@@ -7,7 +7,7 @@ function resolve(dir) {
   return path.join(__dirname, dir)
 }
 
-const name = defaultSettings.title || '渠道管理系统' // page title
+const name = '渠道管理平台' // page title
 
 let apiObj = {
   '/commonApi': process.env.VUE_APP_BASE_API
@@ -42,5 +42,13 @@ module.exports = {
     open: false, // 不自动打开浏览器
     disableHostCheck: true,
     proxy: getProxyTable(apiObj)
+  },
+  configureWebpack: {
+    name: name,
+    resolve: {
+      alias: {
+        '@': resolve('src')
+      }
+    }
   }
 }

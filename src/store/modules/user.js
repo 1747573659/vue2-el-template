@@ -1,30 +1,28 @@
-import { login, logout, getInfo } from '@/api/user'
-import { getToken, setToken, removeToken } from '@/utils/request/auth'
-import router, { resetRouter } from '@/router'
+import { setLocal, removeLocal } from '@/utils/request/token'
+import MD5Util from '@/utils/MD5Util'
+import { login } from '@/api/login'
 
 const state = {
-  token: getToken(),
-  name: '',
-  avatar: '',
-  introduction: '',
-  roles: []
+  token: '', // 用户token
+  routes: '', // 路由权限
+  userInfo: {}, // 用户信息
+}
+
+const getters = {
+  token: state => state.token,
+  routes: state => state.routes,
+  userInfo: state => state.userInfo
 }
 
 const mutations = {
   SET_TOKEN: (state, token) => {
     state.token = token
   },
-  SET_INTRODUCTION: (state, introduction) => {
-    state.introduction = introduction
+  SET_ROUTES: (state, routes) => {
+    state.routes = routes
   },
-  SET_NAME: (state, name) => {
-    state.name = name
-  },
-  SET_AVATAR: (state, avatar) => {
-    state.avatar = avatar
-  },
-  SET_ROLES: (state, roles) => {
-    state.roles = roles
+  SET_USER_INFO: (state, userInfo) => {
+    state.userInfo = userInfo
   }
 }
 
@@ -32,40 +30,17 @@ const actions = {
   // user login
   login({ commit }, userInfo) {
     const { username, password } = userInfo
+    userInfo.password = MD5Util.md5(userInfo.password)
     return new Promise((resolve, reject) => {
-      login({ username: username.trim(), password: password }).then(response => {
+      login({ username: username.replace(/\s/g, ''), password: password.replace(/\s/g, '') }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
-        setToken(data.token)
+        commit('SET_ROUTES', data.menus)
+        commit('SET_USER_INFO', data.userInfo)
+        setLocal('token', data.token)
+        setLocal('routes', data.menus)
+        setLocal('userInfo', data.userInfo)
         resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // get user info
-  getInfo({ commit, state }) {
-    return new Promise((resolve, reject) => {
-      getInfo(state.token).then(response => {
-        const { data } = response
-
-        if (!data) {
-          reject('Verification failed, please Login again.')
-        }
-
-        const { roles, name, avatar, introduction } = data
-
-        // roles must be a non-empty array
-        if (!roles || roles.length <= 0) {
-          reject('getInfo: roles must be a non-null array!')
-        }
-
-        commit('SET_ROLES', roles)
-        commit('SET_NAME', name)
-        commit('SET_AVATAR', avatar)
-        commit('SET_INTRODUCTION', introduction)
-        resolve(data)
       }).catch(error => {
         reject(error)
       })
@@ -73,59 +48,22 @@ const actions = {
   },
 
   // user logout
-  logout({ commit, state, dispatch }) {
-    return new Promise((resolve, reject) => {
-      logout(state.token).then(() => {
-        commit('SET_TOKEN', '')
-        commit('SET_ROLES', [])
-        removeToken()
-        resetRouter()
-
-        // reset visited views and cached views
-        // to fixed https://github.com/PanJiaChen/vue-element-admin/issues/2485
-        dispatch('tagsView/delAllViews', null, { root: true })
-
-        resolve()
-      }).catch(error => {
-        reject(error)
-      })
-    })
-  },
-
-  // remove token
-  resetToken({ commit }) {
-    return new Promise(resolve => {
+  Logout({ commit }) {
+    return new Promise((resolve) => {
       commit('SET_TOKEN', '')
-      commit('SET_ROLES', [])
-      removeToken()
+      commit('SET_ROUTES', [])
+      commit('SET_USER_INFO', {})
+      removeLocal('token')
+      removeLocal('routes')
+      removeLocal('userInfo')
       resolve()
     })
-  },
-
-  // dynamically modify permissions
-  async changeRoles({ commit, dispatch }, role) {
-    const token = role + '-token'
-
-    commit('SET_TOKEN', token)
-    setToken(token)
-
-    const { roles } = await dispatch('getInfo')
-
-    resetRouter()
-
-    // generate accessible routes map based on roles
-    const accessRoutes = await dispatch('permission/generateRoutes', roles, { root: true })
-    // dynamically add accessible routes
-    router.addRoutes(accessRoutes)
-
-    // reset visited views and cached views
-    dispatch('tagsView/delAllViews', null, { root: true })
   }
 }
 
 export default {
-  namespaced: true,
   state,
+  getters,
   mutations,
   actions
 }

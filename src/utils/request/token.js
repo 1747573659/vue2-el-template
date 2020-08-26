@@ -1,15 +1,12 @@
-const TokenKey = 'TOKEN'
-
-export function getToken () {
+export function getLocal (localName) {
   // return Cookies.get(TokenKey)
-  return localStorage.getItem(TokenKey)
+  return localStorage.getItem(localName)
 }
 
-export function setToken (token) {
-  localStorage.setItem(TokenKey, token)
-  // return Cookies.set(TokenKey, token)
+export function setLocal (localName, localValue) {
+  localStorage.setItem(localName, localValue)
 }
 
-export function removeToken () {
-  localStorage.removeItem(TokenKey)
+export function removeLocal (localName) {
+  localStorage.removeItem(localName)
 }

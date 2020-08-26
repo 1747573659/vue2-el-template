@@ -1,14 +1,14 @@
 <template>
-  <div class="layout">
-    <el-container>
-      <el-header>Header</el-header>
-      <el-container>
-        <el-aside width="200px">Aside</el-aside>
-        <el-main>
+  <div id="components-layout-demo-basic">
+    <a-layout>
+      <a-layout-header>Header</a-layout-header>
+      <a-layout>
+        <a-layout-sider width="200px">Aside</a-layout-sider>
+        <a-layout-content>
           <router-view></router-view>
-        </el-main>
-      </el-container>
-    </el-container>
+        </a-layout-content>
+      </a-layout>
+    </a-layout>
   </div>
 </template>
 
@@ -19,39 +19,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.layout {
-  .el-header, .el-footer {
-    background-color: #B3C0D1;
-    color: #333;
-    text-align: center;
-    line-height: 60px;
-  }
-  
-  .el-aside {
-    background-color: #D3DCE6;
-    color: #333;
-    text-align: center;
-    line-height: 200px;
-  }
-  
-  .el-main {
-    background-color: #E9EEF3;
-    color: #333;
-    text-align: center;
-    line-height: 160px;
-  }
-  
-  body > .el-container {
-    margin-bottom: 40px;
-  }
-  
-  .el-container:nth-child(5) .el-aside,
-  .el-container:nth-child(6) .el-aside {
-    line-height: 260px;
-  }
-  
-  .el-container:nth-child(7) .el-aside {
-    line-height: 320px;
-  }
+#components-layout-demo-basic {
+  text-align: center;
+}
+#components-layout-demo-basic .ant-layout-header,
+#components-layout-demo-basic .ant-layout-footer {
+  background: #7dbcea;
+  color: #fff;
+}
+#components-layout-demo-basic .ant-layout-footer {
+  line-height: 1.5;
+}
+#components-layout-demo-basic .ant-layout-sider {
+  background: #3ba0e9;
+  color: #fff;
+  line-height: 120px;
+}
+#components-layout-demo-basic .ant-layout-content {
+  background: rgba(16, 142, 233, 1);
+  color: #fff;
+  min-height: 120px;
+  line-height: 120px;
+}
+#components-layout-demo-basic > .ant-layout {
+  margin-bottom: 48px;
+}
+#components-layout-demo-basic > .ant-layout:last-child {
+  margin: 0;
 }
 </style>

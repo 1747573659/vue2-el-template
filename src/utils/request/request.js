@@ -1,11 +1,10 @@
 import axios from 'axios'
-// import { Message, MessageBox } from 'km-ui'
 import store from '@/store'
-import { Message, MessageBox } from 'element-ui'
-import { getToken } from '@/utils/token'
+import { Modal, message } from 'ant-design-vue'
+import { getLocal } from '@/utils/request/token'
 
 let config = {
-  timeout: 5 * 000, // request timeout 60s
+  timeout: 5 * 1000, // request timeout 60s
   // 跨域请求时是否需要凭证
   withCredentials: false,
   baseURL: process.env.VUE_APP_BASE_API, // url = base url + request url
@@ -19,7 +18,7 @@ service.interceptors.request.use(
   config => {
     if (store.getters.token) {
       // 从localStorage拿token, 放到每个请求头
-      config.headers['token'] = getToken()
+      config.headers['token'] = getLocal()
     }
     return config
   },
@@ -48,59 +47,33 @@ service.interceptors.response.use(
         return res.data
       // 当token超时, 则重新登录
       } else if (res.code === 190001) {
-        MessageBox.confirm(
-          '超时未操作，系统已自动登出，请重新登录',
-          '重新登录',
-          {
-            confirmButtonText: '重新登录',
-            // cancelButtonText: '取消',
-            type: 'warning',
-            showClose: false,
-            showCancelButton: false,
-            closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
-            beforeClose: (action, instance, done) => {
-              // done()
-              if (action === 'cancel') {
-                // MessageBox.close()
+        Modal.warning({
+          title: '重新登录',
+          content: '超时未操作，系统已自动登出，请重新登录',
+          okText: '重新登录',
+          onOk() {
+            return new Promise((resolve) => {
+              store.dispatch('Logout').then(() => {
                 location.reload()
-              } else {
-                // 调用登出方法,清除本地存储信息和vuex的登录相关数据
-                store.dispatch('FedLogOut').then(() => {
-                  location.reload() // 为了重新实例化vue-router对象 避免bug
-                  // this.$router.push({path: '/login'})
-                })
-              }
-            }
+              })
+              resolve()
+            })
           }
-        ).catch(err => {
-          console.log(err)
         })
         return Promise.reject(res.data || res.msg)
         // return false
       } else {
-        Message({
-          message: res.data || res.msg,
-          type: 'error',
-          duration: 3000
-        })
+        message.error(res.data || res.msg)
         return Promise.reject(res.data || res.msg)
       }
     } else {
-      Message({
-        message: res.data || res.msg,
-        type: 'error',
-        duration: 3000
-      })
+      message.error(res.data || res.msg)
       return Promise.reject(res.data || res.msg)
     }
   },
   err => {
     // console.log(err.response) // for debug
-    Message({
-      message: err.response.data.msg || '网络出错~~',
-      type: 'error',
-      duration: 5000
-    })
+    message.error(err.response.data.msg || '网络出错~~')
     return Promise.reject(err)
   }
 )
