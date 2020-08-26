@@ -23,6 +23,6 @@ pnpm-debug.log*
 *.sw?
 
 # 打包文件
-km-chanmel-dev
-km-chanmel-test
-km-chanmel-pro
+km-channel-dev
+km-channel-test
+km-channel-pro

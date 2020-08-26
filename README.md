@@ -17,8 +17,11 @@ npm run serve:pro
 ### Compiles and minifies for production
 ```
 npm run build:dev
+km-channel-dev
 npm run build:test
+km-channel-test
 npm run build:pro
+km-channel-pro
 ```
 
 ### Lints and fixes files

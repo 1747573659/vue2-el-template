@@ -1,10 +1,11 @@
 import setting from './modules/setting'
+import home from './modules/home'
 
 export const routes = [
   {
     path: '/',
-    redirect: '/setting',
-    component: () => import('@/views/layout/layout.vue'),
+    redirect: '/home',
+    component: () => import('@/views/layout/layout.vue')
   },
   {
     path: '/login',
@@ -12,5 +13,6 @@ export const routes = [
     name: 'login',
     component: () => import('@/views/login/login.vue')
   },
-  setting
+  setting,
+  home
 ]
