@@ -1,25 +1,21 @@
-const setting = {
-  path: '/setting',
-  redirect: '/setting/baseinfo',
-  code: 'KM_SETTING',
-  name: 'setting',
-  component: () => import('@/views/setting/layout.vue'),
+const home = {
+  path: '/home',
+  redirect: '/home/index',
+  code: 'KM_DEFAULT_CODE',
+  name: 'home',
+  component: () => import('@/views/layout/layout.vue'),
   meta: {
-    title: '设置',
-    name: 'setting',
+    title: '首页',
+    name: 'home',
   },
   children: [
     {
-      path: 'baseInfo',
-      component: () => import('@/views/setting/baseInfo/baseInfo.vue'),
-      code: 'KM_SETTING_BASEINFO',
-      name: 'baseInfo',
-      meta: {
-        title: '基本信息',
-        name: 'baseInfo',
-      }
-    }
+      path: 'index',
+      component: () => import('@/views/home/home.vue'),
+      name: 'index',
+      meta: { title: '首页', name: 'index' }
+    },
   ]
 }
 
-export default setting
+export default home

@@ -1,6 +1,5 @@
 <template>
   <div class="lay">
-    <p>123231</p>
     <router-view></router-view>
   </div>
 </template>
