@@ -1,14 +1,26 @@
-import Vue from "vue";
-import VueRouter from "vue-router";
-import { routes } from "./routes"
+import Vue from 'vue'
+import VueRouter from 'vue-router'
 
-Vue.use(VueRouter);
+Vue.use(VueRouter)
 
+// 路由数据
+import routes from './routes'
+
+// 导出路由 在 main.js 里使用
 const router = new VueRouter({
-  mode: "history",
-  fallback: true, // 如果浏览器不支持history模式，那么自动帮我们改为hash模式
+  routes,
+  mode: 'history',
   base: process.env.ENV === 'dev' ? '/kmchannel' : '',
-  routes
-});
+  linkActiveClass: 'active-link', // 点击进行路由跳转时那个路由会添加active-link
+  linkExactActiveClass: 'exact-active-link', // 路由路径完全匹配是点击的时候会有exact-active-link
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { y: 0 }
+    }
+  }
+})
 
-export default router;
+export default router
+
