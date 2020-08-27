@@ -1,6 +1,7 @@
 import { setLocal, removeLocal } from '@/utils/request/token'
 import MD5Util from '@/utils/MD5Util'
 import { login } from '@/api/login'
+import routeTree from '@/utils/routeTree'
 
 const state = {
   token: '', // 用户token
@@ -35,10 +36,10 @@ const actions = {
       login({ username: username.replace(/\s/g, ''), password: password.replace(/\s/g, '') }).then(response => {
         const { data } = response
         commit('SET_TOKEN', data.token)
-        commit('SET_ROUTES', data.menus)
+        commit('SET_ROUTES', routeTree(data.menus))
         commit('SET_USER_INFO', data.userInfo)
         setLocal('token', data.token)
-        setLocal('routes', data.menus)
+        setLocal('routes', routeTree(data.menus))
         setLocal('userInfo', data.userInfo)
         resolve()
       }).catch(error => {
