@@ -26,3 +26,6 @@ pnpm-debug.log*
 km-channel-dev
 km-channel-test
 km-channel-pro
+
+# 测试用例
+test

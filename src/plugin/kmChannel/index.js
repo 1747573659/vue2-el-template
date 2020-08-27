@@ -1,6 +1,6 @@
 // Element
-// import ElementUI from 'element-ui'
-// import 'element-ui/lib/theme-chalk/index.css'
+import ElementUI from 'element-ui'
+import 'element-ui/lib/theme-chalk/index.css'
 
 // 功能插件
 
@@ -10,7 +10,7 @@ export default {
     // https://cn.vuejs.org/v2/api/#productionTip
     Vue.config.productionTip = false
     // Element
-    // Vue.use(ElementUI)
+    Vue.use(ElementUI)
     // 插件
   }
 }
