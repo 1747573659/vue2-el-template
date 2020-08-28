@@ -1,7 +1,7 @@
 'use strict'
 const path = require('path')
 // 配置文件详情
-const defaultSettings = require('./src/settings.js')
+// const defaultSettings = require('./src/settings.js')
 
 function resolve(dir) {
   return path.join(__dirname, dir)

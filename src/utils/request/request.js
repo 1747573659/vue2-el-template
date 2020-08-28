@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-import { Modal, message } from 'ant-design-vue'
+import { Message, MessageBox } from 'element-ui'
 import { getLocal } from '@/utils/request/token'
 
 let config = {
@@ -47,33 +47,58 @@ service.interceptors.response.use(
         return res.data
       // 当token超时, 则重新登录
       } else if (res.code === 190001) {
-        Modal.warning({
-          title: '重新登录',
-          content: '超时未操作，系统已自动登出，请重新登录',
-          okText: '重新登录',
-          onOk() {
-            return new Promise((resolve) => {
-              store.dispatch('Logout').then(() => {
+        MessageBox.confirm(
+          '超时未操作，系统已自动登出，请重新登录',
+          '重新登录',
+          {
+            confirmButtonText: '重新登录',
+            // cancelButtonText: '取消',
+            type: 'warning',
+            showClose: false,
+            showCancelButton: false,
+            closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
+            beforeClose: (action) => {
+              // done()
+              if (action === 'cancel') {
+                // MessageBox.close()
                 location.reload()
-              })
-              resolve()
-            })
+              } else {
+                store.dispatch('FedLogOut').then(() => {
+                  location.reload() // 为了重新实例化vue-router对象 避免bug
+                  // this.$router.push({path: '/login'})
+                })
+              }
+            }
           }
+        ).catch((err) => {
+          console.log(err)
         })
         return Promise.reject(res.data || res.msg)
         // return false
       } else {
-        message.error(res.data || res.msg)
+        Message({
+          message: res.data || res.msg,
+          type: 'error',
+          duration: 3000
+        })
         return Promise.reject(res.data || res.msg)
       }
     } else {
-      message.error(res.data || res.msg)
+      Message({
+        message: res.data || res.msg,
+        type: 'error',
+        duration: 3000
+      })
       return Promise.reject(res.data || res.msg)
     }
   },
   err => {
     // console.log(err.response) // for debug
-    message.error(err.response.data.msg || '网络出错~~')
+    Message({
+      message: err.response.data.msg || '网络出错~~',
+      type: 'error',
+      duration: 5000
+    })
     return Promise.reject(err)
   }
 )
