@@ -3,7 +3,7 @@ const home = {
   redirect: '/home/index',
   code: 'KM_DEFAULT_CODE',
   name: 'home',
-  component: () => import('@/views/layout/layout.vue'),
+  component: () => import('@/layout/index.vue'),
   meta: {
     title: '首页',
     name: 'home',
@@ -11,7 +11,7 @@ const home = {
   children: [
     {
       path: 'index',
-      component: () => import('@/views/home/home.vue'),
+      component: () => import('@/pages/home/home.vue'),
       name: 'index',
       meta: { title: '首页', name: 'index' }
     },

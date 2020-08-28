@@ -3,7 +3,7 @@ const setting = {
   redirect: '/setting/baseinfo',
   code: 'KM_SETTING',
   name: 'setting',
-  component: () => import('@/views/layout/layout.vue'),
+  component: () => import('@/layout/index.vue'),
   meta: {
     title: '设置',
     name: 'setting',
@@ -11,7 +11,7 @@ const setting = {
   children: [
     {
       path: 'baseInfo',
-      component: () => import('@/views/setting/layout.vue'),
+      component: () => import('@/pages/setting/layout.vue'),
       code: 'KM_SETTING_BASEINFO',
       name: 'baseInfo',
       meta: {
@@ -21,7 +21,7 @@ const setting = {
       children: [
         {
           path: 'baseInfoIndex',
-          component: () => import('@/views/setting/baseInfo/baseInfo.vue'),
+          component: () => import('@/pages/setting/baseInfo/baseInfo.vue'),
           code: 'KM_SETTING_BASEINFO_INDEX',
           name: 'baseInfoIndex',
           meta: {

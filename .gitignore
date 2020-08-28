@@ -27,3 +27,6 @@ package-lock.json
 km-channel-dev
 km-channel-test
 km-channel-pro
+
+# 测试用例
+test
