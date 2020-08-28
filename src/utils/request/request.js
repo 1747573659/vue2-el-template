@@ -13,7 +13,7 @@ service.interceptors.request.use(
   config => {
     if (store.getters.token) {
       // 从localStorage拿token, 放到每个请求头
-      config.headers['token'] = getLocal()
+      // config.headers['token'] = getLocal()
     }
     return config
   },
