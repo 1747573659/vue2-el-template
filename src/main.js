@@ -1,12 +1,13 @@
 import Vue from "vue";
-import ElementUI from 'element-ui';
-import 'element-ui/lib/theme-chalk/index.css';
 import App from "./App.vue";
 import router from "./router";
 import store from "./store";
 
-Vue.config.productionTip = false;
-Vue.use(ElementUI);
+// 核心插件
+import kmChannel from './plugin/kmChannel'
+
+// 核心插件
+Vue.use(kmChannel)
 
 new Vue({
   router,

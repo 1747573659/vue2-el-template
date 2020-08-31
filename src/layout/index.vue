@@ -1,9 +1,15 @@
 <template>
   <div class="app-wrapper">
     <HeaderView />
-    <SidebarView />
-    <TagView />
-    <router-view />
+    <main class="p-layout_main">
+      <SidebarView />
+      <section class="p-layout_content">
+        <TagView />
+        <div class="p-layout_fill">
+          <router-view />
+        </div>
+      </section>
+    </main>
   </div>
 </template>
 
@@ -20,3 +26,20 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.p {
+  &-layout {
+    &_main {
+      padding-top: 56px;
+    }
+    &_content {
+      margin-left: 200px;
+      height: 100%;
+    }
+    &_fill {
+      padding: 16px;
+    }
+  }
+}
+</style>

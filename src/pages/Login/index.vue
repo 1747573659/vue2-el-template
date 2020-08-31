@@ -81,6 +81,12 @@ export default {
     &_con {
       margin-top: 20px;
       margin-bottom: 57px;
+      /deep/ .el-input__inner{
+        border-radius: 0;
+        border: 0 none;
+        border-bottom: 1px solid #D3DBEB;
+        padding-left: 0;
+      }
     }
   }
 }

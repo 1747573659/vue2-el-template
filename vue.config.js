@@ -47,12 +47,12 @@ module.exports = {
      */
     config.plugins.delete('prefetch').delete('preload')
   },
-  css: {
-    loaderOptions: {
-      scss: {
-        // 全局加载样式，每个Vue组件都可以调用的公共scss
-        additionalData: `@import "~@/assets/scss/variables.scss";@import "~@/assets/scss/mixin.scss";`
-      }
-    }
-  }
+  // css: {
+  //   loaderOptions: {
+  //     scss: {
+  //       // 全局加载样式，每个Vue组件都可以调用的公共scss
+  //       additionalData: `@import "~@/assets/scss/variables.scss";@import "~@/assets/scss/mixin.scss";`
+  //     }
+  //   }
+  // }
 }
