@@ -1,12 +1,4 @@
 'use strict'
-const path = require('path')
-// 配置文件详情
-// const defaultSettings = require('./src/settings.js')
-
-function resolve(dir) {
-  return path.join(__dirname, dir)
-}
-
 const name = '渠道管理平台' // page title
 
 let apiObj = {
