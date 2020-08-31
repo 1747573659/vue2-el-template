@@ -1,0 +1,22 @@
+.el-dialog {
+  border-radius: 4px;
+  .el-dialog__header {
+    border-bottom: 1px solid #E6E9F0;
+    padding: 16px 16px 14px;
+    .el-dialog__title {
+      font-size: 16px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: #333333;
+    }
+    .el-dialog__headerbtn {
+      top: auto;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+      .el-dialog__close {
+        color: #666666;
+      }
+    }
+  }
+}

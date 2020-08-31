@@ -1,0 +1,16 @@
+.el-form-item__label, .el-form-item__content {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #3D4966;
+}
+.el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
+  color: #F23C3C
+}
+.el-form--inline .el-form-item {
+  margin-right: 16px;
+  margin-bottom: 0px !important;
+}
+.el-form-item--mini.el-form-item, .el-form-item--small.el-form-item {
+  margin-bottom: 24px;
+}
