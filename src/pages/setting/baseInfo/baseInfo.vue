@@ -1,6 +1,6 @@
 <template>
   <div class="km-setting-baseInfo">
-    <el-form ref="form" size="small" :rules="rules" :model="form" label-width="100px" style="width:23%">
+    <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:23%">
       <el-form-item label="账号">
         <span>18512457412</span>
       </el-form-item>
@@ -42,7 +42,7 @@
         <span>2020-10-10 10:00</span>
       </el-form-item>
       <el-form-item label="">
-        <el-button type="primary" @click="onSubmit">保存</el-button>
+        <el-button class="channel-baseinfo-save" type="primary" @click="onSubmit">保存</el-button>
       </el-form-item>
     </el-form>
     <el-dialog
@@ -50,7 +50,7 @@
       title="修改联系人手机号"
       :visible.sync="dialogVisible"
       width="27%">
-      <el-form :model="dialogForm" ref="dialogForm" size="small" style="width: 60%" label-width="70px">
+      <el-form :model="dialogForm" label-suffix=":" ref="dialogForm" size="small" style="width: 60%" label-width="70px">
         <el-form-item label="新手机" required>
           <el-input v-model="dialogForm.name"></el-input>
         </el-form-item>
@@ -60,14 +60,14 @@
               <el-input v-model="dialogForm.name"></el-input>
             </el-col>
             <el-col :span="12">
-              <el-button style="float: right" @click="sendCode" :disabled="isClick" type="primary">{{sendBtnText}}</el-button>
+              <el-button style="float: right" :class="{ clicked: isClick }" size="small" @click="sendCode" :disabled="isClick">{{sendBtnText}}</el-button>
             </el-col>
           </el-row>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
-        <el-button @click="dialogVisible = false">取消</el-button>
-        <el-button type="primary" @click="confirmEdit">确认修改</el-button>
+        <el-button size="small" @click="dialogVisible = false" class="km-baseinfo-cancel">取消</el-button>
+        <el-button size="small" type="primary" @click="confirmEdit">确认修改</el-button>
       </span>
     </el-dialog>
   </div>
@@ -108,11 +108,11 @@ export default {
     },
     sendCode() {
       this.isClick = true
-      this.sendBtnText = `重新发送 (${this.countdownTime})`
+      this.sendBtnText = `重新发送(${this.countdownTime})`
       this.countdownTimer = setInterval(() => {
         console.log(this.countdownTime)
         this.countdownTime -= 1
-        this.sendBtnText = `重新发送 (${this.countdownTime})`
+        this.sendBtnText = `重新发送(${this.countdownTime})`
         if (!this.countdownTime) {
           this.resetBtn()
         }
@@ -139,29 +139,21 @@ export default {
   justify-content: center;
   .km-setting-edit {
     padding: 0 16px;
-    font-size:14px;
-    font-family:PingFangSC-Regular,PingFang SC;
-    font-weight:400;
-    color:rgba(51,119,255,1);
   };
-  .km-setting-dialog {
-    /deep/.el-dialog {
-      border-radius:6px;
-      /deep/.el-dialog__header {
-        border-bottom: 1px solid rgba(230,233,240,1);
-        /deep/.el-dialog__headerbtn {
-          /deep/.el-icon-close {
-            width:20px;
-            height:20px;
-            color:rgba(102,102,102,1);
-          }
-        }
-      };
-      /deep/.el-dialog__body {
-        display: flex;
-        justify-content: center;
-      }
-    }
+}
+.channel-baseinfo-save {
+  padding: 8px 23px;
+}
+.km-baseinfo-cancel {
+  padding: 8px 23px;
+}
+.km-setting-dialog {
+  /deep/.el-dialog__body {
+    display: flex;
+    justify-content: center;
   }
+}
+.clicked {
+  padding: 8px 7px;
 }
 </style>

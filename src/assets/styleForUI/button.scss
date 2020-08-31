@@ -1,0 +1,69 @@
+.el-button--small {
+  padding: 8px 12px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+}
+
+
+.el-button--primary {
+  background: #3377FF;
+}
+.el-button--primary:hover {
+  background: #3B83FF;
+  border-color: #3B83FF;
+}
+.el-button--primary:focus {
+  background: #2a6aff;
+  border-color: #2a6aff;
+}
+
+
+.el-button--primary.is-plain {
+  background: #FFFFFF;
+  border: 1px solid #3377FF;
+  color: #3377FF;
+}
+.el-button--primary.is-plain:hover {
+  background: #F7F9FC;
+  border: 1px solid #3377FF;
+  color: #3377FF;
+}
+.el-button--primary.is-plain:focus {
+  background: #F2F6FC;
+  border: 1px solid #3377FF;
+  color: #3377FF;
+}
+
+
+.el-button--default {
+  background: #FFFFFF;
+  border: 1px solid #D3DBEB;
+  color: #3D4966;
+}
+.el-button--default:hover {
+  background: #F7F9FC;
+  border: 1px solid #D3DBEB;
+  color: #3D4966;
+}
+.el-button--default:focus {
+  background: #F2F6FC;
+  border: 1px solid #D3DBEB;
+  color: #3D4966;
+}
+
+
+.el-button--text {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #3377FF;
+  padding: 0px;
+}
+.el-button--text:hover {
+  color: #3B83FF;
+}
+.el-button--text:focus {
+  color: #2A6AFF;
+}
