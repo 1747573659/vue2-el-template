@@ -1,0 +1,101 @@
+.search-box {
+  background: #FFFFFF;
+  padding: 16px 24px
+}
+.data-box {
+  margin: 16px;
+  padding: 16px;
+  background: #FFFFFF;
+}
+.el-button--small {
+  padding: 8px 12px;
+  border-radius: 2px;
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+}
+.el-button--primary {
+  background: #3377FF;
+}
+.el-button--text {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #2A6AFF;
+  padding: 0px;
+}
+.el-form-item__label {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #3D4966;
+}
+.el-form-item__content {
+  font-size: 14px;
+  font-family: PingFangSC-Regular, PingFang SC;
+  font-weight: 400;
+  color: #3D4966;
+}
+.el-form-item.is-required:not(.is-no-asterisk)>.el-form-item__label:before {
+  color: #F23C3C
+}
+.el-form--inline .el-form-item {
+  margin-right: 16px;
+  margin-bottom: 0px !important;
+}
+.el-dialog {
+  border-radius: 4px;
+  .el-dialog__header {
+    border-bottom: 1px solid #E6E9F0;
+    padding: 16px 16px 14px;
+    .el-dialog__title {
+      font-size: 16px;
+      font-family: PingFangSC-Medium, PingFang SC;
+      font-weight: 500;
+      color: #333333;
+    }
+    .el-dialog__headerbtn {
+      top: auto;
+      width: 20px;
+      height: 20px;
+      font-size: 20px;
+      .el-dialog__close {
+        color: #666666;
+      }
+    }
+  }
+}
+.el-input__inner {
+  border-radius: 2px;
+}
+.el-button--primary.is-plain {
+  background-color: #fff;
+  border-color: #3377FF;
+  color: #3377FF;
+}
+.el-button--primary.is-plain:focus {
+  color: #fff;
+  background-color: #3377FF;
+}
+.el-button--primary.is-plain:hover {
+  color: #fff;
+  background: #3377FF;
+}
+.el-table {
+  thead {
+    background: #F7F9FC;
+    font-size: 14px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 500;
+    color: #3D4966;
+  }
+  .el-table__row {
+    font-size: 14px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #3D4966;
+  }
+  th, td {
+    padding: 16px 0px;
+  }
+}

@@ -30,6 +30,28 @@ const setting = {
           },
         }
       ]
+    },
+    {
+      path: 'account',
+      component: () => import('@/pages/setting/layout.vue'),
+      code: 'KM_SETTING_ACCOUNT',
+      name: 'account',
+      meta: {
+        title: '账号管理',
+        name: 'account',
+      },
+      children: [
+        {
+          path: 'role',
+          component: () => import('@/pages/setting/account/role.vue'),
+          code: 'KM_SETTING_ACCOUNT_ROLE',
+          name: 'role',
+          meta: {
+            title: '角色管理',
+            name: 'role',
+          },
+        }
+      ]
     }
   ]
 }

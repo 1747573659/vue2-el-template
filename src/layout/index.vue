@@ -37,6 +37,7 @@ export default {
   .el-main {
     background-color: #E9EEF3;
     color: #333;
+    padding: 0px;
   }
   
   body > .el-container {
