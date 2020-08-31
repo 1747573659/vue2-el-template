@@ -14,7 +14,7 @@
             <el-input v-model="loginForm.verifycode" placeholder="请输入验证码"></el-input>
           </el-form-item>
         </el-form>
-        <el-button type="primary" @click="submitForm('ruleForm')" style="width:100%">登录</el-button>
+        <el-button type="primary" @click="submitForm('ruleForm')" style="width:100%;height:44px">登录</el-button>
       </div>
     </div>
   </section>
@@ -68,7 +68,7 @@ export default {
       border-radius: 4px;
       margin-top: 67px;
       margin-right: 72px;
-      padding: 24px;
+      padding: 44px 24px 24px 24px;
       box-sizing: border-box;
     }
   }
@@ -80,7 +80,7 @@ export default {
     }
     &_con {
       margin-top: 20px;
-      margin-bottom: 57px;
+      margin-bottom: 55px;
       /deep/ .el-input__inner{
         border-radius: 0;
         border: 0 none;
