@@ -7,23 +7,7 @@
   padding: 16px;
   background: #FFFFFF;
 }
-.el-button--small {
-  padding: 8px 12px;
-  border-radius: 2px;
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-}
-.el-button--primary {
-  background: #3377FF;
-}
-.el-button--text {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #2A6AFF;
-  padding: 0px;
-}
+
 .el-form-item__label {
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
@@ -65,37 +49,47 @@
     }
   }
 }
-.el-input__inner {
+.km-page-block {
+  padding: 48px 0px;
+  float: right
+}
+.el-pager li {
+  padding: 0px;
+  margin: 0px 4px;
+  min-width: 32px;
+  height: 32px;
+  line-height: 32px;
+  border: 1px solid #D3DBEB;
   border-radius: 2px;
+  font-size: 14px;
+  font-family: PingFangSC-Medium, PingFang SC;
+  font-weight: 500;
 }
-.el-button--primary.is-plain {
-  background-color: #fff;
-  border-color: #3377FF;
-  color: #3377FF;
-}
-.el-button--primary.is-plain:focus {
-  color: #fff;
-  background-color: #3377FF;
-}
-.el-button--primary.is-plain:hover {
-  color: #fff;
+.el-pager li.active {
   background: #3377FF;
+  color: #FFFFFF;
 }
-.el-table {
-  thead {
-    background: #F7F9FC;
-    font-size: 14px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 500;
-    color: #3D4966;
-  }
-  .el-table__row {
-    font-size: 14px;
-    font-family: PingFangSC-Regular, PingFang SC;
-    font-weight: 400;
-    color: #3D4966;
-  }
-  th, td {
-    padding: 16px 0px;
-  }
+.el-pager li.active+li {
+  border-left: 1px solid #D3DBEB
+}
+.el-pagination button {
+  border: 1px solid #D3DBEB;
+}
+.el-pagination button, .el-pagination span:not([class*=suffix]) {
+  height: 32px;
+  line-height: 32px;
+  min-width: 32px
+}
+.el-pagination button {
+  padding: 0px;
+}
+.el-pagination .btn-prev {
+  padding-right: 0px;
+}
+.el-pagination .btn-next {
+  padding-left: 0px;
+}
+.el-pagination .btn-next .el-icon, .el-pagination .btn-prev .el-icon {
+  font-size: 20px;
+  font-weight: 600;
 }

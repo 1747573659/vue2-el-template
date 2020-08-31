@@ -39,10 +39,21 @@
           align="right">
           <template slot-scope="scope">
             <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="spread(scope.row)" type="text" size="small">推广</el-button>
+            <el-button @click="spread(scope.row)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
+      <div class="km-page-block">
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page="currentPage"
+          :page-sizes="[10, 15, 30]"
+          :page-size="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="totalPage">
+        </el-pagination>
+      </div>
     </div>
   </div>
 </template>
@@ -103,13 +114,18 @@ export default {
           accountNum: '12',
           creatTime: '2018-01-01 10:00:00'
         }
-      ]
+      ],
+      currentPage: 1,
+      totalPage: 233,
+      pageSize: 10
     }
   },
   methods: {
     search() {},
     edit() {},
-    spread() {}
+    spread() {},
+    handleSizeChange() {},
+    handleCurrentChange() {}
   }
 }
 </script>

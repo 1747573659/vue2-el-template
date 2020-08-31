@@ -20,3 +20,9 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.app-wrapper {
+  background-color: #F7F8FA;
+}
+</style>
