@@ -1,0 +1,17 @@
+.el-select--small {
+  .el-icon-arrow-up:before {
+    content: "\e78f";
+  }
+}
+.el-select .el-input .el-select__caret {
+  color: #1F2E4D;
+}
+.el-select .el-input__inner:focus {
+  border: 1px solid #3377FF;
+}
+.el-select .el-select--small {
+  border-radius: 2px;
+}
+.el-select .el-input.is-focus .el-input__inner {
+  border: 1px solid #3377FF;
+}
