@@ -9,7 +9,7 @@
           <el-button type="primary" class="km-role-search" @click="search">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" plain icon="el-icon-plus" class=""  @click="search">新增</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" class=""  @click="add">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -122,7 +122,12 @@ export default {
   },
   methods: {
     search() {},
-    edit() {},
+    add() {
+      this.$router.push({ path: 'roleAdd' })
+    },
+    edit(row) {
+      this.$router.push({ path: 'roleAdd', query: { id: row.id } })
+    },
     spread() {},
     handleSizeChange() {},
     handleCurrentChange() {}

@@ -1,35 +1,37 @@
 <template>
-  <div class="km-setting-account-add">
-    <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
-      <el-form-item label="手机 (账号)" required>
-        <el-input v-model="form.name" v-if="type"></el-input>
-        <span v-else>18566239874</span>
-      </el-form-item>
-      <el-form-item label="姓名" required>
-        <el-input v-model="form.name"></el-input>
-      </el-form-item>
-      <el-form-item label="密码" required v-if="type">
-        <el-input :disabled="true" v-model="form.name" placeholder="默认888888"></el-input>
-      </el-form-item>
-      <el-form-item label="角色" required>
-        <el-select v-model="form.roleId" placeholder="">
-          <el-option
-            v-for="item in roleList"
-            clearable
-            :key="item.value"
-            :label="item.label"
-            :value="item.value">
-          </el-option>
-        </el-select>
-      </el-form-item>
-      <el-form-item label="描述">
-        <el-input v-model="form.name" style="width:240px" rows="6" type="textarea"></el-input>
-      </el-form-item>
-      <el-form-item label="">
-        <el-button class="channel-baseinfo-save" type="primary" @click="onSubmit">保存</el-button>
-        <el-button type="primary" plain class="channel-baseinfo-save" @click="cancel">取消</el-button>
-      </el-form-item>
-    </el-form>
+  <div class="data-box">
+    <div class="km-setting-account-add">
+      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
+        <el-form-item label="手机 (账号)" required>
+          <el-input v-model="form.name" v-if="type"></el-input>
+          <span v-else>18566239874</span>
+        </el-form-item>
+        <el-form-item label="姓名" required>
+          <el-input v-model="form.name"></el-input>
+        </el-form-item>
+        <el-form-item label="密码" required v-if="type">
+          <el-input :disabled="true" v-model="form.name" placeholder="默认888888"></el-input>
+        </el-form-item>
+        <el-form-item label="角色" required>
+          <el-select style="width: 240px" v-model="form.roleId" placeholder="">
+            <el-option
+              v-for="item in roleList"
+              clearable
+              :key="item.value"
+              :label="item.label"
+              :value="item.value">
+            </el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="描述">
+          <el-input v-model="form.name" style="width:240px" rows="6" type="textarea"></el-input>
+        </el-form-item>
+        <el-form-item label="">
+          <el-button class="channel-baseinfo-save" type="primary" @click="onSubmit">保存</el-button>
+          <el-button class="channel-baseinfo-save" @click="cancel">取消</el-button>
+        </el-form-item>
+      </el-form>
+    </div>
   </div>
 </template>
 

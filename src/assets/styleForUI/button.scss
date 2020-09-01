@@ -69,3 +69,7 @@
 .el-button--text:focus {
   color: #2A6AFF;
 }
+
+.el-button+.el-button {
+  margin-left: 12px;
+}
