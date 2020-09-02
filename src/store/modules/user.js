@@ -1,4 +1,4 @@
-import { setLocal, removeLocal } from '@/utils/request/token'
+import { setLocal, removeLocal } from '@/utils/token'
 import MD5Util from '@/utils/MD5Util'
 import { login } from '@/api/login'
 import routeTree from '@/utils/routeTree'

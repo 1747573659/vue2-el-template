@@ -1,31 +1,61 @@
 <template>
   <section class="p-head">
-    <div class="p-head_logo">
-      <img src="../../assets/images/headMenu/logo.png" alt="logo" />
-    </div>
+    <router-link to="/home" class="p-head_logo"><img src="../../assets/images/headMenu/logo.png" alt="logo"/></router-link>
+    <!-- 导航 -->
     <div class="p-head_nav">
       <ul>
         <li class="e-head_active"><router-link to="/login">客户管理</router-link></li>
-        <li><router-link to="/login">订单管理</router-link></li>
-        <li><router-link to="/login">数据中心</router-link></li>
-        <li><router-link to="/login">设置</router-link></li>
+        <li><router-link to="/setting">设置</router-link></li>
       </ul>
     </div>
+    <!-- head操作 -->
     <div class="p-head_action">
-      <el-button type="text" class="p-head_oldVersion">切换旧版</el-button>
+      <el-button type="text" class="p-head_oldVersion" @click="handleSwitchVersion">切换旧版</el-button>
       <div class="p-head_avator">
         <img src="../../assets/images/headMenu/user.png" alt="用户头像" />
       </div>
-      <el-dropdown trigger="click" class="p-head_dropdown">
-        <span class="el-dropdown-link">张三丰<i class="el-icon-arrow-down el-icon--right"></i> </span>
+      <el-dropdown trigger="click" class="p-head_dropdown" @command="handleDropDown">
+        <span class="el-dropdown-link">张三丰<i class="el-icon-arrow-down el-icon--right"></i></span>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item>修改密码</el-dropdown-item>
-          <el-dropdown-item>退出账号</el-dropdown-item>
+          <el-dropdown-item :command="1">修改密码</el-dropdown-item>
+          <el-dropdown-item :command="2">退出账号</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
+      <!-- 修改密码 -->
+      <km-dropout :status.sync="dropStatus"></km-dropout>
     </div>
   </section>
 </template>
+
+<script>
+import dropOutView from './component/dropOut'
+
+export default {
+  components: {
+    'km-dropout': dropOutView
+  },
+  data() {
+    return {
+      dropStatus: false
+    }
+  },
+  methods: {
+    handleDropDown(command) {
+      if (command === 1) {
+        this.dropStatus = true
+      } else {
+        this.$confirm('确认退出吗?', '提示', {
+          confirmButtonText: '确定',
+          cancelButtonText: '取消'
+        })
+          .then(() => {})
+          .catch(() => {})
+      }
+    },
+    handleSwitchVersion() {}
+  }
+}
+</script>
 
 <style lang="scss" scoped>
 .p {

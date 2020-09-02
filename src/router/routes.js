@@ -1,6 +1,6 @@
 // 路由模块数据
-import setting from './modules/setting'
 import home from './modules/home'
+import setting from './modules/setting'
 
 // 由于懒加载页面太多的话会造成webpack热更新太慢，所以开发环境不使用懒加载，只有生产环境使用懒加载
 const _import = require('@/utils/util.import.' + process.env.NODE_ENV)
@@ -23,4 +23,4 @@ const constantRoutes = [
   { path: '*', redirect: '/404', hidden: true }
 ]
 
-export default [...constantRoutes, setting, home]
+export default [...constantRoutes, home, setting]

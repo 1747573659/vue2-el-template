@@ -9,6 +9,7 @@ module.exports = {
   },
   rules: {
     "no-console": process.env.NODE_ENV === "production" && process.env.VUE_APP_FLAG === "pro" ? "warn" : "off",
-    "no-debugger": process.env.NODE_ENV === "production"  && process.env.VUE_APP_FLAG === "pro" ? "warn" : "off"
+    "no-debugger": process.env.NODE_ENV === "production"  && process.env.VUE_APP_FLAG === "pro" ? "warn" : "off",
+    // "no-unused-vars":"off" 关闭未使用变量验证
   }
 };

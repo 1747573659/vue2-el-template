@@ -1,0 +1,18 @@
+.el-message-box {
+  .el-button--primary {
+    color: #fff;
+    background: #3377ff;
+    border-color: #3377ff;
+    &:focus,
+    &:hover {
+      background: #3b83ff;
+      border-color: #3b83ff;
+      color: #fff;
+    }
+    &:active {
+      background: #2a6aff;
+      border-color: #2a6aff;
+      color: #fff;
+    }
+  }
+}

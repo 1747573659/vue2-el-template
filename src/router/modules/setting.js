@@ -5,111 +5,113 @@ const _import = require('@/utils/util.import.' + process.env.NODE_ENV)
 
 const setting = {
   path: '/setting',
-  redirect: '/setting/baseinfo',
-  code: 'KM_SETTING',
   name: 'setting',
+  code: 'KM_SETTING',
   component: Layout,
   meta: {
     title: '设置',
-    name: 'setting',
+    name: 'setting'
   },
   children: [
     {
       path: 'baseInfo',
-      component: _import('setting/layout'),
-      code: 'KM_SETTING_BASEINFO',
       name: 'baseInfo',
+      code: 'KM_SETTING_BASEINFO',
+      redirect: { name: 'baseInfoIndex' },
+      component: _import('setting/index'),
       meta: {
         title: '基本信息',
-        name: 'baseInfo',
+        name: 'baseInfo'
       },
       children: [
         {
           path: 'baseInfoIndex',
-          component: _import('setting/baseInfo/baseInfo'),
-          code: 'KM_SETTING_BASEINFO_INDEX',
           name: 'baseInfoIndex',
+          code: 'KM_SETTING_BASEINFO_INDEX',
+          component: _import('setting/baseInfo/baseInfo'),
           meta: {
             title: '基本信息',
-            name: 'baseInfoIndex',
-          },
+            name: 'baseInfoIndex'
+          }
         }
       ]
     },
     {
       path: 'account',
-      component: () => import('@/pages/setting/layout.vue'),
-      code: 'KM_SETTING_ACCOUNT',
       name: 'account',
+      code: 'KM_SETTING_ACCOUNT',
+      redirect: { name: 'role' },
+      component: _import('setting/index'),
       meta: {
         title: '账号管理',
-        name: 'account',
+        name: 'account'
       },
       children: [
         {
           path: 'role',
-          component: () => import('@/pages/setting/account/role/role.vue'),
-          code: 'KM_SETTING_ACCOUNT_ROLE',
           name: 'role',
+          code: 'KM_SETTING_ACCOUNT_ROLE',
+          component: _import('setting/account/role/role'),
           meta: {
             title: '角色管理',
-            name: 'role',
-          },
+            name: 'role'
+          }
         },
         {
           path: 'roleAdd',
-          component: () => import('@/pages/setting/account/role/roleAdd.vue'),
-          code: 'KM_SETTING_ACCOUNT_ROLEADD',
           name: 'roleAdd',
+          code: 'KM_SETTING_ACCOUNT_ROLEADD',
+          component: _import('setting/account/role/roleAdd'),
           meta: {
-            title: '角色管理',
-            name: 'roleAdd',
-          },
+            title: '角色管理/新增',
+            name: 'roleAdd'
+          }
         },
         {
           path: 'accountSetting',
-          component: () => import('@/pages/setting/account/account/accountSetting.vue'),
-          code: 'KM_SETTING_ACCOUNT_SET',
           name: 'accountSetting',
+          code: 'KM_SETTING_ACCOUNT_SET',
+          component: _import('setting/account/account/accountSetting'),
           meta: {
             title: '账号设置',
-            name: 'accountSetting',
-          },
+            name: 'accountSetting'
+          }
         },
         {
           path: 'accountSettingAdd',
-          component: () => import('@/pages/setting/account/account/accountSettingAdd.vue'),
-          code: 'KM_SETTING_ACCOUNT_SETADD',
           name: 'accountSettingAdd',
+          code: 'KM_SETTING_ACCOUNT_SETADD',
+          component: _import('setting/account/account/accountSettingAdd'),
           meta: {
             title: '账号设置/新增',
-            name: 'accountSettingAdd',
-          },
+            name: 'accountSettingAdd'
+          }
         }
       ]
     },
     {
       path: 'material',
-      component: () => import('@/pages/setting/layout.vue'),
-      code: 'KM_SETTING_MATERIAL',
       name: 'material',
+      code: 'KM_SETTING_MATERIAL',
+      redirect: { name: 'materialDownload' },
+      component: _import('setting/index'),
       meta: {
-        title: '基本信息',
-        name: 'material',
+        title: '其他',
+        name: 'material'
       },
       children: [
         {
           path: 'materialDownload',
-          component: () => import('@/pages/setting/materialDownload/materialDownload.vue'),
-          code: 'KM_SETTING_MATERIAL_DOWNLOAD',
           name: 'materialDownload',
+          code: 'KM_SETTING_MATERIAL_DOWNLOAD',
+          component: _import('setting/materialDownload/materialDownload'),
           meta: {
-            title: '基本信息',
-            name: 'materialDownload',
-          },
+            title: '资料下载',
+            name: 'materialDownload'
+          }
         }
       ]
-    },
+    }
   ]
 }
 
