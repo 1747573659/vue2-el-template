@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { queryBaseInfo } from '@/api/setting/baseInfo'
 export default {
   data() {
     return {
@@ -92,6 +93,14 @@ export default {
     };
   },
   methods: {
+    async getInfo () {
+      let data = {
+        'a': 'a'
+      }
+      try {
+        let res = await queryBaseInfo(data)
+      } catch (e) {}
+    },
     onSubmit() {},
     edit() {
       this.dialogVisible = true
@@ -126,8 +135,7 @@ export default {
     }
   },
   mounted() {
-    // let nameInput = document.getElementById('channel-baseInfo-name-input')
-    // let contactInput = document.getElementById('channel-baseInfo-contact-input')
+    this.getInfo()
   },
 }
 </script>

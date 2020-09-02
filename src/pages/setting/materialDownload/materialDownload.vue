@@ -26,15 +26,15 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="roleName"
+          prop="name"
           label="资料名称">
         </el-table-column>
         <el-table-column
-          prop="descript"
+          prop="remark"
           label="资料描述">
         </el-table-column>
         <el-table-column
-          prop="creatTime"
+          prop="createTime"
           label="创建时间">
         </el-table-column>
         <el-table-column
@@ -63,90 +63,56 @@
 
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
+import { downloadForURL } from '@/utils/download'
 
 export default {
   data() {
     return {
       form: {
-        name: ''
+        name: '',
+        time: []
       },
-      tableData: [
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        }
-      ],
+      tableData: [],
       currentPage: 1,
-      totalPage: 233,
+      totalPage: 0,
       pageSize: 10
     }
   },
   methods: {
-    search() {},
-    downLoad() {},
-    handleSizeChange() {},
-    handleCurrentChange() {},
-    async queryDocumentByPage() {
+    search() {
+      this.currentPage = 1
+      this.getList()
+    },
+    downLoad(row) {
+      downloadForURL(row.completeUrl)
+    },
+    handleSizeChange(value) {
+      this.pageSize = value
+      this.currentPage = 1
+      this.getList()
+    },
+    handleCurrentChange(value) {
+      this.currentPage = value
+      this.getList()
+    },
+    async getList() {
       let data = {
-        "endTime": "",
-        "name": "",
+        "endTime": this.form.time && this.form.time[1],
+        "name": this.form.name,
         "orders": {},
-        "page": 1,
-        "rows": 10,
-        "startTime": ""
+        "page": this.currentPage,
+        "rows": this.pageSize,
+        "startTime": this.form.time && this.form.time[0]
       }
       try {
         const res = await queryDocumentByPage(data)
+        this.tableData = res.results
+        this.totalPage = res.totalCount
       } catch (e) {}
     }
   },
-  created() {
-    console.log(this.token)
-    this.queryDocumentByPage()
+  mounted() {
+    this.getList()
   }
 }
 </script>

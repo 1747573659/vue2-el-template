@@ -2,11 +2,11 @@ import request from '@/utils/request'
 
 const urlLinks = {
   // 登陆接口
-  login: process.env.VUE_APP_BASE_API + '/login',
+  login: '/login',
   // 获取登录用的验证码
-  captcha: process.env.VUE_APP_BASE_API + '/captcha',
+  captcha: '/captcha',
   // 校验验证码
-  validCaptcha: process.env.VUE_APP_BASE_API + '/validCaptcha'
+  validCaptcha: '/validCaptcha'
 }
 
 // 校验验证码

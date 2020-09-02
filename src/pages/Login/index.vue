@@ -39,7 +39,7 @@ export default {
           callback('验证码错误,请重新输入')
         }
       } else {
-        callback('验证码错误,请重新输入')
+        callback('请输入验证码')
       }
     }
     var userNamePass = (rule, value, callback) => {
