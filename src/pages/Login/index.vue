@@ -48,6 +48,7 @@ export default {
     handleLogin() {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
+          this.isLoading = true
           this.$store.dispatch('login', this.loginForm).then(() => {
             this.$router.push({ name: 'home' })
           }).catch(() => {
@@ -60,18 +61,6 @@ export default {
           }).finally(() => {
             this.isLoading = false
           })
-          // try {
-          //   this.isLoading = true
-          //   const res = await login({
-          //     userName: this.loginForm.userName,
-          //     password: MD5Util.md5(this.loginForm.password),
-          //     codeKey: this.loginForm.codeKey
-          //   })
-          //   this.$router.push({ name: 'home' })
-          // } catch (error) {
-          // } finally {
-          //   this.isLoading = false
-          // }
         }
       })
     },
