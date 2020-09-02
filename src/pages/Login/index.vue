@@ -22,22 +22,46 @@
 </template>
 
 <script>
-import { captcha } from '@/api/login'
+import { captcha, validCaptcha } from '@/api/login'
 
 export default {
   data() {
+    var codeKeyPass = async (rule, value, callback) => {
+      if (value.length === 4) {
+        let data = {
+          codeKey: this.usedCoedKey,
+          codeVal: this.loginForm.codeKey
+        }
+        try {
+          let res = await validCaptcha(data)
+          callback()
+        } catch (e) {
+          callback('验证码错误,请重新输入')
+        }
+      } else {
+        callback('请输入验证码')
+      }
+    }
+    var userNamePass = (rule, value, callback) => {
+      if ((/^1[3456789]\d{9}$/.test(value))) {
+        callback()
+      } else {
+        callback('请输入正确的用户名')
+      }
+    }
     return {
       isLoading: false,
       codeKeyUrl: '',
+      usedCoedKey: '',
       loginForm: {
         userName: '',
         password: '',
         codeKey: ''
       },
       loginRules: {
-        userName: [{ required: true, trigger: 'blur', message: '请输入账号' }],
+        userName: [{ required: true, trigger: 'blur', validator: userNamePass }],
         password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
-        codeKey: [{ required: true, trigger: 'blur', message: '请输入验证码' }]
+        codeKey: [{ required: true, trigger: 'blur', validator: codeKeyPass }]
       }
     }
   },
@@ -67,6 +91,7 @@ export default {
     async captcha() {
       const res = await captcha()
       this.codeKeyUrl = res.code || ''
+      this.usedCoedKey = res.codeKey
     }
   }
 }

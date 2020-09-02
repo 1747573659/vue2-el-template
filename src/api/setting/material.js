@@ -1,7 +1,7 @@
 import request from '@/utils/request'
 
 const urlLinks = {
-  queryDocumentByPage: process.env.VUE_APP_BASE_API + '/document/queryDocumentByPage'
+  queryDocumentByPage: '/document/queryDocumentByPage'
 }
 
 export function queryDocumentByPage(data) {

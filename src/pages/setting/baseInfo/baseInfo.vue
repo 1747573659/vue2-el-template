@@ -56,7 +56,7 @@
             <el-input v-model="dialogForm.name"></el-input>
           </el-form-item>
           <el-form-item label="验证码" required>
-            <el-input style="width: 112px;display:line-block" v-model="dialogForm.name"></el-input>
+            <el-input style="width: 112px;display: inline-block" v-model="dialogForm.name"></el-input>
             <el-button style="float: right" class="resend-btn" :class="{ clicked: isClick, disabled: isDisabled }" size="small" @click="sendCode" :disabled="isDisabled">{{sendBtnText}}</el-button>
           </el-form-item>
         </el-form>
@@ -70,6 +70,7 @@
 </template>
 
 <script>
+import { queryBaseInfo } from '@/api/setting/baseInfo'
 export default {
   data() {
     return {
@@ -92,6 +93,14 @@ export default {
     };
   },
   methods: {
+    async getInfo () {
+      let data = {
+        'a': 'a'
+      }
+      try {
+        let res = await queryBaseInfo(data)
+      } catch (e) {}
+    },
     onSubmit() {},
     edit() {
       this.dialogVisible = true
@@ -126,8 +135,7 @@ export default {
     }
   },
   mounted() {
-    // let nameInput = document.getElementById('channel-baseInfo-name-input')
-    // let contactInput = document.getElementById('channel-baseInfo-contact-input')
+    this.getInfo()
   },
 }
 </script>

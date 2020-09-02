@@ -8,7 +8,18 @@ const urlLinks = {
   // 修改密码
   modifyPwd: '/modifyPwd',
   // 获取登录用的验证码
-  captcha: '/captcha'
+  captcha: '/captcha',
+  // 校验验证码
+  validCaptcha: '/validCaptcha'
+}
+
+// 校验验证码
+export function validCaptcha(data) {
+  return request({
+    url: urlLinks.validCaptcha,
+    method: 'post',
+    data: data
+  })
 }
 
 // 登陆接口
@@ -25,16 +36,16 @@ export function login(data) {
   return request({
     url: urlLinks.login,
     method: 'post',
-    data: data
+    data
   })
 }
 
 // 登出
-export function logout(data) {
+export function logout(params) {
   return request({
     url: urlLinks.logout,
     method: 'get',
-    data: data
+    params
   })
 }
 
@@ -43,6 +54,6 @@ export function modifyPwd(data) {
   return request({
     url: urlLinks.modifyPwd,
     method: 'post',
-    data: data
+    data
   })
 }

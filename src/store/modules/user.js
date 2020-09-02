@@ -4,26 +4,18 @@ import { login } from '@/api/login'
 import routeTree from '@/utils/routeTree'
 
 const state = {
-  token: getLocal('token'), // 用户 token
+  token: getLocal('token'), // 用户token
   routes: '', // 路由权限
-  userInfo: {} // 用户信息
+  userInfo: getLocal('userInfo'), // 用户信息
 }
 
 const getters = {
-  token: state => state.token,
-  routes: state => state.routes,
-  userInfo: state => state.userInfo
+  routes: state => state.routes
 }
 
 const mutations = {
-  SET_TOKEN: (state, token) => {
-    state.token = token
-  },
   SET_ROUTES: (state, routes) => {
     state.routes = routes
-  },
-  SET_USER_INFO: (state, userInfo) => {
-    state.userInfo = userInfo
   }
 }
 
@@ -33,29 +25,22 @@ const actions = {
     userInfo.password = MD5Util.md5(userInfo.password)
     const { userName, password, codeKey } = userInfo
     return new Promise((resolve, reject) => {
-      login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
-        .then(response => {
-          commit('SET_TOKEN', response.token)
-          commit('SET_ROUTES', routeTree(response.menus))
-          commit('SET_USER_INFO', response.userInfo)
-          setLocal('token', response.token)
-          setLocal('userInfo', JSON.stringify(response.userInfo))
-          resolve()
-        })
-        .catch(error => {
-          reject(error)
-        })
+      login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey }).then(response => {
+        commit('SET_ROUTES', routeTree(response.menus))
+        setLocal('token', response.token)
+        setLocal('userInfo', JSON.stringify(response.userInfo))
+        resolve()
+      }).catch(error => {
+        reject(error)
+      })
     })
   },
 
   // user logout
   Logout({ commit }) {
-    return new Promise(resolve => {
-      commit('SET_TOKEN', '')
-      commit('SET_ROUTES', [])
+    return new Promise((resolve) => {
       commit('SET_USER_INFO', {})
       removeLocal('token')
-      removeLocal('routes')
       removeLocal('userInfo')
       resolve()
     })
