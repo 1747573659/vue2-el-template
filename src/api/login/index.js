@@ -1,22 +1,26 @@
 import request from '@/utils/request'
 
 const urlLinks = {
-  verifyCode: 'https://api.auauz.net/auth/code',
-  login: 'https://sm-api.cs.kemai.com.cn/login'
+  // 登陆接口
+  login: process.env.VUE_APP_BASE_API + '/login',
+  // 获取登录用的验证码
+  captcha: process.env.VUE_APP_BASE_API + '/captcha'
 }
 
+// 登陆接口
+export function captcha(data) {
+  return request({
+    url: urlLinks.captcha,
+    method: 'get',
+    data: data
+  })
+}
+  
+// 登陆接口
 export function login(data) {
   return request({
     url: urlLinks.login,
     method: 'post',
-    data
-  })
-}
-
-export function getVerifyCode(params) {
-  return request({
-    url: urlLinks.verifyCode,
-    method: 'get',
-    params
+    data: data
   })
 }

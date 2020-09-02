@@ -30,17 +30,15 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    const { username, password } = userInfo
     userInfo.password = MD5Util.md5(userInfo.password)
+    const { userName, password, codeKey } = userInfo
     return new Promise((resolve, reject) => {
-      login({ username: username.replace(/\s/g, ''), password: password.replace(/\s/g, '') }).then(response => {
-        const { data } = response
-        commit('SET_TOKEN', data.token)
-        commit('SET_ROUTES', routeTree(data.menus))
-        commit('SET_USER_INFO', data.userInfo)
-        setLocal('token', data.token)
-        setLocal('routes', routeTree(data.menus))
-        setLocal('userInfo', data.userInfo)
+      login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey }).then(response => {
+        commit('SET_TOKEN', response.token)
+        commit('SET_ROUTES', routeTree(response.menus))
+        commit('SET_USER_INFO', response.userInfo)
+        setLocal('token', response.token)
+        setLocal('userInfo', JSON.stringify(response.userInfo))
         resolve()
       }).catch(error => {
         reject(error)

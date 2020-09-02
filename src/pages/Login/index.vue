@@ -4,15 +4,15 @@
       <div class="mk-login_form">
         <header class="mk-loginForm_head">欢迎登录渠道管理系统</header>
         <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="mk-loginForm_con">
-          <el-form-item prop="loginName">
-            <el-input v-model.trim="loginForm.loginName" placeholder="请输入用户名"></el-input>
+          <el-form-item prop="userName">
+            <el-input clearable v-model.trim="loginForm.userName" placeholder="请输入用户名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input type="password" v-model.trim="loginForm.password" placeholder="请输入密码"></el-input>
+            <el-input clearable type="password" v-model.trim="loginForm.password" placeholder="请输入密码"></el-input>
           </el-form-item>
-          <el-form-item prop="verifycode">
-            <img @click="getVerifyCode" :src="verifycodeUrl" alt="图形验证码" class="e-form_verify" />
-            <el-input v-model="loginForm.verifycode" placeholder="请输入验证码"></el-input>
+          <el-form-item prop="codeKey">
+            <img @click="captcha" :src="codeKeyUrl" alt="图形验证码" class="e-form_code" />
+            <el-input v-model="loginForm.codeKey" placeholder="请输入验证码"></el-input>
           </el-form-item>
         </el-form>
         <el-button type="primary" :loading="isLoading" @click="handleLogin" style="width:100%;height:44px">登录</el-button>
@@ -22,56 +22,62 @@
 </template>
 
 <script>
-// import MD5Util from '@/utils/MD5Util'
-import { getVerifyCode, login } from '@/api/login'
-import testJson from './test.json'
+import { captcha } from '@/api/login'
 
 export default {
   data() {
     return {
       isLoading: false,
-      verifycodeUrl: '',
+      codeKeyUrl: '',
       loginForm: {
-        loginName: '',
+        userName: '',
         password: '',
-        verifycode: ''
+        codeKey: ''
       },
       loginRules: {
-        loginName: [{ required: true, trigger: 'blur', message: '请输入账号' }],
+        userName: [{ required: true, trigger: 'blur', message: '请输入账号' }],
         password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
-        verifycode: [{ required: true, trigger: 'blur', message: '请输入验证码' }]
+        codeKey: [{ required: true, trigger: 'blur', message: '请输入验证码' }]
       }
     }
   },
   mounted() {
-    this.getVerifyCode()
+    this.captcha()
   },
   methods: {
     handleLogin() {
-      console.info(testJson)
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
-          try {
-            this.isLoading = true
-            const res = await login({
-              // username: this.loginForm.username,
-              // password: MD5Util.md5(this.loginForm.password)
-              username: '18800000001',
-              password: 'b09918812f8273a7df57f1752a3d80ff'
-            })
+          this.$store.dispatch('login', this.loginForm).then(() => {
             this.$router.push({ name: 'home' })
-            console.info(res)
-          } catch (error) {
-            console.info(error)
-          } finally {
+          }).catch(() => {
+            this.loginForm = {
+              userName: '',
+              password: '',
+              codeKey: ''
+            }
+            this.captcha()
+          }).finally(() => {
             this.isLoading = false
-          }
+          })
+          // try {
+          //   this.isLoading = true
+          //   const res = await login({
+          //     userName: this.loginForm.userName,
+          //     password: MD5Util.md5(this.loginForm.password),
+          //     codeKey: this.loginForm.codeKey
+          //   })
+          //   this.$router.push({ name: 'home' })
+          // } catch (error) {
+          // } finally {
+          //   this.isLoading = false
+          // }
         }
       })
     },
-    async getVerifyCode() {
-      const res = await getVerifyCode()
-      this.verifycodeUrl = res.img ?? ''
+    async captcha() {
+      const res = await captcha()
+      this.codeKeyUrl = res.code || ''
     }
   }
 }
@@ -123,7 +129,9 @@ export default {
 }
 .e {
   &-form {
-    &_verify {
+    &_code {
+      width: 60px;
+      height: 38px;
       position: absolute;
       right: 0;
       z-index: 1000;

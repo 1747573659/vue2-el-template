@@ -62,6 +62,7 @@
 </template>
 
 <script>
+import { queryDocumentByPage } from '@/api/setting/material'
 export default {
   data() {
     return {
@@ -127,7 +128,23 @@ export default {
     search() {},
     downLoad() {},
     handleSizeChange() {},
-    handleCurrentChange() {}
+    handleCurrentChange() {},
+    async queryDocumentByPage() {
+      let data = {
+        "endTime": "",
+        "name": "",
+        "orders": {},
+        "page": 1,
+        "rows": 10,
+        "startTime": ""
+      }
+      try {
+        const res = await queryDocumentByPage(data)
+      } catch (e) {}
+    }
+  },
+  created() {
+    this.queryDocumentByPage()
   }
 }
 </script>
