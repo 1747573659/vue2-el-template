@@ -7,7 +7,17 @@
 </template>
 
 <script>
-export default {}
+import { mapState, mapActions } from "vuex"
+export default {
+  computed: {
+    ...mapState({
+      token: state => state.token
+    })
+  },
+  created() {
+    console.log(this.token)
+  }
+}
 </script>
 
 <style lang="scss" scoped>

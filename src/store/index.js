@@ -3,8 +3,10 @@ import Vuex from "vuex";
 import allModules from './allModules'
 Vue.use(Vuex);
 
-export default new Vuex.Store({
+const store = new Vuex.Store({
   modules: {
     ...allModules
   }
-});
+})
+
+export default store

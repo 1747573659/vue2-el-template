@@ -63,6 +63,7 @@
 
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
+
 export default {
   data() {
     return {
@@ -144,6 +145,7 @@ export default {
     }
   },
   created() {
+    console.log(this.token)
     this.queryDocumentByPage()
   }
 }

@@ -14,6 +14,7 @@ const service = axios.create(config)
 
 service.interceptors.request.use(
   config => {
+    console.log(store.getters.token)
     if (store.getters.token) {
       // config.headers['Content-Type'] = 'application/x-www-form-urlencoded' // json格式的不需要
       // 从localStorage拿token, 放到每个请求头
@@ -36,9 +37,8 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     const code = response.data?.code
-    if (code === undefined) return res // 验证码二
     if (code === 0) return res.data
-    else if (code === 190001) {
+    else if (code === 195001) {
       MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
         confirmButtonText: '重新登录',
         type: 'warning',
@@ -51,7 +51,7 @@ service.interceptors.response.use(
             // MessageBox.close()
             location.reload()
           } else {
-            store.dispatch('FedLogOut').then(() => {
+            store.dispatch('Logout').then(() => {
               location.reload() // 为了重新实例化vue-router对象 避免bug
               // this.$router.push({path: '/login'})
             })
