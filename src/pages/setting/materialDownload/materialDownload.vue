@@ -3,10 +3,17 @@
     <div class="search-box">
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-form-item label="创建日期">
-          <el-input style="width: 240px" clearable placeholder="" v-model="form.name"></el-input>
+          <el-date-picker
+            v-model="form.time"
+            type="daterange"
+            range-separator="至"
+            start-placeholder="开始日期"
+            end-placeholder="结束日期"
+            value-format="yyyy-MM-dd">
+          </el-date-picker>
         </el-form-item>
-        <el-form-item label="角色信息">
-          <el-input style="width: 240px" clearable placeholder="请输入角色名称" v-model="form.name"></el-input>
+        <el-form-item label="资料信息">
+          <el-input style="width: 240px" clearable placeholder="请输入资料名称" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="km-role-search" @click="search">查询</el-button>
