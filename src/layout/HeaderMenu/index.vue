@@ -15,7 +15,7 @@
         <img src="../../assets/images/headMenu/user.png" alt="用户头像" />
       </div>
       <el-dropdown trigger="click" class="p-head_dropdown" @command="handleDropDown">
-        <span class="el-dropdown-link">张三丰<i class="el-icon-arrow-down el-icon--right"></i></span>
+        <span class="el-dropdown-link">{{userName}}<i class="el-icon-arrow-down el-icon--right"></i></span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item :command="1">修改密码</el-dropdown-item>
           <el-dropdown-item :command="2">退出账号</el-dropdown-item>
@@ -29,6 +29,8 @@
 
 <script>
 import dropOutView from './component/dropOut'
+import {logout} from '@/api/login'
+import {getLocal} from "@/utils/token";
 
 export default {
   components: {
@@ -36,7 +38,8 @@ export default {
   },
   data() {
     return {
-      dropStatus: false
+      dropStatus: false,
+      userName: JSON.parse(getLocal('userInfo')).userName
     }
   },
   methods: {
@@ -48,7 +51,11 @@ export default {
           confirmButtonText: '确定',
           cancelButtonText: '取消'
         })
-          .then(() => {})
+          .then(() => {
+            logout({}).then(()=>{
+              window.location.reload()
+            })
+          })
           .catch(() => {})
       }
     },

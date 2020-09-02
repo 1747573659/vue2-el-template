@@ -1,13 +1,30 @@
 <template>
   <section>
     <main class="p-home">
-      <img src="../../assets/images/home/home.png" alt="首页" />
+      <img src="../../assets/images/home/home.png" alt="首页"/>
     </main>
   </section>
 </template>
 
 <script>
-export default {}
+import {captcha} from "@/api/login";
+
+export default {
+  data() {
+    return {
+      codeKeyUrl: ''
+    }
+  },
+  mounted() {
+    this.captcha()
+  },
+  methods: {
+    async captcha() {
+      const res = await captcha()
+      this.codeKeyUrl = res.code || ''
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -16,6 +33,7 @@ export default {}
     width: 100%;
     height: calc(100vh - 56px - 48px - 16px - 16px);
     min-height: calc(100vh - 56px - 48px - 16px - 16px);
+
     img {
       width: 100%;
       height: 100%;

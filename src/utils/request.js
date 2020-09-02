@@ -36,7 +36,6 @@ service.interceptors.response.use(
   response => {
     const res = response.data
     const code = response.data?.code
-    if (code === undefined) return res // 验证码二
     if (code === 0) return res.data
     else if (code === 190001) {
       MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {

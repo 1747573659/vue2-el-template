@@ -1,7 +1,8 @@
 import Vue from "vue";
 import Vuex from "vuex";
-import allModules from './allModules'
 Vue.use(Vuex);
+
+import allModules from './allModules'
 
 export default new Vuex.Store({
   modules: {
