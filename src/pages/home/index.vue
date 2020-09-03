@@ -1,31 +1,10 @@
 <template>
   <section>
     <main class="p-home">
-      <img src="../../assets/images/home/home.png" alt="首页"/>
+      <img src="../../assets/images/home/home.png" alt="首页" />
     </main>
   </section>
 </template>
-
-<script>
-import {captcha} from "@/api/login";
-
-export default {
-  data() {
-    return {
-      codeKeyUrl: ''
-    }
-  },
-  mounted() {
-    this.captcha()
-  },
-  methods: {
-    async captcha() {
-      const res = await captcha()
-      this.codeKeyUrl = res.code || ''
-    }
-  }
-}
-</script>
 
 <style lang="scss" scoped>
 .p {

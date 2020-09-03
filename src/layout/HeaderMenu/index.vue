@@ -5,7 +5,7 @@
     <div class="p-head_nav">
       <ul>
         <li class="e-head_active">
-          <router-link to="/login">客户管理</router-link>
+          <router-link to="/home">客户管理</router-link>
         </li>
         <li>
           <router-link to="/setting">设置</router-link>

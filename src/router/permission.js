@@ -6,19 +6,31 @@ router.beforeEach((to, from, next) => {
   // Vuex获取获取权限信息
   const hasToken = getLocal('token')
   if (hasToken) {
-    const goViewsMenus = store.getters.routes
-    console.info(goViewsMenus)
-    if(!goViewsMenus){
-      
+    if (store.getters.routes.length === 0) {
+      store.dispatch('GetMenuInfo').then(() => {
+        router.addRoutes(store.getters.routes)
+        const goViewsMenus = store.getters.routes
+        if (!goViewsMenus) {
+          next({ name: 'login' })
+        } else {
+          if (to.name === 'home') {
+            for (let i of goViewsMenus) {
+              if (i.name === 'home') {
+                next({ name: 'home' })
+                break
+              } else {
+                next({ path: goViewsMenus[0].path + '/' + goViewsMenus[0].children[0].path + '/' + goViewsMenus[0].children[0].children[0].path })
+                break
+              }
+            }
+          } else {
+            next({ ...to, replace: true })
+          }
+        }
+      })
+    } else {
+      next()
     }
-    // store.dispatch('GetMenuInfo').then(() => {
-    //   router.addRoutes(store.getters.routes)
-    //   if (to.name === 'login') {
-    //     next()
-    //   } else {
-    //     next()
-    //   }
-    // })
   } else {
     if (to.name !== 'login') {
       if (to.query && to.name !== '404') {

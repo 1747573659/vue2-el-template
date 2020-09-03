@@ -69,10 +69,10 @@ export function resetRedirect(asyncRouterMap) {
   })
   return asyncRouterMap
 }
-
+// console.info(constantRoutes)
 const state = {
   token: getLocal('token'), // 用户token
-  routes: constantRoutes, // 路由权限
+  routes: [], // 路由权限
   userInfo: getLocal('userInfo') // 用户信息
 }
 
@@ -89,8 +89,9 @@ const mutations = {
 const actions = {
   // user login
   login({ commit }, userInfo) {
-    userInfo.password = MD5Util.md5(userInfo.password)
-    const { userName, password, codeKey } = userInfo
+    let userData = deepClone(userInfo)
+    userData.password = MD5Util.md5(userData.password)
+    const { userName, password, codeKey } = userData
     return new Promise((resolve, reject) => {
       login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
         .then(response => {
@@ -119,8 +120,8 @@ const actions = {
         .then(res => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
-          const addRouters = [...constantRoutes, ...redirectList]
-          commit('SET_ROUTES', addRouters)
+          const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
+          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
           resolve()
         })
         .catch(error => {

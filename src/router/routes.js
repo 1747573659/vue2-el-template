@@ -21,7 +21,7 @@ const constantRoutes = [
     component: _import('abnormal/404')
   },
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
+  // { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
 ]
 
 const asyncRouterMap = [...constantRoutes, setting]
