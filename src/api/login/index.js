@@ -10,7 +10,17 @@ const urlLinks = {
   // 获取登录用的验证码
   captcha: '/captcha',
   // 校验验证码
-  validCaptcha: '/validCaptcha'
+  validCaptcha: '/validCaptcha',
+  //
+  getMenuInfo: '/getMenuInfo'
+}
+// 获取路由权限
+export function getMenuInfo(data) {
+  return request({
+    url: urlLinks.getMenuInfo,
+    method: 'post',
+    data: data
+  })
 }
 
 // 校验验证码
