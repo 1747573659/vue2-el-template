@@ -5,7 +5,7 @@ import errorLog from '@/utils/util.errorLog'
 import { Message, MessageBox } from 'element-ui'
 
 let config = {
-  timeout: 2 * 1000, // request timeout 60s
+  timeout: 5 * 1000, // request timeout 60s
   withCredentials: false, // 跨域请求时是否需要凭证
   baseURL: process.env.VUE_APP_BASE_API // url = base url + request url
 }
@@ -45,12 +45,12 @@ service.interceptors.response.use(
         showCancelButton: false,
         closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
         beforeClose: action => {
+          console.info(action)
           // done()
           if (action === 'cancel') {
-            // MessageBox.close()
             location.reload()
           } else {
-            store.dispatch('Logout').then(() => {
+            store.dispatch('FedLogOut').then(() => {
               location.reload() // 为了重新实例化vue-router对象 避免bug
               // this.$router.push({path: '/login'})
             })
@@ -76,7 +76,7 @@ service.interceptors.response.use(
     //   type: 'error',
     //   duration: 5 * 1000
     // })
-    return Promise.reject(error)
+    return Promise.reject(error && (error.data || error.msg))
   }
 )
 

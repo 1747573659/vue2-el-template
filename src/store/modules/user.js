@@ -1,6 +1,6 @@
 import { getLocal, setLocal, removeLocal } from '@/utils/token'
 import MD5Util from '@/utils/MD5Util'
-import { login, getMenuInfo } from '@/api/login'
+import { login, getMenuInfo, logout } from '@/api/login'
 import routeTree from '@/utils/routeTree'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import router from '@/router'
@@ -72,9 +72,7 @@ export function resetRedirect(asyncRouterMap) {
 }
 // console.info(constantRoutes)
 const state = {
-  token: getLocal('token'), // 用户token
-  routes: [], // 路由权限
-  userInfo: getLocal('userInfo') // 用户信息
+  routes: [] // 路由权限
 }
 
 const getters = {
@@ -96,7 +94,10 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
         .then(response => {
-          commit('SET_ROUTES', routeTree(response.menus))
+          // 重新设置异步路由里面的重定向地址
+          let redirectList = resetRedirect(convertRouter(routeTree(response.menus), asyncRouterMap))
+          const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
+          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
           setLocal('token', response.token)
           setLocal('userInfo', JSON.stringify(response.userInfo))
           resolve()
@@ -106,31 +107,47 @@ const actions = {
         })
     })
   },
+
   // user logout
   Logout({ commit }) {
     return new Promise(resolve => {
+      logout()
+        .then(() => {
+          removeLocal('token')
+          removeLocal('userInfo')
+          window.location.reload()
+          resolve()
+        })
+        .catch(error => {})
+    })
+  },
+
+  // 前端 登出
+  FedLogOut ({ commit }) {
+    return new Promise(resolve => {
+      commit('SET_ROUTES', [])
       removeLocal('token')
       removeLocal('userInfo')
       resolve()
     })
   },
+
   // 获取路由信息
   GetMenuInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      let asyncRoutes = []
       getMenuInfo()
         .then(res => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
           const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-          asyncRoutes = [...redirectList, abnormalRouter]
+          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
           resolve()
         })
         .catch(error => {
+          commit('SET_ROUTES', [...constantRoutes])
           router.push({ name: 'login' })
           reject(error)
         })
-      commit('SET_ROUTES', [...constantRoutes, ...asyncRoutes])
     })
   }
 }
