@@ -20,7 +20,27 @@ const urlLinks = {
   // 删除账号
   deleteUser: '/employeeUser/deleteUser',
   // 新增编辑账号
-  insertRole: '/employeeUser/insertRole'
+  insertRole: '/employeeUser/insertRole',
+  // 检测账号
+  checkMobile: '/employeeUser/checkMobile',
+  // 通过ID查询指定账号
+  queryUseById: '/employeeUser/queryUseById'
+}
+// 通过ID查询指定账号
+export function queryUseById(data) {
+  return request({
+    url: urlLinks.queryUseById,
+    method: 'post',
+    params: data
+  })
+}
+// 检测账号
+export function checkMobile(data) {
+  return request({
+    url: urlLinks.checkMobile,
+    method: 'post',
+    params: data
+  })
 }
 // 新增编辑账号
 export function insertRole(data) {

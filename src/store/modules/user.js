@@ -3,7 +3,7 @@ import MD5Util from '@/utils/MD5Util'
 import { login, getMenuInfo } from '@/api/login'
 import routeTree from '@/utils/routeTree'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
-import route from '@/router'
+import router from '@/router'
 
 // 深拷贝 - 工具函数
 export function deepClone(source) {
@@ -115,17 +115,19 @@ const actions = {
   // 获取路由信息
   GetMenuInfo({ commit }) {
     return new Promise((resolve, reject) => {
+      let asyncRoutes = []
       getMenuInfo()
         .then(res => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
           const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
+          asyncRoutes = [...redirectList, abnormalRouter]
+          commit('SET_ROUTES', [...constantRoutes, ...asyncRoutes])
           resolve()
         })
         .catch(error => {
-          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
-          route.replace({ path: '/login' })
+          commit('SET_ROUTES', [...constantRoutes, ...asyncRoutes])
+          router.push({ name: 'login' })
           reject(error)
         })
     })
