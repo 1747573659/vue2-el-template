@@ -5,7 +5,7 @@ import errorLog from '@/utils/util.errorLog'
 import { Message, MessageBox } from 'element-ui'
 
 let config = {
-  timeout: 5 * 1000, // request timeout 60s
+  timeout: 2 * 1000, // request timeout 60s
   withCredentials: false, // 跨域请求时是否需要凭证
   baseURL: process.env.VUE_APP_BASE_API // url = base url + request url
 }
@@ -71,11 +71,11 @@ service.interceptors.response.use(
     }
   },
   error => {
-    Message({
-      message: error.response.data.msg || '网络出错~~',
-      type: 'error',
-      duration: 5 * 1000
-    })
+    // Message({
+    //   message: error.response.data.msg || '网络出错~~',
+    //   type: 'error',
+    //   duration: 5 * 1000
+    // })
     return Promise.reject(error)
   }
 )

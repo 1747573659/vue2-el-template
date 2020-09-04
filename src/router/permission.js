@@ -8,7 +8,11 @@ router.beforeEach((to, from, next) => {
   if (hasToken) {
     if (store.getters.routes.length === 0) {
       store.dispatch('GetMenuInfo').then(() => {
-        router.addRoutes(store.getters.routes)
+        if (store.getters.routes.length > 0) {
+          router.addRoutes(store.getters.routes)
+        } else {
+          next({ name: 'login' })
+        }
         const goViewsMenus = store.getters.routes
         if (!goViewsMenus) {
           next({ name: 'login' })
