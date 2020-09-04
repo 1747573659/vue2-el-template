@@ -67,7 +67,7 @@ service.interceptors.response.use(
         type: 'error',
         duration: 3 * 1000
       })
-      return Promise.reject(res.data || res.msg)
+      return Promise.reject(res && (res.data || res.msg))
     }
   },
   error => {

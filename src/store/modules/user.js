@@ -1,8 +1,9 @@
-import { getLocal, setLocal, removeLocal } from '@/utils/token'
+import { setLocal, removeLocal } from '@/utils/token'
 import MD5Util from '@/utils/MD5Util'
 import { login, getMenuInfo } from '@/api/login'
 import routeTree from '@/utils/routeTree'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
+import route from '@/router'
 
 // 深拷贝 - 工具函数
 export function deepClone(source) {
@@ -71,9 +72,7 @@ export function resetRedirect(asyncRouterMap) {
 }
 // console.info(constantRoutes)
 const state = {
-  token: getLocal('token'), // 用户token
   routes: [], // 路由权限
-  userInfo: getLocal('userInfo') // 用户信息
 }
 
 const getters = {
@@ -125,6 +124,8 @@ const actions = {
           resolve()
         })
         .catch(error => {
+          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
+          route.replace({ path: '/login' })
           reject(error)
         })
     })
