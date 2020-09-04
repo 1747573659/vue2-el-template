@@ -42,6 +42,7 @@ export default {
   },
   data() {
     return {
+      // oldVersionUrl: process.env.VUE_APP_OLD_VERSION,
       dropStatus: false,
       userName: JSON.parse(getLocal('userInfo')).userName
     }
@@ -57,13 +58,13 @@ export default {
         cancelButtonText: '取消'
       })
         .then(() => {
-          logout({}).then(() => {
-            window.location.reload()
-          })
+          this.$store.dispatch('Logout')
         })
         .catch(() => {})
     },
-    handleSwitchVersion() {}
+    handleSwitchVersion() {
+      window.open(process.env.VUE_APP_OLD_VERSION)
+    }
   }
 }
 </script>

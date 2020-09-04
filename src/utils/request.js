@@ -45,12 +45,12 @@ service.interceptors.response.use(
         showCancelButton: false,
         closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
         beforeClose: action => {
+          console.info(action)
           // done()
           if (action === 'cancel') {
-            // MessageBox.close()
             location.reload()
           } else {
-            store.dispatch('Logout').then(() => {
+            store.dispatch('FedLogOut').then(() => {
               location.reload() // 为了重新实例化vue-router对象 避免bug
               // this.$router.push({path: '/login'})
             })
