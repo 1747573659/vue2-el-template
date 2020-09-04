@@ -67,15 +67,15 @@ service.interceptors.response.use(
         type: 'error',
         duration: 3 * 1000
       })
-      return Promise.reject(res.data || res.msg)
+      return Promise.reject(res && (res.data || res.msg))
     }
   },
   error => {
-    // Message({
-    //   message: error.response.data.msg || '网络出错~~',
-    //   type: 'error',
-    //   duration: 5 * 1000
-    // })
+    Message({
+      message: error.response.data.msg || '网络出错~~',
+      type: 'error',
+      duration: 5 * 1000
+    })
     return Promise.reject(error && (error.data || error.msg))
   }
 )

@@ -17,6 +17,7 @@ const urlLinks = {
 // 获取路由权限
 export function getMenuInfo(data) {
   return request({
+    timeout: 1000,
     url: urlLinks.getMenuInfo,
     method: 'post',
     data: data
