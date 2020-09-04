@@ -9,17 +9,7 @@
           <el-input v-model="form.name" style="width:240px" rows="6" type="textarea"></el-input>
         </el-form-item>
         <el-form-item label="PC后台权限">
-          <tree-custom
-            :data="pcData"
-            show-checkbox
-            ref="tree"
-            node-key="id"
-            accordion
-            :default-expanded-keys="[-1]"
-            :default-checked-keys="defaultPCList"
-            :props="defaultProps"
-          >
-          </tree-custom>
+          <authority-tree></authority-tree>
         </el-form-item>
         <el-form-item label="E助手权限">
           <tree-custom
@@ -44,8 +34,12 @@
 </template>
 
 <script>
+import { queryPCMenuByRoleId, queryAPPMenuByRoleId } from '@/api/setting/account'
+import routeTree from '@/utils/routeTree'
+import authorityTree from '@/components/authorityTree'
 export default {
   components: {
+    authorityTree
   },
   data() {
     return {
@@ -64,8 +58,36 @@ export default {
     }
   },
   methods: {
-    onSubmit() {}
-  }
+    onSubmit() {},
+    async queryAPPMenuByRoleId () {
+      let data = {
+        roleId: this.$route.query.id || ''
+      }
+      try {
+        const res = await queryAPPMenuByRoleId(data)
+        this.pcData = [{
+          id: -1,
+          name: '访问权限',
+          children: res || []
+        }]
+        console.log(this.pcData)
+      } catch (e) {
+      } finally {}
+    },
+    async queryPCMenuByRoleId () {
+      let data = {
+        roleId: this.$route.query.id || ''
+      }
+      try {
+        const res = await queryPCMenuByRoleId(data)
+      } catch (e) {
+      } finally {}
+    }
+  },
+  mounted() {
+    this.queryAPPMenuByRoleId()
+    this.queryPCMenuByRoleId()
+  },
 }
 </script>
 

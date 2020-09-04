@@ -3,7 +3,7 @@
     <div class="search-box">
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-form-item label="角色信息">
-          <el-input style="width: 240px" placeholder="请输入角色名称" v-model="form.name"></el-input>
+          <el-input style="width: 240px" clearable placeholder="请输入角色名称" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="km-role-search" @click="search">查询</el-button>
@@ -15,23 +15,24 @@
     </div>
     <div class="data-box">
       <el-table
+        v-loading="tableLoading"
         max-height="700"
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="roleName"
+          prop="name"
           label="角色名称">
         </el-table-column>
         <el-table-column
-          prop="descript"
+          prop="remark"
           label="描述">
         </el-table-column>
         <el-table-column
-          prop="accountNum"
+          prop="num"
           label="关联账号数量">
         </el-table-column>
         <el-table-column
-          prop="creatTime"
+          prop="createTime"
           label="创建时间">
         </el-table-column>
         <el-table-column
@@ -39,7 +40,7 @@
           align="right">
           <template slot-scope="scope">
             <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="spread(scope.row)" type="text" size="small">删除</el-button>
+            <el-button @click="del(scope.row)" type="text" size="small">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -51,7 +52,7 @@
           :page-sizes="[10, 15, 30]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage">
+          :total="total">
         </el-pagination>
       </div>
     </div>
@@ -59,78 +60,83 @@
 </template>
 
 <script>
+import { queryPage, deleteSysRole } from '@/api/setting/account'
+
 export default {
   data() {
     return {
       form: {
         name: ''
       },
-      tableData: [
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          roleName: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        }
-      ],
+      tableData: [],
       currentPage: 1,
-      totalPage: 233,
-      pageSize: 10
+      total: 0,
+      pageSize: 10,
+      tableLoading: false
     }
   },
   methods: {
-    search() {},
+    search() {
+      this.currentPage = 1
+      this.getList()
+    },
     add() {
       this.$router.push({ path: 'roleAdd' })
     },
     edit(row) {
       this.$router.push({ path: 'roleAdd', query: { id: row.id } })
     },
-    spread() {},
-    handleSizeChange() {},
-    handleCurrentChange() {}
+    async del(row) {
+      if (row.num) {
+        this.$message.error('角色有关联的账号，不能删除')
+        return
+      }
+      this.$confirm('确定删除所选数据吗？', '', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        let data = {
+          roleId: row.id
+        }
+        try {
+          const res = await deleteSysRole(data)
+          this.getList()
+          this.$message.success('删除成功!')
+        } catch(e) {
+        } finally {}
+      }).catch(() => {
+        this.$message.info('已取消删除')
+      })
+    },
+    handleSizeChange(value) {
+      this.pageSize = value
+      this.currentPage = 1
+      this.getList()
+    },
+    handleCurrentChange(value) {
+      this.currentPage = value
+      this.getList()
+    },
+    async getList () {
+      this.tableLoading = true
+      let data = {
+        name: this.form.name,
+        page: this.currentPage,
+        rows: this.pageSize
+      }
+      try {
+        let res = await queryPage(data)
+        this.tableData = res.results
+        this.total = res.totalCount
+      } catch (e) {
+      } finally {
+        this.tableLoading = false
+      }
+    }
+  },
+  mounted() {
+    this.getList()
   }
 }
 </script>

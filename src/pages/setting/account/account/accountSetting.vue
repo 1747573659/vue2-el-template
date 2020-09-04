@@ -84,57 +84,7 @@ export default {
         roleId: null
       },
       roleList: [],
-      tableData: [
-        {
-          id: 1,
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        },
-        {
-          name: '经销商管理员',
-          descript: '拥有所有功能权限',
-          accountNum: '12',
-          creatTime: '2018-01-01 10:00:00'
-        }
-      ],
+      tableData: [],
       currentPage: 1,
       totalPage: 233,
       pageSize: 10
