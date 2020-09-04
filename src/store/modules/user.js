@@ -98,6 +98,7 @@ const actions = {
           let redirectList = resetRedirect(convertRouter(routeTree(response.menus), asyncRouterMap))
           const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
           commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
+          router.addRoutes(state.routes)
           setLocal('token', response.token)
           setLocal('userInfo', JSON.stringify(response.userInfo))
           resolve()
@@ -123,7 +124,7 @@ const actions = {
   },
 
   // 前端 登出
-  FedLogOut ({ commit }) {
+  FedLogOut({ commit }) {
     return new Promise(resolve => {
       commit('SET_ROUTES', [])
       removeLocal('token')
@@ -145,7 +146,6 @@ const actions = {
         })
         .catch(error => {
           commit('SET_ROUTES', [...constantRoutes])
-          router.push({ name: 'login' })
           reject(error)
         })
     })
