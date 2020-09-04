@@ -4,12 +4,11 @@
     <!-- 导航 -->
     <div class="p-head_nav">
       <ul>
-        <li class="e-head_active">
-          <router-link to="/home">客户管理</router-link>
-        </li>
-        <li>
-          <router-link to="/setting">设置</router-link>
-        </li>
+        <template v-for="item in addRouters">
+          <li :class="{'e-head_active':getActiveRoute(item.path)}" :key="item.id" v-if="!item.hidden">
+            <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
+          </li>
+        </template>
       </ul>
     </div>
     <!-- head操作 -->
@@ -35,6 +34,7 @@
 import dropOutView from './component/dropOut'
 import { logout } from '@/api/login'
 import { getLocal } from '@/utils/token'
+import { mapGetters } from 'vuex'
 
 export default {
   components: {
@@ -42,10 +42,12 @@ export default {
   },
   data() {
     return {
-      // oldVersionUrl: process.env.VUE_APP_OLD_VERSION,
       dropStatus: false,
       userName: JSON.parse(getLocal('userInfo')).userName
     }
+  },
+  computed: {
+    ...mapGetters(['addRouters'])
   },
   methods: {
     handleDropDown(command) {
@@ -64,6 +66,11 @@ export default {
     },
     handleSwitchVersion() {
       window.open(process.env.VUE_APP_OLD_VERSION)
+    },
+    getActiveRoute(path) {
+      const hasPath = this.$route.path.includes(path)
+      if (hasPath) console.info(123)
+      return hasPath
     }
   }
 }

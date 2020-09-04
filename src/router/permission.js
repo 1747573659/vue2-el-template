@@ -1,7 +1,6 @@
 import router from '@/router'
 import store from '@/store'
 import { getLocal } from '@/utils/token'
-import { Message } from 'element-ui'
 
 router.beforeEach((to, from, next) => {
   // Vuex获取获取权限信息

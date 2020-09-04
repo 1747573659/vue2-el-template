@@ -1,7 +1,7 @@
-import { setLocal, removeLocal } from '@/utils/token'
 import MD5Util from '@/utils/MD5Util'
-import { login, getMenuInfo, logout } from '@/api/login'
 import routeTree from '@/utils/routeTree'
+import { setLocal, removeLocal } from '@/utils/token'
+import { login, getMenuInfo, logout } from '@/api/login'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import router from '@/router'
 
@@ -70,18 +70,22 @@ export function resetRedirect(asyncRouterMap) {
   })
   return asyncRouterMap
 }
-// console.info(constantRoutes)
+
 const state = {
-  routes: [] // 路由权限
+  routes: [], // 路由权限
+  addRouters: []
 }
 
 const getters = {
-  routes: state => state.routes
+  routes: state => state.routes,
+  addRouters: state => state.addRouters
 }
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
-    state.routes = routes
+    const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
+    state.addRouters = routes
+    state.routes = constantRoutes.concat(routes).concat(abnormalRouter)
   }
 }
 
@@ -96,8 +100,7 @@ const actions = {
         .then(response => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(response.menus), asyncRouterMap))
-          const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
+          commit('SET_ROUTES', [...redirectList])
           router.addRoutes(state.routes)
           setLocal('token', response.token)
           setLocal('userInfo', JSON.stringify(response.userInfo))
@@ -140,8 +143,7 @@ const actions = {
         .then(res => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
-          const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
+          commit('SET_ROUTES', [...redirectList])
           resolve()
         })
         .catch(error => {

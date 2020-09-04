@@ -45,7 +45,6 @@ service.interceptors.response.use(
         showCancelButton: false,
         closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
         beforeClose: action => {
-          console.info(action)
           // done()
           if (action === 'cancel') {
             location.reload()
