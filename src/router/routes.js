@@ -7,6 +7,7 @@ const _import = require('@/utils/util.import.' + process.env.NODE_ENV)
 
 // 系统主路由模块，包含登录，异常页，全局页面，其他页面按模块引入
 const constantRoutes = [
+  home,
   {
     path: '/login',
     name: 'login',
@@ -20,7 +21,9 @@ const constantRoutes = [
     component: _import('abnormal/404')
   },
   // 404 page must be placed at the end !!!
-  { path: '*', redirect: '/404', hidden: true }
+  // { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
 ]
 
-export default [...constantRoutes, home, setting]
+const asyncRouterMap = [...constantRoutes, setting]
+
+export { constantRoutes, asyncRouterMap }

@@ -1,9 +1,9 @@
 <template>
-  <section class="mk-login">
-    <div class="mk-login_con">
-      <div class="mk-login_form">
-        <header class="mk-loginForm_head">欢迎登录渠道管理系统</header>
-        <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="mk-loginForm_con">
+  <section class="p-login">
+    <div class="p-login_con">
+      <div class="p-login_form">
+        <header class="p-loginForm_head">欢迎登录渠道管理系统</header>
+        <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="p-loginForm_con">
           <el-form-item prop="userName">
             <el-input clearable v-model.trim="loginForm.userName" placeholder="请输入用户名"></el-input>
           </el-form-item>
@@ -12,10 +12,10 @@
           </el-form-item>
           <el-form-item prop="codeKey">
             <img @click="captcha" :src="codeKeyUrl" alt="验证码" class="e-form_code" />
-            <el-input v-model="loginForm.codeKey" placeholder="请输入验证码"></el-input>
+            <el-input v-model.trim="loginForm.codeKey" placeholder="请输入验证码"></el-input>
           </el-form-item>
         </el-form>
-        <el-button type="primary" :loading="isLoading" @click="handleLogin" style="width:100%;height:44px">登录</el-button>
+        <el-button type="primary" :loading="isLoading" @click="handleLogin" class="e-form_btn">登录</el-button>
       </div>
     </div>
   </section>
@@ -73,18 +73,18 @@ export default {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
           this.isLoading = true
-          this.$store.dispatch('login', this.loginForm).then(() => {
-            this.$router.push({ name: 'home' })
-          }).catch(() => {
-            this.loginForm = {
-              userName: '',
-              password: '',
-              codeKey: ''
-            }
-            this.captcha()
-          }).finally(() => {
-            this.isLoading = false
-          })
+          this.$store
+            .dispatch('login', this.loginForm)
+            .then(() => {
+              this.$router.push({ name: 'home' })
+            })
+            .catch(() => {
+              this.$refs.ruleForm.resetField()
+              this.captcha()
+            })
+            .finally(() => {
+              this.isLoading = false
+            })
         }
       })
     },
@@ -98,7 +98,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.mk {
+.p {
   &-login {
     display: flex;
     justify-content: center;
@@ -147,9 +147,14 @@ export default {
       width: 60px;
       height: 38px;
       position: absolute;
+      bottom: 5px;
       right: 0;
       z-index: 1000;
       cursor: pointer;
+    }
+    &_btn {
+      width: 100%;
+      height: 44px;
     }
   }
 }

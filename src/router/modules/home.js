@@ -17,7 +17,7 @@ const home = {
     {
       path: 'index',
       component: _import('home/index'),
-      name: 'index',
+      name: 'home',
       meta: { title: '首页', name: 'index' }
     }
   ]

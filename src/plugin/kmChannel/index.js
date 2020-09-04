@@ -4,6 +4,8 @@ import "element-ui/lib/theme-chalk/index.css";
 import "@/assets/scss/styleForUI/index.scss";
 import "@/assets/scss/styleForUI.scss";
 
+import '@/router/permission'
+
 // 功能插件
 import TreeCustom from "@/components/treeCustom/index.js";
 
