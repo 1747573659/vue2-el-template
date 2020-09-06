@@ -93,23 +93,19 @@ const actions = {
     userData.password = MD5Util.md5(userData.password)
     const { userName, password, codeKey } = userData
     return new Promise((resolve, reject) => {
-      let redirectList = resetRedirect(asyncRouterMap)
-      commit('SET_ROUTES', [...redirectList])
-      router.addRoutes(state.routes)
-      resolve()
-      // login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
-      //   .then(response => {
-      //     // 重新设置异步路由里面的重定向地址
-      //     let redirectList = resetRedirect(convertRouter(routeTree(response.menus), asyncRouterMap))
-      //     commit('SET_ROUTES', [...redirectList])
-      //     router.addRoutes(state.routes)
-      //     setLocal('token', response.token)
-      //     setLocal('userInfo', JSON.stringify(response.userInfo))
-      //     resolve()
-      //   })
-      //   .catch(error => {
-      //     reject(error)
-      //   })
+      login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
+        .then(response => {
+          // 重新设置异步路由里面的重定向地址
+          let redirectList = resetRedirect(convertRouter(routeTree(response.menus), asyncRouterMap))
+          commit('SET_ROUTES', [...redirectList])
+          router.addRoutes(state.routes)
+          setLocal('token', response.token)
+          setLocal('userInfo', JSON.stringify(response.userInfo))
+          resolve()
+        })
+        .catch(error => {
+          reject(error)
+        })
     })
   },
 
@@ -140,21 +136,17 @@ const actions = {
   // 获取路由信息
   GetMenuInfo({ commit }) {
     return new Promise((resolve, reject) => {
-      let redirectList = resetRedirect(asyncRouterMap)
-      commit('SET_ROUTES', [...redirectList])
-      router.addRoutes(state.routes)
-      resolve()
-      // getMenuInfo()
-      //   .then(res => {
-      //     // 重新设置异步路由里面的重定向地址
-      //     let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
-      //     commit('SET_ROUTES', [...redirectList])
-      //     resolve()
-      //   })
-      //   .catch(error => {
-      //     commit('SET_ROUTES', [...constantRoutes])
-      //     reject(error)
-      //   })
+      getMenuInfo()
+        .then(res => {
+          // 重新设置异步路由里面的重定向地址
+          let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
+          commit('SET_ROUTES', [...redirectList])
+          resolve()
+        })
+        .catch(error => {
+          commit('SET_ROUTES', [...constantRoutes])
+          reject(error)
+        })
     })
   }
 }

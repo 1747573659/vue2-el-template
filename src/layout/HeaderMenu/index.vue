@@ -18,15 +18,14 @@
         <img src="../../assets/images/headMenu/user.png" alt="用户头像" />
       </div>
       <el-dropdown trigger="click" class="p-head_dropdown" @command="handleDropDown">
-        <!-- <span class="el-dropdown-link">{{ userName }}<i class="el-icon-arrow-down el-icon--right"></i></span> -->
-        <span class="el-dropdown-link">123<i class="el-icon-arrow-down el-icon--right"></i></span>
+        <span class="el-dropdown-link">{{ userName }}<i class="el-icon-arrow-down el-icon--right"></i></span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item :command="1">修改密码</el-dropdown-item>
           <el-dropdown-item :command="2">退出账号</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <!-- 修改密码 -->
-      <!-- <km-dropout :status.sync="dropStatus"></km-dropout> -->
+      <km-dropout :status.sync="dropStatus"></km-dropout>
     </div>
   </section>
 </template>
@@ -39,12 +38,12 @@ import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
-    // 'km-dropout': dropOutView
+    'km-dropout': dropOutView
   },
   data() {
     return {
-      dropStatus: false
-      // userName: JSON.parse(getLocal('userInfo')).userName
+      dropStatus: false,
+      userName: JSON.parse(getLocal('userInfo')).userName
     }
   },
   computed: {

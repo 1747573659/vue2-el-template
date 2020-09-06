@@ -3,8 +3,7 @@
     <div class="p-login_con">
       <div class="p-login_form">
         <header class="p-loginForm_head">欢迎登录渠道管理系统</header>
-        <el-form :model="loginForm" ref="ruleForm" class="p-loginForm_con">
-        <!-- <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="p-loginForm_con"> -->
+        <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="p-loginForm_con">
           <el-form-item prop="userName">
             <el-input clearable v-model.trim="loginForm.userName" placeholder="请输入用户名"></el-input>
           </el-form-item>
