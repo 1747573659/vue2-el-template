@@ -4,8 +4,8 @@
     <!-- 导航 -->
     <div class="p-head_nav">
       <ul>
-        <template v-for="item in addRouters">
-          <li :class="{'e-head_active':getActiveRoute(item.path)}" :key="item.id" v-if="!item.hidden">
+        <template v-for="item in routes">
+          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
             <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
           </li>
         </template>
@@ -18,14 +18,15 @@
         <img src="../../assets/images/headMenu/user.png" alt="用户头像" />
       </div>
       <el-dropdown trigger="click" class="p-head_dropdown" @command="handleDropDown">
-        <span class="el-dropdown-link">{{ userName }}<i class="el-icon-arrow-down el-icon--right"></i></span>
+        <!-- <span class="el-dropdown-link">{{ userName }}<i class="el-icon-arrow-down el-icon--right"></i></span> -->
+        <span class="el-dropdown-link">123<i class="el-icon-arrow-down el-icon--right"></i></span>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item :command="1">修改密码</el-dropdown-item>
           <el-dropdown-item :command="2">退出账号</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <!-- 修改密码 -->
-      <km-dropout :status.sync="dropStatus"></km-dropout>
+      <!-- <km-dropout :status.sync="dropStatus"></km-dropout> -->
     </div>
   </section>
 </template>
@@ -34,22 +35,31 @@
 import dropOutView from './component/dropOut'
 import { logout } from '@/api/login'
 import { getLocal } from '@/utils/token'
-import { mapGetters } from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
-    'km-dropout': dropOutView
+    // 'km-dropout': dropOutView
   },
   data() {
     return {
-      dropStatus: false,
-      userName: JSON.parse(getLocal('userInfo')).userName
+      dropStatus: false
+      // userName: JSON.parse(getLocal('userInfo')).userName
     }
   },
   computed: {
-    ...mapGetters(['addRouters'])
+    ...mapGetters(['routes'])
+  },
+  watch: {
+    $route(route) {
+      this.getChildRoutes(this.$route)
+    }
+  },
+  created() {
+    this.getChildRoutes(this.$route)
   },
   methods: {
+    ...mapActions(['setSidebarROUTES']),
     handleDropDown(command) {
       if (command === 1) this.dropStatus = true
       else this.handleLoginOut()
@@ -66,6 +76,14 @@ export default {
     },
     handleSwitchVersion() {
       window.open(process.env.VUE_APP_OLD_VERSION)
+    },
+    getChildRoutes(route) {
+      let index = this.routes.findIndex(item => {
+        return JSON.stringify(item).includes(route.name)
+      })
+      if (this.routes[index].children && this.routes[index].children.length) {
+        this.setSidebarROUTES(this.routes[index].children)
+      }
     },
     getActiveRoute(path) {
       const hasPath = this.$route.path.includes(path)
