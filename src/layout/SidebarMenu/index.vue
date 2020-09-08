@@ -3,7 +3,7 @@
     <div class="p-sidebar_main">
       <el-scrollbar>
         <el-menu :default-active="$route.path">
-          <sidebar-nav v-for="item in sidebarRoutes" :key="item.name" :routes="item"></sidebar-nav>
+          <sidebar-nav v-for="item in sidebarRoutes" :key="item.name" :routes="item" :basePath="basePath + '/' + item.path"></sidebar-nav>
         </el-menu>
       </el-scrollbar>
     </div>
@@ -19,11 +19,11 @@ export default {
     sidebarNav
   },
   computed: {
-    ...mapGetters(['sidebarRoutes'])
-  },
-  mounted(){
-    console.info(this.sidebarRoutes)
+    ...mapGetters(['sidebarRoutes', 'basePath'])
   }
+  // mounted() {
+  //   console.info(this.basePath)
+  // }
 }
 </script>
 
