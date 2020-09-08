@@ -12,7 +12,7 @@ const constantRoutes = [
     path: '/login',
     name: 'login',
     code: 'KM_DEFAULT_CODE',
-    component: _import('login/index'),
+    component: _import('Login/index'),
     hidden: true
   },
   {
