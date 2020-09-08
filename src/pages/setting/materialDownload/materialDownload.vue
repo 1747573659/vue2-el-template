@@ -16,12 +16,13 @@
           <el-input style="width: 240px" clearable placeholder="请输入资料名称" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="km-role-search" @click="search">查询</el-button>
+          <el-button type="primary" class="km-role-search" :loading="cxLoading" @click="search">查询</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="data-box">
       <el-table
+        :loading="tableLoading"
         max-height="700"
         :data="tableData"
         style="width: 100%">
@@ -75,11 +76,14 @@ export default {
       tableData: [],
       currentPage: 1,
       totalPage: 0,
-      pageSize: 10
+      pageSize: 10,
+      cxLoading: false,
+      tableLoading: false
     }
   },
   methods: {
     search() {
+      this.cxLoading = true
       this.currentPage = 1
       this.getList()
     },
@@ -96,6 +100,7 @@ export default {
       this.getList()
     },
     async getList() {
+      this.tableLoading = true
       let data = {
         "endTime": this.form.time && this.form.time[1],
         "name": this.form.name,
@@ -108,7 +113,10 @@ export default {
         const res = await queryDocumentByPage(data)
         this.tableData = res.results
         this.totalPage = res.totalCount
-      } catch (e) {}
+      } catch (e) {} finally {
+        this.cxLoading = false
+        this.tableLoading = false
+      }
     }
   },
   mounted() {

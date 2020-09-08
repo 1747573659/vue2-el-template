@@ -5,13 +5,6 @@ const _import = require('@/utils/util.import.' + process.env.NODE_ENV)
 
 const home = [
   {
-    path: '/',
-    redirect: '/home',
-    code: 'KM_DEFAULT_CODE',
-    component: Layout,
-    hidden: true
-  },
-  {
     path: '/home',
     redirect: '/home/index',
     code: 'KM_DEFAULT_CODE',
@@ -31,6 +24,12 @@ const home = [
         hidden: true
       }
     ]
+  },
+  {
+    path: '/',
+    redirect: '/home',
+    component: Layout,
+    hidden: true
   }
 ]
 
