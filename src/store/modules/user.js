@@ -140,7 +140,6 @@ const actions = {
         .then(res => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
-          console.info(redirectList)
           commit('SET_ROUTES', [...redirectList])
           resolve()
         })

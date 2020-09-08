@@ -3,7 +3,7 @@
     <template v-if="handleTailChild && !handleTailChild.children">
       <router-link v-if="handleTailChild.meta" :to="{ path: resolvePath(handleTailChild.path) }">
         <el-menu-item :index="resolvePath(handleTailChild.path)">
-          <span v-if="handleTailChild.meta.title" slot="title">{{ handleTailChild.meta.title }}</span>
+          <span v-if="handleTailChild.meta.title">{{ handleTailChild.meta.title }}</span>
         </el-menu-item>
       </router-link>
     </template>
@@ -12,7 +12,7 @@
         <span v-if="routes.meta && routes.meta.title" slot="title">{{ routes.meta.title }}</span>
       </template>
       <template v-if="routes.children">
-        <sidebar-nav v-for="child in routes.children" :key="child.name" :routes="child"></sidebar-nav>
+        <sidebar-nav v-for="child in routes.children" :key="child.name" :routes="child" :basePath="resolvePath(child.path)"></sidebar-nav>
       </template>
     </el-submenu>
   </section>
@@ -35,10 +35,7 @@ export default {
   computed: {
     getTailChildNum() {
       if (this.routes.children) {
-        const tailChildNum = this.routes.children.filter(item => {
-          if (item.meta && item.meta.hidden) return false
-          else return true
-        })
+        const tailChildNum = this.routes.children.filter(item => item.meta && !item.meta.hidden)
         return tailChildNum.length
       }
       return 0
@@ -60,6 +57,7 @@ export default {
       return /^(https?:|mailto:|tel:)/.test(path)
     },
     resolvePath(routePath) {
+      // 判断两次？
       if (this.isExternal(routePath)) {
         return routePath
       }

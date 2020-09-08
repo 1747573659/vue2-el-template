@@ -4,7 +4,7 @@
     <main class="p-layout_main">
       <SidebarView />
       <section class="p-layout_content">
-        <Breadcrumb />
+        <!-- <Breadcrumb /> -->
         <TagView />
         <div class="p-layout_fill">
           <router-view />
@@ -24,7 +24,7 @@ export default {
   components: {
     HeaderView,
     SidebarView,
-    Breadcrumb,
+    // Breadcrumb,
     TagView
   }
 }
@@ -41,7 +41,7 @@ export default {
       height: 100%;
     }
     &_fill {
-      padding: 16px;
+      padding: 48px 16px 16px;
     }
   }
 }

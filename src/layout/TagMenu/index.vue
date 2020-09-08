@@ -1,6 +1,7 @@
 <template>
   <section class="p-tags_con">
-    <div ref="tags">
+    <span></span>
+    <!-- <div ref="tags">
       <div
         v-for="(item, index) in tags"
         :key="item.title"
@@ -13,7 +14,7 @@
         <span>{{ item.title }}</span>
         <i v-if="hasTagIndex(index) && activeIndex !== 0" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>
       </div>
-    </div>
+    </div> -->
   </section>
 </template>
 
@@ -25,9 +26,16 @@ export default {
       activeIndex: 0
     }
   },
+  watch: {
+    $route() {}
+  },
   methods: {
-    handleJumpPage() {
+    addTagViews() {
+      if (this.$route.name) {
+        
+      }
     },
+    handleJumpPage() {},
     handleClose(item) {
       console.info(item)
     },
@@ -56,6 +64,11 @@ export default {
       padding: 0 10px;
       background: #ffffff;
       border-bottom: 1px solid #e8e8e8;
+      position: fixed;
+      top: 56px;
+      left: 200px;
+      width: 100%;
+      z-index: 1000;
     }
     &_item {
       padding: 0 20px;

@@ -104,11 +104,9 @@ export default {
     display: flex;
     position: fixed;
     z-index: 1001;
-
     &_logo {
       width: 200px;
       height: 100%;
-
       img {
         width: 148px;
         height: 41px;
@@ -116,41 +114,35 @@ export default {
         margin: 8px 12px 0 0;
       }
     }
-
     &_nav {
       margin-left: 68px;
       flex: 2 1 auto;
-
       ul {
         display: flex;
-
         li {
           line-height: 56px;
           padding: 0 20px;
-
+          height: 56px;
+          line-height: 56px;
           a {
             font-size: 18px;
             color: #1f2e4d;
           }
-
           &.e-head_active a {
             color: #3377ff;
           }
         }
       }
     }
-
     &_action {
       display: flex;
       align-items: center;
       margin-right: 25px;
     }
-
     &_oldVersion {
       color: #3377ff;
       font-size: 14px;
     }
-
     &_avator {
       vertical-align: top;
       margin: 0 14px 0 24px;
@@ -162,7 +154,6 @@ export default {
         height: 100%;
       }
     }
-
     &_dropdown {
       height: 100%;
       line-height: 56px;
