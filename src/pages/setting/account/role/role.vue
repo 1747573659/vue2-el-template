@@ -81,10 +81,10 @@ export default {
       this.getList()
     },
     add() {
-      this.$router.push({ path: 'roleAdd' })
+      this.$router.push({ name: 'roleAdd' })
     },
     edit(row) {
-      this.$router.push({ path: 'roleAdd', query: { id: row.id } })
+      this.$router.push({ name: 'roleAdd', query: { id: row.id } })
     },
     async del(row) {
       if (row.num) {

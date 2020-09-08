@@ -373,9 +373,7 @@ export default {
         // setData is required for draggable to work in FireFox
         // the content has to be '' so dragging a node out of the tree won't open a new tab in FireFox
         event.dataTransfer.setData('text/plain', '')
-      } catch (e) {
-        console.log(e)
-      }
+      } catch (e) { }
       dragState.draggingNode = treeNode
       this.$emit('node-drag-start', treeNode.node, event)
     })
@@ -521,9 +519,9 @@ export default {
   overflow: inherit;
 }
 .tree-custom-wrap .el-tree-node .tree-custom-children4 {
-  overflow-y: scroll;
+  // overflow-y: scroll;
   // min-height: 397px;
-  min-height: 540px;
+  min-height: 268px;
   max-width: 120px;
   overflow-x: hidden;
 }
@@ -533,10 +531,10 @@ export default {
   .tree-custom-left {
     border: 1px solid #d5d5d5;
     border-radius: 4px 4px 0px 0px;
-    width: 330px;
+    width: 390px;
     // height: 350px;
-    min-height: 448px;
-    height: 592px;
+    min-height: 450px;
+    height: 450px;
     // overflow: hidden;
     position: relative;
     float: left;
@@ -547,8 +545,8 @@ export default {
     width: 122px;
     margin-left: 18px;
     // height: 350px;
-    min-height: 448px;
-    height: 592px;
+    min-height: 450px;
+    height: 450px;
     // overflow: hidden;
     position: relative;
     float: left;
@@ -557,7 +555,7 @@ export default {
     height: 50px;
     line-height: 50px;
     border-bottom: 1px solid #d5d5d5;
-    padding-left: 15px;
+    padding-left: 10px;
     .checkbox {
       padding-right: 7px;
     }
