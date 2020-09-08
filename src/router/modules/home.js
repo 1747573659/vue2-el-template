@@ -9,6 +9,7 @@ const home = {
   code: 'KM_DEFAULT_CODE',
   name: 'home',
   component: Layout,
+  hidden: true,
   meta: {
     title: '首页',
     name: 'home'
@@ -16,9 +17,10 @@ const home = {
   children: [
     {
       path: 'index',
-      component: _import('home/index'),
       name: 'home',
-      meta: { title: '首页', name: 'index' }
+      meta: { title: '首页', name: 'index' },
+      component: _import('home/index'),
+      hidden: true
     }
   ]
 }

@@ -4,12 +4,11 @@
     <!-- 导航 -->
     <div class="p-head_nav">
       <ul>
-        <li class="e-head_active">
-          <router-link to="/home">客户管理</router-link>
-        </li>
-        <li>
-          <router-link to="/setting">设置</router-link>
-        </li>
+        <template v-for="item in routes">
+          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
+            <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
+          </li>
+        </template>
       </ul>
     </div>
     <!-- head操作 -->
@@ -35,6 +34,7 @@
 import dropOutView from './component/dropOut'
 import { logout } from '@/api/login'
 import { getLocal } from '@/utils/token'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   components: {
@@ -42,12 +42,23 @@ export default {
   },
   data() {
     return {
-      // oldVersionUrl: process.env.VUE_APP_OLD_VERSION,
       dropStatus: false,
       userName: JSON.parse(getLocal('userInfo')).userName
     }
   },
+  computed: {
+    ...mapGetters(['routes'])
+  },
+  watch: {
+    $route(route) {
+      this.getChildRoutes(this.$route)
+    }
+  },
+  created() {
+    this.getChildRoutes(this.$route)
+  },
   methods: {
+    ...mapActions(['setSidebarROUTES']),
     handleDropDown(command) {
       if (command === 1) this.dropStatus = true
       else this.handleLoginOut()
@@ -64,6 +75,19 @@ export default {
     },
     handleSwitchVersion() {
       window.open(process.env.VUE_APP_OLD_VERSION)
+    },
+    getChildRoutes(route) {
+      let index = this.routes.findIndex(item => {
+        return JSON.stringify(item).includes(route.name)
+      })
+      if (this.routes[index].children && this.routes[index].children.length) {
+        this.setSidebarROUTES(this.routes[index].children)
+      }
+    },
+    getActiveRoute(path) {
+      const hasPath = this.$route.path.includes(path)
+      if (hasPath) console.info(123)
+      return hasPath
     }
   }
 }

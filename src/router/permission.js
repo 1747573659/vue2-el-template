@@ -10,27 +10,36 @@ router.beforeEach((to, from, next) => {
       next()
     } else {
       if (store.getters.routes.length === 0) {
-        store.dispatch('GetMenuInfo').then(() => {
-          router.addRoutes(store.getters.routes)
-          const goViewsMenus = store.getters.routes
-          if (!goViewsMenus) {
-            next({ name: 'login' })
-          } else {
-            if (to.name === 'home') {
-              for (let i of goViewsMenus) {
-                if (i.name === 'home') {
-                  next({ name: 'home' })
-                  break
-                } else {
-                  next({ path: goViewsMenus[0].path + '/' + goViewsMenus[0].children[0].path + '/' + goViewsMenus[0].children[0].children[0].path })
-                  break
-                }
-              }
+        store
+          .dispatch('GetMenuInfo')
+          .then(() => {
+            router.addRoutes(store.getters.routes)
+            const goViewsMenus = store.getters.routes
+            if (!goViewsMenus) {
+              next({ name: 'login' })
             } else {
-              next({ ...to, replace: true })
+              if (to.name === 'home') {
+                for (let i of goViewsMenus) {
+                  if (i.name === 'home') {
+                    next({ name: 'home' })
+                    break
+                  } else {
+                    next({ path: goViewsMenus[0].path + '/' + goViewsMenus[0].children[0].path + '/' + goViewsMenus[0].children[0].children[0].path })
+                    break
+                  }
+                }
+              } else {
+                next({ ...to, replace: true })
+              }
             }
-          }
-        })
+          })
+          .catch(error => {
+            // 接口服务关闭时测试
+            // store.dispatch('FedLogOut').then(() => {
+            //   Message.error(error || '请重新登录')
+            //   next({ name: 'home' })
+            // })
+          })
       } else {
         next()
       }

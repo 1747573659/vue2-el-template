@@ -1,7 +1,7 @@
-import { setLocal, removeLocal } from '@/utils/token'
 import MD5Util from '@/utils/MD5Util'
-import { login, getMenuInfo, logout } from '@/api/login'
 import routeTree from '@/utils/routeTree'
+import { setLocal, removeLocal } from '@/utils/token'
+import { login, getMenuInfo, logout } from '@/api/login'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import router from '@/router'
 
@@ -70,7 +70,7 @@ export function resetRedirect(asyncRouterMap) {
   })
   return asyncRouterMap
 }
-// console.info(constantRoutes)
+
 const state = {
   routes: [] // 路由权限
 }
@@ -81,7 +81,8 @@ const getters = {
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
-    state.routes = routes
+    const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
+    state.routes = constantRoutes.concat(routes).concat(abnormalRouter)
   }
 }
 
@@ -96,8 +97,7 @@ const actions = {
         .then(response => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(response.menus), asyncRouterMap))
-          const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
+          commit('SET_ROUTES', [...redirectList])
           router.addRoutes(state.routes)
           setLocal('token', response.token)
           setLocal('userInfo', JSON.stringify(response.userInfo))
@@ -124,7 +124,7 @@ const actions = {
   },
 
   // 前端 登出
-  FedLogOut ({ commit }) {
+  FedLogOut({ commit }) {
     return new Promise(resolve => {
       commit('SET_ROUTES', [])
       removeLocal('token')
@@ -140,13 +140,11 @@ const actions = {
         .then(res => {
           // 重新设置异步路由里面的重定向地址
           let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
-          const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-          commit('SET_ROUTES', [...constantRoutes, ...redirectList, abnormalRouter])
+          commit('SET_ROUTES', [...redirectList])
           resolve()
         })
         .catch(error => {
           commit('SET_ROUTES', [...constantRoutes])
-          router.push({ name: 'login' })
           reject(error)
         })
     })

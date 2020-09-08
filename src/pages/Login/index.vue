@@ -43,7 +43,7 @@ export default {
       }
     }
     var userNamePass = (rule, value, callback) => {
-      if ((/^1[3456789]\d{9}$/.test(value))) {
+      if (/^1[3456789]\d{9}$/.test(value)) {
         callback()
       } else {
         callback('请输入正确的用户名')
@@ -62,7 +62,18 @@ export default {
         userName: [{ required: true, trigger: 'blur', validator: userNamePass }],
         password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
         codeKey: [{ required: true, trigger: 'blur', validator: codeKeyPass }]
-      }
+      },
+      redirect: '',
+      query: ''
+    }
+  },
+  watch: {
+    $route: {
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
+        this.query = route.query && route.query.query
+      },
+      immediate: true
     }
   },
   mounted() {
@@ -76,7 +87,22 @@ export default {
           this.$store
             .dispatch('login', this.loginForm)
             .then(() => {
-              this.$router.push({ name: 'home' })
+              const routes = this.$store.getters.routes
+              const utilRoutePoint = () => {
+                if (JSON.stringify(routes).includes('home')) {
+                  this.$router.push({ name: 'home' })
+                } else {
+                  this.$router.push({ name: routes[0].children[0].children[0].name })
+                }
+              }
+
+              if (this.redirect) {
+                const rotationData = this.redirect.split('/')
+                rotationData.shift()
+                if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
+                  this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
+                } else utilRoutePoint()
+              } else utilRoutePoint()
             })
             .catch(() => {
               this.$refs.ruleForm.resetField()

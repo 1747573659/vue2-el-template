@@ -12,18 +12,18 @@ const constantRoutes = [
     path: '/login',
     name: 'login',
     code: 'KM_DEFAULT_CODE',
-    component: _import('login/index')
+    component: _import('login/index'),
+    hidden: true
   },
   {
     path: '/404',
     name: '404',
     code: 'KM_DEFAULT_CODE',
-    component: _import('abnormal/404')
-  },
-  // 404 page must be placed at the end !!!
-  // { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
+    component: _import('abnormal/404'),
+    hidden: true
+  }
 ]
 
-const asyncRouterMap = [...constantRoutes, setting]
+const asyncRouterMap = [setting]
 
 export { constantRoutes, asyncRouterMap }

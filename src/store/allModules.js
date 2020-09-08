@@ -1,5 +1,7 @@
 import user from './modules/user'
+import sidebar from './modules/sidebar'
 
 export default {
-  user
+  user,
+  sidebar
 }
