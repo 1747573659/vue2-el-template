@@ -377,7 +377,7 @@ export default {
     height: 36px;
     line-height: 36px;
     &:hover {
-      width: 108px;
+      width: 128px;
     }
   }
 }
@@ -396,40 +396,40 @@ export default {
 .tree-custom-children1,
 .tree-custom-children2 {
   // height: 299px;
-  min-height: 396px;
-  height: 540px;
-  width: 110px;
+  min-height: 398px;
+  height: 398px;
+  width: 130px;
   border-right: 1px solid #d5d5d5;
 }
 .tree-custom-children2,
 .tree-custom-children3 {
   position: absolute;
   top: 0;
-  left: 110px;
+  left: 130px;
 }
 .tree-custom-children4 {
   position: absolute;
   top: 0;
-  left: 128px;
-  width: 140px;
+  left: 148px;
+  width: 130px;
   max-height: 400px;
   z-index: 2;
 }
 .tree-custom-children3 {
-  left: 110px;
+  left: 130px;
   width: 110px;
 }
 .tree-custom-header1 + .el-tree-node__children {
   position: relative;
   // height: 299px;
-  min-height: 396px;
+  min-height: 268px;
 }
 .custom-el-tree-node__children .is-expanded {
-  width: 108px;
+  width: 128px;
   background-color: #f5f7fa;
 }
 .el-tree-node:focus > .tree-custom-header > .el-tree-node__content {
-  width: 108px;
+  width: 128px;
   background-color: #f5f7fa;
 }
 .el-tree-node:focus > .tree-custom-header1 > .el-tree-node__content {
@@ -441,8 +441,8 @@ export default {
 }
 .tree-custom-header-clone {
   // position: absolute;
-  right: -47px;
-  top: -37px;
+  right: -72px;
+  top: -38px;
   z-index: 2;
   display: none;
   .el-tree-node__content {

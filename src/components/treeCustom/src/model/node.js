@@ -73,7 +73,7 @@ export default class Node {
     this.visible = true
 
     for (let name in options) {
-      if (options.hasOwnProperty(name)) {
+      if ( Object.prototype.hasOwnProperty.call(options, name)) {
         this[name] = options[name]
       }
     }
@@ -365,7 +365,7 @@ export default class Node {
         return computer.checked
       })
       if (isLast && this.level === 5 && this.data.code !== 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW') {
-        if (currentNode.data.hasOwnProperty('disabled') && currentNode.data.disabled !== '') {
+        if (Object.prototype.hasOwnProperty.call(currentNode.data, 'disabled') && currentNode.data.disabled !== '') {
           if (value) {
             currentNode.data.disabled = true
             currentNode.checked = true

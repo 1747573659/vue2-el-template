@@ -5,10 +5,6 @@ const urlLinks = {
   queryPage: '/employeeRole/queryPage',
   // 删除角色
   deleteSysRole: '/employeeRole/deleteSysRole',
-  // 查看指定角色APP权限/全部权限)
-  queryAPPMenuByRoleId: '/employeeRole/queryAPPMenuByRoleId',
-  // 查看指定角色PC权限/全部权限
-  queryPCMenuByRoleId: '/employeeRole/queryPCMenuByRoleId',
   // 查询所有账号
   queryUserPage: '/employeeUser/queryUserPage',
   // 查询所有角色
@@ -24,12 +20,46 @@ const urlLinks = {
   // 检测账号
   checkMobile: '/employeeUser/checkMobile',
   // 通过ID查询指定账号
-  queryUseById: '/employeeUser/queryUseById'
+  queryUserById: '/employeeUser/queryUserById',
+  // 新增/编辑角色
+  addRole: '/employeeRole/addRole',
+  // 查看指定角色PC全部权限
+  queryRoleById: '/employeeRole/queryRoleById',
+  // 查看指定角色APP权限/全部权限)
+  queryAllAPPMenu: '/employeeRole/queryAllAPPMenu',
+  // 查看指定角色PC权限/全部权限
+  queryAllPCMenu: '/employeeRole/queryAllPCMenu',
+  // 查看指定角色PC权限/全部权限
+  checkRoleName: '/employeeRole/checkRoleName'
+}
+// 校验角色重名
+export function checkRoleName(data) {
+  return request({
+    url: urlLinks.checkRoleName,
+    method: 'post',
+    params: data
+  })
+}
+// 通过ID查询指定角色
+export function queryRoleById(data) {
+  return request({
+    url: urlLinks.queryRoleById,
+    method: 'post',
+    params: data
+  })
+}
+// 新增/编辑角色
+export function addRole(data) {
+  return request({
+    url: urlLinks.addRole,
+    method: 'post',
+    data: data
+  })
 }
 // 通过ID查询指定账号
-export function queryUseById(data) {
+export function queryUserById(data) {
   return request({
-    url: urlLinks.queryUseById,
+    url: urlLinks.queryUserById,
     method: 'post',
     params: data
   })
@@ -91,17 +121,17 @@ export function queryUserPage(data) {
   })
 }
 // 查看指定角色PC权限/全部权限
-export function queryPCMenuByRoleId(data) {
+export function queryAllPCMenu(data) {
   return request({
-    url: urlLinks.queryPCMenuByRoleId,
+    url: urlLinks.queryAllPCMenu,
     method: 'post',
     params: data
   })
 }
 // 查看指定角色APP权限/全部权限)
-export function queryAPPMenuByRoleId(data) {
+export function queryAllAPPMenu(data) {
   return request({
-    url: urlLinks.queryAPPMenuByRoleId,
+    url: urlLinks.queryAllAPPMenu,
     method: 'post',
     params: data
   })

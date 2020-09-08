@@ -27,7 +27,6 @@ export default {
   },
   methods: {
     handleJumpPage() {
-      console.info(123)
     },
     handleClose(item) {
       console.info(item)

@@ -3,13 +3,13 @@
     <div class="km-setting-account-add">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
         <el-form-item label="手机 (账号)" prop="loginName">
-          <el-input v-model.trim="form.loginName" v-if="type"></el-input>
+          <el-input v-model.trim="form.loginName" v-if="isAdd"></el-input>
           <span v-else>{{form.loginName}}</span>
         </el-form-item>
         <el-form-item label="姓名" prop="userName">
           <el-input v-model="form.userName"></el-input>
         </el-form-item>
-        <el-form-item label="密码" prop="psw" v-if="type">
+        <el-form-item label="密码" prop="psw" v-if="isAdd">
           <el-input :disabled="true" v-model="form.psw" placeholder="默认888888"></el-input>
         </el-form-item>
         <el-form-item label="角色" prop="roleId">
@@ -24,7 +24,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
-          <el-input v-model="form.remark" style="width:240px" rows="6" type="textarea"></el-input>
+          <el-input v-model="form.remark" style="width:240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
         </el-form-item>
         <el-form-item label="">
           <el-button class="channel-baseinfo-save" type="primary" @click="onSubmit">保存</el-button>
@@ -40,13 +40,23 @@ import {
   queryRole,
   insertRole,
   checkMobile,
-  queryUseById
+  queryUserById
 } from '@/api/setting/account'
 export default {
   data() {
-    var mobileRule = (rule, value, callback) => {
-      if ((/^1[3456789]\d{9}$/.test(value))) {
+    var mobileRule = async (rule, value, callback) => {
+      if (!this.isAdd) {
         callback()
+      } else if ((/^1[3456789]\d{9}$/.test(value))) {
+        let data = {
+          mobile: value
+        }
+        try {
+          const res = await checkMobile(data)
+          callback(res)
+        } catch (e) {}
+      } else if (value.length === 0) {
+        callback('请输入手机号')
       } else {
         callback('请输入正确的手机号')
       }
@@ -72,7 +82,7 @@ export default {
         ]
       },
       roleList: {},
-      type: true
+      isAdd: true
     };
   },
   methods: {
@@ -104,41 +114,27 @@ export default {
         this.roleList = res
       } catch (e) {}
     },
-    async queryUseById () {
+    async queryUserById () {
       let data = {
         id: this.$route.query.id
       }
       try {
-        const res = await queryUseById(data)
+        const res = await queryUserById(data)
         this.form = res
       } catch (e) {}
     }
   },
   mounted() {
     this.getRoleList()
-    if (this.$route.query.id) this.queryUseById()
+    if (this.$route.query.id) this.queryUserById()
   },
   computed: {
     loginName() {
       return this.form.loginName
     }
   },
-  watch: {
-    async loginName (newValue, oldValue) {
-      // this.form.loginName = newValue.substr(0,11)
-      if (newValue.length === 11 && !this.$route.query.id) { // 当且仅当输入框内容的长度为11且为新增的时候才进行校验手机号是否重复
-        let data = {
-          mobile: newValue
-        }
-        try {
-          const res = await checkMobile(data)
-        } catch (e) {}
-      }
-    }
-  },
   created() {
-    this.type = this.$route.query.id ? false : true // 由于query过来的参数是string, 所以要转换为number方便判断
-    console.log(this.type)
+    this.isAdd = this.$route.query.id ? false : true // 由于query过来的参数是string, 所以要转换为number方便判断
   }
 }
 </script>
