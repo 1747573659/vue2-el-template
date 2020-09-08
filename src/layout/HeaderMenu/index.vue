@@ -58,7 +58,7 @@ export default {
     this.getChildRoutes(this.$route)
   },
   methods: {
-    ...mapActions(['setSidebarROUTES']),
+    ...mapActions(['setSidebarROUTES', 'setBasePath']),
     handleDropDown(command) {
       if (command === 1) this.dropStatus = true
       else this.handleLoginOut()
@@ -86,6 +86,7 @@ export default {
     },
     getActiveRoute(path) {
       const hasPath = this.$route.path.includes(path)
+      if (hasPath) this.setBasePath(path)
       return hasPath
     }
   }

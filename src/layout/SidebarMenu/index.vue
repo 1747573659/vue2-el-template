@@ -2,43 +2,30 @@
   <section class="p-sidebar_con">
     <div class="p-sidebar_main">
       <el-scrollbar>
-        <el-menu :default-active="$route.path" background-color="#ffffff" text-color="#696C6F" active-text-color="#1A92FD">
-          <el-submenu index="1">
-            <template slot="title">
-              <i class="el-icon-location"></i>
-              <span>导航一</span>
-            </template>
-            <el-menu-item-group>
-              <template slot="title">分组一</template>
-              <el-menu-item index="1-1">选项1</el-menu-item>
-              <el-menu-item index="1-2">选项2</el-menu-item>
-            </el-menu-item-group>
-            <el-menu-item-group title="分组2">
-              <el-menu-item index="1-3">选项3</el-menu-item>
-            </el-menu-item-group>
-            <el-submenu index="1-4">
-              <template slot="title">选项4</template>
-              <el-menu-item index="1-4-1">选项1</el-menu-item>
-            </el-submenu>
-          </el-submenu>
-          <el-menu-item index="2">
-            <i class="el-icon-menu"></i>
-            <span slot="title">导航二</span>
-          </el-menu-item>
-          <el-menu-item index="3" disabled>
-            <i class="el-icon-document"></i>
-            <span slot="title">导航三</span>
-          </el-menu-item>
-          <el-menu-item index="4">
-            <i class="el-icon-setting"></i>
-            <span slot="title">导航四</span>
-          </el-menu-item>
+        <el-menu :default-active="$route.path">
+          <sidebar-nav v-for="item in sidebarRoutes" :key="item.name" :routes="item" :basePath="basePath + '/' + item.path"></sidebar-nav>
         </el-menu>
       </el-scrollbar>
-      <!-- <el-menu default-active="2" class="el-menu-vertical-demo"> </el-menu> -->
     </div>
   </section>
 </template>
+
+<script>
+import { mapGetters } from 'vuex'
+import sidebarNav from './component/sidebar'
+
+export default {
+  components: {
+    sidebarNav
+  },
+  computed: {
+    ...mapGetters(['sidebarRoutes', 'basePath'])
+  }
+  // mounted() {
+  //   console.info(this.basePath)
+  // }
+}
+</script>
 
 <style lang="scss" scoped>
 .p {
@@ -50,9 +37,9 @@
       background-color: #fff;
       box-shadow: 2px 0px 4px 0px rgba(0, 0, 0, 0.08);
     }
-    &_main {
-      // padding-top: 68px;
-    }
+    // &_main {
+    // padding-top: 68px;
+    // }
   }
 }
 </style>
