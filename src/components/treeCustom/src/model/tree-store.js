@@ -7,7 +7,7 @@ export default class TreeStore {
     this.currentNodeKey = null
 
     for (let option in options) {
-      if (options.hasOwnProperty(option)) {
+      if (Object.prototype.hasOwnProperty.call(options, option)) {
         this[option] = options[option]
       }
     }
@@ -199,7 +199,7 @@ export default class TreeStore {
     const allNodes = []
     const nodesMap = this.nodesMap
     for (let nodeKey in nodesMap) {
-      if (nodesMap.hasOwnProperty(nodeKey)) {
+      if (Object.prototype.hasOwnProperty.call(nodesMap, nodeKey)) {
         allNodes.push(nodesMap[nodeKey])
       }
     }
