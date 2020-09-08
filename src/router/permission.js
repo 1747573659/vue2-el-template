@@ -9,12 +9,14 @@ router.beforeEach((to, from, next) => {
     if (to.name === 'login') {
       next()
     } else {
+      // 如果vuex路由权限为空，则重新请求权限
       if (store.getters.routes.length === 0) {
         store
           .dispatch('GetMenuInfo')
           .then(() => {
             router.addRoutes(store.getters.routes)
             const goViewsMenus = store.getters.routes
+            // 当权限接口返回权限为空时，跳转登录
             if (!goViewsMenus) {
               next({ name: 'login' })
             } else {
