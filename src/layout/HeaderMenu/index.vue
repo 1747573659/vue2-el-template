@@ -86,7 +86,6 @@ export default {
     },
     getActiveRoute(path) {
       const hasPath = this.$route.path.includes(path)
-      if (hasPath) console.info(123)
       return hasPath
     }
   }

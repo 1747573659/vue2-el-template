@@ -20,7 +20,7 @@ const urlLinks = {
   // 检测账号
   checkMobile: '/employeeUser/checkMobile',
   // 通过ID查询指定账号
-  queryUseById: '/employeeUser/queryUseById',
+  queryUserById: '/employeeUser/queryUserById',
   // 新增/编辑角色
   addRole: '/employeeRole/addRole',
   // 查看指定角色PC全部权限
@@ -28,7 +28,17 @@ const urlLinks = {
   // 查看指定角色APP权限/全部权限)
   queryAllAPPMenu: '/employeeRole/queryAllAPPMenu',
   // 查看指定角色PC权限/全部权限
-  queryAllPCMenu: '/employeeRole/queryAllPCMenu'
+  queryAllPCMenu: '/employeeRole/queryAllPCMenu',
+  // 查看指定角色PC权限/全部权限
+  checkRoleName: '/employeeRole/checkRoleName'
+}
+// 校验角色重名
+export function checkRoleName(data) {
+  return request({
+    url: urlLinks.checkRoleName,
+    method: 'post',
+    params: data
+  })
 }
 // 通过ID查询指定角色
 export function queryRoleById(data) {
@@ -47,9 +57,9 @@ export function addRole(data) {
   })
 }
 // 通过ID查询指定账号
-export function queryUseById(data) {
+export function queryUserById(data) {
   return request({
-    url: urlLinks.queryUseById,
+    url: urlLinks.queryUserById,
     method: 'post',
     params: data
   })

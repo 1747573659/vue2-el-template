@@ -6,7 +6,7 @@
           <el-input style="width: 240px" clearable placeholder="请输入角色名称" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
-          <el-button type="primary" class="km-role-search" @click="search">查询</el-button>
+          <el-button type="primary" class="km-role-search" @click="search" :loading="cxLoading">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
           <el-button type="primary" plain icon="el-icon-plus" class=""  @click="add">新增</el-button>
@@ -72,11 +72,13 @@ export default {
       currentPage: 1,
       total: 0,
       pageSize: 10,
-      tableLoading: false
+      tableLoading: false,
+      cxLoading: false
     }
   },
   methods: {
     search() {
+      this.cxLoading = true
       this.currentPage = 1
       this.getList()
     },
@@ -131,6 +133,7 @@ export default {
         this.total = res.totalCount
       } catch (e) {
       } finally {
+        this.cxLoading = false
         this.tableLoading = false
       }
     }

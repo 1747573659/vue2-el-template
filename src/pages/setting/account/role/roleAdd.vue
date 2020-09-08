@@ -2,11 +2,11 @@
   <div class="data-box">
     <div class="km-setting-roleAdd">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
-        <el-form-item label="角色名称" required prop="name">
+        <el-form-item label="角色名称" prop="name">
           <el-input v-model="form.name" style="width:240px"></el-input>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="form.remark" maxlength="250" style="width:240px" rows="6" type="textarea"></el-input>
+          <el-input v-model="form.remark" maxlength="250" style="width:240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
         </el-form-item>
         <el-form-item label="PC后台权限">
           <tree-custom
@@ -48,22 +48,35 @@ import {
   addRole,
   queryAllPCMenu,
   queryAllAPPMenu,
-  queryRoleById
+  queryRoleById,
+  checkRoleName
 } from '@/api/setting/account'
 import routeTree from '@/utils/routeTree'
 export default {
   components: {
   },
   data() {
+    var nameRule = async (rule, value, callback) => {
+      if (value.length === 0) {
+        callback('请输入角色名称')
+      } else if (value.length > 50) {
+        callback('角色名称应少于50个字符')
+      } else if (value !== this.form.usedName) { // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
+        try {
+          const res = await checkRoleName({ name: value })
+          callback(res)
+        } catch(e) {}
+      }
+    }
     return {
       rules: {
         name: [
-          { required: true, trigger: "blur", message: '请输入角色名称' },
-          { max: 55, message: '长度在 50 个字符以内', trigger: 'blur' }
+          { required: true, trigger: "blur", validator: nameRule }
         ],
       },
       form: {
         id: null,
+        usedName: '',
         name: '',
         remark: '',
         menuIdsPC: '',
@@ -159,6 +172,7 @@ export default {
         const res = await queryRoleById({ 'id': this.$route.query.id })
         this.form.id = res.id
         this.form.name = res.name
+        this.form.usedName = res.name
         this.form.remark = res.remark
         res.menuIdsPC.forEach(item => {
           this.defaultPCList.push(item.id)
