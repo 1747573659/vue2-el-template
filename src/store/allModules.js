@@ -1,7 +1,7 @@
 import user from './modules/user'
-import sidebar from './modules/sidebar'
+import navbarMenu from './modules/navbarMenu'
 
 export default {
   user,
-  sidebar
+  navbarMenu
 }

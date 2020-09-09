@@ -1,43 +1,72 @@
 <template>
   <section class="p-tags_con">
-    <span></span>
-    <!-- <div ref="tags">
-      <div
-        v-for="(item, index) in tags"
-        :key="item.title"
-        class="p-tags_item"
-        :class="{ 'e-tag-cut__pd': hasTagIndex(index), 'e-tag_active': isActive(index) }"
-        @mouseover="setTagIndex(index)"
-        @mouseleave="resetTagIndex"
-        @click="handleJumpPage"
-      >
-        <span>{{ item.title }}</span>
-        <i v-if="hasTagIndex(index) && activeIndex !== 0" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>
-      </div>
-    </div> -->
+    <div
+      class="p-tags_item"
+      :class="{ 'e-tag_active': isActive(item), 'e-tag-cut__pd': hasTagIndex(index) }"
+      @mouseover="setTagIndex(index)"
+      @mouseleave="resetTagIndex"
+      @click="handleJumpPage(item, item.query)"
+      v-for="(item, index) in tagViews"
+      :key="item.name"
+    >
+      {{ item.title }}
+      <i v-if="hasTagIndex(index) && item.name !== 'home'" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>
+    </div>
   </section>
 </template>
 
 <script>
+import { mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
-      tags: [{ title: '首页' }, { title: '测试页' }],
+      tags: [],
       activeIndex: 0
     }
   },
   watch: {
-    $route() {}
+    $route() {
+      this.handleTagViews()
+    },
+    tagViews(val) {
+      this.tags = val
+    }
+  },
+  computed: {
+    ...mapGetters(['tagViews', 'routes'])
+  },
+  mounted() {
+    this.handleTagViews()
   },
   methods: {
-    addTagViews() {
+    ...mapActions(['setTagViews', 'setCacheViews', 'delTagViews']),
+    handleTagViews() {
       if (this.$route.name) {
-        
+        this.setTagViews(this.$route)
+        this.setCacheViews(this.$route)
       }
     },
-    handleJumpPage() {},
+    handleJumpPage(item, query) {
+      if (this.$route.path === item.path) return
+      this.$router.push({ path: item.path, query: Object.keys(query).length === 0 ? {} : query })
+    },
     handleClose(item) {
-      console.info(item)
+      this.delTagViews(item).then(views => {
+        if (this.isActive(item)) {
+          const latestView = views.slice(-1)[0]
+          if (latestView) {
+            this.$router.push({ path: latestView.path, query: latestView.query ? {} : latestView.query })
+          } else {
+            const menus = this.routes
+            if (JSON.stringify(menus).includes('home')) {
+              this.$router.push({ name: 'home' })
+            } else {
+              this.$router.push({ name: menus[0].children[0].children[0].name, query: { time: String(new Date().getTime()) } })
+            }
+          }
+          this.delCachedView(item)
+        }
+      })
     },
     setTagIndex(index) {
       this.activeIndex = index
@@ -71,16 +100,19 @@ export default {
       z-index: 1000;
     }
     &_item {
-      padding: 0 20px;
+      display: block;
       float: left;
+      font-size: 14px;
+      color: #555555;
+      background: #f6f6f6;
       line-height: 32px;
       height: 32px;
+      padding: 0 20px 0 20px;
       border-right: 1px solid #e8e8e8;
       border-top: 1px solid #e8e8e8;
-      border-bottom: 1px solid #e8e8e8;
-      margin-top: 16px;
-      background: #f6f6f6;
+      margin-top: 14px;
       cursor: pointer;
+      box-sizing: content-box;
       &:first-child {
         border-left: 1px solid #e8e8e8;
       }

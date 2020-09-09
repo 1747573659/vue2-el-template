@@ -11,7 +11,7 @@
       <template slot="title">
         <span v-if="routes.meta && routes.meta.title" slot="title">{{ routes.meta.title }}</span>
       </template>
-      <template v-if="routes.children">
+      <template v-if="routes.children && routes.children.length > 0">
         <sidebar-nav v-for="child in routes.children" :key="child.name" :routes="child" :basePath="resolvePath(child.path)"></sidebar-nav>
       </template>
     </el-submenu>
@@ -34,7 +34,7 @@ export default {
   },
   computed: {
     getTailChildNum() {
-      if (this.routes.children) {
+      if (this.routes.children && this.routes.children.length > 0) {
         const tailChildNum = this.routes.children.filter(item => item.meta && !item.meta.hidden)
         return tailChildNum.length
       }
@@ -42,7 +42,7 @@ export default {
     },
     handleTailChild() {
       if (this.getTailChildNum > 1) return null
-      if (this.routes.children) {
+      if (this.routes.children && this.routes.children.length > 0) {
         for (let child of this.routes.children) {
           if (!child.meta || !child.meta.hidden) {
             return this.routes
