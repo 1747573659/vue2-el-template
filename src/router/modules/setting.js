@@ -61,7 +61,7 @@ const setting = {
           path: 'roleAdd',
           hidden: true,
           name: 'roleAdd',
-          code: 'KM_SETTING_ACCOUNT_ROLEADD',
+          code: 'KM_DEFAULT_CODE',
           component: _import('setting/account/role/roleAdd'),
           meta: {
             title: '角色管理/新增',

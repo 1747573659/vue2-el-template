@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-permission.page="'DEL3'">
     <div class="search-box">
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-form-item label="角色信息">
