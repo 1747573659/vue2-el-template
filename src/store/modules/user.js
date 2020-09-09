@@ -24,6 +24,7 @@ export function deepClone(source) {
 // 递归输出路由树
 export function convertRouter(menu = [], asyncRouterMap = []) {
   if (menu) {
+    console.log(menu)
     const accessedRouters = []
     menu = Array.from(menu)
     asyncRouterMap = Array.from(asyncRouterMap)
@@ -76,13 +77,17 @@ const state = {
 }
 
 const getters = {
-  routes: state => state.routes
+  routes: state => state.routes,
+  btns: state => state.btns
 }
 
 const mutations = {
   SET_ROUTES: (state, routes) => {
     const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
     state.routes = constantRoutes.concat(routes).concat(abnormalRouter)
+  },
+  SET_BTNS: (state, btns) => {
+    state.btns = btns
   }
 }
 
