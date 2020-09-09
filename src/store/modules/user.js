@@ -3,55 +3,9 @@ import routeTree from '@/utils/routeTree'
 import { setLocal, removeLocal } from '@/utils/token'
 import { login, getMenuInfo, logout } from '@/api/login'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
+import convertRouter from '@/utils/convertRouter'
+import deepClone from '@/utils/deepClone'
 import router from '@/router'
-
-// 深拷贝 - 工具函数
-export function deepClone(source) {
-  if (!source && typeof source !== 'object') {
-    throw new Error('error arguments')
-  }
-  const targetObj = source.constructor === Array ? [] : {}
-  Object.keys(source).forEach(keys => {
-    if (source[keys] && typeof source[keys] === 'object') {
-      targetObj[keys] = deepClone(source[keys])
-    } else {
-      targetObj[keys] = source[keys]
-    }
-  })
-  return targetObj
-}
-
-// 递归输出路由树
-export function convertRouter(menu = [], asyncRouterMap = []) {
-  if (menu) {
-    // console.info(asyncRouterMap)
-    const accessedRouters = []
-    menu = Array.from(menu)
-    asyncRouterMap = Array.from(asyncRouterMap)
-    asyncRouterMap.forEach(asyncRouterItem => {
-      menu.forEach(item => {
-        const temp = { ...asyncRouterItem }
-        let tempArr = deepClone(accessedRouters)
-        // 判断是不是没有code值和children项，没有的话就添加
-        // if (!temp.code && !temp.children) {
-        //   let isRepeat = tempArr.filter(i => i.name === temp.name && i.path === temp.path)
-        //   // 过滤重复的添加的路由
-        //   if (!isRepeat.length) accessedRouters.push(temp)
-        // }
-        // 如果code和前端路由的code一致，那么添加的异步路由中
-        if (temp.code === item.code) {
-          if (item.children && item.children.length) {
-            temp.children = convertRouter(item.children, temp.children)
-          }
-          accessedRouters.push(temp)
-        }
-      })
-    })
-    return accessedRouters
-  } else {
-    return []
-  }
-}
 
 // 返回重定向的路径（都是子项目里面的第一个元素地址，children[0].path）
 export function returnRedirectPath(obj) {
@@ -73,7 +27,8 @@ export function resetRedirect(asyncRouterMap) {
 }
 
 const state = {
-  routes: [] // 路由权限
+  routes: [], // 路由权限
+  btns: []
 }
 
 const getters = {
@@ -84,10 +39,11 @@ const getters = {
 const mutations = {
   SET_ROUTES: (state, routes) => {
     const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-    state.routes = constantRoutes.concat(routes).concat(abnormalRouter)
+    // 注意链接顺序，默认登录成功后跳转第一个路由链接
+    state.routes = routes.concat(constantRoutes).concat(abnormalRouter)
   },
   SET_BTNS: (state, btns) => {
-    state.btns = btns
+    state.btns = state.btns.concat(btns)
   }
 }
 
@@ -153,6 +109,10 @@ const actions = {
           reject(error)
         })
     })
+  },
+  // 添加按钮权限
+  SetBtns({ commit }, list) {
+    commit('SET_BTNS', list)
   }
 }
 

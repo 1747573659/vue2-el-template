@@ -18,7 +18,7 @@ const home = [
     children: [
       {
         path: 'index',
-        name: 'home',
+        name: 'homeIndex',
         meta: { title: '首页', name: 'index' },
         component: _import('home/index'),
         hidden: true

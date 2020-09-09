@@ -89,10 +89,10 @@ export default {
             .then(() => {
               const routes = this.$store.getters.routes
               const utilRoutePoint = () => {
-                if (JSON.stringify(routes).includes('home')) {
-                  this.$router.push({ name: 'home' })
+                if (routes.length && routes[0] && routes[0].redirect) {
+                  this.$router.push({ path: routes[0].redirect })
                 } else {
-                  this.$router.push({ name: routes[0].children[0].children[0].name })
+                  console.error('登录跳转成功后第一个路由没有redirect请检查：', routes)
                 }
               }
 
@@ -104,7 +104,8 @@ export default {
                 } else utilRoutePoint()
               } else utilRoutePoint()
             })
-            .catch(() => {
+            .catch((err) => {
+              console.error(err)
               this.$refs.ruleForm.resetField()
               this.captcha()
             })
