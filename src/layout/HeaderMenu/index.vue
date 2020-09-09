@@ -74,6 +74,8 @@ export default {
         .catch(() => {})
     },
     handleSwitchVersion() {
+      // 统计【切换旧版】系统的点击次数
+      window._hmt.push(['_trackEvent', 'old_system_click', '切换旧版', '跳转到旧系统']);
       window.open(process.env.VUE_APP_OLD_VERSION)
     },
     getChildRoutes(route) {
