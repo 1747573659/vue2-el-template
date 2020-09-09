@@ -40,7 +40,13 @@
           align="right">
           <template slot-scope="scope">
             <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="del(scope.row)" type="text" size="small">删除</el-button>
+            <el-popconfirm
+              title="这是一段内容确定删除吗？"
+              placement="top-start"
+              @onConfirm="del(scope.row)"
+            >
+              <el-button slot="reference" type="text" size="small">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -93,23 +99,36 @@ export default {
         this.$message.error('角色有关联的账号，不能删除')
         return
       }
-      this.$confirm('确定删除所选数据吗？', '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        let data = {
-          roleId: row.id
-        }
-        try {
-          const res = await deleteSysRole(data)
-          this.getList()
-          this.$message.success('删除成功!')
-        } catch(e) {
-        } finally {}
-      }).catch(() => {
-        this.$message.info('已取消删除')
-      })
+      let data = {
+        roleId: row.id
+      }
+      try {
+        const res = await deleteSysRole(data)
+        this.getList()
+        this.$message.success('删除成功!')
+      } catch(e) {
+      } finally {}
+      // if (row.num) {
+      //   this.$message.error('角色有关联的账号，不能删除')
+      //   return
+      // }
+      // this.$confirm('确定删除所选数据吗？', '', {
+      //   confirmButtonText: '确定',
+      //   cancelButtonText: '取消',
+      //   type: 'warning'
+      // }).then(async () => {
+      //   let data = {
+      //     roleId: row.id
+      //   }
+      //   try {
+      //     const res = await deleteSysRole(data)
+      //     this.getList()
+      //     this.$message.success('删除成功!')
+      //   } catch(e) {
+      //   } finally {}
+      // }).catch(() => {
+      //   this.$message.info('已取消删除')
+      // })
     },
     handleSizeChange(value) {
       this.pageSize = value
