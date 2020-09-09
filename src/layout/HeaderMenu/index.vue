@@ -1,6 +1,8 @@
 <template>
   <section class="p-head">
-    <router-link to="/home" class="p-head_logo"><img src="../../assets/images/headMenu/logo.png" alt="logo" /> </router-link>
+    <router-link to="/home" class="p-head_logo">
+      <img src="../../assets/images/headMenu/logo.png" alt="logo" />
+    </router-link>
     <!-- 导航 -->
     <div class="p-head_nav">
       <ul>
@@ -77,6 +79,7 @@ export default {
       window.open(process.env.VUE_APP_OLD_VERSION)
     },
     getChildRoutes(route) {
+      // 设置左侧导航栏
       let index = this.routes.findIndex(item => {
         return JSON.stringify(item).includes(route.name)
       })

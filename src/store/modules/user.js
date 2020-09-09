@@ -24,7 +24,7 @@ export function deepClone(source) {
 // 递归输出路由树
 export function convertRouter(menu = [], asyncRouterMap = []) {
   if (menu) {
-    console.log(menu)
+    // console.info(asyncRouterMap)
     const accessedRouters = []
     menu = Array.from(menu)
     asyncRouterMap = Array.from(asyncRouterMap)
@@ -33,11 +33,11 @@ export function convertRouter(menu = [], asyncRouterMap = []) {
         const temp = { ...asyncRouterItem }
         let tempArr = deepClone(accessedRouters)
         // 判断是不是没有code值和children项，没有的话就添加
-        if (!temp.code && !temp.children) {
-          let isRepeat = tempArr.filter(i => i.name === temp.name && i.path === temp.path)
-          // 过滤重复的添加的路由
-          if (!isRepeat.length) accessedRouters.push(temp)
-        }
+        // if (!temp.code && !temp.children) {
+        //   let isRepeat = tempArr.filter(i => i.name === temp.name && i.path === temp.path)
+        //   // 过滤重复的添加的路由
+        //   if (!isRepeat.length) accessedRouters.push(temp)
+        // }
         // 如果code和前端路由的code一致，那么添加的异步路由中
         if (temp.code === item.code) {
           if (item.children && item.children.length) {
