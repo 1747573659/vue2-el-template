@@ -59,6 +59,7 @@ const setting = {
         },
         {
           path: 'roleAdd',
+          hidden: true,
           name: 'roleAdd',
           code: 'KM_SETTING_ACCOUNT_ROLEADD',
           component: _import('setting/account/role/roleAdd'),
@@ -79,6 +80,7 @@ const setting = {
         },
         {
           path: 'accountSettingAdd',
+          hidden: true,
           name: 'accountSettingAdd',
           code: 'KM_SETTING_ACCOUNT_SETADD',
           component: _import('setting/account/account/accountSettingAdd'),

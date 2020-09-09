@@ -41,6 +41,7 @@ export default {
       return 0
     },
     handleTailChild() {
+      // 当有子级的时候，则返回null
       if (this.getTailChildNum > 1) return null
       if (this.routes.children && this.routes.children.length > 0) {
         for (let child of this.routes.children) {
