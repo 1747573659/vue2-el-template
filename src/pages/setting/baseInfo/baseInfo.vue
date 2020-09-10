@@ -36,7 +36,7 @@
               <el-input disabled v-model="form.mobile"></el-input>
             </el-col>
             <el-col :span="3">
-              <el-button type="text" class="km-setting-edit" @click="edit">修改</el-button>
+              <el-button type="text" class="km-setting-edit" v-permission="'BASEINFO_INDEX_EDIT'" @click="edit">修改</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -54,7 +54,7 @@
           <el-button
             class="channel-baseinfo-save"
             type="primary"
-            v-permission="'DEL'"
+            v-permission="'BASEINFO_INDEX_SAVE'"
             @click="onSubmit">保存</el-button>
         </el-form-item>
       </el-form>

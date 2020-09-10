@@ -198,7 +198,7 @@ export default {
 .km-setting-roleAdd {
   display: flex;
   justify-content: center;
-  padding-top: 48px;
+  padding-top: 16px;
 }
 .channel-setting-save {
   padding: 8px 22px;
