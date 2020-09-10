@@ -39,7 +39,8 @@ const getters = {
 const mutations = {
   SET_ROUTES: (state, routes) => {
     const abnormalRouter = { path: '*', redirect: '/404', code: 'KM_DEFAULT_CODE', hidden: true }
-    state.routes = constantRoutes.concat(routes).concat(abnormalRouter)
+    // 注意链接顺序，默认登录成功后跳转第一个路由链接
+    state.routes = routes.concat(constantRoutes).concat(abnormalRouter)
   },
   SET_BTNS: (state, btns) => {
     state.btns = state.btns.concat(btns)

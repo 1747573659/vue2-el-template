@@ -54,6 +54,7 @@
           <el-button
             class="channel-baseinfo-save"
             type="primary"
+            v-permission="'DEL'"
             @click="onSubmit">保存</el-button>
         </el-form-item>
       </el-form>

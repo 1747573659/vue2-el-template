@@ -1,6 +1,8 @@
 <template>
   <section class="p-head">
-    <router-link to="/home" class="p-head_logo"><img src="../../assets/images/headMenu/logo.png" alt="logo" /> </router-link>
+    <router-link to="/home" class="p-head_logo">
+      <img src="../../assets/images/headMenu/logo.png" alt="logo" />
+    </router-link>
     <!-- 导航 -->
     <div class="p-head_nav">
       <ul>
@@ -74,9 +76,12 @@ export default {
         .catch(() => {})
     },
     handleSwitchVersion() {
+      // 统计【切换旧版】系统的点击次数
+      window._hmt.push(['_trackEvent', 'old_system_click', '切换旧版', '跳转到旧系统']);
       window.open(process.env.VUE_APP_OLD_VERSION)
     },
     getChildRoutes(route) {
+      // 设置左侧导航栏
       let index = this.routes.findIndex(item => {
         return JSON.stringify(item).includes(route.name)
       })

@@ -19,7 +19,7 @@
           <el-button type="primary" class="km-role-search" :loading="cxLoading" @click="search">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" plain icon="el-icon-plus"  @click="add">新增</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" v-permission="'ACCOUNT_SET_ADD'" @click="add">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -57,9 +57,10 @@
           label="操作"
           align="right">
           <template slot-scope="scope">
-            <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="status(scope.row)" type="text" size="small">{{statusList[scope.row.status === 0 ? 1 : 0]}}</el-button>
+            <el-button @click="edit(scope.row)" v-permission="'ACCOUNT_SET_EDIT'" type="text" size="small">编辑</el-button>
+            <el-button @click="status(scope.row)" v-permission="'ACCOUNT_SET_STATUS'" type="text" size="small">{{statusList[scope.row.status === 0 ? 1 : 0]}}</el-button>
             <el-popconfirm
+              v-permission="'ACCOUNT_SET_RESETPWD'"
               style="margin-left: 12px"
               iconColor="#FFA033"
               title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
@@ -69,6 +70,7 @@
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
             <el-popconfirm
+              v-permission="'ACCOUNT_SET_DEL'"
               style="margin-left: 12px"
               iconColor="#FFA033"
               title="确定删除所选数据吗？"

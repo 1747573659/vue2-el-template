@@ -1,7 +1,7 @@
 <template>
   <section v-if="!routes.hidden">
     <template v-if="handleTailChild && !handleTailChild.children">
-      <router-link v-if="handleTailChild.meta" :to="{ path: resolvePath(handleTailChild.path) }">
+      <router-link v-if="handleTailChild.meta" :to="{ path: resolvePath(handleTailChild.path) }" @click.native="linkClick(handleTailChild)">
         <el-menu-item :index="resolvePath(handleTailChild.path)">
           <span v-if="handleTailChild.meta.title">{{ handleTailChild.meta.title }}</span>
         </el-menu-item>
@@ -66,6 +66,12 @@ export default {
         return this.basePath
       }
       return path.resolve(this.basePath, routePath)
+    },
+    linkClick(routePathObj) {
+      if (routePathObj && routePathObj.meta) {
+        // 统计左侧菜单栏的点击次数
+        window._hmt.push(['_trackEvent', 'left_menu_click', routePathObj.meta.name || 'unknow', routePathObj.meta.title || 'unknow']);
+      }
     }
   }
 }

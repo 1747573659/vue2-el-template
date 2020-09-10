@@ -9,8 +9,10 @@ export default function convertRouter(menu = [], asyncRouterMap = []) {
     menu = Array.from(menu)
     asyncRouterMap = Array.from(asyncRouterMap)
     asyncRouterMap.forEach(asyncRouterItem => {
+      const temp = { ...asyncRouterItem }
+      // 如果为页面的附属页面，即为KM_DEFAULT_CODE，则添加到路由里面
+      if (temp.code === 'KM_DEFAULT_CODE') accessedRouters.push(temp)
       menu.forEach(item => {
-        const temp = { ...asyncRouterItem }
         let tempArr = deepClone(accessedRouters)
         // 判断是不是没有code值和children项，没有的话就添加
         if (!temp.code && !temp.children) {

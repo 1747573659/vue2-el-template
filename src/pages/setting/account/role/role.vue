@@ -9,7 +9,7 @@
           <el-button type="primary" class="km-role-search" @click="search" :loading="cxLoading">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" plain icon="el-icon-plus" class=""  @click="add">新增</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'"  @click="add">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -39,8 +39,9 @@
           label="操作"
           align="right">
           <template slot-scope="scope">
-            <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button @click="edit(scope.row)" type="text" size="small" v-permission="'ACCOUNT_ROLE_EDIT'">编辑</el-button>
             <el-popconfirm
+              v-permission="'ACCOUNT_ROLE_DEL'"
               v-if="!scope.row.code"
               style="margin-left: 12px"
               iconColor="#FFA033"

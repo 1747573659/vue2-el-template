@@ -72,14 +72,10 @@ const mutations = {
 
 const actions = {
   setSidebarROUTES({ commit }, routes) {
-    if (routes) {
-      commit('SET_SIDEBAR_ROUTES', routes)
-    }
+    commit('SET_SIDEBAR_ROUTES', routes)
   },
   setBasePath({ commit }, basePath) {
-    if (basePath) {
-      commit('SET_BASE_PATH', basePath)
-    }
+    commit('SET_BASE_PATH', basePath)
   },
   setTagViews({ commit }, view) {
     commit('SET_TAG_VIEWS', view)

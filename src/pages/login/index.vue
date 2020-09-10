@@ -46,7 +46,7 @@ export default {
       if (/^1[3456789]\d{9}$/.test(value)) {
         callback()
       } else {
-        callback('请输入正确的用户名')
+        callback('请输入用户名')
       }
     }
     return {
@@ -89,10 +89,10 @@ export default {
             .then(() => {
               const routes = this.$store.getters.routes
               const utilRoutePoint = () => {
-                if (JSON.stringify(routes).includes('home')) {
-                  this.$router.push({ name: 'home' })
+                if (routes.length && routes[0] && routes[0].redirect) {
+                  this.$router.push({ path: routes[0].redirect })
                 } else {
-                  this.$router.push({ name: routes[0].children[0].children[0].name })
+                  console.error('登录跳转成功后第一个路由没有redirect请检查：', routes)
                 }
               }
 
@@ -104,7 +104,8 @@ export default {
                 } else utilRoutePoint()
               } else utilRoutePoint()
             })
-            .catch(() => {
+            .catch((err) => {
+              console.error(err)
               this.$refs.ruleForm.resetField()
               this.captcha()
             })
@@ -130,22 +131,21 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100vh;
+    background: linear-gradient(207deg, rgba(50, 163, 255, 1) 0%, rgba(51, 119, 255, 1) 100%);
     &_con {
       width: 1120px;
       height: 539px;
       display: flex;
       justify-content: flex-end;
-      background: linear-gradient(207deg, rgba(50, 163, 255, 1) 0%, rgba(51, 119, 255, 1) 100%);
+      align-items: center;
     }
     &_form {
       width: 400px;
       height: 406px;
-      background: rgba(255, 255, 255, 1);
+      background: #fff;
       box-shadow: 0px 3px 6px 0px rgba(0, 0, 0, 0.15);
       border-radius: 4px;
-      margin-top: 67px;
-      margin-right: 72px;
-      padding: 44px 24px 24px 24px;
+      padding: 56px 24px 24px 24px;
       box-sizing: border-box;
     }
   }
@@ -157,7 +157,7 @@ export default {
     }
     &_con {
       margin-top: 20px;
-      margin-bottom: 55px;
+      margin-bottom: 57px;
       /deep/ .el-input__inner {
         border-radius: 0;
         border: 0 none;

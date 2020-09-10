@@ -1,15 +1,14 @@
 <template>
-  <el-dialog class="p-drop_con" title="修改密码" :before-close="handleDiaClose" :visible.sync="status" append-to-body
-             width="508px">
+  <el-dialog class="p-drop_con" title="修改密码" :before-close="handleDiaClose" :visible.sync="status" append-to-body width="508px">
     <el-form ref="passForm" :model="passwordInfo" :rules="passwordRules" size="small" label-width="100px">
       <el-form-item label="旧密码" prop="oldPass">
-        <el-input type="password" v-model="passwordInfo.oldPass" placeholder="6位数字"></el-input>
+        <el-input type="password" v-model="passwordInfo.oldPass" maxlength="6" placeholder="6位数字"></el-input>
       </el-form-item>
       <el-form-item label="新密码" prop="newPass">
-        <el-input type="password" v-model="passwordInfo.newPass" placeholder="6位数字"></el-input>
+        <el-input type="password" v-model="passwordInfo.newPass" maxlength="6" placeholder="6位数字"></el-input>
       </el-form-item>
       <el-form-item label="确认新密码" prop="checkPass">
-        <el-input type="password" v-model="passwordInfo.checkPass" placeholder="6位数字"></el-input>
+        <el-input type="password" v-model="passwordInfo.checkPass" maxlength="6" placeholder="6位数字"></el-input>
       </el-form-item>
     </el-form>
     <div slot="footer">
@@ -20,7 +19,7 @@
 </template>
 
 <script>
-import {modifyPwd} from '@/api/login'
+import { modifyPwd } from '@/api/login'
 import MD5Util from '@/utils/MD5Util'
 
 export default {
@@ -33,9 +32,9 @@ export default {
   data() {
     const validatePass = (rule, value, callback) => {
       if (value === '') {
-        callback(new Error('请再次输入密码'))
+        callback(new Error('确认新密码不能为空'))
       } else if (value !== this.passwordInfo.newPass) {
-        callback(new Error('两次输入密码不一致!'))
+        callback(new Error('两次新密码不一致!'))
       } else {
         callback()
       }
@@ -48,12 +47,17 @@ export default {
         checkPass: ''
       },
       passwordRules: {
-        oldPass: [{required: true, message: '请输入原始密码', trigger: 'blur'}],
+        oldPass: [{ required: true, message: '旧密码不能为空', trigger: 'blur' }],
         newPass: [
-          {required: true, message: '请输入新密码', trigger: 'blur'},
-          {min: 6, message: '新密码长度最少为6个字符', trigger: 'blur'}
+          { required: true, message: '新密码不能为空', trigger: 'blur' },
+          { min: 6, message: '新密码必须6位数字', trigger: 'blur' },
+          { type: 'number', message: '新密码必须6位数字', trigger: 'blur', transform: value => this.$options.filters.formValidateNum(value, 'number') }
         ],
-        checkPass: [{validator: validatePass, required: true, trigger: 'blur'}]
+        checkPass: [
+          { validator: validatePass, required: true, trigger: 'blur' },
+          { min: 6, message: '确认新密码必须6位数字', trigger: 'blur' },
+          { type: 'number', message: '确认新密码必须6位数字', trigger: 'blur', transform: value => this.$options.filters.formValidateNum(value, 'number') }
+        ]
       }
     }
   },
@@ -72,14 +76,14 @@ export default {
               oldPassword: MD5Util.md5(this.passwordInfo.oldPass)
             })
             this.handleDiaClose()
-            this.$message({message: '修改成功', type: 'success'})
-          } catch (e) {} finally {
+            this.$message({ message: '修改成功', type: 'success' })
+          } catch (e) {
+          } finally {
             this.isLoading = false
           }
         }
       })
-
-    },
+    }
   }
 }
 </script>
@@ -91,6 +95,8 @@ export default {
       /deep/ .el-form {
         width: 300px;
         margin: 0 auto;
+        margin-top: 11px;
+        margin-bottom: -16px;
       }
     }
   }
