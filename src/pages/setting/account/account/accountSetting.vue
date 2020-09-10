@@ -54,6 +54,7 @@
           </template>
         </el-table-column>
         <el-table-column
+          width="230"
           label="操作"
           align="right">
           <template slot-scope="scope">

@@ -14,6 +14,9 @@
   font-family: PingFangSC-Medium, PingFang SC;
   font-weight: 500;
 }
+.el-pager li:hover {
+  color: #3377FF;
+}
 .el-pager li.active {
   background: #3377FF;
   color: #FFFFFF;
@@ -32,6 +35,9 @@
 }
 .el-pagination button {
   padding: 0px;
+}
+.el-pagination button:hover {
+  color: #3377FF;
 }
 .el-pagination .btn-prev {
   padding-right: 0px;
@@ -62,4 +68,10 @@
 }
 .el-input--mini .el-input__icon {
   line-height: 32px;
+}
+.el-pagination__sizes .el-input .el-input__inner:hover {
+  border-color: #3377FF;
+}
+.el-select-dropdown__item.selected {
+  color: #3377FF
 }
