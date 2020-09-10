@@ -1,4 +1,5 @@
 import store from '../index'
+
 const state = {
   sidebarRoutes: [], // 路由权限
   basePath: '', // 基础路由
@@ -33,11 +34,12 @@ const mutations = {
     const menus = store.getters.routes
     if (menus && menus.length) {
       for (let i of menus) {
+        // 当name为home时，tagViews包含homePage，return 不包含unshift插入
         if (i.name === 'home') {
           let homePage = {
             path: '/home',
-            fullPath: '/home/index',
-            name: 'home',
+            fullPath: '/home',
+            name: 'homeIndex',
             title: '首页',
             query: {}
           }

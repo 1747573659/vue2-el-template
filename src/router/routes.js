@@ -7,7 +7,7 @@ const _import = require('@/utils/util.import.' + process.env.NODE_ENV)
 
 // 系统主路由模块，包含登录，异常页，全局页面，其他页面按模块引入
 const constantRoutes = [
-  ...home,
+  home,
   {
     path: '/login',
     name: 'login',
