@@ -109,7 +109,11 @@
 </template>
 
 <script>
-import { queryBaseInfo, modifyBaseInfo } from "@/api/setting/baseInfo"
+import {
+  queryBaseInfo,
+  modifyBaseInfo,
+  checkAgentName
+} from "@/api/setting/baseInfo"
 import { createAuthCode, modifyMobile } from '@/api/sms/sms'
 export default {
   data() {
@@ -127,10 +131,23 @@ export default {
         callback('请输入正确的邮箱')
       }
     }
+    var agentNameRule = async (rule, value, callback) => {
+      if (value.length === 0) {
+        callback('请输入角色名称')
+      } else if (value.length > 30) {
+        callback('角色名称应少于30个字符')
+      } else if (value !== this.form.usedAgentName) { // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
+        try {
+          const res = await checkAgentName({ name: value })
+          callback(res)
+        } catch(e) {}
+      }
+    }
     return {
       form: {
         loginName: "",
         agentId: null,
+        usedAgentName: "",
         agentName: "",
         contact: "",
         mobile: "",
@@ -139,8 +156,7 @@ export default {
       },
       rules: {
         agentName: [
-          { required: true, message: "请输入经销商名称", trigger: "blur" },
-          { max: 50, message: '长度在 50 个字符以内', trigger: 'blur' }
+          { required: true, validator: agentNameRule, trigger: "blur" },
         ],
         contact: [
           { required: true, message: "请输入联系人", trigger: "blur" },
@@ -150,7 +166,8 @@ export default {
           { required: true, message: "请输入联系人手机", trigger: "blur" }
         ],
         email: [
-          { required: true, validator: emailRule, trigger: "blur" }
+          { required: true, validator: emailRule, trigger: "blur" },
+          { max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
         ], 
       },
       dialogRules: {
@@ -181,6 +198,7 @@ export default {
       try {
         let res = await queryBaseInfo()
         this.form = res;
+        this.form.usedAgentName = res.agentName
       } catch (e) {}
     },
     async onSubmit() {

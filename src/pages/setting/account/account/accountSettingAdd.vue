@@ -1,5 +1,5 @@
 <template>
-  <div class="data-box">
+  <div class="data-box" v-permission="'ACCOUNT_SET_ADD'">
     <div class="km-setting-account-add">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
         <el-form-item label="手机 (账号)" prop="loginName">
@@ -53,7 +53,7 @@ export default {
         }
         try {
           const res = await checkMobile(data)
-          callback(res)
+          callback(res ? '此手机已注册，请更改后重试。' : null)
         } catch (e) {}
       } else if (value.length === 0) {
         callback('请输入手机号')
@@ -99,14 +99,18 @@ export default {
           try {
             const res = await insertRole(data)
             this.$message.success('操作成功')
-            this.$router.push({ path: 'accountSetting' })
+            this.$store.dispatch('delTagViews', this.$route).then(() => {
+              this.$router.push({ path: 'accountSetting' })
+            })
           } catch (e) {}
         } else {
         }
       })
     },
     cancel () {
-      this.$router.push({ path: 'accountSetting' })
+      this.$store.dispatch('delTagViews', this.$route).then(() => {
+        this.$router.push({ path: 'accountSetting' })
+      })
     },
     async getRoleList () {
       try {

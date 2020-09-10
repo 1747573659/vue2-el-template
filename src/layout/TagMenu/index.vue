@@ -10,7 +10,7 @@
       :key="item.name"
     >
       {{ item.title }}
-      <i v-if="hasTagIndex(index) && item.name !== 'home'" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>
+      <i v-if="hasTagIndex(index) && item.name !== 'homeIndex'" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>
     </div>
   </section>
 </template>

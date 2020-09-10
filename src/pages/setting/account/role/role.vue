@@ -3,20 +3,20 @@
     <div class="search-box">
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-form-item label="角色信息">
-          <el-input style="width: 240px" clearable placeholder="请输入角色名称" v-model="form.name"></el-input>
+          <el-input style="width: 240px" maxlength="50" clearable placeholder="请输入角色名称" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" class="km-role-search" @click="search" :loading="cxLoading">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" plain icon="el-icon-plus" class=""  @click="add">新增</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'"  @click="add">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="data-box">
       <el-table
         v-loading="tableLoading"
-        max-height="700"
+        :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column
@@ -39,9 +39,13 @@
           label="操作"
           align="right">
           <template slot-scope="scope">
-            <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button @click="edit(scope.row)" type="text" size="small" v-permission="'ACCOUNT_ROLE_EDIT'">编辑</el-button>
             <el-popconfirm
-              title="这是一段内容确定删除吗？"
+              v-permission="'ACCOUNT_ROLE_DEL'"
+              v-if="!scope.row.code"
+              style="margin-left: 12px"
+              iconColor="#FFA033"
+              title="确定删除所选数据吗？"
               placement="top-start"
               @onConfirm="del(scope.row)"
             >
@@ -96,7 +100,7 @@ export default {
     },
     async del(row) {
       if (row.num) {
-        this.$message.error('角色有关联的账号，不能删除')
+        this.$message.error({message:'角色有关联的账号，不能删除', duration: 0})
         return
       }
       let data = {
@@ -105,30 +109,9 @@ export default {
       try {
         const res = await deleteSysRole(data)
         this.getList()
-        this.$message.success('删除成功!')
+        this.$message.success({message:'删除成功!', duration: 0})
       } catch(e) {
       } finally {}
-      // if (row.num) {
-      //   this.$message.error('角色有关联的账号，不能删除')
-      //   return
-      // }
-      // this.$confirm('确定删除所选数据吗？', '', {
-      //   confirmButtonText: '确定',
-      //   cancelButtonText: '取消',
-      //   type: 'warning'
-      // }).then(async () => {
-      //   let data = {
-      //     roleId: row.id
-      //   }
-      //   try {
-      //     const res = await deleteSysRole(data)
-      //     this.getList()
-      //     this.$message.success('删除成功!')
-      //   } catch(e) {
-      //   } finally {}
-      // }).catch(() => {
-      //   this.$message.info('已取消删除')
-      // })
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -155,6 +138,11 @@ export default {
         this.cxLoading = false
         this.tableLoading = false
       }
+    }
+  },
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
   },
   mounted() {

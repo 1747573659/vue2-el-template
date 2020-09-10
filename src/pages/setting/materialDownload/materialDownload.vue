@@ -23,7 +23,7 @@
     <div class="data-box">
       <el-table
         :loading="tableLoading"
-        max-height="700"
+        :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column
@@ -117,6 +117,11 @@ export default {
         this.cxLoading = false
         this.tableLoading = false
       }
+    }
+  },
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
   },
   mounted() {
