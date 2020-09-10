@@ -38,7 +38,7 @@ export default {
       height: 100%;
     }
     &_fill {
-      padding: 48px 0px 16px;
+      padding: 48px 0px 0px;
     }
   }
 }
