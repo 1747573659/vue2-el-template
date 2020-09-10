@@ -115,7 +115,9 @@ export default {
       }
     },
     cancel () {
-      this.$router.push({ name: 'role' })
+      this.$store.dispatch('delTagViews', this.$route).then(() => {
+        this.$router.push({ name: 'role' })
+      })
     },
     async onSubmit() {
       this.$refs.form.validate(async valid => {
@@ -133,7 +135,9 @@ export default {
           try {
             const res = await addRole(data)
             this.$message.success('操作成功')
-            this.$router.push({ name: 'role' })
+            this.$store.dispatch('delTagViews', this.$route).then(() => {
+              this.$router.push({ name: 'role' })
+            })
           } catch (e) {
           } finally {
             this.submitLoading = false

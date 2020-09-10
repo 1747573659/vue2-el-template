@@ -3,7 +3,7 @@
     <div class="search-box">
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-form-item label="账号信息">
-          <el-input style="width: 240px" clearable placeholder="请输入姓名/手机号" v-model="form.userName"></el-input>
+          <el-input style="width: 240px" maxlength="50" clearable placeholder="请输入姓名/手机号" v-model="form.userName"></el-input>
         </el-form-item>
         <el-form-item label="角色">
           <el-select style="width: 240px" clearable v-model="form.roleId" placeholder="全选">
@@ -25,8 +25,9 @@
     </div>
     <div class="data-box">
       <el-table
+        id="table"
+        :max-height="tableMaxHeight"
         v-loading="tableLoading"
-        max-height="700"
         :data="tableData"
         style="width: 100%">
         <el-table-column
@@ -58,8 +59,24 @@
           <template slot-scope="scope">
             <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="status(scope.row)" type="text" size="small">{{statusList[scope.row.status === 0 ? 1 : 0]}}</el-button>
-            <el-button @click="resetPsw(scope.row)" type="text" size="small">重置密码</el-button>
-            <el-button @click="del(scope.row)" type="text" size="small">删除</el-button>
+            <el-popconfirm
+              style="margin-left: 12px"
+              iconColor="#FFA033"
+              title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
+              placement="top-start"
+              @onConfirm="resetPsw(scope.row)"
+            >
+              <el-button slot="reference" type="text" size="small">重置密码</el-button>
+            </el-popconfirm>
+            <el-popconfirm
+              style="margin-left: 12px"
+              iconColor="#FFA033"
+              title="确定删除所选数据吗？"
+              placement="top-start"
+              @onConfirm="del(scope.row)"
+            >
+              <el-button slot="reference" type="text" size="small">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -126,43 +143,27 @@ export default {
         this.getList()
       } catch (e) {}
     },
-    resetPsw (row) {
-      this.$confirm('确定后将对应账号的密码更新为888888', '你确定要重置密码吗？', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        let data = {
-          userId: row.id
-        }
-        try {
-          const res = await resetPassword(data)
-          this.getList()
-          this.$message.success('重置密码成功!')
-        } catch(e) {
-        } finally {}
-      }).catch(() => {
-        this.$message.info('已取消重置')
-      })
+    async resetPsw (row) {
+      let data = {
+        userId: row.id
+      }
+      try {
+        const res = await resetPassword(data)
+        this.getList()
+        this.$message.success('重置密码成功!')
+      } catch(e) {
+      } finally {}
     },
-    del(row) {
-      this.$confirm('确定删除所选数据吗？', '', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        let data = {
-          userId: row.id
-        }
-        try {
-          const res = await deleteUser(data)
-          this.getList()
-          this.$message.success('删除成功!')
-        } catch(e) {
-        } finally {}
-      }).catch(() => {
-        this.$message.info('已取消删除')
-      })
+    async del(row) {
+      let data = {
+        userId: row.id
+      }
+      try {
+        const res = await deleteUser(data)
+        this.getList()
+        this.$message.success('删除成功!')
+      } catch(e) {
+      } finally {}
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -199,6 +200,11 @@ export default {
         const res = await queryRole({})
         this.roleList = res
       } catch (e) {}
+    }
+  },
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
   },
   mounted() {
