@@ -1,5 +1,5 @@
 <template>
-  <div class="data-box" v-permission="'ACCOUNT_SET_ADD'">
+  <div class="data-box" v-permission.page="'ACCOUNT_SET_ADD'">
     <div class="km-setting-account-add">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
         <el-form-item label="手机 (账号)" prop="loginName">
