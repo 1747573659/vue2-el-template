@@ -59,9 +59,9 @@ const setting = {
         },
         {
           path: 'roleAdd',
-          hidden: true,
           name: 'roleAdd',
           code: 'KM_DEFAULT_CODE',
+          hidden: true,
           component: _import('setting/account/role/roleAdd'),
           meta: {
             title: '角色管理/新增',
@@ -80,9 +80,9 @@ const setting = {
         },
         {
           path: 'accountSettingAdd',
-          hidden: true,
           name: 'accountSettingAdd',
           code: 'KM_SETTING_ACCOUNT_SETADD',
+          hidden: true,
           component: _import('setting/account/account/accountSettingAdd'),
           meta: {
             title: '账号设置/新增',

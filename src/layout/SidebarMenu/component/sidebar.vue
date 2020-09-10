@@ -58,7 +58,6 @@ export default {
       return /^(https?:|mailto:|tel:)/.test(path)
     },
     resolvePath(routePath) {
-      // 判断两次？
       if (this.isExternal(routePath)) {
         return routePath
       }

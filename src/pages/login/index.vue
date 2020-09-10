@@ -15,7 +15,7 @@
             <el-input v-model.trim="loginForm.codeKey" placeholder="请输入验证码"></el-input>
           </el-form-item>
         </el-form>
-        <el-button type="primary" :loading="isLoading" @click="handleLogin" class="e-form_btn">登录</el-button>
+        <el-button type="primary" :loading="isLoading" @click.native.prevent="handleLogin" class="e-form_btn">登录</el-button>
       </div>
     </div>
   </section>
@@ -88,14 +88,8 @@ export default {
             .dispatch('login', this.loginForm)
             .then(() => {
               const routes = this.$store.getters.routes
-              const utilRoutePoint = () => {
-                if (routes.length && routes[0] && routes[0].redirect) {
-                  this.$router.push({ path: routes[0].redirect })
-                } else {
-                  console.error('登录跳转成功后第一个路由没有redirect请检查：', routes)
-                }
-              }
-
+              const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
+              // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
               if (this.redirect) {
                 const rotationData = this.redirect.split('/')
                 rotationData.shift()
@@ -104,9 +98,8 @@ export default {
                 } else utilRoutePoint()
               } else utilRoutePoint()
             })
-            .catch((err) => {
-              console.error(err)
-              this.$refs.ruleForm.resetField()
+            .catch(err => {
+              this.loginForm = { userName: '', password: '', codeKey: '' }
               this.captcha()
             })
             .finally(() => {

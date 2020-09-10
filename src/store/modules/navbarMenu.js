@@ -42,7 +42,7 @@ const mutations = {
             query: {}
           }
           if (state.tagViews.some(item => item.path === homePage.path)) return
-          state.tagViews.unshift(homePage)
+          // state.tagViews.unshift(homePage)
           break
         }
       }
