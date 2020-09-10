@@ -4,7 +4,6 @@
     <main class="p-layout_main">
       <SidebarView />
       <section class="p-layout_content">
-        <!-- <Breadcrumb /> -->
         <TagView />
         <div class="p-layout_fill">
           <router-view />
@@ -18,13 +17,11 @@
 import HeaderView from './HeaderMenu'
 import SidebarView from './SidebarMenu'
 import TagView from './TagMenu'
-import Breadcrumb from './Breadcrumb'
 
 export default {
   components: {
     HeaderView,
     SidebarView,
-    // Breadcrumb,
     TagView
   }
 }

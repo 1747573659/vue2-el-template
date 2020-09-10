@@ -7,7 +7,7 @@
         </el-menu-item>
       </router-link>
     </template>
-    <el-submenu :index="resolvePath(routes.path)" v-else>
+    <el-submenu class="e-submenu" :index="resolvePath(routes.path)" v-else>
       <template slot="title">
         <span v-if="routes.meta && routes.meta.title" slot="title">{{ routes.meta.title }}</span>
       </template>
@@ -69,9 +69,26 @@ export default {
     linkClick(routePathObj) {
       if (routePathObj && routePathObj.meta) {
         // 统计左侧菜单栏的点击次数
-        window._hmt.push(['_trackEvent', 'left_menu_click', routePathObj.meta.name || 'unknow', routePathObj.meta.title || 'unknow']);
+        window._hmt.push(['_trackEvent', 'left_menu_click', routePathObj.meta.name || 'unknow', routePathObj.meta.title || 'unknow'])
       }
     }
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.e {
+  &-submenu {
+    /deep/ .el-submenu__title {
+      color: #475166 !important;
+      padding-left: 44px !important;
+    }
+    /deep/ .el-menu-item {
+      padding-left: 58px !important;
+    }
+    /deep/ .el-submenu__icon-arrow{
+      display: none;
+    }
+  }
+}
+</style>

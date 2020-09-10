@@ -82,6 +82,7 @@ const setting = {
           path: 'accountSettingAdd',
           name: 'accountSettingAdd',
           code: 'KM_DEFAULT_CODE',
+          hidden: true,
           component: _import('setting/account/account/accountSettingAdd'),
           meta: {
             title: '账号设置/新增',
