@@ -1,10 +1,8 @@
 import MD5Util from '@/utils/MD5Util'
-import routeTree from '@/utils/routeTree'
-import { setLocal, removeLocal } from '@/utils/token'
+import { routeTree, convertRouter, deepClone } from '@/utils/util'
+import { setLocal, removeLocal } from '@/utils/storage'
 import { login, getMenuInfo, logout } from '@/api/login'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
-import convertRouter from '@/utils/convertRouter'
-import deepClone from '@/utils/deepClone'
 import router from '@/router'
 
 // 返回重定向的路径（都是子项目里面的第一个元素地址，children[0].path）

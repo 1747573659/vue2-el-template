@@ -64,7 +64,7 @@
 
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
-import { downloadForURL } from '@/utils/download'
+import { downloadForURL } from '@/utils/util'
 
 export default {
   data() {

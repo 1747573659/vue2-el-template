@@ -35,7 +35,7 @@
 <script>
 import dropOutView from './component/dropOut'
 import { logout } from '@/api/login'
-import { getLocal } from '@/utils/token'
+import { getLocal } from '@/utils/storage'
 import { mapGetters, mapActions } from 'vuex'
 
 import home from '@/router/modules/home'
