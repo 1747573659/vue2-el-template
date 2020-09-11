@@ -20,7 +20,7 @@
 
 <script>
 import { modifyPwd } from '@/api/login'
-import MD5Util from '@/utils/MD5Util'
+import { MD5Util } from '@/utils'
 
 export default {
   props: {

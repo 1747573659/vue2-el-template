@@ -1,5 +1,4 @@
-import MD5Util from '@/utils/MD5Util'
-import { routeTree, convertRouter, deepClone } from '@/utils/util'
+import { routeTree, convertRouter, MD5Util, deepClone } from '@/utils'
 import { setLocal, removeLocal } from '@/utils/storage'
 import { login, getMenuInfo, logout } from '@/api/login'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
