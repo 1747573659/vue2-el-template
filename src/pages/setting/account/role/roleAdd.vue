@@ -27,7 +27,7 @@
 
 <script>
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
-import { routeTree } from '@/utils/util'
+import { routeTree } from '@/utils'
 export default {
   components: {},
   data() {

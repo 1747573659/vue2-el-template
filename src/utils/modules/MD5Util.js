@@ -3,7 +3,7 @@
  * @Date     2019-04-17
  * @Project  XDDAgent
  */
-function MD5Util (string) {
+export default function MD5Util (string) {
   function md5RotateLeft (lValue, iShiftBits) {
     return (lValue << iShiftBits) | (lValue >>> (32 - iShiftBits))
   }
@@ -208,7 +208,4 @@ function MD5Util (string) {
     d = md5AddUnsigned(d, DD)
   }
   return (md5WordToHex(a) + md5WordToHex(b) + md5WordToHex(c) + md5WordToHex(d)).toLowerCase()
-}
-export default {
-  md5: MD5Util
 }

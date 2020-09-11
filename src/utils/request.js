@@ -1,7 +1,7 @@
 import axios from 'axios'
 import store from '@/store'
 import { getLocal } from '@/utils/storage'
-import errorLog from '@/utils/util.errorLog'
+import { errorLog } from '@/utils'
 import { Message, MessageBox } from 'element-ui'
 
 let config = {
