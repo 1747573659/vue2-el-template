@@ -1,6 +1,6 @@
 import axios from 'axios'
 import store from '@/store'
-import { getLocal } from '@/utils/token'
+import { getLocal } from '@/utils/storage'
 import errorLog from '@/utils/util.errorLog'
 import { Message, MessageBox } from 'element-ui'
 

@@ -1,6 +1,6 @@
 import router from '@/router'
 import store from '@/store'
-import { getLocal } from '@/utils/token'
+import { getLocal } from '@/utils/storage'
 
 router.beforeEach((to, from, next) => {
   // Vuex获取获取权限信息

@@ -9,29 +9,11 @@
           <el-input v-model="form.remark" maxlength="250" style="width:240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
         </el-form-item>
         <el-form-item label="PC后台权限">
-          <tree-custom
-            :data="pcData"
-            show-checkbox
-            ref="treePC"
-            node-key="id"
-            accordion
-            :default-expanded-keys="[-1]"
-            :default-checked-keys="defaultPCList"
-            :props="defaultProps"
-          >
+          <tree-custom :data="pcData" show-checkbox ref="treePC" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultPCList" :props="defaultProps">
           </tree-custom>
         </el-form-item>
         <el-form-item label="E助手权限">
-          <tree-custom
-            :data="appData"
-            show-checkbox
-            ref="treeE"
-            node-key="id"
-            accordion
-            :default-expanded-keys="[-1]"
-            :default-checked-keys="defaultAPPList"
-            :props="defaultProps"
-          >
+          <tree-custom :data="appData" show-checkbox ref="treeE" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultAPPList" :props="defaultProps">
           </tree-custom>
         </el-form-item>
         <el-form-item label="">
@@ -44,35 +26,27 @@
 </template>
 
 <script>
-import {
-  addRole,
-  queryAllPCMenu,
-  queryAllAPPMenu,
-  queryRoleById,
-  checkRoleName
-} from '@/api/setting/account'
-import routeTree from '@/utils/routeTree'
+import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
+import { routeTree } from '@/utils/util'
 export default {
-  components: {
-  },
+  components: {},
   data() {
     var nameRule = async (rule, value, callback) => {
       if (value.length === 0) {
         callback('请输入角色名称')
       } else if (value.length > 50) {
         callback('角色名称应少于50个字符')
-      } else if (value !== this.form.usedName) { // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
+      } else if (value !== this.form.usedName) {
+        // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
         try {
           const res = await checkRoleName({ name: value })
           callback(res)
-        } catch(e) {}
+        } catch (e) {}
       }
     }
     return {
       rules: {
-        name: [
-          { required: true, trigger: "blur", validator: nameRule }
-        ],
+        name: [{ required: true, trigger: 'blur', validator: nameRule }]
       },
       form: {
         id: null,
@@ -94,11 +68,11 @@ export default {
     }
   },
   methods: {
-    getCheckIdList (tree) {
+    getCheckIdList(tree) {
       let checkIdList = []
-      const traverse = function (node) {
+      const traverse = function(node) {
         const childNodes = node.root ? node.root.childNodes : node.childNodes
-        childNodes.forEach((child) => {
+        childNodes.forEach(child => {
           if (child.checked || child.indeterminate) {
             if (child.data.code !== 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW') {
               checkIdList.push(child.key)
@@ -114,7 +88,7 @@ export default {
         return checkIdList.join(',')
       }
     },
-    cancel () {
+    cancel() {
       this.$store.dispatch('delTagViews', this.$route).then(() => {
         this.$router.push({ name: 'role' })
       })
@@ -145,35 +119,39 @@ export default {
         }
       })
     },
-    async queryAllAPPMenu (id) {
+    async queryAllAPPMenu(id) {
       try {
         const res = await queryAllAPPMenu({ roleId: id })
-        this.appData = [{
-          id: -1,
-          name: '访问权限',
-          children: routeTree(res.allMenus) || []
-        }]
+        this.appData = [
+          {
+            id: -1,
+            name: '访问权限',
+            children: routeTree(res.allMenus) || []
+          }
+        ]
         res.roleMenus.forEach(item => {
           this.defaultAPPList.push(item.id)
         })
       } catch (e) {}
     },
-    async queryAllPCMenu (id) {
+    async queryAllPCMenu(id) {
       try {
         const res = await queryAllPCMenu({ roleId: id })
-        this.pcData = [{
-          id: -1,
-          name: '访问权限',
-          children: routeTree(res.allMenus) || []
-        }]
+        this.pcData = [
+          {
+            id: -1,
+            name: '访问权限',
+            children: routeTree(res.allMenus) || []
+          }
+        ]
         res.roleMenus.forEach(item => {
           this.defaultPCList.push(item.id)
         })
       } catch (e) {}
     },
-    async queryRoleById () {
+    async queryRoleById() {
       try {
-        const res = await queryRoleById({ 'id': this.$route.query.id })
+        const res = await queryRoleById({ id: this.$route.query.id })
         this.form.id = res.id
         this.form.name = res.name
         this.form.usedName = res.name
@@ -181,7 +159,7 @@ export default {
         res.menuIdsPC.forEach(item => {
           this.defaultPCList.push(item.id)
         })
-      } catch(e) {}
+      } catch (e) {}
     }
   },
   mounted() {
@@ -190,7 +168,7 @@ export default {
     if (this.$route.query.id) {
       this.queryRoleById()
     }
-  },
+  }
 }
 </script>
 

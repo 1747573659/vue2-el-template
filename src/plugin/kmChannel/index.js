@@ -1,13 +1,18 @@
 // Element
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-import '@/assets/scss/styleForUI/index.scss'
-import '@/assets/scss/styleForUI.scss'
 
+// UI库样式覆盖
+import '@/assets/scss/styleForUI/_index.scss'
+
+// 全局路由守卫
 import '@/router/permission'
 
 // filters
 import * as filters from '@/filters'
+
+// directive
+import permission from '@/directive/permission/index.js'
 
 // 功能插件
 import TreeCustom from '@/components/treeCustom/index.js'
@@ -21,6 +26,8 @@ export default {
     Object.keys(filters).forEach(key => {
       Vue.filter(key, filters[key])
     })
+    // directive
+    Vue.use(permission)
     // Element
     Vue.use(ElementUI)
     // 插件
