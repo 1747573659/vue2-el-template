@@ -16,7 +16,6 @@
     <div class="data-box">
       <el-table
         v-loading="tableLoading"
-        :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column
@@ -105,7 +104,7 @@ export default {
     },
     async del(row) {
       if (row.num) {
-        this.$message.error({message:'角色有关联的账号，不能删除', duration: 0})
+        this.$message.error({message:'角色有关联的账号，不能删除'})
         return
       }
       let data = {
@@ -114,7 +113,7 @@ export default {
       try {
         const res = await deleteSysRole(data)
         this.getList()
-        this.$message.success({message:'删除成功!', duration: 0})
+        this.$message.success({message:'删除成功!'})
       } catch(e) {
       } finally {}
     },

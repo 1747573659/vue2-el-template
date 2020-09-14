@@ -16,10 +16,10 @@
         <el-form-item label="经销商编号" class="km-setting-baseInfo-text">
           <span>{{ form.agentId }}</span>
         </el-form-item>
-        <el-form-item label="经销商名称" prop="agentName">
+        <el-form-item label="经销商名称" prop="name">
           <el-row>
             <el-col :span="21">
-              <el-input v-model="form.agentName"></el-input>
+              <el-input v-model="form.name"></el-input>
             </el-col>
           </el-row>
         </el-form-item>
@@ -131,12 +131,12 @@ export default {
         callback('请输入正确的邮箱')
       }
     }
-    var agentNameRule = async (rule, value, callback) => {
+    var nameRule = async (rule, value, callback) => {
       if (value.length === 0) {
         callback('请输入角色名称')
       } else if (value.length > 30) {
         callback('角色名称应少于30个字符')
-      } else if (value !== this.form.usedAgentName) { // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
+      } else if (value !== this.form.usedName) { // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
         try {
           const res = await checkAgentName({ name: value })
           callback(res)
@@ -147,16 +147,16 @@ export default {
       form: {
         loginName: "",
         agentId: null,
-        usedAgentName: "",
-        agentName: "",
+        usedName: "",
+        name: "",
         contact: "",
         mobile: "",
         email: "",
         createTime: ""
       },
       rules: {
-        agentName: [
-          { required: true, validator: agentNameRule, trigger: "blur" },
+        name: [
+          { required: true, validator: nameRule, trigger: "blur" },
         ],
         contact: [
           { required: true, message: "请输入联系人", trigger: "blur" },
@@ -198,14 +198,14 @@ export default {
       try {
         let res = await queryBaseInfo()
         this.form = res;
-        this.form.usedAgentName = res.agentName
+        this.form.usedName = res.name
       } catch (e) {}
     },
     async onSubmit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
           let data = {
-            agentName: this.form.agentName,
+            name: this.form.name,
             contact: this.form.contact,
             email: this.form.email,
             mobile: this.form.mobile

@@ -32,6 +32,7 @@ export default {
   &-layout {
     &_main {
       padding-top: 56px;
+      height: 100%;
     }
     &_content {
       margin-left: 200px;
@@ -39,7 +40,14 @@ export default {
     }
     &_fill {
       padding: 48px 0px 0px;
+      height: calc(100vh - 104px);
+      div {
+        height: 100%;
+      }
     }
   }
+}
+.app-wrapper {
+  height: 100%;
 }
 </style>
