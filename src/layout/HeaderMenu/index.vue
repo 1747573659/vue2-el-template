@@ -1,7 +1,7 @@
 <template>
   <section class="p-head">
     <router-link to="/home" class="p-head_logo">
-      <img src="../../assets/images/headMenu/logo.png" alt="logo" />
+      <img src="../../assets/images/menu/logo.png" alt="logo" />
     </router-link>
     <!-- 导航 -->
     <div class="p-head_nav">
@@ -17,7 +17,7 @@
     <div class="p-head_action">
       <el-button type="text" class="p-head_oldVersion" @click="handleSwitchVersion">切换旧版</el-button>
       <div class="p-head_avator">
-        <img src="../../assets/images/headMenu/user.png" alt="用户头像" />
+        <img src="../../assets/images/menu/user.png" alt="用户头像" />
       </div>
       <el-dropdown trigger="click" class="p-head_dropdown" @command="handleDropDown">
         <span class="el-dropdown-link">{{ userName }}<i class="el-icon-arrow-down el-icon--right"></i></span>
@@ -62,7 +62,7 @@ export default {
     this.getChildRoutes(this.$route)
   },
   methods: {
-    ...mapActions(['setSidebarROUTES', 'setBasePath']),
+    ...mapActions(['setAsideROUTES', 'setBasePath']),
     handleDropDown(command) {
       if (command === 1) this.dropStatus = true
       else this.handleLoginOut()
@@ -88,7 +88,7 @@ export default {
         return JSON.stringify(item).includes(route.name)
       })
       if (this.routes[index].children && this.routes[index].children.length) {
-        this.setSidebarROUTES(this.routes[index].children)
+        this.setAsideROUTES(this.routes[index].children)
       }
     },
     getActiveRoute(path) {

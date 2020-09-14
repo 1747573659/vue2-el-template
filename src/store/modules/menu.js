@@ -1,22 +1,22 @@
 import store from '../index'
 
 const state = {
-  sidebarRoutes: [], // 路由权限
+  asideRoutes: [], // 路由权限
   basePath: '', // 基础路由
   tagViews: [], // 活跃tag导航
   cacheViews: [] // keep-alive 缓存页面
 }
 
 const getters = {
-  sidebarRoutes: state => state.sidebarRoutes,
+  asideRoutes: state => state.asideRoutes,
   basePath: state => state.basePath,
   tagViews: state => state.tagViews,
   cacheViews: state => state.cacheViews
 }
 
 const mutations = {
-  SET_SIDEBAR_ROUTES: (state, routes) => {
-    state.sidebarRoutes = [].concat(routes)
+  SET_ASIDE_ROUTES: (state, routes) => {
+    state.asideRoutes = [].concat(routes)
   },
   SET_BASE_PATH: (state, basePath) => {
     state.basePath = basePath
@@ -73,8 +73,8 @@ const mutations = {
 }
 
 const actions = {
-  setSidebarROUTES({ commit }, routes) {
-    commit('SET_SIDEBAR_ROUTES', routes)
+  setAsideROUTES({ commit }, routes) {
+    commit('SET_ASIDE_ROUTES', routes)
   },
   setBasePath({ commit }, basePath) {
     commit('SET_BASE_PATH', basePath)

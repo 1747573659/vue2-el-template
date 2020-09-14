@@ -43,6 +43,16 @@ channelV1.*.*
   for version develop
 
 ## 文件结构
+### api
+接口请求文件（按模块构建）
+
+### assets
+系统公共文件
+
+### components
+系统公共组件
+- kmContainer 系统统一布局文件
+- index 导入Vue.component
 
 ### scss 结构
 - _reset.scss 全局重置样式，消除不同浏览器html标签差异
@@ -61,14 +71,17 @@ channelV1.*.*
 
 ### router
 系统路由配置包含路由守卫 `permission`、本地路由字典 `routes`、VueRouter实例化配置
+- **_import** 提取成方法
 
 ### store
+- 命名空间暂未添加
 
 ### utils
 存放系统工具函数
+- modules 工具函数构建完成
 
 ### 待完成工作 (优化)
-- utils整理
+- 接口请求拒绝报错捕获
 - 验证文件整理
 - 全局不能输空格指令
 
@@ -81,6 +94,7 @@ channelV1.*.*
 - axios 待重新优化，补充element异常处理与二次封装
 - login 事件，验证码待补充
 - router 拦截器待补充完整
+- utils整理
 
 
 

@@ -1,9 +1,11 @@
 // Element
 import ElementUI from 'element-ui'
 import 'element-ui/lib/theme-chalk/index.css'
-
 // UI库样式覆盖
 import '@/assets/scss/styleForUI/_index.scss'
+
+// 组件
+import '@/components'
 
 // 全局路由守卫
 import '@/router/permission'
@@ -15,7 +17,6 @@ import * as filters from '@/filters'
 import permission from '@/directive/permission/index.js'
 
 // 功能插件
-import TreeCustom from '@/components/treeCustom/index.js'
 
 export default {
   async install(Vue) {
@@ -31,6 +32,5 @@ export default {
     // Element
     Vue.use(ElementUI)
     // 插件
-    Vue.component('TreeCustom', TreeCustom)
   }
 }
