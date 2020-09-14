@@ -29,7 +29,12 @@
         </el-table-column>
         <el-table-column
           prop="num"
-          label="关联账号数量">
+          label="关联账号数量"
+          header-align="left"
+          align="right">
+          <template slot-scope="scope">
+            <div class="table-num">{{scope.row.num}}</div>
+          </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
@@ -154,5 +159,8 @@ export default {
 <style lang="scss" scoped>
 .km-role-search {
   padding: 8px 22px;
+}
+.table-num {
+  width: 82px;
 }
 </style>
