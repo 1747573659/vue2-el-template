@@ -92,9 +92,14 @@ export default {
       }
     },
     getActiveRoute(path) {
-      const hasPath = this.$route.path.includes(path) || this.$route.name === 'homeIndex'
-      this.setBasePath('/customer')
-      return hasPath
+      if (this.$route.name === 'homeIndex') {
+        this.setBasePath(this.routes[0].path)
+        return this.routes[0].path === path
+      }
+      if (this.$route.path.indexOf(path) >= 0) {
+        this.setBasePath(path)
+      }
+      return this.$route.path.indexOf(path) >= 0
     }
   }
 }
