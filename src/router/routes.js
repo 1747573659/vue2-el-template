@@ -25,8 +25,8 @@ const constantRoutes = [
 ]
 
 const asyncRouterMap = [
-  setting,
-  customer
+  customer,
+  setting
 ]
 
 export { constantRoutes, asyncRouterMap }
