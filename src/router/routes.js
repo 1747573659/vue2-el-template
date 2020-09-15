@@ -3,6 +3,7 @@ import { _import } from '@/utils'
 // 路由模块数据
 import home from './modules/home'
 import setting from './modules/setting'
+import customer from './modules/customer'
 
 // 系统主路由模块，包含登录，异常页，全局页面，其他页面按模块引入
 const constantRoutes = [
@@ -23,6 +24,9 @@ const constantRoutes = [
   }
 ]
 
-const asyncRouterMap = [setting]
+const asyncRouterMap = [
+  setting,
+  customer
+]
 
 export { constantRoutes, asyncRouterMap }
