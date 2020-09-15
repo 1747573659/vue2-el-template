@@ -6,11 +6,11 @@
     <!-- 导航 -->
     <div class="p-head_nav">
       <ul>
-        <template v-for="item in routes">
-          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
+        <div v-for="item in routes" :key="item.name">
+          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" v-if="!item.hidden">
             <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
           </li>
-        </template>
+        </div>
       </ul>
     </div>
     <!-- head操作 -->
@@ -93,7 +93,7 @@ export default {
     },
     getActiveRoute(path) {
       const hasPath = this.$route.path.includes(path) || this.$route.name === 'homeIndex'
-      this.setBasePath(path)
+      this.setBasePath('/customer')
       return hasPath
     }
   }
