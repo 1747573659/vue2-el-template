@@ -10,7 +10,7 @@
           <el-form-item prop="password">
             <el-input clearable type="password" v-model.trim="loginForm.password" placeholder="请输入密码"></el-input>
           </el-form-item>
-          <el-form-item prop="codeKey">
+          <el-form-item>
             <img @click="captcha" :src="codeKeyUrl" alt="验证码" class="e-form_code" />
             <el-input v-model.trim="loginForm.codeKey" placeholder="请输入验证码"></el-input>
           </el-form-item>
@@ -26,22 +26,6 @@ import { captcha, validCaptcha } from '@/api/login'
 
 export default {
   data() {
-    var codeKeyPass = async (rule, value, callback) => {
-      if (value.length === 4) {
-        let data = {
-          codeKey: this.usedCoedKey,
-          codeVal: this.loginForm.codeKey
-        }
-        try {
-          let res = await validCaptcha(data)
-          callback()
-        } catch (e) {
-          callback('验证码错误,请重新输入')
-        }
-      } else {
-        callback('请输入验证码')
-      }
-    }
     var userNamePass = (rule, value, callback) => {
       if (/^1[3456789]\d{9}$/.test(value)) {
         callback()
@@ -60,8 +44,8 @@ export default {
       },
       loginRules: {
         userName: [{ required: true, trigger: 'blur', validator: userNamePass }],
-        password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
-        codeKey: [{ required: true, trigger: 'blur', validator: codeKeyPass }]
+        password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
+        // codeKey: [{ required: true, trigger: 'blur', validator: codeKeyPass }]
       },
       redirect: '',
       query: ''
@@ -83,30 +67,41 @@ export default {
     handleLogin() {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
-          this.isLoading = true
-          this.$store
-            .dispatch('login', this.loginForm)
+          this.validCaptcha()
             .then(() => {
-              const routes = this.$store.getters.routes
-              const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
-              // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
-              if (this.redirect) {
-                const rotationData = this.redirect.split('/')
-                rotationData.shift()
-                if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
-                  this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
-                } else utilRoutePoint()
-              } else utilRoutePoint()
+              this.isLoading = true
+              this.$store
+                .dispatch('login', this.loginForm)
+                .then(() => {
+                  const routes = this.$store.getters.routes
+                  const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
+                  // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
+                  if (this.redirect) {
+                    const rotationData = this.redirect.split('/')
+                    rotationData.shift()
+                    if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
+                      this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
+                    } else utilRoutePoint()
+                  } else utilRoutePoint()
+                })
+                .catch(err => {
+                  this.loginForm = { userName: '', password: '', codeKey: '' }
+                  this.captcha()
+                })
+                .finally(() => {
+                  this.isLoading = false
+                })
             })
-            .catch(err => {
-              this.loginForm = { userName: '', password: '', codeKey: '' }
-              this.captcha()
-            })
-            .finally(() => {
-              this.isLoading = false
-            })
+            .catch(() => {})
         }
       })
+    },
+    async validCaptcha() {
+      const data = {
+        codeKey: this.usedCoedKey,
+        codeVal: this.loginForm.codeKey
+      }
+      let res = await validCaptcha(data)
     },
     async captcha() {
       const res = await captcha()

@@ -1,8 +1,8 @@
 import axios from 'axios'
 import store from '@/store'
 import { getLocal } from '@/utils/storage'
-import { errorLog } from '@/utils'
 import { Message, MessageBox } from 'element-ui'
+import { errorLog } from '@/utils'
 
 let config = {
   timeout: 5 * 1000, // request timeout 60s
@@ -45,7 +45,6 @@ service.interceptors.response.use(
         showCancelButton: false,
         closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
         beforeClose: action => {
-          // done()
           if (action === 'cancel') {
             location.reload()
           } else {
@@ -60,9 +59,11 @@ service.interceptors.response.use(
       })
       return Promise.reject(res.data || res.msg)
     } else {
-      const hasErrorCode = Object.keys(errorLog).includes(String(code))
+      // 异常状态码优化，暂时直接取后台返回msg信息
+      // const hasErrorCode = Object.keys(errorLog).includes(String(code))
       Message({
-        message: hasErrorCode ? errorLog[String(code)] : res.data || res.msg,
+        // message: hasErrorCode ? errorLog[String(code)] : res.data || res.msg,
+        message: res.data || res.msg,
         type: 'error',
         duration: 3 * 1000
       })
@@ -70,11 +71,19 @@ service.interceptors.response.use(
     }
   },
   error => {
-    Message({
-      message: error.response.data.msg || '网络出错~~',
-      type: 'error',
-      duration: 5 * 1000
-    })
+    if (error.message.includes('timeout of')) {
+      Message({
+        message: '系统繁忙,请稍后再试~~',
+        type: 'error',
+        duration: 3 * 1000
+      })
+    } else {
+      Message({
+        message: error.msg || (error.response && error.response.data.msg) || '网络繁忙,请稍后再试~~',
+        type: 'error',
+        duration: 5 * 1000
+      })
+    }
     return Promise.reject(error && (error.data || error.msg))
   }
 )
