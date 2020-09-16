@@ -5,14 +5,14 @@
         <header class="p-loginForm_head">欢迎登录渠道管理系统</header>
         <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="p-loginForm_con">
           <el-form-item prop="userName">
-            <el-input clearable v-model.trim="loginForm.userName" placeholder="请输入用户名"></el-input>
+            <el-input clearable v-model.trim="loginForm.userName" @keyup.enter.native="handleLogin" placeholder="请输入用户名"></el-input>
           </el-form-item>
           <el-form-item prop="password">
-            <el-input clearable type="password" v-model.trim="loginForm.password" placeholder="请输入密码"></el-input>
+            <el-input clearable type="password" v-model.trim="loginForm.password" @keyup.enter.native="handleLogin" placeholder="请输入密码"></el-input>
           </el-form-item>
           <el-form-item>
             <img @click="captcha" :src="codeKeyUrl" alt="验证码" class="e-form_code" />
-            <el-input v-model.trim="loginForm.codeKey" placeholder="请输入验证码"></el-input>
+            <el-input v-model.trim="loginForm.codeKey" placeholder="请输入验证码" @keyup.enter.native="handleLogin"></el-input>
           </el-form-item>
         </el-form>
         <el-button type="primary" :loading="isLoading" @click.native.prevent="handleLogin" class="e-form_btn">登录</el-button>
@@ -84,14 +84,16 @@ export default {
                   } else utilRoutePoint()
                 })
                 .catch(err => {
-                  this.loginForm = { userName: '', password: '', codeKey: '' }
+                  this.loginForm.codeKey = ''
                   this.captcha()
                 })
                 .finally(() => {
                   this.isLoading = false
                 })
             })
-            .catch(() => {})
+            .catch(() => {
+              this.captcha()
+            })
         }
       })
     },
