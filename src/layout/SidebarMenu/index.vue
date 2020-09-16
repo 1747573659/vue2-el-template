@@ -34,9 +34,10 @@ export default {
       background-color: #fff;
       box-shadow: 2px 0px 4px 0px rgba(0, 0, 0, 0.08);
     }
-    // &_main {
-    // padding-top: 68px;
-    // }
+    &_main {
+      margin-right: -1px;
+      padding-top: 12px;
+    }
   }
 }
 </style>
