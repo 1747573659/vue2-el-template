@@ -71,17 +71,17 @@
       width="507px">
       <el-form ref="form" size="small" label-suffix=":" style="width: 300px" label-width="120px" :model="subShopForm">
         <el-form-item label="微信子商户号">
-          <el-row>
-          <el-col :span="18">
-            {{subShopForm.name}}
-          </el-col>
-          <el-col :span="6">
-            <el-button style="float:right" @click="copy(subShopForm.name)" type="text" size="small">复制</el-button>
-          </el-col>
-        </el-row>
+          <el-row class="shop-dialog-row">
+            <el-col :span="18">
+              {{subShopForm.name}}
+            </el-col>
+            <el-col :span="6">
+              <el-button style="float:right" @click="copy(subShopForm.name)" type="text" size="small">复制</el-button>
+            </el-col>
+          </el-row>
         </el-form-item>
         <el-form-item label="支付宝子商户号">
-          <el-row>
+          <el-row class="shop-dialog-row">
             <el-col :span="18">
               {{subShopForm.url}}
             </el-col>
@@ -91,7 +91,7 @@
           </el-row>
         </el-form-item>
         <el-form-item label="银总联商户号">
-          <el-row>
+          <el-row class="shop-dialog-row">
             <el-col :span="18">
               {{subShopForm.creatorName}}
             </el-col>
@@ -101,7 +101,7 @@
           </el-row>
         </el-form-item>
         <el-form-item label="银联子商户号">
-          <el-row>
+          <el-row class="shop-dialog-row">
             <el-col :span="18">
               {{subShopForm.completeUrl}}
             </el-col>
@@ -121,7 +121,6 @@
 
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
-
 export default {
   data() {
     return {
@@ -203,6 +202,7 @@ export default {
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
+      line-height: 22px;
       color: #3D4966;
     }
     .author-dialog-text:first-child {
@@ -223,5 +223,10 @@ export default {
     display: flex;
     justify-content: center;
   }
+}
+.shop-dialog-row {
+  display: flex;
+  align-items: center;
+  line-height: 32px;
 }
 </style>

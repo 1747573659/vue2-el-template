@@ -101,17 +101,17 @@
           align="right"
           width="240px">
           <template slot-scope="scope">
-            <el-button @click="downLoad(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="downLoad(scope.row)" type="text" size="small">复制</el-button>
-            <el-button @click="downLoad(scope.row)" type="text" size="small">停用</el-button>
-            <el-dropdown style="margin-left: 12px" @command="handleCommand">
+            <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
+            <el-button @click="changeStatus(scope.row)" type="text" size="small">停用</el-button>
+            <el-dropdown style="margin-left: 12px">
               <span class="el-dropdown-link">
                 ···
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item command="toDetail">进件详情</el-dropdown-item>
-                <el-dropdown-item>认证状态</el-dropdown-item>
-                <el-dropdown-item>商户扫码认证</el-dropdown-item>
+                <el-dropdown-item @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
+                <el-dropdown-item @click.native="shopQRCode(scope.row)">认证状态</el-dropdown-item>
+                <el-dropdown-item @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -129,12 +129,24 @@
         </el-pagination>
       </div>
     </div>
+    <el-dialog
+      title="商户微信实名认证指引流程"
+      :visible.sync="certificationVisible"
+      width="507px"
+      class="certification-dialog">
+      <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">郭鼎(手机尾号9902)</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
+      <img :src="imgSrc" class="certification-dialog-img" alt="qrcode">
+      <div class="certification-dialog-text">2. 完成信息补充后，引导公司法人完成法人的实名认证（或对公账户验证）</div>
+      <div class="certification-dialog-text">3. 完成1-2两步操作之后，即完成了微信关于系统风控，用户资金安全的监管要求，开户成功！</div>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" style="padding: 8px 22px" @click="certificationVisible = false">关闭</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
-import { downloadForURL } from '@/utils'
 
 export default {
   data() {
@@ -149,21 +161,28 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
+      certificationVisible: false,
       cxLoading: false,
-      tableLoading: false
+      tableLoading: false,
+      imgSrc: require('@/assets/images/abnormal/404.png')
     }
   },
   methods: {
     add() {
       this.$router.push({ name: 'xftArchiveAdd' })
     },
+    edit(row) {
+      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'edit' }})
+    },
+    copy(row) {
+      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'copy' }})
+    },
     search() {
       this.cxLoading = true
       this.currentPage = 1
       this.getList()
     },
-    downLoad(row) {
-      downloadForURL(row.completeUrl)
+    changeStatus(row) {
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -177,8 +196,8 @@ export default {
     statusClick(row) {
       this.$alert(row.name)
     },
-    handleCommand(command) {
-      this.toDetail()
+    shopQRCode (row) {
+      this.certificationVisible = true
     },
     toDetail (row) {
       this.$router.push({ name: 'xftArchiveDetail' })
@@ -215,6 +234,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.certification-dialog {
+  /deep/.el-dialog__body {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    .certification-dialog-text {
+      font-size: 14px;
+      font-family: PingFangSC-Regular, PingFang SC;
+      font-weight: 400;
+      color: #3D4966;
+      margin-bottom: 12px;
+      line-height: 22px;
+    }
+    .certification-dialog-text:last-child {
+      margin-bottom: 0px;
+    }
+    .certification-dialog-img {
+      margin: 18px 30px 30px;
+      width: 152px;
+      height: 152px;
+    }
+  }
+}
 .km-archive-search {
   padding: 8px 13px;
 }
