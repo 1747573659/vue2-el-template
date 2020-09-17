@@ -86,7 +86,7 @@ export default {
     /deep/ .el-menu-item {
       padding-left: 58px !important;
     }
-    /deep/ .el-submenu__icon-arrow{
+    /deep/ .el-submenu__icon-arrow {
       display: none;
     }
   }
