@@ -5,12 +5,12 @@
     </router-link>
     <!-- 导航 -->
     <div class="p-head_nav">
-      <ul>
-        <div v-for="item in routes" :key="item.name">
-          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" v-if="!item.hidden">
+      <ul v-if="routeMenus.length > 0">
+        <template v-for="item in routes">
+          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
             <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
           </li>
-        </div>
+        </template>
       </ul>
     </div>
     <!-- head操作 -->
@@ -47,7 +47,8 @@ export default {
   data() {
     return {
       dropStatus: false,
-      userName: JSON.parse(getLocal('userInfo')).userName
+      userName: JSON.parse(getLocal('userInfo')).userName,
+      routeMenus: []
     }
   },
   computed: {
@@ -58,7 +59,8 @@ export default {
       this.getChildRoutes(this.$route)
     }
   },
-  created() {
+  mounted() {
+    this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
   },
   methods: {
@@ -92,6 +94,7 @@ export default {
       }
     },
     getActiveRoute(path) {
+      console.info(path)
       if (this.$route.name === 'homeIndex') {
         this.setBasePath(this.routes[0].path)
         return this.routes[0].path === path
