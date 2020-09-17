@@ -15,7 +15,7 @@
     </div>
     <div class="title">基本信息</div>
     <div class="base-info">
-      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="100px">
+      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
         <el-row>
           <el-col :span="12" class="archive-form-item">
             <el-form-item label="商户" prop="status">
@@ -36,7 +36,111 @@
         </el-row>
         <el-row>
           <el-col :span="12" class="archive-form-item">
-            <el-form-item label="商户" prop="status">
+            <el-form-item label="商户类型" prop="status">
+              <el-radio-group v-model="form.merchantType">
+                <el-radio :label="3">持证商户</el-radio>
+                <el-radio :label="6">非持证商户</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="开通超级码" prop="status">
+              <el-radio-group v-model="form.merchantType">
+                <el-radio :label="3">是</el-radio>
+                <el-radio :label="6">否</el-radio>
+              </el-radio-group>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="公司名称" prop="status">
+              <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="商户简称" prop="status">
+              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="地区" prop="status">
+              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="详细地址" prop="status">
+              <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="客服电话" prop="status">
+              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="负责人" prop="status">
+              <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="负责人证件号码" prop="status">
+              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="负责人电话" prop="status">
+              <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="邮箱" prop="status">
+              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="经营类型" prop="status">
+              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+                <el-option
+                  v-for="item in statusList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="经营类目" prop="status">
+              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+                <el-option
+                  v-for="item in statusList"
+                  :key="item.id"
+                  :label="item.name"
+                  :value="item.id">
+                </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="门店门头照" prop="status">
+              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="企业信息公示图" prop="status">
               <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
                 <el-option
                   v-for="item in statusList"
@@ -66,7 +170,7 @@ export default {
       shopList: [],
       selectPageNo: 1,
       isMaxPage: false,
-      searchString: ''
+      searchString: '',
     }
   },
   methods: {
@@ -167,7 +271,7 @@ export default {
   .base-info {
     padding-top: 24px;
     .archive-form-item {
-      text-align: center;
+      padding-left: 10%;
     }
     /deep/.el-form-item {
       margin-bottom: 24px;
