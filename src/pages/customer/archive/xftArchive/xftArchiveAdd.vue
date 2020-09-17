@@ -13,9 +13,9 @@
         </el-col>
       </el-row>
     </div>
-    <div class="title">基本信息</div>
-    <div class="base-info">
-      <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
+    <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
+      <div class="title">基本信息</div>
+      <div class="form-info">
         <el-row>
           <el-col :span="12" class="archive-form-item">
             <el-form-item label="商户" prop="status">
@@ -67,7 +67,7 @@
         <el-row>
           <el-col :span="12" class="archive-form-item">
             <el-form-item label="地区" prop="status">
-              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <area-select></area-select>
             </el-form-item>
           </el-col>
           <el-col :span="12" class="archive-form-item">
@@ -153,18 +153,34 @@
             </el-form-item>
           </el-col>
         </el-row>
-      </el-form>
-    </div>
+      </div>
+      <div class="title">营业执照</div>
+      <div class="form-info">
+        <el-row>
+          <el-col :span="12" class="archive-form-item">
+            <el-form-item label="营业执照" prop="status">
+              <upload-pic
+                alt="营业执照"
+                :exampleImg="exampleImg"
+                @click="imgClick">
+              </upload-pic>
+            </el-form-item>
+          </el-col>
+        </el-row>
+      </div>
+    </el-form>
   </div>
 </template>
 
 <script>
 import selectPage from '@/components/selectPage'
 import uploadPic from '../components/uploadPic'
+import areaSelect from '@/components/areaSelect'
 export default {
   components: {
     selectPage,
-    uploadPic
+    uploadPic,
+    areaSelect
   },
   data() {
     return {
@@ -231,6 +247,7 @@ export default {
     shopChange(value) {
     },
     imgClick() {
+      if (this.formDisabled)
       alert('hahahah')
     }
   }
@@ -276,7 +293,7 @@ export default {
     line-height: 48px;
     border-bottom: 1px solid #E6E9F0;
   }
-  .base-info {
+  .form-info {
     padding-top: 24px;
     .archive-form-item {
       padding-left: 10%;
