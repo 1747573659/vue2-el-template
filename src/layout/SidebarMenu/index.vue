@@ -2,7 +2,7 @@
   <section class="p-sidebar_con">
     <div class="p-sidebar_main">
       <el-scrollbar>
-        <el-menu :default-active="$route.path" active-text-color="#3377FF" text-color="#3D4966">
+        <el-menu :default-active="$route.path" :default-openeds="defaultOptions" active-text-color="#3377FF" text-color="#3D4966">
           <sidebar-nav v-for="route in asideRoutes" :key="route.name" :routes="route" :basePath="basePath + '/' + route.path"></sidebar-nav>
         </el-menu>
       </el-scrollbar>
@@ -13,13 +13,19 @@
 <script>
 import { mapGetters } from 'vuex'
 import sidebarNav from './component/sidebar'
+import path from 'path'
 
 export default {
   components: {
     sidebarNav
   },
   computed: {
-    ...mapGetters(['asideRoutes', 'basePath'])
+    ...mapGetters(['asideRoutes', 'basePath']),
+    defaultOptions() {
+      return this.asideRoutes.map(item => {
+        if (!item.hidden) return path.resolve(this.basePath, item.path, item.path)
+      })
+    }
   }
 }
 </script>
