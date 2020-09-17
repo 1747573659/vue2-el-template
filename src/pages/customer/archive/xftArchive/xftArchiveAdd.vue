@@ -15,7 +15,7 @@
     </div>
     <div class="title">基本信息</div>
     <div class="base-info">
-      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
+      <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
         <el-row>
           <el-col :span="12" class="archive-form-item">
             <el-form-item label="商户" prop="status">
@@ -136,19 +136,20 @@
         <el-row>
           <el-col :span="12" class="archive-form-item">
             <el-form-item label="门店门头照" prop="status">
-              <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <upload-pic
+                alt="门店门头照"
+                :exampleImg="exampleImg"
+                @click="imgClick">
+              </upload-pic>
             </el-form-item>
           </el-col>
           <el-col :span="12" class="archive-form-item">
             <el-form-item label="企业信息公示图" prop="status">
-              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                <el-option
-                  v-for="item in statusList"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
-              </el-select>
+              <upload-pic
+                alt="企业信息公示图"
+                :exampleImg="exampleImg"
+                @click="imgClick">
+              </upload-pic>
             </el-form-item>
           </el-col>
         </el-row>
@@ -159,9 +160,11 @@
 
 <script>
 import selectPage from '@/components/selectPage'
+import uploadPic from '../components/uploadPic'
 export default {
   components: {
-    selectPage
+    selectPage,
+    uploadPic
   },
   data() {
     return {
@@ -169,8 +172,10 @@ export default {
       statusList: [],
       shopList: [],
       selectPageNo: 1,
+      formDisabled: false,
       isMaxPage: false,
       searchString: '',
+      exampleImg: require('@/assets/images/home/home.png')
     }
   },
   methods: {
@@ -225,6 +230,9 @@ export default {
     },
     shopChange(value) {
     },
+    imgClick() {
+      alert('hahahah')
+    }
   }
 }
 </script>
