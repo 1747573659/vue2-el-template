@@ -90,6 +90,7 @@ const actions = {
         })
         .catch(error => {
           commit('SET_ROUTES', [...constantRoutes])
+          router.replace({ name: 'login' })
           reject(error)
         })
     })
