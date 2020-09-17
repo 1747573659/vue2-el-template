@@ -72,8 +72,8 @@ export default {
           try {
             this.isLoading = true
             await modifyPwd({
-              newPassword: MD5Util.md5(this.passwordInfo.newPass),
-              oldPassword: MD5Util.md5(this.passwordInfo.oldPass)
+              newPassword: this.passwordInfo.newPass,
+              oldPassword: this.passwordInfo.oldPass
             })
             this.handleDiaClose()
             this.$message({ message: '修改成功', type: 'success' })
