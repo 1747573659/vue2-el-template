@@ -1,57 +1,46 @@
 <template>
   <div>
-    <el-cascader style="width: 240px" :props="props"></el-cascader>
+    <el-cascader style="width: 240px" :props="props" clearable @change="change"></el-cascader>
   </div>
 </template>
 
 <script>
-let id = 0;
+import { queryProvinceList, queryCityList } from '@/api/area'
 export default {
   data() {
     return {
-      // props: {
-      //   lazy: true,
-      //   lazyLoad (node, resolve) {
-      //     console.log(node)
-      //     console.log(resolve)
-      //     const { level } = node;
-      //     setTimeout(() => {
-      //       const nodes = Array.from({ length: level + 1 })
-      //         .map(item => ({
-      //           value: ++id,
-      //           label: `选项${id}`,
-      //           leaf: level >= 2
-      //         }));
-      //       // 通过调用resolve将子节点数据返回，通知组件数据加载完成
-      //       resolve(nodes);
-      //     }, 1000);
-      //   }
-      // }
-      provinceList: [],
       props: {
         lazy: true,
-        lazyLoad (node, resolve) {
-          console.log(node, resolve)
-          const nodes = this.provinceList.map(item => ({
-            value:  item.code,
-            label: item.fullName,
-            leaf: 1
-          }))
+        lazyLoad: async function (node, resolve) {
+          const { level } = node
+          console.log(node)
+          let nodes = []
+          let res
+          // level为0时去请求省的列表，否则根据node.value去请求市和区，leaf用来判断是否有子节点
+          if (level === 0) {
+            res = await queryProvinceList()
+          } else {
+            res = await queryCityList({code: node.value})
+          }
+          res.forEach(item => {
+            nodes.push({
+              value: item.code,
+              label: item.name,
+              leaf: level >= 2
+            })
+          })
           resolve(nodes)
         }
-      }
+      },
+      provinceList: []
     }
   },
   methods: {
-    getProvinceList () {
-      import('@/api/area').then(async module => {
-        const res = await module.queryProvinceList()
-        this.provinceList = res
-      })
+    change(value) {
+      this.$emit('change', value)
     }
   },
-  created() {
-    this.getProvinceList()
+  mounted() {
   }
 }
 </script>

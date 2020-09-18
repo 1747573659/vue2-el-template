@@ -109,9 +109,9 @@
                 ···
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
-                <el-dropdown-item @click.native="shopQRCode(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" @click.native="shopQRCode(scope.row)">认证状态</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>

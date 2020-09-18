@@ -67,7 +67,7 @@
         <el-row>
           <el-col :span="12" class="archive-form-item">
             <el-form-item label="地区" prop="status">
-              <area-select></area-select>
+              <area-select @change="areaChange"></area-select>
             </el-form-item>
           </el-col>
           <el-col :span="12" class="archive-form-item">
@@ -249,6 +249,9 @@ export default {
     imgClick() {
       if (this.formDisabled)
       alert('hahahah')
+    },
+    areaChange(value) {
+      console.log(value)
     }
   }
 }

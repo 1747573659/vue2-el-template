@@ -2,9 +2,9 @@ import request from '@/utils/request'
 
 const urlLinks = {
   // 分页角色列表
-  queryPage: '/employeeRole/queryPage',
+  queryPage: '/role/queryPage',
   // 删除角色
-  deleteSysRole: '/employeeRole/deleteSysRole',
+  deleteSysRole: '/role/deleteSysRole',
   // 查询所有账号
   queryUserPage: '/employeeUser/queryUserPage',
   // 查询所有角色
@@ -22,15 +22,15 @@ const urlLinks = {
   // 通过ID查询指定账号
   queryUserById: '/employeeUser/queryUserById',
   // 新增/编辑角色
-  addRole: '/employeeRole/addRole',
+  addRole: '/role/addRole',
   // 查看指定角色PC全部权限
-  queryRoleById: '/employeeRole/queryRoleById',
+  queryRoleById: '/role/queryRoleById',
   // 查看指定角色APP权限/全部权限)
-  queryAllAPPMenu: '/employeeRole/queryAllAPPMenu',
+  queryAllAPPMenu: '/role/queryAllAPPMenu',
   // 查看指定角色PC权限/全部权限
-  queryAllPCMenu: '/employeeRole/queryAllPCMenu',
+  queryAllPCMenu: '/role/queryAllPCMenu',
   // 查看指定角色PC权限/全部权限
-  checkRoleName: '/employeeRole/checkRoleName'
+  checkRoleName: '/role/checkRoleName'
 }
 // 校验角色重名
 export function checkRoleName(data) {
