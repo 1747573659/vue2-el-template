@@ -27,12 +27,16 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="name"
           label="资料名称" width="350px">
+          <template slot-scope="scope">
+            <span :title="scope.row.name">{{ scope.row.name }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="remark"
           label="资料描述" width="350px">
+          <template slot-scope="scope">
+            <span :title="scope.row.remark">{{ scope.row.remark }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
