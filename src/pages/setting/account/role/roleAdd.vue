@@ -137,12 +137,50 @@ export default {
     async queryAllPCMenu(id) {
       try {
         const res = await queryAllPCMenu({ roleId: id })
-        console.log(routeTree(res.allMenus))
+        let newRouteTree = routeTree(res.allMenus)
+        newRouteTree.forEach(itemOne => {
+          if (itemOne && itemOne.children) {
+            itemOne.children.forEach(itemTwo => {
+              if (itemTwo && itemTwo.children) {
+                itemTwo.children.forEach(itemThree => {
+                  if (itemThree && itemThree.children) {
+                    itemThree.children.push({
+                      'id': '',
+                      'name': '查看',
+                      'code': 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
+                      'iconCls': null,
+                      'url': null,
+                      'lever': 4,
+                      'parentId': itemThree.id,
+                      'remark': null,
+                      'creatorId': null,
+                      'createTime': null,
+                      'modifierId': null,
+                      'modifyTime': null,
+                      'type': 4,
+                      'parentName': null,
+                      'children': [
+                      ],
+                      'disabled': false,
+                      'checked': false,
+                      'viewPath': null,
+                      'sort': null,
+                      'domainType': null,
+                      'appId': null,
+                      'menuType': 2
+                    })
+                  }
+                })
+              }
+            })
+          }
+        })
+        console.log(newRouteTree)
         this.pcData = [
           {
             id: -1,
             name: '访问权限',
-            children: routeTree(res.allMenus) || []
+            children: newRouteTree || []
           }
         ]
         res.roleMenus.forEach(item => {
