@@ -94,7 +94,6 @@ export default {
       }
     },
     getActiveRoute(path) {
-      console.info(path)
       if (this.$route.name === 'homeIndex') {
         this.setBasePath(this.routes[0].path)
         return this.routes[0].path === path
