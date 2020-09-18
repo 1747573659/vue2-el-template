@@ -20,7 +20,10 @@
         <img src="../../assets/images/menu/user.png" alt="用户头像" />
       </div>
       <el-dropdown trigger="click" class="p-head_dropdown" @command="handleDropDown">
-        <span class="el-dropdown-link">{{ userName }}<i class="el-icon-arrow-down el-icon--right"></i></span>
+        <div class="e-dropdown-con">
+          <span class="e-dropdown-name">{{ userName }}</span>
+          <i class="el-icon-arrow-down el-icon--right"></i>
+        </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item :command="1">修改密码</el-dropdown-item>
           <el-dropdown-item :command="2">退出账号</el-dropdown-item>
@@ -52,7 +55,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['routes'])
+    ...mapGetters(['routes']),
+    getActiveRoute(path) {
+      return function(path) {
+        if (this.$route.name === 'homeIndex') {
+          this.setBasePath(this.routes[0].path)
+          return this.routes[0].path === path
+        }
+        if (this.$route.path.includes(path)) {
+          this.setBasePath(path)
+        }
+        return this.$route.path.includes(path)
+      }
+    }
   },
   watch: {
     $route(route) {
@@ -92,16 +107,6 @@ export default {
       if (this.routes[index].children && this.routes[index].children.length) {
         this.setAsideROUTES(this.routes[index].children)
       }
-    },
-    getActiveRoute(path) {
-      if (this.$route.name === 'homeIndex') {
-        this.setBasePath(this.routes[0].path)
-        return this.routes[0].path === path
-      }
-      if (this.$route.path.indexOf(path) >= 0) {
-        this.setBasePath(path)
-      }
-      return this.$route.path.indexOf(path) >= 0
     }
   }
 }
@@ -172,6 +177,21 @@ export default {
       height: 100%;
       line-height: 56px;
       cursor: pointer;
+    }
+  }
+}
+.e {
+  &-dropdown {
+    &-con {
+      display: flex;
+      align-items: center;
+    }
+    &-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 100px;
     }
   }
 }
