@@ -9,10 +9,18 @@
       :on-error="uploadErrer"
       :on-success="uploadSuccess"
       :before-upload="beforeUpload">
-      <img v-if="imageUrl" @click="imgClick" :src="fileServer + imageUrl" class="avatar" :alt="alt">
-      <div class="before-upload" v-else>
+      <img v-if="imageUrl" @click="imgClick" :src="fileServer + imageUrl" class="avatar" :class="{card: card}" :alt="alt">
+      <div class="before-upload" :class="{card: card}" v-else>
         <i class="el-icon-plus avatar-uploader-icon"></i>
-        <div class="upload-text">上传照片</div>
+        <div class="upload-text">
+          上传照片
+          <span v-if="card === 'front'">
+            (正面)
+          </span>
+          <span v-if="card === 'back'">
+            (背面)
+          </span>
+        </div>
       </div>
     </el-upload>
     <div class="upload-require">
@@ -51,6 +59,10 @@ export default {
     exampleImg: {
       type: String,
       default: ''
+    },
+    card: {
+      type: String,
+      default: null
     }
   },
   methods: {
@@ -138,5 +150,9 @@ export default {
 .upload-example-img {
   width: 289px;
   height: 183px;
+}
+.card {
+  width: 180px;
+  height: 120px;
 }
 </style>

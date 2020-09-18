@@ -8,7 +8,7 @@ const urlLinks = {
   // 查询所有账号
   queryUserPage: '/employeeUser/queryUserPage',
   // 查询所有角色
-  queryRole: '/employeeUser/queryRole',
+  queryRole: '/role/queryRole',
   // 账号 启用/停用
   updateStatus: '/employeeUser/updateStatus',
   // 账号 重置密码
