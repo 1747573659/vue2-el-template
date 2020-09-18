@@ -28,11 +28,11 @@
         style="width: 100%">
         <el-table-column
           prop="name"
-          label="资料名称">
+          label="资料名称" width="350px">
         </el-table-column>
         <el-table-column
           prop="remark"
-          label="资料描述">
+          label="资料描述" width="350px">
         </el-table-column>
         <el-table-column
           prop="createTime"
