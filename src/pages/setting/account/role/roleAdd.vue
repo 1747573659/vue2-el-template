@@ -137,6 +137,7 @@ export default {
     async queryAllPCMenu(id) {
       try {
         const res = await queryAllPCMenu({ roleId: id })
+        console.log(routeTree(res.allMenus))
         this.pcData = [
           {
             id: -1,
