@@ -425,9 +425,12 @@
           </el-row>
         </div>
       </el-form>
-      <div class="bottom">
-        <el-button type="primary" size="samll" icon="el-icon-plus">新增</el-button>
-      </div>
+    </div>
+    <div class="bottom">
+      <el-button size="samll" type="primary" class="archive-bottom-btn">保存</el-button>
+      <el-button size="samll" type="primary" plain class="archive-bottom-btn">新增</el-button>
+      <el-button size="samll" class="archive-bottom-btn">拒绝</el-button>
+      <el-button size="samll" class="archive-bottom-btn">取消</el-button>
     </div>
   </div>
 </template>
@@ -568,13 +571,19 @@ export default {
       margin-bottom: 24px;
     }
   }
-  .bottom {
-    height: 56px;
-    position: fixed;
-    bottom: 0;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-  }
+}
+.bottom {
+  width: 100%;
+  background-color: #fff;
+  height: 56px;
+  position: fixed;
+  bottom: 0;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+}
+.archive-bottom-btn {
+  padding: 8px 22px;
 }
 </style>
