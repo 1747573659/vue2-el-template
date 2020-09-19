@@ -1,5 +1,5 @@
 <template>
-  <div class="data-box" v-permission.page="'ACCOUNT_SET_ADD'">
+  <div class="data-box" v-permission.page="'ACCOUNT_SET_ADD,ACCOUNT_SET_EDIT'">
     <div class="km-setting-account-add">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
         <el-form-item label="手机 (账号)" prop="loginName">
@@ -99,7 +99,7 @@ export default {
           try {
             const res = await insertRole(data)
             this.$message.success('操作成功')
-            this.$store.dispatch('delTagViews', this.$route).then(() => {
+            this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'accountSetting' })
             })
           } catch (e) {}
@@ -108,7 +108,7 @@ export default {
       })
     },
     cancel () {
-      this.$store.dispatch('delTagViews', this.$route).then(() => {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ path: 'accountSetting' })
       })
     },

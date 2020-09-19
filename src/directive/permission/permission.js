@@ -5,9 +5,13 @@ function checkPermission(el, binding) {
   // value为权限code
   let { expression: value, modifiers } = binding
   const roles = store.getters && store.getters.btns
-
-  if (value) {
-    const hasPermission = roles.findIndex(r => r.code == value.replace(/'/g, '')) >= 0
+  // 此处的权限控制为当前的按钮权限和当前子页面的权限，子页面的权限要把所有的按钮可以跳转到的权限加上去(一般为编辑和新增)
+  // 将权限分为数组,按钮为['xxx'],页面为['xxx','xxx']或者更多
+  // 然后再将页面按钮以及页面权限数组 和 vuex里存的按钮权限进行对比
+  // 页面没有权限就跳转404, 页面按钮没有权限则不进行显示
+  value = value.replace(/'/g, '').split(',')
+  if (value.length) {
+    const hasPermission = roles.findIndex(r => value.includes(r.code)) >= 0
 
     // 没有权限
     if (!hasPermission) {

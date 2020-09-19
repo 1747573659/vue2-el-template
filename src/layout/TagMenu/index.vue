@@ -39,11 +39,11 @@ export default {
     this.handleTagViews()
   },
   methods: {
-    ...mapActions(['setTagViews', 'setCacheViews', 'delTagViews']),
+    ...mapActions(['setTagViews', 'setCachedViews', 'delTagView', 'delCachedView']),
     handleTagViews() {
       if (this.$route.name) {
         this.setTagViews(this.$route)
-        this.setCacheViews(this.$route)
+        this.setCachedViews(this.$route)
       }
     },
     handleJumpPage(item, query) {
@@ -51,7 +51,7 @@ export default {
       this.$router.push({ path: item.path, query: Object.keys(query).length === 0 ? {} : query })
     },
     handleClose(item) {
-      this.delTagViews(item).then(views => {
+      this.delTagView(item).then(views => {
         if (this.isActive(item)) {
           const latestView = views.slice(-1)[0]
           if (latestView) {
