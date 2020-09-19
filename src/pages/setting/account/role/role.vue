@@ -16,6 +16,7 @@
     <div class="data-box">
       <el-table
         v-loading="tableLoading"
+        :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column

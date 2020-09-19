@@ -160,7 +160,7 @@ export default {
       }
     },
     cancel() {
-      this.$store.dispatch('delTagViews', this.$route).then(() => {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ name: 'role' })
       })
     },
@@ -180,7 +180,7 @@ export default {
           try {
             const res = await addRole(data)
             this.$message.success('操作成功')
-            this.$store.dispatch('delTagViews', this.$route).then(() => {
+            this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'role' })
             })
           } catch (e) {

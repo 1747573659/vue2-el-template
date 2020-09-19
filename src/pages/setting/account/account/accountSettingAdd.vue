@@ -99,7 +99,7 @@ export default {
           try {
             const res = await insertRole(data)
             this.$message.success('操作成功')
-            this.$store.dispatch('delTagViews', this.$route).then(() => {
+            this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'accountSetting' })
             })
           } catch (e) {}
@@ -108,7 +108,7 @@ export default {
       })
     },
     cancel () {
-      this.$store.dispatch('delTagViews', this.$route).then(() => {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ path: 'accountSetting' })
       })
     },

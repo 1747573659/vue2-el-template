@@ -4,14 +4,14 @@ const state = {
   asideRoutes: [], // 路由权限
   basePath: '', // 基础路由
   tagViews: [], // 活跃tag导航
-  cacheViews: [] // keep-alive 缓存页面
+  cachedViews: [] // keep-alive 缓存页面
 }
 
 const getters = {
   asideRoutes: state => state.asideRoutes,
   basePath: state => state.basePath,
   tagViews: state => state.tagViews,
-  cacheViews: state => state.cacheViews
+  cachedViews: state => state.cachedViews
 }
 
 const mutations = {
@@ -51,10 +51,10 @@ const mutations = {
     }
   },
   SET_CACHE_VIEWS: (state, view) => {
-    if (state.cacheViews.includes(view.name)) return
-    if (!view.meta.noCache) state.cacheViews.push(view.name)
+    if (state.cachedViews.includes(view.name)) return
+    if (!view.meta.noCache) state.cachedViews.push(view.name)
   },
-  DEL_TAG_VIEWS: (state, view) => {
+  DEL_TAG_VIEW: (state, view) => {
     for (let i = 0; i < state.tagViews.length; i++) {
       if (state.tagViews[i].path === view.path) {
         state.tagViews.splice(i, 1)
@@ -82,19 +82,19 @@ const actions = {
   setTagViews({ commit }, view) {
     commit('SET_TAG_VIEWS', view)
   },
-  setCacheViews({ commit }, view) {
+  setCachedViews({ commit }, view) {
     commit('SET_CACHE_VIEWS', view)
   },
-  delTagViews({ commit }, view) {
+  delTagView({ commit }, view) {
     return new Promise(resolve => {
-      commit('DEL_TAG_VIEWS', view)
+      commit('DEL_TAG_VIEW', view)
       resolve([...state.tagViews])
     })
   },
-  delCacheViews({ commit }, view) {
+  delCachedView({ commit }, view) {
     return new Promise(resolve => {
       commit('DEL_CACHED_VIEW', view)
-      resolve([...state.cacheViews])
+      resolve([...state.cachedViews])
     })
   }
 }

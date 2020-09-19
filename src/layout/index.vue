@@ -40,9 +40,10 @@ export default {
     }
     &_fill {
       padding: 48px 0px 0px;
-      height: calc(100vh - 104px);
-      div {
-        height: 100%;
+      height: 100%;
+      overflow-y: auto;
+      & > div {
+        min-height: calc(100vh - 56px - 48px - 32px);
       }
     }
   }
