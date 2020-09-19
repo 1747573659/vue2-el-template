@@ -27,8 +27,8 @@ const mutations = {
         for (let i of state.tagViews) {
           if (i.path === view.path) i.query = view.query
         }
-        return
-      } else return
+      }
+      return
     }
     state.tagViews.push(Object.assign({}, view, { title: view.meta.title || 'no-name' }))
     const menus = store.getters.routes
