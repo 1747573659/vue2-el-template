@@ -74,7 +74,7 @@ export default {
           { required: true, trigger: "blur", validator: mobileRule }
         ],
         userName: [
-          { required: true, message: "请输入经销商名称", trigger: "blur" },
+          { required: true, message: "请输入姓名", trigger: "blur" },
           { max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
         ],
         roleId: [

@@ -27,12 +27,16 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="name"
-          label="资料名称">
+          label="资料名称" width="350px">
+          <template slot-scope="scope">
+            <span :title="scope.row.name">{{ scope.row.name }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="remark"
-          label="资料描述">
+          label="资料描述" width="350px">
+          <template slot-scope="scope">
+            <span :title="scope.row.remark">{{ scope.row.remark }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
@@ -52,7 +56,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalPage">

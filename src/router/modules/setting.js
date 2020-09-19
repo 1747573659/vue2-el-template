@@ -19,6 +19,7 @@ const setting = {
       component: _import('setting/index'),
       meta: {
         title: '基本信息',
+        icon: 'el-icon-menu',
         name: 'baseInfo'
       },
       children: [
@@ -42,6 +43,7 @@ const setting = {
       component: _import('setting/index'),
       meta: {
         title: '账号管理',
+        icon: 'el-icon-menu',
         name: 'account'
       },
       children: [
@@ -97,6 +99,7 @@ const setting = {
       component: _import('setting/index'),
       meta: {
         title: '其他',
+        icon: 'el-icon-menu',
         name: 'material'
       },
       children: [

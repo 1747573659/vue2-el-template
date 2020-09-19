@@ -1,6 +1,6 @@
 <template>
   <section>
-    <!-- <div class="search-box">
+    <div class="search-box">
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="100px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -16,7 +16,9 @@
             </el-form-item>
             <el-form-item label="资料状态">
               <el-select v-model="form.status" class="p-general_formWidth" clearable placeholder="全部">
-                <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                <template v-for="item in statusOptions">
+                  <el-option v-if="!item.hidden" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </template>
               </el-select>
             </el-form-item>
             <el-form-item label="商户信息">
@@ -29,20 +31,20 @@
             </el-form-item>
             <el-form-item>
               <div class="p-general_btnLabel">
-                <el-button type="primary" class="km-archive-search">查询</el-button>
+                <el-button type="primary" class="e-general-btn">查询</el-button>
               </div>
             </el-form-item>
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <el-button type="primary" class="add-btn" size="small" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'">新增</el-button>
+              <el-button type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-    </div> -->
+    </div>
     <div class="data-box">
-      <el-table :max-height="tableMaxHeight" :data="tableData">
+      <el-table :data="tableData">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable width="110" align="center"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
@@ -54,7 +56,7 @@
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态">
           <template slot-scope="scope">
-            <span :class="{ 'table-text-color': [4, 8].includes(scope.row.archiveBaseDTO.auditStatus) }">{{ scope.row.archiveBaseDTO.auditStatus | filterReview }}</span>
+            <span :class="{ 'e-general_tabOrange': [4, 8].includes(scope.row.archiveBaseDTO.auditStatus) }">{{ scope.row.archiveBaseDTO.auditStatus | filterReview }}</span>
           </template>
         </el-table-column>
         <el-table-column label="小微进件状态">
@@ -67,7 +69,11 @@
             <span>{{ scope.row.xiaoWeiUpgradeStatus }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.fixFeeRate" label="费率"></el-table-column>
+        <el-table-column label="费率">
+          <template slot-scope="scope">
+            <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
+          </template>
+        </el-table-column>
         <!-- <el-table-column prop="createTime" label="停用"></el-table-column> -->
         <el-table-column label="操作" align="right" width="240px">
           <template slot-scope="scope">
@@ -81,7 +87,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <!-- <div class="km-page-block">
+      <div class="km-page-block">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -92,7 +98,7 @@
           :total="totalPage"
         >
         </el-pagination>
-      </div> -->
+      </div>
     </div>
   </section>
   <!-- <div> -->
@@ -158,22 +164,23 @@
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
 import { filterReview } from './filters/reviewStatus'
+import { statusOptions } from './index'
 
 export default {
   data() {
     return {
+      statusOptions,
       form: {
         createTime: '',
         status: '',
         msg: '',
         isDeactivate: ''
       },
-
       statusList: [],
-      tableData: []
-      // currentPage: 1,
-      // totalPage: 0,
-      // pageSize: 10,
+      tableData: [],
+      currentPage: 1,
+      totalPage: 0,
+      pageSize: 10
       // certificationVisible: false,
       // cxLoading: false,
       // tableLoading: false,
@@ -183,68 +190,68 @@ export default {
   filters: {
     filterReview
   },
+  // computed: {
+  //   tableMaxHeight() {
+  //     return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
+  //   }
+  // },
+  mounted() {},
   methods: {
-    add() {
-      this.$router.push({ name: 'xftArchiveAdd' })
-    },
-    edit(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'edit' } })
-    },
-    copy(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'copy' } })
-    },
-    search() {
-      this.cxLoading = true
-      this.currentPage = 1
-      this.getList()
-    },
-    changeStatus(row) {},
-    handleSizeChange(value) {
-      this.pageSize = value
-      this.currentPage = 1
-      this.getList()
-    },
-    handleCurrentChange(value) {
-      this.currentPage = value
-      this.getList()
-    },
-    statusClick(row) {
-      this.$alert(row.name)
-    },
-    shopQRCode(row) {
-      this.certificationVisible = true
-    },
-    toDetail(row) {
-      this.$router.push({ name: 'xftArchiveDetail' })
-    },
-    async getList() {
-      this.tableLoading = true
-      let data = {
-        endTime: this.form.time && this.form.time[1],
-        name: this.form.name,
-        orders: {},
-        page: this.currentPage,
-        rows: this.pageSize,
-        startTime: this.form.time && this.form.time[0]
-      }
-      try {
-        const res = await queryDocumentByPage(data)
-        this.tableData = res.results
-        this.totalPage = res.totalCount
-      } catch (e) {
-      } finally {
-        this.cxLoading = false
-        this.tableLoading = false
-      }
-    }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
-    }
-  },
-  mounted() {
-    this.getList()
+    handleCurrentChange() {},
+    handleSizeChange() {}
+    // add() {
+    //   this.$router.push({ name: 'xftArchiveAdd' })
+    // },
+    // edit(row) {
+    //   this.$router.push({ name: 'xftArchiveAdd', query: { type: 'edit' } })
+    // },
+    // copy(row) {
+    //   this.$router.push({ name: 'xftArchiveAdd', query: { type: 'copy' } })
+    // },
+    // search() {
+    //   this.cxLoading = true
+    //   this.currentPage = 1
+    //   this.getList()
+    // },
+    // changeStatus(row) {},
+    // handleSizeChange(value) {
+    //   this.pageSize = value
+    //   this.currentPage = 1
+    //   this.getList()
+    // },
+    // handleCurrentChange(value) {
+    //   this.currentPage = value
+    //   this.getList()
+    // },
+    // statusClick(row) {
+    //   this.$alert(row.name)
+    // },
+    // shopQRCode(row) {
+    //   this.certificationVisible = true
+    // },
+    // toDetail(row) {
+    //   this.$router.push({ name: 'xftArchiveDetail' })
+    // },
+    // async getList() {
+    //   this.tableLoading = true
+    //   let data = {
+    //     endTime: this.form.time && this.form.time[1],
+    //     name: this.form.name,
+    //     orders: {},
+    //     page: this.currentPage,
+    //     rows: this.pageSize,
+    //     startTime: this.form.time && this.form.time[0]
+    //   }
+    //   try {
+    //     const res = await queryDocumentByPage(data)
+    //     this.tableData = res.results
+    //     this.totalPage = res.totalCount
+    //   } catch (e) {
+    //   } finally {
+    //     this.cxLoading = false
+    //     this.tableLoading = false
+    //   }
+    // }
   }
 }
 </script>
@@ -269,48 +276,59 @@ export default {
     }
   }
 }
-.test {
-  background-color: red;
-}
-.certification-dialog {
-  /deep/.el-dialog__body {
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    .certification-dialog-text {
-      font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: #3d4966;
-      margin-bottom: 12px;
-      line-height: 22px;
+.e {
+  &-general {
+    &-btn {
+      padding: 8px 13px;
     }
-    .certification-dialog-text:last-child {
-      margin-bottom: 0px;
+    &-add {
+      padding: 8px 15.5px;
     }
-    .certification-dialog-img {
-      margin: 18px 30px 30px;
-      width: 152px;
-      height: 152px;
+    &_tabOrange {
+      color: #ff6010;
+      cursor: pointer;
     }
   }
 }
-.km-archive-search {
-  padding: 8px 13px;
-}
-.add-btn {
-  padding: 8px 15.5px;
-}
-.el-dropdown-link {
-  font-size: 18px;
-  color: #3377ff;
-  cursor: pointer;
-}
-.table-text-color {
-  font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
-  font-weight: 400;
-  color: #ff6010;
-  cursor: pointer;
-}
+// .certification-dialog {
+//   /deep/.el-dialog__body {
+//     display: flex;
+//     flex-direction: column;
+//     align-items: center;
+//     .certification-dialog-text {
+//       font-size: 14px;
+//       font-family: PingFangSC-Regular, PingFang SC;
+//       font-weight: 400;
+//       color: #3d4966;
+//       margin-bottom: 12px;
+//       line-height: 22px;
+//     }
+//     .certification-dialog-text:last-child {
+//       margin-bottom: 0px;
+//     }
+//     .certification-dialog-img {
+//       margin: 18px 30px 30px;
+//       width: 152px;
+//       height: 152px;
+//     }
+//   }
+// }
+// .km-archive-search {
+//   padding: 8px 13px;
+// }
+// .add-btn {
+//   padding: 8px 15.5px;
+// }
+// .el-dropdown-link {
+//   font-size: 18px;
+//   color: #3377ff;
+//   cursor: pointer;
+// }
+// .table-text-color {
+//   font-size: 14px;
+//   font-family: PingFangSC-Regular, PingFang SC;
+//   font-weight: 400;
+//   color: #ff6010;
+//   cursor: pointer;
+// }
 </style>
