@@ -6,7 +6,7 @@
           <el-col :span="21">
             <el-form-item label="申请时间">
               <el-date-picker
-                v-model="form.createTime"
+                v-model="applicationTime"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -26,12 +26,12 @@
             </el-form-item>
             <el-form-item label="停用">
               <el-select v-model="form.isDeactivate" class="p-general_formWidth" clearable placeholder="全部">
-                <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                <el-option v-for="item in deactivateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
               <div class="p-general_btnLabel">
-                <el-button type="primary" class="e-general-btn">查询</el-button>
+                <el-button type="primary" class="e-general-btn" @click="handleSearch" :loading="isSearchLock">查询</el-button>
               </div>
             </el-form-item>
           </el-col>
@@ -43,7 +43,7 @@
         </el-row>
       </el-form>
     </div>
-    <div class="data-box">
+    <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable width="110" align="center"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
@@ -56,7 +56,9 @@
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态">
           <template slot-scope="scope">
-            <span :class="{ 'e-general_tabOrange': [4, 8].includes(scope.row.archiveBaseDTO.auditStatus) }">{{ scope.row.archiveBaseDTO.auditStatus | filterReview }}</span>
+            <span :class="{ 'e-general_tabOrange': [4, 8].includes(scope.row.archiveBaseDTO.auditStatus) }" @click="handleReason(scope.row)">{{
+              scope.row.archiveBaseDTO.auditStatus | filterReview
+            }}</span>
           </template>
         </el-table-column>
         <el-table-column label="小微进件状态">
@@ -100,91 +102,171 @@
         </el-pagination>
       </div>
     </div>
-  </section>
-  <!-- <div> -->
-  <!-- <div class="search-box"></div> -->
-  <!-- <div class="data-box">
-      <el-table :loading="tableLoading" :max-height="tableMaxHeight" :data="tableData" style="width: 100%">
-        <el-table-column prop="createTime" label="商户简称"> </el-table-column>
-        <el-table-column prop="createTime" label="公司名称"> </el-table-column>
-        <el-table-column prop="createTime" label="银行卡号"> </el-table-column>
-        <el-table-column prop="createTime" label="资料状态">
-          <template slot-scope="scope">
-            <span class="table-text-color" @click="statusClick(scope.row)">
-              {{ scope.row.creatorName }}
-            </span>
-          </template>
-        </el-table-column>
-        <el-table-column prop="createTime" label="微信认证状态"> </el-table-column>
-        <el-table-column prop="createTime" label="费率"> </el-table-column>
-        <el-table-column prop="createTime" label="停用"> </el-table-column>
-        <el-table-column label="操作" align="right" width="240px">
-          <template slot-scope="scope">
-            <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
-            <el-button @click="changeStatus(scope.row)" type="text" size="small">停用</el-button>
-            <el-dropdown style="margin-left: 12px">
-              <span class="el-dropdown-link">
-                ···
-              </span>
-              <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
-                <el-dropdown-item @click.native="shopQRCode(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
-              </el-dropdown-menu>
-            </el-dropdown>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="km-page-block">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage"
-        >
-        </el-pagination>
+    <!-- dialog -->
+    <el-dialog append-to-body :visible.sync="isReason" title="原因" width="507px">
+      <p>{{ reasonMsg }}</p>
+      <div slot="footer">
+        <el-button @click="isReason = false" type="primary" size="small">确定</el-button>
       </div>
-    </div> -->
-  <!-- <el-dialog title="商户微信实名认证指引流程" :visible.sync="certificationVisible" width="507px" class="certification-dialog">
-      <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">郭鼎(手机尾号9902)</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
-      <img :src="imgSrc" class="certification-dialog-img" alt="qrcode" />
-      <div class="certification-dialog-text">2. 完成信息补充后，引导公司法人完成法人的实名认证（或对公账户验证）</div>
-      <div class="certification-dialog-text">3. 完成1-2两步操作之后，即完成了微信关于系统风控，用户资金安全的监管要求，开户成功！</div>
-      <span slot="footer" class="dialog-footer">
-        <el-button size="small" style="padding: 8px 22px" @click="certificationVisible = false">关闭</el-button>
-      </span>
-    </el-dialog> -->
-  <!-- </div> -->
+    </el-dialog>
+  </section>
 </template>
 
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
 import { filterReview } from './filters/reviewStatus'
-import { statusOptions } from './index'
+import { statusOptions, deactivateOptions } from './index'
 
 export default {
   data() {
     return {
       statusOptions,
+      deactivateOptions,
+      applicationTime: '',
       form: {
-        createTime: '',
         status: '',
         msg: '',
-        isDeactivate: ''
+        isDeactivate: 0
       },
-      statusList: [],
-      tableData: [],
+      isSearchLock: false,
+      isTabLock: false,
+      isReason: false,
+      reasonMsg: '',
+      tableData: [
+        {
+          archiveBaseDTO: {
+            id: 37,
+            userId: 1554,
+            archiveMode: 1,
+            archiveType: 1,
+            agentId: 25,
+            agentName: null,
+            merchantId: 92,
+            merchantName: null,
+            merchantType: 2,
+            merchantShortName: '测试',
+            companyName: '测试公司1212',
+            businessCategory: null,
+            businessCategoryRemark: null,
+            province: '110000',
+            provinceName: null,
+            city: '110100',
+            cityName: null,
+            area: '110101',
+            areaName: null,
+            address: '天安门附近',
+            contact: '121212',
+            contactPhone: '12121212120',
+            email: '12121212@qq.com',
+            publicId: null,
+            appletId: null,
+            superCode: 2,
+            submitLevel: 2,
+            fixFeeRate: 55,
+            debitcardFeeRate: 0,
+            creditcardFeeRate: 0,
+            unionpaycodeFeeRate: 0,
+            exchangeFeeRate: 0,
+            auditUserId: 1,
+            auditTime: '2020-04-10 14:10:29',
+            auditRemark: '345345',
+            auditStatus: 4,
+            remark: null,
+            createId: 1554,
+            createTime: '2017-01-11 14:26:48',
+            source: null,
+            aliOrgTypeCode: null,
+            wxCertStatus: 0,
+            serviceTel: null,
+            wxFlag: null,
+            idNumber: null,
+            directAgentId: null,
+            wxIndustryId: '',
+            wxIndustryIdName: null,
+            alIndustryId: '',
+            alIndustryIdName: null,
+            mchDealType: null,
+            appid: '',
+            appsecret: '',
+            partner: '',
+            pid: '',
+            isOpenXingPos: null,
+            status: null,
+            industrId: null,
+            industrIdName: null,
+            mchTypeId: null,
+            mchTypeName: null,
+            bossAuditTime: null,
+            useChannelCode: null
+          },
+          archiveExpandDTO: {
+            archiveId: 37,
+            licType: 1,
+            licId: '',
+            licValidityBigen: '2017-01-12',
+            licValidityEnd: '2017-01-24',
+            orgInstitutionCode: null,
+            orgInstitutionBigen: '2017-01-01',
+            orgInstitutionEnd: '2017-01-01',
+            businessLicenseUrl: '/uploadFiles/7097bd389504486590b374a1c1a9f558.jpg',
+            orgInstitutionUrl: null,
+            taxRegistrationUrl: null,
+            businessScope: null,
+            sellShopDescribe: null,
+            legalPersonName: '121',
+            idType: '身份证',
+            idNumber: '121211212121219',
+            idBegin: '2016-07-03',
+            idEnd: '2016-07-03',
+            idFrontUrl: '/uploadFiles/d66fc57b5a8043daa47fa338fd74ca2b.jpg',
+            idBackUrl: '/uploadFiles/e1fc95d24f394cc28f4c52fb4878e2c2.jpg',
+            hardIdUrl: '/uploadFiles/bc3a8315dc33432a8eca0201c1673865.jpg',
+            bank: '13',
+            bankName: null,
+            bankSub: null,
+            bankSubName: '车公庙支行',
+            bankAccountName: '撒大声地',
+            bankCard: '按时大大',
+            bankCardFrontUrl: '/default/408d93bb17754aa6beae17c7d158b7ed.jpg',
+            openingPermitUrl: '/default/408d93bb17754aa6beae17c7d158b7ed.jpg',
+            bankProvince: '110000',
+            bankProvinceName: null,
+            bankCity: '110100',
+            bankCityName: null,
+            bankArea: '110101',
+            bankAreaName: null,
+            acctType: null,
+            cardholderIdType: '身份证',
+            cardholderIdNumber: '',
+            bankCardBackUrl: '',
+            legalPersonValidityBegin: null,
+            legalPersonValidityEnd: null,
+            certType: '',
+            certTypeName: null,
+            cashreceiveType: null,
+            cardholderPhone: null,
+            cardholderType: null,
+            oldAndNewHolder: '',
+            merchantInfoChange: ''
+          },
+          archiveOtherDTO: null,
+          merchantName: '测试商户B',
+          agentName: '代理测试A',
+          hasArchive: null,
+          xiaoWeiId: null,
+          xiaoWeiArchiveStatus: null,
+          xiaoWeiUpgradeStatus: null,
+          businessScene: null,
+          businessSceneShow: null,
+          isRegister: null,
+          archiveChannelList: null,
+          useBankChannelCode: null,
+          useBankChannelCodeName: null
+        }
+      ],
       currentPage: 1,
       totalPage: 0,
       pageSize: 10
-      // certificationVisible: false,
-      // cxLoading: false,
-      // tableLoading: false,
-      // imgSrc: require('@/assets/images/abnormal/404.png')
     }
   },
   filters: {
@@ -197,61 +279,38 @@ export default {
   // },
   mounted() {},
   methods: {
-    handleCurrentChange() {},
-    handleSizeChange() {}
-    // add() {
-    //   this.$router.push({ name: 'xftArchiveAdd' })
-    // },
-    // edit(row) {
-    //   this.$router.push({ name: 'xftArchiveAdd', query: { type: 'edit' } })
-    // },
-    // copy(row) {
-    //   this.$router.push({ name: 'xftArchiveAdd', query: { type: 'copy' } })
-    // },
-    // search() {
-    //   this.cxLoading = true
-    //   this.currentPage = 1
-    //   this.getList()
-    // },
-    // changeStatus(row) {},
-    // handleSizeChange(value) {
-    //   this.pageSize = value
-    //   this.currentPage = 1
-    //   this.getList()
-    // },
-    // handleCurrentChange(value) {
-    //   this.currentPage = value
-    //   this.getList()
-    // },
-    // statusClick(row) {
-    //   this.$alert(row.name)
-    // },
-    // shopQRCode(row) {
-    //   this.certificationVisible = true
-    // },
-    // toDetail(row) {
-    //   this.$router.push({ name: 'xftArchiveDetail' })
-    // },
-    // async getList() {
-    //   this.tableLoading = true
-    //   let data = {
-    //     endTime: this.form.time && this.form.time[1],
-    //     name: this.form.name,
-    //     orders: {},
-    //     page: this.currentPage,
-    //     rows: this.pageSize,
-    //     startTime: this.form.time && this.form.time[0]
-    //   }
-    //   try {
-    //     const res = await queryDocumentByPage(data)
-    //     this.tableData = res.results
-    //     this.totalPage = res.totalCount
-    //   } catch (e) {
-    //   } finally {
-    //     this.cxLoading = false
-    //     this.tableLoading = false
-    //   }
-    // }
+    handleReason(row) {
+      this.reasonMsg = row.archiveBaseDTO.auditRemark
+      this.isReason = true
+    },
+    handleQueryPage: async function() {
+      const data = Object.assign({ startTime: this.applicationTime[0], endTime: this.applicationTime[1] }, this.form, { page: this.pageSize, rows: this.currentPage })
+      // 查询调用接口
+      try {
+        this.isTabLock = true
+      } catch (error) {
+      } finally {
+        this.isTabLock = false
+      }
+    },
+    handleSearch() {
+      this.pageSize = 1
+      this.isSearchLock = true
+      this.handleQueryPage().finally(() => {
+        this.isSearchLock = true
+      })
+    },
+    handleCurrentChange(val) {
+      // 切换当前页
+      this.currentPage = val
+      this.handleQueryPage()
+    },
+    handleSizeChange(val) {
+      // 切换页面总条数
+      this.currentPage = 1
+      this.pageSize = val
+      this.handleQueryPage()
+    }
   }
 }
 </script>

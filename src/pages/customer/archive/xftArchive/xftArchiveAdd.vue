@@ -423,10 +423,10 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button size="samll" type="primary" class="archive-bottom-btn">保存</el-button>
-      <el-button size="samll" type="primary" plain class="archive-bottom-btn">新增</el-button>
-      <el-button size="samll" class="archive-bottom-btn">拒绝</el-button>
-      <el-button size="samll" class="archive-bottom-btn">取消</el-button>
+      <el-button size="small" type="primary" class="archive-bottom-btn">保存</el-button>
+      <el-button size="small" type="primary" plain class="archive-bottom-btn">新增</el-button>
+      <el-button size="small" class="archive-bottom-btn">拒绝</el-button>
+      <el-button size="small" class="archive-bottom-btn">取消</el-button>
     </div>
   </div>
 </template>

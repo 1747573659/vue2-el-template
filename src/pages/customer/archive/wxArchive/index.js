@@ -13,3 +13,8 @@ export const statusOptions = [
   { value: 10, label: '账号申请中', hidden: true },
   { value: 11, label: '账号申请中', hidden: true }
 ]
+
+export const deactivateOptions = [
+  { value: 0, label: '否' },
+  { value: 1, label: '是' }
+]
