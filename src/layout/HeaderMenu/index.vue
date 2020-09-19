@@ -189,7 +189,8 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
       display: inline-block;
-      width: 100px;
+      width: 80px;
+      text-align: right;
     }
   }
 }
