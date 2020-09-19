@@ -83,7 +83,7 @@ export default {
     /deep/ .el-submenu__title {
       color: #475166 !important;
       padding-left: 29px !important;
-      font-weight: 500;
+      font-weight: bold;
     }
     /deep/ .el-menu-item {
       padding-left: 58px !important;
