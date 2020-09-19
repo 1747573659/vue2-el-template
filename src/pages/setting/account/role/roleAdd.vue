@@ -68,6 +68,77 @@ export default {
     }
   },
   methods: {
+    // 递归选中的id
+    getCheckIdInitForPC (arr, list) {
+      var temp = []
+      if (arr && arr.length > 0) {
+        arr.forEach(item => {
+          item['children'] = []
+          if (!item.parentId) {
+            temp.push(item)
+          }
+          if (item.parentId) {
+            // 递归操作
+            const traverse = function (array, item) {
+              array.forEach(cItem => {
+                if (cItem.id === item.parentId) {
+                  cItem['children'].push(item)
+                } else {
+                  traverse(cItem['children'], item)
+                }
+              })
+            }
+            traverse(temp, item)
+          }
+        })
+      }
+      // let obj = this.toChildrenNum(list)
+      function t2 (array) {
+        array.length > 0 && array.forEach(item => {
+          if (item['children'].length === 0) {
+            this.defaultPCList.push(item.id)
+          } else {
+            t2.call(this, item['children'])
+          }
+        })
+      }
+      t2.call(this, temp)
+    },
+    getCheckIdInitForAPP (arr, list) {
+      var temp = []
+      if (arr && arr.length > 0) {
+        arr.forEach(item => {
+          item['children'] = []
+          if (!item.parentId) {
+            temp.push(item)
+          }
+          if (item.parentId) {
+            // 递归操作
+            const traverse = function (array, item) {
+              array.forEach(cItem => {
+                if (cItem.id === item.parentId) {
+                  cItem['children'].push(item)
+                } else {
+                  traverse(cItem['children'], item)
+                }
+              })
+            }
+            traverse(temp, item)
+          }
+        })
+      }
+      // let obj = this.toChildrenNum(list)
+      function t2 (array) {
+        array.length > 0 && array.forEach(item => {
+          if (item['children'].length === 0) {
+            this.defaultAPPList.push(item.id)
+          } else {
+            t2.call(this, item['children'])
+          }
+        })
+      }
+      t2.call(this, temp)
+    },
     getCheckIdList(tree) {
       let checkIdList = []
       const traverse = function(node) {
@@ -129,53 +200,52 @@ export default {
             children: routeTree(res.allMenus) || []
           }
         ]
-        res.roleMenus.forEach(item => {
-          this.defaultAPPList.push(item.id)
-        })
+        this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children)
       } catch (e) {}
     },
     async queryAllPCMenu(id) {
       try {
         const res = await queryAllPCMenu({ roleId: id })
         let newRouteTree = routeTree(res.allMenus)
-        newRouteTree.forEach(itemOne => {
-          if (itemOne && itemOne.children) {
-            itemOne.children.forEach(itemTwo => {
-              if (itemTwo && itemTwo.children) {
-                itemTwo.children.forEach(itemThree => {
-                  if (itemThree && itemThree.children) {
-                    itemThree.children.push({
-                      'id': '',
-                      'name': '查看',
-                      'code': 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
-                      'iconCls': null,
-                      'url': null,
-                      'lever': 4,
-                      'parentId': itemThree.id,
-                      'remark': null,
-                      'creatorId': null,
-                      'createTime': null,
-                      'modifierId': null,
-                      'modifyTime': null,
-                      'type': 4,
-                      'parentName': null,
-                      'children': [
-                      ],
-                      'disabled': false,
-                      'checked': false,
-                      'viewPath': null,
-                      'sort': null,
-                      'domainType': null,
-                      'appId': null,
-                      'menuType': 2
-                    })
-                  }
-                })
-              }
-            })
-          }
-        })
-        console.log(newRouteTree)
+        // var cid = 444444
+        // newRouteTree.forEach(itemOne => {
+        //   if (itemOne && itemOne.children) {
+        //     itemOne.children.forEach(itemTwo => {
+        //       if (itemTwo && itemTwo.children) {
+        //         itemTwo.children.forEach(itemThree => {
+        //           cid++
+        //           if (itemThree && itemThree.children) {
+        //             itemThree.children.push({
+        //               'id': cid,
+        //               'name': '查看',
+        //               'code': 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
+        //               'iconCls': null,
+        //               'url': null,
+        //               'lever': 4,
+        //               'parentId': itemThree.id,
+        //               'remark': null,
+        //               'creatorId': null,
+        //               'createTime': null,
+        //               'modifierId': null,
+        //               'modifyTime': null,
+        //               'type': 4,
+        //               'parentName': null,
+        //               'children': [
+        //               ],
+        //               'disabled': false,
+        //               'checked': false,
+        //               'viewPath': null,
+        //               'sort': null,
+        //               'domainType': null,
+        //               'appId': null,
+        //               'menuType': 2
+        //             })
+        //           }
+        //         })
+        //       }
+        //     })
+        //   }
+        // })
         this.pcData = [
           {
             id: -1,
@@ -183,9 +253,7 @@ export default {
             children: newRouteTree || []
           }
         ]
-        res.roleMenus.forEach(item => {
-          this.defaultPCList.push(item.id)
-        })
+        this.getCheckIdInitForPC(res.roleMenus || [], this.pcData.children)
       } catch (e) {}
     },
     async queryRoleById() {
@@ -195,9 +263,6 @@ export default {
         this.form.name = res.name
         this.form.usedName = res.name
         this.form.remark = res.remark
-        res.menuIdsPC.forEach(item => {
-          this.defaultPCList.push(item.id)
-        })
       } catch (e) {}
     }
   },
