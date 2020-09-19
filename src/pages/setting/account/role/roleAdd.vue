@@ -1,5 +1,5 @@
 <template>
-  <div class="data-box" v-permission.page="'ACCOUNT_ROLE_ADD'">
+  <div class="data-box" v-permission.page="'ACCOUNT_ROLE_ADD,ACCOUNT_ROLE_EDIT'">
     <div class="km-setting-roleAdd">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
         <el-form-item label="角色名称" prop="name">
