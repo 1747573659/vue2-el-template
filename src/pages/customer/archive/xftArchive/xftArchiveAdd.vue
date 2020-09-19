@@ -234,8 +234,7 @@
                 <upload-pic
                   alt="身份证正面照"
                   :exampleImg="exampleImg"
-                  @click="imgClick"
-                  card="front">
+                  @click="imgClick">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -244,8 +243,7 @@
                 <upload-pic
                   alt="身份证背面照"
                   :exampleImg="exampleImg"
-                  @click="imgClick"
-                  card="back">
+                  @click="imgClick">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -337,8 +335,7 @@
                 <upload-pic
                   alt="银行卡正面照"
                   :exampleImg="exampleImg"
-                  @click="imgClick"
-                  card="front">
+                  @click="imgClick">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -347,8 +344,7 @@
                 <upload-pic
                   alt="银行卡背面照"
                   :exampleImg="exampleImg"
-                  @click="imgClick"
-                  card="back">
+                  @click="imgClick">
                 </upload-pic>
               </el-form-item>
             </el-col>
