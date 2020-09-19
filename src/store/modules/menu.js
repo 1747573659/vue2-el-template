@@ -73,7 +73,7 @@ const mutations = {
 }
 
 const actions = {
-  setAsideROUTES({ commit }, routes) {
+  setAsideRoutes({ commit }, routes) {
     commit('SET_ASIDE_ROUTES', routes)
   },
   setBasePath({ commit }, basePath) {

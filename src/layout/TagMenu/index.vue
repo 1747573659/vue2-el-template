@@ -7,7 +7,7 @@
       @mouseleave="resetTagIndex"
       @click="handleJumpPage(item, item.query)"
       v-for="(item, index) in tagViews"
-      :key="item.name"
+      :key="item.path"
     >
       {{ item.title }}
       <i v-if="hasTagIndex(index) && item.name !== 'homeIndex'" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>

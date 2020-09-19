@@ -5,11 +5,13 @@
     </router-link>
     <!-- 导航 -->
     <div class="p-head_nav">
-      <ul v-if="routeMenus.length > 0">
-        <template v-for="item in routes">
-          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
-            <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
-          </li>
+      <ul>
+        <template v-if="routeMenus.length > 0">
+          <template v-for="item in routeMenus">
+            <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
+              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
+            </li>
+          </template>
         </template>
       </ul>
     </div>
@@ -56,8 +58,9 @@ export default {
   },
   computed: {
     ...mapGetters(['routes']),
-    getActiveRoute(path) {
+    getActiveRoute() {
       return function(path) {
+        console.info(path)
         if (this.$route.name === 'homeIndex') {
           this.setBasePath(this.routes[0].path)
           return this.routes[0].path === path
@@ -79,7 +82,7 @@ export default {
     this.getChildRoutes(this.$route)
   },
   methods: {
-    ...mapActions(['setAsideROUTES', 'setBasePath']),
+    ...mapActions(['setAsideRoutes', 'setBasePath']),
     handleDropDown(command) {
       if (command === 1) this.dropStatus = true
       else this.handleLoginOut()
@@ -105,7 +108,7 @@ export default {
         return JSON.stringify(item).includes(route.name)
       })
       if (this.routes[index].children && this.routes[index].children.length) {
-        this.setAsideROUTES(this.routes[index].children)
+        this.setAsideRoutes(this.routes[index].children)
       }
     }
   }
