@@ -27,25 +27,25 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          label="资料名称" width="350px">
+          label="资料名称">
           <template slot-scope="scope">
             <span :title="scope.row.name">{{ scope.row.name }}</span>
           </template>
         </el-table-column>
         <el-table-column
-          label="资料描述" width="350px">
+          label="资料描述">
           <template slot-scope="scope">
             <span :title="scope.row.remark">{{ scope.row.remark }}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
-          label="创建时间">
+          label="创建时间" width="350px">
         </el-table-column>
         <el-table-column
           label="操作"
           align="right"
-          width="70px">
+          width="150px">
           <template slot-scope="scope">
             <el-button @click="downLoad(scope.row)" type="text" size="small">下载</el-button>
           </template>
