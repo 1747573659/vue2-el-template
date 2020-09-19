@@ -7,22 +7,11 @@
       <div class="p-abnormal_main">
         <p class="p-abnormal_errTitle">404</p>
         <p class="p-abnormal_errMsg">抱歉，你访问的页面不存在</p>
-        <el-button type="primary" @click="handleBankHome">返回首页</el-button>
+        <el-button type="primary" @click="$router.push({ name: 'homeIndex' })">返回首页</el-button>
       </div>
     </div>
   </section>
 </template>
-
-<script>
-export default {
-  methods: {
-    handleBankHome() {
-      // 首页存在返回首页
-      // 首页不存在返回当前路由权限首页
-    }
-  }
-};
-</script>
 
 <style lang="scss" scoped>
 .p {
