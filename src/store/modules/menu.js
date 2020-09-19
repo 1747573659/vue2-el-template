@@ -27,8 +27,8 @@ const mutations = {
         for (let i of state.tagViews) {
           if (i.path === view.path) i.query = view.query
         }
-      }
-      return
+        return
+      } else return
     }
     state.tagViews.push(Object.assign({}, view, { title: view.meta.title || 'no-name' }))
     const menus = store.getters.routes
@@ -73,7 +73,7 @@ const mutations = {
 }
 
 const actions = {
-  setAsideROUTES({ commit }, routes) {
+  setAsideRoutes({ commit }, routes) {
     commit('SET_ASIDE_ROUTES', routes)
   },
   setBasePath({ commit }, basePath) {
