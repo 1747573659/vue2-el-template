@@ -1,5 +1,6 @@
 import { _import } from '@/utils'
 import Layout from '@/layout'
+import kmContainer from '@/components/km-container'
 
 const customer = {
   path: '/customer',
@@ -16,7 +17,7 @@ const customer = {
       name: 'archive',
       code: 'KM_CUSTOMER_ARCHIVE',
       redirect: { name: 'wxArchive' },
-      component: _import('customer/index'),
+      component: kmContainer,
       meta: {
         title: '进件管理',
         name: 'archive'
@@ -85,7 +86,7 @@ const customer = {
             title: '进件详情',
             name: 'xftArchiveDetail'
           }
-        },
+        }
       ]
     }
   ]

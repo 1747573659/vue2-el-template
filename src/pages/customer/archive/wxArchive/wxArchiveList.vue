@@ -44,8 +44,8 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData">
-        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable width="110" align="center"></el-table-column>
+      <el-table :data="tableData" @sort-change="handleTabSort">
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
@@ -61,13 +61,15 @@
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="小微进件状态">
+        <el-table-column label="小微进件状态" prop="xiaoWeiArchiveStatus">
           <template slot-scope="scope">
+            <!-- <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span> -->
             <span>{{ scope.row.xiaoWeiArchiveStatus }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="xiaoWeiUpgradeStatus" label="升级状态">
           <template slot-scope="scope">
+            <!-- <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span> -->
             <span>{{ scope.row.xiaoWeiUpgradeStatus }}</span>
           </template>
         </el-table-column>
@@ -85,7 +87,7 @@
             <el-button type="text" size="small" v-else>详情</el-button>
             <!-- <el-button type="text" size="small">启用/停用</el-button> -->
             <el-button type="text" size="small">复制</el-button>
-            <el-button type="text" size="small">进件详情</el-button>
+            <el-button type="text" size="small" v-if="scope.row.xiaoWeiArchiveStatus" @click="$router.push({ name: 'wxArchiveDetail' })">进件详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -113,9 +115,9 @@
 </template>
 
 <script>
-import { queryDocumentByPage } from '@/api/setting/material'
-import { filterReview } from './filters/reviewStatus'
+import { filterReview, filterArchiveStatus } from './filters/reviewStatus'
 import { statusOptions, deactivateOptions } from './index'
+import { xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus } from '@/api/wxArchive'
 
 export default {
   data() {
@@ -128,10 +130,12 @@ export default {
         msg: '',
         isDeactivate: 0
       },
-      isSearchLock: false,
+      isSearchLock: false, // 锁状态
       isTabLock: false,
-      isReason: false,
+      isReason: false, // 异常状态原因
       reasonMsg: '',
+      xiaoWeiArchiveData: [],
+      xiaoWeiUpgradeData: [],
       tableData: [
         {
           archiveBaseDTO: {
@@ -254,7 +258,7 @@ export default {
           agentName: '代理测试A',
           hasArchive: null,
           xiaoWeiId: null,
-          xiaoWeiArchiveStatus: null,
+          xiaoWeiArchiveStatus: 1,
           xiaoWeiUpgradeStatus: null,
           businessScene: null,
           businessSceneShow: null,
@@ -270,7 +274,8 @@ export default {
     }
   },
   filters: {
-    filterReview
+    filterReview,
+    filterArchiveStatus
   },
   // computed: {
   //   tableMaxHeight() {
@@ -279,19 +284,17 @@ export default {
   // },
   mounted() {},
   methods: {
+    test() {
+      console.info(123)
+    },
     handleReason(row) {
       this.reasonMsg = row.archiveBaseDTO.auditRemark
       this.isReason = true
     },
-    handleQueryPage: async function() {
-      const data = Object.assign({ startTime: this.applicationTime[0], endTime: this.applicationTime[1] }, this.form, { page: this.pageSize, rows: this.currentPage })
-      // 查询调用接口
-      try {
-        this.isTabLock = true
-      } catch (error) {
-      } finally {
-        this.isTabLock = false
-      }
+    handleTabSort({ column, prop, order }) {
+      console.info(order)
+      // 点击排序时
+      this.handleQueryPage()
     },
     handleSearch() {
       this.pageSize = 1
@@ -310,6 +313,24 @@ export default {
       this.currentPage = 1
       this.pageSize = val
       this.handleQueryPage()
+    },
+    handleQueryPage: async function() {
+      const data = Object.assign({ startTime: this.applicationTime[0], endTime: this.applicationTime[1] }, this.form, { page: this.pageSize, rows: this.currentPage })
+      // 查询调用接口
+      try {
+        this.isTabLock = true
+      } catch (error) {
+      } finally {
+        this.isTabLock = false
+      }
+    },
+    getXiaoWeiArchiveStatus: async function() {
+      const res = await xiaoWeiArchiveStatus()
+      this.xiaoWeiArchiveData = res
+    },
+    getXiaoWeiUpgradeStatus: async function() {
+      const res = await xiaoWeiUpgradeStatus()
+      this.xiaoWeiUpgradeData = res
     }
   }
 }
@@ -349,45 +370,4 @@ export default {
     }
   }
 }
-// .certification-dialog {
-//   /deep/.el-dialog__body {
-//     display: flex;
-//     flex-direction: column;
-//     align-items: center;
-//     .certification-dialog-text {
-//       font-size: 14px;
-//       font-family: PingFangSC-Regular, PingFang SC;
-//       font-weight: 400;
-//       color: #3d4966;
-//       margin-bottom: 12px;
-//       line-height: 22px;
-//     }
-//     .certification-dialog-text:last-child {
-//       margin-bottom: 0px;
-//     }
-//     .certification-dialog-img {
-//       margin: 18px 30px 30px;
-//       width: 152px;
-//       height: 152px;
-//     }
-//   }
-// }
-// .km-archive-search {
-//   padding: 8px 13px;
-// }
-// .add-btn {
-//   padding: 8px 15.5px;
-// }
-// .el-dropdown-link {
-//   font-size: 18px;
-//   color: #3377ff;
-//   cursor: pointer;
-// }
-// .table-text-color {
-//   font-size: 14px;
-//   font-family: PingFangSC-Regular, PingFang SC;
-//   font-weight: 400;
-//   color: #ff6010;
-//   cursor: pointer;
-// }
 </style>

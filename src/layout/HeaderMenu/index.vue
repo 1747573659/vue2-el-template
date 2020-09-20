@@ -60,7 +60,6 @@ export default {
     ...mapGetters(['routes']),
     getActiveRoute() {
       return function(path) {
-        console.info(path)
         if (this.$route.name === 'homeIndex') {
           this.setBasePath(this.routes[0].path)
           return this.routes[0].path === path
