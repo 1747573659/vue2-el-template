@@ -98,10 +98,7 @@ export default {
       })
     },
     async validCaptcha() {
-      const data = {
-        codeKey: this.usedCoedKey,
-        codeVal: this.loginForm.codeKey
-      }
+      const data = { codeKey: this.usedCoedKey, codeVal: this.loginForm.codeKey }
       let res = await validCaptcha(data)
     },
     async captcha() {
