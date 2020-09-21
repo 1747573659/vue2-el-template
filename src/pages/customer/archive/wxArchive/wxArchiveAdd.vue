@@ -46,17 +46,242 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业场景" prop="status">
-                <el-checkbox-group v-model="form.merchantType">
-                  <el-checkbox :label="3">公众号</el-checkbox>
-                  <el-checkbox :label="6">小程序</el-checkbox>
+                <el-checkbox-group v-model="test">
+                  <el-checkbox label="1">公众号</el-checkbox>
+                  <el-checkbox label="2">小程序</el-checkbox>
                 </el-checkbox-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="公众号APPID" prop="status">
+                <el-input placeholder="请输入公众号APPID"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="小程序APPID" prop="status">
+                <el-input placeholder="请输入小程序APPID"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="商户类型" prop="status">
+                <el-radio-group v-model="form.merchantType">
+                  <el-radio :label="3">个体工商户</el-radio>
+                  <el-radio :label="6">企业</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="公司名称" prop="status">
+                <el-input placeholder="请输入公司名称"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="商户简称" prop="status">
+                <el-input placeholder="请输入公司简称"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="地区" prop="status">
+                <area-select @change="areaChange"></area-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="详细地址" prop="status">
+                <el-input placeholder="请输入公司简称"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人" prop="status">
+                <el-input placeholder="请输入联系人"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人电话" prop="status">
+                <el-input placeholder="请输入联系人电话"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="邮箱" prop="status">
+                <el-input placeholder="请输入邮箱"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="门店门头照" prop="status">
+                <upload-pic alt="门店门头照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照1" prop="status">
+                <upload-pic alt="经营场所照1" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照2" prop="status">
+                <upload-pic alt="经营场所照2" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照3" prop="status">
+                <upload-pic alt="经营场所照3" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场地证明" prop="status">
+                <upload-pic alt="经营场地证明" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="补充资料1" prop="status">
+                <upload-pic alt="补充资料1" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="补充资料2" prop="status">
+                <upload-pic alt="补充资料2" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
+      </div>
+      <div>
+        <div class="p-wxArchive-itemTitle">营业执照</div>
+        <el-form class="p-wxArchive-baseInfo" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="252px">
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="证件类型" prop="status">
+                <el-radio-group v-model="form.merchantType">
+                  <el-radio :label="3">多证合一</el-radio>
+                  <el-radio :label="6">旧证</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="营业执照" prop="status">
+                <upload-pic alt="营业执照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="类目特殊资质" prop="status">
+                <upload-pic alt="类目特殊资质" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="营业执照注册号" prop="status">
+                <el-input placeholder="营业执照注册号"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="营业执照有效期" prop="status">
+                <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="经营范围" prop="status">
+                <el-input placeholder="经营范围"></el-input>
+              </el-form-item>
+            </el-col>
+            
+            <el-col :span="12">
+              <el-form-item label="营业场景" prop="status">
+                <el-checkbox-group v-model="test">
+                  <el-checkbox label="1">公众号</el-checkbox>
+                  <el-checkbox label="2">小程序</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="公众号APPID" prop="status">
+                <el-input placeholder="请输入公众号APPID"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="小程序APPID" prop="status">
+                <el-input placeholder="请输入小程序APPID"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="商户类型" prop="status">
+                <el-radio-group v-model="form.merchantType">
+                  <el-radio :label="3">个体工商户</el-radio>
+                  <el-radio :label="6">企业</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="公司名称" prop="status">
+                <el-input placeholder="请输入公司名称"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="商户简称" prop="status">
+                <el-input placeholder="请输入公司简称"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="地区" prop="status">
+                <area-select @change="areaChange"></area-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="详细地址" prop="status">
+                <el-input placeholder="请输入公司简称"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人" prop="status">
+                <el-input placeholder="请输入联系人"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人电话" prop="status">
+                <el-input placeholder="请输入联系人电话"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="邮箱" prop="status">
+                <el-input placeholder="请输入邮箱"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="门店门头照" prop="status">
+                <upload-pic alt="门店门头照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照1" prop="status">
+                <upload-pic alt="经营场所照1" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照2" prop="status">
+                <upload-pic alt="经营场所照2" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照3" prop="status">
+                <upload-pic alt="经营场所照3" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场地证明" prop="status">
+                <upload-pic alt="经营场地证明" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="补充资料1" prop="status">
+                <upload-pic alt="补充资料1" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="补充资料2" prop="status">
+                <upload-pic alt="补充资料2" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
         </el-form>
       </div>
     </section>
-    
+
     <div class="xft-add">
       <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
         <!-- <div class="title">基本信息</div> -->
@@ -387,6 +612,7 @@ export default {
   },
   data() {
     return {
+      test: [1],
       form: {},
       statusList: [],
       shopList: [],

@@ -13,7 +13,7 @@ export default {
         lazy: true,
         lazyLoad: async function (node, resolve) {
           const { level } = node
-          console.log(node)
+          // console.log(node)
           let nodes = []
           let res
           // level为0时去请求省的列表，否则根据node.value去请求市和区，leaf用来判断是否有子节点
