@@ -37,7 +37,16 @@
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <el-button type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'">新增</el-button>
+              <el-button
+                type="primary"
+                class="e-general-add"
+                size="small"
+                plain
+                icon="el-icon-plus"
+                @click="$router.push({ name: 'wxArchiveAdd' })"
+                v-permission="'ACCOUNT_ROLE_ADD'"
+                >新增</el-button
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -83,7 +92,7 @@
           <template slot-scope="scope">
             <!-- 按钮状态 编辑、审核、详情、复制、启用、停用 -->
             <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 2">审核</el-button>
-            <el-button type="text" size="small" v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)">编辑</el-button>
+            <el-button type="text" size="small" @click="$router.push({ name: 'wxArchiveAdd' })" v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)">编辑</el-button>
             <el-button type="text" size="small" v-else>详情</el-button>
             <!-- <el-button type="text" size="small">启用/停用</el-button> -->
             <el-button type="text" size="small">复制</el-button>
@@ -284,9 +293,6 @@ export default {
   // },
   mounted() {},
   methods: {
-    test() {
-      console.info(123)
-    },
     handleReason(row) {
       this.reasonMsg = row.archiveBaseDTO.auditRemark
       this.isReason = true
