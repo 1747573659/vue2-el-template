@@ -54,7 +54,7 @@
           <el-button
             class="channel-baseinfo-save"
             type="primary"
-            v-permission="'BASEINFO_INDEX_SAVE'"
+            v-permission="'BASEINFO_INDEX_EDIT'"
             @click="onSubmit">保存</el-button>
         </el-form-item>
       </el-form>

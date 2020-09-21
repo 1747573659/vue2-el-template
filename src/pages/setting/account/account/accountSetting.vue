@@ -107,6 +107,7 @@ import {
   deleteUser
   } from '@/api/setting/account'
 export default {
+  name:'accountSetting',
   data() {
     return {
       statusList: [
