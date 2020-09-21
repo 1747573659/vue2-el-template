@@ -1,5 +1,6 @@
 import { _import } from '@/utils'
 import Layout from '@/layout'
+import kmContainer from '@/components/km-container'
 
 const setting = {
   path: '/setting',
@@ -16,7 +17,7 @@ const setting = {
       name: 'baseInfo',
       code: 'KM_SETTING_BASEINFO',
       redirect: { name: 'baseInfoIndex' },
-      component: _import('setting/index'),
+      component: kmContainer,
       meta: {
         title: '基本信息',
         icon: 'el-icon-menu',
@@ -40,7 +41,7 @@ const setting = {
       name: 'account',
       code: 'KM_SETTING_ACCOUNT',
       redirect: { name: 'role' },
-      component: _import('setting/index'),
+      component: kmContainer,
       meta: {
         title: '账号管理',
         icon: 'el-icon-menu',
@@ -96,7 +97,7 @@ const setting = {
       name: 'material',
       code: 'KM_SETTING_MATERIAL',
       redirect: { name: 'materialDownload' },
-      component: _import('setting/index'),
+      component: kmContainer,
       meta: {
         title: '其他',
         icon: 'el-icon-menu',

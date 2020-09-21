@@ -71,6 +71,7 @@ import { queryDocumentByPage } from '@/api/setting/material'
 import { downloadForURL } from '@/utils'
 
 export default {
+  name: 'materialDownload',
   data() {
     return {
       form: {

@@ -43,6 +43,7 @@ import {
   queryUserById
 } from '@/api/setting/account'
 export default {
+  name: 'accountSettingAdd',
   data() {
     var mobileRule = async (rule, value, callback) => {
       if (!this.isAdd) {
