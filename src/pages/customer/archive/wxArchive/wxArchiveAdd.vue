@@ -1,21 +1,65 @@
 <template>
-  <div>
-    <div class="xft-add">
-      <div class="header">
-        <el-row>
-          <el-col :span="12" class="title-text">
-            <span class="archive-title">进件状态：</span>
-            <span class="archive-status">编辑中</span>
-          </el-col>
-          <el-col :span="12" class="title-text">
-            <span class="archive-title">审核结果：</span>
-            <span>你的资料不全，</span>
-            <span class="archive-result">审核不通过</span>
-          </el-col>
-        </el-row>
+  <section class="p-wxArchive-con">
+    <header>
+      <el-row>
+        <el-col :span="12">
+          <label>进件状态：</label>
+          <span class="e-wxArchive-status_pd e-wxArchive-warning">编辑中</span>
+        </el-col>
+        <el-col :span="12">
+          <label>进件状态：</label>
+          <span>你的资料不全，</span>
+          <span class="e-wxArchive-warning">审核不通过</span>
+        </el-col>
+      </el-row>
+    </header>
+    <section>
+      <div>
+        <div class="p-wxArchive-itemTitle">基本信息</div>
+        <el-form class="p-wxArchive-baseInfo" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="252px">
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="商户">
+                <select-page
+                  id="id"
+                  name="name"
+                  :options="shopList"
+                  :isMaxPage="isMaxPage"
+                  @loadMore="loadMore"
+                  @remoteMethod="remoteMethod"
+                  @focus="shopFocus"
+                  @change="shopChange"
+                  @clear="shopClear"
+                >
+                </select-page>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="进件类型" prop="status">
+                <el-radio-group v-model="form.merchantType">
+                  <el-radio :label="3">微信直连</el-radio>
+                  <el-radio :label="6">小微商户</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="营业场景" prop="status">
+                <el-checkbox-group v-model="form.merchantType">
+                  <el-checkbox :label="3">公众号</el-checkbox>
+                  <el-checkbox :label="6">小程序</el-checkbox>
+                </el-checkbox-group>
+              </el-form-item>
+            </el-col>
+          </el-row>
+        </el-form>
       </div>
+    </section>
+    
+    <div class="xft-add">
       <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
-        <div class="title">基本信息</div>
+        <!-- <div class="title">基本信息</div> -->
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
@@ -110,12 +154,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="经营类型" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -124,12 +163,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="经营类目" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -137,20 +171,12 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="门店门头照" prop="status">
-                <upload-pic
-                  alt="门店门头照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="门店门头照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="企业信息公示图" prop="status">
-                <upload-pic
-                  alt="企业信息公示图"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="企业信息公示图" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -160,11 +186,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="营业执照" prop="status">
-                <upload-pic
-                  alt="营业执照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="营业执照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -176,13 +198,7 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="营业执照有效期" prop="status">
-                <el-date-picker
-                  v-model="form.time"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -199,12 +215,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="证件类型" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -217,13 +228,7 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="证件有效期" prop="status">
-                <el-date-picker
-                  v-model="form.time"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd">
+                <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -231,20 +236,12 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="身份证正面照" prop="status">
-                <upload-pic
-                  alt="身份证正面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="身份证正面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="身份证背面照" prop="status">
-                <upload-pic
-                  alt="身份证背面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="身份证背面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -255,12 +252,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="账户类型" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -269,24 +261,14 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="所属支行" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -314,12 +296,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人证件类型" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -332,20 +309,12 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行卡正面照" prop="status">
-                <upload-pic
-                  alt="银行卡正面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="银行卡正面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行卡背面照" prop="status">
-                <upload-pic
-                  alt="银行卡背面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="银行卡背面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -353,12 +322,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人类型" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -369,39 +333,25 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通星POS刷卡" prop="status">
-                <el-switch
-                  style="display: block"
-                  v-model="form.isXingPOS"
-                  active-color="#3377FF"
-                  inactive-color="#D3DBEB">
-                </el-switch>
+                <el-switch style="display: block" v-model="form.isXingPOS" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人身份证正面照" prop="status">
-                <upload-pic
-                  alt="银行卡背面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+                <upload-pic alt="银行卡背面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
         </div>
         <div class="title">费率</div>
-              <div class="form-info">
+        <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="费率" prop="status">
                 <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -409,13 +359,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="备注" prop="status">
-                <el-input
-                  style="width: 240px"
-                  type="textarea"
-                  :autosize="{ minRows: 3}"
-                  placeholder=""
-                  v-model="form.remark">
-                </el-input>
+                <el-input style="width: 240px" type="textarea" :autosize="{ minRows: 3 }" placeholder="" v-model="form.remark"> </el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -428,7 +372,7 @@
       <el-button size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button size="small" class="archive-bottom-btn">取消</el-button>
     </div>
-  </div>
+  </section>
 </template>
 
 <script>
@@ -465,9 +409,9 @@ export default {
       // 只有value有值的时候才去请求接口
       if (value) {
         let data = {
-          'name': value,
-          "page": this.selectPageNo,
-          "rows": 10
+          name: value,
+          page: this.selectPageNo,
+          rows: 10
         }
         import('@/api/setting/account').then(async module => {
           const res = await module.queryPage(data)
@@ -503,11 +447,9 @@ export default {
       this.searchString = ''
       this.selectPageNo = 1
     },
-    shopChange(value) {
-    },
+    shopChange(value) {},
     imgClick() {
-      if (this.formDisabled)
-      alert('hahahah')
+      if (this.formDisabled) alert('hahahah')
     },
     areaChange(value) {
       console.log(value)
@@ -517,69 +459,112 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.xft-add {
-  background-color: #fff;
-  margin: 16px 16px 72px;
-  .header {
-    height: 72px;
-    div {
-      height: 100%;
+.p {
+  &-wxArchive {
+    &-con {
+      margin: 16px 16px 72px;
+      background-color: #fff;
+      header {
+        /deep/ .el-col {
+          height: 72px;
+          display: flex;
+          align-items: center;
+          padding-left: 10%;
+          color: #3d4966;
+          font-size: 14px;
+        }
+      }
     }
-    .title-text {
-      padding-left: 10%;
-      display: flex;
-      align-items: center;
-      font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      color: #3D4966;
-      .archive-status {
+    &-itemTitle {
+      height: 48px;
+      line-height: 48px;
+      padding-left: 16px;
+      font-size: 16px;
+      color: #1f2e4d;
+      border-bottom: 1px solid #e6e9f0;
+      font-weight: 500;
+    }
+    &-baseInfo {
+      padding-top: 24px;
+    }
+  }
+}
+.e {
+  &-wxArchive {
+    &-warning {
+      color: #ff6010;
+    }
+    &-status {
+      &_pd {
         padding: 5px 12px;
-        background: #FFEFE8;
-        border-radius: 3px;
-        color: #FF6010;
-        line-height: 14px;
-      }
-      .archive-result {
-        color: #FF6010;
+        background: #ffefe8;
       }
     }
   }
-  .title {
-    height: 48px;
-    padding-left: 16px;
-    font-size: 16px;
-    font-family: PingFangSC-Medium, PingFang SC;
-    font-weight: 500;
-    color: #1F2E4D;
-    line-height: 48px;
-    border-bottom: 1px solid #E6E9F0;
-  }
-  .form-info {
-    padding-top: 24px;
-    .archive-form-item {
-      padding-left: 10%;
-      .el-switch {
-        line-height: 32px;
-      }
-    }
-    /deep/.el-form-item {
-      margin-bottom: 24px;
-    }
-  }
 }
-.bottom {
-  width: 100%;
-  background-color: #fff;
-  height: 56px;
-  position: fixed;
-  bottom: 0;
-  display: flex;
-  justify-content: center;
-  align-items: center;
-  box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
-}
-.archive-bottom-btn {
-  padding: 8px 22px;
-}
+// .xft-add {
+//   background-color: #fff;
+//   margin: 16px 16px 72px;
+//   .header {
+//     height: 72px;
+//     div {
+//       height: 100%;
+//     }
+//     .title-text {
+//       padding-left: 10%;
+//       display: flex;
+//       align-items: center;
+//       font-size: 14px;
+//       font-family: PingFangSC-Regular, PingFang SC;
+//       font-weight: 400;
+//       color: #3d4966;
+//       .archive-status {
+//         padding: 5px 12px;
+//         background: #ffefe8;
+//         border-radius: 3px;
+//         color: #ff6010;
+//         line-height: 14px;
+//       }
+//       .archive-result {
+//         color: #ff6010;
+//       }
+//     }
+//   }
+//   .title {
+//     height: 48px;
+//     padding-left: 16px;
+//     font-size: 16px;
+//     font-family: PingFangSC-Medium, PingFang SC;
+//     font-weight: 500;
+//     color: #1f2e4d;
+//     line-height: 48px;
+//     border-bottom: 1px solid #e6e9f0;
+//   }
+//   .form-info {
+//     padding-top: 24px;
+//     .archive-form-item {
+//       padding-left: 10%;
+//       .el-switch {
+//         line-height: 32px;
+//       }
+//     }
+//     /deep/.el-form-item {
+//       margin-bottom: 24px;
+//     }
+//   }
+// }
+// .bottom {
+//   width: 100%;
+//   background-color: #fff;
+//   height: 56px;
+//   position: fixed;
+//   bottom: 0;
+//   display: flex;
+//   justify-content: center;
+//   align-items: center;
+//   box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+// }
+// .archive-bottom-btn {
+//   padding: 8px 22px;
+// }
 </style>

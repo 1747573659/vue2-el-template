@@ -6,7 +6,7 @@
           <el-col :span="21">
             <el-form-item label="申请时间">
               <el-date-picker
-                v-model="applicationTime"
+                v-model="form.createTime"
                 type="daterange"
                 range-separator="至"
                 start-placeholder="开始日期"
@@ -15,7 +15,7 @@
               ></el-date-picker>
             </el-form-item>
             <el-form-item label="资料状态">
-              <el-select v-model="form.status" class="p-general_formWidth" clearable placeholder="全部">
+              <el-select v-model="form.auditStatus" class="p-general_formWidth" clearable placeholder="全部">
                 <template v-for="item in statusOptions">
                   <el-option v-if="!item.hidden" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </template>
@@ -54,7 +54,7 @@
     </div>
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" @sort-change="handleTabSort">
-        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column>
+        <!-- <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column> -->
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
@@ -92,7 +92,9 @@
           <template slot-scope="scope">
             <!-- 按钮状态 编辑、审核、详情、复制、启用、停用 -->
             <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 2">审核</el-button>
-            <el-button type="text" size="small" @click="$router.push({ name: 'wxArchiveAdd' })" v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)">编辑</el-button>
+            <el-button type="text" size="small" @click="$router.push({ name: 'wxArchiveAdd' })" v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
+              >编辑</el-button
+            >
             <el-button type="text" size="small" v-else>详情</el-button>
             <!-- <el-button type="text" size="small">启用/停用</el-button> -->
             <el-button type="text" size="small">复制</el-button>
@@ -126,16 +128,16 @@
 <script>
 import { filterReview, filterArchiveStatus } from './filters/reviewStatus'
 import { statusOptions, deactivateOptions } from './index'
-import { xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus } from '@/api/wxArchive'
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus } from '@/api/wxArchive'
 
 export default {
   data() {
     return {
       statusOptions,
       deactivateOptions,
-      applicationTime: '',
       form: {
-        status: '',
+        createTime: '',
+        auditStatus: '',
         msg: '',
         isDeactivate: 0
       },
@@ -186,7 +188,7 @@ export default {
             auditStatus: 4,
             remark: null,
             createId: 1554,
-            createTime: '2017-01-11 14:26:48',
+            // createTime: '2017-01-11 14:26:48',
             source: null,
             aliOrgTypeCode: null,
             wxCertStatus: 0,
@@ -303,7 +305,7 @@ export default {
       this.handleQueryPage()
     },
     handleSearch() {
-      this.pageSize = 1
+      this.currentPage = 1
       this.isSearchLock = true
       this.handleQueryPage().finally(() => {
         this.isSearchLock = true
@@ -321,10 +323,23 @@ export default {
       this.handleQueryPage()
     },
     handleQueryPage: async function() {
-      const data = Object.assign({ startTime: this.applicationTime[0], endTime: this.applicationTime[1] }, this.form, { page: this.pageSize, rows: this.currentPage })
+      const data = {
+        startTime: this.form.createTime[0],
+        endTime: this.form.createTime[1],
+        auditStatus: this.form.auditStatus,
+        companyName: this.form.msg,
+        bankCard: this.form.msg,
+        merchantName: this.form.msg,
+        merchantShortName: this.form.msg,
+        page: this.currentPage,
+        row: this.pageSize
+      }
       // 查询调用接口
       try {
         this.isTabLock = true
+        const res = await queryPage(data)
+        this.tableData = res.results
+        this.totalPage = res.totalCount
       } catch (error) {
       } finally {
         this.isTabLock = false
