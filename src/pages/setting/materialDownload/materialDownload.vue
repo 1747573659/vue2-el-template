@@ -47,7 +47,7 @@
           align="right"
           width="150px">
           <template slot-scope="scope">
-            <el-button @click="downLoad(scope.row)" type="text" size="small">下载</el-button>
+            <el-button @click="downLoad(scope.row)" type="text" size="small" v-permission="'MATERIAL_INDEX_DOWN'">下载</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -71,6 +71,7 @@ import { queryDocumentByPage } from '@/api/setting/material'
 import { downloadForURL } from '@/utils'
 
 export default {
+  name: 'materialDownload',
   data() {
     return {
       form: {
