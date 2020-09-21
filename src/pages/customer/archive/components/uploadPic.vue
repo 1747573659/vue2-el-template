@@ -40,9 +40,7 @@
 
 <script>
 import { getLocal } from '@/utils/storage'
-import fileServer from '@/mixins/fileServe'
 export default {
-  mixins: [fileServer],
   data() {
     return {
       uploadUrl: process.env.VUE_APP_BASE_API + '/uploadPic',
@@ -52,6 +50,10 @@ export default {
     }
   },
   props: {
+    fileServer: {
+      type: String,
+      default: ''
+    },
     alt: {
       type: String,
       default: ''

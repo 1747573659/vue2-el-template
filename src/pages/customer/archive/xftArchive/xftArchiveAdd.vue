@@ -14,7 +14,7 @@
           </el-col>
         </el-row>
       </div>
-      <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
+      <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="190px">
         <div class="title">基本信息</div>
         <div class="form-info">
           <el-row>
@@ -37,16 +37,16 @@
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="商户类型" prop="status">
-                <el-radio-group v-model="form.merchantType">
+              <el-form-item label="商户类型" prop="archiveBaseVO.merchantType">
+                <el-radio-group v-model="form.archiveBaseVO.merchantType" @change="merchantTypeChange">
                   <el-radio :label="3">持证商户</el-radio>
-                  <el-radio :label="6">非持证商户</el-radio>
+                  <el-radio :label="4">非持证商户</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开通超级码" prop="status">
-                <el-radio-group v-model="form.merchantType">
+              <el-form-item label="开通超级码" prop="archiveBaseVO.superCode">
+                <el-radio-group v-model="form.archiveBaseVO.superCode">
                   <el-radio :label="3">是</el-radio>
                   <el-radio :label="6">否</el-radio>
                 </el-radio-group>
@@ -55,134 +55,113 @@
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="公司名称" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
+              <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.companyName" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="商户简称" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.merchantShortName" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="地区" prop="status">
+              <el-form-item label="地区" prop="archiveBaseVO.address">
                 <area-select @change="areaChange"></area-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="详细地址" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
+              <el-form-item label="详细地址" prop="archiveBaseVO.address">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.address" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="客服电话" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="客服电话" prop="archiveBaseVO.serviceTel">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.serviceTel" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="负责人" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="负责人证件号码" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="负责人电话" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
+              <el-form-item label="负责人" prop="archiveBaseVO.contact">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.contact" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="邮箱" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="负责人证件号码" prop="archiveBaseVO.idNumber">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.idNumber" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="经营类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+              <el-form-item label="负责人电话" prop="archiveBaseVO.contactPhone">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.contactPhone" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="邮箱" prop="archiveBaseVO.email">
+                <el-input style="width:240px" v-model="form.archiveBaseVO.email" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="经营类型" prop="archiveBaseVO.mchDealType">
+                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.mchDealType" placeholder="全部">
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="经营类目" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+              <el-form-item label="经营类目" prop="archiveBaseVO.industrId">
+                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.industrId" placeholder="全部" @change="industrIdChange">
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 3 && form.archiveBaseVO.industrIdName.includes('事业单位')">
+              <el-form-item label="登记证书类型" prop="archiveBaseVO.certType">
+                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.certType" placeholder="全部">
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="门店门头照" prop="status">
-                <upload-pic
-                  alt="门店门头照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
+                <upload-pic alt="门店门头照" :fileServer="fileServer" :exampleImg="exampleImg.signboardUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="企业信息公示图" prop="status">
-                <upload-pic
-                  alt="企业信息公示图"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="企业信息公示图" prop="archiveOtherVO.enterpriseInfoScreenshot">
+                <upload-pic alt="企业信息公示图" :fileServer="fileServer" :exampleImg="exampleImg.enterpriseInfoScreenshot" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
         </div>
-        <div class="title">营业执照</div>
+        <div class="title" v-if="form.archiveBaseVO.merchantType === 3">营业执照</div>
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照" prop="status">
-                <upload-pic
-                  alt="营业执照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
+                <upload-pic alt="营业执照" :fileServer="fileServer" :exampleImg="exampleImg.businessLicenseUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照注册号" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
+                <el-input style="width:240px" v-model="form.archiveExpandVO.licId" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照有效期" prop="status">
-                <el-date-picker
-                  v-model="form.time"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd">
+              <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidity">
+                <el-date-picker v-model="form.archiveExpandVO.licValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -192,59 +171,40 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="法人姓名" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="法人姓名" prop="archiveExpandVO.legalPersonName">
+                <el-input style="width:240px" v-model="form.archiveExpandVO.legalPersonName" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+              <el-form-item label="证件类型" prop="archiveExpandVO.cardholderIdType">
+                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardholderIdType" placeholder="全部">
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件号码" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="证件号码" prop="archiveExpandVO.idNumber">
+                <el-input style="width:240px" v-model="form.archiveExpandVO.idNumber" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件有效期" prop="status">
-                <el-date-picker
-                  v-model="form.time"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd">
+              <el-form-item label="证件有效期" prop="archiveExpandVO.legalPersonValidity">
+                <el-date-picker v-model="form.archiveExpandVO.legalPersonValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="身份证正面照" prop="status">
-                <upload-pic
-                  alt="身份证正面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
+                <upload-pic alt="身份证正面照" :fileServer="fileServer" :exampleImg="exampleImg.idFrontUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="身份证背面照" prop="status">
-                <upload-pic
-                  alt="身份证背面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
+                <upload-pic alt="身份证背面照" :fileServer="fileServer" :exampleImg="exampleImg.idBackUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -253,113 +213,109 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="账户类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+              <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
+                <el-select style="width: 240px" @change="acctTypeChange" :disabled="form.archiveBaseVO.merchantType === 4" clearable v-model="form.archiveExpandVO.acctType" placeholder="全部">
+                  <el-option v-for="item in acctTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 2">
+              <el-form-item label="收款类型" prop="archiveExpandVO.cashreceiveType">
+                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cashreceiveType" placeholder="全部">
+                  <el-option v-for="item in cashreceiveTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1">
+              <el-form-item label="持卡人类型" prop="archiveExpandVO.cardholderType">
+                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardholderType" placeholder="全部">
+                  <el-option v-for="item in cardholderTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
+                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.bankSub" placeholder="全部">
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+              <el-form-item label="开户支行所在省市" prop="archiveBaseVO.address">
+                <area-select @change="areaChange"></area-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
+                <el-input clearable style="width:240px" v-model="form.archiveExpandVO.bankAccountName" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
+                <el-input clearable style="width:240px" v-model="form.archiveExpandVO.bankCard" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="预留手机号" prop="archiveExpandVO.cardholderPhone">
+                <el-input clearable style="width:240px" v-model="form.archiveExpandVO.cardholderPhone" placeholder=""></el-input>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="form.archiveExpandVO.acctType === 1">
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="持卡人证件类型" prop="archiveExpandVO.cardholderIdType">
+                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardholderIdType" placeholder="全部">
+                  <el-option v-for="item in cardholderIdTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="所属支行" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
+              <el-form-item label="持卡人证件号码" prop="archiveExpandVO.cardholderIdNumber">
+                <el-input style="width:240px" v-model="form.archiveExpandVO.cardholderIdNumber" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="form.archiveExpandVO.acctType === 1">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行账号" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
+                <upload-pic alt="银行卡正面照" :fileServer="fileServer" :exampleImg="exampleImg.bankCardFrontUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="账户名" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="预留手机号" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="银行卡背面照" prop="archiveExpandVO.bankCardBackUrl">
+                <upload-pic alt="银行卡背面照" :fileServer="fileServer" :exampleImg="exampleImg.bankCardBackUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="form.archiveExpandVO.acctType === 2">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人证件类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人证件号码" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
+              <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
+                <upload-pic alt="开户许可证" :fileServer="fileServer" :exampleImg="exampleImg.openingPermitUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行卡正面照" prop="status">
-                <upload-pic
-                  alt="银行卡正面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="收款企业法人身份证正面照" prop="archiveExpandVO.cashreceiveIdFrontUrl">
+                <upload-pic alt="收款企业法人身份证正面照" :fileServer="fileServer" :exampleImg="exampleImg.cashreceiveIdFrontUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行卡背面照" prop="status">
-                <upload-pic
-                  alt="银行卡背面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="收款企业法人身份证反面照" prop="archiveExpandVO.cashreceiveIdBackUrl">
+                <upload-pic alt="收款企业法人身份证反面照" :fileServer="fileServer" :exampleImg="exampleImg.cashreceiveIdBackUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
-                </el-select>
+              <el-form-item label="第三方对公结算授权函" prop="archiveExpandVO.publicAuthorization">
+                <upload-pic alt="第三方对公结算授权函" :fileServer="fileServer" :exampleImg="exampleImg.publicAuthorization" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -368,54 +324,41 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开通星POS刷卡" prop="status">
-                <el-switch
-                  style="display: block"
-                  v-model="form.isXingPOS"
-                  active-color="#3377FF"
-                  inactive-color="#D3DBEB">
-                </el-switch>
+              <el-form-item label="开通星POS刷卡" prop="archiveBaseVO.isOpenXingPos">
+                <el-switch style="display: block" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人身份证正面照" prop="status">
-                <upload-pic
-                  alt="银行卡背面照"
-                  :exampleImg="exampleImg"
-                  @click="imgClick">
-                </upload-pic>
+              <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdCardFront">
+                <upload-pic alt="持卡人身份证正面照" :fileServer="fileServer" :exampleImg="exampleImg.cardholderIdCardFront" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
         </div>
         <div class="title">费率</div>
-              <div class="form-info">
+        <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="费率" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option
-                    v-for="item in statusList"
-                    :key="item.id"
-                    :label="item.name"
-                    :value="item.id">
-                  </el-option>
+              <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
+                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.fixFeeRate" placeholder="全部">
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="享钱汇银费率" prop="archiveBaseVO.exchangeFeeRate">
+                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="备注" prop="status">
-                <el-input
-                  style="width: 240px"
-                  type="textarea"
-                  :autosize="{ minRows: 3}"
-                  placeholder=""
-                  v-model="form.remark">
-                </el-input>
+              <el-form-item label="备注" prop="archiveBaseVO.remark">
+                <el-input style="width: 240px" type="textarea" :autosize="{ minRows: 3 }" placeholder="" v-model="form.archiveBaseVO.remark"> </el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -435,7 +378,10 @@
 import selectPage from '@/components/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
+import fileServer from '@/mixins/fileServe'
+
 export default {
+  mixins: [fileServer],
   components: {
     selectPage,
     uploadPic,
@@ -443,17 +389,207 @@ export default {
   },
   data() {
     return {
-      form: {},
+      form: {
+        archiveBaseVO: {
+          address: '',
+          agentId: 0,
+          agentName: '',
+          alIndustryId: '',
+          alIndustryIdName: '',
+          aliOrgTypeCode: '',
+          appid: '',
+          appletId: '',
+          appsecret: '',
+          archiveMode: 0,
+          archiveType: 0,
+          area: '',
+          areaName: '',
+          auditRemark: '',
+          auditStatus: 0,
+          auditTime: '',
+          auditUserId: 0,
+          bossAuditTime: '',
+          businessCategory: '',
+          businessCategoryRemark: '',
+          city: '',
+          cityName: '',
+          companyName: '',
+          contact: '',
+          contactPhone: '',
+          createId: 0,
+          createTime: '',
+          creditcardFeeRate: 0,
+          debitcardFeeRate: 0,
+          directAgentId: 0,
+          email: '',
+          exchangeFeeRate: 0,
+          fixFeeRate: 0,
+          id: 0,
+          idNumber: '',
+          industrId: '',
+          industrIdName: '',
+          isOpenXingPos: 0,
+          mchDealType: 0,
+          mchTypeId: 0,
+          mchTypeName: '',
+          merchantId: 0,
+          merchantName: '',
+          merchantShortName: '',
+          merchantType: 3,
+          partner: '',
+          pid: '',
+          province: '',
+          provinceName: '',
+          publicId: '',
+          remark: '',
+          serviceTel: '',
+          source: 0,
+          status: 0,
+          submitLevel: 0,
+          superCode: 0,
+          unionpaycodeFeeRate: 0,
+          useChannelCode: '',
+          userId: 0,
+          wxCertStatus: 0,
+          wxFlag: 0,
+          wxIndustryId: '',
+          wxIndustryIdName: ''
+        },
+        archiveExpandVO: {
+          acctType: 1,
+          archiveId: 0,
+          bank: '',
+          bankAccountName: '',
+          bankArea: '',
+          bankAreaName: '',
+          bankCard: '',
+          bankCardBackUrl: '',
+          bankCardFrontUrl: '',
+          bankCity: '',
+          bankCityName: '',
+          bankName: '',
+          bankProvince: '',
+          bankProvinceName: '',
+          bankSub: '',
+          bankSubName: '',
+          businessLicenseUrl: '',
+          businessScope: '',
+          cardholderIdNumber: '',
+          cardholderIdType: '',
+          cardholderPhone: '',
+          cardholderType: 1,
+          cashreceiveType: 1,
+          certType: '',
+          certTypeName: '',
+          hardIdUrl: '',
+          idBackUrl: '',
+          idBegin: '',
+          idEnd: '',
+          idFrontUrl: '',
+          idNumber: '',
+          idType: '',
+          legalPersonName: '',
+          legalPersonValidityBegin: '',
+          legalPersonValidityEnd: '',
+          licId: '',
+          licType: 0,
+          licValidityBigen: '',
+          licValidityEnd: '',
+          openingPermitUrl: '',
+          orgInstitutionBigen: '',
+          orgInstitutionCode: '',
+          orgInstitutionEnd: '',
+          orgInstitutionUrl: '',
+          sellShopDescribe: '',
+          taxRegistrationUrl: ''
+        },
+        archiveOtherVO: {
+          additionalFiveUrl: '',
+          additionalFourUrl: '',
+          additionalOneUrl: '',
+          additionalRemark: '',
+          additionalThreeUrl: '',
+          additionalTwoUrl: '',
+          archiveId: 0,
+          authorizationOfCompany: '',
+          businessSiteOneUrl: '',
+          businessSiteThreeUrl: '',
+          businessSiteTwoUrl: '',
+          businessSiteUrl: '',
+          cardholderIdBackUrl: '',
+          cardholderIdCardFront: '',
+          cardholderIdFrontUrl: '',
+          cardholderPhoto: '',
+          cashierDesk: '',
+          cashreceiveIdBackUrl: '',
+          cashreceiveIdFrontUrl: '',
+          contractOfTenancy1: '',
+          contractOfTenancy2: '',
+          contractOfTenancy3: '',
+          enterpriseInfoScreenshot: '',
+          privateAuthorization: '',
+          publicAuthorization: '',
+          signboardUrl: '',
+          typeAptitudeUrl: ''
+        }
+      },
+      acctTypeList: [
+        {id: 1, name: '对私'},
+        {id: 2, name: '对公'}
+      ],
+      cashreceiveTypeList: [
+        {id: 1, name: '本企业收款'},
+        {id: 2, name: '其他企业收款'}
+      ],
+      cardholderTypeList: [
+        {id: 1, name: '个体商户 持卡人为法人'},
+        {id: 2, name: '个体商户 持卡人为非法人'}
+      ],
+      cardholderIdTypeList: [
+        {id: 1, name: '对私'},
+        {id: 2, name: '对公'}
+      ],
+      industrIdList: [],
       statusList: [],
       shopList: [],
       selectPageNo: 1,
       formDisabled: false,
       isMaxPage: false,
       searchString: '',
-      exampleImg: require('@/assets/images/home/home.png')
+      exampleImg: {
+        signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
+        enterpriseInfoScreenshot: require('@/assets/images/xftArchive/company_information.png'),
+        businessLicenseUrl: require('@/assets/images/xftArchive/business_license.jpg'),
+        idFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+        idBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+        bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png'),
+        bankCardBackUrl: require('@/assets/images/xftArchive/bank_card_back.png'),
+        cardholderIdCardFront: require('@/assets/images/xftArchive/idcard_front.png'),
+        openingPermitUrl: require('@/assets/images/xftArchive/licence_for_opening_accounts.png'),
+        cashreceiveIdFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+        cashreceiveIdBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+        publicAuthorization: require('@/assets/images/xftArchive/authorization.jpg'),
+      }
     }
   },
   methods: {
+    acctTypeChange(value) {
+      console.log(value)
+    },
+    merchantTypeChange(value) {
+      console.log(value)
+      if (value === 4) {
+        this.form.archiveExpandVO.acctType = 1
+      }
+    },
+    industrIdChange(value) {
+      if (value) {
+        this.industrIdList.forEach(item => {
+          item.id = value
+          this.form.archiveBaseVO.industrIdName = item.name
+        })
+      }
+    },
     remoteMethod(value) {
       // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
       if (!value || (this.searchString !== '' && value !== this.searchString)) {
@@ -465,9 +601,9 @@ export default {
       // 只有value有值的时候才去请求接口
       if (value) {
         let data = {
-          'name': value,
-          "page": this.selectPageNo,
-          "rows": 10
+          name: value,
+          page: this.selectPageNo,
+          rows: 10
         }
         import('@/api/setting/account').then(async module => {
           const res = await module.queryPage(data)
@@ -504,13 +640,16 @@ export default {
       this.selectPageNo = 1
     },
     shopChange(value) {
+      this.form.archiveBaseVO.merchantName = value
     },
     imgClick() {
-      if (this.formDisabled)
-      alert('hahahah')
+      if (this.formDisabled) alert('hahahah')
     },
     areaChange(value) {
       console.log(value)
+      this.archiveBaseVO.province = value[0]
+      this.archiveBaseVO.city = value[1]
+      this.archiveBaseVO.area = value[2]
     }
   }
 }
@@ -532,16 +671,16 @@ export default {
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
-      color: #3D4966;
+      color: #3d4966;
       .archive-status {
         padding: 5px 12px;
-        background: #FFEFE8;
+        background: #ffefe8;
         border-radius: 3px;
-        color: #FF6010;
+        color: #ff6010;
         line-height: 14px;
       }
       .archive-result {
-        color: #FF6010;
+        color: #ff6010;
       }
     }
   }
@@ -551,9 +690,9 @@ export default {
     font-size: 16px;
     font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 500;
-    color: #1F2E4D;
+    color: #1f2e4d;
     line-height: 48px;
-    border-bottom: 1px solid #E6E9F0;
+    border-bottom: 1px solid #e6e9f0;
   }
   .form-info {
     padding-top: 24px;
