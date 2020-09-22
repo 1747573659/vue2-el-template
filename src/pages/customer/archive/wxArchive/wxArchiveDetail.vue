@@ -1,19 +1,22 @@
 <template>
   <section>
-    <div class="data-box">
+    <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData">
-        <el-table-column prop="name" label="微信商户号"></el-table-column>
-        <el-table-column prop="createTime" label="进件类型"> </el-table-column>
-        <el-table-column prop="createTime" label="公司名称"> </el-table-column>
-        <el-table-column prop="createTime" label="进件时间"> </el-table-column>
-        <el-table-column prop="createTime" label="审核状态"> </el-table-column>
-        <el-table-column prop="createTime" label="升级状态"> </el-table-column>
+        <el-table-column prop="subMchId" label="微信商户号"></el-table-column>
+        <el-table-column prop="channelList" label="进件类型"></el-table-column>
+        <el-table-column prop="createTime" label="公司名称"></el-table-column>
+        <el-table-column prop="createTime" label="进件时间"></el-table-column>
+        <el-table-column prop="status" label="审核状态"></el-table-column>
+        <el-table-column prop="updateStatus" label="升级状态"></el-table-column>
         <el-table-column label="操作" align="right" width="400px">
-          <!-- <template slot-scope="scope"> -->
-          <!-- <el-button @click="toAuthor(scope.row)" type="text" size="small">子商户号授权</el-button>
-            <el-button @click="queryStatus(scope.row)" type="text" size="small">查询授权状态</el-button>
-            <el-button @click="querySubShop(scope.row)" type="text" size="small">查询子商户号</el-button> -->
-          <!-- </template> -->
+          <template slot-scope="scope">
+            <div v-if="scope.row.status !== -1">
+              <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null">立即签约</el-button>
+              <el-button type="text" size="small" v-if="scope.row.updateStatus === 4">升级签约</el-button>
+              <el-button type="text" size="small" v-if="scope.row.updateStatus === 2">验证账户</el-button>
+            </div>
+            <span v-else>--</span>
+          </template>
         </el-table-column>
       </el-table>
       <div class="km-page-block">
@@ -30,124 +33,64 @@
       </div>
     </div>
     <!-- dialog -->
-    <el-dialog title="微信子商户号授权流程" :visible.sync="authorVisible" width="507px" class="author-dialog">
-      <div class="author-dialog-text">1. 确认商户联系人：已在微信客户端内为 完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”</div>
-      <div class="author-dialog-text">2. 商户联系人：扫描下方小程序二维码，按照流程指引为特约商户号完成授权</div>
-      <img :src="imgSrc" class="author-dialog-img" alt="qrcode" />
+    <!-- 升级签约/立即签约 -->
+    <el-dialog>
+      <section>
+        <header>
+          <p>当前入驻申请已通过</p>
+          <p>请林超（本人）微信扫码完成签约</p>
+        </header>
+        <div>
+          <img src="" alt="" />
+        </div>
+        <section>
+          <p>商户简称</p>
+          <p>公司名称</p>
+          <p>结算银行卡</p>
+        </section>
+      </section>
     </el-dialog>
-    <el-dialog title="子商户信息" :visible.sync="subShopInfoVisible" class="shop-dialog" width="507px">
-      <el-form ref="form" size="small" label-suffix=":" style="width: 300px" label-width="120px" :model="subShopForm">
-        <el-form-item label="微信子商户号">
-          <el-row class="shop-dialog-row">
-            <el-col :span="18">
-              {{ subShopForm.name }}
-            </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.name)" type="text" size="small">复制</el-button>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item label="支付宝子商户号">
-          <el-row class="shop-dialog-row">
-            <el-col :span="18">
-              {{ subShopForm.url }}
-            </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.url)" type="text" size="small">复制</el-button>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item label="银总联商户号">
-          <el-row class="shop-dialog-row">
-            <el-col :span="18">
-              {{ subShopForm.creatorName }}
-            </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.creatorName)" type="text" size="small">复制</el-button>
-            </el-col>
-          </el-row>
-        </el-form-item>
-        <el-form-item label="银联子商户号">
-          <el-row class="shop-dialog-row">
-            <el-col :span="18">
-              {{ subShopForm.completeUrl }}
-            </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.completeUrl)" type="text" size="small">复制</el-button>
-            </el-col>
-          </el-row>
-        </el-form-item>
-      </el-form>
-      <span slot="footer" class="dialog-footer">
-        <el-button @click="subShopInfoVisible = false">取 消</el-button>
-        <el-button type="primary" @click="subShopInfoVisible = false">确认</el-button>
-      </span>
+    <!-- 验证账户 -->
+    <el-dialog title="验证账户">
+      <section>
+        <div class="p-account-item">
+          <p>汇款金额</p>
+        </div>
+        <div class="p-account-item">
+          <p>收款卡号</p>
+        </div>
+        <div class="p-account-item">
+          <p>收款户名</p>
+        </div>
+        <div class="p-account-item">
+          <p>收款账户开户行</p>
+        </div>
+        <div class="p-account-item">
+          <p>开户行省市</p>
+        </div>
+        <div class="p-account-item">
+          <p>汇款截止时间</p>
+        </div>
+        <div class="p-account-item">
+          <p>汇款备注信息</p>
+        </div>
+      </section>
+      <el-alert :title="234" type="warning" show-icon :closable="false"></el-alert>
     </el-dialog>
   </section>
 </template>
 
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
+
 export default {
   data() {
     return {
-      subShopForm: {},
+      isTabLock: false, // 锁状态
       tableData: [],
       currentPage: 1,
       totalPage: 0,
-      pageSize: 10,
-      tableLoading: false,
-      authorVisible: false,
-      subShopInfoVisible: false,
-      imgSrc: require('@/assets/images/abnormal/404.png')
-    }
-  },
-  methods: {
-    copy(value) {
-      let transfer = document.createElement('input')
-      document.body.appendChild(transfer)
-      transfer.value = value // 这里表示想要复制的内容
-      transfer.focus()
-      transfer.select()
-      if (document.execCommand('copy')) {
-        document.execCommand('copy')
-      }
-      transfer.blur()
-      this.$message.success('复制成功')
-      document.body.removeChild(transfer)
-    },
-    toAuthor(row) {
-      this.authorVisible = true
-    },
-    queryStatus(row) {},
-    querySubShop(row) {
-      this.subShopForm = row
-      this.subShopInfoVisible = true
-    },
-    handleSizeChange(value) {
-      this.pageSize = value
-      this.currentPage = 1
-      this.getList()
-    },
-    handleCurrentChange(value) {
-      this.currentPage = value
-      this.getList()
-    },
-    async getList() {
-      this.tableLoading = true
-      let data = {
-        orders: {},
-        page: this.currentPage,
-        rows: this.pageSize
-      }
-      try {
-        const res = await queryDocumentByPage(data)
-        this.tableData = res.results
-        this.totalPage = res.totalCount
-      } catch (e) {
-      } finally {
-        this.tableLoading = false
-      }
+      pageSize: 10
     }
   },
   computed: {
@@ -156,7 +99,30 @@ export default {
     }
   },
   mounted() {
-    this.getList()
+    this.handleQueryPage()
+  },
+  methods: {
+    handleCurrentChange(val) {
+      // 切换当前页
+      this.currentPage = val
+      this.handleQueryPage()
+    },
+    handleSizeChange(val) {
+      // 切换页面总条数
+      this.currentPage = 1
+      this.pageSize = val
+      this.handleQueryPage()
+    },
+    handleQueryPage: async function() {
+      const data = Object.assign({ startTime: this.applicationTime[0], endTime: this.applicationTime[1] }, this.form, { page: this.pageSize, rows: this.currentPage })
+      // 查询调用接口
+      try {
+        this.isTabLock = true
+      } catch (error) {
+      } finally {
+        this.isTabLock = false
+      }
+    }
   }
 }
 </script>
