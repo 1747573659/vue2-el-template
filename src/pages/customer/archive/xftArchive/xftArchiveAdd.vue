@@ -110,7 +110,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="经营类型" prop="archiveBaseVO.mchDealType">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.mchDealType" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -119,14 +119,14 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="经营类目" prop="archiveBaseVO.industrId">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.industrId" placeholder="全部" @change="industrIdChange">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 3 && form.archiveBaseVO.industrIdName.includes('事业单位')">
               <el-form-item label="登记证书类型" prop="archiveBaseVO.certType">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.certType" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -134,18 +134,49 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
-                <upload-pic alt="门店门头照" :fileServer="fileServer" :exampleImg="exampleImg.signboardUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="门店门头照" :fileServer="fileServer" :exampleImg="exampleImg.signboardUrl" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="企业信息公示图" prop="archiveOtherVO.enterpriseInfoScreenshot">
-                <upload-pic alt="企业信息公示图" :fileServer="fileServer" :exampleImg="exampleImg.enterpriseInfoScreenshot" @click="imgClick"> </upload-pic>
+              <el-form-item label="收银台照片" prop="archiveOtherVO.cashierDesk">
+                <upload-pic alt="收银台照片" :fileServer="fileServer" :exampleImg="exampleImg.cashierDesk" @click="imgClick"></upload-pic>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="form.archiveBaseVO.merchantType === 3">
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="企业信息公示网照片" prop="archiveOtherVO.enterpriseInfoScreenshot">
+                <upload-pic alt="企业信息公示网照片" :fileServer="fileServer" :exampleImg="exampleImg.enterpriseInfoScreenshot" @click="imgClick"></upload-pic>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="form.archiveBaseVO.merchantType === 4">
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
+                <upload-pic alt="经营场所照" :fileServer="fileServer" :exampleImg="exampleImg.businessSiteOneUrl" @click="imgClick"></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
+                <upload-pic alt="租赁合同照一" :fileServer="fileServer" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="form.archiveBaseVO.merchantType === 4">
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="租赁合同照二" prop="archiveOtherVO.contractOfTenancy2">
+                <upload-pic alt="租赁合同照二" :fileServer="fileServer" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="租赁合同照三" prop="archiveOtherVO.contractOfTenancy3">
+                <upload-pic alt="租赁合同照三" :fileServer="fileServer" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
         </div>
         <div class="title" v-if="form.archiveBaseVO.merchantType === 3">营业执照</div>
-        <div class="form-info">
+        <div class="form-info" v-if="form.archiveBaseVO.merchantType === 3">
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
@@ -319,17 +350,41 @@
               </el-form-item>
             </el-col>
           </el-row>
+          <el-row v-if="form.archiveExpandVO.acctType === 1 && form.archiveExpandVO.cardholderType === 2">
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdFrontUrl">
+                <upload-pic alt="持卡人身份证正面照" :fileServer="fileServer" :exampleImg="exampleImg.cardholderIdFrontUrl" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="持卡人身份证反面照" prop="archiveOtherVO.cardholderIdBackUrl">
+                <upload-pic alt="持卡人身份证反面照" :fileServer="fileServer" :exampleImg="exampleImg.cardholderIdBackUrl" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="form.archiveExpandVO.acctType === 1 && form.archiveExpandVO.cardholderType === 2">
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="持卡人手持身份证照片" prop="archiveOtherVO.cardholderPhoto">
+                <upload-pic alt="持卡人手持身份证照片" :fileServer="fileServer" :exampleImg="exampleImg.cardholderPhoto" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="第三方对私结算授权函" prop="archiveExpandVO.privateAuthorization">
+                <upload-pic alt="第三方对私结算授权函" :fileServer="fileServer" :exampleImg="exampleImg.privateAuthorization" @click="imgClick"> </upload-pic>
+              </el-form-item>
+            </el-col>
+          </el-row>
         </div>
         <div class="title">其他</div>
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通星POS刷卡" prop="archiveBaseVO.isOpenXingPos">
-                <el-switch style="display: block" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
+                <el-switch style="display: block" :active-value="1" :inactive-value="2" @change="isOpenXingPosChange" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
+          <el-row v-if="form.archiveBaseVO.isOpenXingPos === 1">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdCardFront">
                 <upload-pic alt="持卡人身份证正面照" :fileServer="fileServer" :exampleImg="exampleImg.cardholderIdCardFront" @click="imgClick"> </upload-pic>
@@ -347,7 +402,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" class="archive-form-item">
+            <el-col :span="12" class="archive-form-item" v-if="isExchangeFeeRate">
               <el-form-item label="享钱汇银费率" prop="archiveBaseVO.exchangeFeeRate">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
                   <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -392,7 +447,7 @@ export default {
       form: {
         archiveBaseVO: {
           address: '',
-          agentId: 0,
+          agentId: null,
           agentName: '',
           alIndustryId: '',
           alIndustryIdName: '',
@@ -400,14 +455,14 @@ export default {
           appid: '',
           appletId: '',
           appsecret: '',
-          archiveMode: 0,
-          archiveType: 0,
+          archiveMode: null,
+          archiveType: null,
           area: '',
           areaName: '',
           auditRemark: '',
-          auditStatus: 0,
+          auditStatus: null,
           auditTime: '',
-          auditUserId: 0,
+          auditUserId: null,
           bossAuditTime: '',
           businessCategory: '',
           businessCategoryRemark: '',
@@ -416,23 +471,23 @@ export default {
           companyName: '',
           contact: '',
           contactPhone: '',
-          createId: 0,
+          createId: null,
           createTime: '',
-          creditcardFeeRate: 0,
-          debitcardFeeRate: 0,
-          directAgentId: 0,
+          creditcardFeeRate: null,
+          debitcardFeeRate: null,
+          directAgentId: null,
           email: '',
-          exchangeFeeRate: 0,
-          fixFeeRate: 0,
-          id: 0,
+          exchangeFeeRate: null,
+          fixFeeRate: null,
+          id: null,
           idNumber: '',
           industrId: '',
           industrIdName: '',
-          isOpenXingPos: 0,
-          mchDealType: 0,
-          mchTypeId: 0,
+          isOpenXingPos: 2,
+          mchDealType: null,
+          mchTypeId: null,
           mchTypeName: '',
-          merchantId: 0,
+          merchantId: null,
           merchantName: '',
           merchantShortName: '',
           merchantType: 3,
@@ -443,21 +498,21 @@ export default {
           publicId: '',
           remark: '',
           serviceTel: '',
-          source: 0,
-          status: 0,
-          submitLevel: 0,
-          superCode: 0,
-          unionpaycodeFeeRate: 0,
+          source: null,
+          status: null,
+          submitLevel: null,
+          superCode: null,
+          unionpaycodeFeeRate: null,
           useChannelCode: '',
-          userId: 0,
-          wxCertStatus: 0,
-          wxFlag: 0,
+          userId: null,
+          wxCertStatus: null,
+          wxFlag: null,
           wxIndustryId: '',
           wxIndustryIdName: ''
         },
         archiveExpandVO: {
           acctType: 1,
-          archiveId: 0,
+          archiveId: null,
           bank: '',
           bankAccountName: '',
           bankArea: '',
@@ -492,7 +547,7 @@ export default {
           legalPersonValidityBegin: '',
           legalPersonValidityEnd: '',
           licId: '',
-          licType: 0,
+          licType: null,
           licValidityBigen: '',
           licValidityEnd: '',
           openingPermitUrl: '',
@@ -510,7 +565,7 @@ export default {
           additionalRemark: '',
           additionalThreeUrl: '',
           additionalTwoUrl: '',
-          archiveId: 0,
+          archiveId: null,
           authorizationOfCompany: '',
           businessSiteOneUrl: '',
           businessSiteThreeUrl: '',
@@ -555,6 +610,7 @@ export default {
       selectPageNo: 1,
       formDisabled: false,
       isMaxPage: false,
+      isExchangeFeeRate: false,
       searchString: '',
       exampleImg: {
         signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
@@ -569,10 +625,20 @@ export default {
         cashreceiveIdFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
         cashreceiveIdBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
         publicAuthorization: require('@/assets/images/xftArchive/authorization.jpg'),
+        cardholderPhoto: require('@/assets/images/xftArchive/cardholder_photo.png'),
+        cardholderIdFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+        cardholderIdBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+        privateAuthorization: require('@/assets/images/xftArchive/authorization.jpg'),
+        cashierDesk: require('@/assets/images/xftArchive/cashier_desk.jpg'),
+        businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
+        contractOfTenancy: require('@/assets/images/xftArchive/contract_of_tenancy.png')
       }
     }
   },
   methods: {
+    isOpenXingPosChange(value) {
+      console.log(Number(value))
+    },
     acctTypeChange(value) {
       console.log(value)
     },
@@ -646,7 +712,7 @@ export default {
       if (this.formDisabled) alert('hahahah')
     },
     areaChange(value) {
-      console.log(value)
+      console.log(value[0])
       this.archiveBaseVO.province = value[0]
       this.archiveBaseVO.city = value[1]
       this.archiveBaseVO.area = value[2]
@@ -665,7 +731,7 @@ export default {
       height: 100%;
     }
     .title-text {
-      padding-left: 10%;
+      padding-left: 17%;
       display: flex;
       align-items: center;
       font-size: 14px;
