@@ -68,7 +68,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="地区" prop="archiveBaseVO.address">
-                <area-select @change="areaChange"></area-select>
+                <area-select @change="bankAreaChange"></area-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -277,7 +277,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开户支行所在省市" prop="archiveBaseVO.address">
-                <area-select @change="areaChange"></area-select>
+                <area-select @change="areaChange" :level="1"></area-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -712,10 +712,13 @@ export default {
       if (this.formDisabled) alert('hahahah')
     },
     areaChange(value) {
-      console.log(value[0])
-      this.archiveBaseVO.province = value[0]
-      this.archiveBaseVO.city = value[1]
-      this.archiveBaseVO.area = value[2]
+      this.form.archiveBaseVO.province = value[0]
+      this.form.archiveBaseVO.city = value[1]
+      this.form.archiveBaseVO.area = value[2]
+    },
+    bankAreaChange(value) {
+      this.form.archiveBaseVO.bankProvince = value[0]
+      this.form.archiveBaseVO.bankCity = value[1]
     }
   }
 }

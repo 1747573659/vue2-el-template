@@ -1,12 +1,19 @@
 <template>
   <div>
-    <el-cascader style="width: 240px" :props="props" clearable @change="change"></el-cascader>
+    <el-cascader style="width: 240px" :props="props" clearable @focus="focus" @change="change"></el-cascader>
   </div>
 </template>
 
 <script>
+let areaLevel = 2
 import { queryProvinceList, queryCityList } from '@/api/area'
 export default {
+  props: {
+    level: {
+      type: Number, 
+      default: 2
+    }
+  },
   data() {
     return {
       props: {
@@ -25,7 +32,7 @@ export default {
             nodes.push({
               value: item.code,
               label: item.name,
-              leaf: level >= 2
+              leaf: level >= areaLevel
             })
           })
           resolve(nodes)
@@ -37,6 +44,9 @@ export default {
   methods: {
     change(value) {
       this.$emit('change', value)
+    },
+    focus() {
+      areaLevel = this.level
     }
   },
   mounted() {
