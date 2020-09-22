@@ -14,12 +14,12 @@
       </el-row>
     </header>
     <section>
-      <div>
+      <div class="p-wxArchive-item">
         <div class="p-wxArchive-itemTitle">基本信息</div>
-        <el-form class="p-wxArchive-baseInfo" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="252px">
+        <el-form ref="form" class="p-wxArchive-baseInfo" :model="form" :rules="rules" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="252px">
           <el-row>
             <el-col :span="12">
-              <el-form-item label="商户">
+              <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
                   id="id"
                   name="name"
@@ -37,7 +37,7 @@
           </el-row>
           <el-row>
             <el-col :span="12">
-              <el-form-item label="进件类型" prop="status">
+              <el-form-item label="进件类型">
                 <el-radio-group v-model="form.merchantType">
                   <el-radio :label="3">微信直连</el-radio>
                   <el-radio :label="6">小微商户</el-radio>
@@ -45,7 +45,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="营业场景" prop="status">
+              <el-form-item label="营业场景">
                 <el-checkbox-group v-model="test">
                   <el-checkbox label="1">公众号</el-checkbox>
                   <el-checkbox label="2">小程序</el-checkbox>
@@ -53,17 +53,17 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="公众号APPID" prop="status">
+              <el-form-item label="公众号APPID" prop="archiveBaseVO.appid">
                 <el-input placeholder="请输入公众号APPID"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="小程序APPID" prop="status">
+              <el-form-item label="小程序APPID" prop="archiveBaseVO.appletId">
                 <el-input placeholder="请输入小程序APPID"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="商户类型" prop="status">
+              <el-form-item label="商户类型">
                 <el-radio-group v-model="form.merchantType">
                   <el-radio :label="3">个体工商户</el-radio>
                   <el-radio :label="6">企业</el-radio>
@@ -71,194 +71,57 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="公司名称" prop="status">
+              <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
                 <el-input placeholder="请输入公司名称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="商户简称" prop="status">
+              <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
                 <el-input placeholder="请输入公司简称"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="地区" prop="status">
+              <el-form-item label="地区" prop="archiveBaseVO.area">
                 <area-select @change="areaChange"></area-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="详细地址" prop="status">
-                <el-input placeholder="请输入公司简称"></el-input>
+              <el-form-item label="详细地址" prop="archiveBaseVO.address">
+                <el-input placeholder="请输入详细地址"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="联系人" prop="status">
+              <el-form-item label="联系人" prop="archiveBaseVO.contact">
                 <el-input placeholder="请输入联系人"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="联系人电话" prop="status">
+              <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
                 <el-input placeholder="请输入联系人电话"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
-              <el-form-item label="邮箱" prop="status">
+              <el-form-item label="邮箱" prop="archiveBaseVO.email">
                 <el-input placeholder="请输入邮箱"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="门店门头照" prop="status">
+              <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
                 <upload-pic alt="门店门头照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="经营场所照1" prop="status">
+              <el-form-item label="经营场所照1" prop="archiveOtherVO.businessSiteOneUrl">
                 <upload-pic alt="经营场所照1" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="经营场所照2" prop="status">
+              <el-form-item label="经营场所照2" prop="archiveOtherVO.businessSiteTwoUrl">
                 <upload-pic alt="经营场所照2" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="经营场所照3" prop="status">
-                <upload-pic alt="经营场所照3" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="经营场地证明" prop="status">
-                <upload-pic alt="经营场地证明" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="补充资料1" prop="status">
-                <upload-pic alt="补充资料1" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="补充资料2" prop="status">
-                <upload-pic alt="补充资料2" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </el-form>
-      </div>
-      <div>
-        <div class="p-wxArchive-itemTitle">营业执照</div>
-        <el-form class="p-wxArchive-baseInfo" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="252px">
-          <el-row>
-            <el-col :span="24">
-              <el-form-item label="证件类型" prop="status">
-                <el-radio-group v-model="form.merchantType">
-                  <el-radio :label="3">多证合一</el-radio>
-                  <el-radio :label="6">旧证</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照" prop="status">
-                <upload-pic alt="营业执照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="类目特殊资质" prop="status">
-                <upload-pic alt="类目特殊资质" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="营业执照注册号" prop="status">
-                <el-input placeholder="营业执照注册号"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照有效期" prop="status">
-                <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="经营范围" prop="status">
-                <el-input placeholder="经营范围"></el-input>
-              </el-form-item>
-            </el-col>
-            
-            <el-col :span="12">
-              <el-form-item label="营业场景" prop="status">
-                <el-checkbox-group v-model="test">
-                  <el-checkbox label="1">公众号</el-checkbox>
-                  <el-checkbox label="2">小程序</el-checkbox>
-                </el-checkbox-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="公众号APPID" prop="status">
-                <el-input placeholder="请输入公众号APPID"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="小程序APPID" prop="status">
-                <el-input placeholder="请输入小程序APPID"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="商户类型" prop="status">
-                <el-radio-group v-model="form.merchantType">
-                  <el-radio :label="3">个体工商户</el-radio>
-                  <el-radio :label="6">企业</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="公司名称" prop="status">
-                <el-input placeholder="请输入公司名称"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="商户简称" prop="status">
-                <el-input placeholder="请输入公司简称"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="地区" prop="status">
-                <area-select @change="areaChange"></area-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="详细地址" prop="status">
-                <el-input placeholder="请输入公司简称"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="联系人" prop="status">
-                <el-input placeholder="请输入联系人"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="联系人电话" prop="status">
-                <el-input placeholder="请输入联系人电话"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="邮箱" prop="status">
-                <el-input placeholder="请输入邮箱"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="门店门头照" prop="status">
-                <upload-pic alt="门店门头照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="经营场所照1" prop="status">
-                <upload-pic alt="经营场所照1" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="经营场所照2" prop="status">
-                <upload-pic alt="经营场所照2" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="经营场所照3" prop="status">
+              <el-form-item label="经营场所照3" prop="archiveOtherVO.businessSiteThreeUrl">
                 <upload-pic alt="经营场所照3" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
@@ -281,321 +144,11 @@
         </el-form>
       </div>
     </section>
-
-    <div class="xft-add">
-      <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="120px">
-        <!-- <div class="title">基本信息</div> -->
-        <div class="form-info">
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="商户" prop="status">
-                <select-page
-                  @remoteMethod="remoteMethod"
-                  @loadMore="loadMore"
-                  id="id"
-                  name="name"
-                  :options="shopList"
-                  :isMaxPage="isMaxPage"
-                  @focus="shopFocus"
-                  @change="shopChange"
-                  @clear="shopClear"
-                >
-                </select-page>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="商户类型" prop="status">
-                <el-radio-group v-model="form.merchantType">
-                  <el-radio :label="3">持证商户</el-radio>
-                  <el-radio :label="6">非持证商户</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开通超级码" prop="status">
-                <el-radio-group v-model="form.merchantType">
-                  <el-radio :label="3">是</el-radio>
-                  <el-radio :label="6">否</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="公司名称" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="商户简称" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="地区" prop="status">
-                <area-select @change="areaChange"></area-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="详细地址" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="客服电话" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="负责人" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="负责人证件号码" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="负责人电话" prop="status">
-                <el-input style="width:240px" v-model="form.companyName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="邮箱" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="经营类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="经营类目" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="门店门头照" prop="status">
-                <upload-pic alt="门店门头照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="企业信息公示图" prop="status">
-                <upload-pic alt="企业信息公示图" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="title">营业执照</div>
-        <div class="form-info">
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照" prop="status">
-                <upload-pic alt="营业执照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照注册号" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照有效期" prop="status">
-                <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="title">法人信息</div>
-        <div class="form-info">
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="法人姓名" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件号码" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件有效期" prop="status">
-                <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
-                </el-date-picker>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="身份证正面照" prop="status">
-                <upload-pic alt="身份证正面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="身份证背面照" prop="status">
-                <upload-pic alt="身份证背面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="title">银行卡信息</div>
-        <div class="form-info">
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="账户类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="所属支行" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行账号" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="账户名" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="预留手机号" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人证件类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人证件号码" prop="status">
-                <el-input style="width:240px" v-model="form.companyShortName" placeholder=""></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行卡正面照" prop="status">
-                <upload-pic alt="银行卡正面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="银行卡背面照" prop="status">
-                <upload-pic alt="银行卡背面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人类型" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="title">其他</div>
-        <div class="form-info">
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开通星POS刷卡" prop="status">
-                <el-switch style="display: block" v-model="form.isXingPOS" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="持卡人身份证正面照" prop="status">
-                <upload-pic alt="银行卡背面照" :exampleImg="exampleImg" @click="imgClick"> </upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="title">费率</div>
-        <div class="form-info">
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="费率" prop="status">
-                <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-          </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="备注" prop="status">
-                <el-input style="width: 240px" type="textarea" :autosize="{ minRows: 3 }" placeholder="" v-model="form.remark"> </el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-      </el-form>
-    </div>
-    <div class="bottom">
-      <el-button size="small" type="primary" class="archive-bottom-btn">保存</el-button>
-      <el-button size="small" type="primary" plain class="archive-bottom-btn">新增</el-button>
-      <el-button size="small" class="archive-bottom-btn">拒绝</el-button>
-      <el-button size="small" class="archive-bottom-btn">取消</el-button>
+    <div class="p-wxArchive-action">
+      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleArchive">保存</el-button>
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd">新增</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd">拒绝</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd">取消</el-button>
     </div>
   </section>
 </template>
@@ -604,6 +157,7 @@
 import selectPage from '@/components/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
+
 export default {
   components: {
     selectPage,
@@ -612,8 +166,54 @@ export default {
   },
   data() {
     return {
+      form: {
+        archiveBaseVO: {
+          merchantId: '', // 商户
+          merchantName: '', // 商户名称
+          archiveType: '', // 进件类型
+          appid: '', // 公众号APPID
+          appletId: '', // 小程序APPID
+          merchantType: '', // 商户类型
+          companyName: '', // 公司名称
+          merchantShortName: '', // 商户简称
+          province: '', // 省
+          provinceName: '',
+          city: '', // 市
+          cityName: '',
+          area: '', // 区
+          areaName: '',
+          address: '', // 详细地址
+          contact: '', // 联系人/负责人
+          contactPhone: '', // 联系人手机号/负责人联系方式
+          email: '' // 联系人邮箱
+        },
+        archiveOtherVO: {
+          signboardUrl: '', // 门店门头照
+          businessSiteOneUrl: '', // 经营场所照片1
+          businessSiteTwoUrl: '', // 经营场所照片2
+          businessSiteThreeUrl: '', // 经营场所照片3
+          businessSiteUrl: '', // 经营场地证明
+          additionalOneUrl: '', // 补充材料1
+          additionalTwoUrl: '' // 补充材料2
+        }
+      },
+      rules: {
+        'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户类型', trigger: 'change' }],
+        'archiveBaseVO.appid': [{ required: true, message: '请输入公众号APPID', trigger: 'change' }],
+        'archiveBaseVO.appletId': [{ required: true, message: '请输入小程序APPID', trigger: 'change' }],
+        'archiveBaseVO.companyName': [{ required: true, message: '请输入公司名称', trigger: 'change' }],
+        'archiveBaseVO.merchantShortName': [{ required: true, message: '请输入公司简称', trigger: 'change' }],
+        'archiveBaseVO.area': [{ required: true, message: '请输入地区', trigger: 'change' }],
+        'archiveBaseVO.address': [{ required: true, message: '请输入详细地址', trigger: 'change' }],
+        'archiveBaseVO.contact': [{ required: true, message: '请输入联系人', trigger: 'change' }],
+        'archiveBaseVO.contactPhone': [{ required: true, message: '请输入联系人电话', trigger: 'change' }],
+        'archiveBaseVO.email': [{ required: true, message: '请输入邮箱', trigger: 'change' }],
+        'archiveOtherVO.signboardUrl': [{ required: true, message: '请输入门店门头照', trigger: 'change' }],
+        'archiveOtherVO.businessSiteOneUrl': [{ required: true, message: '请输入经营场所照1', trigger: 'change' }],
+        'archiveOtherVO.businessSiteTwoUrl': [{ required: true, message: '请输入经营场所照2', trigger: 'change' }],
+        'archiveOtherVO.businessSiteThreeUrl': [{ required: true, message: '请输入经营场所照3', trigger: 'change' }]
+      },
       test: [1],
-      form: {},
       statusList: [],
       shopList: [],
       selectPageNo: 1,
@@ -624,6 +224,11 @@ export default {
     }
   },
   methods: {
+    handleArchive(){
+      this.$refs.form.validate(valid => {
+        
+      })
+    },
     remoteMethod(value) {
       // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
       if (!value || (this.searchString !== '' && value !== this.searchString)) {
@@ -713,6 +318,16 @@ export default {
     &-baseInfo {
       padding-top: 24px;
     }
+    &-action {
+      width: 100%;
+      height: 56px;
+      position: fixed;
+      bottom: 0;
+      background-color: #fff;
+      line-height: 56px;
+      text-align: center;
+      box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+    }
   }
 }
 .e {
@@ -726,71 +341,11 @@ export default {
         background: #ffefe8;
       }
     }
+    &-action {
+      &_pd {
+        padding: 8px 22px;
+      }
+    }
   }
 }
-// .xft-add {
-//   background-color: #fff;
-//   margin: 16px 16px 72px;
-//   .header {
-//     height: 72px;
-//     div {
-//       height: 100%;
-//     }
-//     .title-text {
-//       padding-left: 10%;
-//       display: flex;
-//       align-items: center;
-//       font-size: 14px;
-//       font-family: PingFangSC-Regular, PingFang SC;
-//       font-weight: 400;
-//       color: #3d4966;
-//       .archive-status {
-//         padding: 5px 12px;
-//         background: #ffefe8;
-//         border-radius: 3px;
-//         color: #ff6010;
-//         line-height: 14px;
-//       }
-//       .archive-result {
-//         color: #ff6010;
-//       }
-//     }
-//   }
-//   .title {
-//     height: 48px;
-//     padding-left: 16px;
-//     font-size: 16px;
-//     font-family: PingFangSC-Medium, PingFang SC;
-//     font-weight: 500;
-//     color: #1f2e4d;
-//     line-height: 48px;
-//     border-bottom: 1px solid #e6e9f0;
-//   }
-//   .form-info {
-//     padding-top: 24px;
-//     .archive-form-item {
-//       padding-left: 10%;
-//       .el-switch {
-//         line-height: 32px;
-//       }
-//     }
-//     /deep/.el-form-item {
-//       margin-bottom: 24px;
-//     }
-//   }
-// }
-// .bottom {
-//   width: 100%;
-//   background-color: #fff;
-//   height: 56px;
-//   position: fixed;
-//   bottom: 0;
-//   display: flex;
-//   justify-content: center;
-//   align-items: center;
-//   box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
-// }
-// .archive-bottom-btn {
-//   padding: 8px 22px;
-// }
 </style>

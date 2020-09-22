@@ -6,6 +6,7 @@
 
 <script>
 import { queryProvinceList, queryCityList } from '@/api/area'
+
 export default {
   data() {
     return {
@@ -44,6 +45,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
