@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="action-box">
+    <div class="search-box">
       <el-form :model="formData" @submit.native.prevent label-width="110px" ref="form" size="small">
         <el-form-item label="交易时间">
           <el-date-picker
@@ -550,6 +550,8 @@ export default {
 .el-pagination-box {
   text-align: right;
   margin-top: 20px;
+  background: #fff;
+  padding-bottom: 20px;
 }
 .page-box {
   text-align: right;

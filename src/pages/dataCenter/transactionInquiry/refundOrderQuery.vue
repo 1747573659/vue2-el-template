@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="action-box">
+    <div class="search-box">
       <el-form label-width="110px" @submit.native.prevent class="search-form" size="small">
         <el-row>
           <el-col :span="8">
@@ -271,6 +271,8 @@ export default {
 .el-pagination-box {
   text-align: right;
   margin-top: 20px;
+  background: #fff;
+  padding-bottom: 20px;
 }
 .pure {
   &-dialog {

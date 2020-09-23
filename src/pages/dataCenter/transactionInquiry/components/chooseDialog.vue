@@ -41,7 +41,7 @@
 </template>
 
 <script>
-import Pagination from '@/components/Pagination/index.vue'
+import Pagination from '@/components/Pagination'
 export default {
   props: {
     titleName: {
