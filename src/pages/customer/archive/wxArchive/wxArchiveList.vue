@@ -53,8 +53,8 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData" @sort-change="handleTabSort">
-        <!-- <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column> -->
+      <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
@@ -72,14 +72,12 @@
         </el-table-column>
         <el-table-column label="小微进件状态" prop="xiaoWeiArchiveStatus">
           <template slot-scope="scope">
-            <!-- <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span> -->
-            <span>{{ scope.row.xiaoWeiArchiveStatus }}</span>
+            <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="xiaoWeiUpgradeStatus" label="升级状态">
           <template slot-scope="scope">
-            <!-- <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span> -->
-            <span>{{ scope.row.xiaoWeiUpgradeStatus }}</span>
+            <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
           </template>
         </el-table-column>
         <el-table-column label="费率">
@@ -87,18 +85,21 @@
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <!-- <el-table-column prop="createTime" label="停用"></el-table-column> -->
+        <el-table-column prop="archiveBaseDTO.createTime" label="停用"></el-table-column>
         <el-table-column label="操作" align="right" width="240px">
           <template slot-scope="scope">
             <!-- 按钮状态 编辑、审核、详情、复制、启用、停用 -->
+            <!-- boss相比少了小微进件和小微升级 -->
             <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 2">审核</el-button>
             <el-button type="text" size="small" @click="$router.push({ name: 'wxArchiveAdd' })" v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
             <el-button type="text" size="small" v-else>详情</el-button>
-            <!-- <el-button type="text" size="small">启用/停用</el-button> -->
+            <el-button type="text" size="small" @click="handleGeneralEnable(scope.row)">启用</el-button>
             <el-button type="text" size="small">复制</el-button>
-            <el-button type="text" size="small" v-if="scope.row.xiaoWeiArchiveStatus" @click="$router.push({ name: 'wxArchiveDetail' })">进件详情</el-button>
+            <el-button type="text" size="small" v-if="scope.row.xiaoWeiArchiveStatus" @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id } })"
+              >进件详情</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -107,7 +108,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalPage"
@@ -128,8 +129,9 @@
 <script>
 import { filterReview, filterArchiveStatus } from './filters/reviewStatus'
 import { statusOptions, deactivateOptions } from './index'
-import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus } from '@/api/wxArchive'
-
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalEnable } from '@/api/wxArchive'
+// 申请时间排序接口对接
+// 停用启用状态对接
 export default {
   data() {
     return {
@@ -147,138 +149,7 @@ export default {
       reasonMsg: '',
       xiaoWeiArchiveData: [],
       xiaoWeiUpgradeData: [],
-      tableData: [
-        {
-          archiveBaseDTO: {
-            id: 37,
-            userId: 1554,
-            archiveMode: 1,
-            archiveType: 1,
-            agentId: 25,
-            agentName: null,
-            merchantId: 92,
-            merchantName: null,
-            merchantType: 2,
-            merchantShortName: '测试',
-            companyName: '测试公司1212',
-            businessCategory: null,
-            businessCategoryRemark: null,
-            province: '110000',
-            provinceName: null,
-            city: '110100',
-            cityName: null,
-            area: '110101',
-            areaName: null,
-            address: '天安门附近',
-            contact: '121212',
-            contactPhone: '12121212120',
-            email: '12121212@qq.com',
-            publicId: null,
-            appletId: null,
-            superCode: 2,
-            submitLevel: 2,
-            fixFeeRate: 55,
-            debitcardFeeRate: 0,
-            creditcardFeeRate: 0,
-            unionpaycodeFeeRate: 0,
-            exchangeFeeRate: 0,
-            auditUserId: 1,
-            auditTime: '2020-04-10 14:10:29',
-            auditRemark: '345345',
-            auditStatus: 4,
-            remark: null,
-            createId: 1554,
-            // createTime: '2017-01-11 14:26:48',
-            source: null,
-            aliOrgTypeCode: null,
-            wxCertStatus: 0,
-            serviceTel: null,
-            wxFlag: null,
-            idNumber: null,
-            directAgentId: null,
-            wxIndustryId: '',
-            wxIndustryIdName: null,
-            alIndustryId: '',
-            alIndustryIdName: null,
-            mchDealType: null,
-            appid: '',
-            appsecret: '',
-            partner: '',
-            pid: '',
-            isOpenXingPos: null,
-            status: null,
-            industrId: null,
-            industrIdName: null,
-            mchTypeId: null,
-            mchTypeName: null,
-            bossAuditTime: null,
-            useChannelCode: null
-          },
-          archiveExpandDTO: {
-            archiveId: 37,
-            licType: 1,
-            licId: '',
-            licValidityBigen: '2017-01-12',
-            licValidityEnd: '2017-01-24',
-            orgInstitutionCode: null,
-            orgInstitutionBigen: '2017-01-01',
-            orgInstitutionEnd: '2017-01-01',
-            businessLicenseUrl: '/uploadFiles/7097bd389504486590b374a1c1a9f558.jpg',
-            orgInstitutionUrl: null,
-            taxRegistrationUrl: null,
-            businessScope: null,
-            sellShopDescribe: null,
-            legalPersonName: '121',
-            idType: '身份证',
-            idNumber: '121211212121219',
-            idBegin: '2016-07-03',
-            idEnd: '2016-07-03',
-            idFrontUrl: '/uploadFiles/d66fc57b5a8043daa47fa338fd74ca2b.jpg',
-            idBackUrl: '/uploadFiles/e1fc95d24f394cc28f4c52fb4878e2c2.jpg',
-            hardIdUrl: '/uploadFiles/bc3a8315dc33432a8eca0201c1673865.jpg',
-            bank: '13',
-            bankName: null,
-            bankSub: null,
-            bankSubName: '车公庙支行',
-            bankAccountName: '撒大声地',
-            bankCard: '按时大大',
-            bankCardFrontUrl: '/default/408d93bb17754aa6beae17c7d158b7ed.jpg',
-            openingPermitUrl: '/default/408d93bb17754aa6beae17c7d158b7ed.jpg',
-            bankProvince: '110000',
-            bankProvinceName: null,
-            bankCity: '110100',
-            bankCityName: null,
-            bankArea: '110101',
-            bankAreaName: null,
-            acctType: null,
-            cardholderIdType: '身份证',
-            cardholderIdNumber: '',
-            bankCardBackUrl: '',
-            legalPersonValidityBegin: null,
-            legalPersonValidityEnd: null,
-            certType: '',
-            certTypeName: null,
-            cashreceiveType: null,
-            cardholderPhone: null,
-            cardholderType: null,
-            oldAndNewHolder: '',
-            merchantInfoChange: ''
-          },
-          archiveOtherDTO: null,
-          merchantName: '测试商户B',
-          agentName: '代理测试A',
-          hasArchive: null,
-          xiaoWeiId: null,
-          xiaoWeiArchiveStatus: 1,
-          xiaoWeiUpgradeStatus: null,
-          businessScene: null,
-          businessSceneShow: null,
-          isRegister: null,
-          archiveChannelList: null,
-          useBankChannelCode: null,
-          useBankChannelCodeName: null
-        }
-      ],
+      tableData: [],
       currentPage: 1,
       totalPage: 0,
       pageSize: 10
@@ -288,12 +159,16 @@ export default {
     filterReview,
     filterArchiveStatus
   },
-  // computed: {
-  //   tableMaxHeight() {
-  //     return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
-  //   }
-  // },
-  mounted() {},
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
+    }
+  },
+  mounted() {
+    this.getXiaoWeiArchiveStatus()
+    this.getXiaoWeiUpgradeStatus()
+    this.handleQueryPage()
+  },
   methods: {
     handleReason(row) {
       this.reasonMsg = row.archiveBaseDTO.auditRemark
@@ -308,7 +183,7 @@ export default {
       this.currentPage = 1
       this.isSearchLock = true
       this.handleQueryPage().finally(() => {
-        this.isSearchLock = true
+        this.isSearchLock = false
       })
     },
     handleCurrentChange(val) {
@@ -322,10 +197,16 @@ export default {
       this.pageSize = val
       this.handleQueryPage()
     },
+    handleGeneralEnable: async function(row) {
+      // 启用/停用
+      try {
+        await generalEnable()
+      } catch (error) {}
+    },
     handleQueryPage: async function() {
       const data = {
-        startTime: this.form.createTime[0],
-        endTime: this.form.createTime[1],
+        startTime: this.form.createTime[0] ? `${this.form.createTime[0]} 00:00:00` : '',
+        endTime: this.form.createTime[1] ? `${this.form.createTime[1]} 23:59:59` : '',
         auditStatus: this.form.auditStatus,
         companyName: this.form.msg,
         bankCard: this.form.msg,

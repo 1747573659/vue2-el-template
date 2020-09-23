@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData">
+      <el-table :data="tableData" :max-height="tableMaxHeight">
         <el-table-column prop="subMchId" label="微信商户号"></el-table-column>
         <el-table-column prop="channelList" label="进件类型"></el-table-column>
         <el-table-column prop="createTime" label="公司名称"></el-table-column>
@@ -81,7 +81,7 @@
 </template>
 
 <script>
-import { queryDocumentByPage } from '@/api/setting/material'
+import { generalDetail } from '@/api/wxArchive'
 
 export default {
   data() {
@@ -114,10 +114,11 @@ export default {
       this.handleQueryPage()
     },
     handleQueryPage: async function() {
-      const data = Object.assign({ startTime: this.applicationTime[0], endTime: this.applicationTime[1] }, this.form, { page: this.pageSize, rows: this.currentPage })
-      // 查询调用接口
       try {
         this.isTabLock = true
+        const res = await generalDetail({ id: this.$route.query.id })
+        this.tableData = res.results
+        this.totalPage = res.totalCount
       } catch (error) {
       } finally {
         this.isTabLock = false

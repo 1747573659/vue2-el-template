@@ -5,5 +5,7 @@ export function filterReview(status) {
 }
 
 export function filterArchiveStatus(code, statusArr) {
-  return statusArr.filter(item => item.code === code)[0].name
+  if (statusArr.length > 0 && (code || code === 0)) {
+    return statusArr.filter(item => item.code === code)[0].name
+  } else return '--'
 }

@@ -10,6 +10,7 @@
  */
 let areaLevel = 2
 import { queryProvinceList, queryCityList } from '@/api/area'
+
 export default {
   props: {
     level: {
@@ -60,6 +61,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>
