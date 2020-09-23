@@ -1,0 +1,13 @@
+.el-cascader {
+  .el-icon-arrow-down:before {
+    content: "\e790";
+  }
+}
+.el-input__suffix {
+  .el-icon-arrow-down {
+    color: #1F2E4D!important;
+  }
+  .el-icon-circle-close {
+    color: #1F2E4D!important;
+  }
+}

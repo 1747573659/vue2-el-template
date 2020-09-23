@@ -59,38 +59,45 @@
     </div>
     <div class="data-box">
       <el-table
-        :loading="tableLoading"
+        v-loading="tableLoading"
         :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.merchantShortName"
           label="商户简称">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.companyName"
           label="公司名称">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveExpandDTO.bankCard"
           label="银行卡号">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.auditStatus"
           label="资料状态">
           <template slot-scope="scope">
-            <span class="table-text-color" @click="statusClick(scope.row)">
-              {{scope.row.creatorName}}
+            <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
+              {{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}
             </span>
+            <span v-else>{{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
           label="微信认证状态">
+          <template slot-scope="scope">
+            {{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.fixFeeRate"
           label="费率">
+          <template slot-scope="scope">
+            {{scope.row.archiveBaseDTO.fixFeeRate ? (scope.row.archiveBaseDTO.fixFeeRate / 100) + '%' : '--'}}
+          </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
@@ -146,8 +153,7 @@
 </template>
 
 <script>
-import { queryDocumentByPage } from '@/api/setting/material'
-
+import { queryPage } from '@/api/xftArchive'
 export default {
   data() {
     return {
@@ -156,6 +162,27 @@ export default {
         time: [],
         status: ''
       },
+      auditStatusList: [
+        '未提交审核',
+        '审核不通过编辑中',
+        '代理商待审核',
+        'boss 待审核',
+        '审核拒绝',
+        '账号申请中',
+        '部分账号申请通过',
+        '账号全部申请通过'
+      ],
+      wxCertStatusList: [
+        '未认证',
+        '编辑中',
+        '审核中',
+        '待确认联系人信息',
+        '待账号验证',
+        '审核通过',
+        '审核驳回',
+        '已冻结',
+        '已作废'
+      ],
       statusList: [],
       tableData: [],
       currentPage: 1,
@@ -194,7 +221,7 @@ export default {
       this.getList()
     },
     statusClick(row) {
-      this.$alert(row.name)
+      this.$alert(row.archiveBaseDTO.auditRemark)
     },
     shopQRCode (row) {
       this.certificationVisible = true
@@ -205,15 +232,11 @@ export default {
     async getList() {
       this.tableLoading = true
       let data = {
-        "endTime": this.form.time && this.form.time[1],
-        "name": this.form.name,
-        "orders": {},
         "page": this.currentPage,
         "rows": this.pageSize,
-        "startTime": this.form.time && this.form.time[0]
       }
       try {
-        const res = await queryDocumentByPage(data)
+        const res = await queryPage(data)
         this.tableData = res.results
         this.totalPage = res.totalCount
       } catch (e) {} finally {

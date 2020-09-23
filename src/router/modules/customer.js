@@ -1,7 +1,6 @@
 import { _import } from '@/utils'
 import Layout from '@/layout'
 import kmContainer from '@/components/km-container'
-
 const customer = {
   path: '/customer',
   name: 'customer',

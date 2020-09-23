@@ -14,12 +14,12 @@
           </el-col>
         </el-row>
       </div>
-      <el-form :disabled="formDisabled" ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="190px">
+      <el-form :disabled="formDisabled" ref="form" :rules="rules" size="small" label-suffix=":" :inline="true" :model="form" label-width="190px">
         <div class="title">基本信息</div>
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="商户" prop="status">
+              <el-form-item label="商户" prop="archiveBaseVO.merchantName">
                 <select-page
                   @remoteMethod="remoteMethod"
                   @loadMore="loadMore"
@@ -67,8 +67,8 @@
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="地区" prop="archiveBaseVO.address">
-                <area-select @change="bankAreaChange"></area-select>
+              <el-form-item label="地区" prop="archiveBaseVO.area">
+                <area-select @change="areaChange"></area-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -92,12 +92,12 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="负责人证件号码" prop="archiveBaseVO.idNumber">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.idNumber" placeholder=""></el-input>
+                <el-input style="width:240px" v-model="form.archiveBaseVO.idNumber" clearable placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="负责人电话" prop="archiveBaseVO.contactPhone">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.contactPhone" placeholder=""></el-input>
+                <el-input style="width:240px" v-model="form.archiveBaseVO.contactPhone" clearable placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -191,7 +191,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidity">
+              <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
                 <el-date-picker v-model="form.archiveExpandVO.licValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -207,9 +207,9 @@
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件类型" prop="archiveExpandVO.cardholderIdType">
-                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardholderIdType" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              <el-form-item label="证件类型" prop="archiveExpandVO.cardType">
+                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardType" placeholder="全部">
+                  <el-option v-for="item in cardTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -221,7 +221,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件有效期" prop="archiveExpandVO.legalPersonValidity">
+              <el-form-item label="证件有效期" prop="archiveExpandVO.legalPersonValidityBegin">
                 <el-date-picker v-model="form.archiveExpandVO.legalPersonValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
                 </el-date-picker>
               </el-form-item>
@@ -276,8 +276,8 @@
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开户支行所在省市" prop="archiveBaseVO.address">
-                <area-select @change="areaChange" :level="1"></area-select>
+              <el-form-item label="开户支行所在省市" prop="archiveExpandVO.bankArea">
+                <area-select @change="bankAreaChange" :level="1"></area-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -434,6 +434,7 @@ import selectPage from '@/components/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
 import fileServer from '@/mixins/fileServe'
+import xftValidator from './xftValidator'
 
 export default {
   mixins: [fileServer],
@@ -444,6 +445,7 @@ export default {
   },
   data() {
     return {
+      rules: xftValidator(),
       form: {
         archiveBaseVO: {
           address: '',
@@ -511,6 +513,7 @@ export default {
           wxIndustryIdName: ''
         },
         archiveExpandVO: {
+          cardType: 1,
           acctType: 1,
           archiveId: null,
           bank: '',
@@ -601,8 +604,11 @@ export default {
         {id: 2, name: '个体商户 持卡人为非法人'}
       ],
       cardholderIdTypeList: [
-        {id: 1, name: '对私'},
-        {id: 2, name: '对公'}
+        {id: 2, name: '对公'},
+        {id: 1, name: '对私'}
+      ],
+      cardTypeList: [
+        {id: 1, name: '身份证'}
       ],
       industrIdList: [],
       statusList: [],
@@ -637,13 +643,10 @@ export default {
   },
   methods: {
     isOpenXingPosChange(value) {
-      console.log(Number(value))
     },
     acctTypeChange(value) {
-      console.log(value)
     },
     merchantTypeChange(value) {
-      console.log(value)
       if (value === 4) {
         this.form.archiveExpandVO.acctType = 1
       }
