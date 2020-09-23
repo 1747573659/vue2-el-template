@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-cascader style="width: 240px" :props="props" clearable @focus="focus" @change="change"></el-cascader>
+    <el-cascader style="width: 240px" v-model="value" :props="props" clearable @focus="focus" @change="change"></el-cascader>
   </div>
 </template>
 
@@ -16,6 +16,10 @@ export default {
     level: {
       type: Number, 
       default: 2
+    },
+    areaList: { // 用于回显传入数据
+      type: Array,
+      default: () => []
     }
   },
   data() {
@@ -46,18 +50,18 @@ export default {
           resolve(nodes)
         }
       },
-      provinceList: []
+      provinceList: [],
+      value: this.areaList
     }
   },
   methods: {
+    // 用于输出数据
     change(value) {
       this.$emit('change', value)
     },
     focus() {
       areaLevel = this.level
     }
-  },
-  mounted() {
   }
 }
 </script>

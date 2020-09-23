@@ -68,7 +68,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="地区" prop="archiveBaseVO.area">
-                <area-select @change="areaChange"></area-select>
+                <area-select @change="areaChange" :areaList="areaList"></area-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -610,6 +610,7 @@ export default {
       cardTypeList: [
         {id: 1, name: '身份证'}
       ],
+      areaList: [],
       industrIdList: [],
       statusList: [],
       shopList: [],
