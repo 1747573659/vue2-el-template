@@ -66,9 +66,9 @@ export default {
     handleLogin() {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
+          this.isLoading = true
           this.validCaptcha()
             .then(() => {
-              this.isLoading = true
               this.$store
                 .dispatch('login', this.loginForm)
                 .then(() => {
@@ -93,6 +93,7 @@ export default {
             })
             .catch(() => {
               this.captcha()
+              this.isLoading = false
             })
         }
       })

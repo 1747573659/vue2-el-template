@@ -43,7 +43,7 @@
                 size="small"
                 plain
                 icon="el-icon-plus"
-                @click="$router.push({ name: 'wxArchiveAdd' })"
+                @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'add' } })"
                 v-permission="'ACCOUNT_ROLE_ADD'"
                 >新增</el-button
               >
@@ -212,6 +212,7 @@ export default {
         bankCard: this.form.msg,
         merchantName: this.form.msg,
         merchantShortName: this.form.msg,
+        stopUse: this.form.isDeactivate,
         page: this.currentPage,
         row: this.pageSize
       }
