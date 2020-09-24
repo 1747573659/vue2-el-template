@@ -15,9 +15,9 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="资料状态">
-              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+              <el-select style="width: 240px" clearable v-model="form.auditStatus" placeholder="全部">
                 <el-option
-                  v-for="item in statusList"
+                  v-for="item in auditStatusOptions"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id">
@@ -25,9 +25,9 @@
               </el-select>
             </el-form-item>
             <el-form-item label="认证状态">
-              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+              <el-select style="width: 240px" clearable v-model="form.wxCertStatus" placeholder="全部">
                 <el-option
-                  v-for="item in statusList"
+                  v-for="item in wxCertStatusOptions"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id">
@@ -89,7 +89,7 @@
           prop="createTime"
           label="微信认证状态">
           <template slot-scope="scope">
-            {{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}
+            {{wxCertStatusList[scope.row.archiveBaseDTO.auditStatus]}}
           </template>
         </el-table-column>
         <el-table-column
@@ -108,10 +108,11 @@
           align="right"
           width="240px">
           <template slot-scope="scope">
-            <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-if="scope.row.auditStatus === 2 || scope.row.auditStatus === 8" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-else @click="edit(scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button @click="changeStatus(scope.row)" type="text" size="small">停用</el-button>
-            <el-dropdown style="margin-left: 12px">
+            <el-dropdown style="margin-left: 12px" v-if="scope.row.auditStatus === 6 || scope.row.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
               </span>
@@ -160,29 +161,51 @@ export default {
       form: {
         name: '',
         time: [],
-        status: ''
+        auditStatusList: [],
+        auditStatus: null,
+        wxCertStatus: null
       },
-      auditStatusList: [
-        '未提交审核',
-        '审核不通过编辑中',
-        '代理商待审核',
-        'boss 待审核',
-        '审核拒绝',
-        '账号申请中',
-        '部分账号申请通过',
-        '账号全部申请通过'
+      auditStatusOptions: [
+        {id: 0, name: '未提交审核'},
+        {id: 1, name: '审核不通过编辑中'},
+        {id: 2, name: '代理商待审核'},
+        {id: 3, name: 'boss 待审核'},
+        {id: 4, name: '审核拒绝'},
+        {id: 5, name: '账号申请中'},
+        {id: 6, name: '部分账号申请通过'},
+        {id: 7, name: '账号全部申请通过'}
       ],
-      wxCertStatusList: [
-        '未认证',
-        '编辑中',
-        '审核中',
-        '待确认联系人信息',
-        '待账号验证',
-        '审核通过',
-        '审核驳回',
-        '已冻结',
-        '已作废'
+      wxCertStatusOptions: [
+        {id: 0, name: '未认证'},
+        {id: 1, name: '编辑中'},
+        {id: 2, name: '审核中'},
+        {id: 3, name: '待确认联系人信息'},
+        {id: 4, name: '审核通过'},
+        {id: 5, name: '审核驳回'},
+        {id: 6, name: '已冻结'},
+        {id: 7, name: '已作废'},
       ],
+      auditStatusList: {
+        0: '未提交审核',
+        1: '审核不通过编辑中',
+        2: '代理商待审核',
+        3: 'boss 待审核',
+        4: '审核拒绝',
+        5: '账号申请中',
+        6: '部分账号申请通过',
+        7: '账号全部申请通过'
+      },
+      wxCertStatusList: {
+        0: '未认证',
+        1: '编辑中',
+        2: '审核中',
+        3: '待确认联系人信息',
+        4: '待账号验证',
+        5: '审核通过',
+        6: '审核驳回',
+        7: '已冻结',
+        8: '已作废'
+      },
       statusList: [],
       tableData: [],
       currentPage: 1,
@@ -232,8 +255,17 @@ export default {
     async getList() {
       this.tableLoading = true
       let data = {
-        "page": this.currentPage,
-        "rows": this.pageSize,
+        'startTime': this.form.time && this.form.time[0],
+        'endTime': this.form.time && this.form.time[1],
+        'auditStatus': this.form.auditStatus,
+        'merchantName': this.form.name,
+        'merchantShortName': this.form.name,
+        'companyName': this.form.name,
+        'bankCard': this.form.name,
+        // 'auditStatusList': this.form.auditStatus,
+        'wxCertStatus': this.form.wxCertStatus,
+        'page': this.currentPage,
+        'rows': this.pageSize,
       }
       try {
         const res = await queryPage(data)

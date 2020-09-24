@@ -76,6 +76,7 @@ export default {
     },
     uploadSuccess(res, file) {
       this.imageUrl = res.data.path
+      this.$emit('on-success', res)
     },
     beforeUpload(file) {
       let imgTypes = 'image/gif,image/jpeg,image/jpg,image/png'
