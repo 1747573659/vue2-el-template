@@ -21,7 +21,8 @@ export function queryProductList(data) {
   return request({
     url: urlLinks.queryProductList,
     method: 'post',
-    data: data
+    isOld:true,
+    data:queryString.stringify(data)
   })
 }
 export function queryAgent(data) {
@@ -32,17 +33,17 @@ export function queryAgent(data) {
   })
 }
 export function queryWorkOrderList(data) {
-  console.log(data)
   return request({
     url: urlLinks.queryWorkOrderList,
     method: 'post',
-    data: queryString.stringify(data)
+    data: data
   })
 }
 export function queryOrderDetail(data) {
   return request({
     url: urlLinks.queryOrderDetail,
     method: 'post',
-    data
+    isOld:true,
+    data:queryString.stringify(data)
   })
 }

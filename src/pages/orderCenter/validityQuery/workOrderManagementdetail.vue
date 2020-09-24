@@ -52,10 +52,11 @@
           <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
           <el-button @click="resetForm('ruleForm')">重置</el-button>
         </el-form-item>
-        <el-form-item v-else>
-          <el-button type="primary" @click="router.go(-1)" >关闭</el-button>
-        </el-form-item>
+        
       </el-form>
+      <div v-if="isEdit" style="padding-left: 100px;">
+          <el-button type="primary" @click="$router.go(-1)" >关闭</el-button>
+        </div>
     </div>
   </div>
 </template>
@@ -71,6 +72,7 @@ import {
   import { 
   uploadimage
   } from '@/api/dataCenter/common.js'
+  import ipConfig from '@/utils/baseUrl'
 export default {
   name: "validityPeriod",
   mixins: [],
@@ -87,6 +89,7 @@ export default {
         custName: "",
         linkName: "",
         linkPhone: "",
+        fileName2:" "
       },
       rules: {
         demandName: [
@@ -115,36 +118,6 @@ export default {
         "children":"branchs"
       },
       options: [
-        {
-          branchName: "御商+",
-          branchId: "1",
-          branchs: [
-            {
-              branchName: "全部",
-              branchId: "0",
-            },
-          ],
-        },
-        {
-          branchName: "蛙笑CS专卖",
-          branchId: "2",
-          branchs: [
-            {
-              branchName: "全部",
-              branchId: "0",
-            },
-          ],
-        },
-        {
-          branchName: "智赢+",
-          branchId: "3",
-          branchs: [
-            {
-              branchName: "全部",
-              branchId: "0",
-            },
-          ],
-        }
       ],
     };
   },
@@ -153,12 +126,8 @@ export default {
       await this.queryProductList()
       this.queryOrderDetail(res)
     }
-    //isEdit
-    //console.log(this.$router.query)
-    getRequest.call(this,{
-        sheetNo:"BG2009230480",
-        orderType:1
-    })
+    !!this.$route.query.sheetNo && (this.isEdit=true)
+    getRequest.call(this,this.$route.query)
   },
   methods: {
     submitForm(formName) {
@@ -166,6 +135,7 @@ export default {
       this.$refs[formName].validate((valid) => {
         if (valid) {
           let requestData=Object.assign({},this.ruleForm)
+          delete requestData.productNoA
           requestData.productNo=cascader.path[0]
           requestData.branch=cascader.path[1]
           requestData.productName=cascader.pathLabels[0]
@@ -188,7 +158,9 @@ export default {
       })
     },
     queryProductList(){
-      queryProductList().then((res)=>{
+      queryProductList({
+        productName:""
+      }).then((res)=>{
          this.options=[]
         for (const key in res) {
           const element = res[key];
@@ -203,12 +175,13 @@ export default {
     queryOrderDetail(res){
       queryOrderDetail(res).then(
         res=>{
-           let requestData=Object.assign({},res)
+          let requestData=Object.assign({},res)
+          this.ruleForm=res
           this.ruleForm.productNoA=[requestData.productNo,requestData.branch]
-          this.fileList=requestData.fileName.split().map(res=>{
+          this.fileList=requestData.fileName.split(",").map(res1=>{
             return {
-              name:res,
-              url:"www.baidu.com"
+              name:res1,
+              url:ipConfig.WORK_ORDER_URL+"/KMjsfw/images/"+res1
             }
           })
         }

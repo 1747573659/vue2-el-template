@@ -3,19 +3,21 @@
     <div class="search-box">
         <query-group
           className="all-fr"
-          :queryFormList.sync="queryFormList"
           :queryParams="queryParams"
-          @search="initData"
+          :queryFormList.sync="queryFormList"
+          @search="handleFilter"
         ></query-group>
     </div>
     <div class="data-box">
         <base-table
           :columns="headers"
           :list="list"
+          @getList="queryWorkOrderList"
           :loading="loading"
           :total="total"
-          :page.sync="tableParam.pageIndex"
-          :rows.sync="tableParam.pageSize"
+          :page.sync="tableParam.page"
+          :rows.sync="tableParam.rows"
+          @viewResClick="viewResClick"
         ></base-table>
     </div>
   </div>
@@ -44,27 +46,26 @@ export default {
       queryFormList: [
         {
            type: 'daterange',
-            name: 'searchDate',
            label: '提交日期',
-           value:""
+           value:null
         },
         {
           type: 'input',
-          name: 'ticketMsg',
-          label: '工单信息',
-          placeholder: '工单编号/标题/描述/提交人',
+          name: 'title',
+          label: '工单标题',
+          placeholder: '工单标题',
           value: ''
         },
         {
           type: 'input',
-          name: 'ticketNo',
-          label: '工单信息',
-          placeholder: '工单编号/标题/描述/提交人',
+          name: 'sheetNo',
+          label: '工单编号',
+          placeholder: '工单编号',
           value: ''
         },
         {
           type: 'select',
-          name: 'ticketType',
+          name: 'orderType',
           label: '工单类型',
           value: '',
           options: [
@@ -75,7 +76,7 @@ export default {
         },
         {
           type: 'select',
-          name: 'ticketStatus',
+          name: 'status',
           label: '状态',
           value: '',
           options: [
@@ -91,24 +92,16 @@ export default {
           name: 'productNo',
           label: '产品',
           value: '',
-          options: this.productOptions
+          options: []
         }
-        
       ],
       productOptions:[],
       list: [],
       total:0,
       loading:false,
       tableParam:{
-          pageSize:"10",
-          pageIndex:"1",
-          endDate: "",
-          productNo: "",
-          startDate: "",
-          ticketMsg: "",
-          ticketNo: "",
-          ticketStatus: "",
-          ticketType: ""
+          page:1,
+          rows:10
       },
       headers: [
         {
@@ -158,44 +151,43 @@ export default {
     }
   },
   methods: {
-    initData (e) {
-       Object.assign(this.tableParam,e)
-       this.queryWorkOrderList()
-    },
-    handleFilter () {
-      console.log(1)
+    handleFilter (e) {
+      Object.assign(this.tableParam,e)
+      this.queryWorkOrderList()
     },
     viewResClick(e){
-      console.log(e)
+      const {sheetNo,orderType}=e
+      this.$router.push({ path: '/orderCenter/validityQuery/workOrderManagementdetail', query: { sheetNo, orderType}})
     },
     queryWorkOrderList(){
       this.loading=true
-      this.list=true
-      this.total=0
-      //this.tableParam
       queryWorkOrderList(this.tableParam).then((res)=>{
-        console.log(res)
-        this.list=res
+        this.list=res.results || []
+        this.total=res.totalCount || 0
+        this.loading=false
       })
     },
     queryProductList(){
       this.productOptions=[
         {value: '', label: '全部'}
       ]
-      queryProductList().then((res)=>{
-        const temp=res.map(res=>{
+      queryProductList({
+        productName:""
+      }).then((res)=>{
+        const temp=res.map(res1=>{
           return {
-            value:res.productNo,
-            label:res.productName,
+            value:res1.productNo,
+            label:res1.productName,
           }
         })
-        Object.assign(this.productOptions,temp)
+        this.productOptions=[...this.productOptions, ...temp]
+        this.queryFormList[this.queryFormList.length-1].options=this.productOptions
       })
     },
   },
   mounted() {
     this.queryProductList()
-    this.queryWorkOrderList()
+    this.handleFilter(this.queryParams)
   }
 }
 </script>
