@@ -1,0 +1,28 @@
+<template>
+  <div>
+    <base-edit :isEdit="isEdit">
+    </base-edit>
+  </div>
+</template>
+
+<script>
+import BaseEdit from './components/BaseEdit'
+import { queryAgentById } from '@/api/customer/agent'
+
+export default {
+  name: 'editAgent',
+  components: {
+    BaseEdit,
+  },
+  data() {
+    return {
+      isEdit: true,
+    }
+  },
+  created() {},
+  methods: {},
+}
+</script>
+
+<style lang="scss" scoped>
+</style>

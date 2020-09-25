@@ -22,8 +22,8 @@ export default {
   components: {
     HeaderView,
     SidebarView,
-    TagView
-  }
+    TagView,
+  },
 }
 </script>
 
