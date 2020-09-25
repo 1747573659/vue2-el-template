@@ -6,17 +6,13 @@
 
 <script>
 /**
- * 目前组件只支持二级或者三级地区联动,根据level传值进行区别，level为1则是省市联动,level为2则是省市区联动
+ * 地区三级联动
  */
 let areaLevel = 2
 import { queryProvinceList, queryCityList } from '@/api/area'
 
 export default {
   props: {
-    level: {
-      type: Number, 
-      default: 2
-    },
     areaList: { // 用于回显传入数据
       type: Array,
       default: () => []
@@ -40,7 +36,6 @@ export default {
           } else {
             res = await queryCityList({code: node.value})
           }
-          console.log(areaLevel)
           res.forEach(item => {
             nodes.push({
               value: item.code,
@@ -59,9 +54,6 @@ export default {
     // 用于输出数据
     change(value) {
       this.$emit('change', value)
-    },
-    focus() {
-      areaLevel = this.level
     }
   }
 }

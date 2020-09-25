@@ -26,15 +26,7 @@
 
 <script>
 export default {
-  data() {
-    return {
-    }
-  },
   props:{
-    value: {
-      type: String,
-      default: ''
-    },
     isMaxPage: {
       type: Boolean,
       default: false
@@ -46,10 +38,6 @@ export default {
     options: {
       type: [Array, Object],
       default: () => []
-    },
-    isMaxPage: {
-      type: Boolean,
-      default: false
     },
     label: {
       type: String,
