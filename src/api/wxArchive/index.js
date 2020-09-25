@@ -5,7 +5,9 @@ const urlLinks = {
   xiaoWeiArchiveStatus: 'archive/general/xiaoWeiArchiveStatus',
   xiaoWeiUpgradeStatus: 'archive/general/xiaoWeiUpgradeStatus',
   generalEnable: 'archive/general/enable',
-  generalDetail: 'archive/general/generalDetail'
+  generalDetail: 'archive/general/generalDetail',
+  queryShopListByPage: 'shop/queryShopListByPage',
+  queryBankPage: 'branch/queryBankPage'
 }
 
 // 分页查询
@@ -46,6 +48,24 @@ export function generalEnable(data) {
 export function generalDetail(data) {
   return request({
     url: urlLinks.generalDetail,
+    method: 'POST',
+    data
+  })
+}
+
+// 商户查询
+export function queryShopListByPage(data) {
+  return request({
+    url: urlLinks.queryShopListByPage,
+    method: 'POST',
+    data
+  })
+}
+
+// 商户查询
+export function queryBankPage(data) {
+  return request({
+    url: urlLinks.queryBankPage,
     method: 'POST',
     data
   })

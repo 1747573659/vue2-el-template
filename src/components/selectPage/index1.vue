@@ -1,44 +1,24 @@
 <template>
-  <div>
-    <el-select
-      class="select-page"
-      v-model="value"
-      v-loadmore="loadMore"
-      filterable
-      clearable
-      remote
-      @focus="focus"
-      @change="change"
-      @clear="clear"
-      :placeholder="placeholder"
-      :remote-method="remoteMethod"
-      >
-      <el-option
-        v-for="item in options"
-        :key="item.id"
-        :label="item.name"
-        :value="item.id">
-      </el-option>
-      <div class="loading-page">{{isMaxPage ? '已全部加载完毕' : '正在加载下一页'}}</div>
-    </el-select>
-  </div>
+  <el-select
+    v-model="selectValue"
+    v-loadmore="selectLoadMore"
+    filterable
+    clearable
+    remote
+    :placeholder="placeholder"
+    :remote-method="remoteMethod"
+    @clear="clearSelectPage"
+    @focus="clearSelectPage"
+    @change="remoteMethod"
+  >
+    <el-option v-for="item in options" :key="item[value]" :label="item[label]" :value="item[value]"></el-option>
+    <div class="e-select-load">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页...' }}</div>
+  </el-select>
 </template>
 
 <script>
 export default {
-  data() {
-    return {
-    }
-  },
-  props:{
-    value: {
-      type: String,
-      default: ''
-    },
-    isMaxPage: {
-      type: Boolean,
-      default: false
-    },
+  props: {
     placeholder: {
       type: String,
       default: ''
@@ -62,7 +42,7 @@ export default {
   },
   data() {
     return {
-      selectValue: ''
+      selectValue: []
     }
   },
   directives: {
@@ -88,9 +68,6 @@ export default {
     },
     clearSelectPage() {
       this.$emit('resetSelectPage')
-    },
-    changeSelectPage(){
-      this.$emit('changeSelectPage', this.selectValue)
     }
   }
 }
