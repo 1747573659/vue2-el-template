@@ -21,6 +21,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
+                  style="width: 240px"
                   :value="form.archiveBaseVO.merchantName"
                   @remoteMethod="shopRemoteMethod"
                   @loadMore="shopLoadMore"
@@ -153,14 +154,18 @@
           </el-row>
           <el-row v-if="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
-                <upload-pic alt="经营场所照" :imagePath="form.archiveOtherVO.businessSiteOneUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl') }" :exampleImg="exampleImg.businessSiteOneUrl" @click="imgClick"></upload-pic>
-              </el-form-item>
+              <div>
+                <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
+                  <upload-pic alt="经营场所照" :imagePath="form.archiveOtherVO.businessSiteOneUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl') }" :exampleImg="exampleImg.businessSiteOneUrl" @click="imgClick"></upload-pic>
+                </el-form-item>
+              </div>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
-                <upload-pic alt="租赁合同照一" :imagePath="form.archiveOtherVO.contractOfTenancy1" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
-              </el-form-item>
+              <div>
+                <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
+                  <upload-pic alt="租赁合同照一" :imagePath="form.archiveOtherVO.contractOfTenancy1" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
+                </el-form-item>
+              </div>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveBaseVO.merchantType === 4">
@@ -285,6 +290,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
                 <select-page
+                  style="width: 240px"
                   :value="form.archiveExpandVO.bankSubName"
                   @remoteMethod="bankRemoteMethod"
                   @loadMore="bankLoadMore"
@@ -447,8 +453,8 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button @click="toSave" size="small" type="primary" class="archive-bottom-btn">保存</el-button>
-      <el-button @click="toAdd" size="small" type="primary" plain class="archive-bottom-btn">新增</el-button>
+      <el-button @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
+      <el-button @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
       <el-button @click="toRefuse" size="small" class="archive-bottom-btn" v-if="auditStatus === 2">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div>
@@ -1021,6 +1027,7 @@ export default {
         this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
         this.bankAreaKey = Symbol('bankAreaKey')
+        console.log(this.form.archiveOtherVO)
       } catch (error) {}
     },
   },

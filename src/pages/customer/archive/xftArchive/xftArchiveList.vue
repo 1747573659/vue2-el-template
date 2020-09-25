@@ -111,18 +111,17 @@
           align="right"
           width="240px">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.auditStatus === 2 || scope.row.auditStatus === 8" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button v-else @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-if="scope.row.archiveBaseDTO.auditStatus === 2 || scope.row.archiveBaseDTO.auditStatus === 8" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
-            <el-dropdown style="margin-left: 12px" v-if="scope.row.auditStatus === 6 || scope.row.auditStatus === 7">
+            <el-dropdown style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item style="color: #3377FF" @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
                 <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item style="color: #3377FF" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" v-if="[3,4,5].includes(scope.row.archiveBaseDTO.wxCertStatus)" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -145,7 +144,7 @@
       :visible.sync="certificationVisible"
       width="507px"
       class="certification-dialog">
-      <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">郭鼎(手机尾号9902)</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
+      <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">{{this.certificationForm.contact}}(手机尾号{{this.certificationForm.contactPhone}})</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
       <img :src="imgSrc" class="certification-dialog-img" alt="qrcode">
       <div class="certification-dialog-text">2. 完成信息补充后，引导公司法人完成法人的实名认证（或对公账户验证）</div>
       <div class="certification-dialog-text">3. 完成1-2两步操作之后，即完成了微信关于系统风控，用户资金安全的监管要求，开户成功！</div>
@@ -157,10 +156,11 @@
 </template>
 
 <script>
-import { queryPage, queryCertificationStatus, stopUse } from '@/api/xftArchive'
+import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode } from '@/api/xftArchive'
 export default {
   data() {
     return {
+      certificationForm: {},
       form: {
         name: '',
         time: [],
@@ -240,11 +240,13 @@ export default {
     },
     async changeStatus(row) {
       let data = {
-        'archiveId': row.id,
+        'archiveId': row.archiveBaseDTO.id,
         'stopUse': row.archiveBaseDTO.stopUse ? 0 : 1
       }
       try{
         const res = await stopUse(data)
+        this.getList()
+        this.$message.success('操作成功')
       } catch(error) {}
     },
     handleSizeChange(value) {
@@ -259,11 +261,20 @@ export default {
     statusClick(row) {
       this.$alert(row.archiveBaseDTO.auditRemark)
     },
-    shopQRCode (row) {
+    async shopQRCode (row) {
+      let data = {
+        bankChannelCode: row.useBankChannelCode,
+        valueId: row.archiveBaseDTO.id
+      }
+      try {
+        const res = await queryContactQrCode(data)
+        this.certificationForm.contact = res.archiveBaseDTO.contact
+        this.certificationForm.contactPhone = res.archiveBaseDTO.contactPhone.substring(7)
+      } catch (error) {}
       this.certificationVisible = true
     },
     toDetail (row) {
-      this.$router.push({ name: 'xftArchiveDetail', query: {id: row.id} })
+      this.$router.push({ name: 'xftArchiveDetail', query: {id: row.archiveBaseDTO.id} })
     },
     async getList() {
       this.tableLoading = true
@@ -292,7 +303,7 @@ export default {
     },
     async queryStatus(row) {
       let data = {
-        valueId: row.id,
+        valueId: row.archiveBaseDTO.id,
         bankChannelCode: row.useBankChannelCode
       }
       try {

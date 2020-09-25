@@ -28,7 +28,11 @@ const urlLinks = {
   // 进件详情
   queryXftPage: '/archive/xdd/queryXftPage',
   // 详情
-  detail: '/archive/xdd/detail'
+  detail: '/archive/xdd/detail',
+  // 子商户号授权
+  queryContactInfo: '/archive/xdd/queryContactInfo',
+  // 商户扫码认证（微信实名认证）
+  queryContactQrCode: '/archive/xdd/queryContactQrCode'
 }
 // 分页查询
 export function queryPage(data) {
@@ -140,6 +144,22 @@ export function queryXftPage(data) {
 export function detail(data) {
   return request({
     url: urlLinks.detail,
+    method: 'POST',
+    data
+  })
+}
+// 子商户号授权
+export function queryContactInfo(data) {
+  return request({
+    url: urlLinks.queryContactInfo,
+    method: 'POST',
+    data
+  })
+}
+// 商户扫码认证（微信实名认证）
+export function queryContactQrCode(data) {
+  return request({
+    url: urlLinks.queryContactQrCode,
     method: 'POST',
     data
   })
