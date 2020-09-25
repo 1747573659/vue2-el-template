@@ -222,6 +222,28 @@ const customer = {
             name: 'agentRole'
           }
         },
+        {
+          path: 'addRole',
+          name: 'addRole',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/agent/agentManage/addRole'),
+          meta: {
+            title: '代理商角色管理/新增',
+            name: 'addRole'
+          }
+        },
+        {
+          path: 'editRole',
+          name: 'editRole',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/agent/agentManage/editRole'),
+          meta: {
+            title: '代理商角色管理/编辑',
+            name: 'editRole'
+          }
+        },
       ]
     },
   ]

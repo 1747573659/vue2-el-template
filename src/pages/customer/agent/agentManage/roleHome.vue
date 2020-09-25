@@ -13,7 +13,7 @@
           </el-form>
         </el-col>
         <el-col :span="4" style="text-align: right;">
-          <el-button type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
+          <el-button type="primary" size="small" plain icon="el-icon-plus" @click="add">新增</el-button>
         </el-col>
       </el-row>
     </div>
@@ -31,7 +31,7 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="100px">
           <template slot-scope="scope">
-            <el-button size="small" type="text" @click="handleEdit(scope.$index, scope.row)">编辑</el-button>
+            <el-button size="small" type="text" @click="edit(scope.row.id)">编辑</el-button>
             <el-button size="small" type="text" @click="handleDelete(scope.row.id)">删除</el-button>
           </template>
         </el-table-column>
@@ -49,10 +49,6 @@ import { queryPage, deleteSysRole } from '@/api/customer/agent'
 
 export default {
   name: 'agentRole',
-  components: {},
-  filters: {},
-  mixins: [],
-  props: {},
   data() {
     return {
       loading: false,
@@ -66,8 +62,6 @@ export default {
       tableData: [],
     }
   },
-  computed: {},
-  watch: {},
   created() {
     this.queryPage()
   },
@@ -94,12 +88,11 @@ export default {
       this.form.page = 1
       this.queryPage()
     },
-    addShop() {
-      // this.$router.push({ path: '/brandAddShop' })
+    add() {
+      this.$router.push({ path: '/customer/agent/addRole' })
     },
-
-    handleEdit(item) {
-      // this.$router.push({ path: '/brandEditShop' })
+    edit(id) {
+      this.$router.push({ path: '/customer/agent/editRole', query: { id }})
     },
     handleDelete(roleId) {
       this.$confirm(
