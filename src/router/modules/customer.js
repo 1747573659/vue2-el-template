@@ -1,4 +1,6 @@
-import { _import } from '@/utils'
+import {
+  _import
+} from '@/utils'
 import Layout from '@/layout'
 import kmContainer from '@/components/km-container'
 const customer = {
@@ -10,19 +12,97 @@ const customer = {
     title: '客户管理',
     name: 'customer'
   },
-  children: [
+  children: [{
+      path: 'merchant',
+      name: 'merchant',
+      code: 'KM_CUSTOMER_MERCHANT',
+      redirect: {
+        name: 'merchantManage'
+      },
+      component: kmContainer,
+      meta: {
+        title: '商户管理',
+        name: 'merchant'
+      },
+      children: [{
+          path: 'merchantManage',
+          name: 'merchantManage',
+          code: 'KM_CUSTOMER_MERCHANT_MANAGE',
+          component: _import('customer/merchant/merchantManage/merchantHome'),
+          meta: {
+            title: '商户管理',
+            name: 'merchantManage'
+          }
+        },
+        {
+          path: 'addMerchant',
+          name: 'addMerchant',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/merchant/merchantManage/addMerchant'),
+          meta: {
+            title: '商户管理/新增',
+            name: 'addMerchant'
+          }
+        },
+        {
+          path: 'editMerchant',
+          name: 'editMerchant',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/merchant/merchantManage/editMerchant'),
+          meta: {
+            title: '商户管理/编辑',
+            name: 'editMerchant'
+          }
+        },
+        {
+          path: 'brandHome',
+          name: 'brandHome',
+          code: 'KM_CUSTOMER_BRAND_MANAGE',
+          component: _import('customer/merchant/merchantManage/brandHome'),
+          meta: {
+            title: '商户品牌管理',
+            name: 'brandHome'
+          }
+        },
+        {
+          path: 'addBrand',
+          name: 'addBrand',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/merchant/merchantManage/addBrand'),
+          meta: {
+            title: '品牌管理/新增',
+            name: 'addBrand'
+          }
+        },
+        {
+          path: 'editBrand',
+          name: 'editBrand',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/merchant/merchantManage/editBrand'),
+          meta: {
+            title: '品牌管理/编辑',
+            name: 'editBrand'
+          }
+        },
+      ]
+    },
     {
       path: 'archive',
       name: 'archive',
       code: 'KM_CUSTOMER_ARCHIVE',
-      redirect: { name: 'wxArchive' },
+      redirect: {
+        name: 'wxArchive'
+      },
       component: kmContainer,
       meta: {
         title: '进件管理',
         name: 'archive'
       },
-      children: [
-        {
+      children: [{
           path: 'wxArchive',
           name: 'wxArchive',
           code: 'KM_CUSTOMER_ARCHIVE_WX',
@@ -87,7 +167,63 @@ const customer = {
           }
         }
       ]
-    }
+    },
+    {
+      path: 'agent',
+      name: 'agent',
+      code: 'KM_CUSTOMER_AGENT',
+      redirect: {
+        name: 'merchantManage'
+      },
+      component: kmContainer,
+      meta: {
+        title: '代理商管理',
+        name: 'agent'
+      },
+      children: [{
+          path: 'agentManage',
+          name: 'agentManage',
+          code: 'KM_CUSTOMER_AGENT_HOME',
+          component: _import('customer/agent/agentManage/agentHome'),
+          meta: {
+            title: '代理商管理',
+            name: 'agentManage'
+          }
+        },
+        {
+          path: 'addAgent',
+          name: 'addAgent',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/agent/agentManage/addAgent'),
+          meta: {
+            title: '代理商管理/新增',
+            name: 'addAgent'
+          }
+        },
+        {
+          path: 'editAgent',
+          name: 'editAgent',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: _import('customer/agent/agentManage/editAgent'),
+          meta: {
+            title: '代理商管理/编辑',
+            name: 'editAgent'
+          }
+        },
+        {
+          path: 'agentRole',
+          name: 'agentRole',
+          code: 'KM_CUSTOMER_AGENT_ROLE',
+          component: _import('customer/agent/agentManage/roleHome'),
+          meta: {
+            title: '代理商角色',
+            name: 'agentRole'
+          }
+        },
+      ]
+    },
   ]
 }
 

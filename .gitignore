@@ -22,6 +22,7 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw?
+.history
 
 # 打包文件
 km-channel-dev
