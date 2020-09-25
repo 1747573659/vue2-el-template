@@ -13,17 +13,10 @@ export default {
   components: {
     BaseEdit,
   },
-  filters: {},
-  mixins: [],
-  props: {},
   data() {
     return {}
   },
-  computed: {},
-  watch: {},
   created() {},
-  mounted() {},
-  beforeDestroy() {},
   methods: {},
 }
 </script>
