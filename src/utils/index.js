@@ -7,4 +7,13 @@ import _import from './modules/import'
 import errorLog from './modules/errorLog'
 import resetRedirect from './modules/resetRedirect'
 
-export { deepClone, downloadForURL, routeTree, convertRouter, _import, resetRedirect, MD5Util, errorLog }
+export {
+  deepClone,
+  downloadForURL,
+  routeTree,
+  convertRouter,
+  _import,
+  resetRedirect,
+  MD5Util,
+  errorLog
+}
