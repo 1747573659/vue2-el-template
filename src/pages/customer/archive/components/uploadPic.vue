@@ -50,6 +50,10 @@ export default {
     }
   },
   props: {
+    imagePath: {
+      type: String,
+      default: ''
+    },
     fileServer: {
       type: String,
       default: ''
@@ -65,6 +69,11 @@ export default {
     card: {
       type: String,
       default: null
+    }
+  },
+  watch: {
+    imagePath() {
+      this.imageUrl = this.imagePath
     }
   },
   methods: {

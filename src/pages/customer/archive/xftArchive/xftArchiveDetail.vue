@@ -7,30 +7,45 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="name"
-          fixed
+          prop="channelName"
           width="114px"
           label="支付通道">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="wxBindType"
           label="微信支付">
+          <template slot-scope="scope">
+            <span v-if="scope.row.wxBindType === 1">默认使用</span>
+            <span v-else-if="scope.row.wxBindType === 2">正在使用</span>
+            <span v-else>--</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="aliBindType"
           label="支付宝支付">
+          <template slot-scope="scope">
+            <span v-if="scope.row.aliBindType === 1">默认使用</span>
+            <span v-else-if="scope.row.aliBindType === 2">正在使用</span>
+            <span v-else>--</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="wxSubMchId"
           label="微信子商户号">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="wxAuthStatus"
           label="授权状态">
+          <template slot-scope="scope">
+            {{scope.row.wxAuthStatus === 1 ? '已授权' : '未授权'}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="feeRate"
           label="授权费率">
+          <template slot-scope="scope">
+            {{(scope.row.feeRate) / 100 + '%'}}
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
@@ -120,7 +135,9 @@
 </template>
 
 <script>
-import { queryDocumentByPage } from '@/api/setting/material'
+import { 
+  queryXftPage
+} from '@/api/xftArchive'
 export default {
   data() {
     return {
@@ -170,12 +187,12 @@ export default {
     async getList() {
       this.tableLoading = true
       let data = {
-        "orders": {},
+        "archiveId": this.$route.query.id,
         "page": this.currentPage,
         "rows": this.pageSize,
       }
       try {
-        const res = await queryDocumentByPage(data)
+        const res = await queryXftPage(data)
         this.tableData = res.results
         this.totalPage = res.totalCount
       } catch (e) {} finally {

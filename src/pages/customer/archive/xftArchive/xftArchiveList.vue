@@ -100,8 +100,11 @@
           </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.stopUse"
           label="停用">
+          <template slot-scope="scope">
+            {{scope.row.archiveBaseDTO.stopUse ? '停用' : '启用'}}
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
@@ -111,14 +114,14 @@
             <el-button v-if="scope.row.auditStatus === 2 || scope.row.auditStatus === 8" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
             <el-button v-else @click="edit(scope.row)" type="text" size="small">编辑</el-button>
             <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
-            <el-button @click="changeStatus(scope.row)" type="text" size="small">停用</el-button>
+            <el-button @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
             <el-dropdown style="margin-left: 12px" v-if="scope.row.auditStatus === 6 || scope.row.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
               </span>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item style="color: #3377FF" @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
-                <el-dropdown-item style="color: #3377FF" @click.native="shopQRCode(scope.row)">认证状态</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
                 <el-dropdown-item style="color: #3377FF" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
@@ -154,7 +157,7 @@
 </template>
 
 <script>
-import { queryPage } from '@/api/xftArchive'
+import { queryPage, queryCertificationStatus, stopUse } from '@/api/xftArchive'
 export default {
   data() {
     return {
@@ -206,7 +209,10 @@ export default {
         7: '已冻结',
         8: '已作废'
       },
-      statusList: [],
+      statusList: [
+        {id: 0, name:'启用'},
+        {id: 1, name:'停用'}
+      ],
       tableData: [],
       currentPage: 1,
       totalPage: 0,
@@ -232,7 +238,14 @@ export default {
       this.currentPage = 1
       this.getList()
     },
-    changeStatus(row) {
+    async changeStatus(row) {
+      let data = {
+        'archiveId': row.id,
+        'stopUse': row.archiveBaseDTO.stopUse ? 0 : 1
+      }
+      try{
+        const res = await stopUse(data)
+      } catch(error) {}
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -250,7 +263,7 @@ export default {
       this.certificationVisible = true
     },
     toDetail (row) {
-      this.$router.push({ name: 'xftArchiveDetail' })
+      this.$router.push({ name: 'xftArchiveDetail', query: {id: row.id} })
     },
     async getList() {
       this.tableLoading = true
@@ -264,6 +277,7 @@ export default {
         'bankCard': this.form.name,
         // 'auditStatusList': this.form.auditStatus,
         'wxCertStatus': this.form.wxCertStatus,
+        'stopUse': this.form.status,
         'page': this.currentPage,
         'rows': this.pageSize,
       }
@@ -275,6 +289,15 @@ export default {
         this.cxLoading = false
         this.tableLoading = false
       }
+    },
+    async queryStatus(row) {
+      let data = {
+        valueId: row.id,
+        bankChannelCode: row.useBankChannelCode
+      }
+      try {
+        const res = await queryCertificationStatus(data)
+      } catch(error) {}
     }
   },
   computed: {
