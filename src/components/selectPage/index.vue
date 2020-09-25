@@ -2,7 +2,7 @@
   <div>
     <el-select
       class="select-page"
-      v-model="bindValue"
+      v-model="value"
       v-loadmore="loadMore"
       filterable
       clearable
@@ -33,10 +33,13 @@
 export default {
   data() {
     return {
-      bindValue: ''
     }
   },
   props:{
+    value: {
+      type: String,
+      default: ''
+    },
     isMaxPage: {
       type: Boolean,
       default: false

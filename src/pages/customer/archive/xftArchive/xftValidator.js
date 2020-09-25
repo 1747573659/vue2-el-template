@@ -14,7 +14,7 @@ export default function xftValidator () {
     }
   }
   return {
-    'archiveBaseVO.merchantName': [{ required: true, message: '请选择商户', trigger: 'change' }],
+    'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户', trigger: 'change' }],
     'archiveBaseVO.merchantType': [{ required: true, message: '请选择商户类型', trigger: 'change' }],
     'archiveBaseVO.superCode': [{ required: true, message: '请选择是否开通超级码', trigger: 'change' }],
     'archiveBaseVO.companyName': [{ required: true, message: '请输入公司名称', trigger: 'blur' }],
@@ -58,14 +58,16 @@ export default function xftValidator () {
     'archiveExpandVO.bankCardFrontUrl': [{ required: true, message: '请上传银行卡正面照', trigger: 'change' }],
     'archiveExpandVO.bankCardBackUrl': [{ required: true, message: '请上传身份证背面照', trigger: 'change' }],
     'archiveExpandVO.openingPermitUrl': [{ required: true, message: '请上传开户许可证', trigger: 'change' }],
-    'archiveExpandVO.cashreceiveIdFrontUrl': [{ required: true, message: '收款企业法人身份证正面照', trigger: 'change' }],
-    'archiveExpandVO.cashreceiveIdBackUrl': [{ required: true, message: '收款企业法人身份证反面照', trigger: 'change' }],
-    'archiveExpandVO.publicAuthorization': [{ required: true, message: '第三方对公结算授权函', trigger: 'change' }],
-    'archiveOtherVO.cardholderIdFrontUrl': [{ required: true, message: '持卡人身份证正面照', trigger: 'change' }],
-    'archiveOtherVO.cardholderIdBackUrl': [{ required: true, message: '持卡人身份证反面照', trigger: 'change' }],
-    'archiveOtherVO.cardholderPhoto': [{ required: true, message: '持卡人手持身份证照片', trigger: 'change' }],
-    'archiveExpandVO.privateAuthorization': [{ required: true, message: '第三方对私结算授权函', trigger: 'change' }],
-    'archiveBaseVO.isOpenXingPos': [{ required: true, message: '第三方对私结算授权函', trigger: 'change' }],
-    'archiveOtherVO.cardholderIdCardFront': [{ required: true, message: '持卡人身份证正面照', trigger: 'change' }],
+    'archiveExpandVO.cashreceiveIdFrontUrl': [{ required: true, message: '请上传收款企业法人身份证正面照', trigger: 'change' }],
+    'archiveExpandVO.cashreceiveIdBackUrl': [{ required: true, message: '请上传收款企业法人身份证反面照', trigger: 'change' }],
+    'archiveExpandVO.publicAuthorization': [{ required: true, message: '请上传第三方对公结算授权函', trigger: 'change' }],
+    'archiveOtherVO.cardholderIdFrontUrl': [{ required: true, message: '请上传持卡人身份证正面照', trigger: 'change' }],
+    'archiveOtherVO.cardholderIdBackUrl': [{ required: true, message: '请上传持卡人身份证反面照', trigger: 'change' }],
+    'archiveOtherVO.cardholderPhoto': [{ required: true, message: '请上传持卡人手持身份证照片', trigger: 'change' }],
+    'archiveExpandVO.privateAuthorization': [{ required: true, message: '请上传第三方对私结算授权函', trigger: 'change' }],
+    'archiveBaseVO.isOpenXingPos': [{ required: true, message: '请上传第三方对私结算授权函', trigger: 'change' }],
+    'archiveOtherVO.cardholderIdCardFront': [{ required: true, message: '请上传持卡人身份证正面照', trigger: 'change' }],
+    'archiveBaseVO.fixFeeRate': [{ required: true, message: '请选择费率', trigger: 'change' }],
+    'archiveBaseVO.exchangeFeeRate': [{ required: true, message: '请选择享钱汇银费率', trigger: 'change' }],
   }
 }

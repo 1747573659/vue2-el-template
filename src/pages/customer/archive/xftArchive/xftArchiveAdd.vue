@@ -19,8 +19,9 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="商户" prop="archiveBaseVO.merchantName">
+              <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
+                  :value="form.archiveBaseVO.merchantName"
                   @remoteMethod="shopRemoteMethod"
                   @loadMore="shopLoadMore"
                   id="id"
@@ -47,8 +48,8 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通超级码" prop="archiveBaseVO.superCode">
                 <el-radio-group v-model="form.archiveBaseVO.superCode">
-                  <el-radio :label="3">是</el-radio>
-                  <el-radio :label="6">否</el-radio>
+                  <el-radio :label="1">是</el-radio>
+                  <el-radio :label="2">否</el-radio>
                 </el-radio-group>
               </el-form-item>
             </el-col>
@@ -67,7 +68,7 @@
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="地区" prop="archiveBaseVO.area">
+              <el-form-item label="地区" prop="archiveBaseVO.province">
                 <area-select :key="areaKey" @change="areaChange" :areaList="areaList"></area-select>
               </el-form-item>
             </el-col>
@@ -134,43 +135,43 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
-                <upload-pic alt="门店门头照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.signboardUrl') }" :exampleImg="exampleImg.signboardUrl" @click="imgClick"></upload-pic>
+                <upload-pic alt="门店门头照" :imagePath="form.archiveOtherVO.signboardUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.signboardUrl') }" :exampleImg="exampleImg.signboardUrl" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="收银台照片" prop="archiveOtherVO.cashierDesk">
-                <upload-pic alt="收银台照片" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashierDesk') }" :exampleImg="exampleImg.cashierDesk" @click="imgClick"></upload-pic>
+                <upload-pic alt="收银台照片" :imagePath="form.archiveOtherVO.cashierDesk" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashierDesk') }" :exampleImg="exampleImg.cashierDesk" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveBaseVO.merchantType === 3">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="企业信息公示网照片" prop="archiveOtherVO.enterpriseInfoScreenshot">
-                <upload-pic alt="企业信息公示网照片" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.enterpriseInfoScreenshot') }" :exampleImg="exampleImg.enterpriseInfoScreenshot" @click="imgClick"></upload-pic>
+                <upload-pic alt="企业信息公示网照片" :imagePath="form.archiveOtherVO.enterpriseInfoScreenshot" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.enterpriseInfoScreenshot') }" :exampleImg="exampleImg.enterpriseInfoScreenshot" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
-                <upload-pic alt="经营场所照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl') }" :exampleImg="exampleImg.businessSiteOneUrl" @click="imgClick"></upload-pic>
+                <upload-pic alt="经营场所照" :imagePath="form.archiveOtherVO.businessSiteOneUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl') }" :exampleImg="exampleImg.businessSiteOneUrl" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
-                <upload-pic alt="租赁合同照一" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
+                <upload-pic alt="租赁合同照一" :imagePath="form.archiveOtherVO.contractOfTenancy1" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="租赁合同照二" prop="archiveOtherVO.contractOfTenancy2">
-                <upload-pic alt="租赁合同照二" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy2') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
+                <upload-pic alt="租赁合同照二" :imagePath="form.archiveOtherVO.contractOfTenancy2" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy2') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="租赁合同照三" prop="archiveOtherVO.contractOfTenancy3">
-                <upload-pic alt="租赁合同照三" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy3') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
+                <upload-pic alt="租赁合同照三" :imagePath="form.archiveOtherVO.contractOfTenancy3" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy3') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -180,7 +181,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
-                <upload-pic alt="营业执照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessLicenseUrl') }" :exampleImg="exampleImg.businessLicenseUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="营业执照" :imagePath="form.archiveOtherVO.businessLicenseUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.businessLicenseUrl') }" :exampleImg="exampleImg.businessLicenseUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -222,20 +223,35 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="证件有效期" prop="archiveExpandVO.legalPersonValidityBegin">
-                <el-date-picker @change="legalPersonValidityChange" v-model="form.archiveExpandVO.legalPersonValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
+                <!-- <el-date-picker @change="legalPersonValidityChange" v-model="form.archiveExpandVO.legalPersonValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
+                </el-date-picker> -->
+                <el-date-picker
+                  style="width: 140px"
+                  v-model="form.archiveExpandVO.legalPersonValidityBegin"
+                  type="date"
+                  placeholder="选择日期">
                 </el-date-picker>
+                <span style="margin: 5px">至</span>
+                <el-date-picker
+                  v-if="isEdit"
+                  style="width: 140px"
+                  v-model="form.archiveExpandVO.legalPersonValidityEnd"
+                  type="date"
+                  placeholder="选择日期">
+                </el-date-picker>
+                <span v-else>长期有效</span>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
-                <upload-pic alt="身份证正面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.idFrontUrl') }" :exampleImg="exampleImg.idFrontUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="身份证正面照" :imagePath="form.archiveExpandVO.idFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.idFrontUrl') }" :exampleImg="exampleImg.idFrontUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
-                <upload-pic alt="身份证背面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.idBackUrl') }" :exampleImg="exampleImg.idBackUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="身份证背面照" :imagePath="form.archiveExpandVO.idBackUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.idBackUrl') }" :exampleImg="exampleImg.idBackUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -269,6 +285,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
                 <select-page
+                  :value="form.archiveExpandVO.bankSubName"
                   @remoteMethod="bankRemoteMethod"
                   @loadMore="bankLoadMore"
                   id="bcode"
@@ -285,8 +302,8 @@
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开户支行所在省市" prop="archiveExpandVO.bankArea">
-                <area-select @change="bankAreaChange" :level="1"></area-select>
+              <el-form-item label="开户支行所在省市" prop="archiveExpandVO.bankProvince">
+                <area-select-for-two :key="bankAreaKey" @change="bankAreaChange" :areaList="bankAreaList"></area-select-for-two>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -324,62 +341,62 @@
           <el-row v-if="form.archiveExpandVO.acctType === 1">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
-                <upload-pic alt="银行卡正面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.bankCardFrontUrl') }" :exampleImg="exampleImg.bankCardFrontUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="银行卡正面照" :imagePath="form.archiveExpandVO.bankCardFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.bankCardFrontUrl') }" :exampleImg="exampleImg.bankCardFrontUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行卡背面照" prop="archiveExpandVO.bankCardBackUrl">
-                <upload-pic alt="银行卡背面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.bankCardBackUrl') }" :exampleImg="exampleImg.bankCardBackUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="银行卡背面照" :imagePath="form.archiveExpandVO.bankCardBackUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.bankCardBackUrl') }" :exampleImg="exampleImg.bankCardBackUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveExpandVO.acctType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
-                <upload-pic alt="开户许可证" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.openingPermitUrl') }" :exampleImg="exampleImg.openingPermitUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="开户许可证" :imagePath="form.archiveExpandVO.openingPermitUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.openingPermitUrl') }" :exampleImg="exampleImg.openingPermitUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="收款企业法人身份证正面照" prop="archiveExpandVO.cashreceiveIdFrontUrl">
-                <upload-pic alt="收款企业法人身份证正面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashreceiveIdFrontUrl') }" :exampleImg="exampleImg.cashreceiveIdFrontUrl" @click="imgClick"> </upload-pic>
+              <el-form-item label="收款企业法人身份证正面照" prop="archiveOtherVO.cashreceiveIdFrontUrl">
+                <upload-pic alt="收款企业法人身份证正面照" :imagePath="form.archiveOtherVO.cashreceiveIdFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashreceiveIdFrontUrl') }" :exampleImg="exampleImg.cashreceiveIdFrontUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="收款企业法人身份证反面照" prop="archiveExpandVO.cashreceiveIdBackUrl">
-                <upload-pic alt="收款企业法人身份证反面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashreceiveIdBackUrl') }" :exampleImg="exampleImg.cashreceiveIdBackUrl" @click="imgClick"> </upload-pic>
+              <el-form-item label="收款企业法人身份证反面照" prop="archiveOtherVO.cashreceiveIdBackUrl">
+                <upload-pic alt="收款企业法人身份证反面照" :imagePath="form.archiveOtherVO.cashreceiveIdBackUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashreceiveIdBackUrl') }" :exampleImg="exampleImg.cashreceiveIdBackUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="第三方对公结算授权函" prop="archiveExpandVO.publicAuthorization">
-                <upload-pic alt="第三方对公结算授权函" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.publicAuthorization') }" :exampleImg="exampleImg.publicAuthorization" @click="imgClick"> </upload-pic>
+              <el-form-item label="第三方对公结算授权函" prop="archiveOtherVO.publicAuthorization">
+                <upload-pic alt="第三方对公结算授权函" :imagePath="form.archiveOtherVO.publicAuthorization" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.publicAuthorization') }" :exampleImg="exampleImg.publicAuthorization" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveExpandVO.acctType === 1 && form.archiveExpandVO.cardholderType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdFrontUrl">
-                <upload-pic alt="持卡人身份证正面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderIdFrontUrl') }" :exampleImg="exampleImg.cardholderIdFrontUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="持卡人身份证正面照" :imagePath="form.archiveOtherVO.cardholderIdFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderIdFrontUrl') }" :exampleImg="exampleImg.cardholderIdFrontUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人身份证反面照" prop="archiveOtherVO.cardholderIdBackUrl">
-                <upload-pic alt="持卡人身份证反面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderIdBackUrl') }" :exampleImg="exampleImg.cardholderIdBackUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="持卡人身份证反面照" :imagePath="form.archiveOtherVO.cardholderIdBackUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderIdBackUrl') }" :exampleImg="exampleImg.cardholderIdBackUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveExpandVO.acctType === 1 && form.archiveExpandVO.cardholderType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人手持身份证照片" prop="archiveOtherVO.cardholderPhoto">
-                <upload-pic alt="持卡人手持身份证照片" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderPhoto') }" :exampleImg="exampleImg.cardholderPhoto" @click="imgClick"> </upload-pic>
+                <upload-pic alt="持卡人手持身份证照片" :imagePath="form.archiveOtherVO.cardholderPhoto" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderPhoto') }" :exampleImg="exampleImg.cardholderPhoto" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="第三方对私结算授权函" prop="archiveExpandVO.privateAuthorization">
-                <upload-pic alt="第三方对私结算授权函" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.privateAuthorization') }" :exampleImg="exampleImg.privateAuthorization" @click="imgClick"> </upload-pic>
+              <el-form-item label="第三方对私结算授权函" prop="archiveOtherVO.privateAuthorization">
+                <upload-pic alt="第三方对私结算授权函" :imagePath="form.archiveOtherVO.privateAuthorization" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.privateAuthorization') }" :exampleImg="exampleImg.privateAuthorization" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -396,7 +413,7 @@
           <el-row v-if="form.archiveBaseVO.isOpenXingPos === 1">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdCardFront">
-                <upload-pic alt="持卡人身份证正面照" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderIdCardFront') }" :exampleImg="exampleImg.cardholderIdCardFront" @click="imgClick"> </upload-pic>
+                <upload-pic alt="持卡人身份证正面照" :imagePath="form.archiveOtherVO.cardholderIdCardFront" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderIdCardFront') }" :exampleImg="exampleImg.cardholderIdCardFront" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -407,14 +424,14 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.fixFeeRate" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                  <el-option v-for="item in fixFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item" v-if="isExchangeFeeRate">
               <el-form-item label="享钱汇银费率" prop="archiveBaseVO.exchangeFeeRate">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                  <el-option v-for="item in fixFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -435,6 +452,20 @@
       <el-button @click="toRefuse" size="small" class="archive-bottom-btn" v-if="auditStatus === 2">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div>
+    <el-dialog
+      title="提示"
+      :visible.sync="refuseDialogVisible"
+      width="30%">
+      <el-form :model="refuseForm" :rules="refuseRules" ref="refuseForm" label-width="100px" class="demo-ruleForm">
+        <el-form-item label="活动名称" prop="remark">
+          <el-input type="textarea" v-model="refuseForm.remark"></el-input>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button @click="refuseDialogVisible = false">取 消</el-button>
+        <el-button type="primary" @click="refuseConfirm">确 定</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -442,13 +473,19 @@
 import selectPage from '@/components/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
+import areaSelectForTwo from '@/components/areaSelectForTwo'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
 import { 
   getWftAllTrade,
   queryCertType,
   queryShopListByPage,
-  getBankCnapByName
+  getBankCnapByName,
+  isShowRate,
+  audit,
+  submit,
+  refuse,
+  detail
 } from '@/api/xftArchive'
 
 export default {
@@ -456,13 +493,19 @@ export default {
   components: {
     selectPage,
     uploadPic,
-    areaSelect
+    areaSelect,
+    areaSelectForTwo
   },
   data() {
     return {
+      isEdit: false,
       auditStatus: 0,
       areaKey: Symbol('areaKey'),
+      bankAreaKey: Symbol('bankAreaKey'),
       rules: xftValidator(),
+      refuseRules: {
+        remark: [{ required: true, message: '请选择活动区域', trigger: 'change' }]
+      },
       form: {
         archiveBaseVO: {
           address: '',
@@ -520,7 +563,7 @@ export default {
           source: null,
           status: null,
           submitLevel: null,
-          superCode: 3,
+          superCode: 1,
           unionpaycodeFeeRate: null,
           useChannelCode: '',
           userId: null,
@@ -609,8 +652,8 @@ export default {
         }
       },
       acctTypeList: [
-        {id: 1, name: '对私'},
-        {id: 2, name: '对公'}
+        {id: 2, name: '对公'},
+        {id: 1, name: '对私'}
       ],
       cashreceiveTypeList: [
         {id: 1, name: '本企业收款'},
@@ -621,8 +664,8 @@ export default {
         {id: 2, name: '个体商户 持卡人为非法人'}
       ],
       cardholderIdTypeList: [
-        {id: 2, name: '对公'},
-        {id: 1, name: '对私'}
+        {id: '1', name: '身份证'},
+        {id: '2', name: '护照'}
       ],
       cardTypeList: [
         {id: 1, name: '身份证'}
@@ -631,14 +674,29 @@ export default {
         { id: 1, name: '实体'},
         { id: 2, name: '虚拟'}
       ],
+      fixFeeRateList: [
+        { id: 25, name: '25'+'%'},
+        { id: 28, name: '28'+'%'},
+        { id: 30, name: '30'+'%'},
+        { id: 35, name: '35'+'%'},
+        { id: 38, name: '38'+'%'},
+        { id: 45, name: '45'+'%'},
+        { id: 55, name: '55'+'%'},
+        { id: 60, name: '60'+'%'},
+      ],
       industrIdList: [],
       certTypeList: [],
       areaList: [],
+      bankAreaList: [],
       statusList: [],
       shopList: [],
       bankList: [],
       selectPageNoShop: 1,
       selectPageNoBank: 1,
+      refuseDialogVisible: false,
+      refuseForm: {
+        remark: ''
+      },
       formDisabled: false,
       isMaxPageShop: false,
       isMaxPageBank: false,
@@ -670,6 +728,7 @@ export default {
   },
   methods: {
     legalPersonValidityChange(value) {
+      console.log(this.form.archiveExpandVO.legalPersonValidity)
       this.form.archiveExpandVO.legalPersonValidityBegin = value[0]
       this.form.archiveExpandVO.legalPersonValidityEnd = value[1]
     },
@@ -718,14 +777,14 @@ export default {
         case 'archiveExpandVO.openingPermitUrl':
           this.form.archiveExpandVO.openingPermitUrl = res.data.path
           break
-        case 'archiveExpandVO.cashreceiveIdFrontUrl':
-          this.form.archiveExpandVO.cashreceiveIdFrontUrl = res.data.path
+        case 'archiveOtherVO.cashreceiveIdFrontUrl':
+          this.form.archiveOtherVO.cashreceiveIdFrontUrl = res.data.path
           break
-        case 'archiveExpandVO.cashreceiveIdBackUrl':
-          this.form.archiveExpandVO.cashreceiveIdBackUrl = res.data.path
+        case 'archiveOtherVO.cashreceiveIdBackUrl':
+          this.form.archiveOtherVO.cashreceiveIdBackUrl = res.data.path
           break
-        case 'archiveExpandVO.publicAuthorization':
-          this.form.archiveExpandVO.publicAuthorization = res.data.path
+        case 'archiveOtherVO.publicAuthorization':
+          this.form.archiveOtherVO.publicAuthorization = res.data.path
           break
         case 'archiveOtherVO.cardholderIdFrontUrl':
           this.form.archiveOtherVO.cardholderIdFrontUrl = res.data.path
@@ -736,8 +795,8 @@ export default {
         case 'archiveOtherVO.cardholderPhoto':
           this.form.archiveOtherVO.cardholderPhoto = res.data.path
           break
-        case 'archiveExpandVO.privateAuthorization':
-          this.form.archiveExpandVO.privateAuthorization = res.data.path
+        case 'archiveOtherVO.privateAuthorization':
+          this.form.archiveOtherVO.privateAuthorization = res.data.path
           break
         case 'archiveOtherVO.cardholderIdCardFront':
           this.form.archiveOtherVO.cardholderIdCardFront = res.data.path
@@ -804,7 +863,7 @@ export default {
       // 只有value有值的时候才去请求接口
       if (value) {
         let data = {
-          name: value,
+          bankName: value,
           page: this.selectPageNoBank,
           rows: 10
         }
@@ -860,10 +919,19 @@ export default {
       this.selectPageNoBank = 1
     },
     shopChange(value) {
-      this.form.archiveBaseVO.merchantName = value
+      this.form.archiveBaseVO.merchantId = value
+      this.shopList?.forEach(item => {
+        if (item.id === value) {
+          this.form.archiveBaseVO.userId = item.userId
+        }
+      })
     },
-    bankChange(value) {
-      this.form.archiveBaseVO.merchantName = value
+    async bankChange(value) {
+      this.form.archiveExpandVO.bankSub = value
+      try {
+        const res = await isShowRate({code: value})
+        this.isExchangeFeeRate = res
+      } catch (error) {}
     },
     imgClick() {
       if (this.formDisabled) alert('hahahah')
@@ -874,8 +942,8 @@ export default {
       this.form.archiveBaseVO.area = value[2]
     },
     bankAreaChange(value) {
-      this.form.archiveBaseVO.bankProvince = value[0]
-      this.form.archiveBaseVO.bankCity = value[1]
+      this.form.archiveExpandVO.bankProvince = value[0]
+      this.form.archiveExpandVO.bankCity = value[1]
     },
     async getIndustrIdList() {
       try {
@@ -889,17 +957,78 @@ export default {
         this.certTypeList = res
       } catch(error) {}
     },
-    toSave() {
+    async toSave() {
+      try {
+        const res = await submit(this.form)
+        this.$store.dispatch('delTagView', this.$route).then(() => {
+          this.$router.push({ path: 'xftArchive' })
+        })
+        this.$message.success('新增成功')
+      } catch(error) {}
       console.log(this.form)
     },
-    toAdd() {},
-    toRefuse() {},
-    toCancle() {}
+    async toAdd() {
+      try {
+        const res = await audit(this.form)
+        this.$store.dispatch('delTagView', this.$route).then(() => {
+          this.$router.push({ path: 'xftArchive' })
+        })
+        this.$message.success('新增成功')
+      } catch(error) {}
+      console.log(this.form)
+    },
+    toRefuse() {
+      this.refuseForm.remark = ''
+      this.refuseDialogVisible = true
+    },
+    toCancle() {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ path: 'xftArchive' })
+      })
+    },
+    refuseConfirm() {
+      this.$refs.refuseForm.validate(async (valid) => {
+        if (valid) {
+          let data = {
+            archiveId: this.$router.query.id,
+            auditRemark: this.refuseForm.remark
+          }
+          try {
+            const res = await refuse(data)
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ path: 'xftArchive' })
+            })
+            this.$message.success('操作成功')
+          } catch(error) {}
+        } else {
+          console.log('error submit!!')
+          return false
+        }
+      })
+    },
+    async getDetail() {
+      let data = {
+        archiveId: Number(this.$route.query.id)
+      }
+      try {
+        const res = await detail(data)
+        this.form.archiveBaseVO = res.archiveBaseDTO
+        this.form.archiveExpandVO = res.archiveExpandDTO
+        this.form.archiveOtherVO = res.archiveOtherDTO
+        this.form.archiveExpandVO.cardType = 1
+        this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
+        this.areaKey = Symbol('areaKey')
+        this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
+        this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
+        this.bankAreaKey = Symbol('bankAreaKey')
+      } catch (error) {}
+    },
   },
   mounted() {
-    setTimeout(() => {
-      this. areaList = []
-    })
+    if (this.$route.query.id) {
+      this.getDetail()
+    }
+    console.log(this.form)
     this.getIndustrIdList()
   },
 }
