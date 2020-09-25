@@ -53,7 +53,7 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
+      <el-table :data="tableData" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
@@ -63,19 +63,19 @@
             <p>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</p>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态">
+        <el-table-column label="资料状态">
           <template slot-scope="scope">
             <span :class="{ 'e-general_tabOrange': [4, 8].includes(scope.row.archiveBaseDTO.auditStatus) }" @click="handleReason(scope.row)">{{
               scope.row.archiveBaseDTO.auditStatus | filterReview
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="小微进件状态" prop="xiaoWeiArchiveStatus">
+        <el-table-column label="小微进件状态">
           <template slot-scope="scope">
             <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="xiaoWeiUpgradeStatus" label="升级状态">
+        <el-table-column label="升级状态">
           <template slot-scope="scope">
             <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
           </template>
@@ -85,17 +85,27 @@
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.createTime" label="停用"></el-table-column>
+        <el-table-column label="停用">
+          <template slot-scope="scope">
+            <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '停用' : '启用' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="right" width="240px">
           <template slot-scope="scope">
             <!-- 按钮状态 编辑、审核、详情、复制、启用、停用 -->
             <!-- boss相比少了小微进件和小微升级 -->
             <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 2">审核</el-button>
-            <el-button type="text" size="small" @click="$router.push({ name: 'wxArchiveAdd' })" v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
+            <el-button
+              type="text"
+              size="small"
+              @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'edit', id: scope.row.archiveBaseDTO.id } })"
+              v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
-            <el-button type="text" size="small" v-else>详情</el-button>
-            <el-button type="text" size="small" @click="handleGeneralEnable(scope.row)">启用</el-button>
+            <el-button type="text" size="small" v-else @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
+              >详情</el-button
+            >
+            <el-button type="text" size="small" @click="handleGeneralStopUse(scope.$index, scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
             <el-button type="text" size="small">复制</el-button>
             <el-button type="text" size="small" v-if="scope.row.xiaoWeiArchiveStatus" @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id } })"
               >进件详情</el-button
@@ -129,7 +139,7 @@
 <script>
 import { filterReview, filterArchiveStatus } from './filters/reviewStatus'
 import { statusOptions, deactivateOptions } from './index'
-import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalEnable } from '@/api/wxArchive'
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse } from '@/api/wxArchive'
 // 申请时间排序接口对接
 // 停用启用状态对接
 export default {
@@ -147,6 +157,7 @@ export default {
       isTabLock: false,
       isReason: false, // 异常状态原因
       reasonMsg: '',
+      sortStatus: true,
       xiaoWeiArchiveData: [],
       xiaoWeiUpgradeData: [],
       tableData: [],
@@ -176,7 +187,7 @@ export default {
     },
     handleTabSort({ column, prop, order }) {
       console.info(order)
-      // 点击排序时
+      this.sortStatus = order === 'descending' || order === null
       this.handleQueryPage()
     },
     handleSearch() {
@@ -197,14 +208,16 @@ export default {
       this.pageSize = val
       this.handleQueryPage()
     },
-    handleGeneralEnable: async function(row) {
+    handleGeneralStopUse: async function(index, row) {
       // 启用/停用
       try {
-        await generalEnable()
+        await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 })
+        this.tableData[index].archiveBaseDTO.stopUse = !row.archiveBaseDTO.stopUse ? 1 : 0
       } catch (error) {}
     },
     handleQueryPage: async function() {
       const data = {
+        createTime: this.sortStatus ? 'desc' : 'asc',
         startTime: this.form.createTime[0] ? `${this.form.createTime[0]} 00:00:00` : '',
         endTime: this.form.createTime[1] ? `${this.form.createTime[1]} 23:59:59` : '',
         auditStatus: this.form.auditStatus,
@@ -255,7 +268,6 @@ export default {
     &_btnLabel {
       width: 100px;
       text-align: right;
-      padding-right: 12px;
     }
   }
 }
