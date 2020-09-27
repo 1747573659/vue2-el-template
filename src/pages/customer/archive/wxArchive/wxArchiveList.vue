@@ -94,19 +94,27 @@
           <template slot-scope="scope">
             <!-- 按钮状态 编辑、审核、详情、复制、启用、停用 -->
             <!-- boss相比少了小微进件和小微升级 -->
-            <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 2">审核</el-button>
             <el-button
               type="text"
               size="small"
-              @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'edit', id: scope.row.archiveBaseDTO.id } })"
+              @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
+              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
+              >审核</el-button
+            >
+            <el-button
+              type="text"
+              size="small"
+              @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
               v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
             <el-button type="text" size="small" v-else @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
               >详情</el-button
             >
+            <el-button type="text" size="small" @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', isCopy: true, id: scope.row.archiveBaseDTO.id } })"
+              >复制</el-button
+            >
             <el-button type="text" size="small" @click="handleGeneralStopUse(scope.$index, scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
-            <el-button type="text" size="small">复制</el-button>
             <el-button type="text" size="small" v-if="scope.row.xiaoWeiArchiveStatus" @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id } })"
               >进件详情</el-button
             >

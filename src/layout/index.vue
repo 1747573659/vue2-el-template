@@ -22,8 +22,8 @@ export default {
   components: {
     HeaderView,
     SidebarView,
-    TagView,
-  },
+    TagView
+  }
 }
 </script>
 
@@ -44,6 +44,9 @@ export default {
       overflow-y: auto;
       & > div {
         min-height: calc(100vh - 56px - 48px - 32px);
+      }
+      .km-container {
+        background-color: #fff;
       }
     }
   }

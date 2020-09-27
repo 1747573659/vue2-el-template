@@ -38,6 +38,10 @@ export default {
     value: {
       type: String,
       default: 'id'
+    },
+    echoValue: {
+      type: String,
+      default: ''
     }
   },
   data() {
@@ -58,6 +62,11 @@ export default {
       }
     }
   },
+  watch: {
+    echoValue(val) {
+      this.selectValue = val
+    }
+  },
   methods: {
     remoteMethod(query) {
       if (query !== '') this.$emit('remoteMethod', query)
@@ -69,7 +78,7 @@ export default {
     clearSelectPage() {
       this.$emit('resetSelectPage')
     },
-    changeSelectPage(){
+    changeSelectPage() {
       this.$emit('changeSelectPage', this.selectValue)
     }
   }

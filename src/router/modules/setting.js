@@ -31,7 +31,8 @@ const setting = {
           component: _import('setting/baseInfo/baseInfo'),
           meta: {
             title: '基本信息',
-            name: 'baseInfoIndex'
+            name: 'baseInfoIndex',
+            cache: true
           }
         }
       ]
@@ -50,12 +51,13 @@ const setting = {
       children: [
         {
           path: 'role',
-          name: 'role',
+          name: 'roleManagement',
           code: 'KM_SETTING_ACCOUNT_ROLE',
           component: _import('setting/account/role/role'),
           meta: {
             title: '角色管理',
-            name: 'role'
+            name: 'roleManagement',
+            cache: true
           }
         },
         {
@@ -76,7 +78,8 @@ const setting = {
           component: _import('setting/account/account/accountSetting'),
           meta: {
             title: '账号设置',
-            name: 'accountSetting'
+            name: 'accountSetting',
+            cache: true
           }
         },
         {

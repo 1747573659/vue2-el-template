@@ -38,7 +38,7 @@ router.beforeEach((to, from, next) => {
             // 接口服务关闭时测试
             store.dispatch('FedLogOut').then(() => {
               Message.error(error || '请重新登录')
-              next({ name: 'login' })
+              // next({ name: 'login' })
             })
           })
       } else next()
