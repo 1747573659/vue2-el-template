@@ -9,11 +9,11 @@
           </el-col>
           <el-col :span="12" class="title-text" v-if="[1, 4, 8].includes(auditStatus)">
             <span class="archive-title">审核结果：</span>
-            <span>{{form.archiveBaseDTO.auditRemark}}</span>
+            <span>{{form.archiveBaseVO.auditRemark}}</span>
           </el-col>
         </el-row>
       </div>
-      <el-form :disabled="formDisabled" ref="form" :rules="rules" size="small" label-suffix=":" :inline="true" :model="form" label-width="190px">
+      <el-form :disabled="isDetail" ref="form" :rules="rules" class="xft-add-form" size="small" label-suffix=":" :inline="true" :model="form" label-width="190px">
         <div class="title">基本信息</div>
         <div class="form-info">
           <el-row>
@@ -185,7 +185,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
-                <upload-pic alt="营业执照" :imagePath="form.archiveOtherVO.businessLicenseUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.businessLicenseUrl') }" :exampleImg="exampleImg.businessLicenseUrl" @click="imgClick"> </upload-pic>
+                <upload-pic alt="营业执照" :imagePath="form.archiveExpandVO.businessLicenseUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.businessLicenseUrl') }" :exampleImg="exampleImg.businessLicenseUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -197,7 +197,25 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
-                <el-date-picker @change="licValidityChange" v-model="form.archiveExpandVO.licValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
+                <el-date-picker
+                  style="width: 140px"
+                  value-format="yyyy-MM-dd"
+                  v-model="form.archiveExpandVO.licValidityBigen"
+                  type="date"
+                  placeholder="选择日期">
+                </el-date-picker>
+                <span style="margin: 5px">至</span>
+                <span
+                  v-if="[3,5,6,7,9].includes(auditStatus) && !form.archiveExpandVO.legalPersonValidityEnd">
+                  长期有效
+                </span>
+                <el-date-picker
+                  v-else
+                  style="width: 140px"
+                  value-format="yyyy-MM-dd"
+                  v-model="form.archiveExpandVO.licValidityEnd"
+                  type="date"
+                  placeholder="选择日期">
                 </el-date-picker>
               </el-form-item>
             </el-col>
@@ -227,23 +245,26 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="证件有效期" prop="archiveExpandVO.legalPersonValidityBegin">
-                <!-- <el-date-picker @change="legalPersonValidityChange" v-model="form.archiveExpandVO.legalPersonValidity" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
-                </el-date-picker> -->
                 <el-date-picker
                   style="width: 140px"
+                  value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.legalPersonValidityBegin"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
                 <span style="margin: 5px">至</span>
+                <span
+                  v-if="[3,5,6,7,9].includes(auditStatus) && !form.archiveExpandVO.legalPersonValidityEnd">
+                  长期有效
+                </span>
                 <el-date-picker
-                  v-if="isEdit"
+                  v-else
                   style="width: 140px"
+                  value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.legalPersonValidityEnd"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
-                <span v-else>长期有效</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -410,7 +431,7 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开通星POS刷卡" prop="archiveBaseVO.isOpenXingPos">
+              <el-form-item label="开通星POS刷卡" prop="archiveBaseVO.isOpenXingPos" style="width: 100%">
                 <el-switch style="display: block" :active-value="2" :inactive-value="1" @change="isOpenXingPosChange" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
               </el-form-item>
             </el-col>
@@ -452,8 +473,8 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button v-if="[0, 1, 2, 4, 8].includes(auditStatus)" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
-      <el-button v-if="[0, 1, 2, 4, 8].includes(auditStatus)" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
+      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
       <el-button v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div>
@@ -503,6 +524,7 @@ export default {
   },
   data() {
     return {
+      isCopy: false,
       auditStatus: null,
       auditStatusList: {
         0: '未提交审核',
@@ -517,7 +539,7 @@ export default {
         9: '资料补充待审核'
       },
       type: '',
-      isEdit: false,
+      isDetail: false,
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       rules: xftValidator(),
@@ -747,6 +769,9 @@ export default {
   computed: {
     getIndustrId() {
       return this.form.archiveBaseVO.industrId
+    },
+    getBankSub() {
+      return this.form.archiveExpandVO.bankSub
     }
   },
   watch: {
@@ -760,6 +785,17 @@ export default {
         if (this.form.archiveBaseVO.industrIdName && this.form.archiveBaseVO.industrIdName.includes('事业单位')) {
           this.getCertTypeList()
         }
+      }
+    },
+    getBankSub() {
+      if (this.getBankSub) {
+        try {
+          isShowRate({code: this.getBankSub}).then(
+            res=> {
+              this.isExchangeFeeRate = res
+            }
+          )
+        } catch (error) {}
       }
     }
   },
@@ -953,6 +989,11 @@ export default {
     },
     async bankChange(value) {
       this.form.archiveExpandVO.bankSub = value
+      this.bankList?.forEach(item => {
+        if (item.bcode === value) {
+          this.form.archiveExpandVO.bankSubName = item.bname
+        }
+      })
       try {
         const res = await isShowRate({code: value})
         this.isExchangeFeeRate = res
@@ -983,24 +1024,31 @@ export default {
       } catch(error) {}
     },
     async toSave() {
-      try {
-        const res = await submit(this.form)
-        this.$store.dispatch('delTagView', this.$route).then(() => {
-          this.$router.push({ path: 'xftArchive' })
-        })
-        this.$message.success('新增成功')
-      } catch(error) {}
-      console.log(this.form)
+      this.$refs.form.validateField('archiveBaseVO.merchantId', async (errorMessage) => {
+        if (!errorMessage) {
+          try {
+            const res = await submit(this.form)
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ path: 'xftArchive' })
+            })
+            this.$message.success('新增成功')
+          } catch(error) {}
+          console.log(this.form)
+        }
+      })
     },
     async toAdd() {
-      try {
-        const res = await audit(this.form)
-        this.$store.dispatch('delTagView', this.$route).then(() => {
-          this.$router.push({ path: 'xftArchive' })
-        })
-        this.$message.success('新增成功')
-      } catch(error) {}
-      console.log(this.form)
+      this.$refs.form.validate(async (valid) => {
+        if (valid) {
+          try {
+            const res = await audit(this.form)
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ path: 'xftArchive' })
+            })
+            this.$message.success('新增成功')
+          } catch(error) {}
+        }
+      })
     },
     toRefuse() {
       this.refuseForm.remark = ''
@@ -1047,7 +1095,14 @@ export default {
         this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
         this.bankAreaKey = Symbol('bankAreaKey')
-        console.log(this.form.archiveOtherVO)
+        if (this.isCopy) {
+          this.form.archiveBaseVO.id = null
+          this.form.archiveExpandVO.id = null
+          this.form.archiveOtherVO.id = null
+          this.form.archiveExpandVO.bankCard = null
+          this.form.archiveBaseVO.auditStatus = null
+        }
+        this.auditStatus = this.form.archiveBaseVO.auditStatus
       } catch (error) {}
     },
   },
@@ -1055,11 +1110,16 @@ export default {
     if (this.$route.query.id) {
       this.getDetail()
     }
-    console.log(this.form)
     this.getIndustrIdList()
   },
   created() {
+    if (this.$route.query.isCopy) {
+      this.isCopy = true
+    }
     this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
+    if ([3,5,6,7,9].includes(this.auditStatus)) {
+      this.isDetail = true
+    }
   },
 }
 </script>
@@ -1110,6 +1170,9 @@ export default {
       .el-switch {
         line-height: 32px;
       }
+      .el-form-item__content {
+        width: 100%;
+      }
     }
     /deep/.el-form-item {
       margin-bottom: 24px;
@@ -1129,5 +1192,13 @@ export default {
 }
 .archive-bottom-btn {
   padding: 8px 22px;
+}
+.xft-add-form {
+  /deep/.el-input.is-disabled .el-input__inner {
+    color: #212430!important
+  }
+  /deep/.el-radio__input.is-disabled+span.el-radio__label {
+    color: #212430!important
+  }
 }
 </style>
