@@ -6,7 +6,13 @@
           :queryParams="queryParams"
           :queryFormList.sync="queryFormList"
           @search="handleFilter"
-        ></query-group>
+        >
+          <template v-slot:formfoot >
+            <router-link to="/orderCenter/validityQuery/workOrderManagementdetail">
+                <el-button style="margin-left:20px">新增</el-button>
+              </router-link>
+          </template>
+        </query-group>
     </div>
     <div class="data-box">
         <base-table
@@ -114,7 +120,22 @@ export default {
         },
         {
           key: 'orderType',
-          title: '工单类型'
+          title: '工单类型',
+          escape:(row)=>{
+             let str = "";
+            switch (row.orderType) {
+              case "1":
+                str = "问题";
+                break;
+              case "2":
+                str = "需求";
+                break;
+              default:
+                str = "--";
+                break;
+            }
+            return str
+          }
         },
         {
           key: 'productName',

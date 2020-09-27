@@ -82,7 +82,7 @@ export default {
       isEdit:false,
       ruleForm: {
         demandName: "",
-        orderType: "",
+        orderType: "1",
         productNoA: [],
         demandDec: "",
         fileName: "",
@@ -126,8 +126,10 @@ export default {
       await this.queryProductList()
       this.queryOrderDetail(res)
     }
-    !!this.$route.query.sheetNo && (this.isEdit=true)
-    getRequest.call(this,this.$route.query)
+    if(this.$route.query.sheetNo){
+      this.isEdit=true
+      getRequest.call(this,this.$route.query)
+    }
   },
   methods: {
     submitForm(formName) {

@@ -7,8 +7,9 @@
  -->
 <template>
   <div class="query-group-container">
-    <slot></slot>
+    <slot name="header"></slot>
     <el-form :inline="true" :model="queryParams" ref="queryForm" size="small" label-width="80px" :class="className">
+      <slot name="formheader"></slot>
       <template v-for="(item, index) in queryFormList">
         <el-form-item :key="index" v-if="item.type === 'input'" :label="item.label" :label-width="item.labelWidth">
           <el-input v-model="item.value" :placeholder="item.placeholder || ''"></el-input>
@@ -56,7 +57,9 @@
         </el-form-item>
       </template>
       <el-button class="xdd_small-btn" @click="search" type="primary">查询</el-button>
+      <slot name="formfoot"></slot>
     </el-form>
+    <slot name="foot"></slot>
   </div>
 </template>
 

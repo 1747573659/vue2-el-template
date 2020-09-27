@@ -3,7 +3,30 @@
     <div class="search-box">
       <el-form @submit.native.prevent label-width="110px" size="small">
         <el-row>
+         
           <el-col :span="8">
+            <el-form-item label="支付订单号">
+              <el-input style="width:85%" clearable placeholder="请输入支付订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.orderId"></el-input>
+              <el-tooltip effect="light" class="payment">
+                <div slot="content"><img src="../../../assets/images/paymentOrderNumber.png"></div>
+                <i class="el-icon-question pure-info-tip"></i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+           <el-col :span="8">
+            <el-form-item label="商户">
+              <select-page
+                :request="queryMerchantAdminPage"
+                :bvalue.sync="formData.shopAdminId"
+                :name="'companyName'"
+                searchName="id"
+                id="id"
+                :placeholder="'商户名称'"
+              >
+              </select-page>
+            </el-form-item>
+          </el-col>
+           <el-col :span="8">
             <el-form-item label="交易时间">
               <el-date-picker
                 style="width:85%"
@@ -20,26 +43,8 @@
               ></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
-            <el-form-item label="商户名称">
-              <select-page
-                class="select-paeg"
-                style="width:85%"
-                ref="selectPage"
-                type="商户名称"
-                @change="searchCompanyName">
-              </select-page>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="支付订单号">
-              <el-input style="width:85%" clearable placeholder="请输入支付订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.orderId"></el-input>
-              <el-tooltip effect="light" class="payment">
-                <div slot="content"><img src="../../../assets/images/paymentOrderNumber.png"></div>
-                <i class="el-icon-question pure-info-tip"></i>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
+         
+          
         </el-row>
         <el-row>
           <el-col :span="8">
@@ -95,8 +100,8 @@
         <el-table-column label="申请退款金额" prop="refundAmount"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleDetails(scope.row)" v-if="permissonCheckMenus('TRANSACTION_SINGLE_DETAIL')" size="small" type="text">详情</el-button>
-            <el-button @click="handleDelRow(scope.row)" v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4) && permissonCheckMenus('TRANSACTION_SINGLE_REFUNDDETAIL')" size="small" type="text">退款详情</el-button>
+            <el-button @click="handleDetails(scope.row)"  size="small" type="text">详情</el-button>
+            <el-button @click="handleDelRow(scope.row)" v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4)" size="small" type="text">退款详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -166,16 +171,24 @@
       :form="dialogForm"
       type='order'
     />
+    <order-detail-dialog
+      ref="orderDetailDialog"
+      :dialogTitle="dialogTitle"
+      :form="dialogForm2"
+      type='refund'
+    />
   </div>
 </template>
 
 <script>
-import selectPage from '@/components/selectPage/index.vue'
+import selectPage from '@/components/selectPage2/index.vue'
 import moment from 'moment'
 import orderDetailDialog from './components/orderDetailDialog'
 import {
   querySingleOrder,
-  detail
+  detail,
+  refundOrderdetail,
+  queryMerchantAdminPage
 } from '@/api/transtionManagement'
 let minTime = ''
 let maxTime = ''
@@ -196,6 +209,7 @@ export default {
       dialogTitle: '订单详情',
       tabLock: false,
       dialogForm: {},
+      dialogForm2: {},
       tabData: [],
       formData: {
         transactionTime: '',
@@ -226,11 +240,28 @@ export default {
     // this.handleQueryPage()
   },
   methods: {
-    searchCompanyName (value, options, type) {
-      this.formData.shopAdminId = value
+   async  handleDelRow (row) {
+     this.dialogForm = {}
+      const data = {
+        dataSource: 2,
+        paySn: row.id,
+        // 'orderId': '9115882679906900459209030',
+        shopId: row.shopId
+      }
+      try {
+        const res = await refundOrderdetail(data)
+        if (!res) {
+          this.$message('暂无数据')
+          return
+        }
+        res.shopName=row.shopName
+        this.dialogForm2 = res
+        this.dialogForm2.shopName = row.shopName
+        this.$refs.orderDetailDialog2.orderDetailVisible = true
+      } catch {}
     },
-    handleDelRow (row) {
-      this.$router.push({ path: 'refundOrderQuery', query: { 'id': row.id } })
+    queryMerchantAdminPage (e) {
+      return queryMerchantAdminPage(e)
     },
     async handleDetails (row) {
       this.dialogForm = {}

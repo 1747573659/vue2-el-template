@@ -40,6 +40,7 @@ const orderCenter = {
           path: 'workOrderManagementdetail',
           component: () => import('@/pages/orderCenter/validityQuery/workOrderManagementdetail.vue'),
           name: 'workOrderManagementdetail',
+          hidden: true,
           code: 'KM_SETTING_BASEINFO_INDEX',
           meta: { title: '工单管理详情', noCache: false, roles: ['admin', 'other'], isSubMenu: true, name: 'MerchantOrderQuery' }
         }

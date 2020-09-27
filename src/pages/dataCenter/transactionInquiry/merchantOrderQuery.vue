@@ -19,43 +19,69 @@
         </el-form-item>
         <el-row>
           <el-col :span="8">
-            <el-form-item label="商户名称" prop="businessName">
-              <el-input @clear="chooseMerchantsList={}" @focus="handleChooseDia('商户名称', '商户ID/商户名称', 1)" clearable placeholder="请选择商户" size="small" v-model="formData.businessName"></el-input>
+            <el-form-item label="商户名称" prop="shopId">
+               <select-page
+                :request="queryMerchantAdminPage"
+                :bvalue.sync="formData.shopId"
+                :name="'companyName'"
+                searchName="id"
+                id="id"
+                :placeholder="'商户名称'"
+              >
+              </select-page>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="门店名称" prop="storeName">
-              <el-input @clear="chooseStoreList={}" @focus="handleChooseDia('门店名称', '门店ID/门店名称', 2)" clearable placeholder="请选择门店" size="small" v-model="formData.storeName"></el-input>
+            <el-form-item v-show="formData.shopId" label="门店名称" prop="storeName">
+                <select-page
+                  :request="getStorePage"
+                  :bvalue.sync="formData.stores"
+                  :name="'name'"
+                  :isMultiple="true"
+                  searchName="storeName"
+                  :parame="{adminId:formData.shopId || ''}"
+                  id="id"
+                  :placeholder="'门店名称'"
+                >
+                </select-page>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="交易渠道" prop="tradingChanneCode">
-              <el-select v-model="formData.tradingChanneCode">
-                <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in tradingChannelData"></el-option>
-              </el-select>
+            <el-form-item v-show="formData.stores[0]" label="收银员" prop="cashier">
+              <select-page
+                  :request="queryClerkPageByStore"
+                  :bvalue.sync="formData.clerkInfos"
+                  :name="'name'"
+                  searchName="name"
+                  :isMultiple="true"
+                  :parame="{storeId:formData.stores[0] || ''}"
+                  id="id"
+                  :placeholder="'收银员'"
+                >
+                </select-page>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
-          <el-col :span="8">
-            <el-form-item label="交易类型" prop="tradingTypeCode">
-              <el-select v-model="formData.tradingTypeCode">
-                <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in tradingTypeData"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
+         
           <el-col :span="8">
             <el-form-item label="支付方式" prop="paymentCode">
-              <el-select @change="getPaymentScenario" v-model="formData.paymentCode">
+              <el-select @change="getPaymentScenario" filterable v-model="formData.paymentCode">
                 <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentData"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="交易场景" prop="paymentScenarioCode">
-              <el-select v-model="formData.paymentScenarioCode">
+            <el-form-item label="支付场景" prop="paymentScenarioCode">
+              <el-select v-model="formData.paymentScenarioCode" filterable>
                 <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentScenarioData"></el-option>
               </el-select>
+            </el-form-item>
+          </el-col>
+           <el-col :span="8">
+            <el-form-item label="交易金额" prop="paymentScenarioCode">
+              <el-input style="width:120px"  size="small" v-model="formData.startAmount" placeholder="请输入内容"></el-input>-
+              <el-input style="width:120px" size="small" v-model="formData.endAmount" placeholder="请输入内容"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -73,42 +99,36 @@
               <el-button @click="handleReset" plain size="small" type="primary">重置</el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="8" style="text-align:right">
+          <!-- <el-col :span="8" style="text-align:right">
             <el-form-item>
               <el-button @click="handleExport" size="small" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT')">导出</el-button>
               <el-button @click="exportRecord" size="small" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORTRECORD')">导出记录</el-button>
             </el-form-item>
-          </el-col>
+          </el-col> -->
         </el-row>
       </el-form>
-      <chooseDialog
-        :chooseDiaTotal="chooseDiaTotal"
-        :columnObj="chooseBaseData.columnObj"
-        :isChooseStatus.sync="isChooseStatus"
-        :searchPlaceHolder="chooseBaseData.placeHolder"
-        :tabData="chooseDiaData"
-        :titleName="chooseBaseData.titleName"
-        @chooseList="setChooseLise"
-        @search="handleChooseSearch"
-        ref="choose"
-      ></chooseDialog>
+  
     </div>
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
+
       <el-table :data="tabData" ref="table">
-        <el-table-column label="交易时间" prop="createDate"></el-table-column>
-        <el-table-column label="支付订单号" prop="orders"></el-table-column>
+        
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
-        <el-table-column label="支付通道" prop="aisleName"></el-table-column>
-        <el-table-column label="交易渠道" prop="payChannelType"></el-table-column>
+        <el-table-column label="交易时间" prop="createDate"></el-table-column>
+        <el-table-column label="支付订单号" prop="orders"></el-table-column>
+        <el-table-column label="确认码" prop="confirmCode"></el-table-column>
+        <el-table-column label="收银员" prop="workerName"></el-table-column>
+        <!-- <el-table-column label="支付通道" prop="aisleName"></el-table-column>
+        <el-table-column label="交易渠道" prop="payChannelType"></el-table-column> -->
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="交易状态" prop="orderStatusName"></el-table-column>
         <el-table-column label="交易金额" prop="amount"></el-table-column>
         <el-table-column label="申请退款金额" prop="refundAmount"></el-table-column>
         <el-table-column label="操作" width="140px">
           <template slot-scope="scope">
-            <el-button @click="handleDetails(scope.row)" size="small" type="text" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_DETAIL')">详情</el-button>
+            <el-button @click="handleDetails(scope.row)" size="small" type="text" >详情</el-button>
             <el-button
               @click="handleDelRow(scope.row)"
               size="small"
@@ -166,18 +186,19 @@
       </div>
     </el-dialog>
     <order-detail-dialog :dialogTitle="dialogTitle" :form="dialogForm" ref="orderDetailDialog" type="order" />
+    <order-detail-dialog :dialogTitle="dialogTitle" :form="dialogForm2" ref="orderDetailDialog2" type="refund" />
   </div>
 </template>
 
 <script>
 import moment from 'moment'
-
-import chooseDialog from './components/chooseDialog'
+import selectPage from '@/components/selectPage2'
 import orderDetailDialog from './components/orderDetailDialog'
 import {
   queryAllCondition,
   queryStorePage,
   queryMerchantAdminPage,
+  queryClerkPageByStore,
   queryPaySceneByType,
   querySummary,
   queryAllTradeStatus,
@@ -185,15 +206,16 @@ import {
   downloadExcel,
   queryExportRecord,
   deleteRecord,
-  detail
+  detail,
+  refundOrderdetail
 } from '@/api/transtionManagement'
 import { downloadBufferFile } from '@/utils/index'
 
 export default {
   name: 'MerchantOrderQuery',
   components: {
-    chooseDialog,
-    orderDetailDialog
+    orderDetailDialog,
+    selectPage
   },
   data () {
     return {
@@ -205,10 +227,12 @@ export default {
       pageTotal: 0,
       searchLock: false,
       orderDetailVisible: false,
+      orderDetailVisible2: false,
       centerDialogVisible: false,
       dialogTitle: '订单详情',
       exportLoading: true,
       dialogForm: {},
+      dialogForm2: {},
       tabLock: false,
       exportList: [],
       tabData: [],
@@ -220,31 +244,21 @@ export default {
       tradingStatusData: [],
       formData: {
         transactionTime: [moment().startOf('day').valueOf(), moment().endOf('day').valueOf()],
-        businessName: '',
-        storeName: '',
+        shopId: '',
+        stores: [],
         tradingChanneCode: '',
         tradingTypeCode: '',
         paymentCode: '',
         paymentScenarioCode: '',
-        tradingStatusCode: []
+        tradingStatusCode: [],
+        clerkInfos:[],
+        startAmount:0,
+        endAmount:0
       },
       // 选择弹窗
-      isChooseStatus: false,
-      chooseBaseData: {},
-      chooseDiaData: [],
-      chooseDiaTotal: 0,
-      chooseMerchantsList: {},
-      chooseStoreList: {},
-      chooseType: 1,
-      chooseMerchantsObj: [
-        { name: 'id', label: '商户ID' },
-        { name: 'companyName', label: '商户名称' },
-        { name: 'mobile', label: '手机号' }
-      ],
-      chooseStoreObj: [
-        { name: 'id', label: '门店ID' },
-        { name: 'name', label: '门店名称' }
-      ],
+   
+
+
       pickerOptions: {
         disabledDate (time) {
           return (
@@ -286,9 +300,59 @@ export default {
       })
     })
     this.getAllTradeStatus()
-    // this.getQueryPage()
   },
   methods: {
+    remoteMethod(value) {
+      // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
+      if (!value || (this.searchString !== '' && value !== this.searchString)) {
+        this.selectPageNo = 1
+        this.searchString = ''
+        this.isMaxPage = false
+        this.shopList = []
+      }
+      // 只有value有值的时候才去请求接口
+      if (value) {
+        let data = {
+          'name': value,
+          "page": this.selectPageNo,
+          "rows": 10
+        }
+        import('@/api/setting/account').then(async module => {
+          const res = await module.queryPage(data)
+          // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
+          if (res.results && res.results.length !== 0) {
+            this.shopList = this.shopList.concat(res.results)
+            this.searchString = value
+            if (res.results?.length !== 10) {
+              this.isMaxPage = true
+            }
+          }
+        })
+      }
+    },
+    loadMore() {
+      // 如果不是最后一页就加载下一页
+      if (!this.isMaxPage) {
+        this.selectPageNo++
+        this.remoteMethod(this.searchString)
+      }
+    },
+     // 如果点击了清除按钮则将相关数据清空
+    shopClear() {
+      this.isMaxPage = false
+      this.shopList = []
+      this.searchString = ''
+      this.selectPageNo = 1
+    },
+    // 每次focus都将相关数据清空
+    shopFocus() {
+      this.isMaxPage = false
+      this.shopList = []
+      this.searchString = ''
+      this.selectPageNo = 1
+    },
+    shopChange(value) {
+    },
     async handleDetails (row) {
       this.dialogForm = {}
       const data = {
@@ -307,8 +371,25 @@ export default {
         this.$refs.orderDetailDialog.orderDetailVisible = true
       } catch {}
     },
-    handleDelRow (row) {
-      this.$router.push({ path: 'refundOrderQuery', query: { id: row.id } })
+    async handleDelRow (row) {
+      this.dialogForm = {}
+      const data = {
+        dataSource: 1,
+        paySn: row.id,
+        // 'orderId': '9115882679906900459209030',
+        shopId: row.shopId
+      }
+      try {
+        const res = await refundOrderdetail(data)
+        if (!res) {
+          this.$message('暂无数据')
+          return
+        }
+        res.shopName=row.shopName
+        this.dialogForm2 = res
+        this.dialogForm2.shopName = row.shopName
+        this.$refs.orderDetailDialog2.orderDetailVisible = true
+      } catch {}
     },
     handleCurrentChange (val) {
       this.exportPage = val
@@ -336,32 +417,6 @@ export default {
         })
         .catch(() => {})
     },
-    async handleExport () {
-      let paymentStatus = []
-      if (this.formData.tradingStatusCode.length > 0 && this.formData.tradingStatusCode.includes('')) {
-        paymentStatus = JSON.parse(JSON.stringify(this.formData.tradingStatusCode.filter(item => item !== '')))
-      } else {
-        paymentStatus = JSON.parse(JSON.stringify(this.formData.tradingStatusCode))
-      }
-      const data = {
-        page: this.pageNo,
-        rows: this.pageSize,
-        startDate: moment(this.formData.transactionTime[0]).format('YYYY-MM-DD HH:mm:ss'),
-        endDate: moment(this.formData.transactionTime[1]).format('YYYY-MM-DD HH:mm:ss'),
-        payChannelType: this.formData.tradingChanneCode ? this.formData.tradingChanneCode : '', // 交易渠道
-        orderTypes: this.formData.tradingTypeCode !== '' ? [this.formData.tradingTypeCode] : [], // 交易类型集合
-        paymentMethods: this.formData.paymentCode !== '' ? [this.formData.paymentCode] : [], // 支付方式集合
-        paymentPlugins: this.formData.paymentScenarioCode !== '' ? [this.formData.paymentScenarioCode] : [], // 支付场景集合
-        paymentStatus: paymentStatus.length > 0 ? paymentStatus.toString().split(',').map(Number) : [], // 交易状态集合
-        shopId: this.chooseMerchantsList.id, // 商户ID
-        stores: this.chooseStoreList.id ? [this.chooseStoreList.id] : [] // 门店ID集合
-      }
-      try {
-        const res = await downloadExcel(data)
-        this.$message.success('正在生成导出文件，请在导出记录中查看。')
-      } catch {}
-      // downloadBufferFile('/shopOrder/downloadExcel', data, 'POST', 'json', '商户订单列表.xlsx')
-    },
     async exportRecord () {
       this.centerDialogVisible = true
       this.exportLoading = true
@@ -386,14 +441,15 @@ export default {
       this.getQueryPage()
     },
     handleReset () {
-      this.chooseMerchantsList = []
-      this.chooseStoreList = []
+      this.formData.stores=[]
+      this.formData.clerkInfos=[]
+      this.formData.shopId='shopId'
       this.tabData = []
       this.$refs.form.resetFields()
       this.$set(this.formData, 'transactionTime', [moment().startOf('day').valueOf(), moment().endOf('day').valueOf()])
     },
     handleSearch () {
-      if (this.chooseMerchantsList.id) {
+      if (this.formData.shopId) {
         this.pageNo = 1
         this.searchLock = true
         this.getQueryPage().catch(() => {}).finally(() => {
@@ -423,9 +479,12 @@ export default {
         paymentMethods: this.formData.paymentCode !== '' ? [this.formData.paymentCode] : [], // 支付方式集合
         paymentPlugins: this.formData.paymentScenarioCode !== '' ? [this.formData.paymentScenarioCode] : [], // 支付场景集合
         paymentStatus: paymentStatus.length > 0 ? paymentStatus.toString().split(',').map(Number) : [], // 交易状态集合
-        shopId: this.chooseMerchantsList.id, // 商户ID
+        shopId: this.formData.shopId, // 商户ID
         // shopId: 70, // 商户ID
-        stores: this.chooseStoreList.id ? [this.chooseStoreList.id] : [] // 门店ID集合
+        stores: this.formData.stores, // 门店ID集合
+        clerkInfos: this.formData.clerkInfos, // 门店ID集合
+        startAmount: this.formData.startAmount, // 门店ID集合
+        endAmount: this.formData.endAmount, // 门店ID集合
       }
       this.tabLock = true
       try {
@@ -438,71 +497,14 @@ export default {
       }
     },
 
-    handleChooseDia (titleName, placeHolder, type) {
-      let columnObj = {}
-      this.chooseType = type
-      this.chooseDiaData = []
-      this.chooseDiaTotal = 0
-      if (type === 1) {
-        columnObj = this.chooseMerchantsObj
-        this.getMerchantAdminPage()
-      } else {
-        columnObj = this.chooseStoreObj
-        this.getStorePage()
-      }
-      this.isChooseStatus = true
-      this.chooseBaseData = { titleName, placeHolder, columnObj }
+    queryMerchantAdminPage (e) {
+      return queryMerchantAdminPage(e)
     },
-    handleChooseSearch ({ id = '', name = '' } = {}) {
-      if (this.chooseType === 1) {
-        this.getMerchantAdminPage({ id, name })
-      } else {
-        this.getStorePage({ id, name })
-      }
+    getStorePage (e) {
+      return queryStorePage(e)
     },
-    async getMerchantAdminPage ({ id = '', name = '' } = {}) {
-      const data = {
-        page: this.$refs.choose.choosePage,
-        rows: this.$refs.choose.chooseRow,
-        merchantAdminId: id,
-        merchantAdminName: name
-      }
-      this.$refs.choose.tabLoad = true
-      try {
-        const res = await queryMerchantAdminPage(data)
-        const hasResults = res.results && res.results.length > 0
-        this.chooseDiaData = hasResults ? res.results : []
-        this.chooseDiaTotal = hasResults ? res.totalCount : 0
-      } catch (error) {} finally {
-        this.$refs.choose.tabLoad = false
-      }
-    },
-    async getStorePage ({ id = '', name = '' } = {}) {
-      const data = {
-        page: this.$refs.choose.choosePage,
-        rows: this.$refs.choose.chooseRow,
-        id: id,
-        storeName: name,
-        adminId: this.chooseMerchantsList.id || ''
-      }
-      this.$refs.choose.tabLoad = true
-      try {
-        const res = await queryStorePage(data)
-        const hasResults = res.results && res.results.length > 0
-        this.chooseDiaData = hasResults ? res.results : []
-        this.chooseDiaTotal = hasResults ? res.totalCount : 0
-      } catch (error) {} finally {
-        this.$refs.choose.tabLoad = false
-      }
-    },
-    setChooseLise (obj) {
-      if (this.chooseType === 1) {
-        this.chooseMerchantsList = obj
-        this.formData.businessName = obj.companyName
-      } else {
-        this.chooseStoreList = obj
-        this.formData.storeName = obj.name
-      }
+     queryClerkPageByStore (e) {
+      return queryClerkPageByStore(e)
     },
 
     async getAllTradeStatus () {

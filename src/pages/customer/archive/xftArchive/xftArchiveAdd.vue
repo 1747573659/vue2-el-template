@@ -21,14 +21,10 @@
             <el-form-item label="商户" prop="status">
               <select-page
                 @remoteMethod="remoteMethod"
-                @loadMore="loadMore"
                 id="id"
                 name="name"
                 :options="shopList"
                 :isMaxPage="isMaxPage"
-                @focus="shopFocus"
-                @change="shopChange"
-                @clear="shopClear"
               >
               </select-page>
             </el-form-item>
