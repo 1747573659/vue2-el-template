@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-permission.page="'BRAND_SET_ADD'">
     <div class="data-box">
       <div class="com-edit-wrapper">
         <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
@@ -15,15 +15,14 @@
                 <el-form-item label="品牌名称：" prop="name">
                   <el-input v-model="ruleForm.name" maxlength="50" placeholder=""></el-input>
                 </el-form-item>
-                <el-form-item label="品牌LOGO1111：" prop="logo">
-                  <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                    <span v-else class="avatar-uploader-icon-block">
-                      <i class="el-icon-plus avatar-uploader-icon"></i>
-                      <span class="avatar-uploader-text">上传照片</span>
-                    </span>
-                  </el-upload>
-                  <span class="avatar__msg">建议尺寸 600*600，大小不超过 2M</span>
+                <el-form-item label="品牌LOGO：" prop="logo">
+                  <pic-upload
+                    :uploadUrl="uploadUrl"
+                    :imageUrl="ruleForm.logo"
+                    :fileServer="ossFileServe"
+                    @on-success="onUploadSuccess"
+                  >
+                  </pic-upload>
                 </el-form-item>
                 <el-form-item label="品牌行业：" prop="tradeTypeId">
                   <brand-select v-model="brandValue"></brand-select>
@@ -62,13 +61,16 @@ import {
   addMerchant,
 } from '@/api/customer/merchant'
 import BrandSelect from '@/components/brandSelect'
+import PicUpload from '@/components/picUpload'
+import picUploadMixin from '@/mixins/picUpload'
 
 export default {
   name: 'addBrand',
   components: {
     BrandSelect,
+    PicUpload,
   },
-  props: {},
+  mixins: [picUploadMixin],
   data() {
     const validatorTradeType = (rule, value, callback) => {
       const val = this.brandValue
@@ -80,6 +82,7 @@ export default {
     }
 
     return {
+      uploadUrl: process.env.VUE_APP_BASE_API + '/oss/uploadFile',
       submitLoading: false,
       brandValue: [],
       erpProductOptions: [],
@@ -97,6 +100,7 @@ export default {
       rules: {
         adminId: { required: true, message: '请选择商户', trigger: 'change' },
         name: { required: true, message: '请输入品牌名称', trigger: 'blur' },
+        logo: { required: true, message: '请选择图片' },
         tradeTypeId: {
           required: true,
           validator: validatorTradeType,
@@ -106,7 +110,6 @@ export default {
       imageUrl: '',
     }
   },
-  computed: {},
   watch: {
     'ruleForm.industryId': function (val) {
       this.ruleForm.erpProductId = ''
@@ -133,6 +136,9 @@ export default {
     this.queryProductInfoByIndustryId()
   },
   methods: {
+    onUploadSuccess(res) {
+      this.ruleForm.logo = res.data.path
+    },
     queryProductInfoByIndustryId() {
       queryProductInfoByIndustryId({ industryId: 0 }).then((industryRes) => {
         this.industryOptions = industryRes
@@ -158,7 +164,7 @@ export default {
           this.submitLoading = true
           addMerchant(this.ruleForm)
             .then(() => {
-              this.$message.success('保存成功')
+              this.$message.success('保存成功!')
               this.$router.push({ path: '/customer/merchant/brandHome' })
             })
             .finally(() => {
@@ -171,21 +177,6 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ path: '/customer/merchant/brandHome' })
       })
-    },
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isJPG && isLt2M
     },
   },
 }
@@ -218,46 +209,5 @@ export default {
   width: 250px;
   font-size: 14px;
   color: #cad1e0;
-}
-
-.avatar-uploader {
-  height: 82px;
-  overflow: hidden;
-}
-.avatar-uploader /deep/ .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader /deep/ .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon-block {
-  display: inline-block;
-  width: 80px;
-  height: 80px;
-  background-color: #f7f8fa;
-}
-.avatar-uploader-icon {
-  margin-top: 15px;
-  font-size: 18px;
-  color: #8c939d;
-}
-.avatar {
-  width: 80px;
-  height: 80px;
-  display: block;
-}
-.avatar__msg {
-  font-size: 14px;
-  color: #cad1e0;
-}
-.avatar-uploader-text {
-  display: block;
-  font-size: 14px;
-  line-height: 1;
-  color: #8f9bb3;
 }
 </style>

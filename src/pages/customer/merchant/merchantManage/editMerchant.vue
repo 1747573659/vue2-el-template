@@ -52,8 +52,8 @@
                   <el-input v-model="createTime" :disabled="true" placeholder=""></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button size="small" type="primary" @click="submitForm()">保存</el-button>
-                  <el-button size="small" @click="onCancel">取消</el-button>
+                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
+                  <el-button @click="onCancel">取消</el-button>
                 </el-form-item>
               </div>
             </div>
@@ -94,6 +94,7 @@ export default {
     }
 
     return {
+      submitLoading: false,
       areaKey: 0,
       areaValue: [],
       tradeFullName: '',
@@ -200,10 +201,15 @@ export default {
     submitForm() {
       this.$refs['ruleForm'].validate((valid) => {
         if (valid) {
-          modifyShop(this.ruleForm).then(() => {
-            this.$message.success('保存成功')
-            this.$router.push({ path: '/customer/merchant/merchantManage' })
-          })
+          this.submitLoading = true
+          modifyShop(this.ruleForm)
+            .then(() => {
+              this.$message.success('保存成功')
+              this.$router.push({ path: '/customer/merchant/merchantManage' })
+            })
+            .finally(() => {
+              this.submitLoading = false
+            })
         }
       })
     },

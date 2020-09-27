@@ -16,7 +16,7 @@
           </el-form>
         </el-col>
         <el-col :span="4" style="text-align: right;">
-          <el-button type="primary" size="small" plain icon="el-icon-plus" @click="addShop" v-permission="'MERCHANT_BRAND_ADD'">新增</el-button>
+          <el-button v-permission="'BRAND_SET_ADD'" type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
         </el-col>
       </el-row>
     </div>

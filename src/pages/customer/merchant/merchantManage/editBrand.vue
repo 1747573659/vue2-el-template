@@ -2,7 +2,14 @@
   <div>
     <div class="data-box">
       <div class="com-edit-wrapper">
-        <el-form :model="ruleForm" size="small" :rules="rules" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
+        <el-form
+          :model="ruleForm"
+          size="small"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="150px"
+          class="com-edit-ruleForm xdd-btn-block__w240"
+        >
           <div class="com-edit-item" style="padding-top: 0">
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">
@@ -15,18 +22,20 @@
                 <el-form-item label="品牌名称：" prop="name">
                   <el-input v-model="ruleForm.name" placeholder=""></el-input>
                 </el-form-item>
-                <el-form-item label="品牌LOGO111：" prop="logo">
-                  <el-upload class="avatar-uploader" action="https://jsonplaceholder.typicode.com/posts/" :show-file-list="false" :on-success="handleAvatarSuccess" :before-upload="beforeAvatarUpload">
-                    <img v-if="imageUrl" :src="imageUrl" class="avatar">
-                    <span v-else class="avatar-uploader-icon-block">
-                      <i class="el-icon-plus avatar-uploader-icon"></i>
-                      <span class="avatar-uploader-text">上传照片</span>
-                    </span>
-                  </el-upload>
-                  <span class="avatar__msg">建议尺寸 600*600，大小不超过 2M</span>
+                <el-form-item label="品牌LOGO：" prop="logo">
+                  <pic-upload
+                    :uploadUrl="uploadUrl"
+                    :imageUrl="ruleForm.logo"
+                    :fileServer="ossFileServe"
+                    @on-success="onUploadSuccess"
+                  >
+                  </pic-upload>
                 </el-form-item>
                 <el-form-item label="品牌行业：" prop="tradeTypeId">
-                  <brand-select v-model="brandValue" :key="brandKey"></brand-select>
+                  <brand-select
+                    v-model="brandValue"
+                    :key="brandKey"
+                  ></brand-select>
                 </el-form-item>
                 <el-form-item label="ERP行业：" required>
                   <span>{{ erpIndustryName }}</span>
@@ -41,7 +50,12 @@
                   <span>{{ storeNum }}</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
+                  <el-button
+                    type="primary"
+                    :loading="submitLoading"
+                    @click="submitForm()"
+                    >保存</el-button
+                  >
                   <el-button @click="onCancel">取消</el-button>
                 </el-form-item>
               </div>
@@ -56,12 +70,16 @@
 <script>
 import { queryMerchantById, addMerchant } from '@/api/customer/merchant'
 import BrandSelect from '@/components/brandSelect'
+import PicUpload from '@/components/picUpload'
+import picUploadMixin from '@/mixins/picUpload'
 
 export default {
   name: 'editBrand',
   components: {
     BrandSelect,
+    PicUpload,
   },
+  mixins: [picUploadMixin],
   data() {
     const validatorTradeType = (rule, value, callback) => {
       const val = this.brandValue
@@ -73,6 +91,7 @@ export default {
     }
 
     return {
+      uploadUrl: process.env.VUE_APP_BASE_API + '/oss/uploadFile',
       submitLoading: false,
       brandKey: 0,
       brandValue: [],
@@ -93,13 +112,13 @@ export default {
       },
       rules: {
         name: { required: true, message: '请输入品牌名称', trigger: 'blur' },
+        logo: { required: true, message: '请选择图片' },
         tradeTypeId: {
           required: true,
           validator: validatorTradeType,
           trigger: 'change',
         },
       },
-      imageUrl: '',
     }
   },
   watch: {
@@ -115,6 +134,9 @@ export default {
     this.queryMerchantById()
   },
   methods: {
+    onUploadSuccess(res) {
+      this.ruleForm.logo = res.data.path
+    },
     queryMerchantById() {
       queryMerchantById({ id: Number(this.$route.query.id) }).then((res) => {
         this.ruleForm = {
@@ -156,21 +178,6 @@ export default {
         this.$router.push({ path: '/customer/merchant/brandHome' })
       })
     },
-    handleAvatarSuccess(res, file) {
-      this.imageUrl = URL.createObjectURL(file.raw)
-    },
-    beforeAvatarUpload(file) {
-      const isJPG = file.type === 'image/jpeg'
-      const isLt2M = file.size / 1024 / 1024 < 2
-
-      if (!isJPG) {
-        this.$message.error('上传头像图片只能是 JPG 格式!')
-      }
-      if (!isLt2M) {
-        this.$message.error('上传头像图片大小不能超过 2MB!')
-      }
-      return isJPG && isLt2M
-    },
   },
 }
 </script>
@@ -205,46 +212,5 @@ export default {
 }
 .signKey-text {
   white-space: nowrap;
-}
-
-.avatar-uploader {
-  height: 82px;
-  overflow: hidden;
-}
-.avatar-uploader /deep/ .el-upload {
-  border: 1px dashed #d9d9d9;
-  border-radius: 6px;
-  cursor: pointer;
-  position: relative;
-  overflow: hidden;
-}
-.avatar-uploader /deep/ .el-upload:hover {
-  border-color: #409eff;
-}
-.avatar-uploader-icon-block {
-  display: inline-block;
-  width: 80px;
-  height: 80px;
-  background-color: #f7f8fa;
-}
-.avatar-uploader-icon {
-  margin-top: 15px;
-  font-size: 18px;
-  color: #8c939d;
-}
-.avatar {
-  width: 80px;
-  height: 80px;
-  display: block;
-}
-.avatar__msg {
-  font-size: 14px;
-  color: #cad1e0;
-}
-.avatar-uploader-text {
-  display: block;
-  font-size: 14px;
-  line-height: 1;
-  color: #8f9bb3;
 }
 </style>

@@ -27,7 +27,7 @@
         </el-table-column>
         <el-table-column prop="num" label="关联账号数量">
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间">
+        <el-table-column prop="createTime" label="创建时间" width="180px">
         </el-table-column>
         <el-table-column label="操作" align="right" width="100px">
           <template slot-scope="scope">
