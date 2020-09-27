@@ -5,10 +5,10 @@
         <el-col :span="20">
           <el-form :inline="true" size="small" label-width="100px" :model="form" class="xdd-btn-block__w240">
             <el-form-item label="代理商信息：">
-              <el-input v-model="form.name" maxlength="50" placeholder="请输入代理商编号/名称"></el-input>
+              <el-input v-model="form.id" maxlength="50" placeholder="请输入代理商编号/名称"></el-input>
             </el-form-item>
             <el-form-item label="手机号：">
-              <el-input v-model="form.mobile" maxlength="11" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" placeholder=""></el-input>
+              <el-input v-model="form.mobile" maxlength="11" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" placeholder="请输入手机号"></el-input>
             </el-form-item>
             <el-form-item label="BD经理：">
               <el-select v-model="form.channelManagerId" filterable clearable placeholder="请选择BD经理">
@@ -172,11 +172,11 @@ export default {
       loading: false,
       channelManagerOptions: [],
       form: {
-        agentId: '',
         channelManagerId: '',
+        id: '',
         mobile: '',
-        name: '',
         page: 1,
+        propertyType: 2,
         rows: 10,
       },
       tableData: [],

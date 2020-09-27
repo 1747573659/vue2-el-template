@@ -5,7 +5,10 @@
         <el-col :span="20">
           <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
             <el-form-item label="商户信息：">
-              <el-input v-model="form.mobile" maxlength="50" placeholder="请输入商户编号/名称/运营者/手机"></el-input>
+              <el-input v-model="form.id" maxlength="50" placeholder="请输入商户编号/名称/运营者"></el-input>
+            </el-form-item>
+            <el-form-item label="手机号：">
+              <el-input v-model="form.mobile" maxlength="11" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" placeholder="请输入手机号"></el-input>
             </el-form-item>
             <el-form-item label="业务员：">
               <el-select v-model="form.clerkId" placeholder="请输入业务员" filterable clearable>
