@@ -89,7 +89,7 @@
           prop="createTime"
           label="微信认证状态">
           <template slot-scope="scope">
-            {{wxCertStatusList[scope.row.archiveBaseDTO.auditStatus]}}
+            {{wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus]}}
           </template>
         </el-table-column>
         <el-table-column
@@ -112,8 +112,8 @@
           width="240px">
           <template slot-scope="scope">
             <el-button v-if="[0,1,4,8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">审核</el-button>
-            <el-button v-if="[3,5,6,7].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">审核</el-button>
+            <el-button v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
+            <el-button v-if="[3,5,6,7,9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
             <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
             <el-dropdown style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
@@ -121,7 +121,7 @@
                 ···
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="color: #3377FF" @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
                 <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
                 <el-dropdown-item style="color: #3377FF" v-if="[3,4,5].includes(scope.row.archiveBaseDTO.wxCertStatus)" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
               </el-dropdown-menu>
@@ -234,10 +234,16 @@ export default {
       this.$router.push({ name: 'xftArchiveAdd' })
     },
     edit(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'edit' }})
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
+    },
+    check(row){
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
+    },
+    detail(row){
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
     },
     copy(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'copy' }})
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
     },
     search() {
       this.cxLoading = true
@@ -279,7 +285,7 @@ export default {
       } catch (error) {}
       this.certificationVisible = true
     },
-    toDetail (row) {
+    archiveDetail (row) {
       this.$router.push({ name: 'xftArchiveDetail', query: {id: row.archiveBaseDTO.id} })
     },
     async getList() {

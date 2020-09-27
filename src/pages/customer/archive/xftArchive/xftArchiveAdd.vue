@@ -3,14 +3,13 @@
     <div class="xft-add">
       <div class="header">
         <el-row>
-          <el-col :span="12" class="title-text">
+          <el-col :span="12" class="title-text" v-if="auditStatus !== undefined">
             <span class="archive-title">进件状态：</span>
-            <span class="archive-status">编辑中</span>
+            <span class="archive-status">{{auditStatusList[auditStatus]}}</span>
           </el-col>
-          <el-col :span="12" class="title-text">
+          <el-col :span="12" class="title-text" v-if="[1, 4, 8].includes(auditStatus)">
             <span class="archive-title">审核结果：</span>
-            <span>你的资料不全，</span>
-            <span class="archive-result">审核不通过</span>
+            <span>{{form.archiveBaseDTO.auditRemark}}</span>
           </el-col>
         </el-row>
       </div>
@@ -120,14 +119,14 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="经营类目" prop="archiveBaseVO.industrId">
-                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.industrId" placeholder="全部" @change="industrIdChange">
+                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.industrId" placeholder="全部">
                   <el-option v-for="item in industrIdList" :key="item.tradeCode" :label="item.tradeName" :value="item.tradeCode"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 3 && form.archiveBaseVO.industrIdName.includes('事业单位')">
-              <el-form-item label="登记证书类型" prop="archiveBaseVO.certType">
-                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.certType" placeholder="全部">
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 3 && form.archiveBaseVO.industrIdName && form.archiveBaseVO.industrIdName.includes('事业单位')">
+              <el-form-item label="登记证书类型" prop="archiveExpandVO.certType">
+                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.certType" placeholder="全部">
                   <el-option v-for="item in certTypeList" :key="item.certNum" :label="item.certName" :value="item.certNum"></el-option>
                 </el-select>
               </el-form-item>
@@ -412,11 +411,11 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通星POS刷卡" prop="archiveBaseVO.isOpenXingPos">
-                <el-switch style="display: block" :active-value="1" :inactive-value="2" @change="isOpenXingPosChange" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
+                <el-switch style="display: block" :active-value="2" :inactive-value="1" @change="isOpenXingPosChange" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveBaseVO.isOpenXingPos === 1">
+          <el-row v-if="form.archiveBaseVO.isOpenXingPos === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdCardFront">
                 <upload-pic alt="持卡人身份证正面照" :imagePath="form.archiveOtherVO.cardholderIdCardFront" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cardholderIdCardFront') }" :exampleImg="exampleImg.cardholderIdCardFront" @click="imgClick"> </upload-pic>
@@ -453,18 +452,18 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
-      <el-button @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
-      <el-button @click="toRefuse" size="small" class="archive-bottom-btn" v-if="auditStatus === 2">拒绝</el-button>
+      <el-button v-if="[0, 1, 2, 4, 8].includes(auditStatus)" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
+      <el-button v-if="[0, 1, 2, 4, 8].includes(auditStatus)" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      <el-button v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div>
     <el-dialog
-      title="提示"
+      title="拒绝原因"
       :visible.sync="refuseDialogVisible"
       width="30%">
-      <el-form :model="refuseForm" :rules="refuseRules" ref="refuseForm" label-width="100px" class="demo-ruleForm">
-        <el-form-item label="活动名称" prop="remark">
-          <el-input type="textarea" v-model="refuseForm.remark"></el-input>
+      <el-form :model="refuseForm" :rules="refuseRules" ref="refuseForm" class="demo-ruleForm">
+        <el-form-item label="请输入审核不能过的原因" prop="remark">
+          <el-input type="textarea" :autosize="{ minRows: 4}" v-model="refuseForm.remark"></el-input>
         </el-form-item>
       </el-form>
       <span slot="footer" class="dialog-footer">
@@ -504,13 +503,26 @@ export default {
   },
   data() {
     return {
+      auditStatus: null,
+      auditStatusList: {
+        0: '未提交审核',
+        1: '审核不通过编辑中',
+        2: '代理商待审核',
+        3: 'boss 待审核',
+        4: '审核拒绝',
+        5: '账号申请中',
+        6: '部分账号申请通过',
+        7: '账号全部申请通过',
+        8: '资料待补充',
+        9: '资料补充待审核'
+      },
+      type: '',
       isEdit: false,
-      auditStatus: 0,
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       rules: xftValidator(),
       refuseRules: {
-        remark: [{ required: true, message: '请选择活动区域', trigger: 'change' }]
+        remark: [{ required: true, message: '请输入审核不能过的原因', trigger: 'blur' }]
       },
       form: {
         archiveBaseVO: {
@@ -732,6 +744,25 @@ export default {
       }
     }
   },
+  computed: {
+    getIndustrId() {
+      return this.form.archiveBaseVO.industrId
+    }
+  },
+  watch: {
+    getIndustrId() {
+      if (this.getIndustrId) {
+        this.industrIdList.forEach(item => {
+          if(item.tradeCode === this.getIndustrId) {
+            this.form.archiveBaseVO.industrIdName = item.tradeName
+          }
+        })
+        if (this.form.archiveBaseVO.industrIdName && this.form.archiveBaseVO.industrIdName.includes('事业单位')) {
+          this.getCertTypeList()
+        }
+      }
+    }
+  },
   methods: {
     legalPersonValidityChange(value) {
       console.log(this.form.archiveExpandVO.legalPersonValidity)
@@ -816,18 +847,6 @@ export default {
     merchantTypeChange(value) {
       if (value === 4) {
         this.form.archiveExpandVO.acctType = 1
-      }
-    },
-    industrIdChange(value) {
-      if (value) {
-        this.industrIdList.forEach(item => {
-          if(item.tradeCode === value) {
-            this.form.archiveBaseVO.industrIdName = item.tradeName
-          }
-        })
-        if (this.form.archiveBaseVO.industrIdName.includes('事业单位')) {
-          this.getCertTypeList()
-        }
       }
     },
     async shopRemoteMethod(value) {
@@ -996,11 +1015,12 @@ export default {
       this.$refs.refuseForm.validate(async (valid) => {
         if (valid) {
           let data = {
-            archiveId: this.$router.query.id,
+            archiveId: this.$route.query.id,
             auditRemark: this.refuseForm.remark
           }
           try {
             const res = await refuse(data)
+            this.refuseDialogVisible = false
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'xftArchive' })
             })
@@ -1037,6 +1057,9 @@ export default {
     }
     console.log(this.form)
     this.getIndustrIdList()
+  },
+  created() {
+    this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
   },
 }
 </script>

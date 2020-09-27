@@ -28,7 +28,7 @@ export default function xftValidator () {
     'archiveBaseVO.email': [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
     'archiveBaseVO.mchDealType': [{ required: true, message: '请选择经营类型', trigger: 'change' }],
     'archiveBaseVO.industrId': [{ required: true, message: '请选择经营类目', trigger: 'change' }],
-    'archiveBaseVO.certType': [{ required: true, message: '请选择登记证书类型', trigger: 'change' }],
+    'archiveExpandVO.certType': [{ required: true, message: '请选择登记证书类型', trigger: 'change' }],
     'archiveOtherVO.signboardUrl': [{ required: true, message: '请上传门店门头照', trigger: 'change' }],
     'archiveOtherVO.cashierDesk': [{ required: true, message: '请上传收银台照片', trigger: 'change' }],
     'archiveOtherVO.enterpriseInfoScreenshot': [{ required: true, message: '请上传企业信息公示网照片', trigger: 'change' }],
