@@ -1,5 +1,7 @@
 // 树形权限生成函数
 export default function routeTree(routes) {
+  // 根据id对权限进行排序
+  routes.sort((a,b) => a.id - b.id)
   let routesMap = {}
   routes.forEach(item => {
     routesMap[item.id] = item

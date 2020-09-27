@@ -8,8 +8,29 @@
         style="width: 100%">
         <el-table-column
           prop="channelName"
-          width="114px"
           label="支付通道">
+        </el-table-column>
+        <el-table-column
+          prop="mchId"
+          label="通道商户号">
+        </el-table-column>
+        <el-table-column
+          prop="shopName"
+          label="公司名称">
+        </el-table-column>
+        <el-table-column
+          prop="bankCardNo"
+          label="银行卡号">
+          <template slot-scope="scope">
+            {{scope.row.bankCardNo || '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="createDate"
+          label="进件时间">
+          <template slot-scope="scope">
+            {{scope.row.createDate || '--'}}
+          </template>
         </el-table-column>
         <el-table-column
           prop="wxBindType"
@@ -211,7 +232,7 @@ export default {
       let data = {
         bankChannelCode: row.channelCode,
         baseInfoId: row.baseinfoId,
-        masterId: row.id,
+        masterId: row.mchMasterId,
         mchId: row.mchId
       }
       try {
