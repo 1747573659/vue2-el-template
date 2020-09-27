@@ -111,7 +111,9 @@
           align="right"
           width="240px">
           <template slot-scope="scope">
-            <el-button v-if="scope.row.archiveBaseDTO.auditStatus === 2 || scope.row.archiveBaseDTO.auditStatus === 8" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-if="[0,1,4,8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">审核</el-button>
+            <el-button v-if="[3,5,6,7].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">审核</el-button>
             <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
             <el-dropdown style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
@@ -176,7 +178,9 @@ export default {
         {id: 4, name: '审核拒绝'},
         {id: 5, name: '账号申请中'},
         {id: 6, name: '部分账号申请通过'},
-        {id: 7, name: '账号全部申请通过'}
+        {id: 7, name: '账号全部申请通过'},
+        {id: 8, name: '资料待补充'},
+        {id: 9, name: '资料补充待审核'}
       ],
       wxCertStatusOptions: [
         {id: 0, name: '未认证'},
@@ -196,7 +200,9 @@ export default {
         4: '审核拒绝',
         5: '账号申请中',
         6: '部分账号申请通过',
-        7: '账号全部申请通过'
+        7: '账号全部申请通过',
+        8: '资料待补充',
+        9: '资料补充待审核'
       },
       wxCertStatusList: {
         0: '未认证',
