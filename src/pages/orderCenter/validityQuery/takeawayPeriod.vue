@@ -14,7 +14,7 @@
               :bvalue.sync="tableParam.userId"
               :name="'companyName'"
               searchName="id"
-              id="id"
+              id="userId"
               :placeholder="'商户名称'"
             >
             </select-page>
@@ -97,10 +97,16 @@ export default {
         {
           key: "shopName",
           title: "商户",
+          escape: (row) => {
+            return "["+row.shopId+"]"+row.shopName
+          }
         },
         {
           key: "storeName",
           title: "门店",
+          escape: (row) => {
+            return (row.merchantName?row.merchantName:"")+"("+row.storeName+")"
+          }
         },
         {
           key: "appStatus",
