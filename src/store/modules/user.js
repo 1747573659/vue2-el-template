@@ -84,7 +84,9 @@ const actions = {
       getMenuInfo()
         .then(res => {
           // 重新设置异步路由里面的重定向地址
-          let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
+          let a = routeTree(res)
+          let b = convertRouter(a, asyncRouterMap)
+          let redirectList = resetRedirect(b)
           commit('SET_ROUTES', [...redirectList])
           resolve()
         })

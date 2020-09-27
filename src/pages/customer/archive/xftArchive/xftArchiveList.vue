@@ -53,7 +53,7 @@
           <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'">新增</el-button>
+          <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
@@ -293,7 +293,7 @@ export default {
       let data = {
         'startTime': this.form.time && this.form.time[0],
         'endTime': this.form.time && this.form.time[1],
-        'auditStatus': this.form.auditStatus,
+        'auditStatusList': this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
         'merchantName': this.form.name,
         'merchantShortName': this.form.name,
         'companyName': this.form.name,

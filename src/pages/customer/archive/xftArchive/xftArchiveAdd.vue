@@ -1100,6 +1100,18 @@ export default {
           this.form.archiveExpandVO.id = null
           this.form.archiveOtherVO.id = null
           this.form.archiveExpandVO.bankCard = null
+          this.form.archiveExpandVO.bankSub = null
+          this.form.archiveExpandVO.bankSubName = null
+          this.bankAreaList = []
+          this.form.archiveExpandVO.bankProvince = null
+          this.form.archiveExpandVO.bankProvinceName = null
+          this.form.archiveExpandVO.bankCity = null
+          this.form.archiveExpandVO.bankCityName = null
+          this.form.archiveExpandVO.bankAccountName = null
+          this.form.archiveExpandVO.cardholderPhone = null
+          this.form.archiveExpandVO.cardholderIdNumber = null
+          this.form.archiveExpandVO.bankCardFrontUrl = null
+          this.form.archiveExpandVO.bankCardBackUrl = null
           this.form.archiveBaseVO.auditStatus = null
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus
