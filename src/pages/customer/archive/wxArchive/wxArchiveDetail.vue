@@ -1,12 +1,19 @@
 <template>
   <section>
-    <div class="data-box" v-loading="isTabLock">
+    <div style="padding-bottom: 16px;" class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight">
         <el-table-column prop="subMchId" label="微信商户号"></el-table-column>
         <el-table-column prop="channelList" label="进件类型"></el-table-column>
         <el-table-column prop="createTime" label="公司名称"></el-table-column>
         <el-table-column prop="createTime" label="进件时间"></el-table-column>
-        <el-table-column prop="status" label="审核状态"></el-table-column>
+        <el-table-column prop="status" label="审核状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.status === -1"
+              >驳回<el-button style="margin-left: 20px;" @click="handleReason(scope.row)" type="text" size="small" v-if="!scope.row.updateStatus">原因</el-button></span
+            >
+            <span v-else>{{ detailOptions[scope.row.status].label }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="updateStatus" label="升级状态"></el-table-column>
         <el-table-column label="操作" align="right" width="400px">
           <template slot-scope="scope">
@@ -19,18 +26,6 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="km-page-block">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage"
-        >
-        </el-pagination>
-      </div>
     </div>
     <!-- dialog -->
     <!-- 升级签约/立即签约 -->
@@ -77,15 +72,26 @@
       </section>
       <el-alert :title="234" type="warning" show-icon :closable="false"></el-alert>
     </el-dialog>
+    <!-- dialog -->
+    <el-dialog append-to-body :visible.sync="isReason" title="原因" width="507px">
+      <p>{{ reasonMsg }}</p>
+      <div slot="footer">
+        <el-button @click="isReason = false" type="primary" size="small">确定</el-button>
+      </div>
+    </el-dialog>
   </section>
 </template>
 
 <script>
 import { generalDetail } from '@/api/wxArchive'
+import { detailOptions } from './index.js'
 
 export default {
   data() {
     return {
+      detailOptions,
+      isReason: false,
+      reasonMsg:'',
       isTabLock: false, // 锁状态
       tableData: [],
       currentPage: 1,
@@ -102,6 +108,10 @@ export default {
     this.handleQueryPage()
   },
   methods: {
+    handleReason(row) {
+      this.reasonMsg = row.remark
+      this.isReason = true
+    },
     handleCurrentChange(val) {
       // 切换当前页
       this.currentPage = val
@@ -117,7 +127,7 @@ export default {
       try {
         this.isTabLock = true
         const res = await generalDetail({ id: this.$route.query.id })
-        this.tableData = res.results
+        this.tableData = res
         this.totalPage = res.totalCount
       } catch (error) {
       } finally {

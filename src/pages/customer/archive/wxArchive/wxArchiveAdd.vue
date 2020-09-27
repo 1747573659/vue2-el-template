@@ -1,6 +1,6 @@
 <template>
   <section class="p-wxArchive-con">
-    <header v-if="pageAction">
+    <header v-if="pageAction && pageAction !== 'add'">
       <el-row>
         <el-col :span="12" v-if="pageAction !== 'add'">
           <label>进件状态：</label>
@@ -24,7 +24,7 @@
                   :isMaxPage="isMaxPage"
                   :options="selectOptions"
                   @remoteMethod="remoteSelect"
-                  @selectPageMore="selectPageMore"
+                  @selectPageMore="selectPageMore('merchant')"
                   @resetSelectPage="resetSelectPage"
                   @changeSelectPage="changeSelectPage"
                   label="companyName"
@@ -106,7 +106,13 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
-                <upload-pic alt="门店门头照" :exampleImg="exampleImg" @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'signboardUrl')" :fileServer="fileServer">
+                <upload-pic
+                  alt="门店门头照"
+                  :imagePath="form.archiveOtherVO.signboardUrl"
+                  :exampleImg="exampleImg"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'signboardUrl')"
+                  :fileServer="fileServer"
+                >
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -114,6 +120,7 @@
               <el-form-item label="经营场所照1" prop="archiveOtherVO.businessSiteOneUrl">
                 <upload-pic
                   alt="经营场所照1"
+                  :imagePath="form.archiveOtherVO.businessSiteOneUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteOneUrl')"
                   @click="imgClick"
@@ -125,6 +132,7 @@
               <el-form-item label="经营场所照2" prop="archiveOtherVO.businessSiteTwoUrl">
                 <upload-pic
                   alt="经营场所照2"
+                  :imagePath="form.archiveOtherVO.businessSiteTwoUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteTwoUrl')"
                   :fileServer="fileServer"
@@ -135,6 +143,7 @@
               <el-form-item label="经营场所照3" prop="archiveOtherVO.businessSiteThreeUrl">
                 <upload-pic
                   alt="经营场所照3"
+                  :imagePath="form.archiveOtherVO.businessSiteThreeUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteThreeUrl')"
                   @click="imgClick"
@@ -146,6 +155,7 @@
               <el-form-item label="经营场地证明">
                 <upload-pic
                   alt="经营场地证明"
+                  :imagePath="form.archiveOtherVO.businessSiteUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteUrl')"
                   @click="imgClick"
@@ -157,6 +167,7 @@
               <el-form-item label="补充资料1">
                 <upload-pic
                   alt="补充资料1"
+                  :imagePath="form.archiveOtherVO.additionalOneUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalOneUrl')"
                   @click="imgClick"
@@ -168,6 +179,7 @@
               <el-form-item label="补充资料2">
                 <upload-pic
                   alt="补充资料2"
+                  :imagePath="form.archiveOtherVO.additionalTwoUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalTwoUrl')"
                   @click="imgClick"
@@ -192,6 +204,7 @@
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
                 <upload-pic
                   alt="营业执照"
+                  :imagePath="form.archiveExpandVO.businessLicenseUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'businessLicenseUrl')"
                   @click="imgClick"
@@ -203,6 +216,7 @@
               <el-form-item label="类目特殊资质">
                 <upload-pic
                   alt="类目特殊资质"
+                  :imagePath="form.archiveOtherVO.typeAptitudeUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'typeAptitudeUrl')"
                   @click="imgClick"
@@ -255,6 +269,7 @@
               <el-form-item label="组织机构代码证" prop="archiveExpandVO.orgInstitutionUrl">
                 <upload-pic
                   alt="组织机构代码证"
+                  :imagePath="form.archiveExpandVO.orgInstitutionUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'orgInstitutionUrl')"
                   @click="imgClick"
@@ -266,6 +281,7 @@
               <el-form-item label="税务登记证" prop="archiveExpandVO.taxRegistrationUrl">
                 <upload-pic
                   alt="税务登记证"
+                  :imagePath="form.archiveExpandVO.taxRegistrationUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
                   @click="imgClick"
@@ -307,6 +323,7 @@
               <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
                 <upload-pic
                   alt="身份证正面照"
+                  :imagePath="form.archiveExpandVO.idFrontUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idFrontUrl')"
                   @click="imgClick"
@@ -318,6 +335,7 @@
               <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
                 <upload-pic
                   alt="身份证背面照"
+                  :imagePath="form.archiveExpandVO.idBackUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idBackUrl')"
                   @click="imgClick"
@@ -329,6 +347,7 @@
               <el-form-item label="手持身份证正面照" prop="archiveExpandVO.hardIdUrl">
                 <upload-pic
                   alt="手持身份证正面照"
+                  :imagePath="form.archiveExpandVO.hardIdUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'hardIdUrl')"
                   @click="imgClick"
@@ -345,6 +364,7 @@
               <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
                 <upload-pic
                   alt="银行卡正面照"
+                  :imagePath="form.archiveExpandVO.bankCardFrontUrl"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'bankCardFrontUrl')"
                   @click="imgClick"
@@ -354,9 +374,20 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行" prop="archiveExpandVO.bank">
-                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.bank" placeholder="全部">
+                <!-- <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.bank" placeholder="全部">
                   <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-                </el-select>
+                </el-select> -->
+                <!-- <select-page
+                  :isMaxPage="isMaxPage"
+                  :options="selectOptions"
+                  @remoteMethod="remoteBankSelect"
+                  @selectPageMore="selectPageMore('bank')"
+                  @resetSelectPage="resetSelectPage"
+                  @changeSelectPage="changeSelectPage('bank')"
+                  label="bankName"
+                  value="bankCode"
+                  placeholder="请输入银行"
+                ></select-page> -->
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -386,19 +417,20 @@
       </el-form>
     </section>
     <div class="p-wxArchive-action">
-      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleArchive">保存</el-button>
-      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd">新增</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd">拒绝</el-button>
+      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleArchive" v-if="['add', 'edit'].includes(pageAction)">保存</el-button>
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleVerify" v-if="['add', 'edit'].includes(pageAction)">提交审核</el-button>
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd">编辑</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" v-if="['add', 'edit'].includes(pageAction)">拒绝</el-button>
       <el-button size="small" class="e-wxArchive-action_pd">取消</el-button>
     </div>
   </section>
 </template>
 
 <script>
-import selectPage from '@/components/selectPage'
+import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
-import { queryShopListByPage } from '@/api/wxArchive'
+import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify } from '@/api/wxArchive'
 import fileServer from '@/mixins/fileServe'
 
 export default {
@@ -416,8 +448,9 @@ export default {
       isMaxPage: false,
       form: {
         archiveBaseVO: {
+          userId: '',
           merchantId: '', // 商户
-          merchantName: '', // 商户名称
+          // merchantName: '', // 商户名称
           archiveType: 1, // 进件类型
           publicId: '', // 公众号APPID
           appletId: '', // 小程序APPID
@@ -425,11 +458,11 @@ export default {
           companyName: '', // 公司名称
           merchantShortName: '', // 商户简称
           province: '', // 省
-          provinceName: '',
+          // provinceName: '',
           city: '', // 市
-          cityName: '',
+          // cityName: '',
           area: '', // 区
-          areaName: '',
+          // areaName: '',
           address: '', // 详细地址
           contact: '', // 联系人/负责人
           contactPhone: '', // 联系人手机号/负责人联系方式
@@ -458,12 +491,12 @@ export default {
           idBackUrl: '', // 身份证背面照,
           hardIdUrl: '', // 手持身份证正面照
           bankCardFrontUrl: '', //银行卡正面照
-          bank: '', //银行
-          bankSub: '', //所属支行
+          bank: 2, //银行
+          bankSub: 313227010350, //所属支行
           bankCard: '', //银行账号
           bankAccountName: '', //账户名
-          bankProvince:'', //银行所在省
-          bankCity:'', //银行所在市
+          bankProvince: '', //银行所在省
+          bankCity: '', //银行所在市
           bankArea: '' //银行所在地区
         },
         archiveOtherVO: {
@@ -527,16 +560,31 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      let tagName = ''
-      if (vm.pageAction === 'add') tagName = '普通资质进件/新增'
-      else tagName = '普通资质进件/编辑'
-      document.querySelector('.e-tag_active').innerText = tagName
+      vm.handleDetail()
+      // let tagName = ''
+      // if (vm.pageAction === 'add') tagName = '普通资质进件/新增'
+      // else tagName = '普通资质进件/编辑'
+      // document.querySelector('.e-tag_active').innerText = tagName
     })
   },
   methods: {
+    handleVerify: async function() {
+      const res = await submitToVerify(this.form)
+      console.info(res)
+    },
+    handleDetail: async function() {
+      const res = await detail({ archiveId: 101001 })
+      this.form.archiveBaseVO = res.archiveBaseDTO
+      this.form.archiveExpandVO = res.archiveExpandDTO
+      this.form.archiveOtherVO = res.archiveOtherDTO
+      console.info(res)
+    },
     handleArchive() {
       console.info(this.form)
-      this.$refs.form.validate(valid => {})
+      this.$refs.form.validate(async valid => {
+        const res = await submit(this.form)
+        console.info(res)
+      })
     },
     handleArea(type, value) {
       if (type === 'area') {
@@ -549,7 +597,7 @@ export default {
         this.form.archiveExpandVO.bankArea = value[2]
       }
     },
-    selectPageMore() {
+    selectPageMore(type) {
       if (!this.isMaxPage) {
         this.selectPageNo++
         this.remoteSelect(this.searchString)
@@ -562,6 +610,7 @@ export default {
       this.searchString = ''
     },
     changeSelectPage(value) {
+      this.form.archiveBaseVO.userId = value
       this.form.archiveBaseVO.merchantId = value
     },
     remoteSelect: async function(query) {
@@ -580,6 +629,22 @@ export default {
         if (res.results.length !== 10) this.isMaxPage = true
       }
     },
+    // remoteBankSelect: async function(query) {
+    //   if (!!this.searchString && query !== this.searchString) {
+    //     this.resetSelectPage()
+    //   }
+    //   const data = {
+    //     page: this.selectPageNo,
+    //     rows: 10,
+    //     bankName: query
+    //   }
+    //   const res = await queryBankPage(data)
+    //   if (res?.results && res.results.length !== 0) {
+    //     this.searchString = query
+    //     this.selectOptions = this.selectOptions.concat(res.results)
+    //     if (res.results.length !== 10) this.isMaxPage = true
+    //   }
+    // },
     imgClick() {
       if (this.formDisabled) alert('hahahah')
     },

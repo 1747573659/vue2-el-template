@@ -94,18 +94,6 @@
                     个配额
                   </span>
                 </div>
-                <!-- <div class="quota-item">
-                  <span>
-                    <el-checkbox v-model="checked222222"></el-checkbox>
-                    按单付费（剩余配额 <span style="color: #FF6010">5</span>，建议售价：<span style="color: #FF6010">5000.00</span>元）
-                  </span>
-                  <span>
-                    分配
-                    <el-input class="content_input" size="small" v-model="input222222" :disabled="!checked222222" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" @blur="blur">
-                    </el-input>
-                    个配额
-                  </span>
-                </div> -->
               </div>
               <div class="sum-total">
                 <div class="sum-total__label">
@@ -206,7 +194,6 @@ export default {
           (item) => (Number(item.input) * item.saleAmount) / 100
         )
         sum = result.reduce((accumulator, currentValue) => {
-          // debugger
           return accumulator + currentValue
         })
       }
@@ -214,7 +201,6 @@ export default {
       return sum.toFixed(2)
     },
   },
-  watch: {},
   created() {
     this.queryChannel()
     this.queryAgentPage()
