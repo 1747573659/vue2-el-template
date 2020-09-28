@@ -72,7 +72,9 @@ export default {
   },
   computed: {
     imageUrl: {
-      get: function () { return this.imagePath || '' },
+      get: function () { 
+        return this.imagePath
+      },
       set: function () {}
     }
   },
