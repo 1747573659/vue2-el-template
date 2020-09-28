@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-permission.page="'AGENT_ROLE_ADD'">
     <role-form :isEdit="isEdit" :type="type" :router="router"></role-form>
   </div>
 </template>
@@ -8,19 +8,18 @@
 import RoleForm from '@/components/roleForm'
 
 export default {
-  name:'addRole',
+  name: 'addRole',
   components: {
-    RoleForm
+    RoleForm,
   },
   data() {
     return {
-      isEdit: false, 
+      isEdit: false,
       type: 1,
-      router: '/customer/agent/agentRole'
+      router: '/customer/agent/agentRole',
     }
-  }
+  },
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

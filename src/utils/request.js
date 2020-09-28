@@ -13,10 +13,11 @@ let config = {
 const service = axios.create(config)
 
 service.interceptors.request.use(
-  config => {
+  (config) => {
     if (getLocal('token')) {
-      // config.headers['Content-Type'] = 'application/x-www-form-urlencoded' // json格式的不需要
+      config.isOld && (config.headers['Content-Type'] = 'application/x-www-form-urlencoded') // json格式的不需要
       // 从localStorage拿token, 放到每个请求头
+      console.log(getLocal('token'))
       config.headers['token'] = getLocal('token')
     }
     return config

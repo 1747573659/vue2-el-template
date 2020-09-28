@@ -1,7 +1,6 @@
 <template>
-  <div>
-    <base-edit :isEdit="isEdit">
-    </base-edit>
+  <div v-permission.page="'AGENT_MANAGE_EDIT'">
+    <base-edit :isEdit="isEdit"></base-edit>
   </div>
 </template>
 
@@ -24,5 +23,4 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>
