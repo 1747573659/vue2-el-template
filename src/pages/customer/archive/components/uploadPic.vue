@@ -45,7 +45,6 @@ export default {
     return {
       uploadUrl: process.env.VUE_APP_BASE_API + '/uploadPic',
       token: getLocal('token'),
-      imageUrl: '',
       title: this.alt + '示例:'
     }
   },
@@ -71,9 +70,9 @@ export default {
       default: null
     }
   },
-  watch: {
-    imagePath() {
-      this.imageUrl = this.imagePath
+  computed: {
+    imageUrl() {
+      return this.imagePath || ''
     }
   },
   methods: {
