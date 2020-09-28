@@ -18,8 +18,6 @@ export default {
       isEdit: true,
     }
   },
-  created() {},
-  methods: {},
 }
 </script>
 

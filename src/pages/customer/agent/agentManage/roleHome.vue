@@ -103,6 +103,9 @@ export default {
   created() {
     this.queryPage()
   },
+  activated(){
+    this.queryPage()
+  },
   methods: {
     queryPage() {
       this.loading = true

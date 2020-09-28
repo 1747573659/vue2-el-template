@@ -146,6 +146,9 @@ export default {
   created() {
     this.queryMerchantListByPage()
   },
+  activated() {
+    this.queryMerchantListByPage()
+  },
   methods: {
     handleDelete(id) {
       this.$confirm('确定删除所选数据吗？确定后删除品牌信息', '提示', {

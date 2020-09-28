@@ -29,7 +29,7 @@
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
 export default {
-  name:'RoleForm',
+  name:'RoleForm111',
   components: {},
   props: {
     // 新增页or编辑页
@@ -201,7 +201,7 @@ export default {
             const res = await addRole(data)
             this.$message.success('操作成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ paht: this.router })
+              this.$router.push({ path: this.router })
             })
           } catch (e) {
           } finally {

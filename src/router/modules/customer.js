@@ -42,7 +42,8 @@ const customer = {
           component: _import('customer/merchant/merchantManage/addMerchant'),
           meta: {
             title: '商户管理/新增',
-            name: 'addMerchant'
+            name: 'addMerchant',
+            noCache: true
           }
         },
         {
@@ -53,7 +54,8 @@ const customer = {
           component: _import('customer/merchant/merchantManage/editMerchant'),
           meta: {
             title: '商户管理/编辑',
-            name: 'editMerchant'
+            name: 'editMerchant',
+            noCache: true
           }
         },
         {
@@ -74,7 +76,8 @@ const customer = {
           component: _import('customer/merchant/merchantManage/addBrand'),
           meta: {
             title: '品牌管理/新增',
-            name: 'addBrand'
+            name: 'addBrand',
+            noCache: true
           }
         },
         {
@@ -85,7 +88,8 @@ const customer = {
           component: _import('customer/merchant/merchantManage/editBrand'),
           meta: {
             title: '品牌管理/编辑',
-            name: 'editBrand'
+            name: 'editBrand',
+            noCache: true
           }
         }
       ]
@@ -200,7 +204,8 @@ const customer = {
           component: _import('customer/agent/agentManage/addAgent'),
           meta: {
             title: '代理商管理/新增',
-            name: 'addAgent'
+            name: 'addAgent',
+            noCache: true
           }
         },
         {
@@ -211,7 +216,8 @@ const customer = {
           component: _import('customer/agent/agentManage/editAgent'),
           meta: {
             title: '代理商管理/编辑',
-            name: 'editAgent'
+            name: 'editAgent',
+            noCache: true
           }
         },
         {
@@ -232,7 +238,8 @@ const customer = {
           component: _import('customer/agent/agentManage/addRole'),
           meta: {
             title: '代理商角色管理/新增',
-            name: 'addRole'
+            name: 'addRole',
+            noCache: true
           }
         },
         {
@@ -243,7 +250,8 @@ const customer = {
           component: _import('customer/agent/agentManage/editRole'),
           meta: {
             title: '代理商角色管理/编辑',
-            name: 'editRole'
+            name: 'editRole',
+            noCache: true
           }
         }
       ]
