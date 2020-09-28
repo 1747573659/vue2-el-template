@@ -377,8 +377,8 @@ export default {
       const data = {
         dataSource: 1,
         paySn: row.id,
-        // 'orderId': '9115882679906900459209030',
-        shopId: row.shopId
+        // 'sn': '9115882679906900459209030',
+        //shopId: row.shopId
       }
       try {
         const res = await refundOrderdetail(data)
