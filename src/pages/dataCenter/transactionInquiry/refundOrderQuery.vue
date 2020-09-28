@@ -1,21 +1,19 @@
 <template>
   <div class="app-container">
-    <div class="action-box">
-      <el-form label-width="110px" @submit.native.prevent class="search-form" size="small">
+    <div class="search-box">
+      <el-form  label-width="110px" @submit.native.prevent class="search-form" size="small">
         <el-row>
           <el-col :span="8">
-            <el-form-item label="商户名称">
-              <select-page
-                style="width:100%"
-                ref="selectPage"
-                type="商户名称"
-                @change="searchCompanyName">
+            <el-form-item label="商户">
+               <select-page
+                :request="queryMerchantAdminPage"
+                :bvalue.sync="formData.shopAdminId"
+                :name="'companyName'"
+                searchName="id"
+                id="id"
+                :placeholder="'商户名称'"
+              >
               </select-page>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="支付订单号">
-              <el-input clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -23,15 +21,21 @@
               <el-input clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="8">
+           <el-col :span="8">
             <el-form-item label="退款状态">
               <el-select v-model="formData.status">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in statusList"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="支付订单号">
+              <el-input clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
+            </el-form-item>
+          </el-col>
+          
+        </el-row>
+        <el-row>
           <el-col :span="16">
             <el-form-item style="margin-left:-60px">
               <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
@@ -132,10 +136,11 @@
 <script>
 import {
   refundOrderQueryPage,
-  refundOrderdetail
+  refundOrderdetail,
+  queryMerchantAdminPage
 } from '@/api/transtionManagement'
 import orderDetailDialog from './components/orderDetailDialog'
-import selectPage from '@/components/selectPage/index.vue'
+import selectPage from '@/components/selectPage2/index.vue'
 export default {
   name: 'RefundOrderQuery',
   components: {
@@ -179,12 +184,11 @@ export default {
     })
   },
   methods: {
-    searchCompanyName (value, options, type) {
-      this.formData.shopAdminId = value
-    },
     async handleDetails (row) {
       this.dialogForm = {}
       const data = {
+        dataSource:3,
+        paySn:row.id,
         'sn': row.sn
       }
       try {
@@ -197,6 +201,9 @@ export default {
         this.dialogForm.shopName = row.shopName
         this.$refs.orderDetailDialog.orderDetailVisible = true
       } catch {}
+    },
+    queryMerchantAdminPage (e) {
+      return queryMerchantAdminPage(e)
     },
     handleSearch () {
       if (!this.formData.sn && !this.formData.order) {
@@ -213,7 +220,7 @@ export default {
       }
     },
     handleReset () {
-      this.$refs.selectPage.clearAll()
+      //this.$refs.selectPage.clearAll()
       this.formData = {
         order: '',
         sn: '',
@@ -271,6 +278,8 @@ export default {
 .el-pagination-box {
   text-align: right;
   margin-top: 20px;
+  background: #fff;
+  padding-bottom: 20px;
 }
 .pure {
   &-dialog {

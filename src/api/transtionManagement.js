@@ -3,20 +3,23 @@ import ipConfig from '@/utils/baseUrl'
 import qs from 'qs'
 
 const urlLinks = {
-  queryAllConditionByType: `${ipConfig.COMMON_API}/summarySettle/queryAllConditionByType`,
-  queryStorePage: `${ipConfig.COMMON_API}/storeManage/queryStorePage`,
-  queryMerchantAdminPage: `${ipConfig.COMMON_API}/shopManager/queryMerchantAdminPage`,
-  queryPaySceneByType: `${ipConfig.COMMON_API}/summarySettle/queryPaySceneByType`,
-  querySummary: `${ipConfig.COMMON_API}/summarySettle/querySummary`,
-  queryAllTradeStatus: `${ipConfig.COMMON_API}/shopOrder/queryAllTradeStatus`,
-  queryMerchantOrderPage: `${ipConfig.COMMON_API}/shopOrder/queryPage`,
-  downloadExcel: `${ipConfig.COMMON_API}/shopOrder/downloadExcel`,
-  deleteRecord: `${ipConfig.COMMON_API}/shopOrder/deleteRecord`,
-  queryExportRecord: `${ipConfig.COMMON_API}/shopOrder/queryExportRecord`,
-  detail: `${ipConfig.COMMON_API}/shopOrder/detail`,
-  querySingleOrder: `${ipConfig.COMMON_API}/singleOrder/querySingleOrder`,
-  refundOrderQueryPage: `${ipConfig.COMMON_API}/refundOrder/queryPage`,
-  refundOrderdetail: `${ipConfig.COMMON_API}/refundOrder/detail`
+  queryAllConditionByType: `/shopOrder/queryAllConditionByType`,
+  queryStorePage: `/storeClerkManager/queryStorePageByShop`,
+  queryMerchantAdminPage: `/shop/queryShopListByPage`,
+  queryClerkPageByStore: `/storeClerkManager/queryClerkPageByStore`,
+  queryPaySceneByType: `/shopOrder/queryPaySceneByType`,
+  querySummary: `/shopOrder/querySummary`,
+  queryAllTradeStatus: `/shopOrder/queryAllTradeStatus`,
+  queryMerchantOrderPage: `/shopOrder/queryPage`,
+  downloadExcel: `/shopOrder/downloadExcel`,
+  deleteRecord: `/shopOrder/deleteRecord`,
+  queryExportRecord: `/shopOrder/queryExportRecord`,
+  detail: `/shopOrder/detail`,
+  querySingleOrder: `/singleOrder/querySingleOrder`,
+  refundOrderQueryPage: `/refundOrder/queryPage`,
+  refundOrderdetail: `/refundOrder/detail`,
+  wmdownloadExcel: `/wm/downloadExcel`,
+  queryWmTermPage: `/wm/queryWmTermPage`,
 }
 
 const queryAllCondition = data => {
@@ -26,6 +29,7 @@ const queryAllCondition = data => {
     data: qs.stringify(data)
   })
 }
+//查询门店
 const queryStorePage = data => {
   return request({
     url: urlLinks.queryStorePage,
@@ -33,9 +37,19 @@ const queryStorePage = data => {
     data: data
   })
 }
+
+//查询商户
 const queryMerchantAdminPage = data => {
   return request({
     url: urlLinks.queryMerchantAdminPage,
+    method: 'POST',
+    data: data
+  })
+}
+//查询收营员
+const queryClerkPageByStore = data => {
+  return request({
+    url: urlLinks.queryClerkPageByStore,
     method: 'POST',
     data: data
   })
@@ -138,5 +152,6 @@ export {
   queryAllTradeStatus,
   queryMerchantOrderPage,
   downloadExcel,
-  queryExportRecord
+  queryExportRecord,
+  queryClerkPageByStore
 }

@@ -5,6 +5,7 @@ import home from './modules/home'
 import setting from './modules/setting'
 import customer from './modules/customer'
 import dataCenter from './modules/dataCenter'
+import orderCenter from './modules/orderCenter'
 
 // 系统主路由模块，包含登录，异常页，全局页面，其他页面按模块引入
 const constantRoutes = [
@@ -28,7 +29,8 @@ const constantRoutes = [
 const asyncRouterMap = [
   customer,
   setting,
-  dataCenter
+  dataCenter,
+  orderCenter
 ]
 
 export { constantRoutes, asyncRouterMap }

@@ -100,7 +100,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.position {
+
+.pagination-container {
   text-align: right;
+  margin-top: 20px;
+  background: #fff;
+  padding-bottom: 20px;
 }
 </style>
