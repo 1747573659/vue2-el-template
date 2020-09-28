@@ -21,7 +21,7 @@
             <el-col :span="12">
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
-                  v-if="pageAction === 'add' || JSON.parse($route.query.isCopy)"
+                  v-if="pageAction === 'add' || ($route.query.isCopy && JSON.parse($route.query.isCopy))"
                   :isMaxPage="isMaxPage"
                   :options="selectOptions"
                   @remoteMethod="remoteSelect"
@@ -246,9 +246,7 @@
             </el-col>
             <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
               <el-form-item label="经营类目" prop="archiveBaseVO.businessCategoryRemark">
-                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.businessCategoryRemark" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-                </el-select>
+                <el-cascader :options="businessOptions" v-model="form.archiveBaseVO.businessCategoryRemark"></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -389,24 +387,15 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行" prop="archiveExpandVO.bank">
-                <select-page
-                  v-if="pageAction === 'add'"
-                  :isMaxPage="isMaxPage"
-                  :options="selectOptions"
-                  @remoteMethod="remoteSelect"
-                  @selectPageMore="selectPageMore('merchant')"
-                  @resetSelectPage="resetSelectPage"
-                  @changeSelectPage="changeSelectPage"
-                  label="companyName"
-                  value="id"
-                  placeholder="请输入商户"
-                ></select-page>
+                <el-select v-model="form.archiveExpandVO.bank" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBankRemote">
+                  <el-option v-for="item in bankOptions" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"> </el-option>
+                </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
-                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.bankSub" placeholder="全部">
-                  <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+                <el-select v-model="form.archiveExpandVO.bankSub" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBranchRemote">
+                  <el-option v-for="item in branchOptions" :key="item.bCode" :label="item.bName" :value="item.bCode"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -487,7 +476,7 @@
 import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
-import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund } from '@/api/wxArchive'
+import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory } from '@/api/wxArchive'
 import fileServer from '@/mixins/fileServe'
 import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
 import { filterReview } from './filters/reviewStatus'
@@ -520,7 +509,10 @@ export default {
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
-      bankAreaList: []
+      bankAreaList: [],
+      bankOptions: [],
+      branchOptions: [],
+      businessOptions: []
     }
   },
   filters: {
@@ -531,9 +523,62 @@ export default {
       if (vm.pageAction === 'detail') {
         vm.handleDetail()
       }
+      vm.getBankPage()
+      vm.getBranchPage()
+      vm.getBusinessCategory()
     })
   },
   methods: {
+    getBusinessCategory: async function() {
+      const res = await businessCategory()
+      let data = []
+      res.forEach(item => {
+        if (item.parentId === 0) {
+          data.push({
+            value: item.id,
+            label: item.tradeName,
+            children: []
+          })
+        }
+      })
+      data.forEach(item => {
+        res.forEach(children => {
+          if (item.value === children.parentId) {
+            item.children.push({
+              value: children.tradeCode,
+              label: children.tradeName
+            })
+          }
+        })
+      })
+      console.info(data)
+      this.businessOptions = data
+    },
+    handleBankRemote(query) {
+      if (query !== '') {
+        this.getBankPage(query)
+      }
+    },
+    getBankPage: async function(bankName = '') {
+      const data = { page: 1, rows: 100, bankName }
+      const res = await queryBankPage(data)
+      this.bankOptions = res.results
+    },
+    handleBranchRemote(query) {
+      if (query !== '') {
+        this.getBranchPage(query)
+      }
+    },
+    getBranchPage: async function(bName = '') {
+      const data = {
+        page: 1,
+        rows: 100,
+        bCode: '',
+        bName
+      }
+      const res = await queryBranchPage(data)
+      this.branchOptions = res.results
+    },
     handleRefund() {
       this.$refs.refundForm.validate(async valid => {
         if (valid) {
