@@ -11,7 +11,7 @@ import qs from 'qs'
 import { getLocal } from '@/utils/storage'
 import store from '@/store'
 import { Message, MessageBox } from 'element-ui'
-function permissonCheckMenus (code, url) {
+export function permissonCheckMenus (code, url) {
   // console.log(code)
   let permissonMenus = store.getters.permissionMenus
   let routerServe = store.getters.permission_routers
