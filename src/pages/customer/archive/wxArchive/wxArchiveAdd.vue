@@ -246,7 +246,7 @@
             </el-col>
             <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
               <el-form-item label="经营类目" prop="archiveBaseVO.businessCategoryRemark">
-                <el-cascader :options="businessOptions" v-model="form.archiveBaseVO.businessCategoryRemark"></el-cascader>
+                <el-cascader :options="businessOptions" @change="handleBusinessCategory" v-model="form.archiveBaseVO.businessCategory"></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -529,6 +529,23 @@ export default {
     })
   },
   methods: {
+    handleBusinessCategory(val) {
+      let one
+      let two
+      this.businessOptions.forEach(item => {
+        if (val[0] === item.value) {
+          one = item
+          two = item.children
+        }
+      })
+      two &&
+        two.forEach(item => {
+          if (val[1] === item.value) {
+            two = item
+          }
+        })
+      this.form.archiveBaseVO.businessCategoryRemark = one.label + '/' + two.label
+    },
     getBusinessCategory: async function() {
       const res = await businessCategory()
       let data = []
@@ -551,7 +568,6 @@ export default {
           }
         })
       })
-      console.info(data)
       this.businessOptions = data
     },
     handleBankRemote(query) {
