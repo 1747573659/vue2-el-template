@@ -210,6 +210,8 @@ export default {
           return
         }
         res.shopName=row.shopName
+        res.paymentAmount=row.paymentAmount
+        res.orderStatusName=row.orderStatusName
         this.dialogForm2 = res
         this.dialogForm2.shopName = row.shopName
         this.$refs.orderDetailDialog2.orderDetailVisible = true

@@ -11,24 +11,7 @@ import qs from 'qs'
 import { getLocal } from '@/utils/storage'
 import store from '@/store'
 import { Message, MessageBox } from 'element-ui'
-export function permissonCheckMenus (code, url) {
-  // console.log(code)
-  let permissonMenus = store.getters.permissionMenus
-  let routerServe = store.getters.permission_routers
-  // console.log(JSON.stringify(routerServe))
-  if (permissonMenus && permissonMenus.length) {
-    if (url) {
-      let urlArr = url.split('/')
-      if (JSON.stringify(routerServe).includes(urlArr[1]) && JSON.stringify(routerServe).includes(urlArr[2]) && JSON.stringify(routerServe).includes(urlArr[3])) {
-        // JSON.stringify(permissonMenus).includes(code)
-        return JSON.stringify(permissonMenus).includes(code)
-      } else {
-        return false
-      }
-    }
-    return JSON.stringify(permissonMenus).includes(code)
-  }
-}
+
 /**
  * 文件流下载
  * @param {string} url 请求路径

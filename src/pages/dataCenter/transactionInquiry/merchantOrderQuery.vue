@@ -133,7 +133,7 @@
               @click="handleDelRow(scope.row)"
               size="small"
               type="text"
-              v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4) && permissonCheckMenus('TRANSACTION_MERCHANT_REFUNDDETAIL')"
+              v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4)"
             >退款详情</el-button>
           </template>
         </el-table-column>
@@ -253,8 +253,8 @@ export default {
         paymentScenarioCode: '',
         tradingStatusCode: [],
         clerkInfos:[],
-        startAmount:0,
-        endAmount:0
+        startAmount:"",
+        endAmount:""
       },
       // 选择弹窗
    
@@ -387,6 +387,8 @@ export default {
           return
         }
         res.shopName=row.shopName
+        res.paymentAmount=row.paymentAmount
+        res.orderStatusName=row.orderStatusName
         this.dialogForm2 = res
         this.dialogForm2.shopName = row.shopName
         this.$refs.orderDetailDialog2.orderDetailVisible = true
@@ -444,7 +446,9 @@ export default {
     handleReset () {
       this.formData.stores=[]
       this.formData.clerkInfos=[]
-      this.formData.shopId='shopId'
+      this.formData.shopId=''
+      this.formData.startAmount=''
+      this.formData.endAmount=''
       this.tabData = []
       this.$refs.form.resetFields()
       this.$set(this.formData, 'transactionTime', [moment().startOf('day').valueOf(), moment().endOf('day').valueOf()])
