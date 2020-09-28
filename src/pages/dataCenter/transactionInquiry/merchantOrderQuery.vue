@@ -41,7 +41,7 @@
                   searchName="storeName"
                   :parame="{adminId:formData.shopId || ''}"
                   id="id"
-                  :placeholder="'门店名称'"
+                  placeholder="门店名称"
                 >
                 </select-page>
             </el-form-item>
@@ -80,8 +80,8 @@
           </el-col>
            <el-col :span="8">
             <el-form-item label="交易金额" prop="paymentScenarioCode">
-              <el-input style="width:120px"  size="small" v-model="formData.startAmount" placeholder="请输入内容"></el-input>-
-              <el-input style="width:120px" size="small" v-model="formData.endAmount" placeholder="请输入内容"></el-input>
+              <el-input type="number" min="0" style="width:120px"  size="small" v-model="formData.startAmount" placeholder="请输入金额"></el-input>-
+              <el-input type="number" min="0" style="width:120px" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -257,8 +257,6 @@ export default {
         endAmount:""
       },
       // 选择弹窗
-   
-
 
       pickerOptions: {
         disabledDate (time) {
@@ -457,6 +455,10 @@ export default {
       if (this.formData.shopId) {
         if ((this.formData.transactionTime[1]-this.formData.transactionTime[0])>60*24*60*1000*31) {
           this.$message.error('统计时间间隔不超过31天')
+          return false
+        }
+        if(this.formData.startAmount<0 || this.formData.endAmount<0){
+          this.$message.error('金额不能为负数')
           return false
         }
         this.pageNo = 1
