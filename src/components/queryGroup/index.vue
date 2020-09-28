@@ -1,10 +1,4 @@
-<!--
- * @Author: wuhao
- * @Date: 2019-03-26 10:30:25
- * @LastEditors: wuhao
- * @LastEditTime: 2019-04-04 17:04:03
- * @Description: 封装table查询条件
- -->
+
 <template>
   <div class="query-group-container">
     <slot name="header"></slot>
@@ -56,7 +50,7 @@
           ></el-date-picker>
         </el-form-item>
       </template>
-      <el-button class="xdd_small-btn" @click="search" type="primary">查询</el-button>
+      <el-button size="small" class="xdd_small-btn" @click="search" type="primary">查询</el-button>
       <slot name="formfoot"></slot>
     </el-form>
     <slot name="foot"></slot>
@@ -126,6 +120,9 @@ export default {
 
 <style scoped lang="scss">
 .query-group-container {
+  .xdd_small-btn{
+
+  }
   overflow: hidden;
   .all-fr {
     float: left;

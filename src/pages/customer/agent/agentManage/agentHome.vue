@@ -319,6 +319,9 @@ export default {
     this.queryAgentPage()
     this.queryAgentAppAndQuota()
   },
+  activated(){
+    this.queryAgentPage()
+  },
   methods: {
     blur(item) {
       const value = item.input

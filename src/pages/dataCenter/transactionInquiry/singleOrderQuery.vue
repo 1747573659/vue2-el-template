@@ -87,7 +87,7 @@
     </div>
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
-      <el-table :data="tabData" ref="table">
+      <el-table :max-height="750" :data="tabData" ref="table">
         <el-table-column label="交易时间" prop="createDate"></el-table-column>
         <el-table-column label="支付订单号" prop="orders"></el-table-column>
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
@@ -107,6 +107,7 @@
       </el-table>
       <div class="el-pagination-box">
         <el-pagination
+          v-if="pageTotal"
           :current-page="pageNo"
           :page-size="pageSize"
           :page-sizes="[10, 15, 20, 25]"
@@ -118,61 +119,15 @@
         ></el-pagination>
       </div>
     </div>
-    <el-dialog :visible.sync="showDialogStatus" @close="showDialogStatus = false" title="订单详情" width="600px">
-      <section>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">商户名称: 新北区河海宜思客餐饮店</span>
-          <span class="pure-dialog-orderRight">交易时间: 2020-03-23 12:23:56</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">享钱订单号: 9115623336332156</span>
-          <span class="pure-dialog-orderRight">ERP订单号: 1562333633215623</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">交易通道: 得仕通道</span>
-          <span class="pure-dialog-orderRight">交易商户号: 205362200087</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">门店名称: 新北区第一门店</span>
-          <span class="pure-dialog-orderRight">收银员: 小黄/--</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">交易渠道: 线下收银</span>
-          <span class="pure-dialog-orderRight">支付方式: 支付宝商家主扫</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">订单金额: 100.23</span>
-          <span class="pure-dialog-orderRight">商家优惠: 0.00</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">交平台优惠: 100.00</span>
-          <span class="pure-dialog-orderRight">申请退款总金额: 8.23</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">退券金额: 100.00</span>
-          <span class="pure-dialog-orderRight">用户实退: 8.23</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span class="pure-dialog-orderLeft">商家实收: 100.00</span>
-          <span class="pure-dialog-orderRight">手续费: --/0.32</span>
-        </div>
-        <div class="pure-dialog-orderItem">
-          <span>手续费率: 0.2%</span>
-        </div>
-      </section>
-      <div slot="footer">
-        <el-button @click="showDialogStatus = false">取消</el-button>
-        <el-button @click="showDialogStatus = false" type="primary">确定</el-button>
-      </div>
-    </el-dialog>
+
     <order-detail-dialog
-      ref="orderDetailDialog"
+      ref="orderDetailDialog1"
       :dialogTitle="dialogTitle"
       :form="dialogForm"
       type='order'
     />
     <order-detail-dialog
-      ref="orderDetailDialog"
+      ref="orderDetailDialog2"
       :dialogTitle="dialogTitle"
       :form="dialogForm2"
       type='refund'
@@ -204,7 +159,7 @@ export default {
       titleDialogStatus: false,
       pageNo: 1,
       pageSize: 10,
-      pageTotal: 50,
+      pageTotal: 0,
       searchLock: false,
       dialogTitle: '订单详情',
       tabLock: false,
@@ -245,8 +200,8 @@ export default {
       const data = {
         dataSource: 2,
         paySn: row.id,
-        // 'orderId': '9115882679906900459209030',
-        shopId: row.shopId
+        'sn': '',
+        //shopId: row.shopId
       }
       try {
         const res = await refundOrderdetail(data)
@@ -255,6 +210,8 @@ export default {
           return
         }
         res.shopName=row.shopName
+        res.paymentAmount=row.paymentAmount
+        res.orderStatusName=row.orderStatusName
         this.dialogForm2 = res
         this.dialogForm2.shopName = row.shopName
         this.$refs.orderDetailDialog2.orderDetailVisible = true
@@ -278,10 +235,14 @@ export default {
         }
         this.dialogForm = res
         this.dialogForm.shopName = row.shopName
-        this.$refs.orderDetailDialog.orderDetailVisible = true
+        this.$refs.orderDetailDialog1.orderDetailVisible = true
       } catch {}
     },
     handleSearch () {
+      if(!this.formData.shopAdminId){
+        this.$message.error("请先选择商户")
+        return
+      }
       this.pageNo = 1
       this.searchLock = true
       this.handleQueryPage()

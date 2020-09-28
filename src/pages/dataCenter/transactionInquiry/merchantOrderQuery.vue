@@ -41,7 +41,7 @@
                   searchName="storeName"
                   :parame="{adminId:formData.shopId || ''}"
                   id="id"
-                  :placeholder="'门店名称'"
+                  placeholder="门店名称"
                 >
                 </select-page>
             </el-form-item>
@@ -80,8 +80,8 @@
           </el-col>
            <el-col :span="8">
             <el-form-item label="交易金额" prop="paymentScenarioCode">
-              <el-input style="width:120px"  size="small" v-model="formData.startAmount" placeholder="请输入内容"></el-input>-
-              <el-input style="width:120px" size="small" v-model="formData.endAmount" placeholder="请输入内容"></el-input>
+              <el-input type="number" min="0" style="width:120px"  size="small" v-model="formData.startAmount" placeholder="请输入金额"></el-input>-
+              <el-input type="number" min="0" style="width:120px" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -112,7 +112,7 @@
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
 
-      <el-table :data="tabData" ref="table">
+      <el-table :max-height="750" :data="tabData" ref="table">
         
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
@@ -133,13 +133,14 @@
               @click="handleDelRow(scope.row)"
               size="small"
               type="text"
-              v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4) && permissonCheckMenus('TRANSACTION_MERCHANT_REFUNDDETAIL')"
+              v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4)"
             >退款详情</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div class="el-pagination-box">
         <el-pagination
+          v-if="pageTotal"
           :current-page="pageNo"
           :page-size="pageSize"
           :page-sizes="[10, 15, 20, 25]"
@@ -252,12 +253,10 @@ export default {
         paymentScenarioCode: '',
         tradingStatusCode: [],
         clerkInfos:[],
-        startAmount:0,
-        endAmount:0
+        startAmount:"",
+        endAmount:""
       },
       // 选择弹窗
-   
-
 
       pickerOptions: {
         disabledDate (time) {
@@ -376,8 +375,8 @@ export default {
       const data = {
         dataSource: 1,
         paySn: row.id,
-        // 'orderId': '9115882679906900459209030',
-        shopId: row.shopId
+        'sn': '',
+        //shopId: row.shopId
       }
       try {
         const res = await refundOrderdetail(data)
@@ -386,6 +385,8 @@ export default {
           return
         }
         res.shopName=row.shopName
+        res.paymentAmount=row.paymentAmount
+        res.orderStatusName=row.orderStatusName
         this.dialogForm2 = res
         this.dialogForm2.shopName = row.shopName
         this.$refs.orderDetailDialog2.orderDetailVisible = true
@@ -443,13 +444,23 @@ export default {
     handleReset () {
       this.formData.stores=[]
       this.formData.clerkInfos=[]
-      this.formData.shopId='shopId'
+      this.formData.shopId=''
+      this.formData.startAmount=''
+      this.formData.endAmount=''
       this.tabData = []
       this.$refs.form.resetFields()
       this.$set(this.formData, 'transactionTime', [moment().startOf('day').valueOf(), moment().endOf('day').valueOf()])
     },
     handleSearch () {
       if (this.formData.shopId) {
+        if ((this.formData.transactionTime[1]-this.formData.transactionTime[0])>60*24*60*1000*31) {
+          this.$message.error('统计时间间隔不超过31天')
+          return false
+        }
+        if(this.formData.startAmount<0 || this.formData.endAmount<0){
+          this.$message.error('金额不能为负数')
+          return false
+        }
         this.pageNo = 1
         this.searchLock = true
         this.getQueryPage().catch(() => {}).finally(() => {

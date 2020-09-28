@@ -5,16 +5,17 @@
       v-model="selValue"
       v-loadmore="remoteMethod"
       filterable
+      :disabled="disabled"
       clearable
       :multiple="isMultiple"
       :collapse-tags="true"
       remote
       clear
       :multiple-limit="1"
-      no-data-text="暂无锁定数据"
-      no-match-text="暂无数据"
+      no-data-text="暂无数据"
+      no-match-text="暂无搜索数据"
       :reserve-keyword="false"
-      :placeholder="placeholder"
+      :placeholder="placeText"
       :remote-method="remoteMethod"
       >
       <el-option
@@ -35,7 +36,9 @@ export default {
     return {
       isMaxPage:false,
       options:[],
-      page:1
+      page:1,
+      placeText:"",
+      disabled:false
     }
   },
   props:{
@@ -98,11 +101,11 @@ export default {
     }
   },
   watch: {
-  
     "parame":function(val, oldVal){
       if(val){
         Object.keys(val).forEach((value,index)=>{
           if(val[value] && val[value]!==oldVal[value]){
+            this.isInit=true
             this.options=[]
             this.page=1
             this.isMaxPage=false
@@ -113,6 +116,7 @@ export default {
     }
   },
   mounted() {
+      this.isInit=false
       if(!this.isMultiple) this.remoteMethod()
   },
   methods: {
@@ -136,6 +140,14 @@ export default {
       this.request(Object.assign(data,this.parame)).then((res)=>{
         if(!res.results) this.isMaxPage=true
         if(res.results && res.results.length<10) this.isMaxPage=true
+       
+        if(this.isInit && !res.results){
+          this.placeText="暂无数据"
+          this.disabled=true
+        }else{
+          this.placeText=this.placeholder
+          this.disabled=false
+        }
         this.page++
         if(query!==undefined){
           this.options=res.results || []

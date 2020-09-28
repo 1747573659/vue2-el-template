@@ -123,7 +123,8 @@ export function refundOrderdetail (data) {
   return request({
     url: urlLinks.refundOrderdetail,
     method: 'POST',
-    params: data
+    isOld:true,
+    data: qs.stringify(data)
   })
 }
 

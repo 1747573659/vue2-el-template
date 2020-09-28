@@ -22,7 +22,7 @@
         </template>
 
         <template v-slot:formfoot>
-          <el-button @click="wmdownloadExcel">导出</el-button>
+          <el-button v-permission.page="'ACCOUNT_ROLE_ADD,ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD_EXPORT'"  size="small" @click="wmdownloadExcel">导出</el-button>
         </template>
       </query-group>
     </div>

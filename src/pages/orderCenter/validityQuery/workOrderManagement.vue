@@ -8,8 +8,8 @@
           @search="handleFilter"
         >
           <template v-slot:formfoot >
-            <router-link to="/orderCenter/validityQuery/workOrderManagementdetail">
-                <el-button style="margin-left:20px">新增</el-button>
+            <router-link v-permission.page="WORKORDERMANAGEMENT_ADD" to="/customer/workorder/workOrderManagementdetail">
+                <el-button size="small" style="margin-left:20px">新增</el-button>
               </router-link>
           </template>
         </query-group>
@@ -178,7 +178,7 @@ export default {
     },
     viewResClick(e){
       const {sheetNo,orderType}=e
-      this.$router.push({ path: '/orderCenter/validityQuery/workOrderManagementdetail', query: { sheetNo, orderType}})
+      this.$router.push({ path: '/customer/workorder/workOrderManagementdetail', query: { sheetNo, orderType}})
     },
     queryWorkOrderList(){
       this.loading=true
