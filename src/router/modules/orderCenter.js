@@ -4,7 +4,7 @@ import Layout from '@/layout'
 const orderCenter = {
   path: '/orderCenter',
   name: 'orderCenter',
-  code: 'KM_SETTING',
+  code: 'ORDERCENTER',
   component: Layout,
   meta: {
     title: '订单管理',
@@ -14,7 +14,7 @@ const orderCenter = {
     {
       path: 'validityQuery',
       name: 'validityQuery',
-      code: 'KM_SETTING_BASEINFO',
+      code: 'ORDERCENTER_VALIDITYQUERY',
       redirect: { name: 'baseInfoIndex' },
       component: _import('dataCenter/index'),
       meta: {
@@ -26,24 +26,10 @@ const orderCenter = {
           path: 'takeawayPeriod',
           component: () => import('@/pages/orderCenter/validityQuery/takeawayPeriod.vue'),
           name: 'takeawayPeriod',
-          code: 'KM_SETTING_BASEINFO_INDEX',
+          code: 'ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD',
           meta: { title: '享钱外卖有效期', noCache: false, roles: ['admin', 'other'], isSubMenu: true, name: 'MerchantOrderQuery' }
         },
-        {
-          path: 'workOrderManagement',
-          component: () => import('@/pages/orderCenter/validityQuery/workOrderManagement.vue'),
-          name: 'workOrderManagement',
-          code: 'KM_SETTING_BASEINFO_INDEX',
-          meta: { title: '工单管理', noCache: false, roles: ['admin', 'other'], isSubMenu: true, name: 'MerchantOrderQuery' }
-        },
-        {
-          path: 'workOrderManagementdetail',
-          component: () => import('@/pages/orderCenter/validityQuery/workOrderManagementdetail.vue'),
-          name: 'workOrderManagementdetail',
-          hidden: true,
-          code: 'KM_SETTING_BASEINFO_INDEX',
-          meta: { title: '工单管理详情', noCache: false, roles: ['admin', 'other'], isSubMenu: true, name: 'MerchantOrderQuery' }
-        }
+        
         
       ]
     }

@@ -1,6 +1,6 @@
 import { _import } from '@/utils'
 import Layout from '@/layout'
-
+import kmContainer from '@/components/km-container'
 const dataCenter = {
   path: '/dataCenter',
   name: 'dataCenter',
@@ -27,21 +27,21 @@ const dataCenter = {
           component: () => import('@/pages/dataCenter/transactionInquiry/merchantOrderQuery.vue'),
           name: 'MerchantOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_MERCHANTORDERQUERY',
-          meta: { title: '商户订单查询', noCache: false, roles: ['admin', 'other'], isSubMenu: true, name: 'MerchantOrderQuery' }
+          meta: { title: '商户订单查询', name: 'MerchantOrderQuery' }
         },
         {
           path: 'singleOrderQuery',
           component: () => import('@/pages/dataCenter/transactionInquiry/singleOrderQuery.vue'),
           name: 'SingleOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_SINGLEORDERQUERY',
-          meta: { title: '单笔订单查询', noCache: false, roles: ['admin', 'other'], isSubMenu: true, name: 'SingleOrderQuery' }
+          meta: { title: '单笔订单查询',name: 'SingleOrderQuery' }
         },
         {
           path: 'refundOrderQuery',
           component: () => import('@/pages/dataCenter/transactionInquiry/refundOrderQuery.vue'),
           name: 'RefundOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_REFUNDORDERQUERY',
-          meta: { title: '退款订单查询', noCache: false, roles: ['admin', 'other'], isSubMenu: true, name: 'RefundOrderQuery' }
+          meta: { title: '退款订单查询',name: 'RefundOrderQuery' }
         }
       ]
     }
