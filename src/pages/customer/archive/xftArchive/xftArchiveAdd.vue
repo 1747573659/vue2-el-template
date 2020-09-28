@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="xft-add">
+    <div class="xft-add" v-loading="addLoading">
       <div class="header">
         <el-row>
           <el-col :span="12" class="title-text" v-if="auditStatus !== undefined">
@@ -144,14 +144,14 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveBaseVO.merchantType === 3">
+          <el-row v-show="form.archiveBaseVO.merchantType === 3">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="企业信息公示网照片" prop="archiveOtherVO.enterpriseInfoScreenshot">
                 <upload-pic alt="企业信息公示网照片" :imagePath="form.archiveOtherVO.enterpriseInfoScreenshot" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.enterpriseInfoScreenshot') }" :exampleImg="exampleImg.enterpriseInfoScreenshot" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveBaseVO.merchantType === 4">
+          <el-row v-show="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
               <div>
                 <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
@@ -167,7 +167,7 @@
               </div>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveBaseVO.merchantType === 4">
+          <el-row v-show="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="租赁合同照二" prop="archiveOtherVO.contractOfTenancy2">
                 <upload-pic alt="租赁合同照二" :imagePath="form.archiveOtherVO.contractOfTenancy2" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy2') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
@@ -364,7 +364,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveExpandVO.acctType === 1">
+          <el-row v-show="form.archiveExpandVO.acctType === 1">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
                 <upload-pic alt="银行卡正面照" :imagePath="form.archiveExpandVO.bankCardFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.bankCardFrontUrl') }" :exampleImg="exampleImg.bankCardFrontUrl" @click="imgClick"> </upload-pic>
@@ -376,14 +376,14 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveExpandVO.acctType === 2">
+          <el-row v-show="form.archiveExpandVO.acctType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
                 <upload-pic alt="开户许可证" :imagePath="form.archiveExpandVO.openingPermitUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.openingPermitUrl') }" :exampleImg="exampleImg.openingPermitUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
+          <el-row v-show="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="收款企业法人身份证正面照" prop="archiveOtherVO.cashreceiveIdFrontUrl">
                 <upload-pic alt="收款企业法人身份证正面照" :imagePath="form.archiveOtherVO.cashreceiveIdFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashreceiveIdFrontUrl') }" :exampleImg="exampleImg.cashreceiveIdFrontUrl" @click="imgClick"> </upload-pic>
@@ -395,7 +395,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
+          <el-row v-show="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="第三方对公结算授权函" prop="archiveOtherVO.publicAuthorization">
                 <upload-pic alt="第三方对公结算授权函" :imagePath="form.archiveOtherVO.publicAuthorization" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.publicAuthorization') }" :exampleImg="exampleImg.publicAuthorization" @click="imgClick"> </upload-pic>
@@ -524,6 +524,7 @@ export default {
   },
   data() {
     return {
+      addLoading: false,
       isCopy: false,
       auditStatus: null,
       auditStatusList: {
@@ -1081,6 +1082,7 @@ export default {
       })
     },
     async getDetail() {
+      this.addLoading = true
       let data = {
         archiveId: Number(this.$route.query.id)
       }
@@ -1115,7 +1117,10 @@ export default {
           this.form.archiveBaseVO.auditStatus = null
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        this.addLoading = false
+      }
     },
   },
   mounted() {

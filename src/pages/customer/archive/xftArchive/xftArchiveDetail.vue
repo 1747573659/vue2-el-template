@@ -109,40 +109,40 @@
         <el-form-item label="微信子商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.name}}
+              {{subShopForm.wxSubMchIds}}
             </el-col>
             <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.name)" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.wxSubMchIds)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="支付宝子商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.url}}
+              {{subShopForm.aliSmids}}
             </el-col>
             <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.url)" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.aliSmids)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="银总联商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.creatorName}}
+              {{subShopForm.unionPayMchIds}}
             </el-col>
             <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.creatorName)" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.unionPayMchIds)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="银联子商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.completeUrl}}
+              {{subShopForm.corMchNos}}
             </el-col>
             <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.completeUrl)" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.corMchNos)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -159,7 +159,8 @@
 import { 
   queryXftPage,
   queryContactInfo,
-  queryAuthorizationStatus
+  queryAuthorizationStatus,
+  querySubMerchantNo
 } from '@/api/xftArchive'
 export default {
   data() {
@@ -237,17 +238,24 @@ export default {
       }
       try {
         const res = await queryAuthorizationStatus(data)
+        this.$alert(res, '', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.getList()
+          }
+        })
       } catch(error){}
     },
-    querySubShop(row) {
+    async querySubShop(row) {
       let data = {
-        
+        masterId: row.mchMasterId,
+        mchId: row.mchId
       }
       try {
-        // const res = await querySubMerchantNo(data)
+        const res = await querySubMerchantNo(data)
+        this.subShopForm = res
+        this.subShopInfoVisible = true
       } catch(error) {}
-      this.subShopForm = row
-      this.subShopInfoVisible = true
     },
     handleSizeChange(value) {
       this.pageSize = value
