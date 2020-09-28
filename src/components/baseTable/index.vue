@@ -10,7 +10,7 @@
   <div class="base-table-container">
     <el-row>
       <el-col :span="24">
-        <el-table v-loading="loading" :data="list" @selection-change="handleSelectionChange" v-bind="$attrs">
+        <el-table :max-height="750" v-loading="loading" :data="list" @selection-change="handleSelectionChange" v-bind="$attrs">
           <!--   -->
           <template v-for="(column, index) in columns">
             <!-- 复选框 -->
@@ -19,6 +19,7 @@
               v-if="column.type === 'selection'"
               type="selection"
               width="55"
+              
             ></el-table-column>
             <!-- 序号 -->
             <el-table-column

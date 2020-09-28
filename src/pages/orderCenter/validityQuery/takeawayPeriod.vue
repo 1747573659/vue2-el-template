@@ -22,7 +22,7 @@
         </template>
 
         <template v-slot:formfoot>
-          <el-button @click="wmdownloadExcel">导出</el-button>
+          <el-button size="small" @click="wmdownloadExcel">导出</el-button>
         </template>
       </query-group>
     </div>

@@ -56,7 +56,7 @@
           ></el-date-picker>
         </el-form-item>
       </template>
-      <el-button class="xdd_small-btn" @click="search" type="primary">查询</el-button>
+      <el-button size="small" class="xdd_small-btn" @click="search" type="primary">查询</el-button>
       <slot name="formfoot"></slot>
     </el-form>
     <slot name="foot"></slot>
@@ -126,6 +126,9 @@ export default {
 
 <style scoped lang="scss">
 .query-group-container {
+  .xdd_small-btn{
+    
+  }
   overflow: hidden;
   .all-fr {
     float: left;

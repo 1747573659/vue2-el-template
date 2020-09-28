@@ -9,7 +9,7 @@
         >
           <template v-slot:formfoot >
             <router-link to="/orderCenter/validityQuery/workOrderManagementdetail">
-                <el-button style="margin-left:20px">新增</el-button>
+                <el-button size="small" style="margin-left:20px">新增</el-button>
               </router-link>
           </template>
         </query-group>

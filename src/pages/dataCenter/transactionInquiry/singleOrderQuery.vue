@@ -87,7 +87,7 @@
     </div>
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
-      <el-table :data="tabData" ref="table">
+      <el-table :max-height="750" :data="tabData" ref="table">
         <el-table-column label="交易时间" prop="createDate"></el-table-column>
         <el-table-column label="支付订单号" prop="orders"></el-table-column>
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
