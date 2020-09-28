@@ -204,8 +204,10 @@ export default {
           this.submitLoading = true
           modifyShop(this.ruleForm)
             .then(() => {
-              this.$message.success('保存成功')
-              this.$router.push({ path: '/customer/merchant/merchantManage' })
+              this.$message.success('保存成功！')
+              this.$store.dispatch('delTagView', this.$route).then(() => {
+                this.$router.push({ path: '/customer/merchant/merchantManage' })
+              })  
             })
             .finally(() => {
               this.submitLoading = false

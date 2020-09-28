@@ -261,6 +261,8 @@ export default {
         { id: '', name: '全部' },
         { id: 0, name: '停用' },
         { id: 1, name: '启用' },
+        { id: -1, name: '删除' },
+        { id: 2, name: '待审核' },
       ],
       loading: false,
       total: 0,
@@ -293,6 +295,9 @@ export default {
   created() {
     this.queryClerkList()
     this.queryAgentPage()
+    this.queryShopListByPage()
+  },
+  activated () {
     this.queryShopListByPage()
   },
   methods: {

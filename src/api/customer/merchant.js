@@ -59,7 +59,7 @@ export function addShop(data) {
   return request({
     url: urlLinks.addShop,
     method: 'post',
-    params: data
+    data
   })
 }
 
@@ -68,7 +68,7 @@ export function modifyShop(data) {
   return request({
     url: urlLinks.modifyShop,
     method: 'post',
-    params: data
+    data
   })
 }
 
