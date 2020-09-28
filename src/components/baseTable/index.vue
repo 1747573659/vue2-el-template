@@ -1,10 +1,3 @@
-<!--
- * @Author: wuhao
- * @Date: 2019-03-26 10:05:10
- * @LastEditors: wuhao
- * @LastEditTime: 2019-04-15 15:04:24
- * @Description: 封装el-table
- -->
 
 <template>
   <div class="base-table-container">

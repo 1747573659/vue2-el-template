@@ -1,10 +1,4 @@
-<!--
- * @Author: wuhao
- * @Date: 2019-03-26 10:30:25
- * @LastEditors: wuhao
- * @LastEditTime: 2019-04-04 17:04:03
- * @Description: 封装table查询条件
- -->
+
 <template>
   <div class="query-group-container">
     <slot name="header"></slot>
@@ -127,7 +121,7 @@ export default {
 <style scoped lang="scss">
 .query-group-container {
   .xdd_small-btn{
-    
+
   }
   overflow: hidden;
   .all-fr {
