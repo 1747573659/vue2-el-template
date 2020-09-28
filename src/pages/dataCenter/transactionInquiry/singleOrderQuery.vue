@@ -239,6 +239,10 @@ export default {
       } catch {}
     },
     handleSearch () {
+      if(!this.formData.shopAdminId){
+        this.$message.error("请先选择商户")
+        return
+      }
       this.pageNo = 1
       this.searchLock = true
       this.handleQueryPage()
