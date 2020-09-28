@@ -7,7 +7,7 @@ const dataCenter = {
   code: 'KM_SETTING',
   component: Layout,
   meta: {
-    title: '交易数据',
+    title: '数据中心',
     name: 'dataCenter'
   },
   children: [
@@ -18,7 +18,7 @@ const dataCenter = {
       redirect: { name: 'baseInfoIndex' },
       component: _import('dataCenter/index'),
       meta: {
-        title: '交易查询',
+        title: '交易数据',
         name: 'transactionInquiry'
       },
       children: [
