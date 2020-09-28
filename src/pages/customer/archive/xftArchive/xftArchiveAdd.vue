@@ -1021,7 +1021,6 @@ export default {
       } catch(error) {}
     },
     async toSave() {
-      debugger
       this.$refs.form.validateField('archiveBaseVO.merchantId', async (errorMessage) => {
         if (!errorMessage) {
           try {

@@ -71,8 +71,11 @@ export default {
     }
   },
   computed: {
-    imageUrl() {
-      return this.imagePath || ''
+    imageUrl: {
+      get: function () { 
+        return this.imagePath
+      },
+      set: function () {}
     }
   },
   methods: {
