@@ -182,8 +182,10 @@
                   <span>
                     <el-checkbox
                       v-model="item.checked"
+                      :disabled="item.quotaNo === 0"
                       @change="changeCheckbox(item)"
-                    ></el-checkbox>
+                    >
+                    </el-checkbox>
                     {{ item.payType | fiterQuotaPayType }}（剩余配额
                     <span style="color: #FF6010">{{ item.quotaNo }}</span
                     >，建议售价：<span style="color: #FF6010">{{
@@ -198,8 +200,7 @@
                       size="small"
                       v-model="item.input"
                       :disabled="!item.checked"
-                      onkeyup="this.value = this.value.replace(/^[1-9][0-9]*]/g,'');"
-                      @blur="blur(item)"
+                      @input="checkoutQuotaValue(item)"
                     >
                     </el-input>
                     个配额
@@ -319,11 +320,11 @@ export default {
     this.queryAgentPage()
     this.queryAgentAppAndQuota()
   },
-  activated(){
+  activated() {
     this.queryAgentPage()
   },
   methods: {
-    blur(item) {
+    checkoutQuotaValue(item) {
       const value = item.input
       if (isPositiveInteger(value)) {
         if (Number(value) > item.quotaNo) {
@@ -332,7 +333,7 @@ export default {
         }
       } else {
         item.input = ''
-        this.$message.error('请输入大于0的正整数！')
+        // this.$message.error('请输入大于0的正整数！')
       }
     },
     onQuotaComfirm() {
@@ -351,7 +352,8 @@ export default {
       }
 
       if (selectPayType.length === 0) {
-        return this.$message.error('合计金额为零，数据异常')
+        // return this.$message.error('合计金额为零，数据异常')
+        return this.$message.error('请选择分配醒额')
       }
 
       const params = {
