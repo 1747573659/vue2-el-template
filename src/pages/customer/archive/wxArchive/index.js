@@ -26,6 +26,14 @@ export const detailOptions = [
   { value: 3, label: '待签约' },
   { value: 4, label: '签约完成' }
 ]
+export const updateStatusOptions = [
+  { value: -2, label: '已冻结' },
+  { value: -1, label: '已驳回' },
+  { value: 1, label: '资料校验中' },
+  { value: 2, label: '待账户验证' },
+  { value: 3, label: '审核中' },
+  { value: 4, label: '待签约' }
+]
 
 export const rateOptions = [
   {
@@ -125,8 +133,9 @@ export const formObj = {
     hardIdUrl: '', // 手持身份证正面照
     openingPermitUrl: '', // 开户许可证号
     bankCardFrontUrl: '', //银行卡正面照
-    bank: 2, //银行
-    bankSub: 313227010350, //所属支行
+    bank: '', //银行
+    bankName:'',
+    bankSub: '', //所属支行
     bankCard: '', //银行账号
     bankAccountName: '', //账户名
     bankProvince: '', //银行所在省
@@ -181,6 +190,7 @@ export const detailValidate = {
   'archiveExpandVO.openingPermitUrl': [{ required: true, message: '请输入开户许可证', trigger: 'change' }],
   'archiveExpandVO.bankCardFrontUrl': [{ required: true, message: '请输入银行卡正面照', trigger: 'change' }],
   'archiveExpandVO.bank': [{ required: true, message: '请输入银行', trigger: 'change' }],
+  'archiveExpandVO.bankName': [{ required: true, message: '请输入银行', trigger: 'change' }],
   'archiveExpandVO.bankSub': [{ required: true, message: '请输入所属支行', trigger: 'change' }],
   'archiveExpandVO.bankCard': [{ required: true, message: '请输入银行账号', trigger: 'change' }],
   'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'change' }],

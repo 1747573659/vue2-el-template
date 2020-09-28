@@ -11,17 +11,25 @@
             <span v-if="scope.row.status === -1"
               >驳回<el-button style="margin-left: 20px;" @click="handleReason(scope.row)" type="text" size="small" v-if="!scope.row.updateStatus">原因</el-button></span
             >
+            <span v-else-if="!scope.row.status">--</span>
             <span v-else>{{ detailOptions[scope.row.status].label }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="updateStatus" label="升级状态"></el-table-column>
+        <el-table-column label="升级状态">
+          <template slot-scope="scope">
+            <span v-if="scope.row.updateStatus === -1"
+              >已驳回<el-button style="margin-left: 20px;" @click="handleReason(scope.row)" type="text" size="small" v-if="!scope.row.updateStatus">原因</el-button></span
+            >
+            <span v-else-if="!scope.row.updateStatus">--</span>
+            <span v-else>{{ updateStatusOptions[scope.row.updateStatus].label }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" align="right" width="400px">
           <template slot-scope="scope">
-            <div v-if="scope.row.status !== -1">
-              <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null">立即签约</el-button>
-              <el-button type="text" size="small" v-if="scope.row.updateStatus === 4">升级签约</el-button>
-              <el-button type="text" size="small" v-if="scope.row.updateStatus === 2">验证账户</el-button>
-            </div>
+            <el-button type="text" size="small">立即签约</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null">立即签约</el-button>
+            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4">升级签约</el-button>
+            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 2">验证账户</el-button>
             <span v-else>--</span>
           </template>
         </el-table-column>
@@ -84,14 +92,15 @@
 
 <script>
 import { generalDetail } from '@/api/wxArchive'
-import { detailOptions } from './index.js'
+import { detailOptions, updateStatusOptions } from './index.js'
 
 export default {
   data() {
     return {
       detailOptions,
+      updateStatusOptions,
       isReason: false,
-      reasonMsg:'',
+      reasonMsg: '',
       isTabLock: false, // 锁状态
       tableData: [],
       currentPage: 1,

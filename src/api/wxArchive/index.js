@@ -9,10 +9,12 @@ const urlLinks = {
   generalDetail: 'archive/general/generalDetail',
   queryShopListByPage: 'shop/queryShopListByPage',
   queryBankPage: 'branch/queryBankPage',
+  queryBranchPage: 'branch/queryBranchPage',
   submit: 'archive/general/submit',
   detail: 'archive/general/detail',
   refund: 'archive/general/refund',
-  submitToVerify: 'archive/general/submitToVerify'
+  submitToVerify: 'archive/general/submitToVerify',
+  businessCategory: 'archive/general/businessCategory'
 }
 
 // 分页查询
@@ -67,10 +69,19 @@ export function queryShopListByPage(data) {
   })
 }
 
-// 商户查询
+// 查询银行
 export function queryBankPage(data) {
   return request({
     url: urlLinks.queryBankPage,
+    method: 'POST',
+    data
+  })
+}
+
+// 查询银行
+export function queryBranchPage(data) {
+  return request({
+    url: urlLinks.queryBranchPage,
     method: 'POST',
     data
   })
@@ -109,5 +120,14 @@ export function submitToVerify(data) {
     url: urlLinks.submitToVerify,
     method: 'POST',
     data
+  })
+}
+
+// 经营类目
+export function businessCategory(data) {
+  return request({
+    url: urlLinks.businessCategory,
+    method: 'POST',
+    data: qs.stringify(data)
   })
 }
