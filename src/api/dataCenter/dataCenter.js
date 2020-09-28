@@ -1,6 +1,7 @@
 import request from '@/utils/request'
 //import { parse} from "query-string";
-const queryString = require('query-string');
+
+import qs from 'qs'
 const urlLinks = {
   // 分页角色列表
   addWorkOrder: '/workOrder/addWorkOrder',
@@ -22,7 +23,7 @@ export function queryProductList(data) {
     url: urlLinks.queryProductList,
     method: 'post',
     isOld:true,
-    data:queryString.stringify(data)
+    data:qs.stringify(data)
   })
 }
 export function queryAgent(data) {
@@ -44,6 +45,6 @@ export function queryOrderDetail(data) {
     url: urlLinks.queryOrderDetail,
     method: 'post',
     isOld:true,
-    data:queryString.stringify(data)
+    data:qs.stringify(data)
   })
 }
