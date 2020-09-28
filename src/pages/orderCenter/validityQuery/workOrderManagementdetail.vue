@@ -19,7 +19,7 @@
           </el-radio-group>
         </el-form-item>
         <el-form-item label="产品" prop="productNoA">
-          <el-cascader ref="cascader" v-model="ruleForm.productNoA" :options="options" :props="productProps" @change="handleChange"></el-cascader>
+          <el-cascader ref="cascader" v-model="ruleForm.productNoA" :options="options" :props="productProps" ></el-cascader>
         </el-form-item>
         <el-form-item label="工单描述" prop="demandDec">
           <el-input type="textarea" v-model="ruleForm.demandDec"></el-input>
@@ -28,7 +28,11 @@
           <el-upload
             class="upload-demo"
             name="files"
-            action="/JFService/KMJFService.asmx/uploadimage"
+            :on-exceed="handleexceed"
+            :limit="8"
+            :accept="'image/*,video/*,.rar,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx'"
+            :action="uploadurl"
+            :before-upload="handleBeforeupload"
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-success="handleSuccess"
@@ -72,7 +76,9 @@ import {
   import { 
   uploadimage
   } from '@/api/dataCenter/common.js'
-  import ipConfig from '@/utils/baseUrl'
+import baseurl from '@/utils/baseUrl.js'
+const {WORK_ORDER_URL}=baseurl
+console.log(WORK_ORDER_URL)
 export default {
   name: "validityPeriod",
   mixins: [],
@@ -91,6 +97,7 @@ export default {
         linkPhone: "",
         fileName2:" "
       },
+      uploadurl:WORK_ORDER_URL+"/JFService/KMJFService.asmx/uploadimage?jsoncallback=?",
       rules: {
         demandName: [
           { required: true, message: "请填写工单标题", trigger: "blur" },
@@ -118,9 +125,11 @@ export default {
         "children":"branchs"
       },
       options: [
+
       ],
     };
   },
+
    mounted(){
     async function getRequest(res){
       await this.queryProductList()
@@ -129,9 +138,14 @@ export default {
     if(this.$route.query.sheetNo){
       this.isEdit=true
       getRequest.call(this,this.$route.query)
+    }else{
+      this.queryProductList()
     }
   },
   methods: {
+    handleexceed(){
+      this.$message.error("最多上传8个文件");
+    },
     submitForm(formName) {
       const cascader=this.$refs['cascader'].getCheckedNodes()[0];
       this.$refs[formName].validate((valid) => {
@@ -142,10 +156,11 @@ export default {
           requestData.branch=cascader.path[1]
           requestData.productName=cascader.pathLabels[0]
           requestData.branchName=cascader.pathLabels[1]
-          requestData.fileName=this.fileList.map(res=>res.name).join()
-          //requestData.fileName2=this.fileList.map(res=>res.name).join()
+          requestData.fileName2=this.fileList.filter(res=>/^video\/.+$/.test(res.type)).map(res=>res.name).join()
+          requestData.fileName=this.fileList.filter(res=>!(/^video\/.+$/.test(res.type))).map(res=>res.name).join()
           addWorkOrder(requestData).then(res=>{
-            this.$message("创建成功")
+            this.$message.success("创建成功")
+            this.$router.go(-1)
           })
         } else {
           console.log("error submit!!");
@@ -156,7 +171,8 @@ export default {
     handleSuccess(response, file, fileList){
       this.fileList.push({
         name:response.fileName,
-        url:response.url
+        url:WORK_ORDER_URL+"/KMjsfw/images/"+response.fileName,
+        type:file.raw.type
       })
     },
     queryProductList(){
@@ -180,33 +196,36 @@ export default {
           let requestData=Object.assign({},res)
           this.ruleForm=res
           this.ruleForm.productNoA=[requestData.productNo,requestData.branch]
-          this.fileList=requestData.fileName.split(",").map(res1=>{
+          const files1=requestData.fileName?requestData.fileName.split(",").map(res1=>{
             return {
               name:res1,
-              url:ipConfig.WORK_ORDER_URL+"/KMjsfw/images/"+res1
+              url:WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+              type:"image/*"
             }
-          })
+          }):[]
+          const files2=requestData.fileName2?requestData.fileName2.split(",").map(res1=>{
+            return {
+              name:res1,
+              url:WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+              type:"video/*"
+            }
+          }):[]
+          this.fileList=[...files1,...files2]
         }
       )
     },
-    handleChange(e){
-      console.log(e)
-    },
     resetForm(formName) {
       this.$refs[formName].resetFields();
-      // this.ruleForm={
-      //   demandName: "",
-      //   orderType: "",
-      //   productNoA: [],
-      //   demandDec: "",
-      //   fileName: "",
-      //   custName: "",
-      //   linkName: "",
-      //   linkPhone: "",
-      // }
+      this.fileList=[]
+    },
+    handleBeforeupload(file){
+      if(file.size / 1024 / 1024 > 50){
+         this.$message.warning('文件大小限制50M以内')
+         return false
+      }
     },
     handleRemove(file, fileList) {
-      console.log(file, fileList);
+      this.fileList=this.fileList.filter(re=>re.uid!==file.uid)
     },
     handlePreview(file) {
       console.log(file);
