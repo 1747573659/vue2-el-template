@@ -377,7 +377,7 @@ export default {
       const data = {
         dataSource: 1,
         paySn: row.id,
-        // 'sn': '9115882679906900459209030',
+        'sn': '',
         //shopId: row.shopId
       }
       try {
@@ -455,6 +455,10 @@ export default {
     },
     handleSearch () {
       if (this.formData.shopId) {
+        if ((this.formData.transactionTime[1]-this.formData.transactionTime[0])>60*24*60*1000*31) {
+          this.$message.error('统计时间间隔不超过31天')
+          return false
+        }
         this.pageNo = 1
         this.searchLock = true
         this.getQueryPage().catch(() => {}).finally(() => {

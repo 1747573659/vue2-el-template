@@ -161,6 +161,10 @@ export default {
       return queryMerchantAdminPage(e)
     },
     handleSearch () {
+      if(!this.formData.shopAdminId){
+        this.$message.error("请先选择商户")
+        return
+      }
       if (!this.formData.sn && !this.formData.order) {
         this.$message.error('请输入支付订单号或者退款订单号')
         return
