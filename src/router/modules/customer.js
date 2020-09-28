@@ -248,36 +248,36 @@ const customer = {
         }
       ]
     },
-    // {
-    //   path: 'workorder',
-    //   name: 'workorder',
-    //   code: 'WORKORDER',
-    //   redirect: {
-    //     name: 'workOrderManagement'
-    //   },
-    //   component: kmContainer,
-    //   meta: {
-    //     title: '工单管理',
-    //     name: 'workorder'
-    //   },
-    //   children: [
-    //     {
-    //       path: 'workOrderManagement',
-    //       component: () => import('@/pages/orderCenter/validityQuery/workOrderManagement.vue'),
-    //       name: 'workOrderManagement',
-    //       code: 'WORKORDERMANAGEMENT',
-    //       meta: { title: '工单管理', noCache: false, name: 'workOrderManagement' }
-    //     },
-    //     {
-    //       path: 'workOrderManagementdetail',
-    //       component: () => import('@/pages/orderCenter/validityQuery/workOrderManagementdetail.vue'),
-    //       name: 'workOrderManagementdetail',
-    //       hidden: true,
-    //       code: 'WORKORDERMANAGEMENTDETAIL',
-    //       meta: { title: '工单管理详情',name: 'workOrderManagementdetail' }
-    //     }
-    //   ]
-    // }
+    {
+      path: 'workorder',
+      name: 'workorder',
+      code: 'WORKORDER',
+      redirect: {
+        name: 'workOrderManagement'
+      },
+      component: kmContainer,
+      meta: {
+        title: '工单管理',
+        name: 'workorder'
+      },
+      children: [
+        {
+          path: 'workOrderManagement',
+          component: () => import('@/pages/orderCenter/validityQuery/workOrderManagement.vue'),
+          name: 'workOrderManagement',
+          code: 'WORKORDERMANAGEMENT',
+          meta: { title: '工单管理', noCache: false, name: 'workOrderManagement' }
+        },
+        {
+          path: 'workOrderManagementdetail',
+          component: () => import('@/pages/orderCenter/validityQuery/workOrderManagementdetail.vue'),
+          name: 'workOrderManagementdetail',
+          hidden: true,
+          code: 'WORKORDERMANAGEMENTDETAIL',
+          meta: { title: '工单管理详情',name: 'workOrderManagementdetail' }
+        }
+      ]
+    }
   ]
 }
 
