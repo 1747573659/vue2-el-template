@@ -1,9 +1,11 @@
 export default function xftValidator () {
   var contactPhone = (rule, value, callback) => {
     if (!value) {
-      callback('请输入负责人电话')
+      callback(new Error('请输入负责人电话'))
     } else if (!(/^1[3456789]\d{9}$/.test(value))) {
-      callback('请输入正确的电话号码')
+      callback(new Error('请输入正确的电话号码'))
+    } else {
+      callback()
     }
   }
   var cardholderPhone = (rule, value, callback) => {
@@ -11,6 +13,8 @@ export default function xftValidator () {
       callback('请输入预留手机号')
     } else if (!(/^1[3456789]\d{9}$/.test(value))) {
       callback('请输入正确的电话号码')
+    } else {
+      callback()
     }
   }
   return {
@@ -58,9 +62,9 @@ export default function xftValidator () {
     'archiveExpandVO.bankCardFrontUrl': [{ required: true, message: '请上传银行卡正面照', trigger: 'change' }],
     'archiveExpandVO.bankCardBackUrl': [{ required: true, message: '请上传身份证背面照', trigger: 'change' }],
     'archiveExpandVO.openingPermitUrl': [{ required: true, message: '请上传开户许可证', trigger: 'change' }],
-    'archiveExpandVO.cashreceiveIdFrontUrl': [{ required: true, message: '请上传收款企业法人身份证正面照', trigger: 'change' }],
-    'archiveExpandVO.cashreceiveIdBackUrl': [{ required: true, message: '请上传收款企业法人身份证反面照', trigger: 'change' }],
-    'archiveExpandVO.publicAuthorization': [{ required: true, message: '请上传第三方对公结算授权函', trigger: 'change' }],
+    'archiveOtherVO.cashreceiveIdFrontUrl': [{ required: true, message: '请上传收款企业法人身份证正面照', trigger: 'change' }],
+    'archiveOtherVO.cashreceiveIdBackUrl': [{ required: true, message: '请上传收款企业法人身份证反面照', trigger: 'change' }],
+    'archiveOtherVO.publicAuthorization': [{ required: true, message: '请上传第三方对公结算授权函', trigger: 'change' }],
     'archiveOtherVO.cardholderIdFrontUrl': [{ required: true, message: '请上传持卡人身份证正面照', trigger: 'change' }],
     'archiveOtherVO.cardholderIdBackUrl': [{ required: true, message: '请上传持卡人身份证反面照', trigger: 'change' }],
     'archiveOtherVO.cardholderPhoto': [{ required: true, message: '请上传持卡人手持身份证照片', trigger: 'change' }],

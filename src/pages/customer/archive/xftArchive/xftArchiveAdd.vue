@@ -144,30 +144,26 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="form.archiveBaseVO.merchantType === 3">
+          <el-row v-if="form.archiveBaseVO.merchantType === 3">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="企业信息公示网照片" prop="archiveOtherVO.enterpriseInfoScreenshot">
                 <upload-pic alt="企业信息公示网照片" :imagePath="form.archiveOtherVO.enterpriseInfoScreenshot" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.enterpriseInfoScreenshot') }" :exampleImg="exampleImg.enterpriseInfoScreenshot" @click="imgClick"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="form.archiveBaseVO.merchantType === 4">
+          <el-row v-if="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
-              <div>
-                <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
-                  <upload-pic alt="经营场所照" :imagePath="form.archiveOtherVO.businessSiteOneUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl') }" :exampleImg="exampleImg.businessSiteOneUrl" @click="imgClick"></upload-pic>
-                </el-form-item>
-              </div>
+              <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
+                <upload-pic alt="经营场所照" :imagePath="form.archiveOtherVO.businessSiteOneUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl') }" :exampleImg="exampleImg.businessSiteOneUrl" @click="imgClick"></upload-pic>
+              </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <div>
-                <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
-                  <upload-pic alt="租赁合同照一" :imagePath="form.archiveOtherVO.contractOfTenancy1" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
-                </el-form-item>
-              </div>
+              <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
+                <upload-pic alt="租赁合同照一" :imagePath="form.archiveOtherVO.contractOfTenancy1" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
+              </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="form.archiveBaseVO.merchantType === 4">
+          <el-row v-if="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="租赁合同照二" prop="archiveOtherVO.contractOfTenancy2">
                 <upload-pic alt="租赁合同照二" :imagePath="form.archiveOtherVO.contractOfTenancy2" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy2') }" :exampleImg="exampleImg.contractOfTenancy" @click="imgClick"></upload-pic>
@@ -206,7 +202,7 @@
                 </el-date-picker>
                 <span style="margin: 5px">至</span>
                 <span
-                  v-if="[3,5,6,7,9].includes(auditStatus) && !form.archiveExpandVO.legalPersonValidityEnd">
+                  v-if="[3,5,6,7,9].includes(auditStatus) && !form.archiveExpandVO.licValidityEnd">
                   长期有效
                 </span>
                 <el-date-picker
@@ -230,7 +226,7 @@
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="证件类型" prop="archiveExpandVO.cardType">
+              <el-form-item label="证件类型">
                 <el-select style="width: 240px" disabled clearable v-model="form.archiveExpandVO.cardType" placeholder="全部">
                   <el-option v-for="item in cardTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
@@ -364,7 +360,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="form.archiveExpandVO.acctType === 1">
+          <el-row v-if="form.archiveExpandVO.acctType === 1">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
                 <upload-pic alt="银行卡正面照" :imagePath="form.archiveExpandVO.bankCardFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.bankCardFrontUrl') }" :exampleImg="exampleImg.bankCardFrontUrl" @click="imgClick"> </upload-pic>
@@ -376,14 +372,14 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="form.archiveExpandVO.acctType === 2">
+          <el-row v-if="form.archiveExpandVO.acctType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
                 <upload-pic alt="开户许可证" :imagePath="form.archiveExpandVO.openingPermitUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.openingPermitUrl') }" :exampleImg="exampleImg.openingPermitUrl" @click="imgClick"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
+          <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="收款企业法人身份证正面照" prop="archiveOtherVO.cashreceiveIdFrontUrl">
                 <upload-pic alt="收款企业法人身份证正面照" :imagePath="form.archiveOtherVO.cashreceiveIdFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.cashreceiveIdFrontUrl') }" :exampleImg="exampleImg.cashreceiveIdFrontUrl" @click="imgClick"> </upload-pic>
@@ -395,7 +391,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-show="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
+          <el-row v-if="form.archiveExpandVO.acctType === 2 && form.archiveExpandVO.cashreceiveType === 2">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="第三方对公结算授权函" prop="archiveOtherVO.publicAuthorization">
                 <upload-pic alt="第三方对公结算授权函" :imagePath="form.archiveOtherVO.publicAuthorization" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.publicAuthorization') }" :exampleImg="exampleImg.publicAuthorization" @click="imgClick"> </upload-pic>
@@ -586,7 +582,7 @@ export default {
           idNumber: '',
           industrId: '',
           industrIdName: '',
-          isOpenXingPos: 2,
+          isOpenXingPos: 1,
           mchDealType: 1,
           mchTypeId: null,
           mchTypeName: '',
@@ -1025,6 +1021,7 @@ export default {
       } catch(error) {}
     },
     async toSave() {
+      debugger
       this.$refs.form.validateField('archiveBaseVO.merchantId', async (errorMessage) => {
         if (!errorMessage) {
           try {
@@ -1040,6 +1037,7 @@ export default {
     },
     async toAdd() {
       this.$refs.form.validate(async (valid) => {
+        console.log(valid)
         if (valid) {
           try {
             const res = await audit(this.form)
@@ -1117,6 +1115,7 @@ export default {
           this.form.archiveBaseVO.auditStatus = null
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus
+        this.form.archiveExpandVO.openingPermitUrl = res.archiveExpandDTO.openingPermitUrl
       } catch (error) {
       } finally {
         this.addLoading = false
@@ -1124,9 +1123,6 @@ export default {
     },
   },
   mounted() {
-    if (this.$route.query.id) {
-      this.getDetail()
-    }
     this.getIndustrIdList()
   },
   created() {
@@ -1136,6 +1132,9 @@ export default {
     this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
     if ([3,5,6,7,9].includes(this.auditStatus)) {
       this.isDetail = true
+    }
+    if (this.$route.query.id) {
+      this.getDetail()
     }
   },
 }

@@ -17,7 +17,6 @@ service.interceptors.request.use(
     if (getLocal('token')) {
       config.isOld && (config.headers['Content-Type'] = 'application/x-www-form-urlencoded') // json格式的不需要
       // 从localStorage拿token, 放到每个请求头
-      console.log(getLocal('token'))
       config.headers['token'] = getLocal('token')
     }
     return config
