@@ -1,60 +1,60 @@
 <template>
   <div>
-    <el-cascader style="width: 240px" :props="props"></el-cascader>
+    <el-cascader style="width: 240px" v-model="value" :props="props" clearable @change="change"></el-cascader>
   </div>
 </template>
 
 <script>
-let id = 0;
+/**
+ * 地区三级联动
+ */
+let areaLevel = 2
+import { queryProvinceList, queryCityList } from '@/api/area'
+
 export default {
+  props: {
+    areaList: { // 用于回显传入数据
+      type: Array,
+      default: () => []
+    }
+  },
   data() {
     return {
-      // props: {
-      //   lazy: true,
-      //   lazyLoad (node, resolve) {
-      //     console.log(node)
-      //     console.log(resolve)
-      //     const { level } = node;
-      //     setTimeout(() => {
-      //       const nodes = Array.from({ length: level + 1 })
-      //         .map(item => ({
-      //           value: ++id,
-      //           label: `选项${id}`,
-      //           leaf: level >= 2
-      //         }));
-      //       // 通过调用resolve将子节点数据返回，通知组件数据加载完成
-      //       resolve(nodes);
-      //     }, 1000);
-      //   }
-      // }
-      provinceList: [],
       props: {
         lazy: true,
-        lazyLoad (node, resolve) {
-          console.log(node, resolve)
-          const nodes = this.provinceList.map(item => ({
-            value:  item.code,
-            label: item.fullName,
-            leaf: 1
-          }))
+        lazyLoad: async function (node, resolve) {
+          const { level } = node
+          let code = node?.data?.value
+          if (code === '820000' || code === '810000') { // 由于澳门和香港只有两级联动，故做特殊处理
+            areaLevel = 1
+          }
+          let nodes = []
+          let res
+          // level为0时去请求省的列表，否则根据node.value去请求市和区，leaf用来判断是否有子节点
+          if (level === 0) {
+            res = await queryProvinceList()
+          } else {
+            res = await queryCityList({code: node.value})
+          }
+          res.forEach(item => {
+            nodes.push({
+              value: item.code,
+              label: item.name,
+              leaf: level >= areaLevel
+            })
+          })
           resolve(nodes)
         }
-      }
+      },
+      provinceList: [],
+      value: this.areaList
     }
   },
   methods: {
-    getProvinceList () {
-      import('@/api/area').then(async module => {
-        const res = await module.queryProvinceList()
-        this.provinceList = res
-      })
+    // 用于输出数据
+    change(value) {
+      this.$emit('change', value)
     }
-  },
-  created() {
-    this.getProvinceList()
   }
 }
 </script>
-
-<style lang="scss" scoped>
-</style>

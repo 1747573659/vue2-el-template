@@ -7,39 +7,75 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="name"
-          fixed
-          width="114px"
+          prop="channelName"
           label="支付通道">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="mchId"
+          label="通道商户号">
+        </el-table-column>
+        <el-table-column
+          prop="shopName"
+          label="公司名称">
+        </el-table-column>
+        <el-table-column
+          prop="bankCardNo"
+          label="银行卡号">
+          <template slot-scope="scope">
+            {{scope.row.bankCardNo || '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="createDate"
+          label="进件时间">
+          <template slot-scope="scope">
+            {{scope.row.createDate || '--'}}
+          </template>
+        </el-table-column>
+        <el-table-column
+          prop="wxBindType"
           label="微信支付">
+          <template slot-scope="scope">
+            <span v-if="scope.row.wxBindType === 1">默认使用</span>
+            <span v-else-if="scope.row.wxBindType === 2">正在使用</span>
+            <span v-else>--</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="aliBindType"
           label="支付宝支付">
+          <template slot-scope="scope">
+            <span v-if="scope.row.aliBindType === 1">默认使用</span>
+            <span v-else-if="scope.row.aliBindType === 2">正在使用</span>
+            <span v-else>--</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="wxSubMchId"
           label="微信子商户号">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="wxAuthStatus"
           label="授权状态">
+          <template slot-scope="scope">
+            {{scope.row.wxAuthStatus === 1 ? '已授权' : '未授权'}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="feeRate"
           label="授权费率">
+          <template slot-scope="scope">
+            {{scope.row.feeRate + '%'}}
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
           align="right"
           width="400px">
           <template slot-scope="scope">
-            <el-button @click="toAuthor(scope.row)" type="text" size="small">子商户号授权</el-button>
-            <el-button @click="queryStatus(scope.row)" type="text" size="small">查询授权状态</el-button>
-            <el-button @click="querySubShop(scope.row)" type="text" size="small">查询子商户号</el-button>
+            <el-button @click="toAuthor(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">子商户号授权</el-button>
+            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">查询授权状态</el-button>
+            <el-button @click="querySubShop(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7'">查询子商户号</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -60,7 +96,7 @@
       :visible.sync="authorVisible"
       width="507px"
       class="author-dialog">
-      <div class="author-dialog-text">1. 确认商户联系人：已在微信客户端内为  完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”</div>
+      <div class="author-dialog-text">1. 确认商户联系人：<span style="color: #FF6010">{{authorForm.contactName}}(手机尾号{{authorForm.contactPhone}})</span>已在微信客户端内为<span style="color: #FF6010">{{authorForm.shopName}}</span>完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”</div>
       <div class="author-dialog-text">2. 商户联系人：扫描下方小程序二维码，按照流程指引为特约商户号完成授权</div>
       <img :src="imgSrc" class="author-dialog-img" alt="qrcode">
     </el-dialog>
@@ -120,10 +156,15 @@
 </template>
 
 <script>
-import { queryDocumentByPage } from '@/api/setting/material'
+import { 
+  queryXftPage,
+  queryContactInfo,
+  queryAuthorizationStatus
+} from '@/api/xftArchive'
 export default {
   data() {
     return {
+      authorForm: {},
       subShopForm: {
       },
       tableData: [],
@@ -150,11 +191,61 @@ export default {
       this.$message.success('复制成功')
       document.body.removeChild(transfer)
     },
-    toAuthor(row) {
+    async toAuthor(row) {
+      let data = {
+        archiveId: row.baseinfoId
+      }
+      try {
+        const res = await queryContactInfo(data)
+        this.authorForm = {
+          contactName: res.contactName,
+          contactPhone: res.contactPhone.substring(7),
+          shopName: row.shopName
+        }
+        switch(row.channelCode) {
+          case '7':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/7.png')
+            break
+          case '20':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/20.png')
+            break
+          case '22':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/22.png')
+            break
+          case '25':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/25.png')
+            break
+          case '27':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/27.png')
+            break
+          case '29':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/29.png')
+            break
+          case '30':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/30.png')
+            break
+        }
       this.authorVisible = true
+      } catch(error) {}
     },
-    queryStatus(row) {},
+    async queryStatus(row) {
+      let data = {
+        bankChannelCode: row.channelCode,
+        baseInfoId: row.baseinfoId,
+        masterId: row.mchMasterId,
+        mchId: row.mchId
+      }
+      try {
+        const res = await queryAuthorizationStatus(data)
+      } catch(error){}
+    },
     querySubShop(row) {
+      let data = {
+        
+      }
+      try {
+        // const res = await querySubMerchantNo(data)
+      } catch(error) {}
       this.subShopForm = row
       this.subShopInfoVisible = true
     },
@@ -170,12 +261,12 @@ export default {
     async getList() {
       this.tableLoading = true
       let data = {
-        "orders": {},
+        "archiveId": this.$route.query.id,
         "page": this.currentPage,
         "rows": this.pageSize,
       }
       try {
-        const res = await queryDocumentByPage(data)
+        const res = await queryXftPage(data)
         this.tableData = res.results
         this.totalPage = res.totalCount
       } catch (e) {} finally {

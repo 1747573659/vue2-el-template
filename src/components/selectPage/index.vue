@@ -37,6 +37,10 @@ export default {
     }
   },
   props:{
+    value: {
+      type: String,
+      default: ''
+    },
     isMaxPage: {
       type: Boolean,
       default: false
@@ -76,6 +80,9 @@ export default {
   computed: {
   },
   watch: {
+    value() {
+      this.bindValue = this.value
+    },
     options() {
       if (this.options?.length > 0) {
         if (this.id !== 'id') {

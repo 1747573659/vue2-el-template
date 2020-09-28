@@ -41,7 +41,9 @@ const actions = {
       login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
         .then(response => {
           // 重新设置异步路由里面的重定向地址
-          let redirectList = resetRedirect(convertRouter(routeTree(response.menus), asyncRouterMap))
+          const treeRoute = routeTree(response.menus)
+          const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
+          let redirectList = resetRedirect(convertTreeRouter)
           commit('SET_ROUTES', [...redirectList])
           router.addRoutes(state.routes)
           setLocal('token', response.token)
@@ -84,13 +86,14 @@ const actions = {
       getMenuInfo()
         .then(res => {
           // 重新设置异步路由里面的重定向地址
-          let redirectList = resetRedirect(convertRouter(routeTree(res), asyncRouterMap))
+          const treeRoute = routeTree(res)
+          const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
+          let redirectList = resetRedirect(convertTreeRouter)
           commit('SET_ROUTES', [...redirectList])
           resolve()
         })
         .catch(error => {
           commit('SET_ROUTES', [...constantRoutes])
-          router.replace({ name: 'login' })
           reject(error)
         })
     })

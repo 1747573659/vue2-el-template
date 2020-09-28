@@ -1,5 +1,6 @@
 import { _import } from '@/utils'
 import Layout from '@/layout'
+import kmContainer from '@/components/km-container'
 
 const setting = {
   path: '/setting',
@@ -16,9 +17,10 @@ const setting = {
       name: 'baseInfo',
       code: 'KM_SETTING_BASEINFO',
       redirect: { name: 'baseInfoIndex' },
-      component: _import('setting/index'),
+      component: kmContainer,
       meta: {
         title: '基本信息',
+        icon: 'el-icon-menu',
         name: 'baseInfo'
       },
       children: [
@@ -29,7 +31,8 @@ const setting = {
           component: _import('setting/baseInfo/baseInfo'),
           meta: {
             title: '基本信息',
-            name: 'baseInfoIndex'
+            name: 'baseInfoIndex',
+            cache: true
           }
         }
       ]
@@ -39,20 +42,22 @@ const setting = {
       name: 'account',
       code: 'KM_SETTING_ACCOUNT',
       redirect: { name: 'role' },
-      component: _import('setting/index'),
+      component: kmContainer,
       meta: {
         title: '账号管理',
+        icon: 'el-icon-menu',
         name: 'account'
       },
       children: [
         {
           path: 'role',
-          name: 'role',
+          name: 'roleManagement',
           code: 'KM_SETTING_ACCOUNT_ROLE',
           component: _import('setting/account/role/role'),
           meta: {
             title: '角色管理',
-            name: 'role'
+            name: 'roleManagement',
+            cache: true
           }
         },
         {
@@ -73,7 +78,8 @@ const setting = {
           component: _import('setting/account/account/accountSetting'),
           meta: {
             title: '账号设置',
-            name: 'accountSetting'
+            name: 'accountSetting',
+            cache: true
           }
         },
         {
@@ -94,9 +100,10 @@ const setting = {
       name: 'material',
       code: 'KM_SETTING_MATERIAL',
       redirect: { name: 'materialDownload' },
-      component: _import('setting/index'),
+      component: kmContainer,
       meta: {
         title: '其他',
+        icon: 'el-icon-menu',
         name: 'material'
       },
       children: [

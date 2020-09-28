@@ -1,14 +1,14 @@
 import router from '@/router'
 import store from '@/store'
+import { Message } from 'element-ui'
 import { getLocal } from '@/utils/storage'
 
 router.beforeEach((to, from, next) => {
   // Vuex获取获取权限信息
   const hasToken = getLocal('token')
   if (hasToken) {
-    if (to.name === 'login') {
-      next()
-    } else {
+    if (to.name === 'login') next()
+    else {
       // 如果vuex路由权限为空，则重新请求权限
       if (store.getters.routes.length === 0) {
         store
@@ -20,7 +20,7 @@ router.beforeEach((to, from, next) => {
             if (!goViewsMenus) {
               next({ name: 'login' })
             } else {
-              // 是否跳转首页，路由信息含有首页则跳转home，没有则不跳转
+              // 是否跳转首页，路由信息含有首页则跳转home，没有则不跳转，此处逻辑判断多余
               if (to.name === 'home') {
                 for (let i of goViewsMenus) {
                   if (i.name === 'home') {
@@ -31,21 +31,17 @@ router.beforeEach((to, from, next) => {
                     break
                   }
                 }
-              } else {
-                next({ ...to, replace: true })
-              }
+              } else next({ ...to, replace: true })
             }
           })
           .catch(error => {
             // 接口服务关闭时测试
-            // store.dispatch('FedLogOut').then(() => {
-            //   Message.error(error || '请重新登录')
-            //   next({ name: 'home' })
-            // })
+            store.dispatch('FedLogOut').then(() => {
+              Message.error(error || '请重新登录')
+              // next({ name: 'login' })
+            })
           })
-      } else {
-        next()
-      }
+      } else next()
     }
   } else {
     if (to.name !== 'login') {

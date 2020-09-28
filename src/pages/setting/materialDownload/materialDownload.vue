@@ -27,23 +27,27 @@
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="name"
           label="资料名称">
+          <template slot-scope="scope">
+            <span :title="scope.row.name">{{ scope.row.name }}</span>
+          </template>
         </el-table-column>
         <el-table-column
-          prop="remark"
           label="资料描述">
+          <template slot-scope="scope">
+            <span :title="scope.row.remark">{{ scope.row.remark }}</span>
+          </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
-          label="创建时间">
+          label="创建时间" width="350px">
         </el-table-column>
         <el-table-column
           label="操作"
           align="right"
-          width="70px">
+          width="150px">
           <template slot-scope="scope">
-            <el-button @click="downLoad(scope.row)" type="text" size="small">下载</el-button>
+            <el-button @click="downLoad(scope.row)" type="text" size="small" v-permission="'MATERIAL_INDEX_DOWN'">下载</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -52,7 +56,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalPage">
@@ -67,6 +71,7 @@ import { queryDocumentByPage } from '@/api/setting/material'
 import { downloadForURL } from '@/utils'
 
 export default {
+  name: 'materialDownload',
   data() {
     return {
       form: {

@@ -16,6 +16,7 @@
     <div class="data-box">
       <el-table
         v-loading="tableLoading"
+        :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column
@@ -63,7 +64,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total">
@@ -77,6 +78,7 @@
 import { queryPage, deleteSysRole } from '@/api/setting/account'
 
 export default {
+  name:'role',
   data() {
     return {
       form: {

@@ -15,9 +15,9 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="资料状态">
-              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+              <el-select style="width: 240px" clearable v-model="form.auditStatus" placeholder="全部">
                 <el-option
-                  v-for="item in statusList"
+                  v-for="item in auditStatusOptions"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id">
@@ -25,9 +25,9 @@
               </el-select>
             </el-form-item>
             <el-form-item label="认证状态">
-              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+              <el-select style="width: 240px" clearable v-model="form.wxCertStatus" placeholder="全部">
                 <el-option
-                  v-for="item in statusList"
+                  v-for="item in wxCertStatusOptions"
                   :key="item.id"
                   :label="item.name"
                   :value="item.id">
@@ -53,65 +53,77 @@
           <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'">新增</el-button>
+          <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="data-box">
       <el-table
-        :loading="tableLoading"
+        v-loading="tableLoading"
         :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.merchantShortName"
           label="商户简称">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.companyName"
           label="公司名称">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveExpandDTO.bankCard"
           label="银行卡号">
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.auditStatus"
           label="资料状态">
           <template slot-scope="scope">
-            <span class="table-text-color" @click="statusClick(scope.row)">
-              {{scope.row.creatorName}}
+            <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
+              {{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}
             </span>
+            <span v-else>{{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}</span>
           </template>
         </el-table-column>
         <el-table-column
           prop="createTime"
           label="微信认证状态">
+          <template slot-scope="scope">
+            {{wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus]}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.fixFeeRate"
           label="费率">
+          <template slot-scope="scope">
+            {{scope.row.archiveBaseDTO.fixFeeRate ? (scope.row.archiveBaseDTO.fixFeeRate / 100) + '%' : '--'}}
+          </template>
         </el-table-column>
         <el-table-column
-          prop="createTime"
+          prop="archiveBaseDTO.stopUse"
           label="停用">
+          <template slot-scope="scope">
+            {{scope.row.archiveBaseDTO.stopUse ? '停用' : '启用'}}
+          </template>
         </el-table-column>
         <el-table-column
           label="操作"
           align="right"
           width="240px">
           <template slot-scope="scope">
-            <el-button @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-if="[0,1,4,8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
+            <el-button v-if="[3,5,6,7,9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
             <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
-            <el-button @click="changeStatus(scope.row)" type="text" size="small">停用</el-button>
-            <el-dropdown style="margin-left: 12px">
+            <el-button @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
+            <el-dropdown style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item @click.native="toDetail(scope.row)">进件详情</el-dropdown-item>
-                <el-dropdown-item @click.native="shopQRCode(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
+                <el-dropdown-item style="color: #3377FF" v-if="[3,4,5].includes(scope.row.archiveBaseDTO.wxCertStatus)" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -134,7 +146,7 @@
       :visible.sync="certificationVisible"
       width="507px"
       class="certification-dialog">
-      <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">郭鼎(手机尾号9902)</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
+      <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">{{this.certificationForm.contact}}(手机尾号{{this.certificationForm.contactPhone}})</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
       <img :src="imgSrc" class="certification-dialog-img" alt="qrcode">
       <div class="certification-dialog-text">2. 完成信息补充后，引导公司法人完成法人的实名认证（或对公账户验证）</div>
       <div class="certification-dialog-text">3. 完成1-2两步操作之后，即完成了微信关于系统风控，用户资金安全的监管要求，开户成功！</div>
@@ -146,17 +158,67 @@
 </template>
 
 <script>
-import { queryDocumentByPage } from '@/api/setting/material'
-
+import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode } from '@/api/xftArchive'
 export default {
   data() {
     return {
+      certificationForm: {},
       form: {
         name: '',
         time: [],
-        status: ''
+        auditStatusList: [],
+        auditStatus: null,
+        wxCertStatus: null
       },
-      statusList: [],
+      auditStatusOptions: [
+        {id: 0, name: '未提交审核'},
+        {id: 1, name: '审核不通过编辑中'},
+        {id: 2, name: '代理商待审核'},
+        {id: 3, name: 'boss 待审核'},
+        {id: 4, name: '审核拒绝'},
+        {id: 5, name: '账号申请中'},
+        {id: 6, name: '部分账号申请通过'},
+        {id: 7, name: '账号全部申请通过'},
+        {id: 8, name: '资料待补充'},
+        {id: 9, name: '资料补充待审核'}
+      ],
+      wxCertStatusOptions: [
+        {id: 0, name: '未认证'},
+        {id: 1, name: '编辑中'},
+        {id: 2, name: '审核中'},
+        {id: 3, name: '待确认联系人信息'},
+        {id: 4, name: '审核通过'},
+        {id: 5, name: '审核驳回'},
+        {id: 6, name: '已冻结'},
+        {id: 7, name: '已作废'},
+      ],
+      auditStatusList: {
+        0: '未提交审核',
+        1: '审核不通过编辑中',
+        2: '代理商待审核',
+        3: 'boss 待审核',
+        4: '审核拒绝',
+        5: '账号申请中',
+        6: '部分账号申请通过',
+        7: '账号全部申请通过',
+        8: '资料待补充',
+        9: '资料补充待审核'
+      },
+      wxCertStatusList: {
+        0: '未认证',
+        1: '编辑中',
+        2: '审核中',
+        3: '待确认联系人信息',
+        4: '待账号验证',
+        5: '审核通过',
+        6: '审核驳回',
+        7: '已冻结',
+        8: '已作废'
+      },
+      statusList: [
+        {id: 0, name:'启用'},
+        {id: 1, name:'停用'}
+      ],
       tableData: [],
       currentPage: 1,
       totalPage: 0,
@@ -172,17 +234,32 @@ export default {
       this.$router.push({ name: 'xftArchiveAdd' })
     },
     edit(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'edit' }})
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
+    },
+    check(row){
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
+    },
+    detail(row){
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
     },
     copy(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { type: 'copy' }})
+      this.$router.push({ name: 'xftArchiveAdd', query: { isCopy: true, id: row.archiveBaseDTO.id }})
     },
     search() {
       this.cxLoading = true
       this.currentPage = 1
       this.getList()
     },
-    changeStatus(row) {
+    async changeStatus(row) {
+      let data = {
+        'archiveId': row.archiveBaseDTO.id,
+        'stopUse': row.archiveBaseDTO.stopUse ? 0 : 1
+      }
+      try{
+        const res = await stopUse(data)
+        this.getList()
+        this.$message.success('操作成功')
+      } catch(error) {}
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -194,32 +271,56 @@ export default {
       this.getList()
     },
     statusClick(row) {
-      this.$alert(row.name)
+      this.$alert(row.archiveBaseDTO.auditRemark)
     },
-    shopQRCode (row) {
+    async shopQRCode (row) {
+      let data = {
+        bankChannelCode: row.useBankChannelCode,
+        valueId: row.archiveBaseDTO.id
+      }
+      try {
+        const res = await queryContactQrCode(data)
+        this.certificationForm.contact = res.archiveBaseDTO.contact
+        this.certificationForm.contactPhone = res.archiveBaseDTO.contactPhone.substring(7)
+      } catch (error) {}
       this.certificationVisible = true
     },
-    toDetail (row) {
-      this.$router.push({ name: 'xftArchiveDetail' })
+    archiveDetail (row) {
+      this.$router.push({ name: 'xftArchiveDetail', query: {id: row.archiveBaseDTO.id} })
     },
     async getList() {
       this.tableLoading = true
       let data = {
-        "endTime": this.form.time && this.form.time[1],
-        "name": this.form.name,
-        "orders": {},
-        "page": this.currentPage,
-        "rows": this.pageSize,
-        "startTime": this.form.time && this.form.time[0]
+        'startTime': this.form.time && this.form.time[0],
+        'endTime': this.form.time && this.form.time[1],
+        'auditStatusList': this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
+        'merchantName': this.form.name,
+        'merchantShortName': this.form.name,
+        'companyName': this.form.name,
+        'bankCard': this.form.name,
+        // 'auditStatusList': this.form.auditStatus,
+        'wxCertStatus': this.form.wxCertStatus,
+        'stopUse': this.form.status,
+        'page': this.currentPage,
+        'rows': this.pageSize,
       }
       try {
-        const res = await queryDocumentByPage(data)
+        const res = await queryPage(data)
         this.tableData = res.results
         this.totalPage = res.totalCount
       } catch (e) {} finally {
         this.cxLoading = false
         this.tableLoading = false
       }
+    },
+    async queryStatus(row) {
+      let data = {
+        valueId: row.archiveBaseDTO.id,
+        bankChannelCode: row.useBankChannelCode
+      }
+      try {
+        const res = await queryCertificationStatus(data)
+      } catch(error) {}
     }
   },
   computed: {

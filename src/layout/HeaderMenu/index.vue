@@ -5,11 +5,13 @@
     </router-link>
     <!-- 导航 -->
     <div class="p-head_nav">
-      <ul v-if="routeMenus.length > 0">
-        <template v-for="item in routes">
-          <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
-            <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
-          </li>
+      <ul>
+        <template v-if="routeMenus.length > 0">
+          <template v-for="item in routeMenus">
+            <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
+              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
+            </li>
+          </template>
         </template>
       </ul>
     </div>
@@ -20,7 +22,10 @@
         <img src="../../assets/images/menu/user.png" alt="用户头像" />
       </div>
       <el-dropdown trigger="click" class="p-head_dropdown" @command="handleDropDown">
-        <span class="el-dropdown-link">{{ userName }}<i class="el-icon-arrow-down el-icon--right"></i></span>
+        <div class="e-dropdown-con">
+          <span class="e-dropdown-name">{{ userName }}</span>
+          <i class="el-icon-arrow-down el-icon--right"></i>
+        </div>
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item :command="1">修改密码</el-dropdown-item>
           <el-dropdown-item :command="2">退出账号</el-dropdown-item>
@@ -52,7 +57,19 @@ export default {
     }
   },
   computed: {
-    ...mapGetters(['routes'])
+    ...mapGetters(['routes']),
+    getActiveRoute() {
+      return function(path) {
+        if (this.$route.name === 'homeIndex') {
+          this.setBasePath(this.routes[0].path)
+          return this.routes[0].path === path
+        }
+        if (this.$route.path.includes(path)) {
+          this.setBasePath(path)
+        }
+        return this.$route.path.includes(path)
+      }
+    }
   },
   watch: {
     $route(route) {
@@ -64,7 +81,7 @@ export default {
     this.getChildRoutes(this.$route)
   },
   methods: {
-    ...mapActions(['setAsideROUTES', 'setBasePath']),
+    ...mapActions(['setAsideRoutes', 'setBasePath']),
     handleDropDown(command) {
       if (command === 1) this.dropStatus = true
       else this.handleLoginOut()
@@ -90,19 +107,8 @@ export default {
         return JSON.stringify(item).includes(route.name)
       })
       if (this.routes[index].children && this.routes[index].children.length) {
-        this.setAsideROUTES(this.routes[index].children)
+        this.setAsideRoutes(this.routes[index].children)
       }
-    },
-    getActiveRoute(path) {
-      console.info(path)
-      if (this.$route.name === 'homeIndex') {
-        this.setBasePath(this.routes[0].path)
-        return this.routes[0].path === path
-      }
-      if (this.$route.path.indexOf(path) >= 0) {
-        this.setBasePath(path)
-      }
-      return this.$route.path.indexOf(path) >= 0
     }
   }
 }
@@ -173,6 +179,22 @@ export default {
       height: 100%;
       line-height: 56px;
       cursor: pointer;
+    }
+  }
+}
+.e {
+  &-dropdown {
+    &-con {
+      display: flex;
+      align-items: center;
+    }
+    &-name {
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      display: inline-block;
+      width: 80px;
+      text-align: right;
     }
   }
 }

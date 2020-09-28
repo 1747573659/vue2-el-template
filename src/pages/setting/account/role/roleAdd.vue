@@ -1,5 +1,5 @@
 <template>
-  <div class="data-box" v-permission.page="'ACCOUNT_ROLE_ADD'">
+  <div class="data-box" v-permission.page="'ACCOUNT_ROLE_ADD,ACCOUNT_ROLE_EDIT'">
     <div class="km-setting-roleAdd">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
         <el-form-item label="角色名称" prop="name">
@@ -29,6 +29,7 @@
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
 export default {
+  name:'roleAdd',
   components: {},
   data() {
     var nameRule = async (rule, value, callback) => {
@@ -68,6 +69,77 @@ export default {
     }
   },
   methods: {
+    // 递归选中的id
+    getCheckIdInitForPC (arr, list) {
+      var temp = []
+      if (arr && arr.length > 0) {
+        arr.forEach(item => {
+          item['children'] = []
+          if (!item.parentId) {
+            temp.push(item)
+          }
+          if (item.parentId) {
+            // 递归操作
+            const traverse = function (array, item) {
+              array.forEach(cItem => {
+                if (cItem.id === item.parentId) {
+                  cItem['children'].push(item)
+                } else {
+                  traverse(cItem['children'], item)
+                }
+              })
+            }
+            traverse(temp, item)
+          }
+        })
+      }
+      // let obj = this.toChildrenNum(list)
+      function t2 (array) {
+        array.length > 0 && array.forEach(item => {
+          if (item['children'].length === 0) {
+            this.defaultPCList.push(item.id)
+          } else {
+            t2.call(this, item['children'])
+          }
+        })
+      }
+      t2.call(this, temp)
+    },
+    getCheckIdInitForAPP (arr, list) {
+      var temp = []
+      if (arr && arr.length > 0) {
+        arr.forEach(item => {
+          item['children'] = []
+          if (!item.parentId) {
+            temp.push(item)
+          }
+          if (item.parentId) {
+            // 递归操作
+            const traverse = function (array, item) {
+              array.forEach(cItem => {
+                if (cItem.id === item.parentId) {
+                  cItem['children'].push(item)
+                } else {
+                  traverse(cItem['children'], item)
+                }
+              })
+            }
+            traverse(temp, item)
+          }
+        })
+      }
+      // let obj = this.toChildrenNum(list)
+      function t2 (array) {
+        array.length > 0 && array.forEach(item => {
+          if (item['children'].length === 0) {
+            this.defaultAPPList.push(item.id)
+          } else {
+            t2.call(this, item['children'])
+          }
+        })
+      }
+      t2.call(this, temp)
+    },
     getCheckIdList(tree) {
       let checkIdList = []
       const traverse = function(node) {
@@ -89,7 +161,7 @@ export default {
       }
     },
     cancel() {
-      this.$store.dispatch('delTagViews', this.$route).then(() => {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ name: 'role' })
       })
     },
@@ -109,7 +181,7 @@ export default {
           try {
             const res = await addRole(data)
             this.$message.success('操作成功')
-            this.$store.dispatch('delTagViews', this.$route).then(() => {
+            this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'role' })
             })
           } catch (e) {
@@ -129,24 +201,60 @@ export default {
             children: routeTree(res.allMenus) || []
           }
         ]
-        res.roleMenus.forEach(item => {
-          this.defaultAPPList.push(item.id)
-        })
+        this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children)
       } catch (e) {}
     },
     async queryAllPCMenu(id) {
       try {
         const res = await queryAllPCMenu({ roleId: id })
+        let newRouteTree = routeTree(res.allMenus)
+        // var cid = 444444
+        // newRouteTree.forEach(itemOne => {
+        //   if (itemOne && itemOne.children) {
+        //     itemOne.children.forEach(itemTwo => {
+        //       if (itemTwo && itemTwo.children) {
+        //         itemTwo.children.forEach(itemThree => {
+        //           cid++
+        //           if (itemThree && itemThree.children) {
+        //             itemThree.children.push({
+        //               'id': cid,
+        //               'name': '查看',
+        //               'code': 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
+        //               'iconCls': null,
+        //               'url': null,
+        //               'lever': 4,
+        //               'parentId': itemThree.id,
+        //               'remark': null,
+        //               'creatorId': null,
+        //               'createTime': null,
+        //               'modifierId': null,
+        //               'modifyTime': null,
+        //               'type': 4,
+        //               'parentName': null,
+        //               'children': [
+        //               ],
+        //               'disabled': false,
+        //               'checked': false,
+        //               'viewPath': null,
+        //               'sort': null,
+        //               'domainType': null,
+        //               'appId': null,
+        //               'menuType': 2
+        //             })
+        //           }
+        //         })
+        //       }
+        //     })
+        //   }
+        // })
         this.pcData = [
           {
             id: -1,
             name: '访问权限',
-            children: routeTree(res.allMenus) || []
+            children: newRouteTree || []
           }
         ]
-        res.roleMenus.forEach(item => {
-          this.defaultPCList.push(item.id)
-        })
+        this.getCheckIdInitForPC(res.roleMenus || [], this.pcData.children)
       } catch (e) {}
     },
     async queryRoleById() {
@@ -156,9 +264,6 @@ export default {
         this.form.name = res.name
         this.form.usedName = res.name
         this.form.remark = res.remark
-        res.menuIdsPC.forEach(item => {
-          this.defaultPCList.push(item.id)
-        })
       } catch (e) {}
     }
   },

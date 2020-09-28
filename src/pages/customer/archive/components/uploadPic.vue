@@ -9,10 +9,18 @@
       :on-error="uploadErrer"
       :on-success="uploadSuccess"
       :before-upload="beforeUpload">
-      <img v-if="imageUrl" @click="imgClick" :src="fileServer + imageUrl" class="avatar" :alt="alt">
-      <div class="before-upload" v-else>
+      <img v-if="imageUrl" @click="imgClick" :src="fileServer + imageUrl" class="avatar" :class="{card: card}" :alt="alt">
+      <div class="before-upload" :class="{card: card}" v-else>
         <i class="el-icon-plus avatar-uploader-icon"></i>
-        <div class="upload-text">上传照片</div>
+        <div class="upload-text">
+          上传照片
+          <span v-if="card === 'front'">
+            (正面)
+          </span>
+          <span v-if="card === 'back'">
+            (背面)
+          </span>
+        </div>
       </div>
     </el-upload>
     <div class="upload-require">
@@ -32,9 +40,7 @@
 
 <script>
 import { getLocal } from '@/utils/storage'
-import fileServer from '@/mixins/fileServe'
 export default {
-  mixins: [fileServer],
   data() {
     return {
       uploadUrl: process.env.VUE_APP_BASE_API + '/uploadPic',
@@ -44,6 +50,14 @@ export default {
     }
   },
   props: {
+    imagePath: {
+      type: String,
+      default: ''
+    },
+    fileServer: {
+      type: String,
+      default: ''
+    },
     alt: {
       type: String,
       default: ''
@@ -51,6 +65,15 @@ export default {
     exampleImg: {
       type: String,
       default: ''
+    },
+    card: {
+      type: String,
+      default: null
+    }
+  },
+  watch: {
+    imagePath() {
+      this.imageUrl = this.imagePath
     }
   },
   methods: {
@@ -62,6 +85,7 @@ export default {
     },
     uploadSuccess(res, file) {
       this.imageUrl = res.data.path
+      this.$emit('on-success', res)
     },
     beforeUpload(file) {
       let imgTypes = 'image/gif,image/jpeg,image/jpg,image/png'
@@ -138,5 +162,9 @@ export default {
 .upload-example-img {
   width: 289px;
   height: 183px;
+}
+.card {
+  width: 180px;
+  height: 120px;
 }
 </style>

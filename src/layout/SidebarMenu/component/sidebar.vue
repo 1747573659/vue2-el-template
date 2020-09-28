@@ -9,6 +9,7 @@
     </template>
     <el-submenu class="e-submenu" :index="resolvePath(routes.path)" v-else>
       <template slot="title">
+        <i :class="routes.meta.icon"></i>
         <span v-if="routes.meta && routes.meta.title" slot="title">{{ routes.meta.title }}</span>
       </template>
       <template v-if="routes.children && routes.children.length > 0">
@@ -81,10 +82,12 @@ export default {
   &-submenu {
     /deep/ .el-submenu__title {
       color: #475166 !important;
-      padding-left: 44px !important;
+      padding-left: 29px !important;
+      font-weight: bold;
     }
     /deep/ .el-menu-item {
       padding-left: 58px !important;
+      font-weight: 400;
     }
     /deep/ .el-submenu__icon-arrow {
       display: none;

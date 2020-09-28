@@ -1,0 +1,23 @@
+<template>
+  <div>
+    <base-edit></base-edit>
+  </div>
+</template>
+
+<script>
+import BaseEdit from './components/BaseEdit'
+
+export default {
+  name: 'addAgent',
+  components: {
+    BaseEdit,
+  },
+  data() {
+    return {}
+  },
+  created() {},
+  methods: {},
+}
+</script>
+
+<style lang="scss" scoped></style>
