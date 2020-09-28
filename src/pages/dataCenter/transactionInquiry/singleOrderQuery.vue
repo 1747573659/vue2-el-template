@@ -90,14 +90,24 @@
       <el-table :max-height="750" :data="tabData" ref="table">
         <el-table-column label="交易时间" prop="createDate"></el-table-column>
         <el-table-column label="支付订单号" prop="orders"></el-table-column>
+
+        <el-table-column label="确认码" prop="confirmCode"></el-table-column>
+
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
-        <el-table-column label="支付通道" prop="aisleName"></el-table-column>
-        <el-table-column label="交易渠道" prop="payChannelType"></el-table-column>
+
+        <el-table-column label="收银员" prop="workerName">
+           <template slot-scope="scope"> 
+             {{scope.row.workerName?scope.row.workerName:"没有"}}
+           </template>
+        </el-table-column>
+
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="交易状态" prop="orderStatusName"></el-table-column>
         <el-table-column label="交易金额" prop="amount"></el-table-column>
         <el-table-column label="申请退款金额" prop="refundAmount"></el-table-column>
+
+        <el-table-column label="退还用户金额" prop="refundAmount"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button @click="handleDetails(scope.row)"  size="small" type="text">详情</el-button>
