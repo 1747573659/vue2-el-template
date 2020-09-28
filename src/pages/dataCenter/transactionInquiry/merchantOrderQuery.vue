@@ -140,6 +140,7 @@
       </el-table>
       <div class="el-pagination-box">
         <el-pagination
+          v-if="pageTotal"
           :current-page="pageNo"
           :page-size="pageSize"
           :page-sizes="[10, 15, 20, 25]"

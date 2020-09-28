@@ -107,6 +107,7 @@
       </el-table>
       <div class="el-pagination-box">
         <el-pagination
+          v-if="pageTotal"
           :current-page="pageNo"
           :page-size="pageSize"
           :page-sizes="[10, 15, 20, 25]"
@@ -204,7 +205,7 @@ export default {
       titleDialogStatus: false,
       pageNo: 1,
       pageSize: 10,
-      pageTotal: 50,
+      pageTotal: 0,
       searchLock: false,
       dialogTitle: '订单详情',
       tabLock: false,
