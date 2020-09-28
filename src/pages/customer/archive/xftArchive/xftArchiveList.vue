@@ -116,7 +116,7 @@
             <el-button v-if="[3,5,6,7,9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
             <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
-            <el-dropdown style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
+            <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
               </span>
@@ -147,7 +147,7 @@
       width="507px"
       class="certification-dialog">
       <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">{{this.certificationForm.contact}}(手机尾号{{this.certificationForm.contactPhone}})</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
-      <img :src="imgSrc" class="certification-dialog-img" alt="qrcode">
+      <img v-if="certificationVisible" :src="imgSrc" class="certification-dialog-img" alt="qrcode">
       <div class="certification-dialog-text">2. 完成信息补充后，引导公司法人完成法人的实名认证（或对公账户验证）</div>
       <div class="certification-dialog-text">3. 完成1-2两步操作之后，即完成了微信关于系统风控，用户资金安全的监管要求，开户成功！</div>
       <span slot="footer" class="dialog-footer">
@@ -226,7 +226,7 @@ export default {
       certificationVisible: false,
       cxLoading: false,
       tableLoading: false,
-      imgSrc: require('@/assets/images/abnormal/404.png')
+      imgSrc: ''
     }
   },
   methods: {
@@ -274,16 +274,17 @@ export default {
       this.$alert(row.archiveBaseDTO.auditRemark)
     },
     async shopQRCode (row) {
+      this.certificationForm.contact = row.archiveBaseDTO.contact
+      this.certificationForm.contactPhone = row.archiveBaseDTO.contactPhone.substring(7)
       let data = {
         bankChannelCode: row.useBankChannelCode,
         valueId: row.archiveBaseDTO.id
       }
       try {
         const res = await queryContactQrCode(data)
-        this.certificationForm.contact = res.archiveBaseDTO.contact
-        this.certificationForm.contactPhone = res.archiveBaseDTO.contactPhone.substring(7)
+        this.imgSrc = 'data:image/png;base64,' + res
+        this.certificationVisible = true
       } catch (error) {}
-      this.certificationVisible = true
     },
     archiveDetail (row) {
       this.$router.push({ name: 'xftArchiveDetail', query: {id: row.archiveBaseDTO.id} })
@@ -320,6 +321,12 @@ export default {
       }
       try {
         const res = await queryCertificationStatus(data)
+        this.$alert(`微信认证状态为：${res.message}`, '', {
+          confirmButtonText: '确定',
+          callback: action => {
+            this.getList()
+          }
+        });
       } catch(error) {}
     }
   },

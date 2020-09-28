@@ -1,5 +1,5 @@
 <template>
-  <div>
+  <div v-permission.page="'BRAND_SET_EDIT'">
     <div class="data-box">
       <div class="com-edit-wrapper">
         <el-form
