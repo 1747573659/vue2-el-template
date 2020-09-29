@@ -296,7 +296,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1">
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1 && form.archiveBaseVO.merchantType === 3">
               <el-form-item label="持卡人类型" prop="archiveExpandVO.cardholderType">
                 <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardholderType" placeholder="全部">
                   <el-option v-for="item in cardholderTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
