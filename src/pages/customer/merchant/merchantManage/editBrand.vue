@@ -14,10 +14,10 @@
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">
                 <el-form-item label="商户：" required>
-                  <span>{{ adminName }}</span>
+                  <span>{{ adminName || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="品牌编码：" required>
-                  <span>{{ mid }}</span>
+                  <span>{{ mid || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="品牌名称：" prop="name">
                   <el-input v-model="ruleForm.name" placeholder=""></el-input>
@@ -38,16 +38,16 @@
                   ></brand-select>
                 </el-form-item>
                 <el-form-item label="ERP行业：" required>
-                  <span>{{ erpIndustryName }}</span>
+                  <span>{{ erpIndustryName || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="ERP产品：" required>
-                  <span>{{ erpProductName }}</span>
+                  <span>{{ erpProductName || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="商户密钥：" required>
-                  <span class="signKey-text">{{ signKey }}</span>
+                  <span class="signKey-text">{{ signKey || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="门店数：" required>
-                  <span>{{ storeNum }}</span>
+                  <span>{{ storeNum || 0 }}</span>
                 </el-form-item>
                 <el-form-item>
                   <el-button
@@ -164,17 +164,16 @@ export default {
           this.submitLoading = true
           this.$store.dispatch('delTagView', this.$route).then(() => {
             addMerchant(this.ruleForm)
-            .then(() => {
-              this.$message.success('保存成功')
-              this.$store.dispatch('delTagView', this.$route).then(() => {
-                this.$router.push({ path: '/customer/merchant/brandHome' })
+              .then(() => {
+                this.$message.success('保存成功')
+                this.$store.dispatch('delTagView', this.$route).then(() => {
+                  this.$router.push({ path: '/customer/merchant/brandHome' })
+                })
               })
-            })
-            .finally(() => {
-              this.submitLoading = false
-            })
+              .finally(() => {
+                this.submitLoading = false
+              })
           })
-          
         }
       })
     },
