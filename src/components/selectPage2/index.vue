@@ -142,11 +142,9 @@ export default {
       this.request(Object.assign(data,this.parame)).then((res)=>{
         if(!res.results) this.isMaxPage=true
         if(res.results && res.results.length<10) this.isMaxPage=true
-        
         if(this.isInit && !res.results){
           this.placeText="暂无匹配数据"
           this.disabled=true
-          
         }else{
           this.placeText=this.placeholder
           this.disabled=false
@@ -157,7 +155,6 @@ export default {
         }else{
           this.options=(this.options).concat(res.results || [])
         }
-        
       }).finally(()=>{
         
       })
