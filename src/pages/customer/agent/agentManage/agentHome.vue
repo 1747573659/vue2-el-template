@@ -78,6 +78,7 @@
     <div class="data-box">
       <el-table
         v-loading="loading"
+        :max-height="tableMaxHeight"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -299,6 +300,9 @@ export default {
     }
   },
   computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
+    },
     sumTotal() {
       let sum
       if (this.quotaItems.length === 0) {
