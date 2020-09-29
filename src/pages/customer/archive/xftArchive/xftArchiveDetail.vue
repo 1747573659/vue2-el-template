@@ -2,7 +2,7 @@
   <div>
     <div class="data-box">
       <el-table
-        :loading="tableLoading"
+        v-loading="tableLoading"
         :max-height="tableMaxHeight"
         :data="tableData"
         style="width: 100%">
@@ -71,7 +71,7 @@
         <el-table-column
           label="操作"
           align="right"
-          width="400px">
+          width="320px">
           <template slot-scope="scope">
             <el-button @click="toAuthor(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">子商户号授权</el-button>
             <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">查询授权状态</el-button>

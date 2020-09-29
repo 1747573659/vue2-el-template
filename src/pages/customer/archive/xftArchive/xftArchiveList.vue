@@ -72,7 +72,8 @@
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.id"
-          label="资料ID">
+          label="资料ID"
+          width="100">
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.merchantName"
@@ -109,14 +110,16 @@
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.fixFeeRate"
-          label="费率">
+          label="费率"
+          width="80">
           <template slot-scope="scope">
             {{scope.row.archiveBaseDTO.fixFeeRate ? (scope.row.archiveBaseDTO.fixFeeRate / 100) + '%' : '--'}}
           </template>
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.stopUse"
-          label="停用">
+          label="停用"
+          width="80">
           <template slot-scope="scope">
             {{scope.row.archiveBaseDTO.stopUse ? '停用' : '启用'}}
           </template>
@@ -124,7 +127,7 @@
         <el-table-column
           label="操作"
           align="right"
-          width="240px">
+          width="170px">
           <template slot-scope="scope">
             <el-button v-if="[0,1,4,8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
             <el-button v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>

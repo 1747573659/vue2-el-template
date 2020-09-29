@@ -287,6 +287,25 @@
                 </el-select>
               </el-form-item>
             </el-col>
+            <!-- 之所有两个开户支行，是为了页面结构更加的好看 -->
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 4">
+              <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
+                <select-page
+                  style="width: 240px"
+                  :value="form.archiveExpandVO.bankSubName"
+                  @remoteMethod="bankRemoteMethod"
+                  @loadMore="bankLoadMore"
+                  id="bcode"
+                  name="bname"
+                  :options="bankList"
+                  :isMaxPage="isMaxPageBank"
+                  @focus="bankFocus"
+                  @change="bankChange"
+                  @clear="bankClear"
+                >
+                </select-page>
+              </el-form-item>
+            </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 2">
@@ -303,7 +322,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" class="archive-form-item">
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 3">
               <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
                 <select-page
                   style="width: 240px"
