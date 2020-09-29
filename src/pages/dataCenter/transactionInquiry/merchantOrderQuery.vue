@@ -112,7 +112,7 @@
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
 
-      <el-table :max-height="644" :data="tabData" ref="table">
+      <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
         
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
@@ -282,6 +282,9 @@ export default {
       } else {
         return false
       }
+    },
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     },
     isAdd () {
       if (moment(this.formData.transactionTime[1]).startOf('day').valueOf() === moment().startOf('day').valueOf()) {
