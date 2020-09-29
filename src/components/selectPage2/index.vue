@@ -105,7 +105,7 @@ export default {
       if(val){
         Object.keys(val).forEach((value,index)=>{
           if(val[value] && val[value]!==oldVal[value]){
-            this.selValue=""
+            this.selValue=[]
             this.isInit=true
             this.options=[]
             this.page=1
