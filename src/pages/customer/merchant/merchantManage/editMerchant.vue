@@ -2,36 +2,68 @@
   <div v-permission.page="'MERCHANT_SET_EDIT'">
     <div class="data-box">
       <div class="com-edit-wrapper">
-        <el-form :model="ruleForm" size="small" :rules="rules" ref="ruleForm" label-width="150px" class="com-edit-ruleForm">
+        <el-form
+          :model="ruleForm"
+          size="small"
+          :rules="rules"
+          ref="ruleForm"
+          label-width="150px"
+          class="com-edit-ruleForm"
+        >
           <div class="com-edit-item" style="padding-top: 0">
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">
                 <el-form-item label="商户编号：" required>
-                  <span>{{ ruleForm.id }}</span>
+                  <span>{{ ruleForm.id || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="商户名称：" prop="companyName">
-                  <el-input v-model="ruleForm.companyName" placeholder="商户名称需与营业执照一致"></el-input>
+                  <el-input
+                    v-model="ruleForm.companyName"
+                    placeholder="商户名称需与营业执照一致"
+                  ></el-input>
                 </el-form-item>
                 <el-form-item label="商户简称：" prop="shortName">
-                  <el-input v-model="ruleForm.shortName" placeholder=""></el-input>
+                  <el-input
+                    v-model="ruleForm.shortName"
+                    placeholder=""
+                  ></el-input>
                 </el-form-item>
-                <el-form-item label="行业:" required>
-                  <span>{{ tradeFullName }}</span>
+                <el-form-item label="行业：" required>
+                  <span>{{ tradeFullName || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="商户类型：" prop="type">
-                  <el-select style="width: 240px;" v-model="ruleForm.type" placeholder="请选择产品">
-                    <el-option v-for="item in typeOptions" :key="item.id" :label="item.name" :value="item.id">
+                  <el-select
+                    style="width: 240px;"
+                    v-model="ruleForm.type"
+                    placeholder="请选择产品"
+                  >
+                    <el-option
+                      v-for="item in typeOptions"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
                     </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="地区：" prop="districtCode">
-                  <area-select :areaList="areaValue" :key="areaKey" @change="areaChange"></area-select>
+                  <area-select
+                    :areaList="areaValue"
+                    :key="areaKey"
+                    @change="areaChange"
+                  ></area-select>
                 </el-form-item>
                 <el-form-item label="详细地址：" prop="address">
-                  <el-input v-model="ruleForm.address" placeholder=""></el-input>
+                  <el-input
+                    v-model="ruleForm.address"
+                    placeholder=""
+                  ></el-input>
                 </el-form-item>
                 <el-form-item label="运营者姓名：" prop="contactor">
-                  <el-input v-model="ruleForm.contactor" placeholder=""></el-input>
+                  <el-input
+                    v-model="ruleForm.contactor"
+                    placeholder=""
+                  ></el-input>
                 </el-form-item>
                 <el-form-item label="运营者手机：" prop="mobile" required>
                   <span>{{ ruleForm.mobile }}</span>
@@ -40,19 +72,41 @@
                   <el-input v-model="ruleForm.email" placeholder=""></el-input>
                 </el-form-item>
                 <el-form-item label="业务员：">
-                  <el-select v-model="ruleForm.clerkId" placeholder="请选择业务员" clearable>
-                    <el-option v-for="item in clerkOptions" :key="item.id" :label="item.name" :value="item.id">
+                  <el-select
+                    v-model="ruleForm.clerkId"
+                    placeholder="请选择业务员"
+                    clearable
+                  >
+                    <el-option
+                      v-for="item in clerkOptions"
+                      :key="item.id"
+                      :label="item.name"
+                      :value="item.id"
+                    >
                     </el-option>
                   </el-select>
                 </el-form-item>
                 <el-form-item label="商户密钥：">
-                  <el-input v-model="signKey" :disabled="true" placeholder=""></el-input>
+                  <el-input
+                    v-model="signKey"
+                    :disabled="true"
+                    placeholder=""
+                  ></el-input>
                 </el-form-item>
                 <el-form-item label="创建时间：" prop="uuu">
-                  <el-input v-model="createTime" :disabled="true" placeholder=""></el-input>
+                  <el-input
+                    v-model="createTime"
+                    :disabled="true"
+                    placeholder=""
+                  ></el-input>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
+                  <el-button
+                    type="primary"
+                    :loading="submitLoading"
+                    @click="submitForm()"
+                    >保存</el-button
+                  >
                   <el-button @click="onCancel">取消</el-button>
                 </el-form-item>
               </div>
@@ -207,7 +261,7 @@ export default {
               this.$message.success('保存成功！')
               this.$store.dispatch('delTagView', this.$route).then(() => {
                 this.$router.push({ path: '/customer/merchant/merchantManage' })
-              })  
+              })
             })
             .finally(() => {
               this.submitLoading = false

@@ -110,6 +110,7 @@
     <div class="data-box">
       <el-table
         v-loading="loading"
+        :max-height="tableMaxHeight"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -142,6 +143,7 @@
               >编辑</el-button
             >
             <el-button
+              v-if="scope.row.status !== 2"
               v-permission="'MERCHANT_SET_STOPORSTART'"
               size="small"
               type="text"
@@ -237,8 +239,8 @@ export default {
         return '停用'
       } else if (val === 1) {
         return '启用'
-      } else {
-        return '删除'
+      } else if (val === 2) {
+        return '待审核'
       }
     },
     fiterOperateStatus(val) {
@@ -246,9 +248,12 @@ export default {
         return '启用'
       } else if (val === 1) {
         return '停用'
-      } else {
-        return ''
       }
+    },
+  },
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 112 - 32 - 116
     },
   },
   data() {
@@ -261,7 +266,6 @@ export default {
         { id: '', name: '全部' },
         { id: 0, name: '停用' },
         { id: 1, name: '启用' },
-        { id: -1, name: '删除' },
         { id: 2, name: '待审核' },
       ],
       loading: false,
@@ -297,7 +301,7 @@ export default {
     this.queryAgentPage()
     this.queryShopListByPage()
   },
-  activated () {
+  activated() {
     this.queryShopListByPage()
   },
   methods: {

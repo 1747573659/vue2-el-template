@@ -45,7 +45,7 @@
     <div class="data-box">
       <el-table
         v-loading="loading"
-        ref="multipleTable"
+        :max-height="tableMaxHeight"
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
@@ -113,7 +113,6 @@ import {
 
 export default {
   name: 'brandHome',
-  components: {},
   filters: {
     fiterStatus(val) {
       if (val === 0) {
@@ -128,6 +127,11 @@ export default {
       } else if (val === 1) {
         return '停用'
       }
+    },
+  },
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     },
   },
   data() {
