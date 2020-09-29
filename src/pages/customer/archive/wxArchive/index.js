@@ -106,7 +106,8 @@ export const formObj = {
     contact: '', // 联系人/负责人
     contactPhone: '', // 联系人手机号/负责人联系方式
     email: '', // 联系人邮箱
-    businessCategoryRemark: '', // 经营类目
+    businessCategory:'', // 经营类目
+    businessCategoryRemark: '', // 经营类目（名称，用于页面显示）
     auditStatus: '', // 审核状态
     auditRemark: '' // 审核结果
   },

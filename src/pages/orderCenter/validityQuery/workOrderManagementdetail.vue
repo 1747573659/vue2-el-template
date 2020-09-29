@@ -78,8 +78,9 @@ import {
   uploadimage
   } from '@/api/dataCenter/common.js'
 import baseurl from '@/utils/baseUrl.js'
-const {WORK_ORDER_URL}=baseurl
-console.log(WORK_ORDER_URL)
+const {VUE_APP_WORK_ORDER_URL,VUE_APP_WORK_ORDER_URLPATH}=baseurl
+console.log(baseurl)
+
 export default {
   name: "validityPeriod",
   mixins: [],
@@ -98,7 +99,7 @@ export default {
         linkPhone: "",
         fileName2:" "
       },
-      uploadurl:WORK_ORDER_URL+"/JFService/KMJFService.asmx/uploadimage?jsoncallback=?",
+      uploadurl:VUE_APP_WORK_ORDER_URL+VUE_APP_WORK_ORDER_URLPATH+"/KMJFService.asmx/uploadimage?jsoncallback=?",
       rules: {
         demandName: [
           { required: true, message: "请填写工单标题", trigger: "blur" },
@@ -172,7 +173,7 @@ export default {
     handleSuccess(response, file, fileList){
       this.fileList.push({
         name:response.fileName,
-        url:WORK_ORDER_URL+"/KMjsfw/images/"+response.fileName,
+        url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+response.fileName,
         type:file.raw.type
       })
     },
@@ -200,14 +201,14 @@ export default {
           const files1=requestData.fileName?requestData.fileName.split(",").map(res1=>{
             return {
               name:res1,
-              url:WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+              url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
               type:"image/*"
             }
           }):[]
           const files2=requestData.fileName2?requestData.fileName2.split(",").map(res1=>{
             return {
               name:res1,
-              url:WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+              url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
               type:"video/*"
             }
           }):[]

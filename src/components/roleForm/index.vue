@@ -1,24 +1,64 @@
 <template>
   <div class="data-box">
     <div class="km-setting-roleAdd">
-      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
+      <el-form
+        ref="form"
+        size="small"
+        :rules="rules"
+        label-suffix=":"
+        :model="form"
+        label-width="110px"
+        style="width: 800px"
+      >
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="form.name" style="width:240px"></el-input>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="form.remark" maxlength="250" style="width:240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
+          <el-input
+            v-model="form.remark"
+            maxlength="250"
+            style="width:240px"
+            :autosize="{ minRows: 6 }"
+            type="textarea"
+          ></el-input>
         </el-form-item>
         <el-form-item label="PC后台权限">
-          <tree-custom :data="pcData" show-checkbox ref="treePC" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultPCList" :props="defaultProps">
+          <tree-custom
+            :data="pcData"
+            show-checkbox
+            ref="treePC"
+            node-key="id"
+            accordion
+            :default-expanded-keys="[-1]"
+            :default-checked-keys="defaultPCList"
+            :props="defaultProps"
+          >
           </tree-custom>
         </el-form-item>
         <el-form-item label="E助手权限">
-          <tree-custom :data="appData" show-checkbox ref="treeE" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultAPPList" :props="defaultProps">
+          <tree-custom
+            :data="appData"
+            show-checkbox
+            ref="treeE"
+            node-key="id"
+            accordion
+            :default-expanded-keys="[-1]"
+            :default-checked-keys="defaultAPPList"
+            :props="defaultProps"
+          >
           </tree-custom>
         </el-form-item>
         <el-form-item label="">
-          <el-button class="channel-setting-save" :loading="submitLoading" type="primary" @click="onSubmit">保存</el-button>
-          <el-button class="channel-setting-save" @click="cancel">取消</el-button>
+          <el-button
+            class="channel-setting-save"
+            :loading="submitLoading"
+            type="primary"
+            @click="onSubmit"
+            >保存</el-button
+          >
+          <el-button class="channel-setting-save" @click="cancel"
+            >取消</el-button
+          >
         </el-form-item>
       </el-form>
     </div>
@@ -26,28 +66,33 @@
 </template>
 
 <script>
-import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
+import {
+  addRole,
+  queryAllPCMenu,
+  queryAllAPPMenu,
+  queryRoleById,
+  checkRoleName,
+} from '@/api/setting/account'
 import { routeTree } from '@/utils'
 export default {
-  name:'RoleForm111',
-  components: {},
+  name: 'RoleForm',
   props: {
     // 新增页or编辑页
     isEdit: {
       type: Boolean,
-      default: false
+      default: false,
     },
     // 接口参数：代理商传1，员工传2
     type: {
       require: true,
       type: Number,
-      default: 1
+      default: 1,
     },
     // 角色首页路由路径
     router: {
       require: true,
-      type: String
-    }
+      type: String,
+    },
   },
   data() {
     var nameRule = async (rule, value, callback) => {
@@ -65,7 +110,7 @@ export default {
     }
     return {
       rules: {
-        name: [{ required: true, trigger: 'blur', validator: nameRule }]
+        name: [{ required: true, trigger: 'blur', validator: nameRule }],
       },
       form: {
         id: null,
@@ -73,33 +118,33 @@ export default {
         name: '',
         remark: '',
         menuIdsPC: '',
-        menuIdsAPP: ''
+        menuIdsAPP: '',
       },
       submitLoading: false,
       pcData: [],
       appData: [],
       defaultProps: {
         children: 'children',
-        label: 'name'
+        label: 'name',
       },
       defaultPCList: [],
-      defaultAPPList: []
+      defaultAPPList: [],
     }
   },
   methods: {
     // 递归选中的id
-    getCheckIdInitForPC (arr, list) {
+    getCheckIdInitForPC(arr, list) {
       var temp = []
       if (arr && arr.length > 0) {
-        arr.forEach(item => {
+        arr.forEach((item) => {
           item['children'] = []
           if (!item.parentId) {
             temp.push(item)
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function (array, item) {
-              array.forEach(cItem => {
+            const traverse = function(array, item) {
+              array.forEach((cItem) => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
                 } else {
@@ -112,29 +157,30 @@ export default {
         })
       }
       // let obj = this.toChildrenNum(list)
-      function t2 (array) {
-        array.length > 0 && array.forEach(item => {
-          if (item['children'].length === 0) {
-            this.defaultPCList.push(item.id)
-          } else {
-            t2.call(this, item['children'])
-          }
-        })
+      function t2(array) {
+        array.length > 0 &&
+          array.forEach((item) => {
+            if (item['children'].length === 0) {
+              this.defaultPCList.push(item.id)
+            } else {
+              t2.call(this, item['children'])
+            }
+          })
       }
       t2.call(this, temp)
     },
-    getCheckIdInitForAPP (arr, list) {
+    getCheckIdInitForAPP(arr, list) {
       var temp = []
       if (arr && arr.length > 0) {
-        arr.forEach(item => {
+        arr.forEach((item) => {
           item['children'] = []
           if (!item.parentId) {
             temp.push(item)
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function (array, item) {
-              array.forEach(cItem => {
+            const traverse = function(array, item) {
+              array.forEach((cItem) => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
                 } else {
@@ -147,14 +193,15 @@ export default {
         })
       }
       // let obj = this.toChildrenNum(list)
-      function t2 (array) {
-        array.length > 0 && array.forEach(item => {
-          if (item['children'].length === 0) {
-            this.defaultAPPList.push(item.id)
-          } else {
-            t2.call(this, item['children'])
-          }
-        })
+      function t2(array) {
+        array.length > 0 &&
+          array.forEach((item) => {
+            if (item['children'].length === 0) {
+              this.defaultAPPList.push(item.id)
+            } else {
+              t2.call(this, item['children'])
+            }
+          })
       }
       t2.call(this, temp)
     },
@@ -162,7 +209,7 @@ export default {
       let checkIdList = []
       const traverse = function(node) {
         const childNodes = node.root ? node.root.childNodes : node.childNodes
-        childNodes.forEach(child => {
+        childNodes.forEach((child) => {
           if (child.checked || child.indeterminate) {
             if (child.data.code !== 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW') {
               checkIdList.push(child.key)
@@ -184,7 +231,7 @@ export default {
       })
     },
     async onSubmit() {
-      this.$refs.form.validate(async valid => {
+      this.$refs.form.validate(async (valid) => {
         if (valid) {
           this.submitLoading = true
           this.form.menuIdsPC = this.getCheckIdList(this.$refs.treePC)
@@ -195,7 +242,7 @@ export default {
             menuIdsPC: this.form.menuIdsPC,
             name: this.form.name,
             remark: this.form.remark,
-            type: this.type
+            type: this.type,
           }
           try {
             const res = await addRole(data)
@@ -217,8 +264,8 @@ export default {
           {
             id: -1,
             name: '访问权限',
-            children: routeTree(res.allMenus) || []
-          }
+            children: routeTree(res.allMenus) || [],
+          },
         ]
         this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children)
       } catch (e) {}
@@ -270,8 +317,8 @@ export default {
           {
             id: -1,
             name: '访问权限',
-            children: newRouteTree || []
-          }
+            children: newRouteTree || [],
+          },
         ]
         this.getCheckIdInitForPC(res.roleMenus || [], this.pcData.children)
       } catch (e) {}
@@ -284,7 +331,7 @@ export default {
         this.form.usedName = res.name
         this.form.remark = res.remark
       } catch (e) {}
-    }
+    },
   },
   mounted() {
     const id = this.isEdit ? Number(this.$route.query.id) : ''
@@ -293,7 +340,7 @@ export default {
     if (this.isEdit) {
       this.queryRoleById()
     }
-  }
+  },
 }
 </script>
 
