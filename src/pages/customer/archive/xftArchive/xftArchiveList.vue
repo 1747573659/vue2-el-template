@@ -61,8 +61,23 @@
       <el-table
         v-loading="tableLoading"
         :max-height="tableMaxHeight"
+        @sort-change="tableSortChange"
         :data="tableData"
         style="width: 100%">
+        <el-table-column
+          prop="archiveBaseDTO.createTime"
+          label="申请时间"
+          sortable="custom"
+          width="170">
+        </el-table-column>
+        <el-table-column
+          prop="archiveBaseDTO.id"
+          label="资料ID">
+        </el-table-column>
+        <el-table-column
+          prop="archiveBaseDTO.merchantName"
+          label="商户名称">
+        </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.merchantShortName"
           label="商户简称">
@@ -164,6 +179,7 @@ export default {
     return {
       certificationForm: {},
       form: {
+        createTime: '',
         name: '',
         time: [],
         auditStatusList: [],
@@ -230,6 +246,17 @@ export default {
     }
   },
   methods: {
+    tableSortChange({column, prop, order}) {
+      if (order === 'ascending') {
+        this.form.createTime = 'asc'
+      } else if (order === 'descending') {
+        this.form.createTime = 'desc'
+      } else {
+        this.form.createTime = ''
+      }
+      this.currentPage = 1
+      this.getList()
+    },
     add() {
       this.$router.push({ name: 'xftArchiveAdd' })
     },
@@ -292,6 +319,9 @@ export default {
     async getList() {
       this.tableLoading = true
       let data = {
+        'orders': {
+          'createTime': this.form.createTime
+        },
         'startTime': this.form.time && this.form.time[0],
         'endTime': this.form.time && this.form.time[1],
         'auditStatusList': this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],

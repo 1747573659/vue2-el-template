@@ -42,6 +42,11 @@ dev
 channelV1.*.*
   for version develop
 
+## 构建方法
+开发环境构建 推送代码到dev分支，然后去jenkins http://192.168.239.101:9056/job/sz-dev-km-channel-h5/去构建即可, 账号：姓名拼音，如xiaoming(小明);密码：开机密码
+测试环境构建 推送最新代码到release分支，然后通知相关测试人员去构建测试环境的jenkins
+生产环境构建 自己手动打包然后提供包给测试即可
+
 ## 文件结构
 ### api
 接口请求文件（按模块构建）
