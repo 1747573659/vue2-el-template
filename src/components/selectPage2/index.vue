@@ -12,8 +12,8 @@
       remote
       clear
       :multiple-limit="1"
-      no-data-text="暂无数据"
-      no-match-text="暂无搜索数据"
+      no-data-text="暂无匹配数据"
+      no-match-text="暂无匹配数据"
       :reserve-keyword="false"
       :placeholder="placeText"
       :remote-method="remoteMethod"
@@ -105,6 +105,7 @@ export default {
       if(val){
         Object.keys(val).forEach((value,index)=>{
           if(val[value] && val[value]!==oldVal[value]){
+            this.selValue=""
             this.isInit=true
             this.options=[]
             this.page=1
@@ -131,6 +132,7 @@ export default {
           rows: 10,
           [this.searchName]:query
         }
+        this.isInit=false
       }else{
         data = {
           page:this.page,
@@ -140,10 +142,11 @@ export default {
       this.request(Object.assign(data,this.parame)).then((res)=>{
         if(!res.results) this.isMaxPage=true
         if(res.results && res.results.length<10) this.isMaxPage=true
-       
+        
         if(this.isInit && !res.results){
-          this.placeText="暂无数据"
+          this.placeText="暂无匹配数据"
           this.disabled=true
+          
         }else{
           this.placeText=this.placeholder
           this.disabled=false
