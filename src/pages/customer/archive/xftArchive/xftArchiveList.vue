@@ -325,8 +325,8 @@ export default {
         'orders': {
           'createTime': this.form.createTime
         },
-        'startTime': this.form.time && this.form.time[0] + ' 00:00:00',
-        'endTime': this.form.time && this.form.time[1] + ' 23:59:59',
+        'startTime': this.form.time && this.form.time.length > 0 ? this.form.time[0] + ' 00:00:00' : '',
+        'endTime': this.form.time && this.form.time.length > 0 ? this.form.time[1] + ' 23:59:59' : '',
         'auditStatusList': this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
         'merchantName': this.form.name,
         'merchantShortName': this.form.name,
