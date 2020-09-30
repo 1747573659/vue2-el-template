@@ -129,19 +129,19 @@
           align="right"
           width="170px">
           <template slot-scope="scope">
-            <el-button v-if="[0,1,4,8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
-            <el-button v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
-            <el-button v-if="[3,5,6,7,9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
-            <el-button @click="copy(scope.row)" type="text" size="small">复制</el-button>
-            <el-button @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
-            <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
+            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0,1,4,8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-permission="'XFT_LIST_CHECK'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
+            <el-button v-permission="'XFT_LIST_DETAIL'" v-if="[3,5,6,7,9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
+            <el-button v-permission="'XFT_LIST_COPY'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
+            <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
+            <el-dropdown v-permission="'XFT_LIST_OP'" trigger="click" style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
               </span>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
-                <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item style="color: #3377FF" v-if="[3,4,5].includes(scope.row.archiveBaseDTO.wxCertStatus)" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
+                <el-dropdown-item v-permission="'XFT_LIST_ARCHIVE_DETAIL'" style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
+                <el-dropdown-item v-permission="'XFT_LIST_CE_STATUS'" style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
+                <el-dropdown-item v-permission="'XFT_LIST_SHOP_QRCODE'" style="color: #3377FF" v-if="[3,4,5].includes(scope.row.archiveBaseDTO.wxCertStatus)" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -325,8 +325,8 @@ export default {
         'orders': {
           'createTime': this.form.createTime
         },
-        'startTime': this.form.time && this.form.time[0],
-        'endTime': this.form.time && this.form.time[1],
+        'startTime': this.form.time && this.form.time[0] + ' 00:00:00',
+        'endTime': this.form.time && this.form.time[1] + ' 23:59:59',
         'auditStatusList': this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
         'merchantName': this.form.name,
         'merchantShortName': this.form.name,
