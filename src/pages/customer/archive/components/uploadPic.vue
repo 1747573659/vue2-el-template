@@ -43,12 +43,16 @@ import { getLocal } from '@/utils/storage'
 export default {
   data() {
     return {
-      uploadUrl: process.env.VUE_APP_BASE_API + '/uploadPic',
+      uploadUrl: process.env.VUE_APP_BASE_API + this.uploadUrlPath,
       token: getLocal('token'),
       title: this.alt + '示例:'
     }
   },
   props: {
+    uploadUrlPath : {
+      type:String,
+      default: '/uploadPic'
+    },
     imagePath: {
       type: String,
       default: ''

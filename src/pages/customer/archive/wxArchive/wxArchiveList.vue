@@ -58,42 +58,41 @@
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
-        <el-table-column label="进件类型">
+        <el-table-column label="进件类型" width="100px">
           <template slot-scope="scope">
             <p>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</p>
           </template>
         </el-table-column>
-        <el-table-column label="资料状态">
+        <el-table-column label="资料状态" width="150px">
           <template slot-scope="scope">
-            <span :class="{ 'e-general_tabOrange': [4, 8].includes(scope.row.archiveBaseDTO.auditStatus) }" @click="handleReason(scope.row)">{{
+            <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.auditStatus === 4 }" @click="handleReason(scope.row)">{{
               scope.row.archiveBaseDTO.auditStatus | filterReview
             }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="小微进件状态">
+        <el-table-column label="小微进件状态" width="110px">
           <template slot-scope="scope">
             <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="升级状态">
+        <el-table-column label="升级状态" width="110px">
           <template slot-scope="scope">
             <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="费率">
+        <el-table-column label="费率" width="90px">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="停用">
+        <el-table-column label="停用" width="90px">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '停用' : '启用' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="240px">
+        <el-table-column label="操作" align="right" width="210px">
           <template slot-scope="scope">
             <!-- 按钮状态 编辑、审核、详情、复制、启用、停用 -->
-            <!-- boss相比少了小微进件和小微升级 -->
             <el-button
               type="text"
               size="small"
@@ -105,7 +104,7 @@
               type="text"
               size="small"
               @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
-              v-else-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
+              v-else-if="[0, 1, 4].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
             <el-button type="text" size="small" v-else @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
@@ -165,7 +164,7 @@ export default {
       isTabLock: false,
       isReason: false, // 异常状态原因
       reasonMsg: '',
-      sortStatus: true,
+      sortStatus: '',
       xiaoWeiArchiveData: [],
       xiaoWeiUpgradeData: [],
       tableData: [],
@@ -194,8 +193,7 @@ export default {
       this.isReason = true
     },
     handleTabSort({ column, prop, order }) {
-      console.info(order)
-      this.sortStatus = order === 'descending' || order === null
+      this.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
       this.handleQueryPage()
     },
     handleSearch() {
@@ -225,7 +223,7 @@ export default {
     },
     handleQueryPage: async function() {
       const data = {
-        createTime: this.sortStatus ? 'desc' : 'asc',
+        orders: { createTime: this.sortStatus },
         startTime: this.form.createTime[0] ? `${this.form.createTime[0]} 00:00:00` : '',
         endTime: this.form.createTime[1] ? `${this.form.createTime[1]} 23:59:59` : '',
         auditStatus: this.form.auditStatus,
