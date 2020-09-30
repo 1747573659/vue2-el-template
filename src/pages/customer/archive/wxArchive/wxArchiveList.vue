@@ -4,49 +4,41 @@
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="100px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
-            <el-form-item label="申请时间">
-              <el-date-picker
-                v-model="form.createTime"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-              ></el-date-picker>
-            </el-form-item>
-            <el-form-item label="资料状态">
-              <el-select v-model="form.auditStatus" class="p-general_formWidth" clearable placeholder="全部">
-                <template v-for="item in statusOptions">
-                  <el-option v-if="!item.hidden" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </template>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="商户信息">
-              <el-input v-model="form.msg" class="p-general_formWidth" maxlength="50" clearable placeholder="请输入商户名称/简称/公司名称/银行卡号"></el-input>
-            </el-form-item>
-            <el-form-item label="停用">
-              <el-select v-model="form.isDeactivate" class="p-general_formWidth" clearable placeholder="全部">
-                <el-option v-for="item in deactivateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <div class="p-general_btnLabel">
+            <el-col>
+              <el-form-item label="申请时间">
+                <el-date-picker
+                  v-model="form.createTime"
+                  type="daterange"
+                  range-separator="至"
+                  start-placeholder="开始日期"
+                  end-placeholder="结束日期"
+                  value-format="yyyy-MM-dd HH:mm:ss"
+                  :default-time="['00:00:00', '23:59:59']"
+                ></el-date-picker>
+              </el-form-item>
+              <el-form-item label="资料状态">
+                <el-select v-model="form.auditStatus" class="p-general_formWidth" clearable placeholder="全部">
+                  <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item label="商户信息">
+                <el-input v-model.trim="form.msg" class="p-general_formWidth" maxlength="50" clearable placeholder="请输入商户名称/简称/公司名称/银行卡号"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col>
+              <el-form-item label="停用">
+                <el-select v-model="form.stopUse" class="p-general_formWidth" clearable placeholder="全部">
+                  <el-option v-for="item in deactivateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+              <el-form-item class="p-general_btnLabel">
                 <el-button type="primary" class="e-general-btn" @click="handleSearch" :loading="isSearchLock">查询</el-button>
-              </div>
-            </el-form-item>
+              </el-form-item>
+            </el-col>
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <el-button
-                type="primary"
-                class="e-general-add"
-                size="small"
-                plain
-                icon="el-icon-plus"
-                @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'add' } })"
-                v-permission="'ACCOUNT_ROLE_ADD'"
-                >新增</el-button
-              >
+              <el-button v-permission="'WXARCHIVE_LIST_ADD'" type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -60,14 +52,14 @@
         <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
         <el-table-column label="进件类型" width="100px">
           <template slot-scope="scope">
-            <p>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</p>
+            <span>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="资料状态" width="150px">
           <template slot-scope="scope">
-            <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.auditStatus === 4 }" @click="handleReason(scope.row)">{{
-              scope.row.archiveBaseDTO.auditStatus | filterReview
-            }}</span>
+            <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.auditStatus === 4 }" @click="handleReason(scope.row)">
+              {{ scope.row.archiveBaseDTO.auditStatus | filterReview }}
+            </span>
           </template>
         </el-table-column>
         <el-table-column label="小微进件状态" width="110px">
@@ -92,29 +84,33 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="210px">
           <template slot-scope="scope">
-            <!-- 按钮状态 编辑、审核、详情、复制、启用、停用 -->
             <el-button
               type="text"
               size="small"
-              @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
+              v-permission="'WXARCHIVE_LIST_REVIEW'"
+              @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })"
               v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
             >
             <el-button
               type="text"
               size="small"
-              @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
+              v-permission="'WXARCHIVE_LIST_EDIT'"
+              @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })"
               v-else-if="[0, 1, 4].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
-            <el-button type="text" size="small" v-else @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: scope.row.archiveBaseDTO.id } })"
-              >详情</el-button
-            >
-            <el-button type="text" size="small" @click="$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', isCopy: true, id: scope.row.archiveBaseDTO.id } })"
-              >复制</el-button
-            >
-            <el-button type="text" size="small" @click="handleGeneralStopUse(scope.$index, scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
-            <el-button type="text" size="small" v-if="scope.row.xiaoWeiArchiveStatus" @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id } })"
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_DETAIL'" @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })" v-else>详情</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_COPY'" @click="handlePushDetail({ action: 'detail', isCopy: true, id: scope.row.archiveBaseDTO.id })">复制</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleGeneralStopUse(scope.row)">{{
+              scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
+            }}</el-button>
+            <el-button
+              type="text"
+              size="small"
+              v-permission="'WXARCHIVE_LIST_ARCHIVELIST'"
+              v-if="scope.row.xiaoWeiArchiveStatus"
+              @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id } })"
               >进件详情</el-button
             >
           </template>
@@ -144,11 +140,10 @@
 </template>
 
 <script>
-import { filterReview, filterArchiveStatus } from './filters/reviewStatus'
 import { statusOptions, deactivateOptions } from './index'
+import { filterReview, filterArchiveStatus } from './filters/reviewStatus'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse } from '@/api/wxArchive'
-// 申请时间排序接口对接
-// 停用启用状态对接
+
 export default {
   data() {
     return {
@@ -158,13 +153,13 @@ export default {
         createTime: '',
         auditStatus: '',
         msg: '',
-        isDeactivate: 0
+        stopUse: 0
       },
       isSearchLock: false, // 锁状态
       isTabLock: false,
       isReason: false, // 异常状态原因
       reasonMsg: '',
-      sortStatus: '',
+      sortStatus: '', // 时间排序状态
       xiaoWeiArchiveData: [],
       xiaoWeiUpgradeData: [],
       tableData: [],
@@ -188,13 +183,12 @@ export default {
     this.handleQueryPage()
   },
   methods: {
+    handlePushDetail(query) {
+      this.$router.push({ name: 'wxArchiveAdd', query })
+    },
     handleReason(row) {
       this.reasonMsg = row.archiveBaseDTO.auditRemark
       this.isReason = true
-    },
-    handleTabSort({ column, prop, order }) {
-      this.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
-      this.handleQueryPage()
     },
     handleSearch() {
       this.currentPage = 1
@@ -203,39 +197,33 @@ export default {
         this.isSearchLock = false
       })
     },
+    handleTabSort({ column, prop, order }) {
+      this.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
+      this.handleQueryPage()
+    },
     handleCurrentChange(val) {
-      // 切换当前页
       this.currentPage = val
       this.handleQueryPage()
     },
     handleSizeChange(val) {
-      // 切换页面总条数
       this.currentPage = 1
       this.pageSize = val
       this.handleQueryPage()
     },
-    handleGeneralStopUse: async function(index, row) {
-      // 启用/停用
-      try {
-        await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 })
-        this.tableData[index].archiveBaseDTO.stopUse = !row.archiveBaseDTO.stopUse ? 1 : 0
-      } catch (error) {}
-    },
     handleQueryPage: async function() {
       const data = {
         orders: { createTime: this.sortStatus },
-        startTime: this.form.createTime[0] ? `${this.form.createTime[0]} 00:00:00` : '',
-        endTime: this.form.createTime[1] ? `${this.form.createTime[1]} 23:59:59` : '',
+        startTime: this.form.createTime[0],
+        endTime: this.form.createTime[1],
         auditStatus: this.form.auditStatus,
         companyName: this.form.msg,
         bankCard: this.form.msg,
         merchantName: this.form.msg,
         merchantShortName: this.form.msg,
-        stopUse: this.form.isDeactivate,
+        stopUse: this.form.stopUse,
         page: this.currentPage,
         row: this.pageSize
       }
-      // 查询调用接口
       try {
         this.isTabLock = true
         const res = await queryPage(data)
@@ -245,6 +233,13 @@ export default {
       } finally {
         this.isTabLock = false
       }
+    },
+    handleGeneralStopUse: async function(row) {
+      try {
+        await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 })
+        await this.handleQueryPage()
+        this.$message.success('修改成功')
+      } catch (error) {}
     },
     getXiaoWeiArchiveStatus: async function() {
       const res = await xiaoWeiArchiveStatus()

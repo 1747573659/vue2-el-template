@@ -245,7 +245,8 @@
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
                 <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <el-date-picker v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <span v-if="!form.archiveExpandVO.licValidityEnd">长期有效</span>
+                <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -254,8 +255,8 @@
               </el-form-item>
             </el-col>
             <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
-              <el-form-item label="经营类目" prop="archiveBaseVO.businessCategoryRemark">
-                <el-cascader :options="businessOptions" @change="handleBusinessCategory" v-model="form.archiveBaseVO.businessCategory"></el-cascader>
+              <el-form-item label="经营类目">
+                <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory"></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -272,7 +273,8 @@
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
                 <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <el-date-picker v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <span v-if="!form.archiveExpandVO.orgInstitutionEnd">长期有效</span>
+                <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
@@ -328,7 +330,8 @@
               <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
                 <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <el-date-picker v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <span v-if="!form.archiveExpandVO.idEnd">长期有效</span>
+                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -450,6 +453,7 @@
       <el-button
         size="small"
         type="primary"
+        plain
         class="e-wxArchive-action_pd"
         @click="handleArchive"
         v-if="[0, 1, 4, 8].includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
@@ -458,7 +462,6 @@
       <el-button
         size="small"
         type="primary"
-        plain
         class="e-wxArchive-action_pd"
         @click="handleVerify"
         v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
@@ -552,6 +555,7 @@ export default {
   },
   methods: {
     handleBusinessCategory(val) {
+      console.info(this.$refs.cascader.getCheckedNodes())
       let one
       let two
       this.businessOptions.forEach(item => {
@@ -567,6 +571,7 @@ export default {
           }
         })
       this.form.archiveBaseVO.businessCategoryRemark = one.label + '/' + two.label
+      this.form.archiveBaseVO.businessCategory = this.$refs.cascader.getCheckedNodes()[0].value
     },
     getBusinessCategory: async function() {
       const res = await businessCategory()
@@ -624,17 +629,34 @@ export default {
             archiveId: this.$route.query.id,
             auditRemark: this.refundForm.remark
           }
-          const res = await refund(data)
-          this.handleDetail()
-          this.isReason = false
+          try {
+            const res = await refund(data)
+            // this.$store.dispatch('delTagView', this.$route).then(() => {
+            //   this.$router.push({ name: 'wxArchive' })
+            // })
+            this.handleDetail()
+            this.isReason = false
+            this.$message.success('操作成功')
+          } catch (error) {}
         }
       })
     },
     handleVerify: async function() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          const res = await submitToVerify(this.form)
-          console.info(res)
+          try {
+            this.form.archiveExpandVO.orgInstitutionBigen = this.form.archiveExpandVO.orgInstitutionBigen ? `${this.form.archiveExpandVO.orgInstitutionBigen} 00:00:00` : ''
+            this.form.archiveExpandVO.orgInstitutionEnd = this.form.archiveExpandVO.orgInstitutionEnd ? `${this.form.archiveExpandVO.orgInstitutionEnd} 23:59:59` : ''
+            this.form.archiveExpandVO.idBegin = this.form.archiveExpandVO.idBegin ? `${this.form.archiveExpandVO.idBegin} 00:00:00` : ''
+            this.form.archiveExpandVO.idEnd = this.form.archiveExpandVO.idEnd ? `${this.form.archiveExpandVO.idEnd} 23:59:59` : ''
+            this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityBigen ? `${this.form.archiveExpandVO.licValidityBigen} 00:00:00` : ''
+            this.form.archiveExpandVO.licValidityEnd = this.form.archiveExpandVO.licValidityEnd ? `${this.form.archiveExpandVO.licValidityEnd} 23:59:59` : ''
+            const res = await submitToVerify(this.form)
+            // this.$store.dispatch('delTagView', this.$route).then(() => {
+            //   this.$router.push({ name: 'wxArchive' })
+            // })
+            this.$message.success('新增成功')
+          } catch (error) {}
         }
       })
     },
@@ -677,14 +699,23 @@ export default {
       }
     },
     handleArchive() {
-      console.info(this.form)
       this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
         if (!errorMessage) {
-          const res = await submit(this.form)
-          console.info(res)
+          try {
+            this.form.archiveExpandVO.orgInstitutionBigen = this.form.archiveExpandVO.orgInstitutionBigen ? `${this.form.archiveExpandVO.orgInstitutionBigen} 00:00:00` : ''
+            this.form.archiveExpandVO.orgInstitutionEnd = this.form.archiveExpandVO.orgInstitutionEnd ? `${this.form.archiveExpandVO.orgInstitutionEnd} 23:59:59` : ''
+            this.form.archiveExpandVO.idBegin = this.form.archiveExpandVO.idBegin ? `${this.form.archiveExpandVO.idBegin} 00:00:00` : ''
+            this.form.archiveExpandVO.idEnd = this.form.archiveExpandVO.idEnd ? `${this.form.archiveExpandVO.idEnd} 23:59:59` : ''
+            this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityBigen ? `${this.form.archiveExpandVO.licValidityBigen} 00:00:00` : ''
+            this.form.archiveExpandVO.licValidityEnd = this.form.archiveExpandVO.licValidityEnd ? `${this.form.archiveExpandVO.licValidityEnd} 23:59:59` : ''
+            const res = await submit(this.form)
+            // this.$store.dispatch('delTagView', this.$route).then(() => {
+            //   this.$router.push({ name: 'wxArchive' })
+            // })
+            this.$message.success('新增成功')
+          } catch (error) {}
         }
       })
-      // this.$refs.form.validate(async valid => {})
     },
     handleArea(type, value) {
       if (type === 'area') {
