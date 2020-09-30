@@ -12,7 +12,7 @@ export const isEmail = value => /^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?
 
 /**
  * 验证非零的正整数
- * @param { string or number } value
+ * @param { string } value
  */
 export const isPositiveInteger = value => /^\+?[1-9][0-9]*$/g.test(value)
 

@@ -133,9 +133,6 @@ export default {
   components: {
     AreaSelect,
   },
-  filters: {},
-  mixins: [],
-  props: {},
   data() {
     const validatorEmail = (rule, value, callback) => {
       if (value.length === 0) {
@@ -244,12 +241,16 @@ export default {
       this.tradeFullName = res.tradeFullName
       this.signKey = res.signKey
       this.createTime = res.createTime
-      const areaRes = await queryDistricDto({ code: res.districtCode })
-      this.areaValue[0] = areaRes.provinceCode
-      this.areaValue[1] = areaRes.cityCode
-      if (areaRes.zoneCode) {
-        this.areaValue[2] = areaRes.zoneCode
+
+      if (res.districtCode) {
+        const areaRes = await queryDistricDto({ code: res.districtCode })
+        this.areaValue[0] = areaRes.provinceCode
+        this.areaValue[1] = areaRes.cityCode
+        if (areaRes.zoneCode) {
+          this.areaValue[2] = areaRes.zoneCode
+        }
       }
+
       this.areaKey += 1
     },
     submitForm() {

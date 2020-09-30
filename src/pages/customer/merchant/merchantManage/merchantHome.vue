@@ -323,19 +323,26 @@ export default {
     },
     batchSubmitClerk() {
       if (this.multipleSelection.length === 0) {
-        this.$message.error('请先选择数据')
-        return
+        return this.$message.error('请先选择数据')
       }
 
       this.dialogFormVisible = true
     },
     async batchOperate(status) {
-      if (this.multipleSelection.length === 0) {
-        this.$message.error('请先选择数据')
-        return
+      const multipleSelection = this.multipleSelection
+      if (multipleSelection.length === 0) {
+        return this.$message.error('请先选择数据')
       }
 
-      const idStr = this.multipleSelection.map((item) => item.id).join(',')
+      const flag = multipleSelection.some((item) => {
+        return item.status !== 0 && item.status !== 1
+      })
+
+      if (flag) {
+        return this.$message.error('您选择了未通过审核的用户，请重新选择')
+      }
+
+      const idStr = multipleSelection.map((item) => item.id).join(',')
       const params = {
         idStr,
         status,

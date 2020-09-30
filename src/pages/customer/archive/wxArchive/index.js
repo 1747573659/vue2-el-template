@@ -7,11 +7,7 @@ export const statusOptions = [
   { value: 4, label: '未通过审核', hidden: false },
   { value: 5, label: '账号申请中', hidden: false },
   { value: 6, label: '账号申请部分通过', hidden: false },
-  { value: 7, label: '账号申请全部通过', hidden: false },
-  { value: 8, label: '资料待补充', hidden: false },
-  { value: 9, label: '资料补充待审核', hidden: false },
-  { value: 10, label: '账号申请中', hidden: true },
-  { value: 11, label: '账号申请中', hidden: true }
+  { value: 7, label: '账号申请全部通过', hidden: false }
 ]
 
 export const deactivateOptions = [
@@ -106,7 +102,7 @@ export const formObj = {
     contact: '', // 联系人/负责人
     contactPhone: '', // 联系人手机号/负责人联系方式
     email: '', // 联系人邮箱
-    businessCategory:'', // 经营类目
+    businessCategory: '', // 经营类目
     businessCategoryRemark: '', // 经营类目（名称，用于页面显示）
     auditStatus: '', // 审核状态
     auditRemark: '' // 审核结果
@@ -135,7 +131,7 @@ export const formObj = {
     openingPermitUrl: '', // 开户许可证号
     bankCardFrontUrl: '', //银行卡正面照
     bank: '', //银行
-    bankName:'',
+    bankName: '',
     bankSub: '', //所属支行
     bankCard: '', //银行账号
     bankAccountName: '', //账户名
@@ -154,7 +150,15 @@ export const formObj = {
     typeAptitudeUrl: '' // 类目特殊资质
   }
 }
-
+var cardholderPhone = (rule, value, callback) => {
+  if (!value) {
+    callback('请输入联系人电话')
+  } else if (!/^1[3456789]\d{9}$/.test(value)) {
+    callback('请输入正确的电话号码')
+  } else {
+    callback()
+  }
+}
 export const detailValidate = {
   'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户类型', trigger: 'change' }],
   'archiveBaseVO.publicId': [{ required: true, message: '请输入公众号APPID', trigger: 'change' }],
@@ -164,8 +168,11 @@ export const detailValidate = {
   'archiveBaseVO.area': [{ required: true, message: '请输入地区', trigger: 'change' }],
   'archiveBaseVO.address': [{ required: true, message: '请输入详细地址', trigger: 'change' }],
   'archiveBaseVO.contact': [{ required: true, message: '请输入联系人', trigger: 'change' }],
-  'archiveBaseVO.contactPhone': [{ required: true, message: '请输入联系人电话', trigger: 'change' }],
-  'archiveBaseVO.email': [{ required: true, message: '请输入邮箱', trigger: 'change' }],
+  'archiveBaseVO.contactPhone': [{ required: true, validator: cardholderPhone, trigger: ['blur', 'change'] }],
+  'archiveBaseVO.email': [
+    { required: true, message: '请输入邮箱', trigger: 'change' },
+    { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
+  ],
   'archiveOtherVO.signboardUrl': [{ required: true, message: '请输入门店门头照', trigger: 'change' }],
   'archiveOtherVO.businessSiteOneUrl': [{ required: true, message: '请输入经营场所照1', trigger: 'change' }],
   'archiveOtherVO.businessSiteTwoUrl': [{ required: true, message: '请输入经营场所照2', trigger: 'change' }],

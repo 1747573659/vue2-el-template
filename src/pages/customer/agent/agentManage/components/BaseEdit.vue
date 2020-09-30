@@ -433,12 +433,15 @@ export default {
       const res = await queryAgentById({ id: Number(this.$route.query.id) })
       this.ruleForm = res
 
-      const areaRes = await queryDistricDto({ code: res.districtCode })
-      this.areaValue[0] = areaRes.provinceCode
-      this.areaValue[1] = areaRes.cityCode
-      if (areaRes.zoneCode) {
-        this.areaValue[2] = areaRes.zoneCode
+      if (res.districtCode) {
+        const areaRes = await queryDistricDto({ code: res.districtCode })
+        this.areaValue[0] = areaRes.provinceCode
+        this.areaValue[1] = areaRes.cityCode
+        if (areaRes.zoneCode) {
+          this.areaValue[2] = areaRes.zoneCode
+        }
       }
+
       this.areaKey += 1
     },
     areaChange(value) {

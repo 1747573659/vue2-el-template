@@ -1,5 +1,5 @@
 <template>
-  <section class="p-wxArchive-con">
+  <section class="p-wxArchive-con" v-loading="isDetailLoad">
     <header v-if="pageAction && pageAction !== 'add'">
       <el-row>
         <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
@@ -112,6 +112,7 @@
                 <upload-pic
                   alt="门店门头照"
                   :imagePath="form.archiveOtherVO.signboardUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'signboardUrl')"
                   :fileServer="fileServer"
@@ -124,6 +125,7 @@
                 <upload-pic
                   alt="经营场所照1"
                   :imagePath="form.archiveOtherVO.businessSiteOneUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteOneUrl')"
                   @click="imgClick"
@@ -136,6 +138,7 @@
                 <upload-pic
                   alt="经营场所照2"
                   :imagePath="form.archiveOtherVO.businessSiteTwoUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteTwoUrl')"
                   :fileServer="fileServer"
@@ -147,6 +150,7 @@
                 <upload-pic
                   alt="经营场所照3"
                   :imagePath="form.archiveOtherVO.businessSiteThreeUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteThreeUrl')"
                   @click="imgClick"
@@ -159,6 +163,7 @@
                 <upload-pic
                   alt="经营场地证明"
                   :imagePath="form.archiveOtherVO.businessSiteUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteUrl')"
                   @click="imgClick"
@@ -171,6 +176,7 @@
                 <upload-pic
                   alt="补充资料1"
                   :imagePath="form.archiveOtherVO.additionalOneUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalOneUrl')"
                   @click="imgClick"
@@ -183,6 +189,7 @@
                 <upload-pic
                   alt="补充资料2"
                   :imagePath="form.archiveOtherVO.additionalTwoUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalTwoUrl')"
                   @click="imgClick"
@@ -208,6 +215,7 @@
                 <upload-pic
                   alt="营业执照"
                   :imagePath="form.archiveExpandVO.businessLicenseUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'businessLicenseUrl')"
                   @click="imgClick"
@@ -220,6 +228,7 @@
                 <upload-pic
                   alt="类目特殊资质"
                   :imagePath="form.archiveOtherVO.typeAptitudeUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'typeAptitudeUrl')"
                   @click="imgClick"
@@ -271,6 +280,7 @@
                 <upload-pic
                   alt="组织机构代码证"
                   :imagePath="form.archiveExpandVO.orgInstitutionUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'orgInstitutionUrl')"
                   @click="imgClick"
@@ -283,6 +293,7 @@
                 <upload-pic
                   alt="税务登记证"
                   :imagePath="form.archiveExpandVO.taxRegistrationUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
                   @click="imgClick"
@@ -325,6 +336,7 @@
                 <upload-pic
                   alt="身份证正面照"
                   :imagePath="form.archiveExpandVO.idFrontUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idFrontUrl')"
                   @click="imgClick"
@@ -337,6 +349,7 @@
                 <upload-pic
                   alt="身份证背面照"
                   :imagePath="form.archiveExpandVO.idBackUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idBackUrl')"
                   @click="imgClick"
@@ -349,6 +362,7 @@
                 <upload-pic
                   alt="手持身份证正面照"
                   :imagePath="form.archiveExpandVO.hardIdUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'hardIdUrl')"
                   @click="imgClick"
@@ -366,6 +380,7 @@
                 <upload-pic
                   alt="开户许可证"
                   :imagePath="form.archiveExpandVO.openingPermitUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'openingPermitUrl')"
                   @click="imgClick"
@@ -378,6 +393,7 @@
                 <upload-pic
                   alt="银行卡正面照"
                   :imagePath="form.archiveExpandVO.bankCardFrontUrl"
+                  uploadUrlPath="/uploadFile"
                   :exampleImg="exampleImg"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'bankCardFrontUrl')"
                   @click="imgClick"
@@ -480,6 +496,7 @@ import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, ref
 import fileServer from '@/mixins/fileServe'
 import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
 import { filterReview } from './filters/reviewStatus'
+import { deepClone } from '@/utils'
 
 export default {
   mixins: [fileServer],
@@ -497,6 +514,7 @@ export default {
       selectOptions: [],
       searchString: '',
       isMaxPage: false,
+      isDetailLoad: false,
       form: formObj,
       rules: detailValidate,
       businessSceneList: [],
@@ -527,6 +545,10 @@ export default {
       vm.getBranchPage()
       vm.getBusinessCategory()
     })
+  },
+  beforeRouteLeave(to, from, next) {
+    this.$refs.form.resetFields()
+    next()
   },
   methods: {
     handleBusinessCategory(val) {
@@ -617,16 +639,22 @@ export default {
       })
     },
     handleDetail: async function() {
-      const res = await detail({ archiveId: this.$route.query.id })
-      this.form.archiveBaseVO = res.archiveBaseDTO
-      this.form.archiveExpandVO = res.archiveExpandDTO
-      this.form.archiveOtherVO = res.archiveOtherDTO
-      this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
-      this.areaKey = Symbol('areaKey')
-      this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
-      this.bankAreaKey = Symbol('bankAreaKey')
-      if (!this.detailStatusArr.includes(res.archiveBaseDTO.auditStatus)) {
-        this.formDisabled = true
+      try {
+        this.isDetailLoad = true
+        const res = await detail({ archiveId: this.$route.query.id })
+        this.form.archiveBaseVO = res.archiveBaseDTO
+        this.form.archiveExpandVO = res.archiveExpandDTO
+        this.form.archiveOtherVO = res.archiveOtherDTO
+        this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
+        this.areaKey = Symbol('areaKey')
+        this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
+        this.bankAreaKey = Symbol('bankAreaKey')
+        if (!this.detailStatusArr.includes(res.archiveBaseDTO.auditStatus)) {
+          this.formDisabled = true
+        }
+      } catch (error) {
+      } finally {
+        this.isDetailLoad = false
       }
       // 复制
       if (this.$route.query.isCopy) {

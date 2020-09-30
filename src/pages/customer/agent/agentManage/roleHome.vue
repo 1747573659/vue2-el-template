@@ -44,7 +44,11 @@
       >
         <el-table-column prop="id" label="角色编号"> </el-table-column>
         <el-table-column prop="name" label="角色名称"> </el-table-column>
-        <el-table-column prop="remark" label="描述"> </el-table-column>
+        <el-table-column prop="remark" label="描述">
+          <template slot-scope="scope">
+            {{ scope.row.remark || '--' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="num" label="关联账号数量"> </el-table-column>
         <el-table-column prop="createTime" label="创建时间" width="180px">
         </el-table-column>
