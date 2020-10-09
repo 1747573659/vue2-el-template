@@ -147,6 +147,7 @@ export const formObj = {
     businessSiteUrl: '', // 经营场地证明
     additionalOneUrl: '', // 补充材料1
     additionalTwoUrl: '', // 补充材料2
+    additionalRemark:'', //补充说明
     typeAptitudeUrl: '' // 类目特殊资质
   }
 }

@@ -21,6 +21,7 @@
             <el-col :span="12">
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
+                  style="width:240px"
                   v-if="pageAction === 'add' || ($route.query.isCopy && JSON.parse($route.query.isCopy))"
                   :isMaxPage="isMaxPage"
                   :options="selectOptions"
@@ -56,12 +57,12 @@
             </el-col>
             <el-col :span="12" v-if="businessSceneList.includes(1)">
               <el-form-item label="公众号APPID" prop="archiveBaseVO.publicId">
-                <el-input v-model="form.archiveBaseVO.publicId" placeholder="请输入公众号APPID"></el-input>
+                <el-input v-model="form.archiveBaseVO.publicId" placeholder="请输入公众号APPID" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="businessSceneList.includes(2)">
               <el-form-item label="小程序APPID" prop="archiveBaseVO.appletId">
-                <el-input v-model="form.archiveBaseVO.appletId" placeholder="请输入小程序APPID"></el-input>
+                <el-input v-model="form.archiveBaseVO.appletId" placeholder="请输入小程序APPID" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -74,12 +75,12 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
-                <el-input v-model="form.archiveBaseVO.companyName" placeholder="请输入公司名称"></el-input>
+                <el-input v-model="form.archiveBaseVO.companyName" placeholder="请输入公司名称" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
-                <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="请输入商户简称"></el-input>
+                <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="请输入商户简称" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -89,22 +90,22 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="详细地址" prop="archiveBaseVO.address">
-                <el-input v-model="form.archiveBaseVO.address" placeholder="请输入详细地址"></el-input>
+                <el-input v-model="form.archiveBaseVO.address" placeholder="请输入详细地址" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="联系人" prop="archiveBaseVO.contact">
-                <el-input v-model="form.archiveBaseVO.contact" placeholder="请输入联系人"></el-input>
+                <el-input v-model="form.archiveBaseVO.contact" placeholder="请输入联系人" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
-                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="请输入联系人电话"></el-input>
+                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="请输入联系人电话" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="邮箱" prop="archiveBaseVO.email">
-                <el-input v-model="form.archiveBaseVO.email" placeholder="请输入邮箱"></el-input>
+                <el-input v-model="form.archiveBaseVO.email" placeholder="请输入邮箱" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -197,6 +198,11 @@
                 ></upload-pic>
               </el-form-item>
             </el-col>
+            <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
+              <el-form-item label="补充说明" prop="archiveOtherVO.additionalRemark">
+                <el-input v-model="form.archiveOtherVO.additionalRemark" type="textarea" :autosize="{ minRows: 3 }" resize="none" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
           </el-row>
         </div>
         <div class="p-wxArchive-item">
@@ -238,42 +244,50 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
-                <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号"></el-input>
+                <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
                 <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.licValidityEnd">长期有效</span>
+                <span v-if="!form.archiveExpandVO.licValidityEnd && pageAction === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="经营范围" prop="archiveExpandVO.businessScope">
-                <el-input v-model="form.archiveExpandVO.businessScope" style="width: 240px" type="textarea" :autosize="{ minRows: 3 }" placeholder="经营范围"></el-input>
+                <el-input
+                  v-model="form.archiveExpandVO.businessScope"
+                  type="textarea"
+                  :autosize="{ minRows: 3 }"
+                  maxlength="140"
+                  show-word-limit
+                  placeholder="会写入商户合同条款或用于后续公众号展示，请谨慎填写"
+                  style="width: 240px"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
               <el-form-item label="经营类目">
-                <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory"></el-cascader>
+                <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="售卖商品描述" prop="archiveExpandVO.sellShopDescribe">
-                <el-input v-model="form.archiveExpandVO.sellShopDescribe" style="width: 240px" type="textarea" :autosize="{ minRows: 3 }" placeholder="售卖商品描述"></el-input>
+                <el-input v-model="form.archiveExpandVO.sellShopDescribe" type="textarea" :autosize="{ minRows: 3 }" maxlength="140" show-word-limit style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
               <el-form-item label="组织机构代码号" prop="archiveExpandVO.orgInstitutionCode">
-                <el-input v-model="form.archiveExpandVO.orgInstitutionCode" placeholder="组织机构代码号"></el-input>
+                <el-input v-model="form.archiveExpandVO.orgInstitutionCode" placeholder="组织机构代码号" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
                 <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.orgInstitutionEnd">长期有效</span>
+                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && pageAction === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -310,12 +324,12 @@
           <el-row class="p-wxArchive-baseInfo">
             <el-col :span="12">
               <el-form-item label="法人姓名" prop="archiveExpandVO.legalPersonName">
-                <el-input v-model="form.archiveExpandVO.legalPersonName" placeholder="法人姓名"></el-input>
+                <el-input v-model="form.archiveExpandVO.legalPersonName" placeholder="法人姓名" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件类型" prop="archiveExpandVO.idType">
-                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.idType" placeholder="全部">
+                <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="全部" style="width: 240px">
                   <el-option label="身份证" :value="1"></el-option>
                   <el-option label="护照" :value="2"></el-option>
                 </el-select>
@@ -323,14 +337,14 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件号码" prop="archiveExpandVO.idNumber">
-                <el-input style="width:240px" v-model="form.archiveExpandVO.idNumber" placeholder=""></el-input>
+                <el-input v-model="form.archiveExpandVO.idNumber" placeholder="" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
                 <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.idEnd">长期有效</span>
+                <span v-if="!form.archiveExpandVO.idEnd && pageAction === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -406,26 +420,26 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行" prop="archiveExpandVO.bank">
-                <el-select v-model="form.archiveExpandVO.bank" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBankRemote">
+                <el-select v-model="form.archiveExpandVO.bank" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBankRemote" style="width: 240px">
                   <el-option v-for="item in bankOptions" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
-                <el-select v-model="form.archiveExpandVO.bankSub" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBranchRemote">
+                <el-select v-model="form.archiveExpandVO.bankSub" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBranchRemote" style="width: 240px">
                   <el-option v-for="item in branchOptions" :key="item.bCode" :label="item.bName" :value="item.bCode"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
-                <el-input style="width:240px" v-model="form.archiveExpandVO.bankCard" placeholder=""></el-input>
+                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
-                <el-input style="width:240px" v-model="form.archiveExpandVO.bankAccountName" placeholder=""></el-input>
+                <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -440,7 +454,7 @@
           <el-row class="p-wxArchive-baseInfo">
             <el-col :span="12">
               <el-form-item label="费率" prop="archiveBaseVO.bankArea">
-                <el-select v-model="form.archiveBaseVO.fixFeeRate" placeholder="请选择">
+                <el-select v-model="form.archiveBaseVO.fixFeeRate" placeholder="请选择" style="width:240px">
                   <el-option v-for="item in rateOptions" :key="item.value" :label="item.lable" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -450,31 +464,14 @@
       </el-form>
     </section>
     <div class="p-wxArchive-action" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">
-      <el-button
-        size="small"
-        type="primary"
-        plain
-        class="e-wxArchive-action_pd"
-        @click="handleArchive"
-        v-if="[0, 1, 4, 8].includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive" v-if="[0, 1, 4, 8].includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
         >保存</el-button
       >
-      <el-button
-        size="small"
-        type="primary"
-        class="e-wxArchive-action_pd"
-        @click="handleVerify"
-        v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
+      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
         >提交审核</el-button
       >
       <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus)">拒绝</el-button>
-      <el-button
-        size="small"
-        class="e-wxArchive-action_pd"
-        @click="$router.push('wxArchive')"
-        v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
-        >取消</el-button
-      >
+      <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">取消</el-button>
     </div>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
@@ -488,6 +485,8 @@
         <el-button @click="handleRefund" type="primary" size="small" class="e-wxArchive-action_pd">确定</el-button>
       </div>
     </el-dialog>
+    <!-- image-preview -->
+    <!-- <el-image src="https://fuss10.elemecdn.com/e/5d/4a731a90594a4af544c0c25941171jpeg.jpeg" :preview-src-list="srcList" style="width: 100px; height: 100px"></el-image> -->
   </section>
 </template>
 
@@ -510,6 +509,7 @@ export default {
   },
   data() {
     return {
+      srcList: ['https://fuss10.elemecdn.com/8/27/f01c15bb73e1ef3793e64e6b7bbccjpeg.jpeg', 'https://fuss10.elemecdn.com/1/8e/aeffeb4de74e2fde4bd74fc7b4486jpeg.jpeg'],
       rateOptions,
       refundForm,
       refundRules,
@@ -645,12 +645,12 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           try {
-            this.form.archiveExpandVO.orgInstitutionBigen = this.form.archiveExpandVO.orgInstitutionBigen ? `${this.form.archiveExpandVO.orgInstitutionBigen} 00:00:00` : ''
-            this.form.archiveExpandVO.orgInstitutionEnd = this.form.archiveExpandVO.orgInstitutionEnd ? `${this.form.archiveExpandVO.orgInstitutionEnd} 23:59:59` : ''
-            this.form.archiveExpandVO.idBegin = this.form.archiveExpandVO.idBegin ? `${this.form.archiveExpandVO.idBegin} 00:00:00` : ''
-            this.form.archiveExpandVO.idEnd = this.form.archiveExpandVO.idEnd ? `${this.form.archiveExpandVO.idEnd} 23:59:59` : ''
-            this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityBigen ? `${this.form.archiveExpandVO.licValidityBigen} 00:00:00` : ''
-            this.form.archiveExpandVO.licValidityEnd = this.form.archiveExpandVO.licValidityEnd ? `${this.form.archiveExpandVO.licValidityEnd} 23:59:59` : ''
+            // this.form.archiveExpandVO.orgInstitutionBigen = this.form.archiveExpandVO.orgInstitutionBigen ? `${this.form.archiveExpandVO.orgInstitutionBigen} 00:00:00` : ''
+            // this.form.archiveExpandVO.orgInstitutionEnd = this.form.archiveExpandVO.orgInstitutionEnd ? `${this.form.archiveExpandVO.orgInstitutionEnd} 23:59:59` : ''
+            // this.form.archiveExpandVO.idBegin = this.form.archiveExpandVO.idBegin ? `${this.form.archiveExpandVO.idBegin} 00:00:00` : ''
+            // this.form.archiveExpandVO.idEnd = this.form.archiveExpandVO.idEnd ? `${this.form.archiveExpandVO.idEnd} 23:59:59` : ''
+            // this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityBigen ? `${this.form.archiveExpandVO.licValidityBigen} 00:00:00` : ''
+            // this.form.archiveExpandVO.licValidityEnd = this.form.archiveExpandVO.licValidityEnd ? `${this.form.archiveExpandVO.licValidityEnd} 23:59:59` : ''
             const res = await submitToVerify(this.form)
             // this.$store.dispatch('delTagView', this.$route).then(() => {
             //   this.$router.push({ name: 'wxArchive' })
@@ -702,12 +702,12 @@ export default {
       this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
         if (!errorMessage) {
           try {
-            this.form.archiveExpandVO.orgInstitutionBigen = this.form.archiveExpandVO.orgInstitutionBigen ? `${this.form.archiveExpandVO.orgInstitutionBigen} 00:00:00` : ''
-            this.form.archiveExpandVO.orgInstitutionEnd = this.form.archiveExpandVO.orgInstitutionEnd ? `${this.form.archiveExpandVO.orgInstitutionEnd} 23:59:59` : ''
-            this.form.archiveExpandVO.idBegin = this.form.archiveExpandVO.idBegin ? `${this.form.archiveExpandVO.idBegin} 00:00:00` : ''
-            this.form.archiveExpandVO.idEnd = this.form.archiveExpandVO.idEnd ? `${this.form.archiveExpandVO.idEnd} 23:59:59` : ''
-            this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityBigen ? `${this.form.archiveExpandVO.licValidityBigen} 00:00:00` : ''
-            this.form.archiveExpandVO.licValidityEnd = this.form.archiveExpandVO.licValidityEnd ? `${this.form.archiveExpandVO.licValidityEnd} 23:59:59` : ''
+            // this.form.archiveExpandVO.orgInstitutionBigen = this.form.archiveExpandVO.orgInstitutionBigen ? `${this.form.archiveExpandVO.orgInstitutionBigen} 00:00:00` : ''
+            // this.form.archiveExpandVO.orgInstitutionEnd = this.form.archiveExpandVO.orgInstitutionEnd ? `${this.form.archiveExpandVO.orgInstitutionEnd} 23:59:59` : ''
+            // this.form.archiveExpandVO.idBegin = this.form.archiveExpandVO.idBegin ? `${this.form.archiveExpandVO.idBegin} 00:00:00` : ''
+            // this.form.archiveExpandVO.idEnd = this.form.archiveExpandVO.idEnd ? `${this.form.archiveExpandVO.idEnd} 23:59:59` : ''
+            // this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityBigen ? `${this.form.archiveExpandVO.licValidityBigen} 00:00:00` : ''
+            // this.form.archiveExpandVO.licValidityEnd = this.form.archiveExpandVO.licValidityEnd ? `${this.form.archiveExpandVO.licValidityEnd} 23:59:59` : ''
             const res = await submit(this.form)
             // this.$store.dispatch('delTagView', this.$route).then(() => {
             //   this.$router.push({ name: 'wxArchive' })

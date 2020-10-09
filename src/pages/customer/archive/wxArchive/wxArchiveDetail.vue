@@ -26,9 +26,8 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="400px">
           <template slot-scope="scope">
-            <el-button type="text" size="small">立即签约</el-button>
-            <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null">立即签约</el-button>
-            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4">升级签约</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null" @click="handleSignUp(scope.row, 1)">立即签约</el-button>
+            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4" @click="handleSignUp(scope.row, 2)">升级签约</el-button>
             <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 2">验证账户</el-button>
             <span v-else>--</span>
           </template>
@@ -37,19 +36,19 @@
     </div>
     <!-- dialog -->
     <!-- 升级签约/立即签约 -->
-    <el-dialog>
-      <section>
+    <el-dialog append-to-body :visible.sync="signUpStatus" width="30%" custom-class="e-sign-dialog">
+      <section class="e-sign-body">
         <header>
           <p>当前入驻申请已通过</p>
-          <p>请林超（本人）微信扫码完成签约</p>
+          <p>请{{ $route.query.legalPersonName }}（本人）微信扫码完成签约</p>
         </header>
         <div>
-          <img src="" alt="" />
+          <img :src="signUpUrl" alt="签约二维码" style="width:200px;height:200px" />
         </div>
         <section>
-          <p>商户简称</p>
-          <p>公司名称</p>
-          <p>结算银行卡</p>
+          <p>商户简称：{{ $route.query.merchantShortName }}</p>
+          <p>公司名称：{{ $route.query.companyName }}</p>
+          <p>结算银行卡：{{ $route.query.bankCard }}</p>
         </section>
       </section>
     </el-dialog>
@@ -91,7 +90,7 @@
 </template>
 
 <script>
-import { generalDetail } from '@/api/wxArchive'
+import { generalDetail, generalView } from '@/api/wxArchive'
 import { detailOptions, updateStatusOptions } from './index.js'
 
 export default {
@@ -100,6 +99,8 @@ export default {
       detailOptions,
       updateStatusOptions,
       isReason: false,
+      signUpStatus: false,
+      signUpUrl: '',
       reasonMsg: '',
       isTabLock: false, // 锁状态
       tableData: [],
@@ -117,6 +118,13 @@ export default {
     this.handleQueryPage()
   },
   methods: {
+    handleSignUp: async function(row, flag) {
+      try {
+        this.signUpStatus = true
+        const res = await generalView({ id: row.id, flag })
+        this.signUpUrl = 'data:image/png;base64,' + btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+      } catch (error) {}
+    },
     handleReason(row) {
       this.reasonMsg = row.remark
       this.isReason = true
@@ -148,38 +156,22 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.author-dialog {
-  /deep/.el-dialog__body {
-    height: 380px;
-    .author-dialog-text {
-      font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      line-height: 22px;
-      color: #3d4966;
-    }
-    .author-dialog-text:first-child {
-      margin-bottom: 12px;
-    }
-    .author-dialog-img {
-      top: 50%;
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%);
-      width: 152px;
-      height: 152px;
+.e {
+  &-sign {
+    &-body {
+      text-align: center;
     }
   }
 }
-.shop-dialog {
-  /deep/.el-dialog__body {
-    display: flex;
-    justify-content: center;
+</style>
+<style lang="scss">
+.e {
+  &-sign {
+    &-dialog {
+      /deep/ .el-dialog__header {
+        border-bottom: 0 none !important;
+      }
+    }
   }
-}
-.shop-dialog-row {
-  display: flex;
-  align-items: center;
-  line-height: 32px;
 }
 </style>
