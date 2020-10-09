@@ -1,13 +1,13 @@
 export const statusOptions = [
-  { value: '', label: '全部', hidden: false },
-  { value: 0, label: '草稿', hidden: false },
-  { value: 1, label: '未通过审核编辑中', hidden: false },
-  { value: 2, label: '代理商待审核', hidden: false },
-  { value: 3, label: '平台审核中', hidden: false },
-  { value: 4, label: '未通过审核', hidden: false },
-  { value: 5, label: '账号申请中', hidden: false },
-  { value: 6, label: '账号申请部分通过', hidden: false },
-  { value: 7, label: '账号申请全部通过', hidden: false }
+  { value: '', label: '全部' },
+  { value: 0, label: '草稿' },
+  { value: 1, label: '未通过审核编辑中' },
+  { value: 2, label: '代理商待审核' },
+  { value: 3, label: '平台审核中' },
+  { value: 4, label: '未通过审核' },
+  { value: 5, label: '账号申请中' },
+  { value: 6, label: '账号申请部分通过' },
+  { value: 7, label: '账号申请全部通过' }
 ]
 
 export const deactivateOptions = [
