@@ -489,7 +489,8 @@
     </div>
     <div class="bottom">
       <el-button v-permission="'XFT_ADD_SUBMIT'" v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
-      <el-button v-permission="'XFT_ADD_SAVE'" v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      <el-button v-permission="'XFT_ADD_SAVE'" v-if="([undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy) && !isDetail" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      <el-button v-permission="'XFT_ADD_SUBMIT'" v-if="([2].includes(auditStatus) || isCopy) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
       <el-button v-permission="'XFT_ADD_REFUSE'" v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div> 
@@ -1148,7 +1149,7 @@ export default {
       this.isCopy = true
     }
     this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
-    if ([3,5,6,7,9].includes(this.auditStatus)) {
+    if ([2, 3,5,6,7,9].includes(this.auditStatus)) {
       this.isDetail = true
     }
     if (this.$route.query.id) {
