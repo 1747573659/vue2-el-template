@@ -43,7 +43,7 @@ const customer = {
           meta: {
             title: '商户管理/新增',
             name: 'addMerchant',
-            noCache: true
+            cache: true
           }
         },
         {
@@ -55,7 +55,7 @@ const customer = {
           meta: {
             title: '商户管理/编辑',
             name: 'editMerchant',
-            noCache: true
+            cache: true
           }
         },
         {
@@ -77,7 +77,7 @@ const customer = {
           meta: {
             title: '品牌管理/新增',
             name: 'addBrand',
-            noCache: true
+            cache: true
           }
         },
         {
@@ -89,7 +89,7 @@ const customer = {
           meta: {
             title: '品牌管理/编辑',
             name: 'editBrand',
-            noCache: true
+            cache: true
           }
         }
       ]
@@ -205,7 +205,7 @@ const customer = {
           meta: {
             title: '代理商管理/新增',
             name: 'addAgent',
-            noCache: true
+            cache: true
           }
         },
         {
@@ -217,7 +217,7 @@ const customer = {
           meta: {
             title: '代理商管理/编辑',
             name: 'editAgent',
-            noCache: true
+            cache: true
           }
         },
         {
@@ -239,7 +239,7 @@ const customer = {
           meta: {
             title: '代理商角色管理/新增',
             name: 'addRole',
-            noCache: true
+            cache: true
           }
         },
         {
@@ -251,7 +251,7 @@ const customer = {
           meta: {
             title: '代理商角色管理/编辑',
             name: 'editRole',
-            noCache: true
+            cache: true
           }
         }
       ]

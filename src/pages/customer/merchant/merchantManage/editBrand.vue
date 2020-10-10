@@ -151,6 +151,7 @@ export default {
 
         this.brandValue = [res.topTradeTypeId, res.tradeTypeId]
         this.brandKey += 1
+        this.adminName = res.adminName
         this.mid = res.mid
         this.erpIndustryName = res.erpIndustryName
         this.erpProductName = res.erpProductName
