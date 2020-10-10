@@ -56,8 +56,8 @@
             >新增</el-button
           >
           <el-dropdown style="margin-left: 12px;">
-            <el-button type="primary" size="small">
-              更多<i class="el-icon-arrow-down el-icon--right"></i>
+            <el-button size="small">
+              更多
             </el-button>
             <el-dropdown-menu slot="dropdown">
               <el-dropdown-item

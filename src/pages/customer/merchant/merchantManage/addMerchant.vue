@@ -68,7 +68,7 @@
                     placeholder=""
                   ></el-input>
                 </el-form-item>
-                <el-form-item label="商户类型：" prop="type">
+                <!-- <el-form-item label="商户类型：" prop="type">
                   <el-select v-model="ruleForm.type" placeholder="请选择产品">
                     <el-option
                       v-for="item in typeOptions"
@@ -78,7 +78,7 @@
                     >
                     </el-option>
                   </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="业务员：">
                   <el-select
                     v-model="ruleForm.clerkId"
@@ -242,7 +242,7 @@ export default {
       clerkOptions: [],
       tradeTypeOptions: [],
       typeOptions: [
-        { id: 1, name: '普通连锁（单品牌、多品牌同一公众号）' },
+        { id: 1, name: '普通连锁（单品牌）' },
         { id: 2, name: '多品牌连锁（多公众号）' },
         { id: 3, name: '单店' },
       ],
@@ -262,7 +262,7 @@ export default {
         mobile: '',
         shortName: '',
         tradeTypeId: '',
-        type: '',
+        type: 1,
       },
       rules: {
         companyName: {

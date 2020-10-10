@@ -31,7 +31,7 @@
                 <el-form-item label="行业：" required>
                   <span>{{ tradeFullName || '--' }}</span>
                 </el-form-item>
-                <el-form-item label="商户类型：" prop="type">
+                <!-- <el-form-item label="商户类型：" prop="type">
                   <el-select
                     style="width: 240px;"
                     v-model="ruleForm.type"
@@ -45,7 +45,7 @@
                     >
                     </el-option>
                   </el-select>
-                </el-form-item>
+                </el-form-item> -->
                 <el-form-item label="地区：" prop="districtCode">
                   <area-select
                     :areaList="areaValue"
@@ -154,7 +154,7 @@ export default {
       options: [],
       clerkOptions: [],
       typeOptions: [
-        { id: 1, name: '普通连锁（单品牌、多品牌同一公众号）' },
+        { id: 1, name: '普通连锁（单品牌）' },
         { id: 2, name: '多品牌连锁（多公众号）' },
         { id: 3, name: '单店' },
       ],
@@ -168,7 +168,7 @@ export default {
         id: 0,
         mobile: '',
         shortName: '',
-        type: '',
+        type: 1,
       },
       rules: {
         companyName: {
@@ -249,9 +249,8 @@ export default {
         if (areaRes.zoneCode) {
           this.areaValue[2] = areaRes.zoneCode
         }
+        this.areaKey += 1
       }
-
-      this.areaKey += 1
     },
     submitForm() {
       this.$refs['ruleForm'].validate((valid) => {
