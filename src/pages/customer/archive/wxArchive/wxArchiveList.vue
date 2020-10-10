@@ -38,8 +38,7 @@
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <!-- <el-button v-permission="'WXARCHIVE_LIST_ADD'" type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button> -->
-              <el-button type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button>
+              <el-button v-permission="'WXARCHIVE_LIST_ADD'" type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -88,32 +87,6 @@
             <el-button
               type="text"
               size="small"
-              @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })"
-              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
-              >审核</el-button
-            >
-            <el-button
-              type="text"
-              size="small"
-              @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })"
-              v-else-if="[0, 1, 4].includes(scope.row.archiveBaseDTO.auditStatus)"
-              >编辑</el-button
-            >
-            <el-button type="text" size="small" @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })" v-else>详情</el-button>
-            <el-button type="text" size="small" @click="handlePushDetail({ action: 'detail', isCopy: true, id: scope.row.archiveBaseDTO.id })">复制</el-button>
-            <el-button type="text" size="small" @click="handleGeneralStopUse(scope.row)">{{
-              scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
-            }}</el-button>
-            <el-button
-              type="text"
-              size="small"
-              v-if="scope.row.xiaoWeiArchiveStatus"
-              @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id, legalPersonName: scope.row.archiveExpandDTO.legalPersonName, merchantShortName: scope.row.archiveBaseDTO.merchantShortName, companyName:scope.row.archiveBaseDTO.companyName, bankCard: scope.row.archiveExpandDTO.bankCard } })"
-              >进件详情</el-button
-            >
-            <!-- <el-button
-              type="text"
-              size="small"
               v-permission="'WXARCHIVE_LIST_REVIEW'"
               @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })"
               v-if="scope.row.archiveBaseDTO.auditStatus === 2"
@@ -127,7 +100,7 @@
               v-else-if="[0, 1, 4].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_DETAIL'" @click="handlePushDetail({ action: 'detail', idnghuiq: scope.row.archiveBaseDTO.id })" v-else>详情</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_DETAIL'" @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })" v-else>详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_COPY'" @click="handlePushDetail({ action: 'detail', isCopy: true, id: scope.row.archiveBaseDTO.id })">复制</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleGeneralStopUse(scope.row)">{{
               scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
@@ -137,9 +110,20 @@
               size="small"
               v-permission="'WXARCHIVE_LIST_ARCHIVELIST'"
               v-if="scope.row.xiaoWeiArchiveStatus"
-              @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id } })"
+              @click="
+                $router.push({
+                  name: 'wxArchiveDetail',
+                  query: {
+                    id: scope.row.archiveBaseDTO.id,
+                    legalPersonName: scope.row.archiveExpandDTO.legalPersonName,
+                    merchantShortName: scope.row.archiveBaseDTO.merchantShortName,
+                    companyName: scope.row.archiveBaseDTO.companyName,
+                    bankCard: scope.row.archiveExpandDTO.bankCard
+                  }
+                })
+              "
               >进件详情</el-button
-            > -->
+            >
           </template>
         </el-table-column>
       </el-table>

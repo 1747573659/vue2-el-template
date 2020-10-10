@@ -53,31 +53,40 @@
       </section>
     </el-dialog>
     <!-- 验证账户 -->
-    <el-dialog title="验证账户">
+    <el-dialog append-to-body title="验证账户" :visible.sync="checkAccountDialogVisible" width="40%">
       <section>
         <div class="p-account-item">
-          <p>汇款金额</p>
+          <p>付款户名：{{ checkAccountData.accountName }}</p>
         </div>
         <div class="p-account-item">
-          <p>收款卡号</p>
+          <p>汇款金额：{{ checkAccountData.payAmount }}</p>
         </div>
         <div class="p-account-item">
-          <p>收款户名</p>
+          <p>收款卡号：{{ checkAccountData.destinationAccountNumber }}</p>
         </div>
         <div class="p-account-item">
-          <p>收款账户开户行</p>
+          <p>收款户名：{{ checkAccountData.destinationAccountName }}</p>
         </div>
         <div class="p-account-item">
-          <p>开户行省市</p>
+          <p>收款账户开户行：{{ checkAccountData.destinationAccountBank }}</p>
         </div>
         <div class="p-account-item">
-          <p>汇款截止时间</p>
+          <p>开户行省市：{{ checkAccountData.city }}</p>
         </div>
         <div class="p-account-item">
-          <p>汇款备注信息</p>
+          <p>汇款截止时间：{{ checkAccountData.deadlineTime }}</p>
         </div>
+        <div class="p-account-item">
+          <p>汇款备注信息（必填）：{{ checkAccountData.remark }}</p>
+        </div>
+        <el-alert
+          :title="'温馨提醒：请在' + checkAccountData.deadlineTime + '前，使用用上方的付款账号，向指定的收款账号汇入' + checkAccountData.payAmount + '元，以完成账户验证，过期未验证账户则入驻失败！'"
+          type="warning"
+          show-icon
+          :closable="false"
+          style="margin: 20px 0"
+        ></el-alert>
       </section>
-      <el-alert :title="234" type="warning" show-icon :closable="false"></el-alert>
     </el-dialog>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="原因" width="507px">
@@ -90,7 +99,7 @@
 </template>
 
 <script>
-import { generalDetail, generalView } from '@/api/wxArchive'
+import { generalDetail, generalView, queryBySubMchId } from '@/api/wxArchive'
 import { detailOptions, updateStatusOptions } from './index.js'
 
 export default {
@@ -101,6 +110,8 @@ export default {
       isReason: false,
       signUpStatus: false,
       signUpUrl: '',
+      checkAccountData: {},
+      checkAccountDialogVisible: false,
       reasonMsg: '',
       isTabLock: false, // 锁状态
       tableData: [],
@@ -118,6 +129,17 @@ export default {
     this.handleQueryPage()
   },
   methods: {
+    handleVerifyAccount: async function(row) {
+      try {
+        const res = await queryBySubMchId({ subMchId: row.subMchId })
+        if (res) {
+          this.checkAccountData = res
+          this.checkAccountDialogVisible = true
+        } else {
+          this.$message.error('验证账户暂无结果，请稍后重试')
+        }
+      } catch (error) {}
+    },
     handleSignUp: async function(row, flag) {
       try {
         this.signUpStatus = true
@@ -156,10 +178,20 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.p {
+  &-account {
+    &-item {
+      line-height: 40px;
+    }
+  }
+}
 .e {
   &-sign {
     &-body {
       text-align: center;
+      section p {
+        line-height: 1.8;
+      }
     }
   }
 }

@@ -17,7 +17,16 @@ const urlLinks = {
   refund: 'archive/general/refund',
   submitToVerify: 'archive/general/submitToVerify',
   businessCategory: 'archive/general/businessCategory',
-  generalView: 'archive/general/view'
+  generalView: 'archive/general/view',
+  queryBySubMchId: 'archive/general/queryBySubMchId'
+}
+// 验证账户
+export function queryBySubMchId(data) {
+  return request({
+    url: urlLinks.queryBySubMchId,
+    method: 'POST',
+    data
+  })
 }
 
 // 签约
