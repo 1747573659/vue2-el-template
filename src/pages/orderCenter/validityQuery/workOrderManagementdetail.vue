@@ -10,7 +10,7 @@
         :disabled="isEdit"
       >
         <el-form-item label="工单标题" prop="demandName">
-          <el-input v-model="ruleForm.demandName"></el-input>
+          <el-input class="km_input_width"  v-model="ruleForm.demandName"></el-input>
         </el-form-item>
         <el-form-item label="工单类型" prop="orderType">
           <el-radio-group v-model="ruleForm.orderType">
@@ -22,7 +22,7 @@
           <el-cascader ref="cascader" v-model="ruleForm.productNoA" :options="options" :props="productProps" ></el-cascader>
         </el-form-item>
         <el-form-item label="工单描述" prop="demandDec">
-          <el-input type="textarea" v-model="ruleForm.demandDec"></el-input>
+          <el-input class="demandDec" :maxlength="250" show-word-limit type="textarea" v-model="ruleForm.demandDec"></el-input>
         </el-form-item>
         <el-form-item label="工单素材" prop="fileName">
           <el-upload
@@ -43,7 +43,7 @@
             <div class="km_upload_file_text">上传素材</div>
 
             <!-- <el-button size="small" type="primary">点击上传</el-button> -->
-            <div slot="tip" class="el-upload__tip"></div>
+            <div slot="tip" class="el-upload__tip">请上传图片、视频或文件</div>
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
@@ -52,13 +52,13 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称" prop="custName">
-          <el-input v-model="ruleForm.custName"></el-input>
+          <el-input class="km_input_width" v-model="ruleForm.custName"></el-input>
         </el-form-item>
         <el-form-item label="联系人" prop="linkName">
-          <el-input v-model="ruleForm.linkName"></el-input>
+          <el-input class="km_input_width" v-model="ruleForm.linkName"></el-input>
         </el-form-item>
         <el-form-item label="联系方式" prop="linkPhone">
-          <el-input v-model="ruleForm.linkPhone"></el-input>
+          <el-input class="km_input_width" v-model="ruleForm.linkPhone"></el-input>
         </el-form-item>
         <el-form-item v-if="!isEdit">
           <el-button size="small" type="primary" @click="submitForm('ruleForm')">提交</el-button>
@@ -277,5 +277,11 @@ export default {
     position: relative;
     top: -36%;
     color: #D3DBEB;
+}
+.demandDec /deep/ textarea{
+    height: 200px!important;
+}
+.km_input_width{
+  width: 62%;
 }
 </style>

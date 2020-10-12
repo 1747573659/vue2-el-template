@@ -40,13 +40,7 @@
         <a class="el-upload-list__item-name" @click="handleClick(file)">
           <i class="el-icon-document"></i>{{file.name}}
         </a>
-        <label class="el-upload-list__item-status-label">
-          <i :class="{
-            'el-icon-upload-success': true,
-            'el-icon-circle-check': listType === 'text',
-            'el-icon-check': ['picture-card', 'picture'].indexOf(listType) > -1
-          }"></i>
-        </label>
+       
         <i class="el-icon-close" v-if="!disabled" @click="$emit('remove', file)"></i>
         <i class="el-icon-close-tip" v-if="!disabled">{{ t('el.upload.deleteTip') }}</i> <!--因为close按钮只在li:focus的时候 display, li blur后就不存在了，所以键盘导航时永远无法 focus到 close按钮上-->
         <el-progress
@@ -145,4 +139,11 @@
     text-align: center;
     line-height: 148px;
   }
+  .el-upload-list__item-delete{
+    display: inline;
+  }
+  .el-upload-list__item-preview{
+    display: inline;
+  }
+
 </style>
