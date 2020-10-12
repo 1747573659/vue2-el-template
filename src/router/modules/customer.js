@@ -282,6 +282,14 @@ const customer = {
           name: 'workOrderManagementdetail',
           hidden: true,
           code: 'WORKORDERMANAGEMENTDETAIL',
+          meta: { title: '新增工单',name: 'workOrderManagementdetail' }
+        },
+        {
+          path: 'workOrderdetail',
+          component: () => import('@/pages/orderCenter/validityQuery/workOrderdetail.vue'),
+          name: 'workOrderdetail',
+          hidden: true,
+          code: 'WORKORDERMANAGEMENTDETAIL',
           meta: { title: '工单管理详情',name: 'workOrderManagementdetail' }
         }
       ]

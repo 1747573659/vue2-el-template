@@ -10,21 +10,18 @@
         :disabled="isEdit"
       >
         <el-form-item label="工单标题：" prop="demandName">
-          <el-input class="km_input_width"  v-model="ruleForm.demandName"></el-input>
+          <div class="work_item">{{ruleForm.demandName}}</div>
         </el-form-item>
         <el-form-item label="工单类型：" prop="orderType">
-          <el-radio-group v-model="ruleForm.orderType">
-            <el-radio label="1">问题</el-radio>
-            <el-radio label="2">需求</el-radio>
-          </el-radio-group>
+          <div class="work_item">{{workorderType}}</div>
         </el-form-item>
         <el-form-item label="产品：" prop="productNoA">
-          <el-cascader ref="cascader" v-model="ruleForm.productNoA" :options="options" :props="productProps" ></el-cascader>
+          <div class="work_item">{{workProductNo}}</div>
         </el-form-item>
         <el-form-item label="工单描述：" prop="demandDec">
-          <el-input class="demandDec" :maxlength="250" show-word-limit type="textarea" v-model="ruleForm.demandDec"></el-input>
+          <div class="work_item">{{ruleForm.demandDec}}</div>
         </el-form-item>
-        <el-form-item label="工单素材：" prop="fileName">
+        <el-form-item v-if="fileList && fileList.length>0" label="工单素材：" prop="fileName">
           <el-upload
             class="upload-demo"
             name="files"
@@ -39,11 +36,7 @@
             :file-list="fileList"
             list-type="picture-card"
           >
-            <i class="el-icon-upload"></i>
-            <div class="km_upload_file_text">上传素材</div>
-
-            <!-- <el-button size="small" type="primary">点击上传</el-button> -->
-            <div slot="tip" class="el-upload__tip">请上传图片、视频(推荐mp4格式)或文件</div>
+         fds
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
@@ -52,14 +45,26 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
-          <el-input class="km_input_width" v-model="ruleForm.custName"></el-input>
+          <div class="work_item">{{ruleForm.custName}}</div>
         </el-form-item>
         <el-form-item label="联系人：" prop="linkName">
-          <el-input class="km_input_width" v-model="ruleForm.linkName"></el-input>
+          <div class="work_item">{{ruleForm.linkName}}</div>
         </el-form-item>
         <el-form-item label="联系方式：" prop="linkPhone">
-          <el-input class="km_input_width" v-model="ruleForm.linkPhone"></el-input>
+          <div class="work_item">{{ruleForm.linkPhone}}</div>
         </el-form-item>
+
+        <el-form-item label="状态：" prop="linkPhone">
+          <div class="work_item">{{ruleForm.status}}</div>
+        </el-form-item>
+        <el-form-item label="进度：" prop="linkPhone">
+            <div v-for="item in ruleForm.schedules" :key="item.operDate">
+              <span style="margin-right: 20px;">{{item.operDate}}</span>
+              <span>{{item.sheetStatus}}</span>
+            </div>
+        </el-form-item>
+
+        
         <el-form-item v-if="!isEdit">
           <el-button size="small" type="primary" @click="submitForm('ruleForm')">提交</el-button>
           <!-- <el-button  type="primary" plain @click="resetForm('ruleForm')">重置</el-button> -->
@@ -94,6 +99,20 @@ export default {
   mixins: [],
   components: {
     ElUpload
+  },
+  computed: {
+    workorderType:function(){
+      if(this.ruleForm.orderType==="1"){
+        return "问题"
+      }else if(this.ruleForm.orderType==="2"){
+        return "需求"
+      }else{
+        return "未知类型"
+      }
+    },
+    workProductNo:function(){
+      return this.ruleForm.productName+"-"+this.ruleForm.branchName
+    }
   },
   data() {
     return {
@@ -147,14 +166,13 @@ export default {
 
    mounted(){
     async function getRequest(res){
-      await this.queryProductList()
       this.queryOrderDetail(res)
     }
     if(this.$route.query.sheetNo){
       this.isEdit=true
+      const loading = this.$loading()
       getRequest.call(this,this.$route.query)
-    }else{
-      this.queryProductList()
+      loading.close()
     }
   },
   methods: {
@@ -266,8 +284,8 @@ export default {
 <style lang="scss" scoped>
 .app-form {
   background: #fff;
-  padding: 30px 30%;
-  margin-top: 46px;
+  padding: 30px 6%;
+  margin: 24px;
 }
 .el-icon-upload{
   color: #D3DBEB;
@@ -283,5 +301,8 @@ export default {
 }
 .km_input_width{
   width: 62%;
+}
+/deep/ .el-upload--picture-card{
+  display: none;
 }
 </style>

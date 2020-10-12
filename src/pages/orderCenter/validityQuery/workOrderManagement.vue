@@ -180,7 +180,7 @@ export default {
     },
     viewResClick(e){
       const {sheetNo,orderType}=e
-      this.$router.push({ path: '/customer/workorder/workOrderManagementdetail', query: { sheetNo, orderType}})
+      this.$router.push({ path: '/customer/workorder/workOrderdetail', query: { sheetNo, orderType}})
     },
     queryWorkOrderList(){
       this.loading=true
