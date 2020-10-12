@@ -162,7 +162,7 @@ export default {
     },
     cancel() {
       this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ name: 'role' })
+        this.$router.push({ name: 'roleManagement' })
       })
     },
     async onSubmit() {
@@ -182,7 +182,7 @@ export default {
             const res = await addRole(data)
             this.$message.success('操作成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ name: 'role' })
+              this.$router.push({ name: 'roleManagement' })
             })
           } catch (e) {
           } finally {
