@@ -9,22 +9,22 @@
         class="demo-ruleForm"
         :disabled="isEdit"
       >
-        <el-form-item label="工单标题" prop="demandName">
+        <el-form-item label="工单标题：" prop="demandName">
           <el-input class="km_input_width"  v-model="ruleForm.demandName"></el-input>
         </el-form-item>
-        <el-form-item label="工单类型" prop="orderType">
+        <el-form-item label="工单类型：" prop="orderType">
           <el-radio-group v-model="ruleForm.orderType">
             <el-radio label="1">问题</el-radio>
             <el-radio label="2">需求</el-radio>
           </el-radio-group>
         </el-form-item>
-        <el-form-item label="产品" prop="productNoA">
+        <el-form-item label="产品：" prop="productNoA">
           <el-cascader ref="cascader" v-model="ruleForm.productNoA" :options="options" :props="productProps" ></el-cascader>
         </el-form-item>
-        <el-form-item label="工单描述" prop="demandDec">
+        <el-form-item label="工单描述：" prop="demandDec">
           <el-input class="demandDec" :maxlength="250" show-word-limit type="textarea" v-model="ruleForm.demandDec"></el-input>
         </el-form-item>
-        <el-form-item label="工单素材" prop="fileName">
+        <el-form-item label="工单素材：" prop="fileName">
           <el-upload
             class="upload-demo"
             name="files"
@@ -51,13 +51,13 @@
             </video>
           </el-dialog>
         </el-form-item>
-        <el-form-item label="公司名称" prop="custName">
+        <el-form-item label="公司名称：" prop="custName">
           <el-input class="km_input_width" v-model="ruleForm.custName"></el-input>
         </el-form-item>
-        <el-form-item label="联系人" prop="linkName">
+        <el-form-item label="联系人：" prop="linkName">
           <el-input class="km_input_width" v-model="ruleForm.linkName"></el-input>
         </el-form-item>
-        <el-form-item label="联系方式" prop="linkPhone">
+        <el-form-item label="联系方式：" prop="linkPhone">
           <el-input class="km_input_width" v-model="ruleForm.linkPhone"></el-input>
         </el-form-item>
         <el-form-item v-if="!isEdit">
