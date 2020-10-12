@@ -118,7 +118,12 @@ export default {
   },
   mounted() {
       this.isInit=false
-      if(!this.isMultiple) this.remoteMethod()
+      if(!this.isMultiple){
+        this.remoteMethod()
+      } else{
+         this.placeText="全部"
+         this.disabled=true
+      }
   },
   methods: {
     remoteMethod(query){
@@ -143,10 +148,15 @@ export default {
         if(!res.results) this.isMaxPage=true
         if(res.results && res.results.length<10) this.isMaxPage=true
         if(this.isInit && !res.results){
-          this.placeText="暂无匹配数据"
+          this.placeText="全部"
           this.disabled=true
         }else{
-          this.placeText="请选择"+this.placeholder
+          if(!this.isMultiple){
+            this.placeText="请选择"+this.placeholder
+          }else{
+            this.placeText="全部"
+          }
+          //this.placeText="请选择"+this.placeholder
           this.disabled=false
         }
         this.page++

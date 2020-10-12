@@ -37,10 +37,12 @@
             :on-remove="handleRemove"
             :on-success="handleSuccess"
             :file-list="fileList"
-            list-type="text"
+            list-type="picture-card"
           >
-            <!-- <i class="el-icon-plus"></i> -->
-            <el-button size="small" type="primary">点击上传</el-button>
+            <i class="el-icon-upload"></i>
+            <div class="km_upload_file_text">上传素材</div>
+
+            <!-- <el-button size="small" type="primary">点击上传</el-button> -->
             <div slot="tip" class="el-upload__tip"></div>
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
@@ -59,9 +61,9 @@
           <el-input v-model="ruleForm.linkPhone"></el-input>
         </el-form-item>
         <el-form-item v-if="!isEdit">
-          <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button  type="primary" plain @click="resetForm('ruleForm')">重置</el-button>
-          <el-button @click="$router.go(-1)" >返回</el-button>
+          <el-button size="small" type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <!-- <el-button  type="primary" plain @click="resetForm('ruleForm')">重置</el-button> -->
+          <el-button size="small" @click="$router.go(-1)" >取消</el-button>
         </el-form-item>
         
       </el-form>
@@ -84,13 +86,15 @@ import {
   uploadimage
   } from '@/api/dataCenter/common.js'
 import baseurl from '@/utils/baseUrl.js'
+import ElUpload from "@/components/upload/src"
 const {VUE_APP_WORK_ORDER_URL,VUE_APP_WORK_ORDER_URLPATH}=baseurl
-console.log(baseurl)
 
 export default {
   name: "validityPeriod",
   mixins: [],
-  components: {},
+  components: {
+    ElUpload
+  },
   data() {
     return {
       isEdit:false,
@@ -262,7 +266,16 @@ export default {
 <style lang="scss" scoped>
 .app-form {
   background: #fff;
-  padding: 30px 20%;
+  padding: 30px 30%;
   margin-top: 46px;
+}
+.el-icon-upload{
+  color: #D3DBEB;
+}
+.km_upload_file_text{
+    line-height: 0px;
+    position: relative;
+    top: -36%;
+    color: #D3DBEB;
 }
 </style>

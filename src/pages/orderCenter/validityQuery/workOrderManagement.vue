@@ -10,8 +10,8 @@
           <template v-slot:formfoot >
               <router-link v-permission.page="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
                 <el-button icon="el-icon-plus" type="primary"
-            size="small"
-            plain style="margin-left:20px">新增</el-button>
+                  size="small"
+                  plain class="float_right">新增</el-button>
               </router-link>
           </template>
         </query-group>
@@ -217,4 +217,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+  .float_right{
+    float:right;
+  }
 </style>

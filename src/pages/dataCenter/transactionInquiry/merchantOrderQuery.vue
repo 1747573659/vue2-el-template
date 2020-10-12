@@ -32,7 +32,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item v-show="formData.shopId" label="门店名称" prop="storeName">
+            <el-form-item label="门店名称" prop="storeName">
                 <select-page
                   :request="getStorePage"
                   :bvalue.sync="formData.stores"
@@ -47,7 +47,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item v-show="formData.stores[0]" label="收银员" prop="cashier">
+            <el-form-item  label="收银员" prop="cashier">
               <select-page
                   :request="queryClerkPageByStore"
                   :bvalue.sync="formData.clerkInfos"
