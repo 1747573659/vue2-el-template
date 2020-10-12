@@ -30,7 +30,7 @@
             name="files"
             :on-exceed="handleexceed"
             :limit="8"
-            :accept="'image/*,video/*,.rar,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx'"
+            :accept="'image/*,.mp4,.webm,.ogg,.rar,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx'"
             :action="uploadurl"
             :before-upload="handleBeforeupload"
             :on-preview="handlePreview"
@@ -43,7 +43,7 @@
             <div class="km_upload_file_text">上传素材</div>
 
             <!-- <el-button size="small" type="primary">点击上传</el-button> -->
-            <div slot="tip" class="el-upload__tip">请上传图片、视频或文件</div>
+            <div slot="tip" class="el-upload__tip">请上传图片、视频(推荐mp4格式)或文件</div>
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
@@ -68,7 +68,7 @@
         
       </el-form>
       <div v-if="isEdit" style="padding-left: 100px;">
-          <el-button type="primary" @click="$router.go(-1)" >关闭</el-button>
+          <el-button size="small" type="primary" @click="$router.go(-1)" >取消</el-button>
         </div>
     </div>
   </div>
