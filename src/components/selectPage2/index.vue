@@ -146,7 +146,7 @@ export default {
           this.placeText="暂无匹配数据"
           this.disabled=true
         }else{
-          this.placeText=this.placeholder
+          this.placeText="请选择"+this.placeholder
           this.disabled=false
         }
         this.page++

@@ -24,7 +24,7 @@
         <el-form-item label="工单描述" prop="demandDec">
           <el-input type="textarea" v-model="ruleForm.demandDec"></el-input>
         </el-form-item>
-        <el-form-item label="公司素材" prop="fileName">
+        <el-form-item label="工单素材" prop="fileName">
           <el-upload
             class="upload-demo"
             name="files"
@@ -37,11 +37,17 @@
             :on-remove="handleRemove"
             :on-success="handleSuccess"
             :file-list="fileList"
-            list-type="picture"
+            list-type="text"
           >
+            <!-- <i class="el-icon-plus"></i> -->
             <el-button size="small" type="primary">点击上传</el-button>
             <div slot="tip" class="el-upload__tip"></div>
           </el-upload>
+          <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
+            <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
+            <video width="100%" height="60%" loop autoplay v-if="vedioUrl" src="http://www.k-scm.com/KMjsfw/images/JF2010104775_mmexport1602319019570.mp4" controls>
+            </video>
+          </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称" prop="custName">
           <el-input v-model="ruleForm.custName"></el-input>
@@ -54,7 +60,7 @@
         </el-form-item>
         <el-form-item v-if="!isEdit">
           <el-button type="primary" @click="submitForm('ruleForm')">立即创建</el-button>
-          <el-button @click="resetForm('ruleForm')">重置</el-button>
+          <el-button  type="primary" plain @click="resetForm('ruleForm')">重置</el-button>
           <el-button @click="$router.go(-1)" >返回</el-button>
         </el-form-item>
         
@@ -99,6 +105,9 @@ export default {
         linkPhone: "",
         fileName2:" "
       },
+      dialogImgVisible:false,
+      dialogImgUrl:"",
+      vedioUrl:"",
       uploadurl:VUE_APP_WORK_ORDER_URL+VUE_APP_WORK_ORDER_URLPATH+"/KMJFService.asmx/uploadimage?jsoncallback=?",
       rules: {
         demandName: [
@@ -171,11 +180,11 @@ export default {
       });
     },
     handleSuccess(response, file, fileList){
-      this.fileList.push({
-        name:response.fileName,
-        url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+response.fileName,
-        type:file.raw.type
-      })
+        this.fileList.push({
+          name:response.fileName,
+          url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+response.fileName,
+          type:file.raw.type
+        })
     },
     queryProductList(){
       queryProductList({
@@ -229,8 +238,21 @@ export default {
     handleRemove(file, fileList) {
       this.fileList=this.fileList.filter(re=>re.uid!==file.uid)
     },
+    onClose(done){
+      this.vedioUrl=""
+      this.dialogImgUrl=""
+      done()
+    },
     handlePreview(file) {
-      console.log(file);
+      if(/^video\/.+$/.test(file.type)){
+        this.vedioUrl=file.url
+        this.dialogImgVisible = true;
+      }else if(/^image\/.+$/.test(file.type)){
+        this.dialogImgUrl = file.url;
+        this.dialogImgVisible = true;
+      }else{
+        this.$message.warning('只有图片和视频文件支持预览')
+      }
     },
   },
   created() {},

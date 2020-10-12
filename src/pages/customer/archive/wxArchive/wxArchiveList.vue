@@ -110,7 +110,18 @@
               size="small"
               v-permission="'WXARCHIVE_LIST_ARCHIVELIST'"
               v-if="scope.row.xiaoWeiArchiveStatus"
-              @click="$router.push({ name: 'wxArchiveDetail', query: { id: scope.row.archiveBaseDTO.id } })"
+              @click="
+                $router.push({
+                  name: 'wxArchiveDetail',
+                  query: {
+                    id: scope.row.archiveBaseDTO.id,
+                    legalPersonName: scope.row.archiveExpandDTO.legalPersonName,
+                    merchantShortName: scope.row.archiveBaseDTO.merchantShortName,
+                    companyName: scope.row.archiveBaseDTO.companyName,
+                    bankCard: scope.row.archiveExpandDTO.bankCard
+                  }
+                })
+              "
               >进件详情</el-button
             >
           </template>

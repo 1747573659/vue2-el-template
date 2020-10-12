@@ -27,7 +27,7 @@ const dataCenter = {
           component: () => import('@/pages/dataCenter/transactionInquiry/merchantOrderQuery.vue'),
           name: 'MerchantOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_MERCHANTORDERQUERY',
-          meta: { title: '商户订单查询', name: 'MerchantOrderQuery' }
+          meta: { title: '交易流水查询', name: 'MerchantOrderQuery' }
         },
         {
           path: 'singleOrderQuery',

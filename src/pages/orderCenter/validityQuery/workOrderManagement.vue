@@ -8,8 +8,10 @@
           @search="handleFilter"
         >
           <template v-slot:formfoot >
-            <router-link v-permission.page="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
-                <el-button size="small" style="margin-left:20px">新增</el-button>
+              <router-link v-permission.page="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
+                <el-button icon="el-icon-plus" type="primary"
+            size="small"
+            plain style="margin-left:20px">新增</el-button>
               </router-link>
           </template>
         </query-group>
@@ -185,6 +187,7 @@ export default {
       queryWorkOrderList(this.tableParam).then((res)=>{
         this.list=res.results || []
         this.total=res.totalCount || 0
+      }).finally(()=>{
         this.loading=false
       })
     },

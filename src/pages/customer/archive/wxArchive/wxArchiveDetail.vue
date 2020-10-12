@@ -26,9 +26,8 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="400px">
           <template slot-scope="scope">
-            <el-button type="text" size="small">立即签约</el-button>
-            <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null">立即签约</el-button>
-            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4">升级签约</el-button>
+            <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null" @click="handleSignUp(scope.row, 1)">立即签约</el-button>
+            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4" @click="handleSignUp(scope.row, 2)">升级签约</el-button>
             <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 2">验证账户</el-button>
             <span v-else>--</span>
           </template>
@@ -37,48 +36,57 @@
     </div>
     <!-- dialog -->
     <!-- 升级签约/立即签约 -->
-    <el-dialog>
-      <section>
+    <el-dialog append-to-body :visible.sync="signUpStatus" width="30%" custom-class="e-sign-dialog">
+      <section class="e-sign-body">
         <header>
           <p>当前入驻申请已通过</p>
-          <p>请林超（本人）微信扫码完成签约</p>
+          <p>请{{ $route.query.legalPersonName }}（本人）微信扫码完成签约</p>
         </header>
         <div>
-          <img src="" alt="" />
+          <img :src="signUpUrl" alt="签约二维码" style="width:200px;height:200px" />
         </div>
         <section>
-          <p>商户简称</p>
-          <p>公司名称</p>
-          <p>结算银行卡</p>
+          <p>商户简称：{{ $route.query.merchantShortName }}</p>
+          <p>公司名称：{{ $route.query.companyName }}</p>
+          <p>结算银行卡：{{ $route.query.bankCard }}</p>
         </section>
       </section>
     </el-dialog>
     <!-- 验证账户 -->
-    <el-dialog title="验证账户">
+    <el-dialog append-to-body title="验证账户" :visible.sync="checkAccountDialogVisible" width="40%">
       <section>
         <div class="p-account-item">
-          <p>汇款金额</p>
+          <p>付款户名：{{ checkAccountData.accountName }}</p>
         </div>
         <div class="p-account-item">
-          <p>收款卡号</p>
+          <p>汇款金额：{{ checkAccountData.payAmount }}</p>
         </div>
         <div class="p-account-item">
-          <p>收款户名</p>
+          <p>收款卡号：{{ checkAccountData.destinationAccountNumber }}</p>
         </div>
         <div class="p-account-item">
-          <p>收款账户开户行</p>
+          <p>收款户名：{{ checkAccountData.destinationAccountName }}</p>
         </div>
         <div class="p-account-item">
-          <p>开户行省市</p>
+          <p>收款账户开户行：{{ checkAccountData.destinationAccountBank }}</p>
         </div>
         <div class="p-account-item">
-          <p>汇款截止时间</p>
+          <p>开户行省市：{{ checkAccountData.city }}</p>
         </div>
         <div class="p-account-item">
-          <p>汇款备注信息</p>
+          <p>汇款截止时间：{{ checkAccountData.deadlineTime }}</p>
         </div>
+        <div class="p-account-item">
+          <p>汇款备注信息（必填）：{{ checkAccountData.remark }}</p>
+        </div>
+        <el-alert
+          :title="'温馨提醒：请在' + checkAccountData.deadlineTime + '前，使用用上方的付款账号，向指定的收款账号汇入' + checkAccountData.payAmount + '元，以完成账户验证，过期未验证账户则入驻失败！'"
+          type="warning"
+          show-icon
+          :closable="false"
+          style="margin: 20px 0"
+        ></el-alert>
       </section>
-      <el-alert :title="234" type="warning" show-icon :closable="false"></el-alert>
     </el-dialog>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="原因" width="507px">
@@ -91,7 +99,7 @@
 </template>
 
 <script>
-import { generalDetail } from '@/api/wxArchive'
+import { generalDetail, generalView, queryBySubMchId } from '@/api/wxArchive'
 import { detailOptions, updateStatusOptions } from './index.js'
 
 export default {
@@ -100,6 +108,10 @@ export default {
       detailOptions,
       updateStatusOptions,
       isReason: false,
+      signUpStatus: false,
+      signUpUrl: '',
+      checkAccountData: {},
+      checkAccountDialogVisible: false,
       reasonMsg: '',
       isTabLock: false, // 锁状态
       tableData: [],
@@ -117,6 +129,24 @@ export default {
     this.handleQueryPage()
   },
   methods: {
+    handleVerifyAccount: async function(row) {
+      try {
+        const res = await queryBySubMchId({ subMchId: row.subMchId })
+        if (res) {
+          this.checkAccountData = res
+          this.checkAccountDialogVisible = true
+        } else {
+          this.$message.error('验证账户暂无结果，请稍后重试')
+        }
+      } catch (error) {}
+    },
+    handleSignUp: async function(row, flag) {
+      try {
+        this.signUpStatus = true
+        const res = await generalView({ id: row.id, flag })
+        this.signUpUrl = 'data:image/png;base64,' + btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+      } catch (error) {}
+    },
     handleReason(row) {
       this.reasonMsg = row.remark
       this.isReason = true
@@ -148,38 +178,32 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.author-dialog {
-  /deep/.el-dialog__body {
-    height: 380px;
-    .author-dialog-text {
-      font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
-      font-weight: 400;
-      line-height: 22px;
-      color: #3d4966;
-    }
-    .author-dialog-text:first-child {
-      margin-bottom: 12px;
-    }
-    .author-dialog-img {
-      top: 50%;
-      position: absolute;
-      left: 50%;
-      transform: translate(-50%);
-      width: 152px;
-      height: 152px;
+.p {
+  &-account {
+    &-item {
+      line-height: 40px;
     }
   }
 }
-.shop-dialog {
-  /deep/.el-dialog__body {
-    display: flex;
-    justify-content: center;
+.e {
+  &-sign {
+    &-body {
+      text-align: center;
+      section p {
+        line-height: 1.8;
+      }
+    }
   }
 }
-.shop-dialog-row {
-  display: flex;
-  align-items: center;
-  line-height: 32px;
+</style>
+<style lang="scss">
+.e {
+  &-sign {
+    &-dialog {
+      /deep/ .el-dialog__header {
+        border-bottom: 0 none !important;
+      }
+    }
+  }
 }
 </style>

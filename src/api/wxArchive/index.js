@@ -1,4 +1,6 @@
 import request from '@/utils/request'
+import { getLocal } from '@/utils/storage'
+import axios from 'axios'
 import qs from 'qs'
 
 const urlLinks = {
@@ -14,7 +16,29 @@ const urlLinks = {
   detail: 'archive/general/detail',
   refund: 'archive/general/refund',
   submitToVerify: 'archive/general/submitToVerify',
-  businessCategory: 'archive/general/businessCategory'
+  businessCategory: 'archive/general/businessCategory',
+  generalView: 'archive/general/view',
+  queryBySubMchId: 'archive/general/queryBySubMchId'
+}
+// 验证账户
+export function queryBySubMchId(data) {
+  return request({
+    url: urlLinks.queryBySubMchId,
+    method: 'POST',
+    data
+  })
+}
+
+// 签约
+export function generalView(data) {
+  return axios({
+    url: `${process.env.VUE_APP_BASE_API}/${urlLinks.generalView}/${data.id}/${data.flag}`,
+    method: 'POST',
+    headers: {
+      token: getLocal('token')
+    },
+    responseType: 'arraybuffer'
+  })
 }
 
 // 分页查询
