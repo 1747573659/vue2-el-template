@@ -86,7 +86,7 @@ import {
   uploadimage
   } from '@/api/dataCenter/common.js'
 import baseurl from '@/utils/baseUrl.js'
-import ElUpload from "@/components/upload/src"
+import ElUpload from "@/components/upload"
 const {VUE_APP_WORK_ORDER_URL,VUE_APP_WORK_ORDER_URLPATH}=baseurl
 
 export default {
