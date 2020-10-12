@@ -187,7 +187,8 @@ export default {
         time: [],
         auditStatusList: [],
         auditStatus: null,
-        wxCertStatus: null
+        wxCertStatus: null,
+        status: 0
       },
       auditStatusOptions: [
         {id: 0, name: '未提交审核'},
@@ -235,8 +236,9 @@ export default {
         8: '已作废'
       },
       statusList: [
-        {id: 0, name:'启用'},
-        {id: 1, name:'停用'}
+        {id: '', name:'全部'},
+        {id: 1, name:'是'},
+        {id: 0, name:'否'}
       ],
       tableData: [],
       currentPage: 1,

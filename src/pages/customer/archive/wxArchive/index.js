@@ -11,8 +11,9 @@ export const statusOptions = [
 ]
 
 export const deactivateOptions = [
-  { value: 0, label: '否' },
-  { value: 1, label: '是' }
+  { value: '', label: '全部' },
+  { value: 1, label: '是' },
+  { value: 0, label: '否' }
 ]
 
 export const detailOptions = [
@@ -105,7 +106,8 @@ export const formObj = {
     businessCategory: '', // 经营类目
     businessCategoryRemark: '', // 经营类目（名称，用于页面显示）
     auditStatus: '', // 审核状态
-    auditRemark: '' // 审核结果
+    auditRemark: '', // 审核结果
+    fixFeeRate: '' // 小微进件费率
   },
   archiveExpandVO: {
     licType: 1, // 证件类型
@@ -203,7 +205,8 @@ export const detailValidate = {
   'archiveExpandVO.bankSub': [{ required: true, message: '请输入所属支行', trigger: 'change' }],
   'archiveExpandVO.bankCard': [{ required: true, message: '请输入银行账号', trigger: 'change' }],
   'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'change' }],
-  'archiveExpandVO.bankArea': [{ required: true, message: '请输入银行所在地区', trigger: 'change' }]
+  'archiveExpandVO.bankArea': [{ required: true, message: '请输入银行所在地区', trigger: 'change' }],
+  'archiveBaseVO.fixFeeRate': [{ required: true, message: '请选择小微交易费率', trigger: 'change' }]
 }
 
 export const refundForm = {

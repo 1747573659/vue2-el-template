@@ -455,7 +455,7 @@
           <div class="p-wxArchive-itemTitle">费率</div>
           <el-row class="p-wxArchive-baseInfo">
             <el-col :span="12">
-              <el-form-item label="费率" prop="archiveBaseVO.bankArea">
+              <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
                 <el-select v-model="form.archiveBaseVO.fixFeeRate" placeholder="请选择" style="width:240px">
                   <el-option v-for="item in rateOptions" :key="item.value" :label="item.lable" :value="item.value"></el-option>
                 </el-select>
@@ -488,7 +488,7 @@
       </div>
     </el-dialog>
     <!-- image-preview -->
-    <el-image ref="imageViewer" :src="previewSrc" :preview-src-list="previewList" class="e-preview-con"></el-image>
+    <el-image-preview ref="imageViewer" v-if="showViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="handleClosePreview" class="e-preview-con"></el-image-preview>
   </section>
 </template>
 
@@ -501,13 +501,15 @@ import fileServer from '@/mixins/fileServe'
 import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
 import { filterReview } from './filters/reviewStatus'
 import { deepClone } from '@/utils'
+import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 
 export default {
   mixins: [fileServer],
   components: {
     selectPage,
     uploadPic,
-    areaSelect
+    areaSelect,
+    ElImagePreview
   },
   data() {
     return {
@@ -536,7 +538,8 @@ export default {
       branchOptions: [],
       businessOptions: [],
       previewList: [],
-      previewSrc: ''
+      showViewer: false,
+      imageIndex: 0
     }
   },
   filters: {
@@ -557,18 +560,18 @@ export default {
     next()
   },
   methods: {
+    handleClosePreview() {
+      this.showViewer = false
+    },
     handleImgPreview(url) {
       if (this.formDisabled && url) {
         this.previewList = []
-        this.previewSrc = ''
         let imgList = document.querySelectorAll('.avatar')
         for (let i = 0; i < imgList.length; i++) {
           this.previewList.push(imgList[i].src)
         }
-        this.previewSrc = this.previewList.find(item => item === url)
-        this.$nextTick(() => {
-          this.$refs.imageViewer.clickHandler()
-        })
+        this.showViewer = true
+        this.imageIndex = this.previewList.findIndex(item => item === url)
       }
     },
     handleBusinessCategory(val) {
@@ -839,16 +842,12 @@ export default {
   }
   &-preview {
     &-con {
-      width: 100px;
-      height: 100px;
+      left: 35vw;
+      right: 35vw;
+      bottom: 20vh;
+      top: 10vh;
       /deep/ .el-image-viewer__mask {
         display: none;
-      }
-      /deep/ .el-image-viewer__wrapper {
-        left: 35vw;
-        right: 35vw;
-        bottom: 20vh;
-        top: 10vh;
       }
       /deep/ .el-image-viewer__close {
         background-color: #606266;

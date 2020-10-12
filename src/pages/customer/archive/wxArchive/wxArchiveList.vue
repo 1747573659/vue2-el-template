@@ -14,6 +14,7 @@
                   end-placeholder="结束日期"
                   value-format="yyyy-MM-dd HH:mm:ss"
                   :default-time="['00:00:00', '23:59:59']"
+                  clearable
                 ></el-date-picker>
               </el-form-item>
               <el-form-item label="资料状态">
@@ -22,7 +23,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="商户信息">
-                <el-input v-model.trim="form.msg" class="p-general_formWidth" maxlength="50" clearable placeholder="请输入商户名称/简称/公司名称/银行卡号"></el-input>
+                <el-input v-model.trim="form.msg" class="p-general_formWidth" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号"></el-input>
               </el-form-item>
             </el-col>
             <el-col>
