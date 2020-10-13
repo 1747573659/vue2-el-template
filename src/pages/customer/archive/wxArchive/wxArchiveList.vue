@@ -47,7 +47,7 @@
     </div>
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
-        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="180" align="center"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column label="停用" width="90px">
           <template slot-scope="scope">
-            <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '停用' : '启用' }}</span>
+            <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="right" width="210px">
@@ -103,14 +103,12 @@
             >
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_DETAIL'" @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })" v-else>详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_COPY'" @click="handlePushDetail({ action: 'detail', isCopy: true, id: scope.row.archiveBaseDTO.id })">复制</el-button>
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleGeneralStopUse(scope.row)">{{
-              scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
-            }}</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleStopUse(scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
             <el-button
               type="text"
               size="small"
               v-permission="'WXARCHIVE_LIST_ARCHIVELIST'"
-              v-if="scope.row.xiaoWeiArchiveStatus"
+              v-if="scope.row.hasArchive"
               @click="
                 $router.push({
                   name: 'wxArchiveDetail',
@@ -153,10 +151,11 @@
 
 <script>
 import { statusOptions, deactivateOptions } from './index'
-import { filterReview, filterArchiveStatus } from './filters/reviewStatus'
+import { filterReview, filterArchiveStatus } from './filters'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse } from '@/api/wxArchive'
 
 export default {
+  name: 'wxArchive',
   data() {
     return {
       statusOptions,
@@ -225,8 +224,8 @@ export default {
     handleQueryPage: async function() {
       const data = {
         orders: { createTime: this.sortStatus },
-        startTime: this.form.createTime[0],
-        endTime: this.form.createTime[1],
+        startTime: this.form.createTime?.[0] ?? '',
+        endTime: this.form.createTime?.[1] ?? '',
         auditStatus: this.form.auditStatus,
         companyName: this.form.msg,
         bankCard: this.form.msg,
@@ -246,12 +245,10 @@ export default {
         this.isTabLock = false
       }
     },
-    handleGeneralStopUse: async function(row) {
-      try {
-        await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 })
-        await this.handleQueryPage()
-        this.$message.success('修改成功')
-      } catch (error) {}
+    handleStopUse: async function(row) {
+      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 }).then
+      await this.handleQueryPage()
+      this.$message.success('修改成功')
     },
     getXiaoWeiArchiveStatus: async function() {
       const res = await xiaoWeiArchiveStatus()

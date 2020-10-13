@@ -25,12 +25,11 @@
           <el-input class="demandDec" :maxlength="250" show-word-limit type="textarea" v-model="ruleForm.demandDec"></el-input>
         </el-form-item>
         <el-form-item label="工单素材：" prop="fileName">
-          <el-upload
+          <km-upload
             class="upload-demo"
             name="files"
             :on-exceed="handleexceed"
             :limit="8"
-            :accept="'image/*,video/*'"
             :action="uploadurl"
             :before-upload="handleBeforeupload"
             :on-preview="handlePreview"
@@ -44,11 +43,11 @@
 
             <!-- <el-button size="small" type="primary">点击上传</el-button> -->
             <div slot="tip" class="el-upload__tip">请上传图片、视频(推荐mp4格式)或文件</div>
-          </el-upload>
+          </km-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
-            <video width="100%" height="60%" loop autoplay v-if="vedioUrl" src="http://www.k-scm.com/KMjsfw/images/JF2010104775_mmexport1602319019570.mp4" controls>
-            </video>
+            <!-- <video width="100%" height="60%" loop autoplay v-if="vedioUrl" src="http://www.k-scm.com/KMjsfw/images/JF2010104775_mmexport1602319019570.mp4" controls>
+            </video> -->
           </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
@@ -86,14 +85,14 @@ import {
   uploadimage
   } from '@/api/dataCenter/common.js'
 import baseurl from '@/utils/baseUrl.js'
-import ElUpload from "@/components/upload"
+import KmUpload from "@/components/upload"
 const {VUE_APP_WORK_ORDER_URL,VUE_APP_WORK_ORDER_URLPATH}=baseurl
 
 export default {
   name: "validityPeriod",
   mixins: [],
   components: {
-    ElUpload
+    KmUpload
   },
   data() {
     return {
@@ -171,8 +170,8 @@ export default {
           requestData.branch=cascader.path[1]
           requestData.productName=cascader.pathLabels[0]
           requestData.branchName=cascader.pathLabels[1]
-          requestData.fileName2=this.fileList.filter(res=>/^video\/.+$/.test(res.type)).map(res=>res.name).join()
-          requestData.fileName=this.fileList.filter(res=>!(/^video\/.+$/.test(res.type))).map(res=>res.name).join()
+          requestData.fileName=this.fileList.filter(res=>/(^video\/.+$)|(^image\/.+$)/.test(res.type)).map(res=>res.name).join()
+          requestData.fileName2=this.fileList.filter(res=>!(/(^video\/.+$)|(^image\/.+$)/.test(res.type))).map(res=>res.name).join()
           addWorkOrder(requestData).then(res=>{
             this.$message.success("创建成功")
             this.$router.go(-1)
@@ -238,10 +237,6 @@ export default {
          this.$message.warning('请将文件大小限制50M以内')
          return false
       }
-      if(!/^video\/.+$/.test(file.type) && !/^image\/.+$/.test(file.type)){
-        this.$message.warning('暂时加入限制只支持图片和视频，因为其他文件类型传上去以后怎么回显问题没解决')
-        return false
-      }
     },
     handleRemove(file, fileList) {
       this.fileList=this.fileList.filter(re=>re.uid!==file.uid)
@@ -253,13 +248,13 @@ export default {
     },
     handlePreview(file) {
       if(/^video\/.+$/.test(file.type)){
-        this.vedioUrl=file.url
-        this.dialogImgVisible = true;
+         window.open(file.url);
       }else if(/^image\/.+$/.test(file.type)){
         this.dialogImgUrl = file.url;
         this.dialogImgVisible = true;
       }else{
-        this.$message.warning('只有图片和视频文件支持预览')
+        window.open(file.url);
+        //this.$message.warning('只有图片和视频文件支持预览')
       }
     },
   },

@@ -27,7 +27,6 @@
             name="files"
             :on-exceed="handleexceed"
             :limit="8"
-            :accept="'image/*,video/*'"
             :action="uploadurl"
             :before-upload="handleBeforeupload"
             :on-preview="handlePreview"
@@ -39,8 +38,8 @@
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
-            <video width="100%" height="60%" loop autoplay v-if="vedioUrl" src="http://www.k-scm.com/KMjsfw/images/JF2010104775_mmexport1602319019570.mp4" controls>
-            </video>
+            <!-- <video ref="vediomedia" width="100%" height="60%" loop autoplay v-if="vedioUrl" :src="vedioUrl" controls>
+            </video> -->
           </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
@@ -132,24 +131,6 @@ export default {
       vedioUrl:"",
       uploadurl:VUE_APP_WORK_ORDER_URL+VUE_APP_WORK_ORDER_URLPATH+"/KMJFService.asmx/uploadimage?jsoncallback=?",
       rules: {
-        demandName: [
-          { required: true, message: "请填写工单标题", trigger: "blur" },
-        ],
-        productNoA: [
-          { required: true, message: "请选择产品", trigger: "change" },
-        ],
-        demandDec: [
-          { required: true, message: "请填写工单描述", trigger: "blur" },
-        ],
-        custName: [
-          { required: true, message: "请填写公司名称", trigger: "blur" },
-        ],
-        linkName: [
-          { required: true, message: "请填写联系人", trigger: "blur" },
-        ],
-        linkPhone: [
-          { required: true, message: "请填写联系方式", trigger: "blur" },
-        ],
       },
       fileList: [],
       productProps:{
@@ -188,8 +169,8 @@ export default {
           requestData.branch=cascader.path[1]
           requestData.productName=cascader.pathLabels[0]
           requestData.branchName=cascader.pathLabels[1]
-          requestData.fileName2=this.fileList.filter(res=>/^video\/.+$/.test(res.type)).map(res=>res.name).join()
-          requestData.fileName=this.fileList.filter(res=>!(/^video\/.+$/.test(res.type))).map(res=>res.name).join()
+          requestData.fileName=this.fileList.filter(res=>/(^video\/.+$)|(^image\/.+$)/.test(res.type)).map(res=>res.name).join()
+          requestData.fileName2=this.fileList.filter(res=>!(/(^video\/.+$)|(^image\/.+$)/.test(res.type))).map(res=>res.name).join()
           addWorkOrder(requestData).then(res=>{
             this.$message.success("创建成功")
             this.$router.go(-1)
@@ -223,25 +204,37 @@ export default {
       })
     },
     queryOrderDetail(res){
+      function getTypeFile(res1){
+            let suffix=res1.match(/.+\.(.+)/)[1]
+            let isimg="bmp,jpg,png,tif,gif,pcx,tga,exif,fpx,svg,psd,cdr,pcd,dxf,ufo,eps,ai,raw,wmf,webp".includes(suffix.toLowerCase())
+            let isvedio="avi,mov,rmvb,rm,flv,mp4,3gp".includes(suffix.toLowerCase())
+            if(isimg){
+              return {
+                name:res1,
+                url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+                type:"image/*"
+              }
+            }else if(isvedio){
+              return {
+                name:res1,
+                url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+                type:"video/*"
+              }
+            }else{
+              return {
+                name:res1,
+                url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+                type:"other/*"
+              }
+            }
+      }
       queryOrderDetail(res).then(
         res=>{
           let requestData=Object.assign({},res)
           this.ruleForm=res
           this.ruleForm.productNoA=[requestData.productNo,requestData.branch]
-          const files1=requestData.fileName?requestData.fileName.split(",").map(res1=>{
-            return {
-              name:res1,
-              url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
-              type:"image/*"
-            }
-          }):[]
-          const files2=requestData.fileName2?requestData.fileName2.split(",").map(res1=>{
-            return {
-              name:res1,
-              url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
-              type:"video/*"
-            }
-          }):[]
+          const files1=requestData.fileName?requestData.fileName.split(",").map(getTypeFile):[]
+          const files2=requestData.fileName2?requestData.fileName2.split(",").map(getTypeFile):[]
           this.fileList=[...files1,...files2]
         }
       )
@@ -266,13 +259,21 @@ export default {
     },
     handlePreview(file) {
       if(/^video\/.+$/.test(file.type)){
-        this.vedioUrl=file.url
-        this.dialogImgVisible = true;
+        // this.vedioUrl=file.url
+        // this.$nextTick(()=>{
+        //   if(this.$refs['vediomedia'].error){
+        //     this.$message.warning('由于兼容问题不支持预览该视频')
+        //     window.open(file.url);
+        //   }
+        // })
+        // this.dialogImgVisible = true;
+        window.open(file.url);
       }else if(/^image\/.+$/.test(file.type)){
         this.dialogImgUrl = file.url;
         this.dialogImgVisible = true;
       }else{
-        this.$message.warning('只有图片和视频文件支持预览')
+        window.open(file.url);
+        //this.$message.warning('只有图片和视频文件支持预览')
       }
     },
   },

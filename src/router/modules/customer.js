@@ -112,7 +112,8 @@ const customer = {
           component: _import('customer/archive/wxArchive/wxArchiveList'),
           meta: {
             title: '普通资质进件',
-            name: 'wxArchive'
+            name: 'wxArchive',
+            cache: true
           }
         },
         {
