@@ -1,6 +1,5 @@
 import router from '@/router'
 import store from '@/store'
-import { Message } from 'element-ui'
 import { getLocal } from '@/utils/storage'
 
 router.beforeEach((to, from, next) => {
@@ -37,7 +36,7 @@ router.beforeEach((to, from, next) => {
           .catch(error => {
             // 接口服务关闭时测试
             store.dispatch('FedLogOut').then(() => {
-              Message.error(error || '请重新登录')
+              // Message.error(error || '请重新登录')
               // next({ name: 'login' })
             })
           })

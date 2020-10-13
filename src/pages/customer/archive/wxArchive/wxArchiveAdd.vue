@@ -6,10 +6,11 @@
           <label>进件状态：</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.auditStatus | filterReview }}</span>
         </el-col>
-        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== ''">
+        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [1, 4].includes(form.archiveBaseVO.auditStatus)">
           <label>审核结果：</label>
-          <span>{{ form.archiveBaseVO.auditRemark }}</span>
-          <span class="e-wxArchive-warning">审核不通过</span>
+          <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
+            <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
+          </el-tooltip>
         </el-col>
       </el-row>
     </header>
@@ -466,20 +467,16 @@
       </el-form>
     </section>
     <div class="p-wxArchive-action" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">
-      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive" v-if="[0, 1, 4, 8].includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
-        >保存</el-button
-      >
-      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
-        >提交审核</el-button
-      >
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">保存</el-button>
+      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
       <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus)">拒绝</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">取消</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')">取消</el-button>
     </div>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
-        <el-form-item label="原因" prop="remark">
-          <el-input type="textarea" v-model="refundForm.remark" placeholder="请输入审核不能过的原因"></el-input>
+        <el-form-item label="原因" prop="remark" class="e-dialog-remark">
+          <el-input type="textarea" v-model="refundForm.remark" :rows="4" placeholder="请输入审核不能过的原因"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -496,12 +493,12 @@
 import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
-import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory } from '@/api/wxArchive'
 import fileServer from '@/mixins/fileServe'
 import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
-import { filterReview } from './filters/reviewStatus'
+import { filterReview } from './filters'
 import { deepClone } from '@/utils'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
+import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory } from '@/api/wxArchive'
 
 export default {
   mixins: [fileServer],
@@ -529,7 +526,7 @@ export default {
       formDisabled: false,
       exampleImg: require('@/assets/images/home/home.png'),
       isReason: false,
-      detailStatusArr: [0, 1, 2, 4, 8],
+      detailStatusArr: [0, 1, 2, 4],
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
@@ -839,6 +836,14 @@ export default {
         padding: 8px 22px;
       }
     }
+    &-review {
+      color: #ff6010;
+      width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
   }
   &-preview {
     &-con {
@@ -859,6 +864,11 @@ export default {
         content: '\e6db';
         color: #fff;
       }
+    }
+  }
+  &-dialog{
+    &-remark{
+      margin-bottom: 0;
     }
   }
 }

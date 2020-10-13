@@ -17,11 +17,11 @@ export const deactivateOptions = [
 ]
 
 export const detailOptions = [
-  { value: -1, label: '驳回' },
+  { value: -1, label: '已驳回' },
   { value: 1, label: '待审核' },
   { value: 2, label: '审核中' },
   { value: 3, label: '待签约' },
-  { value: 4, label: '签约完成' }
+  { value: 4, label: '已签约' }
 ]
 export const updateStatusOptions = [
   { value: -2, label: '已冻结' },
