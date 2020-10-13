@@ -2,10 +2,10 @@ import axios from 'axios'
 import store from '@/store'
 import { getLocal } from '@/utils/storage'
 import { Message, MessageBox } from 'element-ui'
-import { errorLog } from '@/utils'
+// import { errorLog } from '@/utils' // 异常状态码封装
 
 let config = {
-  timeout: 10 * 1000, // request timeout 60s
+  timeout: 5 * 1000, // request timeout 60s
   withCredentials: false, // 跨域请求时是否需要凭证
   baseURL: process.env.VUE_APP_BASE_API // url = base url + request url
 }
@@ -13,11 +13,10 @@ let config = {
 const service = axios.create(config)
 
 service.interceptors.request.use(
-  (config) => {
+  config => {
     if (getLocal('token')) {
       config.isOld && (config.headers['Content-Type'] = 'application/x-www-form-urlencoded') // json格式的不需要
-      // 从localStorage拿token, 放到每个请求头
-      config.headers['token'] = getLocal('token')
+      config.headers['token'] = getLocal('token') // 从localStorage拿token, 放到每个请求头
     }
     return config
   },
@@ -50,13 +49,10 @@ service.interceptors.response.use(
           } else {
             store.dispatch('FedLogOut').then(() => {
               location.reload() // 为了重新实例化vue-router对象 避免bug
-              // this.$router.push({path: '/login'})
             })
           }
         }
-      }).catch(err => {
-        console.log(err)
-      })
+      }).catch(() => {})
       return Promise.reject(res.data || res.msg)
     } else {
       // 异常状态码优化，暂时直接取后台返回msg信息

@@ -6,10 +6,11 @@
           <label>进件状态：</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.auditStatus | filterReview }}</span>
         </el-col>
-        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== ''">
+        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [1, 4].includes(form.archiveBaseVO.auditStatus)">
           <label>审核结果：</label>
-          <span>{{ form.archiveBaseVO.auditRemark }}</span>
-          <span class="e-wxArchive-warning">审核不通过</span>
+          <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
+            <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
+          </el-tooltip>
         </el-col>
       </el-row>
     </header>
@@ -32,7 +33,7 @@
                   label="companyName"
                   value="id"
                   :echoValue="form.archiveBaseVO.merchantName"
-                  placeholder="请输入商户"
+                  placeholder="商户"
                 ></select-page>
                 <span v-else>{{ form.archiveBaseVO.merchantName }}</span>
               </el-form-item>
@@ -57,12 +58,12 @@
             </el-col>
             <el-col :span="12" v-if="businessSceneList.includes(1)">
               <el-form-item label="公众号APPID" prop="archiveBaseVO.publicId">
-                <el-input v-model="form.archiveBaseVO.publicId" placeholder="请输入公众号APPID" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.publicId" placeholder="公众号APPID" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="businessSceneList.includes(2)">
               <el-form-item label="小程序APPID" prop="archiveBaseVO.appletId">
-                <el-input v-model="form.archiveBaseVO.appletId" placeholder="请输入小程序APPID" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -75,12 +76,12 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
-                <el-input v-model="form.archiveBaseVO.companyName" placeholder="请输入公司名称" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
-                <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="请输入商户简称" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="商户简称" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -90,22 +91,22 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="详细地址" prop="archiveBaseVO.address">
-                <el-input v-model="form.archiveBaseVO.address" placeholder="请输入详细地址" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.address" placeholder="详细地址" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="联系人" prop="archiveBaseVO.contact">
-                <el-input v-model="form.archiveBaseVO.contact" placeholder="请输入联系人" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.contact" placeholder="联系人" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
-                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="请输入联系人电话" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="24">
               <el-form-item label="邮箱" prop="archiveBaseVO.email">
-                <el-input v-model="form.archiveBaseVO.email" placeholder="请输入邮箱" style="width:240px"></el-input>
+                <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -331,7 +332,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件类型" prop="archiveExpandVO.idType">
-                <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="全部" style="width: 240px">
+                <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="证件类型" style="width: 240px">
                   <el-option label="身份证" :value="1"></el-option>
                   <el-option label="护照" :value="2"></el-option>
                 </el-select>
@@ -339,7 +340,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件号码" prop="archiveExpandVO.idNumber">
-                <el-input v-model="form.archiveExpandVO.idNumber" placeholder="" style="width: 240px"></el-input>
+                <el-input v-model="form.archiveExpandVO.idNumber" placeholder="证件号码" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -422,26 +423,26 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行" prop="archiveExpandVO.bank">
-                <el-select v-model="form.archiveExpandVO.bank" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBankRemote" style="width: 240px">
+                <el-select v-model="form.archiveExpandVO.bank" filterable clearable remote reserve-keyword placeholder="银行" :remote-method="handleBankRemote" style="width: 240px">
                   <el-option v-for="item in bankOptions" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
-                <el-select v-model="form.archiveExpandVO.bankSub" filterable clearable remote reserve-keyword placeholder="请输入关键词" :remote-method="handleBranchRemote" style="width: 240px">
+                <el-select v-model="form.archiveExpandVO.bankSub" filterable clearable remote reserve-keyword placeholder="所属支行" :remote-method="handleBranchRemote" style="width: 240px">
                   <el-option v-for="item in branchOptions" :key="item.bCode" :label="item.bName" :value="item.bCode"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
-                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="" style="width:240px"></el-input>
+                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
-                <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="" style="width:240px"></el-input>
+                <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -456,7 +457,7 @@
           <el-row class="p-wxArchive-baseInfo">
             <el-col :span="12">
               <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
-                <el-select v-model="form.archiveBaseVO.fixFeeRate" placeholder="请选择" style="width:240px">
+                <el-select v-model="form.archiveBaseVO.fixFeeRate" placeholder="费率" style="width:240px">
                   <el-option v-for="item in rateOptions" :key="item.value" :label="item.lable" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -466,20 +467,18 @@
       </el-form>
     </section>
     <div class="p-wxArchive-action" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">
-      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive" v-if="[0, 1, 4, 8].includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
-        >保存</el-button
-      >
-      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'"
-        >提交审核</el-button
-      >
+      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{
+        [2].includes(form.archiveBaseVO.auditStatus) && !archiveStatus ? '编辑' : '保存'
+      }}</el-button>
       <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus)">拒绝</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">取消</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')">取消</el-button>
     </div>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
-        <el-form-item label="原因" prop="remark">
-          <el-input type="textarea" v-model="refundForm.remark" placeholder="请输入审核不能过的原因"></el-input>
+        <el-form-item label="原因" prop="remark" class="e-dialog-remark">
+          <el-input type="textarea" v-model="refundForm.remark" :rows="4" placeholder="请输入审核不能过的原因"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -496,12 +495,12 @@
 import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
-import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory } from '@/api/wxArchive'
 import fileServer from '@/mixins/fileServe'
 import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
-import { filterReview } from './filters/reviewStatus'
+import { filterReview } from './filters'
 import { deepClone } from '@/utils'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
+import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory } from '@/api/wxArchive'
 
 export default {
   mixins: [fileServer],
@@ -529,7 +528,7 @@ export default {
       formDisabled: false,
       exampleImg: require('@/assets/images/home/home.png'),
       isReason: false,
-      detailStatusArr: [0, 1, 2, 4, 8],
+      detailStatusArr: [0, 1, 2, 4],
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
@@ -537,6 +536,7 @@ export default {
       bankOptions: [],
       branchOptions: [],
       businessOptions: [],
+      archiveStatus: false,
       previewList: [],
       showViewer: false,
       imageIndex: 0
@@ -684,7 +684,7 @@ export default {
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-        if (!this.detailStatusArr.includes(res.archiveBaseDTO.auditStatus)) {
+        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus)) {
           this.formDisabled = true
         }
       } catch (error) {
@@ -712,17 +712,22 @@ export default {
       }
     },
     handleArchive() {
-      this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
-        if (!errorMessage) {
-          try {
-            const res = await submit(this.form)
-            // this.$store.dispatch('delTagView', this.$route).then(() => {
-            //   this.$router.push({ name: 'wxArchive' })
-            // })
-            this.$message.success('新增成功')
-          } catch (error) {}
-        }
-      })
+      if (this.archiveStatus) {
+        this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
+          if (!errorMessage) {
+            try {
+              const res = await submit(this.form)
+              // this.$store.dispatch('delTagView', this.$route).then(() => {
+              //   this.$router.push({ name: 'wxArchive' })
+              // })
+              this.$message.success('新增成功')
+            } catch (error) {}
+          }
+        })
+      } else {
+        this.archiveStatus = true
+        this.formDisabled = false
+      }
     },
     handleArea(type, value) {
       if (type === 'area') {
@@ -839,6 +844,14 @@ export default {
         padding: 8px 22px;
       }
     }
+    &-review {
+      color: #ff6010;
+      width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
   }
   &-preview {
     &-con {
@@ -859,6 +872,11 @@ export default {
         content: '\e6db';
         color: #fff;
       }
+    }
+  }
+  &-dialog {
+    &-remark {
+      margin-bottom: 0;
     }
   }
 }
