@@ -239,8 +239,8 @@ export default {
       },
       statusList: [
         {id: '', name:'全部'},
-        {id: 0, name:'否'},
-        {id: 1, name:'是'}
+        {id: 1, name:'是'},
+        {id: 0, name:'否'}
       ],
       tableData: [],
       currentPage: 1,
