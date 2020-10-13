@@ -262,7 +262,7 @@ export default {
         mobile: '',
         shortName: '',
         tradeTypeId: '',
-        type: 1,
+        type: 2,
       },
       rules: {
         companyName: {

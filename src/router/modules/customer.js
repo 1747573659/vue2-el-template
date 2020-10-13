@@ -43,7 +43,6 @@ const customer = {
           meta: {
             title: '商户管理/新增',
             name: 'addMerchant',
-            cache: true
           }
         },
         {
@@ -55,7 +54,7 @@ const customer = {
           meta: {
             title: '商户管理/编辑',
             name: 'editMerchant',
-            cache: true
+            cache: true,
           }
         },
         {
@@ -77,7 +76,6 @@ const customer = {
           meta: {
             title: '品牌管理/新增',
             name: 'addBrand',
-            cache: true
           }
         },
         {
@@ -207,7 +205,6 @@ const customer = {
           meta: {
             title: '代理商管理/新增',
             name: 'addAgent',
-            cache: true
           }
         },
         {
@@ -241,7 +238,6 @@ const customer = {
           meta: {
             title: '代理商角色管理/新增',
             name: 'addRole',
-            cache: true
           }
         },
         {
