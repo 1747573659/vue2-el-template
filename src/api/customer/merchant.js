@@ -157,6 +157,7 @@ export function queryDistricDto(data) {
 export function addMerchant(data) {
   return request({
     url: urlLinks.addMerchant,
+    timeout: 10 * 1000,
     method: 'post',
     data
   })

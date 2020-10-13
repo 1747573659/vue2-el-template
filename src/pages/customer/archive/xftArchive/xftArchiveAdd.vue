@@ -509,7 +509,7 @@
       </span>
     </el-dialog>
     <!-- image-preview -->
-    <el-image ref="imageViewer" :src="previewSrc" :preview-src-list="previewList" class="e-preview-con"></el-image>
+    <el-image-preview ref="imageViewer" v-if="showViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="handleClosePreview" class="e-preview-con"></el-image-preview>
   </div>
 </template>
 
@@ -518,6 +518,7 @@ import selectPage from '@/components/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
 import areaSelectForTwo from '@/components/areaSelectForTwo'
+import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
 import { 
@@ -538,7 +539,8 @@ export default {
     selectPage,
     uploadPic,
     areaSelect,
-    areaSelectForTwo
+    areaSelectForTwo,
+    ElImagePreview
   },
   data() {
     return {
@@ -784,7 +786,8 @@ export default {
         contractOfTenancy: require('@/assets/images/xftArchive/contract_of_tenancy.png')
       },
       previewList: [],
-      previewSrc: ''
+      showViewer: false,
+      imageIndex: 0
     }
   },
   computed: {
@@ -821,18 +824,18 @@ export default {
     }
   },
   methods: {
+    handleClosePreview() {
+      this.showViewer = false
+    },
     handleImgPreview(url) {
       if (this.isDetail && url) {
         this.previewList = []
-        this.previewSrc = ''
         let imgList = document.querySelectorAll('.avatar')
         for (let i = 0; i < imgList.length; i++) {
           this.previewList.push(imgList[i].src)
         }
-        this.previewSrc = this.previewList.find(item => item === url)
-        this.$nextTick(() => {
-          this.$refs.imageViewer.clickHandler()
-        })
+        this.showViewer = true
+        this.imageIndex = this.previewList.findIndex(item => item === url)
       }
     },
     legalPersonValidityChange(value) {
@@ -1257,16 +1260,12 @@ export default {
 .e {
   &-preview {
     &-con {
-      width: 100px;
-      height: 100px;
+      left: 35vw;
+      right: 35vw;
+      bottom: 20vh;
+      top: 10vh;
       /deep/ .el-image-viewer__mask {
         display: none;
-      }
-      /deep/ .el-image-viewer__wrapper {
-        left: 35vw;
-        right: 35vw;
-        bottom: 20vh;
-        top: 10vh;
       }
       /deep/ .el-image-viewer__close {
         background-color: #606266;
