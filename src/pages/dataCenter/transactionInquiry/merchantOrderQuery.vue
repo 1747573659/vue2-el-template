@@ -507,7 +507,7 @@ export default {
       this.tabLock = true
       try {
         const res = await queryMerchantOrderPage(data)
-        this.tabData = res.results
+        this.tabData = res.results || []
         this.pageNo = res.page
         this.pageTotal = res.totalCount
       } catch (error) {} finally {

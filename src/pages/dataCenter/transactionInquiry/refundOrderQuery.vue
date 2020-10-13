@@ -223,7 +223,7 @@ export default {
       try {
         const res = await refundOrderQueryPage(params)
         this.pageTotal = res.totalCount
-        this.tabData = res.results
+        this.tabData = res.results || []
       } catch {}
       this.tabLock = true
       this.tabLock = false

@@ -304,7 +304,7 @@ export default {
       this.tabLock = true
       try {
         const res = await querySingleOrder(params)
-        this.tabData = res
+        this.tabData = res || []
         this.tabLock = false
       } catch {
         this.tabLock = false
