@@ -178,6 +178,14 @@
 <script>
 import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode } from '@/api/xftArchive'
 export default {
+  beforeRouteEnter (to, from, next) {
+    next(vm => {
+      // 通过 `vm` 访问组件实例
+      vm.currentPage = 1
+      vm.getList()
+    })
+  },
+  name: 'xftArchive',
   data() {
     return {
       certificationForm: {},
@@ -374,7 +382,6 @@ export default {
     }
   },
   mounted() {
-    this.getList()
   }
 }
 </script>
