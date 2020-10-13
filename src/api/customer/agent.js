@@ -15,6 +15,7 @@ const urlLinks = {
   queryAgentAppAndQuota: '/agent/queryAgentAppAndQuota',
   distributeAppQuota: '/agent/distributeAppQuota',
   queryDistricDto: '/district/queryDistricDto',
+  checkAgentName: '/agent/checkAgentName',
 }
 
 // 查询渠道列表
@@ -138,5 +139,14 @@ export function queryDistricDto(data) {
     url: urlLinks.queryDistricDto,
     method: 'post',
     data
+  })
+}
+
+// 验证代理商存在
+export function checkAgentName(data) {
+  return request({
+    url: urlLinks.checkAgentName,
+    method: 'post',
+    params: data
   })
 }

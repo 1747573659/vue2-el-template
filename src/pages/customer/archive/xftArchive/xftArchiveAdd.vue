@@ -48,6 +48,16 @@
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
+              <div class="question-icon">
+                <el-tooltip class="item" effect="light" placement="top">
+                  <div slot="content">
+                    提示:若商户无营业执照，可按非持证商户进件。<br/>
+                    非持证商户日限额2W，月限额5W。<br/>
+                    持证商户日限额50W，月限额500W。
+                  </div>
+                  <svg t="1602573775934" class="icon" viewBox="0 0 1024 1024" version="1.1" xmlns="http://www.w3.org/2000/svg" p-id="2374" width="16" height="16"><path d="M512 0C230.4 0 0 230.4 0 512s230.4 512 512 512 512-230.4 512-512S793.6 0 512 0z m0 981.333333C251.733333 981.333333 42.666667 772.266667 42.666667 512S251.733333 42.666667 512 42.666667s469.333333 209.066667 469.333333 469.333333-209.066667 469.333333-469.333333 469.333333z" fill="#999999" p-id="2375"></path><path d="M512 174.933333c-119.466667 0-213.333333 98.133333-213.333333 217.6 0 25.6 17.066667 42.666667 42.666666 42.666667s42.666667-17.066667 42.666667-42.666667c0-72.533333 59.733333-132.266667 128-132.266666 42.666667 0 81.066667 17.066667 106.666667 42.666666 17.066667 21.333333 25.6 46.933333 21.333333 76.8-4.266667 38.4-25.6 51.2-64 72.533334-46.933333 25.6-106.666667 59.733333-106.666667 162.133333 0 25.6 17.066667 42.666667 42.666667 42.666667s42.666667-17.066667 42.666667-42.666667c0-51.2 21.333333-64 64-89.6 38.4-21.333333 93.866667-55.466667 106.666666-136.533333 8.533333-55.466667-8.533333-106.666667-42.666666-145.066667-38.4-42.666667-102.4-68.266667-170.666667-68.266667z" fill="#999999" p-id="2376"></path><path d="M512 789.333333m-55.466667 0a55.466667 55.466667 0 1 0 110.933334 0 55.466667 55.466667 0 1 0-110.933334 0Z" fill="#999999" p-id="2377"></path></svg>
+                </el-tooltip>
+              </div>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通超级码" prop="archiveBaseVO.superCode">
@@ -60,6 +70,14 @@
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
+              <el-tooltip class="item question-icon" effect="light" placement="top">
+                <div slot="content">
+                  提示：消费者扫码支付，50元<br/>
+                  以下享受优惠费率，具体请联<br/>
+                  系行业经理
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
             </el-col>
           </el-row>
           <el-row>
@@ -70,6 +88,12 @@
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
+              <el-tooltip class="item question-icon" effect="light" placement="top">
+                <div slot="content">
+                  提示:必须与营业执照<br/>名称一致
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
@@ -78,6 +102,12 @@
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
+              <el-tooltip class="item question-icon" effect="light" placement="top">
+                <div slot="content">
+                  提示:用于支付完成页<br/>面向消费者展示
+                </div>
+                <i class="el-icon-question"></i>
+              </el-tooltip>
             </el-col>
           </el-row>
           <el-row>
@@ -1302,5 +1332,10 @@ export default {
       margin-left: 10px;
     }
   }
+}
+.question-icon {
+  display: inline-block;
+  line-height: 32px;
+  width: 16px;
 }
 </style>
