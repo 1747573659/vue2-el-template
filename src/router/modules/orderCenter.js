@@ -29,8 +29,6 @@ const orderCenter = {
           code: 'ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD',
           meta: { title: '享钱外卖有效期', name: 'takeawayPeriod' }
         },
-        
-        
       ]
     }
   ]
