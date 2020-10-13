@@ -27,21 +27,21 @@ const dataCenter = {
           component: () => import('@/pages/dataCenter/transactionInquiry/merchantOrderQuery.vue'),
           name: 'merchantOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_MERCHANTORDERQUERY',
-          meta: { title: '交易流水查询', name: 'MerchantOrderQuery' }
+          meta: { title: '交易流水查询', name: 'merchantOrderQuery' }
         },
         {
           path: 'singleOrderQuery',
           component: () => import('@/pages/dataCenter/transactionInquiry/singleOrderQuery.vue'),
-          name: 'SingleOrderQuery',
+          name: 'singleOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_SINGLEORDERQUERY',
-          meta: { title: '单笔订单查询',name: 'SingleOrderQuery' }
+          meta: { title: '单笔订单查询',name: 'singleOrderQuery' }
         },
         {
           path: 'refundOrderQuery',
           component: () => import('@/pages/dataCenter/transactionInquiry/refundOrderQuery.vue'),
           name: 'refundOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_REFUNDORDERQUERY',
-          meta: { title: '退款订单查询',name: 'RefundOrderQuery' }
+          meta: { title: '退款订单查询',name: 'refundOrderQuery' }
         }
       ]
     }

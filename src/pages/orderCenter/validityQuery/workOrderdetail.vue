@@ -27,7 +27,7 @@
             name="files"
             :on-exceed="handleexceed"
             :limit="8"
-            :accept="'image/*,.mp4,.webm,.ogg,.rar,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx'"
+            :accept="'image/*,video/*'"
             :action="uploadurl"
             :before-upload="handleBeforeupload"
             :on-preview="handlePreview"
@@ -36,7 +36,6 @@
             :file-list="fileList"
             list-type="picture-card"
           >
-         fds
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">

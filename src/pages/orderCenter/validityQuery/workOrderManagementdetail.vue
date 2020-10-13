@@ -30,7 +30,7 @@
             name="files"
             :on-exceed="handleexceed"
             :limit="8"
-            :accept="'image/*,.mp4,.webm,.ogg,.rar,.zip,.doc,.docx,.xls,.xlsx,.ppt,.pptx'"
+            :accept="'image/*,video/*'"
             :action="uploadurl"
             :before-upload="handleBeforeupload"
             :on-preview="handlePreview"
@@ -237,6 +237,10 @@ export default {
       if(file.size / 1024 / 1024 > 50){
          this.$message.warning('请将文件大小限制50M以内')
          return false
+      }
+      if(!/^video\/.+$/.test(file.type) && !/^image\/.+$/.test(file.type)){
+        this.$message.warning('暂时加入限制只支持图片和视频，因为其他文件类型传上去以后怎么回显问题没解决')
+        return false
       }
     },
     handleRemove(file, fileList) {

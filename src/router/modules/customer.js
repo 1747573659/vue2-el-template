@@ -137,7 +137,8 @@ const customer = {
           component: _import('customer/archive/wxArchive/wxArchiveDetail'),
           meta: {
             title: '进件详情',
-            name: 'wxArchiveDetail'
+            name: 'wxArchiveDetail',
+            cache: true
           }
         },
         {
@@ -290,7 +291,7 @@ const customer = {
           component: () => import('@/pages/orderCenter/validityQuery/workOrderdetail.vue'),
           name: 'workOrderdetail',
           hidden: true,
-          code: 'WORKORDERMANAGEMENTDETAIL',
+          code: 'WORKORDERMANAGEMENTVIEWDETAIL',
           meta: { title: '工单管理详情',name: 'workOrderManagementdetail' }
         }
       ]
