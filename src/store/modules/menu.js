@@ -52,7 +52,7 @@ const mutations = {
   },
   SET_CACHE_VIEWS: (state, view) => {
     if (state.cachedViews.includes(view.name)) return
-    if (!view.meta.cache) state.cachedViews.push(view.name)
+    if (view.meta.cache) state.cachedViews.push(view.name)
   },
   DEL_TAG_VIEW: (state, view) => {
     for (let i = 0; i < state.tagViews.length; i++) {

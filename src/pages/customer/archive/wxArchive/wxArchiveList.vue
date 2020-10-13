@@ -47,7 +47,7 @@
     </div>
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
-        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110" align="center"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="180" align="center"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column label="停用" width="90px">
           <template slot-scope="scope">
-            <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '是' : '否' }}</span>
+            <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="right" width="210px">
@@ -155,6 +155,7 @@ import { filterReview, filterArchiveStatus } from './filters'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse } from '@/api/wxArchive'
 
 export default {
+  name: 'wxArchive',
   data() {
     return {
       statusOptions,
@@ -223,8 +224,8 @@ export default {
     handleQueryPage: async function() {
       const data = {
         orders: { createTime: this.sortStatus },
-        startTime: this.form.createTime[0],
-        endTime: this.form.createTime[1],
+        startTime: this.form.createTime?.[0] ?? '',
+        endTime: this.form.createTime?.[1] ?? '',
         auditStatus: this.form.auditStatus,
         companyName: this.form.msg,
         bankCard: this.form.msg,
