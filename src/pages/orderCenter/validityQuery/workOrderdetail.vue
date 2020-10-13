@@ -27,7 +27,6 @@
             name="files"
             :on-exceed="handleexceed"
             :limit="8"
-            :accept="'image/*,video/*'"
             :action="uploadurl"
             :before-upload="handleBeforeupload"
             :on-preview="handlePreview"
@@ -39,7 +38,7 @@
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
-            <video width="100%" height="60%" loop autoplay v-if="vedioUrl" src="http://www.k-scm.com/KMjsfw/images/JF2010104775_mmexport1602319019570.mp4" controls>
+            <video width="100%" height="60%" loop autoplay v-if="vedioUrl" :src="vedioUrl" controls>
             </video>
           </el-dialog>
         </el-form-item>
@@ -188,8 +187,8 @@ export default {
           requestData.branch=cascader.path[1]
           requestData.productName=cascader.pathLabels[0]
           requestData.branchName=cascader.pathLabels[1]
-          requestData.fileName2=this.fileList.filter(res=>/^video\/.+$/.test(res.type)).map(res=>res.name).join()
-          requestData.fileName=this.fileList.filter(res=>!(/^video\/.+$/.test(res.type))).map(res=>res.name).join()
+          requestData.fileName=this.fileList.filter(res=>/(^video\/.+$)|(^image\/.+$)/.test(res.type)).map(res=>res.name).join()
+          requestData.fileName2=this.fileList.filter(res=>!(/(^video\/.+$)|(^image\/.+$)/.test(res.type))).map(res=>res.name).join()
           addWorkOrder(requestData).then(res=>{
             this.$message.success("创建成功")
             this.$router.go(-1)
@@ -223,25 +222,38 @@ export default {
       })
     },
     queryOrderDetail(res){
+      function getTypeFile(res1){
+            let suffix=res1.match(/.+\.(.+)/)[1]
+            let isimg="bmp,jpg,png,tif,gif,pcx,tga,exif,fpx,svg,psd,cdr,pcd,dxf,ufo,eps,ai,raw,wmf,webp".includes(suffix.toLowerCase())
+            let isvedio="avi,mov,rmvb,rm,flv,mp4,3gp".includes(suffix.toLowerCase())
+            console.log(suffix.toLowerCase())
+            if(isimg){
+              return {
+                name:res1,
+                url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+                type:"image/*"
+              }
+            }else if(isvedio){
+              return {
+                name:res1,
+                url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+                type:"video/*"
+              }
+            }else{
+              return {
+                name:res1,
+                url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
+                type:"other/*"
+              }
+            }
+      }
       queryOrderDetail(res).then(
         res=>{
           let requestData=Object.assign({},res)
           this.ruleForm=res
           this.ruleForm.productNoA=[requestData.productNo,requestData.branch]
-          const files1=requestData.fileName?requestData.fileName.split(",").map(res1=>{
-            return {
-              name:res1,
-              url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
-              type:"image/*"
-            }
-          }):[]
-          const files2=requestData.fileName2?requestData.fileName2.split(",").map(res1=>{
-            return {
-              name:res1,
-              url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+res1,
-              type:"video/*"
-            }
-          }):[]
+          const files1=requestData.fileName?requestData.fileName.split(",").map(getTypeFile):[]
+          const files2=requestData.fileName2?requestData.fileName2.split(",").map(getTypeFile):[]
           this.fileList=[...files1,...files2]
         }
       )
@@ -272,7 +284,8 @@ export default {
         this.dialogImgUrl = file.url;
         this.dialogImgVisible = true;
       }else{
-        this.$message.warning('只有图片和视频文件支持预览')
+        window.open(file.url);
+        //this.$message.warning('只有图片和视频文件支持预览')
       }
     },
   },
