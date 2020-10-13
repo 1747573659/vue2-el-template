@@ -121,7 +121,7 @@
           label="停用"
           width="80">
           <template slot-scope="scope">
-            {{scope.row.archiveBaseDTO.stopUse ? '停用' : '启用'}}
+            {{scope.row.archiveBaseDTO.stopUse ? '是' : '否'}}
           </template>
         </el-table-column>
         <el-table-column

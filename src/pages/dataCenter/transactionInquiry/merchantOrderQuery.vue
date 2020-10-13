@@ -217,7 +217,7 @@ import {
 import { downloadBufferFile } from '@/utils/index'
 
 export default {
-  name: 'MerchantOrderQuery',
+  name: 'merchantOrderQuery',
   components: {
     orderDetailDialog,
     selectPage
