@@ -109,40 +109,40 @@
         <el-form-item label="微信子商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.wxSubMchIds}}
+              {{subShopForm.wxSubMchIds && subShopForm.wxSubMchIds[0]}}
             </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.wxSubMchIds)" type="text" size="small">复制</el-button>
+            <el-col :span="6" v-if="subShopForm.wxSubMchIds">
+              <el-button style="float:right" @click="copy(subShopForm.wxSubMchIds[0])" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="支付宝子商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.aliSmids}}
+              {{subShopForm.aliSmids && subShopForm.aliSmids[0]}}
             </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.aliSmids)" type="text" size="small">复制</el-button>
+            <el-col :span="6" v-if="subShopForm.aliSmids">
+              <el-button style="float:right" @click="copy(subShopForm.aliSmids[0])" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="银总联商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.unionPayMchIds}}
+              {{subShopForm.unionPayMchIds && subShopForm.unionPayMchIds[0]}}
             </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.unionPayMchIds)" type="text" size="small">复制</el-button>
+            <el-col :span="6" v-if="subShopForm.unionPayMchIds">
+              <el-button style="float:right" @click="copy(subShopForm.unionPayMchIds[0])" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
         <el-form-item label="银联子商户号">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
-              {{subShopForm.corMchNos}}
+              {{subShopForm.corMchNos && subShopForm.corMchNos[0]}}
             </el-col>
-            <el-col :span="6">
-              <el-button style="float:right" @click="copy(subShopForm.corMchNos)" type="text" size="small">复制</el-button>
+            <el-col :span="6" v-if="subShopForm.corMchNos">
+              <el-button style="float:right" @click="copy(subShopForm.corMchNos[0])" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
