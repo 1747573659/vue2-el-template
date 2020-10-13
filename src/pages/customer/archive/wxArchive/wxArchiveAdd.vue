@@ -77,11 +77,19 @@
             <el-col :span="12">
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
                 <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
+                <el-tooltip effect="dark" content="必须与营业执照一致" placement="top">
+                  <!-- <i class="el-icon-question e-icon-question"></i> -->
+                  <img :src="questionIcon" alt="">
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
                 <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="商户简称" style="width:240px"></el-input>
+                <el-tooltip effect="dark" content="商户简称在消费者付款成功页展示，请认真填写" placement="top">
+                  <!-- <i class="el-icon-question e-icon-question"></i> -->
+                  <img :src="questionIcon" alt="">
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -512,6 +520,7 @@ export default {
   },
   data() {
     return {
+      questionIcon: require('@/assets/images/icon/questioin.png'),
       rateOptions,
       refundForm,
       refundRules,
@@ -877,6 +886,13 @@ export default {
   &-dialog {
     &-remark {
       margin-bottom: 0;
+    }
+  }
+  &-icon {
+    &-question {
+      font-size: 18px;
+      vertical-align: middle;
+      margin-left: 10px;
     }
   }
 }
