@@ -46,8 +46,8 @@
           </km-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
-            <video width="100%" height="60%" loop autoplay v-if="vedioUrl" src="http://www.k-scm.com/KMjsfw/images/JF2010104775_mmexport1602319019570.mp4" controls>
-            </video>
+            <!-- <video width="100%" height="60%" loop autoplay v-if="vedioUrl" src="http://www.k-scm.com/KMjsfw/images/JF2010104775_mmexport1602319019570.mp4" controls>
+            </video> -->
           </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
@@ -248,8 +248,7 @@ export default {
     },
     handlePreview(file) {
       if(/^video\/.+$/.test(file.type)){
-        this.vedioUrl=file.url
-        this.dialogImgVisible = true;
+         window.open(file.url);
       }else if(/^image\/.+$/.test(file.type)){
         this.dialogImgUrl = file.url;
         this.dialogImgVisible = true;

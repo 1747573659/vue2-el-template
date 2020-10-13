@@ -38,8 +38,8 @@
           </el-upload>
           <el-dialog :before-close="onClose" width="40%"  title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="">
-            <video width="100%" height="60%" loop autoplay v-if="vedioUrl" :src="vedioUrl" controls>
-            </video>
+            <!-- <video ref="vediomedia" width="100%" height="60%" loop autoplay v-if="vedioUrl" :src="vedioUrl" controls>
+            </video> -->
           </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
@@ -208,7 +208,6 @@ export default {
             let suffix=res1.match(/.+\.(.+)/)[1]
             let isimg="bmp,jpg,png,tif,gif,pcx,tga,exif,fpx,svg,psd,cdr,pcd,dxf,ufo,eps,ai,raw,wmf,webp".includes(suffix.toLowerCase())
             let isvedio="avi,mov,rmvb,rm,flv,mp4,3gp".includes(suffix.toLowerCase())
-            console.log(suffix.toLowerCase())
             if(isimg){
               return {
                 name:res1,
@@ -260,8 +259,15 @@ export default {
     },
     handlePreview(file) {
       if(/^video\/.+$/.test(file.type)){
-        this.vedioUrl=file.url
-        this.dialogImgVisible = true;
+        // this.vedioUrl=file.url
+        // this.$nextTick(()=>{
+        //   if(this.$refs['vediomedia'].error){
+        //     this.$message.warning('由于兼容问题不支持预览该视频')
+        //     window.open(file.url);
+        //   }
+        // })
+        // this.dialogImgVisible = true;
+        window.open(file.url);
       }else if(/^image\/.+$/.test(file.type)){
         this.dialogImgUrl = file.url;
         this.dialogImgVisible = true;
