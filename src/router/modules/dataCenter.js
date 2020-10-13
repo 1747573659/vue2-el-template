@@ -15,8 +15,8 @@ const dataCenter = {
       path: 'transactionInquiry',
       name: 'transactionInquiry',
       code: 'DATACENTER_TRANSACTIONINQUIRY',
-      redirect: { name: 'MerchantOrderQuery' },
-      component: _import('dataCenter/index'),
+      redirect: { name: 'merchantOrderQuery' },
+      component: kmContainer,
       meta: {
         title: '交易数据',
         name: 'transactionInquiry'
@@ -25,7 +25,7 @@ const dataCenter = {
         {
           path: 'merchantOrderQuery',
           component: () => import('@/pages/dataCenter/transactionInquiry/merchantOrderQuery.vue'),
-          name: 'MerchantOrderQuery',
+          name: 'merchantOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_MERCHANTORDERQUERY',
           meta: { title: '交易流水查询', name: 'MerchantOrderQuery' }
         },
@@ -39,7 +39,7 @@ const dataCenter = {
         {
           path: 'refundOrderQuery',
           component: () => import('@/pages/dataCenter/transactionInquiry/refundOrderQuery.vue'),
-          name: 'RefundOrderQuery',
+          name: 'refundOrderQuery',
           code: 'DATACENTER_TRANSACTIONINQUIRY_REFUNDORDERQUERY',
           meta: { title: '退款订单查询',name: 'RefundOrderQuery' }
         }

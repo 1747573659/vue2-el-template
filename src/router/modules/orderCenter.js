@@ -1,6 +1,6 @@
 import { _import } from '@/utils'
 import Layout from '@/layout'
-
+import kmContainer from '@/components/km-container'
 const orderCenter = {
   path: '/orderCenter',
   name: 'orderCenter',
@@ -15,8 +15,8 @@ const orderCenter = {
       path: 'validityQuery',
       name: 'validityQuery',
       code: 'ORDERCENTER_VALIDITYQUERY',
-      redirect: { name: 'baseInfoIndex' },
-      component: _import('dataCenter/index'),
+      redirect: { name: 'takeawayPeriod' },
+      component: kmContainer,
       meta: {
         title: '有效期查询',
         name: 'validityQuery'

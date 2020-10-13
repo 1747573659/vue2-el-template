@@ -188,7 +188,7 @@ export default {
         auditStatusList: [],
         auditStatus: '',
         wxCertStatus: '',
-        status: 1
+        status: 0
       },
       auditStatusOptions: [
         {id: '', name: '全部'},
