@@ -131,24 +131,6 @@ export default {
       vedioUrl:"",
       uploadurl:VUE_APP_WORK_ORDER_URL+VUE_APP_WORK_ORDER_URLPATH+"/KMJFService.asmx/uploadimage?jsoncallback=?",
       rules: {
-        demandName: [
-          { required: true, message: "请填写工单标题", trigger: "blur" },
-        ],
-        productNoA: [
-          { required: true, message: "请选择产品", trigger: "change" },
-        ],
-        demandDec: [
-          { required: true, message: "请填写工单描述", trigger: "blur" },
-        ],
-        custName: [
-          { required: true, message: "请填写公司名称", trigger: "blur" },
-        ],
-        linkName: [
-          { required: true, message: "请填写联系人", trigger: "blur" },
-        ],
-        linkPhone: [
-          { required: true, message: "请填写联系方式", trigger: "blur" },
-        ],
       },
       fileList: [],
       productProps:{
