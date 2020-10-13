@@ -168,7 +168,7 @@ export default {
         id: 0,
         mobile: '',
         shortName: '',
-        type: 1,
+        type: 2,
       },
       rules: {
         companyName: {
