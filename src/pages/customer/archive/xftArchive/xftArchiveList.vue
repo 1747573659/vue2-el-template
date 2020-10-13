@@ -186,10 +186,12 @@ export default {
         name: '',
         time: [],
         auditStatusList: [],
-        auditStatus: null,
-        wxCertStatus: null
+        auditStatus: '',
+        wxCertStatus: '',
+        status: 1
       },
       auditStatusOptions: [
+        {id: '', name: '全部'},
         {id: 0, name: '未提交审核'},
         {id: 1, name: '审核不通过编辑中'},
         {id: 2, name: '代理商待审核'},
@@ -202,6 +204,7 @@ export default {
         {id: 9, name: '资料补充待审核'}
       ],
       wxCertStatusOptions: [
+        {id: '', name: '全部'},
         {id: 0, name: '未认证'},
         {id: 1, name: '编辑中'},
         {id: 2, name: '审核中'},
@@ -235,8 +238,9 @@ export default {
         8: '已作废'
       },
       statusList: [
-        {id: 0, name:'启用'},
-        {id: 1, name:'停用'}
+        {id: '', name:'全部'},
+        {id: 0, name:'否'},
+        {id: 1, name:'是'}
       ],
       tableData: [],
       currentPage: 1,
