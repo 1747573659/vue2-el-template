@@ -136,7 +136,8 @@ const customer = {
           component: _import('customer/archive/wxArchive/wxArchiveDetail'),
           meta: {
             title: '进件详情',
-            name: 'wxArchiveDetail'
+            name: 'wxArchiveDetail',
+            cache: true
           }
         },
         {
