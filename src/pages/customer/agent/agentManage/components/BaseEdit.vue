@@ -204,10 +204,12 @@ export default {
     const validatorName = (rule, value, callback) => {
       if (value === '') {
         callback('请输入代理商名称')
-      } else if (value && value !== this.validatorName) {
+      } else if (value !== this.validatorName) {
         checkAgentName({ name: value }).then((res) => {
-          if (res === '该经销商已经存在') {
-            callback('该经销商已经存在')
+          if (res) {
+            callback(res)
+          } else {
+            callback()
           }
         })
       } else {
