@@ -468,6 +468,15 @@ export default {
           this.$message.error('金额不能为负数')
           return false
         }
+        
+        if((this.formData.startAmount && !this.formData.endAmount) || !this.formData.startAmount && this.formData.endAmount){
+          this.$message.error('请输入一个金额范围')
+          return false
+        }
+        if(this.formData.startAmount> this.formData.endAmount){
+          this.$message.error('结束金额必须大于起始金额')
+          return false
+        }
         this.pageNo = 1
         this.searchLock = true
         this.getQueryPage().catch(() => {}).finally(() => {
