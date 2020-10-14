@@ -43,6 +43,10 @@
                   <el-radio :label="3">持证商户</el-radio>
                   <el-radio :label="4">非持证商户</el-radio>
                 </el-radio-group>
+                <el-tooltip effect="dark" placement="top">
+                  <div slot="content">若商户无营业执照，可按非持证商户进件。<br/>非持证商户日限额2W，月限额5W。<br/>持证商户日限额50W，月限额500W。</div>
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -51,6 +55,10 @@
                   <el-radio :label="1">是</el-radio>
                   <el-radio :label="2">否</el-radio>
                 </el-radio-group>
+                <el-tooltip effect="dark" content="消费者扫码支付，50元以下享受优惠费率，具体请联系行业经理" placement="top">
+                  <div slot="content">消费者扫码支付，50元以下享受优惠费率，<br/>具体请联系行业经理</div>
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>
@@ -58,11 +66,17 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
                 <el-input style="width:240px" v-model="form.archiveBaseVO.companyName" placeholder=""></el-input>
+                <el-tooltip effect="dark" content="必须与营业执照一致" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
                 <el-input style="width:240px" v-model="form.archiveBaseVO.merchantShortName" placeholder=""></el-input>
+                <el-tooltip effect="dark" content="用于支付完成页面向消费者展示" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>
@@ -544,6 +558,7 @@ export default {
   },
   data() {
     return {
+      questionIcon: require('@/assets/images/icon/questioin.png'),
       addLoading: false,
       isCopy: false,
       auditStatus: null,
@@ -1279,5 +1294,18 @@ export default {
       }
     }
   }
+  &-icon {
+    &-question {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+  }
+}
+.question-icon {
+  display: inline-block;
+  line-height: 32px;
+  width: 16px;
 }
 </style>

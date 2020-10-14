@@ -37,7 +37,7 @@
           </el-col>
         </el-row>
         <el-form-item label="商户信息">
-          <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/银行卡号" v-model="form.name"></el-input>
+          <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="停用">
           <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
@@ -233,7 +233,9 @@ export default {
         6: '部分账号申请通过',
         7: '申请通过',
         8: '资料待补充',
-        9: '资料补充待审核'
+        9: '资料补充待审核',
+        10: '账号申请中',
+        11: '账号申请中'
       },
       wxCertStatusList: {
         0: '未认证',

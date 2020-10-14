@@ -1,6 +1,6 @@
 <template>
   <section class="p-wxArchive-con" v-loading="isDetailLoad">
-    <header v-if="pageAction && pageAction !== 'add'">
+    <header>
       <el-row>
         <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
           <label>进件状态：</label>
@@ -78,8 +78,7 @@
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
                 <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
                 <el-tooltip effect="dark" content="必须与营业执照一致" placement="top">
-                  <!-- <i class="el-icon-question e-icon-question"></i> -->
-                  <img :src="questionIcon" alt="">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
             </el-col>
@@ -87,8 +86,7 @@
               <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
                 <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="商户简称" style="width:240px"></el-input>
                 <el-tooltip effect="dark" content="商户简称在消费者付款成功页展示，请认真填写" placement="top">
-                  <!-- <i class="el-icon-question e-icon-question"></i> -->
-                  <img :src="questionIcon" alt="">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
             </el-col>
@@ -262,7 +260,7 @@
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
                 <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.licValidityEnd && pageAction === 'detail'">长期有效</span>
+                <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -298,7 +296,7 @@
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
                 <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && pageAction === 'detail'">长期有效</span>
+                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && formDisabled && pageAction === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -341,8 +339,8 @@
             <el-col :span="12">
               <el-form-item label="证件类型" prop="archiveExpandVO.idType">
                 <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="证件类型" style="width: 240px">
-                  <el-option label="身份证" :value="1"></el-option>
-                  <el-option label="护照" :value="2"></el-option>
+                  <el-option label="身份证" value="1"></el-option>
+                  <el-option label="护照" value="2"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -355,7 +353,7 @@
               <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
                 <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.idEnd && pageAction === 'detail'">长期有效</span>
+                <span v-if="!form.archiveExpandVO.idEnd && formDisabled && pageAction === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -431,14 +429,34 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行" prop="archiveExpandVO.bank">
-                <el-select v-model="form.archiveExpandVO.bank" filterable clearable remote reserve-keyword placeholder="银行" :remote-method="handleBankRemote" style="width: 240px">
-                  <el-option v-for="item in bankOptions" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"> </el-option>
+                <el-select
+                  v-model="form.archiveExpandVO.bank"
+                  filterable
+                  clearable
+                  remote
+                  reserve-keyword
+                  placeholder="银行"
+                  :remote-method="handleBankRemote"
+                  @focus="handleBankPage"
+                  style="width: 240px"
+                >
+                  <el-option v-for="item in bankOptions" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
-                <el-select v-model="form.archiveExpandVO.bankSub" filterable clearable remote reserve-keyword placeholder="所属支行" :remote-method="handleBranchRemote" style="width: 240px">
+                <el-select
+                  v-model="form.archiveExpandVO.bankSub"
+                  filterable
+                  clearable
+                  remote
+                  reserve-keyword
+                  placeholder="所属支行"
+                  :remote-method="handleBranchRemote"
+                  @focus="handleBranchPage"
+                  style="width: 240px"
+                >
                   <el-option v-for="item in branchOptions" :key="item.bCode" :label="item.bName" :value="item.bCode"></el-option>
                 </el-select>
               </el-form-item>
@@ -476,9 +494,7 @@
     </section>
     <div class="p-wxArchive-action" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">
       <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
-      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{
-        [2].includes(form.archiveBaseVO.auditStatus) && !archiveStatus ? '编辑' : '保存'
-      }}</el-button>
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}</el-button>
       <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus)">拒绝</el-button>
       <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')">取消</el-button>
     </div>
@@ -545,7 +561,6 @@ export default {
       bankOptions: [],
       branchOptions: [],
       businessOptions: [],
-      archiveStatus: false,
       previewList: [],
       showViewer: false,
       imageIndex: 0
@@ -556,6 +571,7 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
+      vm.form = deepClone(formObj)
       if (vm.pageAction === 'detail') {
         vm.handleDetail()
       }
@@ -563,10 +579,6 @@ export default {
       vm.getBranchPage()
       vm.getBusinessCategory()
     })
-  },
-  beforeRouteLeave(to, from, next) {
-    this.$refs.form.resetFields()
-    next()
   },
   methods: {
     handleClosePreview() {
@@ -630,6 +642,9 @@ export default {
         this.getBankPage(query)
       }
     },
+    handleBankPage() {
+      if (!this.bankOptions) this.getBankPage()
+    },
     getBankPage: async function(bankName = '') {
       const data = { page: 1, rows: 100, bankName }
       const res = await queryBankPage(data)
@@ -640,13 +655,11 @@ export default {
         this.getBranchPage(query)
       }
     },
+    handleBranchPage() {
+      if (!this.branchOptions) this.getBranchPage()
+    },
     getBranchPage: async function(bName = '') {
-      const data = {
-        page: 1,
-        rows: 100,
-        bCode: '',
-        bName
-      }
+      const data = { page: 1, rows: 100, bCode: '', bName }
       const res = await queryBranchPage(data)
       this.branchOptions = res.results
     },
@@ -659,9 +672,9 @@ export default {
           }
           try {
             const res = await refund(data)
-            // this.$store.dispatch('delTagView', this.$route).then(() => {
-            //   this.$router.push({ name: 'wxArchive' })
-            // })
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ name: 'wxArchive' })
+            })
             this.handleDetail()
             this.isReason = false
             this.$message.success('操作成功')
@@ -674,9 +687,9 @@ export default {
         if (valid) {
           try {
             const res = await submitToVerify(this.form)
-            // this.$store.dispatch('delTagView', this.$route).then(() => {
-            //   this.$router.push({ name: 'wxArchive' })
-            // })
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ name: 'wxArchive' })
+            })
             this.$message.success('新增成功')
           } catch (error) {}
         }
@@ -686,16 +699,14 @@ export default {
       try {
         this.isDetailLoad = true
         const res = await detail({ archiveId: this.$route.query.id })
-        this.form.archiveBaseVO = res.archiveBaseDTO
-        this.form.archiveExpandVO = res.archiveExpandDTO
-        this.form.archiveOtherVO = res.archiveOtherDTO
+        this.form.archiveBaseVO = res?.archiveBaseDTO ?? deepClone(formObj.archiveBaseDTO)
+        this.form.archiveExpandVO = res.archiveExpandDTO ?? deepClone(formObj.archiveExpandDTO)
+        this.form.archiveOtherVO = res.archiveOtherDTO ?? deepClone(formObj.archiveOtherDTO)
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus)) {
-          this.formDisabled = true
-        }
+        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus)) this.formDisabled = true
       } catch (error) {
       } finally {
         this.isDetailLoad = false
@@ -721,21 +732,20 @@ export default {
       }
     },
     handleArchive() {
-      if (this.archiveStatus) {
+      if (this.form.archiveBaseVO.auditStatus === 2 && this.formDisabled) {
+        this.formDisabled = false
+      } else {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
               const res = await submit(this.form)
-              // this.$store.dispatch('delTagView', this.$route).then(() => {
-              //   this.$router.push({ name: 'wxArchive' })
-              // })
+              this.$store.dispatch('delTagView', this.$route).then(() => {
+                this.$router.push({ name: 'wxArchive' })
+              })
               this.$message.success('新增成功')
             } catch (error) {}
           }
         })
-      } else {
-        this.archiveStatus = true
-        this.formDisabled = false
       }
     },
     handleArea(type, value) {
@@ -825,7 +835,7 @@ export default {
       padding-top: 24px;
     }
     &-action {
-      width: 100%;
+      width: calc(100% - 200px - 42px);
       height: 56px;
       position: fixed;
       bottom: 0;
@@ -890,7 +900,8 @@ export default {
   }
   &-icon {
     &-question {
-      font-size: 18px;
+      width: 18px;
+      height: 18px;
       vertical-align: middle;
       margin-left: 10px;
     }
