@@ -23,7 +23,7 @@
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
                   style="width:240px"
-                  v-if="pageAction === 'add' || ($route.query.isCopy && JSON.parse($route.query.isCopy))"
+                  v-if="pageAction === 'add'"
                   :isMaxPage="isMaxPage"
                   :options="selectOptions"
                   @remoteMethod="remoteSelect"
@@ -578,6 +578,10 @@ export default {
       vm.getBankPage()
       vm.getBranchPage()
       vm.getBusinessCategory()
+      // 修改顶部tag
+      const tags = { edit: '编辑', detail: '详情', copy: '新增' }
+      let pageStatus = vm.$route.query.status ? tags[vm.$route.query.status] : '新增'
+      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
     })
   },
   methods: {
@@ -712,7 +716,7 @@ export default {
         this.isDetailLoad = false
       }
       // 复制
-      if (this.$route.query.isCopy) {
+      if (this.$route.query.status === 'copy') {
         this.form.archiveBaseVO.id = null
         this.form.archiveExpandVO.id = null
         this.form.archiveOtherVO.id = null
