@@ -66,12 +66,12 @@
         <el-form-item v-if="!isEdit">
           <el-button size="small" type="primary" @click="submitForm('ruleForm')">提交</el-button>
           <!-- <el-button  type="primary" plain @click="resetForm('ruleForm')">重置</el-button> -->
-          <el-button size="small" @click="$router.go(-1)" >取消</el-button>
+          <el-button size="small" @click="cance()" >取消</el-button>
         </el-form-item>
         
       </el-form>
       <div v-if="isEdit" style="padding-left: 100px;">
-          <el-button size="small" type="primary" @click="$router.go(-1)" >取消</el-button>
+          <el-button size="small" type="primary" @click="cance()" >关闭</el-button>
         </div>
     </div>
   </div>
@@ -156,6 +156,11 @@ export default {
     }
   },
   methods: {
+    cance(){
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ path: '/customer/workorder/workOrderManagement' })
+      })
+    },
     handleexceed(){
       this.$message.error("最多上传8个文件");
     },

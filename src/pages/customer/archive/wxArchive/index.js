@@ -1,13 +1,13 @@
 export const statusOptions = [
   { value: '', label: '全部' },
-  { value: 0, label: '草稿' },
-  { value: 1, label: '未通过审核编辑中' },
+  { value: 0, label: '未提交审核' },
+  { value: 1, label: '审核不通过编辑中' },
   { value: 2, label: '代理商待审核' },
-  { value: 3, label: '平台审核中' },
-  { value: 4, label: '未通过审核' },
+  { value: 3, label: 'BOSS待审核' },
+  { value: 4, label: '审核拒绝' },
   { value: 5, label: '账号申请中' },
-  { value: 6, label: '账号申请部分通过' },
-  { value: 7, label: '账号申请全部通过' }
+  { value: 6, label: '部分账号申请通过' },
+  { value: 7, label: '账号全部申请通过' }
 ]
 
 export const deactivateOptions = [
@@ -78,10 +78,7 @@ export const rateOptions = [
     lable: '0.6%'
   }
 ]
-// let tagName = ''
-// if (vm.pageAction === 'add') tagName = '普通资质进件/新增'
-// else tagName = '普通资质进件/编辑'
-// document.querySelector('.e-tag_active').innerText = tagName
+
 export const formObj = {
   archiveBaseVO: {
     userId: '',
@@ -182,7 +179,7 @@ const asyncIdNumber = (rule, value, callback) => {
 }
 
 export const detailValidate = {
-  'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户类型', trigger: 'change' }],
+  'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户', trigger: 'change' }],
   'archiveBaseVO.publicId': [{ required: true, message: '请输入公众号APPID', trigger: 'change' }],
   'archiveBaseVO.appletId': [{ required: true, message: '请输入小程序APPID', trigger: 'change' }],
   'archiveBaseVO.companyName': [{ required: true, message: '请输入公司名称', trigger: 'change' }],

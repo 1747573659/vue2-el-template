@@ -225,8 +225,8 @@
           </div>
         </div>
       </div>
-      <div slot="footer" class="dialog-footer">
-        <el-button @click="orderDetailVisible = false" size="small">关闭</el-button>
+      <div slot="footer" class="dialog-footer center">
+        <el-button @click="orderDetailVisible = false" size="small">我知道了</el-button>
       </div>
     </el-dialog>
   </div>
@@ -259,8 +259,12 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.center{
+    text-align: center;
+  }
 .table-content {
   border: 1px solid;
+  
   .table-item {
     border-bottom: 1px solid;
     display: flex;

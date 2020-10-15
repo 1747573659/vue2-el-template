@@ -1,5 +1,4 @@
 <template>
-              
   <section>
     <div class="search-box">
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="100px" @submit.native.prevent>
@@ -86,24 +85,19 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="210px">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              v-permission="'WXARCHIVE_LIST_REVIEW'"
-              @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })"
-              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)" v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
             >
             <el-button
               type="text"
               size="small"
               v-permission="'WXARCHIVE_LIST_EDIT'"
-              @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })"
+              @click="handlePushDetail({ status: 'edit' }, scope.row)"
               v-else-if="[0, 1, 4].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_DETAIL'" @click="handlePushDetail({ action: 'detail', id: scope.row.archiveBaseDTO.id })" v-else>详情</el-button>
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_COPY'" @click="handlePushDetail({ action: 'detail', isCopy: true, id: scope.row.archiveBaseDTO.id })">复制</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_DETAIL'" @click="handlePushDetail({ status: 'detail' }, scope.row)" v-else>详情</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleStopUse(scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
             <el-button
               type="text"
@@ -189,14 +183,20 @@ export default {
       return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
     }
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.currentPage = 1
+      vm.handleQueryPage()
+    })
+  },
   mounted() {
     this.getXiaoWeiArchiveStatus()
     this.getXiaoWeiUpgradeStatus()
     this.handleQueryPage()
   },
   methods: {
-    handlePushDetail(query) {
-      this.$router.push({ name: 'wxArchiveAdd', query })
+    handlePushDetail(query, row = {}) {
+      this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
     },
     handleReason(row) {
       this.reasonMsg = row.archiveBaseDTO.auditRemark
