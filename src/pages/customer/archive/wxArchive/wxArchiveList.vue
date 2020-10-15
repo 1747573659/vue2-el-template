@@ -183,6 +183,12 @@ export default {
       return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
     }
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.currentPage = 1
+      vm.handleQueryPage()
+    })
+  },
   mounted() {
     this.getXiaoWeiArchiveStatus()
     this.getXiaoWeiUpgradeStatus()

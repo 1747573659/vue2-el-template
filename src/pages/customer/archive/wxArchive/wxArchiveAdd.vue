@@ -739,8 +739,8 @@ export default {
       if (this.form.archiveBaseVO.auditStatus === 2 && this.formDisabled) {
         this.formDisabled = false
       } else {
-        this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
-          if (!errorMessage) {
+        this.$refs.form.validate(async valid => {
+          if (valid) {
             try {
               const res = await submit(this.form)
               this.$store.dispatch('delTagView', this.$route).then(() => {
