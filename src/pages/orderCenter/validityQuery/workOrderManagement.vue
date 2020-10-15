@@ -35,6 +35,7 @@
 import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
+import moment from 'moment'
 import { 
   addWorkOrder,
   queryProductList,
@@ -49,19 +50,20 @@ export default {
     baseTable,
     queryGroup
   },
+  
   data () {
     return {
       queryFormList: [
         {
            type: 'daterange',
            label: '提交日期',
-           value:null
+           value:[moment().subtract(30, 'days').format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")]
         },
         {
           type: 'input',
           name: 'title',
-          label: '工单标题',
-          placeholder: '工单标题',
+          label: '工单信息',
+          placeholder: '工单标题/描述/提交人',
           value: ''
         },
         {
