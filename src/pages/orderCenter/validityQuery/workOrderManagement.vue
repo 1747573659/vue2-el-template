@@ -111,7 +111,8 @@ export default {
       loading:false,
       tableParam:{
           page:1,
-          rows:10
+          rows:10,
+          sheetNo:""
       },
       headers: [
         {
@@ -221,5 +222,6 @@ export default {
 <style lang="scss" scoped>
   .float_right{
     float:right;
+    margin-left: 40px;
   }
 </style>
