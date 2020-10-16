@@ -75,7 +75,7 @@
           <template slot-scope="scope">
             <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">子商户号授权</el-button>
             <el-button v-permission="'XFT_DETAIL_STATUS'" @click="queryStatus(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">查询授权状态</el-button>
-            <el-button v-permission="'XFT_DETAIL_SUBSHOP'" @click="querySubShop(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7'">查询子商户号</el-button>
+            <el-button v-permission="'XFT_DETAIL_SUBSHOP'" @click="querySubShop(scope.row)" type="text" size="small">查询子商户号</el-button>
           </template>
         </el-table-column>
       </el-table>
