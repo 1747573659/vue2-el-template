@@ -1,21 +1,15 @@
 <template>
   <div class="app-container">
     <div class="search-box">
+      <div class="xdd_tip"><i class="el-icon-info"></i>
+至少输入一个订单号，支付订单号无需选择交易时间，其他订单号必须选择交易时间；
+只支持查询近一年内的交易流水</div>
       <el-form @submit.native.prevent label-width="110px" size="small">
         <el-row>
-         
           <el-col :span="8">
-            <el-form-item label="支付订单号">
-              <el-input style="width:85%" clearable placeholder="请输入支付订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.orderId"></el-input>
-              <el-tooltip effect="light" class="payment">
-                <div slot="content"><img src="../../../assets/images/paymentOrderNumber.png"></div>
-                <i class="el-icon-question pure-info-tip"></i>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
-           <el-col :span="8">
             <el-form-item label="商户">
               <select-page
+                :width="'85%'"
                 :request="queryMerchantAdminPage"
                 :bvalue.sync="formData.shopAdminId"
                 :name="'companyName'"
@@ -26,6 +20,16 @@
               </select-page>
             </el-form-item>
           </el-col>
+          <el-col :span="8">
+            <el-form-item label="支付订单号">
+              <el-input style="width:85%" clearable placeholder="请输入支付订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.orderId"></el-input>
+              <el-tooltip effect="light" class="payment">
+                <div slot="content"><img src="../../../assets/images/paymentOrderNumber.png"></div>
+                <i class="el-icon-question pure-info-tip"></i>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+           
            <el-col :span="8">
             <el-form-item label="交易时间">
               <el-date-picker
@@ -88,8 +92,8 @@
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
-        <el-table-column fixed="left" label="交易时间" prop="createDate"></el-table-column>
-        <el-table-column label="支付订单号" prop="orders"></el-table-column>
+        <el-table-column :width="110" label="交易时间" prop="createDate"></el-table-column>
+        <el-table-column :min-width="114" label="支付订单号" prop="orders"></el-table-column>
 
         <el-table-column label="确认码" prop="confirmCode"></el-table-column>
 
@@ -105,10 +109,10 @@
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="交易状态" prop="orderStatusName"></el-table-column>
         <el-table-column label="交易金额" prop="amount"></el-table-column>
-        <el-table-column label="申请退款金额" prop="refundAmount"></el-table-column>
+        <el-table-column align="right" label="申请退款金额" prop="refundAmount"></el-table-column>
 
-        <el-table-column label="退还用户金额" prop="refundAmount"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column align="right" label="退还用户金额" prop="refundAmount"></el-table-column>
+        <el-table-column align="right" label="操作">
           <template slot-scope="scope">
             <el-button @click="handleDetails(scope.row)"  size="small" type="text">详情</el-button>
             <el-button @click="handleDelRow(scope.row)" v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4)" size="small" type="text">退款详情</el-button>
@@ -325,6 +329,17 @@ export default {
   margin-top: 20px;
   background: #fff;
   padding-bottom: 20px;
+}
+.xdd_tip{
+    background: #E5EDFD;
+    border: 1px solid #A6C4FE;
+    padding: 8px 30px;
+    margin-bottom: 20px;
+    color: #3D4966;
+    font-size: 14px;
+}
+.xdd_tip i{
+    color: #3377FF;
 }
 .pure {
   &-dialog {
