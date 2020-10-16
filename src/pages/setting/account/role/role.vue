@@ -78,7 +78,7 @@
 import { queryPage, deleteSysRole } from '@/api/setting/account'
 
 export default {
-  name:'role',
+  name:'roleManagement',
   data() {
     return {
       form: {

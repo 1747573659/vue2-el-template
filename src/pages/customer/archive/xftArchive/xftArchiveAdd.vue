@@ -1,7 +1,7 @@
 <template>
   <div v-permission.page="'XFT_LIST_ADD,XFT_LIST_EDIT,XFT_LIST_CHECK,XFT_LIST_DETAIL,XFT_LIST_COPY'">
     <div class="xft-add" v-loading="addLoading">
-      <div class="header">
+      <div class="header" v-if="!isCopy">
         <el-row>
           <el-col :span="12" class="title-text" v-if="auditStatus !== undefined">
             <span class="archive-title">进件状态：</span>
@@ -563,16 +563,18 @@ export default {
       isCopy: false,
       auditStatus: null,
       auditStatusList: {
-        0: '未提交审核',
-        1: '审核不通过编辑中',
-        2: '代理商待审核',
-        3: 'boss 待审核',
-        4: '审核拒绝',
+        0: '草稿',
+        1: '未通过审核编辑中',
+        2: '待审核',
+        3: '平台审核中',
+        4: '未通过审核',
         5: '账号申请中',
         6: '部分账号申请通过',
-        7: '账号全部申请通过',
+        7: '申请通过',
         8: '资料待补充',
-        9: '资料补充待审核'
+        9: '资料补充待审核',
+        10: '账号申请中',
+        11: '账号申请中'
       },
       type: '',
       isDetail: false,
