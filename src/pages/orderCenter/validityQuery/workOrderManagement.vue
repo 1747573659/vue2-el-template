@@ -222,6 +222,6 @@ export default {
 <style lang="scss" scoped>
   .float_right{
     float:right;
-    margin-left: 40px;
+    margin-left: 20px;
   }
 </style>

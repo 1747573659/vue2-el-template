@@ -6,7 +6,7 @@
       <slot name="formheader"></slot>
       <template v-for="(item, index) in queryFormList">
         <el-form-item :key="index" v-if="item.type === 'input'" :label="item.label" :label-width="item.labelWidth">
-          <el-input v-model="item.value" :placeholder="item.placeholder || ''"></el-input>
+          <el-input style="width:200px" v-model="item.value" :placeholder="item.placeholder || ''"></el-input>
         </el-form-item>
 
         <el-form-item
