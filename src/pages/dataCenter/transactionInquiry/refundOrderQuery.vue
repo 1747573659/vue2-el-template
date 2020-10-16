@@ -48,7 +48,7 @@
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
-        <el-table-column label="退款时间" prop="refundDate"></el-table-column>
+        <el-table-column fixed="left" label="退款时间" prop="refundDate"></el-table-column>
         <el-table-column label="退款订单号" prop="sn"></el-table-column>
         <el-table-column label="支付订单号" prop="paySn"></el-table-column>
         <el-table-column label="商户名称" prop="shopName"></el-table-column>

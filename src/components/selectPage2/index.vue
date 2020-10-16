@@ -17,6 +17,7 @@
       :reserve-keyword="false"
       :placeholder="placeText"
       :remote-method="remoteMethod"
+      @clear="clear()"
       >
       <el-option
         v-for="item in options"
@@ -126,6 +127,11 @@ export default {
       }
   },
   methods: {
+    clear(){
+      this.page=1
+      this.options=[]
+      this.remoteMethod()
+    },
     remoteMethod(query){
       let data={}
       if(query!==undefined){

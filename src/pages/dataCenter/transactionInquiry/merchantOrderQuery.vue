@@ -114,7 +114,7 @@
 
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
         
-        <el-table-column label="商户名称" prop="shopName"></el-table-column>
+        <el-table-column fixed="left" label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
         <el-table-column label="交易时间" prop="createDate"></el-table-column>
         <el-table-column label="支付订单号" prop="orders"></el-table-column>
@@ -474,7 +474,7 @@ export default {
           return false
         }
         if(this.formData.startAmount> this.formData.endAmount){
-          this.$message.error('结束金额必须大于起始金额')
+          this.$message.error('最小金额不能大于最大金额')
           return false
         }
         this.pageNo = 1

@@ -137,11 +137,11 @@
           </div>
         </div>
         <div class="table-item">
-           <div class="table-item-content">
+           <div class="table-item-content left-content">
             <span class="table-item-title">平台优惠退款: </span>
             <span class="table-item-text">{{form.refundCouponAmount}}</span>
           </div>
-         <div class="table-item-content left-content">
+         <div class="table-item-content">
             <span class="table-item-title">退还用户金额: </span>
             <span class="table-item-text">{{form.refundAmount}}</span>
           </div>
@@ -157,13 +157,13 @@
             <span class="table-item-title">商户名称: </span>
             <span class="table-item-text">{{form.shopName}}</span>
           </div>
-          <div class="table-item-content left-content">
+          <div class="table-item-content">
             <span class="table-item-title">门店名称: </span>
             <span class="table-item-text">{{form.tradeStore}}</span>
           </div>
         </div>
         <div class="table-item">
-          <div class="table-item-content">
+          <div class="table-item-content left-content">
             <span class="table-item-title">交易时间: </span>
             <span class="table-item-text">{{form.tradeDate}}</span>
           </div>
@@ -174,12 +174,11 @@
           
         </div>
         <div class="table-item">
-          
-          <div class="table-item-content">
-            <span class="table-item-title">支付流水号: </span>
+          <div class="table-item-content left-content">
+            <span class="table-item-title ">支付流水号: </span>
             <span class="table-item-text">{{form.tradeNo}}</span>
           </div>
-           <div class="table-item-content left-content">
+           <div class="table-item-content ">
             <span class="table-item-title">线下订单号: </span>
             <span class="table-item-text">{{form.thirdSn}}</span>
           </div>
@@ -189,7 +188,7 @@
             <span class="table-item-title">支付完成时间: </span>
             <span class="table-item-text">{{form.paymentDate}}</span>
           </div>
-          <div class="table-item-content left-content">
+          <div class="table-item-content">
             <span class="table-item-title">收银员: </span>
             <span class="table-item-text">{{form.workerName?form.workerName:"没有"}}</span>
           </div>
@@ -226,7 +225,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer center">
-        <el-button @click="orderDetailVisible = false" size="small">我知道了</el-button>
+        <el-button type="primary" @click="orderDetailVisible = false" size="small">我知道了</el-button>
       </div>
     </el-dialog>
   </div>
@@ -263,10 +262,10 @@ export default {
     text-align: center;
   }
 .table-content {
-  border: 1px solid;
+  border: 1px solid #E6E9F0;
   
   .table-item {
-    border-bottom: 1px solid;
+    border-bottom: 1px solid #E6E9F0;
     display: flex;
     align-items: center;
     justify-content: space-between;
@@ -277,7 +276,7 @@ export default {
       width: 50%
     }
     .left-content {
-      border-right: 1px solid;
+      border-right: 1px solid #E6E9F0;
     }
   }
   .table-item:last-child {
