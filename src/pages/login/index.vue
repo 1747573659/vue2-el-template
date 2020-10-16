@@ -43,8 +43,10 @@ export default {
         codeKey: '',
       },
       loginRules: {
-        // userName: [{ required: true, trigger: 'blur', validator: userNamePass }],
-        // password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
+        userName: [
+          { required: true, trigger: 'blur', validator: userNamePass },
+        ],
+        password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
       },
       redirect: '',
       query: '',
