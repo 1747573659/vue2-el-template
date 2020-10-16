@@ -4,8 +4,8 @@
       <img src="../../assets/images/menu/logo.png" alt="logo" />
     </router-link>
     <!-- 导航 -->
-    <div class="p-head_nav">
-      <ul>
+    <div class="p-head_nav" style="display: flex;">
+      <ul v-if="!isDropdown">
         <template v-if="routeMenus.length > 0">
           <template v-for="item in routeMenus">
             <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
@@ -14,6 +14,17 @@
           </template>
         </template>
       </ul>
+      <!-- 位置不够，隐藏展示 -->
+      <el-dropdown class="p-menu_dropdown" v-else>
+        <span>下拉菜单<i class="el-icon-arrow-down el-icon--right"></i></span>
+        <el-dropdown-menu slot="dropdown">
+          <el-dropdown-item v-for="item in routeMenus" :key="item.path">
+            <div :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
+              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
+            </div>
+          </el-dropdown-item>
+        </el-dropdown-menu>
+      </el-dropdown>
     </div>
     <!-- head操作 -->
     <div class="p-head_action">
@@ -53,7 +64,8 @@ export default {
     return {
       dropStatus: false,
       userName: JSON.parse(getLocal('userInfo')).userName,
-      routeMenus: []
+      routeMenus: [],
+      isDropdown: false
     }
   },
   computed: {
@@ -79,6 +91,14 @@ export default {
   mounted() {
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
+    this.$nextTick(() => {
+      if (document.body.clientWidth < 1500) this.isDropdown = true
+      else this.isDropdown = false
+      window.addEventListener('resize', () => {
+        if (document.body.clientWidth < 1500) this.isDropdown = true
+        else this.isDropdown = false
+      })
+    })
   },
   methods: {
     ...mapActions(['setAsideRoutes', 'setBasePath']),
@@ -169,7 +189,6 @@ export default {
       margin: 0 14px 0 24px;
       width: 32px;
       height: 32px;
-
       img {
         width: 100%;
         height: 100%;
@@ -181,8 +200,22 @@ export default {
       cursor: pointer;
     }
   }
+  &-menu {
+    &_dropdown {
+      font-size: 18px;
+      color: #1f2e4d;
+      line-height: 56px;
+    }
+  }
 }
 .e {
+  &-head {
+    &_active {
+      a {
+        color: #3377ff;
+      }
+    }
+  }
   &-dropdown {
     &-con {
       display: flex;
