@@ -6,7 +6,7 @@
           <div class="com-edit-item" style="padding-top: 0">
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">
-                <el-form-item label="商户编号：" required>
+                <el-form-item label="商户编号：">
                   <span>{{ ruleForm.id || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="商户名称：" prop="companyName">
@@ -15,7 +15,7 @@
                 <el-form-item label="商户简称：" prop="shortName">
                   <el-input v-model="ruleForm.shortName" placeholder=""></el-input>
                 </el-form-item>
-                <el-form-item label="行业：" required>
+                <el-form-item label="行业：">
                   <span>{{ tradeFullName || '--' }}</span>
                 </el-form-item>
                 <!-- <el-form-item label="商户类型：" prop="type">
@@ -55,10 +55,10 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="商户密钥：">
-                  <el-input v-model="signKey" :disabled="true" placeholder=""></el-input>
+                  <span>{{ signKey || '--' }}</span>
                 </el-form-item>
-                <el-form-item label="创建时间：" prop="uuu">
-                  <el-input v-model="createTime" :disabled="true" placeholder=""></el-input>
+                <el-form-item label="创建时间：">
+                  <span>{{ createTime || '--' }}</span>
                 </el-form-item>
                 <el-form-item>
                   <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>

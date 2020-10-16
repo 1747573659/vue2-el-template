@@ -63,8 +63,8 @@
                 <el-form-item label="品牌名称：" prop="merchantName">
                   <el-input v-model="ruleForm.merchantName" maxlength="50" placeholder="商户名称需与营业执照一致"></el-input>
                 </el-form-item>
-                <el-form-item label="品牌LOGO：" prop="logo">
-                  <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" @on-success="onUploadSuccess">
+                <el-form-item label="品牌LOGO：">
+                  <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
                   </pic-upload>
                 </el-form-item>
                 <el-form-item label="品牌行业：" prop="tradeTypeId">
@@ -238,7 +238,7 @@ export default {
           message: '请输入品牌名称',
           trigger: 'blur',
         },
-        logo: { required: true, message: '请选择图片' },
+        // logo: { required: true, message: '请选择图片' },
         tradeTypeId: {
           required: true,
           validator: validatorTradeType,
@@ -275,6 +275,9 @@ export default {
     this.queryTradeById()
   },
   methods: {
+    onRemove() {
+      this.ruleForm.logo = ''
+    },
     onUploadSuccess(res) {
       this.ruleForm.logo = res.data.path
     },
