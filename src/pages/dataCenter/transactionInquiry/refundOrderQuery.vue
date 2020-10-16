@@ -11,6 +11,7 @@
                 :name="'companyName'"
                 searchName="id"
                 id="id"
+                :width="'85%'"
                 :placeholder="'商户名称'"
               >
               </select-page>
@@ -18,47 +19,47 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="退款订单号">
-              <el-input clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
+              <el-input  style="width:85%" clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
             </el-form-item>
           </el-col>
            <el-col :span="8">
-            <el-form-item label="退款状态">
-              <el-select v-model="formData.status">
+            <el-form-item  label="退款状态">
+              <el-select  style="width:85%" v-model="formData.status">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in statusList"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="支付订单号">
-              <el-input clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
+              <el-input  style="width:85%" clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
             </el-form-item>
           </el-col>
-          
+            <el-col :span="8">
+              <el-form-item style="margin-left:-60px">
+                <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+                <el-button @click="handleReset" plain size="small" type="primary">重置</el-button>
+              </el-form-item>
+          </el-col>
         </el-row>
         <el-row>
-          <el-col :span="16">
-            <el-form-item style="margin-left:-60px">
-              <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-              <el-button @click="handleReset" plain size="small" type="primary">重置</el-button>
-            </el-form-item>
-          </el-col>
+          
         </el-row>
       </el-form>
     </div>
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
-        <el-table-column fixed="left" label="退款时间" prop="refundDate"></el-table-column>
-        <el-table-column label="退款订单号" prop="sn"></el-table-column>
-        <el-table-column label="支付订单号" prop="paySn"></el-table-column>
+        <el-table-column :width="110" label="退款时间" prop="refundDate"></el-table-column>
+        <el-table-column :min-width="114" label="退款订单号" prop="sn"></el-table-column>
+        <el-table-column :min-width="114" label="支付订单号" prop="paySn"></el-table-column>
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="tradeStoreName"></el-table-column>
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="退款人" prop="refundPerson"></el-table-column>
-        <el-table-column label="申请退款金额" prop="amount"></el-table-column>
-        <el-table-column label="退还用户金额" prop="refundAmount"></el-table-column>
+        <el-table-column align="right" label="申请退款金额" prop="amount"></el-table-column>
+        <el-table-column align="right" label="退还用户金额" prop="refundAmount"></el-table-column>
         <el-table-column label="退款状态" prop="refundStatusName"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column align="right" label="操作">
           <template slot-scope="scope">
             <el-button @click="handleDetails(scope.row)"  size="small" type="text">详情</el-button>
           </template>
