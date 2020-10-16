@@ -3,26 +3,12 @@
     <div class="search-box">
       <el-row>
         <el-col :span="20">
-          <el-form
-            :inline="true"
-            size="small"
-            :model="form"
-            label-width="85px"
-            class="xdd-btn-block__w240"
-          >
+          <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
             <el-form-item label="商户信息：">
-              <el-input
-                v-model="form.merchantAdminName"
-                maxlength="50"
-                placeholder="请输入商户编号/名称"
-              ></el-input>
+              <el-input v-model="form.merchantAdminName" maxlength="50" placeholder="请输入商户编号/名称" clearable></el-input>
             </el-form-item>
             <el-form-item label="品牌信息：">
-              <el-input
-                v-model="form.merchantName"
-                maxlength="50"
-                placeholder="请输入品牌编号/名称"
-              ></el-input>
+              <el-input v-model="form.merchantName" maxlength="50" placeholder="请输入品牌编号/名称" clearable></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getPageList">查询</el-button>
@@ -30,26 +16,12 @@
           </el-form>
         </el-col>
         <el-col :span="4" style="text-align: right;">
-          <el-button
-            v-permission="'BRAND_SET_ADD'"
-            type="primary"
-            size="small"
-            plain
-            icon="el-icon-plus"
-            @click="addShop"
-            >新增</el-button
-          >
+          <el-button v-permission="'BRAND_SET_ADD'" type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
         </el-col>
       </el-row>
     </div>
     <div class="data-box">
-      <el-table
-        v-loading="loading"
-        :max-height="tableMaxHeight"
-        :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
-      >
+      <el-table v-loading="loading" :max-height="tableMaxHeight" :data="tableData" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="adminId" label="商户编号"> </el-table-column>
         <el-table-column prop="adminName" label="商户名称"> </el-table-column>
         <el-table-column prop="mid" label="品牌编码"> </el-table-column>
@@ -64,40 +36,14 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="180">
           <template slot-scope="scope">
-            <el-button
-              v-permission="'BRAND_SET_EDIT'"
-              size="small"
-              type="text"
-              @click="handleEdit(scope.row.id)"
-              >编辑</el-button
-            >
-            <el-button
-              v-permission="'BRAND_SET_DEL'"
-              size="small"
-              type="text"
-              @click="handleDelete(scope.row.id)"
-              >删除</el-button
-            >
-            <el-button
-              v-permission="'BRAND_SET_STOPANDSTART'"
-              size="small"
-              type="text"
-              @click="handleOperate(scope.row.id, scope.row.status)"
-              >{{ scope.row.status | fiterOperateStatus }}</el-button
-            >
+            <el-button v-permission="'BRAND_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
+            <el-button v-permission="'BRAND_SET_DEL'" size="small" type="text" @click="handleDelete(scope.row.id)">删除</el-button>
+            <el-button v-permission="'BRAND_SET_STOPANDSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{ scope.row.status | fiterOperateStatus }}</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div v-show="total > 0" class="km-page-block">
-        <el-pagination
-          @size-change="getPageList"
-          @current-change="handleCurrentChange"
-          :current-page.sync="form.page"
-          :page-sizes="[10, 15, 30]"
-          :page-size.sync="form.rows"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+        <el-pagination @size-change="getPageList" @current-change="handleCurrentChange" :current-page.sync="form.page" :page-sizes="[10, 15, 30]" :page-size.sync="form.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </div>
     </div>

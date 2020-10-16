@@ -16,6 +16,7 @@ const urlLinks = {
   distributeAppQuota: '/agent/distributeAppQuota',
   queryDistricDto: '/district/queryDistricDto',
   checkAgentName: '/agent/checkAgentName',
+  checkChannelName: '/agent/checkChannelName',
 }
 
 // 查询渠道列表
@@ -146,6 +147,15 @@ export function queryDistricDto(data) {
 export function checkAgentName(data) {
   return request({
     url: urlLinks.checkAgentName,
+    method: 'post',
+    params: data
+  })
+}
+
+// 查询DB经理名称是否存在
+export function checkChannelName(data) {
+  return request({
+    url: urlLinks.checkChannelName,
     method: 'post',
     params: data
   })

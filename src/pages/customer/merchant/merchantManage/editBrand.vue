@@ -2,60 +2,40 @@
   <div v-permission.page="'BRAND_SET_EDIT'">
     <div class="data-box">
       <div class="com-edit-wrapper">
-        <el-form
-          :model="ruleForm"
-          size="small"
-          :rules="rules"
-          ref="ruleForm"
-          label-width="150px"
-          class="com-edit-ruleForm xdd-btn-block__w240"
-        >
+        <el-form :model="ruleForm" size="small" :rules="rules" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
           <div class="com-edit-item" style="padding-top: 0">
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">
-                <el-form-item label="商户：" required>
+                <el-form-item label="商户：">
                   <span>{{ adminName || '--' }}</span>
                 </el-form-item>
-                <el-form-item label="品牌编码：" required>
+                <el-form-item label="品牌编码：">
                   <span>{{ mid || '--' }}</span>
                 </el-form-item>
                 <el-form-item label="品牌名称：" prop="name">
                   <el-input v-model="ruleForm.name" placeholder=""></el-input>
                 </el-form-item>
-                <el-form-item label="品牌LOGO：" prop="logo">
-                  <pic-upload
-                    :uploadUrl="uploadUrl"
-                    :imageUrl="ruleForm.logo"
-                    :fileServer="ossFileServe"
-                    @on-success="onUploadSuccess"
-                  >
+                <el-form-item label="品牌LOGO：">
+                  <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
                   </pic-upload>
                 </el-form-item>
                 <el-form-item label="品牌行业：" prop="tradeTypeId">
-                  <brand-select
-                    v-model="brandValue"
-                    :key="brandKey"
-                  ></brand-select>
+                  <brand-select v-model="brandValue" :key="brandKey"></brand-select>
                 </el-form-item>
-                <el-form-item label="ERP行业：" required>
+                <el-form-item label="ERP行业：">
                   <span>{{ erpIndustryName || '--' }}</span>
                 </el-form-item>
-                <el-form-item label="ERP产品：" required>
+                <el-form-item label="ERP产品：">
                   <span>{{ erpProductName || '--' }}</span>
                 </el-form-item>
-                <el-form-item label="商户密钥：" required>
+                <el-form-item label="密钥：">
                   <span class="signKey-text">{{ signKey || '--' }}</span>
                 </el-form-item>
-                <el-form-item label="门店数：" required>
+                <el-form-item label="门店数：">
                   <span>{{ storeNum || 0 }}</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button
-                    type="primary"
-                    :loading="submitLoading"
-                    @click="submitForm()"
-                    >保存</el-button
-                  >
+                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
                   <el-button @click="onCancel">取消</el-button>
                 </el-form-item>
               </div>
@@ -112,7 +92,7 @@ export default {
       },
       rules: {
         name: { required: true, message: '请输入品牌名称', trigger: 'blur' },
-        logo: { required: true, message: '请选择图片' },
+        // logo: { required: true, message: '请选择图片' },
         tradeTypeId: {
           required: true,
           validator: validatorTradeType,
@@ -134,6 +114,9 @@ export default {
     this.queryMerchantById()
   },
   methods: {
+    onRemove() {
+      this.ruleForm.logo = ''
+    },
     onUploadSuccess(res) {
       this.ruleForm.logo = res.data.path
     },
