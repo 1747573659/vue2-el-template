@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
     <div class="search-box">
+      <div class="xdd_tip"><i class="el-icon-info"></i>
+至少输入一个订单号，支付订单号无需选择交易时间，其他订单号必须选择交易时间；
+只支持查询近一年内的交易流水</div>
       <el-form @submit.native.prevent label-width="110px" size="small">
         <el-row>
           <el-col :span="8">
@@ -326,6 +329,17 @@ export default {
   margin-top: 20px;
   background: #fff;
   padding-bottom: 20px;
+}
+.xdd_tip{
+    background: #E5EDFD;
+    border: 1px solid #A6C4FE;
+    padding: 8px 30px;
+    margin-bottom: 20px;
+    color: #3D4966;
+    font-size: 14px;
+}
+.xdd_tip i{
+    color: #3377FF;
 }
 .pure {
   &-dialog {

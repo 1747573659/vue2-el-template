@@ -1,6 +1,7 @@
 <template>
   <div class="app-container">
     <div class="search-box">
+      <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近半年内的交易流水，单次查询日期的最长跨度为31天</div>
       <el-form :model="formData" @submit.native.prevent label-width="110px" ref="form" size="small">
         <el-row>
         <el-col :span="8">
@@ -583,6 +584,17 @@ export default {
   /deep/ .el-select {
     width: 100%;
   }
+}
+.xdd_tip{
+    background: #E5EDFD;
+    border: 1px solid #A6C4FE;
+    padding: 8px 30px;
+    margin-bottom: 20px;
+    color: #3D4966;
+    font-size: 14px;
+}
+.xdd_tip i{
+    color: #3377FF;
 }
 .el-pagination-box {
   text-align: right;

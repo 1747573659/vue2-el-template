@@ -1,6 +1,9 @@
 <template>
   <div class="app-container">
     <div class="search-box">
+      <div class="xdd_tip"><i class="el-icon-info"></i>
+支付订单号 与 退款订单号 至少输入一个，支付订单号无需选择商户，退款订单号必须选择商户；
+只支持查询近半年内的退款订单；</div>
       <el-form  label-width="110px" @submit.native.prevent class="search-form" size="small">
         <el-row>
           <el-col :span="8">
@@ -245,6 +248,17 @@ export default {
   margin-top: 20px;
   background: #fff;
   padding-bottom: 20px;
+}
+.xdd_tip{
+    background: #E5EDFD;
+    border: 1px solid #A6C4FE;
+    padding: 8px 30px;
+    margin-bottom: 20px;
+    color: #3D4966;
+    font-size: 14px;
+}
+.xdd_tip i{
+    color: #3377FF;
 }
 .pure {
   &-dialog {
