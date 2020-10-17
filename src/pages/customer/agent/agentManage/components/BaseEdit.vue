@@ -291,6 +291,7 @@ export default {
       if (!val) {
         this.BDForm.channelName = ''
         this.channelData = deepClone(this.channelManagerOptions)
+        this.arrBD = []
       }
     },
   },
@@ -343,7 +344,7 @@ export default {
       if (name === '') return this.$message.error('请输入BD经理名称')
 
       if (this.arrBD.includes(name)) {
-        return this.$message.error('该BD经理已经存在111')
+        return this.$message.error('该BD经理已经存在')
       }
 
       checkChannelName({ name }).then((res) => {
@@ -354,31 +355,6 @@ export default {
         this.channelData.push({ id: '', name })
         this.arrBD.push(name)
         this.BDForm.channelName = ''
-      })
-
-      // const params = [{ id: '', name: this.BDForm.channelName }]
-      // await addChannel(params)
-      // await this.queryChannel()
-      // this.$message.success('添加BD经理成功！')
-    },
-    channelBlur(row) {
-      // const name = this.BDForm.channelName
-      const name = row.name
-      if (name === '') return this.$message.error('请输入BD经理名称')
-
-      if (this.arrBD.includes(name)) {
-        return this.$message.error('该BD经理已经存在111')
-      }
-
-      checkChannelName({ name }).then((res) => {
-        if (res) {
-          row.name = ''
-          return this.$message.error(res)
-        }
-
-        this.channelData.push({ id: '', name })
-        this.arrBD.push(name)
-        // this.BDForm.channelName = ''
       })
     },
     queryChannel() {
@@ -395,8 +371,7 @@ export default {
           this.arrBD.splice(this.arrBD.indexOf(name), 1)
         }
         this.channelData.splice(index, 1)
-        // this.queryChannel()
-        // this.$message.success('删除成功！')
+        // this.arrBD.push(name)
       } catch {}
     },
     async onComfirm() {
