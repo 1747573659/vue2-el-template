@@ -104,7 +104,7 @@ export const formObj = {
     businessCategoryRemark: '', // 经营类目（名称，用于页面显示）
     auditStatus: '', // 审核状态
     auditRemark: '', // 审核结果
-    fixFeeRate: '' // 小微进件费率
+    fixFeeRate: 60 // 小微进件费率
   },
   archiveExpandVO: {
     licType: 1, // 证件类型
