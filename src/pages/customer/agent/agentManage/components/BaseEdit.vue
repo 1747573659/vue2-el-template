@@ -18,7 +18,7 @@
                 <el-input v-if="!isEdit" v-model="ruleForm.mobile" maxlength="11" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" placeholder=""></el-input>
                 <span v-else>{{ ruleForm.mobile }}</span>
               </el-form-item>
-              <el-form-item label="密码：" required>
+              <el-form-item v-if="!isEdit" label="密码：" required>
                 <el-input v-model="psw" :disabled="true" placeholder=""></el-input>
               </el-form-item>
               <el-form-item label="代理商角色：" prop="roleId">
