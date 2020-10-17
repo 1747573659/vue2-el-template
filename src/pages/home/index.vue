@@ -18,6 +18,13 @@
       width: 100%;
       max-width: 1440px;
       height: 100%;
+      padding: 0 20px;
+      @media screen and (max-width: 1440px) {
+        max-width: 1366px;
+      }
+      @media screen and (max-width: 1366px) {
+        max-width: 1200px;
+      }
     }
   }
 }

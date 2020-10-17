@@ -9,7 +9,7 @@
       v-for="(item, index) in tagViews"
       :key="item.path"
     >
-      <span>{{ item.title }}</span>
+      {{ item.title }}
       <i v-if="hasTagIndex(index) && item.name !== 'homeIndex'" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>
     </div>
   </section>
@@ -20,12 +20,16 @@ import { mapGetters, mapActions } from 'vuex'
 export default {
   data() {
     return {
+      tags: [],
       activeIndex: 0
     }
   },
   watch: {
     $route() {
       this.handleTagViews()
+    },
+    tagViews(val) {
+      this.tags = val
     }
   },
   computed: {
@@ -51,7 +55,7 @@ export default {
         if (this.isActive(item)) {
           const latestView = views.slice(-1)[0]
           if (latestView) {
-            this.$router.push({ path: latestView.path, query: latestView.query ? {} : latestView.query })
+            this.$router.push({ path: latestView.path, query: latestView.query ? latestView.query : {} })
           } else {
             const menus = this.routes
             if (JSON.stringify(menus).includes('home')) {

@@ -18,7 +18,7 @@
                 <el-input v-if="!isEdit" v-model="ruleForm.mobile" maxlength="11" onkeyup="this.value = this.value.replace(/[^\d]/g,'');" placeholder=""></el-input>
                 <span v-else>{{ ruleForm.mobile }}</span>
               </el-form-item>
-              <el-form-item label="密码：" required>
+              <el-form-item v-if="!isEdit" label="密码：" required>
                 <el-input v-model="psw" :disabled="true" placeholder=""></el-input>
               </el-form-item>
               <el-form-item label="代理商角色：" prop="roleId">
@@ -38,7 +38,7 @@
                 <el-button type="text" class="item-btn" @click="dialogVisible = true">管理</el-button>
               </el-form-item>
               <el-form-item label="代理商分成比例：" prop="proportion" class="icon-block">
-                <el-input v-model="ruleForm.proportion" placeholder="1至100"></el-input>
+                <el-input v-model="ruleForm.proportion" placeholder="0至100"></el-input>
                 <el-popover :close-delay="0" placement="top" width="350" trigger="hover" content="代理商分润 =（商户成本费率-代理商成本费率）*代理商分润比例，100表示分润全额返给代理商，0表示代理商不参与分润">
                   <i slot="reference" class="el-icon-question icon-question"></i>
                 </el-popover>
@@ -57,7 +57,7 @@
                 <el-input v-model="ruleForm.legalPerson" maxlength="10" placeholder=""></el-input>
               </el-form-item>
               <el-form-item label="营业执照：" prop="businessLicense">
-                <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.businessLicense" :fileServer="ossFileServe" @on-success="onUploadSuccess">
+                <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.businessLicense" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
                 </pic-upload>
               </el-form-item>
               <el-form-item label="商务姓名：" prop="contact">
@@ -121,13 +121,13 @@
         </el-table-column>
         <el-table-column label="操作" align="right">
           <template slot-scope="scope">
-            <el-button size="small" type="text" @click="handleDel(scope.row.id)">删除</el-button>
+            <el-button size="small" type="text" @click="handleDel(scope.$index, scope.row.id, scope.row.name)">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
       <div slot="footer" class="dialog-footer">
         <el-button size="small" @click="dialogVisible = false">取 消</el-button>
-        <el-button size="small" type="primary" @click="onComfirm">确 定</el-button>
+        <el-button size="small" type="primary" @click="onComfirm">保 存</el-button>
       </div>
     </el-dialog>
   </div>
@@ -143,6 +143,7 @@ import {
   queryAgentById,
   queryDistricDto,
   checkAgentName,
+  checkChannelName,
 } from '@/api/customer/agent'
 import areaSelect from '@/components/areaSelect'
 import PicUpload from '@/components/picUpload'
@@ -193,9 +194,9 @@ export default {
       if (value === '') {
         callback('请输入代理商分成比例')
       } else if (
-        !(isPositiveNumber(value) && Number(value) >= 1 && Number(value) <= 100)
+        !(isPositiveNumber(value) && Number(value) >= 0 && Number(value) <= 100)
       ) {
-        callback('请输入1至100的数字')
+        callback('请输入0至100的数字')
       } else {
         callback()
       }
@@ -218,6 +219,7 @@ export default {
     }
 
     return {
+      arrBD: [],
       validatorName: '',
       uploadUrl: process.env.VUE_APP_BASE_API + '/oss/uploadFile',
       submitLoading: false,
@@ -288,6 +290,8 @@ export default {
     dialogVisible(val) {
       if (!val) {
         this.BDForm.channelName = ''
+        this.channelData = deepClone(this.channelManagerOptions)
+        this.arrBD = []
       }
     },
   },
@@ -301,6 +305,9 @@ export default {
     this.queryChannel()
   },
   methods: {
+    onRemove() {
+      this.ruleForm.businessLicense = ''
+    },
     onUploadSuccess(res) {
       this.ruleForm.businessLicense = res.data.path
     },
@@ -332,16 +339,23 @@ export default {
         this.ruleForm.districtCode = value[2]
       }
     },
-    async addBD() {
-      if (this.BDForm.channelName === '') {
-        this.$message.error('请输入BD经理名称')
-        return
+    addBD() {
+      const name = this.BDForm.channelName
+      if (name === '') return this.$message.error('请输入BD经理名称')
+
+      if (this.arrBD.includes(name)) {
+        return this.$message.error('该BD经理已经存在')
       }
 
-      const params = [{ id: '', name: this.BDForm.channelName }]
-      await addChannel(params)
-      await this.queryChannel()
-      this.$message.success('添加BD经理成功！')
+      checkChannelName({ name }).then((res) => {
+        if (res) {
+          return this.$message.error(res)
+        }
+
+        this.channelData.push({ id: '', name })
+        this.arrBD.push(name)
+        this.BDForm.channelName = ''
+      })
     },
     queryChannel() {
       queryChannel().then((res) => {
@@ -349,11 +363,15 @@ export default {
         this.channelData = deepClone(res)
       })
     },
-    async handleDel(id) {
+    async handleDel(index, id, name) {
       try {
-        await deleteChannel({ id })
-        this.queryChannel()
-        this.$message.success('删除成功！')
+        if (id) {
+          await deleteChannel({ id })
+        } else {
+          this.arrBD.splice(this.arrBD.indexOf(name), 1)
+        }
+        this.channelData.splice(index, 1)
+        // this.arrBD.push(name)
       } catch {}
     },
     async onComfirm() {

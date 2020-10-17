@@ -29,11 +29,6 @@
       display: flex;
       align-items: center;
     }
-    &_img {
-      img {
-        vertical-align: top;
-      }
-    }
     &_main {
       margin-left: 120px;
     }

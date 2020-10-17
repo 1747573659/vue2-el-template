@@ -50,7 +50,7 @@ import selectPage from "@/components/selectPage2/index.vue";
 import {downloadBufferFile} from "@/utils"
 const DOWNLOAD_URL= process.env.VUE_APP_BASE_API
 export default {
-  name: "validityPeriod",
+  name: "takeawayPeriod",
   mixins: [listMixins],
   components: {
     selectPage,

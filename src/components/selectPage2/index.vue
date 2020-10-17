@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-select
+      :style="{ width:width }"
       class="select-page"
       v-model="selValue"
       v-loadmore="remoteMethod"
@@ -75,6 +76,10 @@ export default {
       type: Function,
       default: null
     },
+    width: {
+      type: String,
+      default: ""
+    }
   },
   computed: {
     selValue:{

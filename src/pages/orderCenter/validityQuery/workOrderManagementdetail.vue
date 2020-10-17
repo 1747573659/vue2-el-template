@@ -89,7 +89,7 @@ import KmUpload from "@/components/upload"
 const {VUE_APP_WORK_ORDER_URL,VUE_APP_WORK_ORDER_URLPATH}=baseurl
 
 export default {
-  name: "validityPeriod",
+  name: "workOrderManagementdetail",
   mixins: [],
   components: {
     KmUpload

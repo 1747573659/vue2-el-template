@@ -5,10 +5,10 @@
         <el-row>
           <el-col :span="20">
             <el-form-item label="商户信息：">
-              <el-input v-model="form.id" maxlength="50" placeholder="请输入商户编号/名称/运营者"></el-input>
+              <el-input v-model="form.id" maxlength="50" placeholder="请输入商户编号/名称/运营者" clearable></el-input>
             </el-form-item>
             <el-form-item label="运营者手机：">
-              <el-input v-model="form.mobile" maxlength="11" placeholder="请输入手机号"></el-input>
+              <el-input v-model="form.mobile" maxlength="11" placeholder="请输入手机号" clearable></el-input>
             </el-form-item>
             <el-form-item label="业务员：">
               <el-select v-model="form.clerkId" placeholder="请输入业务员" filterable clearable>
@@ -27,7 +27,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="状态：">
-              <el-select v-model="form.status" placeholder="请输入状态">
+              <el-select v-model="form.status" placeholder="请输入状态" clearable>
                 <el-option v-for="item in statusOptions" :key="item.id" :label="item.name" :value="item.id">
                 </el-option>
               </el-select>

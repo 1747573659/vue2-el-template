@@ -1,4 +1,6 @@
-import { _import } from '@/utils'
+import {
+  _import
+} from '@/utils'
 import Layout from '@/layout'
 import kmContainer from '@/components/km-container'
 const customer = {
@@ -10,8 +12,7 @@ const customer = {
     title: '客户管理',
     name: 'customer'
   },
-  children: [
-    {
+  children: [{
       path: 'merchant',
       name: 'merchant',
       code: 'KM_CUSTOMER_MERCHANT',
@@ -23,15 +24,15 @@ const customer = {
         title: '商户管理',
         name: 'merchant'
       },
-      children: [
-        {
+      children: [{
           path: 'merchantManage',
           name: 'merchantManage',
           code: 'KM_CUSTOMER_MERCHANT_MANAGE',
           component: _import('customer/merchant/merchantManage/merchantHome'),
           meta: {
             title: '商户管理',
-            name: 'merchantManage'
+            name: 'merchantManage',
+            cache: true
           }
         },
         {
@@ -54,7 +55,8 @@ const customer = {
           component: _import('customer/merchant/merchantManage/editMerchant'),
           meta: {
             title: '商户管理/编辑',
-            name: 'editMerchant'
+            name: 'editMerchant',
+            cache: false
           }
         },
         {
@@ -63,8 +65,9 @@ const customer = {
           code: 'KM_CUSTOMER_BRAND_MANAGE',
           component: _import('customer/merchant/merchantManage/brandHome'),
           meta: {
-            title: '商户品牌管理',
-            name: 'brandHome'
+            title: '商户品牌',
+            name: 'brandHome',
+            cache: true
           }
         },
         {
@@ -87,7 +90,8 @@ const customer = {
           component: _import('customer/merchant/merchantManage/editBrand'),
           meta: {
             title: '品牌管理/编辑',
-            name: 'editBrand'
+            name: 'editBrand',
+            cache: false
           }
         }
       ]
@@ -104,8 +108,7 @@ const customer = {
         title: '进件管理',
         name: 'archive'
       },
-      children: [
-        {
+      children: [{
           path: 'wxArchive',
           name: 'wxArchive',
           code: 'KM_CUSTOMER_ARCHIVE_WX',
@@ -185,15 +188,15 @@ const customer = {
         title: '代理商管理',
         name: 'agent'
       },
-      children: [
-        {
+      children: [{
           path: 'agentManage',
           name: 'agentManage',
           code: 'KM_CUSTOMER_AGENT_HOME',
           component: _import('customer/agent/agentManage/agentHome'),
           meta: {
             title: '代理商管理',
-            name: 'agentManage'
+            name: 'agentManage',
+            cache: true
           }
         },
         {
@@ -216,7 +219,8 @@ const customer = {
           component: _import('customer/agent/agentManage/editAgent'),
           meta: {
             title: '代理商管理/编辑',
-            name: 'editAgent'
+            name: 'editAgent',
+            cache: false
           }
         },
         {
@@ -226,7 +230,8 @@ const customer = {
           component: _import('customer/agent/agentManage/roleHome'),
           meta: {
             title: '代理商角色',
-            name: 'agentRole'
+            name: 'agentRole',
+            cache: true
           }
         },
         {
@@ -249,7 +254,8 @@ const customer = {
           component: _import('customer/agent/agentManage/editRole'),
           meta: {
             title: '代理商角色管理/编辑',
-            name: 'editRole'
+            name: 'editRole',
+            cache: false
           }
         }
       ]
@@ -266,15 +272,14 @@ const customer = {
         title: '工单管理',
         name: 'workorder'
       },
-      children: [
-        {
+      children: [{
           path: 'workOrderManagement',
           component: () => import('@/pages/orderCenter/validityQuery/workOrderManagement.vue'),
           name: 'workOrderManagement',
           code: 'WORKORDERMANAGEMENT',
           meta: {
             title: '工单管理',
-            noCache: false,
+            cache: true,
             name: 'workOrderManagement'
           }
         },
@@ -286,6 +291,7 @@ const customer = {
           code: 'WORKORDERMANAGEMENTDETAIL',
           meta: {
             title: '新增工单',
+            cache: true,
             name: 'workOrderManagementdetail'
           }
         },
@@ -297,6 +303,7 @@ const customer = {
           code: 'WORKORDERMANAGEMENTVIEWDETAIL',
           meta: {
             title: '工单管理详情',
+            cache: true,
             name: 'workOrderManagementdetail'
           }
         }
