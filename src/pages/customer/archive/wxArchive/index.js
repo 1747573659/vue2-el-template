@@ -1,6 +1,6 @@
 export const statusOptions = [
   { value: '', label: '全部' },
-  { value: 0, label: '未提交审核' },
+  { value: 0, label: '草稿' },
   { value: 1, label: '审核不通过编辑中' },
   { value: 2, label: '代理商待审核' },
   { value: 3, label: 'BOSS待审核' },

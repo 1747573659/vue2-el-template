@@ -40,31 +40,33 @@ export default {
       loginForm: {
         userName: '',
         password: '',
-        codeKey: ''
+        codeKey: '',
       },
       loginRules: {
-        userName: [{ required: true, trigger: 'blur', validator: userNamePass }],
-        password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
+        userName: [
+          { required: true, trigger: 'blur', validator: userNamePass },
+        ],
+        password: [{ required: true, trigger: 'blur', message: '请输入密码' }],
       },
       redirect: '',
-      query: ''
+      query: '',
     }
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
         this.query = route.query && route.query.query
       },
-      immediate: true
-    }
+      immediate: true,
+    },
   },
   mounted() {
     this.captcha()
   },
   methods: {
     handleLogin() {
-      this.$refs.ruleForm.validate(async valid => {
+      this.$refs.ruleForm.validate(async (valid) => {
         if (valid) {
           this.isLoading = true
           this.validCaptcha()
@@ -73,17 +75,29 @@ export default {
                 .dispatch('login', this.loginForm)
                 .then(() => {
                   const routes = this.$store.getters.routes
-                  const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
+                  const utilRoutePoint = () =>
+                    this.$router.push({
+                      path: JSON.stringify(routes).includes('home')
+                        ? '/'
+                        : routes[0].redirect,
+                    })
                   // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
                   if (this.redirect) {
                     const rotationData = this.redirect.split('/')
                     rotationData.shift()
-                    if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
-                      this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
+                    if (
+                      rotationData.every((item) =>
+                        JSON.stringify(routes).includes(item)
+                      )
+                    ) {
+                      this.$router.push({
+                        path: this.redirect,
+                        query: this.query ? JSON.parse(this.query) : '',
+                      })
                     } else utilRoutePoint()
                   } else utilRoutePoint()
                 })
-                .catch(err => {
+                .catch((err) => {
                   this.loginForm.codeKey = ''
                   this.captcha()
                 })
@@ -99,15 +113,18 @@ export default {
       })
     },
     async validCaptcha() {
-      const data = { codeKey: this.usedCoedKey, codeVal: this.loginForm.codeKey }
+      const data = {
+        codeKey: this.usedCoedKey,
+        codeVal: this.loginForm.codeKey,
+      }
       let res = await validCaptcha(data)
     },
     async captcha() {
       const res = await captcha()
       this.codeKeyUrl = res.code || ''
       this.usedCoedKey = res.codeKey
-    }
-  }
+    },
+  },
 }
 </script>
 
@@ -118,7 +135,11 @@ export default {
     justify-content: center;
     align-items: center;
     height: 100vh;
-    background: linear-gradient(207deg, rgba(50, 163, 255, 1) 0%, rgba(51, 119, 255, 1) 100%);
+    background: linear-gradient(
+      207deg,
+      rgba(50, 163, 255, 1) 0%,
+      rgba(51, 119, 255, 1) 100%
+    );
     &_con {
       width: 1120px;
       height: 539px;
