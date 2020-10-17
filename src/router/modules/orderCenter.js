@@ -27,7 +27,7 @@ const orderCenter = {
           component: () => import('@/pages/orderCenter/validityQuery/takeawayPeriod.vue'),
           name: 'takeawayPeriod',
           code: 'ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD',
-          meta: { title: '享钱外卖有效期', name: 'takeawayPeriod' }
+          meta: { title: '享钱外卖有效期', name: 'takeawayPeriod' ,cache: true}
         },
       ]
     }

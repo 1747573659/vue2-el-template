@@ -215,6 +215,7 @@ export default {
     this.queryAgentAppAndQuota()
   },
   activated() {
+    this.queryChannel()
     this.queryAgentPage()
   },
   methods: {

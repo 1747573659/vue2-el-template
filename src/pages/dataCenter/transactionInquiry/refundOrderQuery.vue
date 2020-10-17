@@ -101,7 +101,7 @@ import {
 import orderDetailDialog from './components/orderDetailDialog'
 import selectPage from '@/components/selectPage2/index.vue'
 export default {
-  name: 'RefundOrderQuery',
+  name: 'refundOrderQuery',
   components: {
     selectPage,
     orderDetailDialog
@@ -175,11 +175,11 @@ export default {
         return
       }
       if (!this.formData.sn && !this.formData.order) {
-        this.$message.error('请输入支付订单号或者退款订单号')
+        this.$message.error('支付订单号、退款订单号至少输入一个')
         return
       }
       if (this.formData.sn && !this.formData.shopAdminId) {
-        this.$message.error('用退款订单号进行查询时,需要选择对应的商户!')
+        this.$message.error('退款订单号必须选择商户')
       } else {
         this.pageNo = 1
         this.searchLock = true

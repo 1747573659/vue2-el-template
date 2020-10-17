@@ -34,7 +34,8 @@ const urlLinks = {
   // 商户扫码认证（微信实名认证）
   queryContactQrCode: '/archive/xdd/queryContactQrCode',
   // 查询子商户号
-  querySubMerchantNo: '/archive/xdd/querySubMerchantNo'
+  querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
+  querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf'
 }
 // 分页查询
 export function queryPage(data) {
@@ -170,6 +171,14 @@ export function queryContactQrCode(data) {
 export function querySubMerchantNo(data) {
   return request({
     url: urlLinks.querySubMerchantNo,
+    method: 'POST',
+    data
+  })
+}
+// 查询子商户号
+export function querySubMchIdForSxf(data) {
+  return request({
+    url: urlLinks.querySubMchIdForSxf,
     method: 'POST',
     data
   })
