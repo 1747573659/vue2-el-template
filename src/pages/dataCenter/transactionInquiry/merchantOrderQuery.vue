@@ -17,7 +17,7 @@
               </select-page>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <el-col :span="16">
         <el-form-item label="交易时间">
 
           <el-date-picker
@@ -92,22 +92,24 @@
               <el-input type="number" min="0" style="width:115px" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="交易状态" prop="tradingStatusCode">
               <el-select style="margin-right: 16px;" class="order_sel" collapse-tags multiple v-model="formData.tradingStatusCode">
                 <el-option :key="item.codes" :label="item.name" :value="item.codes" v-for="item in tradingStatusData"></el-option>
               </el-select>
-                <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-                  <el-button @click="handleReset" plain size="small" type="primary">重置</el-button>
+                
              </el-form-item>
-             <el-form-item style="margin-left:-60px">
              
-            </el-form-item>
           </el-col>
-         
+          
         </el-row>
         <el-row>
-          
+          <el-col :span="12" style="padding-left: 108px;padding-bottom: 20px;">
+            <div style="display:inline-block">
+                  <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+                  <el-button @click="handleReset" plain size="small" type="primary">重置</el-button>
+            </div>
+          </el-col>
           <!-- <el-col :span="8" style="text-align:right">
             <el-form-item>
               <el-button @click="handleExport" size="small" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT')">导出</el-button>
