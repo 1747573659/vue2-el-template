@@ -128,7 +128,7 @@
         <el-table-column  label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
         <el-table-column :width="110" label="交易时间" prop="createDate"></el-table-column>
-        <el-table-column :min-width="114" label="支付订单号" prop="orders"></el-table-column>
+        <el-table-column :min-width="134" label="支付订单号" prop="orders"></el-table-column>
         <el-table-column label="确认码" prop="confirmCode"></el-table-column>
         <el-table-column label="收银员" prop="workerName">
            <template slot-scope="scope"> 

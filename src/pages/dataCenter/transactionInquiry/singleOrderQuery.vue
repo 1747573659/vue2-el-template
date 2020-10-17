@@ -93,7 +93,7 @@
     <div class="data-box" v-loading="tabLock">
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
         <el-table-column :width="110" label="交易时间" prop="createDate"></el-table-column>
-        <el-table-column :min-width="114" label="支付订单号" prop="orders"></el-table-column>
+        <el-table-column :min-width="134" label="支付订单号" prop="orders"></el-table-column>
 
         <el-table-column label="确认码" prop="confirmCode"></el-table-column>
 
