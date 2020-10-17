@@ -162,7 +162,7 @@ import {
 let minTime = ''
 let maxTime = ''
 export default {
-  name: 'SingleOrderQuery',
+  name: 'singleOrderQuery',
   components: {
     selectPage,
     orderDetailDialog

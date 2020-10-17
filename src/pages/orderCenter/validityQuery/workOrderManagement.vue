@@ -44,7 +44,7 @@ import {
   queryOrderDetail
   } from '@/api/dataCenter/dataCenter.js'
 export default {
-  name: 'validityPeriod',
+  name: 'workOrderManagement',
   mixins: [listMixins],
   components: {
     baseTable,

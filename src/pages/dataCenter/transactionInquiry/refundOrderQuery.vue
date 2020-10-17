@@ -101,7 +101,7 @@ import {
 import orderDetailDialog from './components/orderDetailDialog'
 import selectPage from '@/components/selectPage2/index.vue'
 export default {
-  name: 'RefundOrderQuery',
+  name: 'refundOrderQuery',
   components: {
     selectPage,
     orderDetailDialog
