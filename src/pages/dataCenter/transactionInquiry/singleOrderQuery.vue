@@ -263,6 +263,15 @@ export default {
         this.$message.error("请先选择商户")
         return
       }
+      if(!this.formData.orderId && !this.formData.serialSn && !this.formData.tenantSn && !this.formData.thirdSn){
+        this.$message.error("至少输入一个订单号")
+        return
+      }
+      if(!this.formData.orderId && !this.formData.transactionTime){
+        this.$message.error("请选择交易时间")
+        return
+      }
+      
       this.pageNo = 1
       this.searchLock = true
       this.handleQueryPage()
