@@ -6,7 +6,7 @@ export const statusOptions = [
   { value: 3, label: 'BOSS待审核' },
   { value: 4, label: '审核拒绝' },
   { value: 5, label: '账号申请中' },
-  { value: 6, label: '部分账号申请通过' },
+  { value: 6, label: '账号部分申请通过' },
   { value: 7, label: '账号全部申请通过' }
 ]
 

@@ -206,7 +206,7 @@ export default {
         {id: 3, name: '平台审核中'},
         {id: 4, name: '未通过审核'},
         {id: 5, name: '账号申请中'},
-        {id: 6, name: '部分账号申请通过'},
+        {id: 6, name: '账号部分申请通过'},
         {id: 7, name: '申请通过'},
         {id: 8, name: '资料待补充'},
         {id: 9, name: '资料补充待审核'}
