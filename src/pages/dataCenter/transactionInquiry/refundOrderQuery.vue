@@ -40,7 +40,7 @@
             <el-col :span="8">
               <el-form-item style="margin-left:-60px">
                 <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-                <el-button @click="handleReset" plain size="small" type="primary">重置</el-button>
+                <!-- <el-button @click="handleReset" plain size="small" type="primary">重置</el-button> -->
               </el-form-item>
           </el-col>
         </el-row>
