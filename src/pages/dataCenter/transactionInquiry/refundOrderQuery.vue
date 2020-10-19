@@ -56,9 +56,7 @@
         <el-table-column :min-width="134" label="退款订单号" prop="sn"></el-table-column>
         <el-table-column :min-width="134" label="支付订单号" prop="paySn"></el-table-column>
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
-        
         <el-table-column label="门店名称" prop="tradeStoreName"></el-table-column>
-        
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="退款人" prop="refundPerson"></el-table-column>
         <el-table-column align="right" label="申请退款金额" prop="amount"></el-table-column>
