@@ -15,7 +15,7 @@
       </el-row>
     </header>
     <section>
-      <el-form ref="form" :model="form" :rules="rules" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="252px">
+      <el-form ref="form" :model="form" :rules="rules" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="200px">
         <div class="p-wxArchive-item">
           <div class="p-wxArchive-itemTitle">基本信息</div>
           <el-row class="p-wxArchive-baseInfo">
@@ -121,7 +121,7 @@
                   alt="门店门头照"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.signboardUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.signboardUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'signboardUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"
@@ -135,7 +135,7 @@
                   alt="经营场所照1"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.businessSiteOneUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.businessSiteOneUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteOneUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
@@ -148,7 +148,7 @@
                   alt="经营场所照2"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.businessSiteTwoUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.businessSiteTwoUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteTwoUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteTwoUrl)"
@@ -161,7 +161,7 @@
                   alt="经营场所照3"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.businessSiteThreeUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.businessSiteThreeUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteThreeUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteThreeUrl)"
@@ -172,9 +172,9 @@
               <el-form-item label="经营场地证明">
                 <upload-pic
                   alt="经营场地证明"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.businessSiteUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteUrl)"
@@ -185,9 +185,9 @@
               <el-form-item label="补充资料1">
                 <upload-pic
                   alt="补充资料1"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.additionalOneUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalOneUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalOneUrl)"
@@ -198,9 +198,9 @@
               <el-form-item label="补充资料2">
                 <upload-pic
                   alt="补充资料2"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.additionalTwoUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalTwoUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalTwoUrl)"
@@ -231,7 +231,7 @@
                   alt="营业执照"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.businessLicenseUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.businessLicenseUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'businessLicenseUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
@@ -242,9 +242,9 @@
               <el-form-item label="类目特殊资质">
                 <upload-pic
                   alt="类目特殊资质"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.typeAptitudeUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'typeAptitudeUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)"
@@ -282,7 +282,7 @@
                 <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               </el-form-item>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)">
               <el-form-item label="售卖商品描述" prop="archiveExpandVO.sellShopDescribe">
                 <el-input v-model="form.archiveExpandVO.sellShopDescribe" type="textarea" :autosize="{ minRows: 3 }" maxlength="140" show-word-limit style="width: 240px"></el-input>
               </el-form-item>
@@ -304,9 +304,9 @@
               <el-form-item label="组织机构代码证" prop="archiveExpandVO.orgInstitutionUrl">
                 <upload-pic
                   alt="组织机构代码证"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.orgInstitutionUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'orgInstitutionUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.orgInstitutionUrl)"
@@ -317,9 +317,9 @@
               <el-form-item label="税务登记证" prop="archiveExpandVO.taxRegistrationUrl">
                 <upload-pic
                   alt="税务登记证"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.taxRegistrationUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)"
@@ -363,7 +363,7 @@
                   alt="身份证正面照"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.idFrontUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.idFrontUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idFrontUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"
@@ -376,7 +376,7 @@
                   alt="身份证背面照"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.idBackUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.idBackUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idBackUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"
@@ -389,7 +389,7 @@
                   alt="手持身份证正面照"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.hardIdUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.hardIdUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'hardIdUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.hardIdUrl)"
@@ -405,9 +405,9 @@
               <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
                 <upload-pic
                   alt="开户许可证"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.openingPermitUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'openingPermitUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)"
@@ -420,7 +420,7 @@
                   alt="银行卡正面照"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.bankCardFrontUrl"
-                  :exampleImg="exampleImg"
+                  :exampleImg="exampleImg.bankCardFrontUrl"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'bankCardFrontUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
@@ -551,7 +551,17 @@ export default {
       statusList: [],
       selectPageNo: 1,
       formDisabled: false,
-      exampleImg: require('@/assets/images/home/home.png'),
+      exampleImg: {
+        signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
+        businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
+        businessSiteTwoUrl: require('@/assets/images/xftArchive/shop_in.png'),
+        businessSiteThreeUrl: require('@/assets/images/xftArchive/goods.png'),
+        businessLicenseUrl: require('@/assets/images/xftArchive/goods.png'),
+        idFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+        idBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+        hardIdUrl: require('@/assets/images/xftArchive/people_id.png'),
+        bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png')
+      },
       isReason: false,
       detailStatusArr: [0, 1, 2, 4],
       areaKey: Symbol('areaKey'),
@@ -742,6 +752,7 @@ export default {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
+              if (this.$route.query.status === 'copy') this.form.archiveBaseVO.createTime = null
               const res = await submit(this.form)
               this.$store.dispatch('delTagView', this.$route).then(() => {
                 this.$router.push({ name: 'wxArchive' })

@@ -1079,6 +1079,7 @@ export default {
       } catch(error) {}
     },
     async toSave() {
+      if(this.$route.query.isCopy) this.form.archiveBaseVO.createTime = null
       this.$refs.form.validateField('archiveBaseVO.merchantId', async (errorMessage) => {
         if (!errorMessage) {
           try {

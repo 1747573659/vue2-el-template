@@ -183,11 +183,9 @@ export default {
       return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
     }
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.currentPage = 1
-      vm.handleQueryPage()
-    })
+  activated() {
+    this.currentPage = 1
+    this.handleQueryPage()
   },
   mounted() {
     this.getXiaoWeiArchiveStatus()
@@ -199,8 +197,11 @@ export default {
       this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
     },
     handleReason(row) {
-      this.reasonMsg = row.archiveBaseDTO.auditRemark
-      this.isReason = true
+      if (row.archiveBaseDTO.auditStatus === 4) {
+        this.reasonMsg = row.archiveBaseDTO.auditRemark
+
+        this.isReason = true
+      }
     },
     handleSearch() {
       this.currentPage = 1

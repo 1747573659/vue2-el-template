@@ -61,7 +61,7 @@
                   :name="'name'"
                   searchName="name"
                   :isMultiple="true"
-                  :parame="{storeId:formData.stores[0] || ''}"
+                  :parame="{storeId:formData.stores || ''}"
                   id="id"
                   :placeholder="'收银员'"
                 >
@@ -107,7 +107,7 @@
           <el-col :span="12" style="padding-left: 108px;padding-bottom: 20px;">
             <div style="display:inline-block">
                   <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-                  <el-button @click="handleReset" plain size="small" type="primary">重置</el-button>
+                  <!-- <el-button @click="handleReset" plain size="small" type="primary">重置</el-button> -->
             </div>
           </el-col>
           <!-- <el-col :span="8" style="text-align:right">
@@ -126,7 +126,11 @@
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
         
         <el-table-column  label="商户名称" prop="shopName"></el-table-column>
-        <el-table-column label="门店名称" prop="storeName"></el-table-column>
+        <el-table-column label="门店名称" prop="storeName">
+            <template slot-scope="scope"> 
+             {{scope.row.merchantName}}({{scope.row.storeName}})
+           </template>
+        </el-table-column>
         <el-table-column :width="110" label="交易时间" prop="createDate"></el-table-column>
         <el-table-column :min-width="134" label="支付订单号" prop="orders"></el-table-column>
         <el-table-column label="确认码" prop="confirmCode"></el-table-column>
@@ -261,13 +265,13 @@ export default {
       formData: {
         transactionTime: [moment().startOf('day').valueOf(), moment().endOf('day').valueOf()],
         shopId: '',
-        stores: [],
+        stores: "",
         tradingChanneCode: '',
         tradingTypeCode: '',
         paymentCode: '',
         paymentScenarioCode: '',
         tradingStatusCode: [],
-        clerkInfos:[],
+        clerkInfos:"",
         startAmount:"",
         endAmount:""
       },
@@ -460,8 +464,8 @@ export default {
       this.getQueryPage()
     },
     handleReset () {
-      this.formData.stores=[]
-      this.formData.clerkInfos=[]
+      this.formData.stores=""
+      this.formData.clerkInfos=""
       this.formData.shopId=''
       this.formData.startAmount=''
       this.formData.endAmount=''
@@ -519,8 +523,8 @@ export default {
         paymentStatus: paymentStatus.length > 0 ? paymentStatus.toString().split(',').map(Number) : [], // 交易状态集合
         shopId: this.formData.shopId, // 商户ID
         // shopId: 70, // 商户ID
-        stores: this.formData.stores, // 门店ID集合
-        clerkInfos: this.formData.clerkInfos, // 门店ID集合
+        stores: this.formData.stores?[this.formData.stores]:[], // 门店ID集合
+        clerkInfos: this.formData.clerkInfos?[this.formData.clerkInfos]:[], // 门店ID集合
         startAmount: this.formData.startAmount, // 门店ID集合
         endAmount: this.formData.endAmount, // 门店ID集合
       }

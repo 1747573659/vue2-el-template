@@ -291,7 +291,6 @@ const customer = {
           code: 'WORKORDERMANAGEMENTDETAIL',
           meta: {
             title: '新增工单',
-            cache: true,
             name: 'workOrderManagementdetail'
           }
         },
@@ -303,7 +302,6 @@ const customer = {
           code: 'WORKORDERMANAGEMENTVIEWDETAIL',
           meta: {
             title: '工单管理详情',
-            cache: true,
             name: 'workOrderManagementdetail'
           }
         }

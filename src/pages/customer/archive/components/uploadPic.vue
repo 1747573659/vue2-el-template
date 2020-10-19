@@ -32,7 +32,7 @@
         width="313"
         trigger="hover">
         <img class="upload-example-img" :src="exampleImg" alt="">
-        <span class="upload-example-text" slot="reference">图片示例</span>
+        <span class="upload-example-text" slot="reference" v-if="showExample">图片示例</span>
       </el-popover>
     </div>
   </div>
@@ -72,6 +72,10 @@ export default {
     card: {
       type: String,
       default: null
+    },
+    showExample:{
+      type: Boolean,
+      default: true
     }
   },
   computed: {
