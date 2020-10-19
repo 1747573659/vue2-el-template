@@ -126,7 +126,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="银总联商户号">
+        <el-form-item label="银总联商户号" v-if="subShopForm.channelCode !== '30'">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
               <span v-for="(item, index) in subShopForm.unionPayMchIds" :key="index">{{item + (index === subShopForm.unionPayMchIds.length - 1 ? '' : ',')}}</span>
@@ -259,6 +259,7 @@ export default {
       try {
         const res = row.channelCode === '7' ? await querySubMerchantNo(data) : await querySubMchIdForSxf(data)
         this.subShopForm = res
+        this.subShopForm.channelCode = row.channelCode
         this.subShopInfoVisible = true
       } catch(error) {}
     },
