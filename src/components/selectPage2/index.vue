@@ -8,7 +8,6 @@
       filterable
       :disabled="disabled"
       clearable
-      :multiple="isMultiple"
       :collapse-tags="true"
       remote
       clear
@@ -111,12 +110,20 @@ export default {
       if(val){
         Object.keys(val).forEach((value,index)=>{
           if(val[value] && val[value]!==oldVal[value]){
-            this.selValue=[]
+            this.selValue=""
             this.isInit=true
             this.options=[]
             this.page=1
             this.isMaxPage=false
             this.remoteMethod()
+          }
+          if(val[value]===""){
+            this.selValue=""
+            this.isInit=true
+            this.options=[]
+            this.page=1
+            this.disabled=true
+            this.isMaxPage=false
           }
         })
       }
