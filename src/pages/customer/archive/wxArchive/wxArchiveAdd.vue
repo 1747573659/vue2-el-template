@@ -172,9 +172,9 @@
               <el-form-item label="经营场地证明">
                 <upload-pic
                   alt="经营场地证明"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.businessSiteUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteUrl)"
@@ -185,9 +185,9 @@
               <el-form-item label="补充资料1">
                 <upload-pic
                   alt="补充资料1"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.additionalOneUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalOneUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalOneUrl)"
@@ -198,9 +198,9 @@
               <el-form-item label="补充资料2">
                 <upload-pic
                   alt="补充资料2"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.additionalTwoUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalTwoUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalTwoUrl)"
@@ -242,9 +242,9 @@
               <el-form-item label="类目特殊资质">
                 <upload-pic
                   alt="类目特殊资质"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveOtherVO.typeAptitudeUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'typeAptitudeUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)"
@@ -304,9 +304,9 @@
               <el-form-item label="组织机构代码证" prop="archiveExpandVO.orgInstitutionUrl">
                 <upload-pic
                   alt="组织机构代码证"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.orgInstitutionUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'orgInstitutionUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.orgInstitutionUrl)"
@@ -317,9 +317,9 @@
               <el-form-item label="税务登记证" prop="archiveExpandVO.taxRegistrationUrl">
                 <upload-pic
                   alt="税务登记证"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.taxRegistrationUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)"
@@ -405,9 +405,9 @@
               <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
                 <upload-pic
                   alt="开户许可证"
+                  :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.openingPermitUrl"
-                  :exampleImg="exampleImg"
                   uploadUrlPath="/uploadFile"
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'openingPermitUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)"
