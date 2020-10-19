@@ -175,6 +175,7 @@ export default {
             this.placeText="全部"
           }
           //this.placeText="请选择"+this.placeholder
+          this.isInit=false
           this.disabled=false
         }
         this.page++
