@@ -37,7 +37,9 @@
         <el-table-column label="操作" align="right" width="180">
           <template slot-scope="scope">
             <el-button v-permission="'BRAND_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
-            <el-button v-permission="'BRAND_SET_DEL'" size="small" type="text" @click="handleDelete(scope.row.id)">删除</el-button>
+            <el-popconfirm v-permission="'BRAND_SET_DEL'" style="margin: 0 12px" iconColor="#FFA033" title="确定删除所选数据吗？确定后删除品牌信息" placement="top-start" @onConfirm="handleDelete(scope.row.storeNum, scope.row.id)">
+              <el-button slot="reference" size="small" type="text">删除</el-button>
+            </el-popconfirm>
             <el-button v-permission="'BRAND_SET_STOPANDSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{ scope.row.status | fiterOperateStatus }}</el-button>
           </template>
         </el-table-column>
@@ -100,21 +102,15 @@ export default {
     this.queryMerchantListByPage()
   },
   methods: {
-    handleDelete(id) {
-      this.$confirm('确定删除所选数据吗？确定后删除品牌信息', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
+    async handleDelete(num, id) {
+      if (num > 0) return this.$message.error('该品牌已有门店使用，不能删除')
+
+      await deleteMerchant({ id })
+      await this.queryMerchantListByPage()
+      this.$message({
+        type: 'success',
+        message: '删除成功!',
       })
-        .then(async () => {
-          await deleteMerchant({ id })
-          await this.queryMerchantListByPage()
-          this.$message({
-            type: 'success',
-            message: '删除成功!',
-          })
-        })
-        .catch(() => {})
     },
     async handleOperate(id, val) {
       await branchUpdateStatus({ id, status: val === 0 ? 1 : 0 })
