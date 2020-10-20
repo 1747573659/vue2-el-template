@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section v-permission.page="'WXARCHIVE_LIST_ARCHIVELIST'">
     <div style="padding-bottom: 16px;" class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight">
         <el-table-column prop="subMchId" label="微信商户号"></el-table-column>
@@ -26,9 +26,9 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="400px">
           <template slot-scope="scope">
-            <el-button type="text" size="small" v-if="scope.row.status === 3 && scope.row.updateStatus === null" @click="handleSignUp(scope.row, 1)">立即签约</el-button>
-            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4" @click="handleSignUp(scope.row, 2)">升级签约</el-button>
-            <el-button type="text" size="small" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 2">验证账户</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_SIGNNOW'" v-if="scope.row.status === 3 && scope.row.updateStatus === null" @click="handleSignUp(scope.row, 1)">立即签约</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_SIGNUPDATE'" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4" @click="handleSignUp(scope.row, 2)">升级签约</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_VERIFY'" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 2">验证账户</el-button>
             <span v-else>--</span>
           </template>
         </el-table-column>

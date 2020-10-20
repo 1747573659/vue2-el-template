@@ -32,7 +32,9 @@
         <el-table-column label="操作" align="right" width="100px">
           <template slot-scope="scope">
             <el-button v-permission="'AGENT_ROLE_EDIT'" size="small" type="text" @click="edit(scope.row.id)">编辑</el-button>
-            <el-button v-permission="'AGENT_ROLE_DEL'" size="small" type="text" @click="handleDelete(scope.row.id)">删除</el-button>
+            <el-popconfirm v-permission="'AGENT_ROLE_DEL'" style="margin-left: 12px" iconColor="#FFA033" title="确定删除所选数据吗？确认则删除角色及账号对应的角色关系" placement="top-start" @onConfirm="handleDelete(scope.row.num, scope.row.id)">
+              <el-button slot="reference" size="small" type="text">删除</el-button>
+            </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
@@ -102,22 +104,12 @@ export default {
     edit(id) {
       this.$router.push({ path: '/customer/agent/editRole', query: { id } })
     },
-    handleDelete(roleId) {
-      this.$confirm(
-        '确定删除所选数据吗？确认则删除角色及账号对应的角色关系。',
-        '提示',
-        {
-          confirmButtonText: '确定',
-          cancelButtonText: '取消',
-          type: 'warning',
-        }
-      )
-        .then(async () => {
-          await deleteSysRole({ roleId })
-          await this.queryPage()
-          this.$message.success('删除成功!')
-        })
-        .catch(() => {})
+    async handleDelete(num, roleId) {
+      if (num > 0) return this.$message.error('角色有关联的账号，不能删除')
+      
+      await deleteSysRole({ roleId })
+      await this.queryPage()
+      this.$message.success('删除成功!')
     },
   },
 }

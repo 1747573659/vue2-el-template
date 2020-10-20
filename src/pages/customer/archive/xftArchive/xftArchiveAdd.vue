@@ -502,10 +502,10 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button v-permission="'XFT_ADD_SUBMIT'" v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
-      <el-button v-permission="'XFT_ADD_SAVE'" v-if="([undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy) && !isDetail" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
-      <el-button v-permission="'XFT_ADD_SUBMIT'" v-if="([2].includes(auditStatus) || isCopy) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
-      <el-button v-permission="'XFT_ADD_REFUSE'" v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
+      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
+      <el-button v-if="([undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy) && !isDetail" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      <el-button v-if="([2].includes(auditStatus) || isCopy) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
+      <el-button v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div> 
     <el-dialog
@@ -570,7 +570,7 @@ export default {
         4: '未通过审核',
         5: '账号申请中',
         6: '部分账号申请通过',
-        7: '申请通过',
+        7: '账号全部申请通过',
         8: '资料待补充',
         9: '资料补充待审核',
         10: '账号申请中',
@@ -753,14 +753,14 @@ export default {
         { id: 2, name: '虚拟'}
       ],
       fixFeeRateList: [
-        { id: 25, name: '25'+'%'},
-        { id: 28, name: '28'+'%'},
-        { id: 30, name: '30'+'%'},
-        { id: 35, name: '35'+'%'},
-        { id: 38, name: '38'+'%'},
-        { id: 45, name: '45'+'%'},
-        { id: 55, name: '55'+'%'},
-        { id: 60, name: '60'+'%'},
+        { id: 25, name: '0.' + '25'+'%'},
+        { id: 28, name: '0.' + '28'+'%'},
+        { id: 30, name: '0.' + '30'+'%'},
+        { id: 35, name: '0.' + '35'+'%'},
+        { id: 38, name: '0.' + '38'+'%'},
+        { id: 45, name: '0.' + '45'+'%'},
+        { id: 55, name: '0.' + '55'+'%'},
+        { id: 60, name: '0.' + '60'+'%'},
       ],
       industrIdList: [],
       certTypeList: [],
@@ -1087,7 +1087,7 @@ export default {
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'xftArchive' })
             })
-            this.$message.success('新增成功')
+            this.$message.success('保存成功')
           } catch(error) {}
           console.log(this.form)
         }
@@ -1102,7 +1102,7 @@ export default {
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'xftArchive' })
             })
-            this.$message.success('新增成功')
+            this.$message.success('提交成功')
           } catch(error) {}
         }
       })

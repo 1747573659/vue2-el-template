@@ -54,6 +54,7 @@ import {
   queryShopListByPage,
   queryProductInfoByIndustryId,
   addMerchant,
+  checkMerchant,
 } from '@/api/customer/merchant'
 import BrandSelect from '@/components/brandSelect'
 import PicUpload from '@/components/picUpload'
@@ -76,7 +77,24 @@ export default {
       }
     }
 
+    const validatorName = (rule, value, callback) => {
+      if (value === '') {
+        callback('请输入品牌名称')
+      } else if (value !== this.validatorName) {
+        checkMerchant({ name: value, adminId: this.ruleForm.adminId }).then((res) => {
+          if (res) {
+            callback(res)
+          } else {
+            callback()
+          }
+        })
+      } else {
+        callback()
+      }
+    }
+
     return {
+      validatorName: '',
       uploadUrl: process.env.VUE_APP_BASE_API + '/oss/uploadFile',
       submitLoading: false,
       brandValue: [],
@@ -94,7 +112,8 @@ export default {
       },
       rules: {
         adminId: { required: true, message: '请选择商户', trigger: 'change' },
-        name: { required: true, message: '请输入品牌名称', trigger: 'blur' },
+        // name: { required: true, validatorName: '请输入品牌名称', trigger: 'blur' },
+        name: { required: true, validator: validatorName, trigger: 'blur' },
         // logo: { required: true, message: '请选择图片' },
         tradeTypeId: {
           required: true,
