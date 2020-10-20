@@ -18,6 +18,7 @@ const urlLinks = {
   queryDistricDto: '/district/queryDistricDto',
   addMerchant: '/merchant/addMerchant',
   checkShopName: '/shop/checkShopName',
+  checkMerchant: '/merchant/checkMerchant',
 }
 
 // 分页查询商户信息
@@ -168,6 +169,15 @@ export function addMerchant(data) {
 export function checkShopName(data) {
   return request({
     url: urlLinks.checkShopName,
+    method: 'post',
+    params: data
+  })
+}
+
+// 验证品牌存在
+export function checkMerchant(data) {
+  return request({
+    url: urlLinks.checkMerchant,
     method: 'post',
     params: data
   })
