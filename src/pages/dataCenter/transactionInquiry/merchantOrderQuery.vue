@@ -4,12 +4,13 @@
       <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近半年内的交易流水，单次查询日期的最长跨度为31天</div>
       <el-form :model="formData" @submit.native.prevent label-width="110px" ref="form" size="small">
         <el-row>
-        <el-col :span="8">
+        <el-col :span="7">
             <el-form-item label="商户名称" prop="shopId">
                <select-page
                 :request="queryMerchantAdminPage"
                 :bvalue.sync="formData.shopId"
                 :name="'companyName'"
+                :width="'100%'"
                 searchName="id"
                 id="id"
                 :placeholder="'商户名称'"
@@ -19,7 +20,6 @@
           </el-col>
           <el-col :span="16">
         <el-form-item label="交易时间">
-
           <el-date-picker
             :clearable="false"
             :default-time="['00:00:00', '23:59:59']"
@@ -38,7 +38,7 @@
         </el-row>
         <el-row>
           
-          <el-col :span="8">
+          <el-col :span="7">
             <el-form-item label="门店名称" prop="storeName">
                 <select-page
                   :request="getStorePage"
@@ -46,6 +46,7 @@
                   :name="'name'"
                   :isMultiple="true"
                   searchName="storeName"
+                   :width="'100%'"
                   :parame="{adminId:formData.shopId || ''}"
                   id="id"
                   placeholder="门店名称"
@@ -53,13 +54,14 @@
                 </select-page>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="7">
             <el-form-item  label="收银员" prop="cashier">
               <select-page
                   :request="queryClerkPageByStore"
                   :bvalue.sync="formData.clerkInfos"
                   :name="'name'"
                   searchName="name"
+                   :width="'100%'"
                   :isMultiple="true"
                   :parame="{storeId:formData.stores || ''}"
                   id="id"
@@ -68,7 +70,7 @@
                 </select-page>
             </el-form-item>
           </el-col>
-           <el-col :span="8">
+           <el-col :span="7">
             <el-form-item label="支付方式" prop="paymentCode">
               <el-select class="order_sel"  @change="getPaymentScenario" filterable v-model="formData.paymentCode">
                 <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentData"></el-option>
@@ -79,20 +81,21 @@
         <el-row>
          
          
-          <el-col :span="8">
+          <el-col :span="7">
             <el-form-item label="支付场景" prop="paymentScenarioCode">
               <el-select class="order_sel" v-model="formData.paymentScenarioCode" filterable>
                 <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentScenarioData"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-           <el-col :span="8">
-            <el-form-item label="交易金额" prop="paymentScenarioCode">
-              <el-input type="number" min="0" style="width:115px"  size="small" v-model="formData.startAmount" placeholder="请输入金额"></el-input>-
-              <el-input type="number" min="0" style="width:115px" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
+           <el-col :span="7">
+            <el-form-item label="交易金额" prop="paymentScenarioCode" class="paymentScenarioCod">
+              <el-input type="number" min="0" style="width:50%;margin-right: 5px;"  size="small" v-model="formData.startAmount" placeholder="请输入金额"></el-input>
+              -
+              <el-input type="number" min="0" style="width:50;margin-left: 5px;" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
+          <el-col :span="7">
             <el-form-item label="交易状态" prop="tradingStatusCode">
               <el-select style="margin-right: 16px;" class="order_sel" collapse-tags multiple v-model="formData.tradingStatusCode">
                 <el-option :key="item.codes" :label="item.name" :value="item.codes" v-for="item in tradingStatusData"></el-option>
@@ -101,22 +104,12 @@
              </el-form-item>
              
           </el-col>
+          <el-col :span="2">
+             <el-button style="margin-left: 24px;" :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+          </el-col>
           
         </el-row>
-        <el-row>
-          <el-col :span="12" style="padding-left: 108px;padding-bottom: 20px;">
-            <div style="display:inline-block">
-                  <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-                  <!-- <el-button @click="handleReset" plain size="small" type="primary">重置</el-button> -->
-            </div>
-          </el-col>
-          <!-- <el-col :span="8" style="text-align:right">
-            <el-form-item>
-              <el-button @click="handleExport" size="small" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT')">导出</el-button>
-              <el-button @click="exportRecord" size="small" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORTRECORD')">导出记录</el-button>
-            </el-form-item>
-          </el-col> -->
-        </el-row>
+       
       </el-form>
   
     </div>
@@ -485,7 +478,7 @@ export default {
         }
         
         if((this.formData.startAmount && !this.formData.endAmount) || !this.formData.startAmount && this.formData.endAmount){
-          this.$message.error('请输入一个金额范围')
+          this.$message.error('请输入交易金额范围')
           return false
         }
         if(this.formData.startAmount> this.formData.endAmount){
@@ -613,7 +606,14 @@ export default {
   padding: 20px 0;
 }
 .order_sel{
-  width:240px
+  width:100%
+}
+.paymentScenarioCod{
+  /deep/.el-form-item__content{
+    justify-content: space-between;
+    display: flex;
+  }
+  
 }
 .pure {
   &-btn {
