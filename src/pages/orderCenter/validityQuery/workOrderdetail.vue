@@ -43,7 +43,7 @@
           </el-dialog>
         </el-form-item>
          <el-form-item label="工单素材：" v-else>
-           <div class="work_item">没有提交工单素材</div>
+           <div class="work_item"></div>
          </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
           <div class="work_item">{{ruleForm.custName}}</div>

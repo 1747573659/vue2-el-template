@@ -92,7 +92,7 @@
             <el-form-item label="交易金额" prop="paymentScenarioCode" class="paymentScenarioCod">
               <el-input type="number" min="0" style="width:50%;margin-right: 5px;"  size="small" v-model="formData.startAmount" placeholder="请输入金额"></el-input>
               -
-              <el-input type="number" min="0" style="width:50;margin-left: 5px;" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
+              <el-input type="number" min="0" style="width:50%;margin-left: 5px;" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="7">
