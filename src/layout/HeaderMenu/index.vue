@@ -92,10 +92,10 @@ export default {
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
-      if (document.body.clientWidth < 1500) this.isDropdown = true
+      if (document.body.clientWidth < 1200) this.isDropdown = true
       else this.isDropdown = false
       window.addEventListener('resize', () => {
-        if (document.body.clientWidth < 1500) this.isDropdown = true
+        if (document.body.clientWidth < 1200) this.isDropdown = true
         else this.isDropdown = false
       })
     })

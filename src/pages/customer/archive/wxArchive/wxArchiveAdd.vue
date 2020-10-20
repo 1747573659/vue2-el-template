@@ -493,9 +493,9 @@
       </el-form>
     </section>
     <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
-      <el-button size="small" type="primary" v-permission="'WXARCHIVE_LIST_SUBMIT'" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
-      <el-button size="small" type="primary" v-permission="'WXARCHIVE_LIST_SAVE'" plain class="e-wxArchive-action_pd" @click="handleArchive">{{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" v-permission="'WXARCHIVE_LIST_REFUSE'" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'">拒绝</el-button>
+      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'">拒绝</el-button>
       <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')">取消</el-button>
     </div>
     <!-- dialog -->
