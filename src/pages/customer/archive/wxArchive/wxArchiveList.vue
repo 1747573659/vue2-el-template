@@ -278,7 +278,8 @@ export default {
       float: right;
     }
     &_btnLabel {
-      width: 100px;
+      // width: 100px;
+      padding-left: 30px;
       text-align: right;
     }
   }
