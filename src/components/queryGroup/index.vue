@@ -2,11 +2,14 @@
 <template>
   <div class="query-group-container">
     <slot name="header"></slot>
-    <el-form :inline="true" :model="queryParams" ref="queryForm" size="small" label-width="80px" :class="className">
+
+    <el-form :inline="true" :model="queryParams" ref="queryForm" size="small" label-width="100px" :class="className">
+       <el-row>
+          <el-col :span="24">
       <slot name="formheader"></slot>
       <template v-for="(item, index) in queryFormList">
         <el-form-item class="xdd_item_form"  :style="{ width:item.width }" :key="index" v-if="item.type === 'input'" :label="item.label" :label-width="item.labelWidth">
-          <el-input style="width:100%" clearable   v-model="item.value" :placeholder="item.placeholder || ''"></el-input>
+          <el-input  clearable   v-model="item.value" :placeholder="item.placeholder || ''"></el-input>
         </el-form-item>
 
         <el-form-item
@@ -20,7 +23,6 @@
           <el-select
             :clearable="item.clearable"
             :filterable="item.filterable"
-            style="width:100%"
             v-model="item.value"
             :placeholder="item.placeholder || ''"
           >
@@ -43,7 +45,6 @@
         >
           <el-date-picker
             :type="item.type"
-            style="width:100%"
             :value-format='daterangeValueFormat'
             range-separator="至"
             placeholder="选择日期"
@@ -58,6 +59,9 @@
       </template>
       <el-button size="small" class="xdd_small-btn" @click="search" type="primary">查询</el-button>
       <slot name="formfoot"></slot>
+      
+      </el-col>
+      </el-row>
     </el-form>
     <slot name="foot"></slot>
   </div>

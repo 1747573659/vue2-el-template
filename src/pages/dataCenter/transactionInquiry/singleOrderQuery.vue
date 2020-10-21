@@ -4,36 +4,30 @@
       <div class="xdd_tip"><i class="el-icon-info"></i>
 至少输入一个订单号，支付订单号无需选择交易时间，其他订单号必须选择交易时间；
 只支持查询近一年内的交易流水</div>
-      <el-form @submit.native.prevent label-width="110px" size="small">
+      <el-form :inline="true" @submit.native.prevent label-width="100px" size="small" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="8">
-            <el-form-item label="商户">
+          <el-col :span="24">
+            <el-form-item label="商户" class="xdd_form_item"> 
               <select-page
-                :width="'85%'"
                 :request="queryMerchantAdminPage"
                 :bvalue.sync="formData.shopAdminId"
                 :name="'companyName'"
+                :width="'240px'"
                 searchName="id"
                 id="id"
                 :placeholder="'商户名称'"
               >
               </select-page>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="支付订单号">
-              <el-input style="width:85%" clearable placeholder="请输入支付订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.orderId"></el-input>
+            <el-form-item label="支付订单号" class="xdd_form_item">
+              <el-input  clearable placeholder="请输入支付订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.orderId"></el-input>
               <el-tooltip effect="light" class="payment">
                 <div slot="content"><img src="../../../assets/images/paymentOrderNumber.png"></div>
                 <i class="el-icon-question pure-info-tip"></i>
               </el-tooltip>
             </el-form-item>
-          </el-col>
-           
-           <el-col :span="8">
-            <el-form-item label="交易时间">
+             <el-form-item label="交易时间" class="xdd_form_item">
               <el-date-picker
-                style="width:85%"
                 size="small"
                 :clearable="false"
                 :default-time="['00:00:00', '23:59:59']"
@@ -46,47 +40,44 @@
                 value-format="timestamp"
               ></el-date-picker>
             </el-form-item>
+            
           </el-col>
-         
-          
         </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item label="交易流水号">
-              <el-input style="width:85%" clearable placeholder="请输入交易流水号" size="small" oninput="value=value.replace(/[\W]/g,'')" v-model.trim="formData.serialSn"></el-input>
+         <el-row>
+          <el-col :span="24">
+            <el-form-item label="交易流水号" class="xdd_form_item">
+              <el-input  clearable placeholder="请输入交易流水号" size="small" oninput="value=value.replace(/[\W]/g,'')" v-model.trim="formData.serialSn"></el-input>
               <el-tooltip effect="light" class="payment">
                 <div slot="content"><img src="../../../assets/images/paymentSerialNumber.png"></div>
                 <i class="el-icon-question pure-info-tip"></i>
               </el-tooltip>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="线下订单号">
-              <el-input style="width:85%" clearable placeholder="请输入线下订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.thirdSn"></el-input>
+            <el-form-item label="线下订单号" class="xdd_form_item">
+              <el-input  clearable placeholder="请输入线下订单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.thirdSn"></el-input>
               <el-tooltip effect="light" class="payment">
                 <div slot="content"><img src="../../../assets/images/offlineOrderNumber.png"></div>
                 <i class="el-icon-question pure-info-tip"></i>
               </el-tooltip>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="商户单号">
-              <el-input style="width:85%" clearable placeholder="请输入商户单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.tenantSn"></el-input>
+            <el-form-item label="商户单号" class="xdd_form_item">
+              <el-input  clearable placeholder="请输入商户单号" size="small" oninput="value=value.replace(/[^\d]/g, '')" v-model.trim="formData.tenantSn"></el-input>
               <el-tooltip effect="light" class="payment">
                 <div slot="content"><img src="../../../assets/images/merchantOrderNumber.png"></div>
                 <i class="el-icon-question pure-info-tip"></i>
               </el-tooltip>
             </el-form-item>
+            
           </el-col>
+         
         </el-row>
-        <el-row>
-          <el-col :span="8">
-            <el-form-item>
-              <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-              <!-- <el-button @click="handleReset" plain size="small" type="primary">重置</el-button> -->
-            </el-form-item>
-          </el-col>
-        </el-row>
+         <el-row>
+           
+              <el-form-item style="margin-left: 100px;">
+                <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+              </el-form-item>
+        
+         </el-row>
+     
       </el-form>
     </div>
     <!-- 内容展示区域 -->
@@ -349,6 +340,17 @@ export default {
 }
 .xdd_tip i{
     color: #3377FF;
+}
+.xdd_form_item{
+  min-width:363px;
+  margin-right: 0px;
+}
+/deep/.el-date-editor {
+  width: 305px;
+  padding-right: 0px;
+}
+.xdd-btn-block__w240 .el-input{
+  //width: 200px!important;
 }
 .pure {
   &-dialog {

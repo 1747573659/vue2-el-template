@@ -288,7 +288,7 @@ const customer = {
           component: () => import('@/pages/orderCenter/validityQuery/workOrderManagementdetail.vue'),
           name: 'workOrderManagementdetail',
           hidden: true,
-         
+          code: 'KM_DEFAULT_CODE',
           meta: {
             title: '工单管理/新增',
             cache: true,
@@ -300,6 +300,7 @@ const customer = {
           component: () => import('@/pages/orderCenter/validityQuery/workOrderdetail.vue'),
           name: 'workOrderdetail',
           hidden: true,
+          code: 'KM_DEFAULT_CODE',
           meta: {
             title: '工单管理/详情',
             name: 'workOrderManagementdetail'

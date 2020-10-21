@@ -4,38 +4,36 @@
       <div class="xdd_tip"><i class="el-icon-info"></i>
 支付订单号 与 退款订单号 至少输入一个，支付订单号无需选择商户，退款订单号必须选择商户；
 只支持查询近半年内的退款订单；</div>
-      <el-form  label-width="110px" @submit.native.prevent class="search-form" size="small">
-        <el-row>
-          <el-col :span="6">
-            <el-form-item label="商户">
+      <el-form :inline="true" label-width="100px" @submit.native.prevent class="xdd-btn-block__w240" size="small">
+        <el-row :span="24">
+          <el-form-item label="商户">
                <select-page
                 :request="queryMerchantAdminPage"
                 :bvalue.sync="formData.shopAdminId"
                 :name="'companyName'"
                 searchName="id"
                 id="id"
-                :width="'100%'"
+                :width="'240px'"
                 :placeholder="'商户名称'"
               >
               </select-page>
             </el-form-item>
-          </el-col>
-          <el-col :span="6">
             <el-form-item label="退款订单号">
-              <el-input  style="width:100%" clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
+              <el-input  clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
             </el-form-item>
-          </el-col>
-           <el-col :span="6">
+       
             <el-form-item  label="退款状态">
-              <el-select  style="width:100%" v-model="formData.status">
+              <el-select  v-model="formData.status">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in statusList"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col :span="8">
+        
+          <el-col :span="24">
             <el-form-item label="支付订单号">
-              <el-input  style="width:68%" clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
-              <el-button style="margin-left:8%" :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+              <el-input  clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
+            </el-form-item>
+             <el-form-item>
+              <el-button  :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -137,7 +135,7 @@ export default {
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
     },
   },
   methods: {
