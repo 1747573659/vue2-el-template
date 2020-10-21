@@ -5,11 +5,13 @@
     <el-form :inline="true" :model="queryParams" ref="queryForm" size="small" label-width="80px" :class="className">
       <slot name="formheader"></slot>
       <template v-for="(item, index) in queryFormList">
-        <el-form-item :key="index" v-if="item.type === 'input'" :label="item.label" :label-width="item.labelWidth">
-          <el-input style="width:200px" v-model="item.value" :placeholder="item.placeholder || ''"></el-input>
+        <el-form-item class="xdd_item_form"  :style="{ width:item.width }" :key="index" v-if="item.type === 'input'" :label="item.label" :label-width="item.labelWidth">
+          <el-input style="width:100%" clearable   v-model="item.value" :placeholder="item.placeholder || ''"></el-input>
         </el-form-item>
 
         <el-form-item
+          class="xdd_item_form"
+          :style="{ width:item.width }"
           :key="index"
           v-else-if="item.type === 'select'"
           :label="item.label"
@@ -18,6 +20,7 @@
           <el-select
             :clearable="item.clearable"
             :filterable="item.filterable"
+            style="width:100%"
             v-model="item.value"
             :placeholder="item.placeholder || ''"
           >
@@ -31,6 +34,8 @@
         </el-form-item>
 
         <el-form-item
+          class="xdd_item_form"
+          :style="{ width:item.width }"
           :key="index"
           v-else-if="item.type === 'date' || item.type === 'daterange'"
           :label="item.label"
@@ -38,6 +43,7 @@
         >
           <el-date-picker
             :type="item.type"
+            style="width:100%"
             :value-format='daterangeValueFormat'
             range-separator="至"
             placeholder="选择日期"
@@ -131,6 +137,18 @@ export default {
   .btn-fr {
     .el-button {
       float: right;
+    }
+  }
+  /deep/.xdd_item_form{
+    display: inline-flex;
+    .el-form-item__content{
+      flex:1
+    }
+    .el-date-editor {
+      flex:1
+    }
+    .el-date-editor {
+      flex:1
     }
   }
 }

@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" right>
+    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" :width="'60%'" right>
       <div class="table-content" v-if="this.type === 'order'">
         <div class="table-item">
           <div class="table-item-content left-content">
@@ -147,9 +147,12 @@
           </div>
         </div>
         <div class="table-item">
-          <div class="table-item-content">
+          <div class="table-item-content left-content">
             <span class="table-item-title">退款人员: </span>
             <span class="table-item-text">{{form.refundPerson}}</span>
+          </div>
+           <div class="table-item-content">
+          
           </div>
         </div>
         <div class="table-item">
@@ -224,7 +227,7 @@
           </div>
         </div>
       </div>
-      <div slot="footer" class="dialog-footer center">
+      <div slot="footer" class="dialog-footer right">
         <el-button type="primary" @click="orderDetailVisible = false" size="small">我知道了</el-button>
       </div>
     </el-dialog>
@@ -263,7 +266,10 @@ export default {
   }
 .table-content {
   border: 1px solid #E6E9F0;
-  
+    margin-top: 10px;
+    margin-bottom: -10px;
+    margin-right: 10px;
+    margin-left: 10px;
   .table-item {
     border-bottom: 1px solid #E6E9F0;
     display: flex;
@@ -273,7 +279,17 @@ export default {
       font-size: 14px;
       color: #212430;
       padding: 10px;
-      width: 50%
+      width: 50%;
+      display: flex;
+      padding: 19px 0;
+      .table-item-title{
+        width: 30%;
+        text-align: right;
+        margin-right: 14px;
+      }
+      .table-item-text{
+         width: 70%;
+      }
     }
     .left-content {
       border-right: 1px solid #E6E9F0;

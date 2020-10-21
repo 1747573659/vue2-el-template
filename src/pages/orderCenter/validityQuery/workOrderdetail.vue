@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="app-form">
+    <div class="app-form data-box">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -42,6 +42,9 @@
             </video> -->
           </el-dialog>
         </el-form-item>
+         <el-form-item label="工单素材：" v-else>
+           <div class="work_item">没有提交工单素材</div>
+         </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
           <div class="work_item">{{ruleForm.custName}}</div>
         </el-form-item>
@@ -290,7 +293,7 @@ export default {
 .app-form {
   background: #fff;
   padding: 30px 6%;
-  margin: 24px;
+  // margin: 24px;
 }
 .el-icon-upload{
   color: #D3DBEB;
@@ -309,5 +312,8 @@ export default {
 }
 /deep/ .el-upload--picture-card{
   display: none;
+}
+/deep/ .el-form-item{
+      margin-bottom: 6px;
 }
 </style>

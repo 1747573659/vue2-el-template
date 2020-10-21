@@ -8,7 +8,7 @@
           @search="handleFilter"
         >
           <template v-slot:formfoot >
-              <router-link v-permission.page="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
+              <router-link v-permission="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
                 <el-button icon="el-icon-plus" type="primary"
                   size="small"
                   plain class="float_right">新增</el-button>
@@ -57,14 +57,16 @@ export default {
         {
            type: 'daterange',
            label: '提交日期',
-           value:[moment().subtract(30, 'days').format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")]
+           value:[moment().subtract(30, 'days').format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
+           width:"28%"
         },
         {
           type: 'input',
           name: 'title',
           label: '工单信息',
           placeholder: '工单编号/标题/描述/提交人',
-          value: ''
+          value: '',
+           width:"28%"
         },
         // {
         //   type: 'input',
@@ -82,7 +84,8 @@ export default {
             {value: '', label: '全部'},
             {value: '1', label: '问题'},
             {value: '2', label: '需求'}
-          ]
+          ],
+           width:"28%"
         },
         {
           type: 'select',
@@ -95,14 +98,16 @@ export default {
             {value: '2', label: '处理中'},
             {value: '3', label: '已处理'},
             {value: '9', label: '已关闭'}
-          ]
+          ],
+           width:"28%"
         },
         {
           type: 'select',
           name: 'productNo',
           label: '产品',
           value: '',
-          options: []
+          options: [],
+           width:"28%"
         }
       ],
       productOptions:[],
@@ -211,6 +216,9 @@ export default {
         this.queryFormList[this.queryFormList.length-1].options=this.productOptions
       })
     },
+  },
+  activated:function () {
+    this.handleFilter(this.queryParams)
   },
   mounted() {
     this.queryProductList()

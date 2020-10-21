@@ -6,7 +6,7 @@
 只支持查询近半年内的退款订单；</div>
       <el-form  label-width="110px" @submit.native.prevent class="search-form" size="small">
         <el-row>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="商户">
                <select-page
                 :request="queryMerchantAdminPage"
@@ -14,39 +14,32 @@
                 :name="'companyName'"
                 searchName="id"
                 id="id"
-                :width="'85%'"
+                :width="'100%'"
                 :placeholder="'商户名称'"
               >
               </select-page>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <el-col :span="6">
             <el-form-item label="退款订单号">
-              <el-input  style="width:85%" clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
+              <el-input  style="width:100%" clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
             </el-form-item>
           </el-col>
-           <el-col :span="8">
+           <el-col :span="6">
             <el-form-item  label="退款状态">
-              <el-select  style="width:85%" v-model="formData.status">
+              <el-select  style="width:100%" v-model="formData.status">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in statusList"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="支付订单号">
-              <el-input  style="width:85%" clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
+              <el-input  style="width:68%" clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
+              <el-button style="margin-left:8%" :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
-            <el-col :span="8">
-              <el-form-item style="margin-left:-60px">
-                <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-                <!-- <el-button @click="handleReset" plain size="small" type="primary">重置</el-button> -->
-              </el-form-item>
-          </el-col>
         </el-row>
-        <el-row>
-          
-        </el-row>
+    
       </el-form>
     </div>
     <!-- 内容展示区域 -->

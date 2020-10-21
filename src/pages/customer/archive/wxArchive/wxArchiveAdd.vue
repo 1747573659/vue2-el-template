@@ -1,7 +1,7 @@
 <template>
-  <section class="p-wxArchive-con" v-loading="isDetailLoad">
+  <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
     <header>
-      <el-row>
+      <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
         <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
           <label>进件状态：</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.auditStatus | filterReview }}</span>
@@ -258,10 +258,10 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
-                <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -294,10 +294,10 @@
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
-                <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.orgInstitutionEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
@@ -351,10 +351,10 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
-                <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.idEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -492,11 +492,11 @@
         </div>
       </el-form>
     </section>
-    <div class="p-wxArchive-action" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">
+    <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
       <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
       <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus)">拒绝</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')">取消</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'">拒绝</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
@@ -595,6 +595,11 @@ export default {
     })
   },
   methods: {
+    handleCancel() {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ name: 'wxArchive' })
+      })
+    },
     handleClosePreview() {
       this.showViewer = false
     },
@@ -704,7 +709,7 @@ export default {
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'wxArchive' })
             })
-            this.$message.success('新增成功')
+            this.$message.success('提交成功')
           } catch (error) {}
         }
       })
@@ -720,7 +725,7 @@ export default {
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus)) this.formDisabled = true
+        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
       } catch (error) {
       } finally {
         this.isDetailLoad = false
@@ -752,12 +757,15 @@ export default {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
-              if (this.$route.query.status === 'copy') this.form.archiveBaseVO.createTime = null
+              if (this.$route.query.status === 'copy') {
+                this.form.archiveBaseVO.createTime = null
+                this.form.archiveBaseVO.auditStatus = ''
+              }
               const res = await submit(this.form)
               this.$store.dispatch('delTagView', this.$route).then(() => {
                 this.$router.push({ name: 'wxArchive' })
               })
-              this.$message.success('新增成功')
+              this.$message.success('保存成功')
             } catch (error) {}
           }
         })

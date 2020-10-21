@@ -47,43 +47,43 @@
     </div>
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
-        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="180" align="center"></el-table-column>
-        <el-table-column prop="merchantName" label="商户名称"></el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
-        <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
-        <el-table-column label="进件类型" width="100px">
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="170"></el-table-column>
+        <el-table-column prop="merchantName" label="商户名称" width="120"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称" width="120"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.companyName" label="公司名称" width="120"></el-table-column>
+        <el-table-column label="进件类型">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="资料状态" width="150px">
+        <el-table-column label="资料状态">
           <template slot-scope="scope">
             <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.auditStatus === 4 }" @click="handleReason(scope.row)">
               {{ scope.row.archiveBaseDTO.auditStatus | filterReview }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="小微进件状态" width="110px">
+        <el-table-column label="小微进件状态">
           <template slot-scope="scope">
             <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="升级状态" width="110px">
+        <el-table-column label="升级状态">
           <template slot-scope="scope">
             <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="费率" width="90px">
+        <el-table-column label="费率">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="停用" width="90px">
+        <el-table-column label="停用">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="210px">
+        <el-table-column label="操作" align="right" width="210">
           <template slot-scope="scope">
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)" v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
@@ -96,13 +96,12 @@
               v-else-if="[0, 1, 4].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_DETAIL'" @click="handlePushDetail({ status: 'detail' }, scope.row)" v-else>详情</el-button>
+            <el-button type="text" size="small" @click="handlePushDetail({ status: 'detail' }, scope.row)" v-else>详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleStopUse(scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
             <el-button
               type="text"
               size="small"
-              v-permission="'WXARCHIVE_LIST_ARCHIVELIST'"
               v-if="scope.row.hasArchive"
               @click="
                 $router.push({
@@ -278,7 +277,8 @@ export default {
       float: right;
     }
     &_btnLabel {
-      width: 100px;
+      // width: 100px;
+      padding-left: 30px;
       text-align: right;
     }
   }

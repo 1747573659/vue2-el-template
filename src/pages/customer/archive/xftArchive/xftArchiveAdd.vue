@@ -1,5 +1,5 @@
 <template>
-  <div v-permission.page="'XFT_LIST_ADD,XFT_LIST_EDIT,XFT_LIST_CHECK,XFT_LIST_DETAIL,XFT_LIST_COPY'">
+  <div v-permission.page="'XFT_LIST_ADD,XFT_LIST_EDIT'">
     <div class="xft-add" v-loading="addLoading">
       <div class="header" v-if="!isCopy">
         <el-row>
@@ -502,10 +502,10 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button v-permission="'XFT_ADD_SUBMIT'" v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
-      <el-button v-permission="'XFT_ADD_SAVE'" v-if="([undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy) && !isDetail" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
-      <el-button v-permission="'XFT_ADD_SUBMIT'" v-if="([2].includes(auditStatus) || isCopy) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
-      <el-button v-permission="'XFT_ADD_REFUSE'" v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
+      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
+      <el-button v-if="([undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy) && !isDetail" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      <el-button v-if="([2].includes(auditStatus) || isCopy) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
+      <el-button v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div> 
     <el-dialog
