@@ -1,5 +1,5 @@
 <template>
-  <section v-permission.page="'WXARCHIVE_LIST_ARCHIVELIST'">
+  <section>
     <div style="padding-bottom: 16px;" class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight">
         <el-table-column prop="subMchId" label="微信商户号"></el-table-column>

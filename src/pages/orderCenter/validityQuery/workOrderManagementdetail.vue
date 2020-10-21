@@ -1,6 +1,6 @@
 <template>
-  <div class="app-container">
-    <div class="app-form">
+  <div class="app-container" v-permission.page="'WORKORDERMANAGEMENT_ADD'">
+    <div class="app-form data-box">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -298,7 +298,7 @@ export default {
 .app-form {
   background: #fff;
   padding: 30px 30%;
-  margin-top: 46px;
+  // margin-top: 46px;
 }
 .el-icon-upload{
   color: #D3DBEB;

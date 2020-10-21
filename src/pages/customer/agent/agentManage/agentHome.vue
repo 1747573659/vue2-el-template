@@ -28,8 +28,8 @@
               更多
             </el-button>
             <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-permission="'AGENT_MANAGE_BATCH_STOP'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
-              <el-dropdown-item v-permission="'AGENT_MANAGE_BATCH_START'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
+              <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
+              <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
             </el-dropdown-menu>
           </el-dropdown>
         </el-col>

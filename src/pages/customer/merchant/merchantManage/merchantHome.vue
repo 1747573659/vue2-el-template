@@ -44,8 +44,8 @@
                   更多
                 </el-button>
                 <el-dropdown-menu slot="dropdown">
-                  <el-dropdown-item v-permission="'MERCHANT_BATCH_STOP'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
-                  <el-dropdown-item v-permission="'MERCHANT_BATCH_START'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
+                  <el-dropdown-item v-permission="'MERCHANT_SET_STOPORSTART'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
+                  <el-dropdown-item v-permission="'MERCHANT_SET_STOPORSTART'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
                   <el-dropdown-item v-permission="'MERCHANT_BATCH_CLERK'" @click.native="batchSubmitClerk()">移交业务员</el-dropdown-item>
                 </el-dropdown-menu>
               </el-dropdown>

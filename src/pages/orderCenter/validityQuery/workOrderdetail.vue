@@ -1,6 +1,6 @@
 <template>
   <div class="app-container">
-    <div class="app-form">
+    <div class="app-form data-box">
       <el-form
         :model="ruleForm"
         :rules="rules"
@@ -293,7 +293,7 @@ export default {
 .app-form {
   background: #fff;
   padding: 30px 6%;
-  margin: 24px;
+  // margin: 24px;
 }
 .el-icon-upload{
   color: #D3DBEB;
