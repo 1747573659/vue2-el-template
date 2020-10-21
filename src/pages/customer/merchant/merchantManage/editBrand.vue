@@ -48,7 +48,7 @@
 </template>
 
 <script>
-import { queryMerchantById, addMerchant } from '@/api/customer/merchant'
+import { queryMerchantById, addMerchant, checkMerchant } from '@/api/customer/merchant'
 import BrandSelect from '@/components/brandSelect'
 import PicUpload from '@/components/picUpload'
 import picUploadMixin from '@/mixins/picUpload'
@@ -65,6 +65,22 @@ export default {
       const val = this.brandValue
       if (val?.length === 0) {
         callback('请选择品牌行业')
+      } else {
+        callback()
+      }
+    }
+
+    const validatorName = (rule, value, callback) => {
+      if (value === '') {
+        callback('请输入品牌名称')
+      } else if (value !== this.validatorName) {
+        checkMerchant({ name: value, adminId: this.ruleForm.adminId }).then((res) => {
+          if (res) {
+            callback(res)
+          } else {
+            callback()
+          }
+        })
       } else {
         callback()
       }
@@ -91,7 +107,8 @@ export default {
         tradeTypeId: '',
       },
       rules: {
-        name: { required: true, message: '请输入品牌名称', trigger: 'blur' },
+        // name: { required: true, message: '请输入品牌名称', trigger: 'blur' },
+        name: { required: true, validator: validatorName, trigger: 'blur' },
         // logo: { required: true, message: '请选择图片' },
         tradeTypeId: {
           required: true,
@@ -132,6 +149,7 @@ export default {
           tradeTypeId: res.tradeTypeId,
         }
 
+        this.validatorName = res.name
         this.brandValue = [res.topTradeTypeId, res.tradeTypeId]
         this.brandKey += 1
         this.adminName = res.adminName

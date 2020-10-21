@@ -8,7 +8,8 @@ const urlLinks = {
   queryProductList: '/workOrder/queryProductList',
   queryAgent: '/agentUser/queryAgent',
   queryWorkOrderList: '/workOrder/queryWorkOrderList',
-  queryOrderDetail: '/workOrder/queryOrderDetail'
+  queryOrderDetail: '/workOrder/queryOrderDetail',
+  queryAgentPage: '/agent/queryAgent',
 }
 // 校验角色重名
 export function addWorkOrder(data) {
@@ -43,6 +44,14 @@ export function queryWorkOrderList(data) {
 export function queryOrderDetail(data) {
   return request({
     url: urlLinks.queryOrderDetail,
+    method: 'post',
+    isOld:true,
+    data:qs.stringify(data)
+  })
+}
+export function queryAgentPage(data) {
+  return request({
+    url: urlLinks.queryAgentPage,
     method: 'post',
     isOld:true,
     data:qs.stringify(data)

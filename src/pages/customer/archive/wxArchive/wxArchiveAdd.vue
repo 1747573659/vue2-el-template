@@ -1,7 +1,7 @@
 <template>
-  <section class="p-wxArchive-con" v-loading="isDetailLoad">
+  <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_DETAIL,WXARCHIVE_LIST_ADD'">
     <header>
-      <el-row>
+      <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
         <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
           <label>进件状态：</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.auditStatus | filterReview }}</span>
@@ -492,10 +492,10 @@
         </div>
       </el-form>
     </section>
-    <div class="p-wxArchive-action" v-if="detailStatusArr.includes(form.archiveBaseVO.auditStatus) || pageAction === 'add'">
+    <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
       <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
       <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus)">拒绝</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'">拒绝</el-button>
       <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')">取消</el-button>
     </div>
     <!-- dialog -->
@@ -704,7 +704,7 @@ export default {
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'wxArchive' })
             })
-            this.$message.success('新增成功')
+            this.$message.success('提交成功')
           } catch (error) {}
         }
       })
@@ -720,7 +720,7 @@ export default {
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus)) this.formDisabled = true
+        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
       } catch (error) {
       } finally {
         this.isDetailLoad = false
@@ -752,12 +752,15 @@ export default {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
-              if (this.$route.query.status === 'copy') this.form.archiveBaseVO.createTime = null
+              if (this.$route.query.status === 'copy'){
+                this.form.archiveBaseVO.createTime = null
+                this.form.archiveBaseVO.auditStatus = ''
+              }
               const res = await submit(this.form)
               this.$store.dispatch('delTagView', this.$route).then(() => {
                 this.$router.push({ name: 'wxArchive' })
               })
-              this.$message.success('新增成功')
+              this.$message.success('保存成功')
             } catch (error) {}
           }
         })

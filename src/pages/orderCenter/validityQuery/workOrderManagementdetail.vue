@@ -35,6 +35,7 @@
             :on-preview="handlePreview"
             :on-remove="handleRemove"
             :on-success="handleSuccess"
+            ref="uploadfile"
             :file-list="fileList"
             list-type="picture-card"
           >
@@ -60,7 +61,7 @@
           <el-input class="km_input_width" v-model="ruleForm.linkPhone"></el-input>
         </el-form-item>
         <el-form-item v-if="!isEdit">
-          <el-button size="small" type="primary" @click="submitForm('ruleForm')">提交</el-button>
+          <el-button :disabled="isDisabled" size="small" type="primary" @click="submitForm('ruleForm')">提交</el-button>
           <!-- <el-button  type="primary" plain @click="resetForm('ruleForm')">重置</el-button> -->
           <el-button size="small" @click="cance()" >关闭</el-button>
         </el-form-item>
@@ -79,7 +80,8 @@ import {
   queryProductList,
   queryAgent,
   queryWorkOrderList,
-  queryOrderDetail
+  queryOrderDetail,
+  queryAgentPage
   } from '@/api/dataCenter/dataCenter.js'
   import { 
   uploadimage
@@ -99,7 +101,7 @@ export default {
       isEdit:false,
       ruleForm: {
         demandName: "",
-        orderType: "1",
+        orderType: "",
         productNoA: [],
         demandDec: "",
         fileName: "",
@@ -111,6 +113,7 @@ export default {
       dialogImgVisible:false,
       dialogImgUrl:"",
       vedioUrl:"",
+      isDisabled:false,
       uploadurl:VUE_APP_WORK_ORDER_URL+VUE_APP_WORK_ORDER_URLPATH+"/KMJFService.asmx/uploadimage?jsoncallback=?",
       rules: {
         demandName: [
@@ -121,6 +124,9 @@ export default {
         ],
         demandDec: [
           { required: true, message: "请填写工单描述", trigger: "blur" },
+        ],
+        orderType: [
+          { required: true, message: "请选择工单类型", trigger: "blur" },
         ],
         custName: [
           { required: true, message: "请填写公司名称", trigger: "blur" },
@@ -154,6 +160,11 @@ export default {
       getRequest.call(this,this.$route.query)
     }else{
       this.queryProductList()
+      queryAgentPage().then(res=>{
+        this.ruleForm.custName=res.companyName
+        this.ruleForm.linkName=res.contact
+        this.ruleForm.linkPhone=res.mobile
+      })
     }
   },
   methods: {
@@ -161,6 +172,20 @@ export default {
       this.$message.error("最多上传8个文件");
     },
     submitForm(formName) {
+      let files=this.$refs['uploadfile'].$children[0].files
+      if(files.length>0){
+        const isuploadingco = files.every((item, index) => {
+          if (item.status === 'success') {
+            return true
+          } else {
+            return false
+          }
+        })
+        if(!isuploadingco){
+          this.$message.warning("有文件正在上传，请等待文件上传完在点提交");
+          return false
+        }
+      }
       const cascader=this.$refs['cascader'].getCheckedNodes()[0];
       this.$refs[formName].validate((valid) => {
         if (valid) {
@@ -188,6 +213,7 @@ export default {
           url:VUE_APP_WORK_ORDER_URL+"/KMjsfw/images/"+response.fileName,
           type:file.raw.type
         })
+        this.isDisabled=false
     },
     queryProductList(){
       queryProductList({
@@ -237,6 +263,7 @@ export default {
          this.$message.warning('请将文件大小限制50M以内')
          return false
       }
+      this.isDisabled=true
     },
     handleRemove(file, fileList) {
       this.fileList=this.fileList.filter(re=>re.uid!==file.uid)
