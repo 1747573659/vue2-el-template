@@ -17,12 +17,22 @@ export default function xftValidator () {
       callback()
     }
   }
+  var merchantShortNameCheck = (rule, value, callback) => {
+    console.log(!value.match(/^[\u4E00-\u9FA5A-Za-z0-9]+$/g))
+    if (value === '') {
+      callback(new Error('请输入商户简称'))
+    } else if (!value.match(/^[\u4E00-\u9FA5A-Za-z0-9]+$/g)) {
+      callback(new Error('不可输入特殊字符'))
+    } else {
+      callback()
+    }
+  }
   return {
     'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户', trigger: 'change' }],
     'archiveBaseVO.merchantType': [{ required: true, message: '请选择商户类型', trigger: 'change' }],
     'archiveBaseVO.superCode': [{ required: true, message: '请选择是否开通超级码', trigger: 'change' }],
     'archiveBaseVO.companyName': [{ required: true, message: '请输入公司名称', trigger: 'blur' }],
-    'archiveBaseVO.merchantShortName': [{ required: true, message: '请输入商户简称', trigger: 'blur' }],
+    'archiveBaseVO.merchantShortName': [{ required: true, validator: merchantShortNameCheck, trigger: 'blur' }],
     'archiveBaseVO.province': [{ required: true, message: '请选择地区', trigger: 'change' }],
     'archiveBaseVO.address': [{ required: true, message: '请输入详细地址', trigger: 'blur' }],
     'archiveBaseVO.serviceTel': [{ required: true, message: '请输入客服电话', trigger: 'blur' }],
