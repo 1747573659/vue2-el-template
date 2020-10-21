@@ -496,7 +496,7 @@
       <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
       <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}</el-button>
       <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'">拒绝</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" @click="$router.push('wxArchive')">取消</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
@@ -595,6 +595,11 @@ export default {
     })
   },
   methods: {
+    handleCancel() {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ name: 'wxArchive' })
+      })
+    },
     handleClosePreview() {
       this.showViewer = false
     },
@@ -752,7 +757,7 @@ export default {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
-              if (this.$route.query.status === 'copy'){
+              if (this.$route.query.status === 'copy') {
                 this.form.archiveBaseVO.createTime = null
                 this.form.archiveBaseVO.auditStatus = ''
               }
