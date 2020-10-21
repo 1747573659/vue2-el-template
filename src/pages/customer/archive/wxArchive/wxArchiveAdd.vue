@@ -1,5 +1,5 @@
 <template>
-  <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_DETAIL,WXARCHIVE_LIST_ADD'">
+  <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
     <header>
       <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
         <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
@@ -258,10 +258,10 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
-                <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -294,10 +294,10 @@
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
-                <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.orgInstitutionEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
@@ -351,10 +351,10 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
-                <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.idEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12">

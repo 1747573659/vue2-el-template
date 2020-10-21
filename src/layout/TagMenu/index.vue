@@ -1,35 +1,54 @@
 <template>
-  <section class="p-tags_con">
-    <div
-      class="p-tags_item"
-      :class="{ 'e-tag_active': isActive(item), 'e-tag-cut__pd': hasTagIndex(index) }"
-      @mouseover="setTagIndex(index)"
-      @mouseleave="resetTagIndex"
-      @click="handleJumpPage(item, item.query)"
-      v-for="(item, index) in tagViews"
-      :key="item.path"
-    >
+  <section class="p-tags_con" ref="tagMenu">
+    <div class="p-tags_item" v-for="(item, index) in baseArr" :key="item.path" :class="{ 'e-tag_active': isActive(item), 'p-tags_closable': index > 0 }" @click="handleJumpPage(item, item.query)">
       <span>{{ item.title }}</span>
-      <i v-if="hasTagIndex(index) && item.name !== 'homeIndex'" class="el-icon-close" :class="{ 'e-tag_close': hasTagIndex(index) }" @click.stop="handleClose(item)"></i>
+      <i class="el-icon-close" @click.stop="handleClose(item)"></i>
     </div>
+    <el-dropdown class="p-tags_item e-tags_dropdown" v-if="dropArr.length > 0" @command="handleCommand">
+      <span class="el-dropdown-link">
+        <i class="el-icon-arrow-down"></i>
+      </span>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item v-for="item in dropArr" :key="item.name" :command="{ item: item, query: item.query }" :class="{ 'e-tag_active': isActive(item) }">{{ item.title }}</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
   </section>
 </template>
 
 <script>
 import { mapGetters, mapActions } from 'vuex'
+
 export default {
   data() {
     return {
-      tags: [],
-      activeIndex: 0
+      dropArr: [],
+      baseArr: []
     }
   },
   watch: {
     $route() {
       this.handleTagViews()
     },
-    tagViews(val) {
-      this.tags = val
+    tagViews: {
+      handler(val) {
+        this.baseArr = val
+        this.$nextTick(() => {
+          let tagsWidth = this.$refs.tagMenu.offsetWidth
+          let tagsItem = document.querySelectorAll('.p-tags_item')
+          let width = 0
+          for (let i = 0; i < this.tagViews.length; i++) {
+            width += tagsItem[i].offsetWidth
+            if (tagsWidth - width <= 100) {
+              this.baseArr = this.tagViews.slice(0, i)
+              this.dropArr = this.tagViews.slice(i)
+              break
+            } else {
+              this.dropArr = []
+            }
+          }
+        })
+      },
+      immediate: true
     }
   },
   computed: {
@@ -40,6 +59,9 @@ export default {
   },
   methods: {
     ...mapActions(['setTagViews', 'setCachedViews', 'delTagView', 'delCachedView']),
+    handleCommand({ item, query }) {
+      this.$router.push({ path: item.path, query: Object.keys(query).length === 0 ? {} : query })
+    },
     handleTagViews() {
       if (this.$route.name) {
         this.setTagViews(this.$route)
@@ -55,30 +77,21 @@ export default {
         if (this.isActive(item)) {
           const latestView = views.slice(-1)[0]
           if (latestView) {
-            this.$router.push({ path: latestView.path, query: latestView.query ? latestView.query : {} })
+            this.$router.push({ path: latestView.path, query: latestView.query ? {} : latestView.query })
           } else {
             const menus = this.routes
             if (JSON.stringify(menus).includes('home')) {
               this.$router.push({ name: 'home' })
             } else {
-              this.$router.push({ name: menus[0].children[0].children[0].name, query: { time: String(new Date().getTime()) } })
+              this.$router.push({ name: menus[0].children[0].children[0].name })
             }
           }
           this.delCachedView(item)
         }
       })
     },
-    setTagIndex(index) {
-      this.activeIndex = index
-    },
-    resetTagIndex() {
-      this.activeIndex = 0
-    },
     isActive(route) {
       return route.path === this.$route.path
-    },
-    hasTagIndex(index) {
-      return this.activeIndex === index
     }
   }
 }
@@ -96,25 +109,55 @@ export default {
       position: fixed;
       top: 56px;
       left: 200px;
-      width: 100%;
+      width: calc(100% - 200px);
       z-index: 1000;
     }
     &_item {
-      display: block;
-      float: left;
+      height: 32px;
+      line-height: 32px;
+      display: inline-block;
       font-size: 14px;
       color: #555555;
       background: #f6f6f6;
-      line-height: 32px;
-      height: 32px;
-      padding: 0 20px 0 20px;
-      border-right: 1px solid #e8e8e8;
-      border-top: 1px solid #e8e8e8;
-      margin-top: 14px;
+      position: relative;
+      top: 15px;
+      border-bottom: 1px solid transparent;
+      border-left: 1px solid #e4e7ed;
+      border-top: 1px solid #e4e7ed;
+      transition: padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+      padding: 0 20px;
       cursor: pointer;
-      box-sizing: content-box;
-      &:first-child {
-        border-left: 1px solid #e8e8e8;
+      &:last-child {
+        border-right: 1px solid #e4e7ed;
+      }
+      /deep/ .el-icon-close {
+        position: relative;
+        width: 0;
+        height: 14px;
+        vertical-align: middle;
+        overflow: hidden;
+        top: -1px;
+        right: -2px;
+        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
+        margin-left: 5px;
+      }
+      &.e-tag_active.p-tags_closable {
+        &:hover {
+          padding-left: 20px;
+          padding-right: 20px;
+        }
+        /deep/ .el-icon-close {
+          width: 14px;
+        }
+      }
+      &.p-tags_closable {
+        &:hover {
+          padding-left: 13px;
+          padding-right: 13px;
+          /deep/ .el-icon-close {
+            width: 14px;
+          }
+        }
       }
     }
   }
@@ -131,6 +174,15 @@ export default {
     }
     &-cut__pd {
       padding-right: 10px;
+    }
+  }
+  &-tags {
+    &_dropdown {
+      padding: 0;
+      /deep/ .el-dropdown-link{
+        padding: 0 10px;
+        display: inline-block;
+      }
     }
   }
 }
