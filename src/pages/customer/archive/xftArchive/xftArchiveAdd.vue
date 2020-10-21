@@ -1,5 +1,5 @@
 <template>
-  <div v-permission.page="'XFT_LIST_ADD,XFT_LIST_EDIT,XFT_LIST_CHECK,XFT_LIST_DETAIL,XFT_LIST_COPY'">
+  <div v-permission.page="'XFT_LIST_ADD,XFT_LIST_EDIT'">
     <div class="xft-add" v-loading="addLoading">
       <div class="header" v-if="!isCopy">
         <el-row>
