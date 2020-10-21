@@ -291,6 +291,7 @@ const customer = {
           code: 'WORKORDERMANAGEMENTDETAIL',
           meta: {
             title: '工单管理/新增',
+            cache: true,
             name: 'workOrderManagementdetail'
           }
         },
