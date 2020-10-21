@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" right>
+    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" :width="'60%'" right>
       <div class="table-content" v-if="this.type === 'order'">
         <div class="table-item">
           <div class="table-item-content left-content">
