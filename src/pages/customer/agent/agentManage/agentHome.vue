@@ -71,7 +71,7 @@
         </el-pagination>
       </div>
 
-      <el-dialog title="分配应用配额" :visible.sync="dialogVisible" width="800px">
+      <el-dialog title="分配应用配额" :visible.sync="dialogVisible" width="800px" class="quota-dialog-wrapper">
         <div>
           <div class="dialog-content">
             <aside class="dialog-left">
@@ -383,6 +383,8 @@ export default {
   height: 56px;
   line-height: 56px;
   background: #f7f9fc;
+  font-weight: 500;
+  color: #3D4966;
 }
 ul {
   margin: 0;
