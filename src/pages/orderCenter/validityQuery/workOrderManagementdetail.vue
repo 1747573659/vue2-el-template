@@ -125,6 +125,9 @@ export default {
         demandDec: [
           { required: true, message: "请填写工单描述", trigger: "blur" },
         ],
+        orderType: [
+          { required: true, message: "请选择工单类型", trigger: "blur" },
+        ],
         custName: [
           { required: true, message: "请填写公司名称", trigger: "blur" },
         ],

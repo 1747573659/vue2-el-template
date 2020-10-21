@@ -217,6 +217,9 @@ export default {
       })
     },
   },
+  activated:function () {
+    this.handleFilter(this.queryParams)
+  },
   mounted() {
     this.queryProductList()
     this.handleFilter(this.queryParams)
