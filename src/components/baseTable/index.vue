@@ -12,7 +12,6 @@
               v-if="column.type === 'selection'"
               type="selection"
               width="55"
-              
             ></el-table-column>
             <!-- 序号 -->
             <el-table-column
@@ -162,7 +161,7 @@ export default {
       }
     },
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 146
     },
     pageSizes: {
       get () {
