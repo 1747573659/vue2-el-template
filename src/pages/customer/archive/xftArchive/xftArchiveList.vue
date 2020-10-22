@@ -68,7 +68,7 @@
           prop="archiveBaseDTO.createTime"
           label="申请时间"
           sortable="custom"
-          width="170">
+          width="110">
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.id"
