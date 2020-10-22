@@ -18,3 +18,8 @@
     width: 240px;
   }
 }
+
+.km-container__inner {
+  min-height: calc(100vh - 136px);
+  background-color: #fff;
+}

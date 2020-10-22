@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="search-box">
-      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="100px" @submit.native.prevent>
+      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
             <el-col>
@@ -47,10 +47,10 @@
     </div>
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
-        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="170"></el-table-column>
-        <el-table-column prop="merchantName" label="商户名称" width="120"></el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称" width="120"></el-table-column>
-        <el-table-column prop="archiveBaseDTO.companyName" label="公司名称" width="120"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
+        <el-table-column prop="merchantName" label="商户名称"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
         <el-table-column label="进件类型">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</span>
@@ -63,7 +63,7 @@
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="小微进件状态">
+        <el-table-column label="小微进件">
           <template slot-scope="scope">
             <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span>
           </template>
@@ -73,12 +73,12 @@
             <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="费率">
+        <el-table-column label="费率" width="80">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="停用">
+        <el-table-column label="停用" width="60">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>

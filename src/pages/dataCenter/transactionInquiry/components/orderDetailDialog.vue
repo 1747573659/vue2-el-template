@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" :width="'60%'" right>
+    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" :width="'843px'" right>
       <div class="table-content" v-if="this.type === 'order'">
         <div class="table-item">
           <div class="table-item-content left-content">
@@ -228,7 +228,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer right">
-        <el-button type="primary" @click="orderDetailVisible = false" size="small">我知道了</el-button>
+        <el-button style="width:80px" type="primary" @click="orderDetailVisible = false" size="small">我知道了</el-button>
       </div>
     </el-dialog>
   </div>
@@ -264,8 +264,10 @@ export default {
 .center{
     text-align: center;
   }
+  
 .table-content {
   border: 1px solid #E6E9F0;
+  width:780px;
     margin-top: 10px;
     margin-bottom: -10px;
     margin-right: 10px;
@@ -277,13 +279,13 @@ export default {
     justify-content: space-between;
     .table-item-content {
       font-size: 14px;
-      color: #212430;
+      color: #3D4966;
       padding: 10px;
       width: 50%;
       display: flex;
-      padding: 19px 0;
+      padding: 18px 0;
       .table-item-title{
-        width: 30%;
+        width: 130px;
         text-align: right;
         margin-right: 14px;
       }
@@ -293,6 +295,13 @@ export default {
     }
     .left-content {
       border-right: 1px solid #E6E9F0;
+    }
+
+  }
+  .dialog-footer{
+    button{
+      position: relative;
+      right: -1px;
     }
   }
   .table-item:last-child {

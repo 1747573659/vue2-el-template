@@ -3,7 +3,7 @@
     <div class="search-box">
       <el-form :inline="true" size="small" :model="form" label-width="100px" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="20">
+          <el-col :span="24">
             <el-form-item label="商户信息：">
               <el-input v-model="form.id" maxlength="50" placeholder="请输入商户编号/名称/运营者" clearable></el-input>
             </el-form-item>

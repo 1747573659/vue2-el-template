@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="search-box">
-      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="100px">
+      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-row>
           <el-col :span="21">
             <el-form-item label="申请时间">
@@ -68,7 +68,7 @@
           prop="archiveBaseDTO.createTime"
           label="申请时间"
           sortable="custom"
-          width="170">
+          width="110">
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.id"
@@ -93,7 +93,8 @@
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.auditStatus"
-          label="资料状态">
+          label="资料状态"
+          width="140">
           <template slot-scope="scope">
             <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
               {{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}
@@ -103,7 +104,8 @@
         </el-table-column>
         <el-table-column
           prop="createTime"
-          label="微信认证状态">
+          label="微信认证状态"
+          width="130">
           <template slot-scope="scope">
             {{wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus]}}
           </template>
