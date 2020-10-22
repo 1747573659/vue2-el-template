@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="search-box">
       <query-group
-        className="all-fr"
+        className="xdd-btn-block__w240"
         :queryFormList.sync="queryFormList"
         :queryParams="queryParams"
         @search="handleFilter"
@@ -14,6 +14,7 @@
               :bvalue.sync="tableParam.userId"
               :name="'companyName'"
               searchName="id"
+              :width="'240px'"
               id="userId"
               :placeholder="'商户名称'"
             >
@@ -22,7 +23,7 @@
         </template>
 
         <template v-slot:formfoot>
-          <el-button v-permission.page="'ACCOUNT_ROLE_ADD,ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD_EXPORT'"  size="small" @click="wmdownloadExcel">导出</el-button>
+              <el-button v-permission.page="'ACCOUNT_ROLE_ADD,ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD_EXPORT'"  size="small" @click="wmdownloadExcel">导出</el-button>
         </template>
       </query-group>
     </div>

@@ -93,7 +93,8 @@
         </el-table-column>
         <el-table-column
           prop="archiveBaseDTO.auditStatus"
-          label="资料状态">
+          label="资料状态"
+          width="140">
           <template slot-scope="scope">
             <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
               {{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}
@@ -103,7 +104,8 @@
         </el-table-column>
         <el-table-column
           prop="createTime"
-          label="微信认证状态">
+          label="微信认证状态"
+          width="130">
           <template slot-scope="scope">
             {{wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus]}}
           </template>
@@ -206,7 +208,7 @@ export default {
         {id: 3, name: '平台审核中'},
         {id: 4, name: '未通过审核'},
         {id: 5, name: '账号申请中'},
-        {id: 6, name: '部分账号申请通过'},
+        {id: 6, name: '账号部分申请通过'},
         {id: 7, name: '账号全部申请通过'},
         {id: 8, name: '资料待补充'},
         {id: 9, name: '资料补充待审核'}
@@ -230,7 +232,7 @@ export default {
         3: '平台审核中',
         4: '未通过审核',
         5: '账号申请中',
-        6: '部分账号申请通过',
+        6: '账号部分申请通过',
         7: '账号全部申请通过',
         8: '资料待补充',
         9: '资料补充待审核',
