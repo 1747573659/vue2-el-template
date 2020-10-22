@@ -2,13 +2,13 @@
   <div class="app-container">
     <div class="search-box">
         <query-group
-          className="all-fr"
+          className="xdd-btn-block__w240"
           :queryParams="queryParams"
           :queryFormList.sync="queryFormList"
           @search="handleFilter"
         >
           <template v-slot:formfoot >
-              <router-link v-permission.page="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
+              <router-link  v-permission="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
                 <el-button icon="el-icon-plus" type="primary"
                   size="small"
                   plain class="float_right">新增</el-button>
@@ -58,7 +58,7 @@ export default {
            type: 'daterange',
            label: '提交日期',
            value:[moment().subtract(30, 'days').format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
-           width:"28%"
+         
         },
         {
           type: 'input',
@@ -66,7 +66,6 @@ export default {
           label: '工单信息',
           placeholder: '工单编号/标题/描述/提交人',
           value: '',
-           width:"28%"
         },
         // {
         //   type: 'input',
@@ -85,7 +84,6 @@ export default {
             {value: '1', label: '问题'},
             {value: '2', label: '需求'}
           ],
-           width:"28%"
         },
         {
           type: 'select',
@@ -99,7 +97,6 @@ export default {
             {value: '3', label: '已处理'},
             {value: '9', label: '已关闭'}
           ],
-           width:"28%"
         },
         {
           type: 'select',
@@ -107,7 +104,6 @@ export default {
           label: '产品',
           value: '',
           options: [],
-           width:"28%"
         }
       ],
       productOptions:[],
@@ -122,7 +118,8 @@ export default {
       headers: [
         {
           key: 'sheetNo',
-          title: '工单编号'
+          title: '工单编号',
+          width:"130"
         },
         {
           key: 'demandName',
@@ -161,16 +158,19 @@ export default {
         },
         {
           key: 'orderDate',
-          title: '提交时间'
+          title: '提交时间',
+          width:"180"
         },
         {
           key: 'status',
-          title: '状态'
+          title: '状态',
+           width:"80",
         },
         {
           type: 'operate',
           title: '操作',
-          width: '100',
+          width:"60",
+          position:"right",
           operates: [
             {
               name: '详情',

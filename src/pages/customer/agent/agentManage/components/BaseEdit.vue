@@ -40,7 +40,8 @@
               <el-form-item label="代理商分成比例：" prop="proportion" class="icon-block">
                 <el-input v-model="ruleForm.proportion" placeholder="0至100"></el-input>
                 <el-popover :close-delay="0" placement="top" width="350" trigger="hover" content="代理商分润 =（商户成本费率-代理商成本费率）*代理商分润比例，100表示分润全额返给代理商，0表示代理商不参与分润">
-                  <i slot="reference" class="el-icon-question icon-question"></i>
+                  <!-- <i slot="reference" class="el-icon-question icon-question"></i> -->
+                  <img :src="questionIcon" slot="reference" alt="提示" class="e-icon-question icon-question" />
                 </el-popover>
               </el-form-item>
             </div>
@@ -219,6 +220,7 @@ export default {
     }
 
     return {
+      questionIcon: require('@/assets/images/icon/questioin.png'),
       arrBD: [],
       validatorName: '',
       uploadUrl: process.env.VUE_APP_BASE_API + '/oss/uploadFile',
@@ -452,10 +454,6 @@ export default {
   width: 16px;
   font-size: 16px;
   color: #cad1e0;
-  cursor: pointer;
-  &:hover {
-    color: #3377ff;
-  }
 }
 .item-btn {
   position: absolute;

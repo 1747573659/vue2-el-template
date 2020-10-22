@@ -2,43 +2,41 @@
   <div class="app-container">
     <div class="search-box">
       <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近半年内的交易流水，单次查询日期的最长跨度为31天</div>
-      <el-form :model="formData" @submit.native.prevent label-width="110px" ref="form" size="small">
+      <el-form :inline="true" :model="formData" @submit.native.prevent label-width="100px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
-        <el-col :span="7">
+          <el-col :span="24">
             <el-form-item label="商户名称" prop="shopId">
                <select-page
                 :request="queryMerchantAdminPage"
                 :bvalue.sync="formData.shopId"
                 :name="'companyName'"
-                :width="'100%'"
+                :width="'240px'"
                 searchName="id"
                 id="id"
                 :placeholder="'商户名称'"
               >
               </select-page>
             </el-form-item>
+            <el-form-item label="交易时间">
+              <el-date-picker
+                :clearable="false"
+                :default-time="['00:00:00', '23:59:59']"
+                :picker-options="pickerOptions"
+                end-placeholder="结束日期"
+                range-separator="至"
+                start-placeholder="开始日期"
+                type="datetimerange"
+                v-model="formData.transactionTime"
+                value-format="timestamp"
+              ></el-date-picker>
+              <el-button :disabled="isSubtract" @click="setSearchTime('subtract')" class="pure-btn_space" size="small" type="default">前一天</el-button>
+              <el-button :disabled="isAdd" @click="setSearchTime('add')" size="small" type="default">后一天</el-button>
+            </el-form-item>
           </el-col>
-          <el-col :span="16">
-        <el-form-item label="交易时间">
-          <el-date-picker
-            :clearable="false"
-            :default-time="['00:00:00', '23:59:59']"
-            :picker-options="pickerOptions"
-            end-placeholder="结束日期"
-            range-separator="至"
-            start-placeholder="开始日期"
-            type="datetimerange"
-            v-model="formData.transactionTime"
-            value-format="timestamp"
-          ></el-date-picker>
-          <el-button :disabled="isSubtract" @click="setSearchTime('subtract')" class="pure-btn_space" size="small" type="default">前一天</el-button>
-          <el-button :disabled="isAdd" @click="setSearchTime('add')" size="small" type="default">后一天</el-button>
-        </el-form-item>
-        </el-col>
         </el-row>
+            
         <el-row>
-          
-          <el-col :span="7">
+          <el-col :span="24">
             <el-form-item label="门店名称" prop="storeName">
                 <select-page
                   :request="getStorePage"
@@ -46,22 +44,21 @@
                   :name="'name'"
                   :isMultiple="true"
                   searchName="storeName"
-                   :width="'100%'"
+                   :width="'240px'"
                   :parame="{adminId:formData.shopId || ''}"
                   id="id"
                   placeholder="门店名称"
                 >
                 </select-page>
             </el-form-item>
-          </el-col>
-          <el-col :span="7">
+          
             <el-form-item  label="收银员" prop="cashier">
               <select-page
                   :request="queryClerkPageByStore"
                   :bvalue.sync="formData.clerkInfos"
                   :name="'name'"
                   searchName="name"
-                   :width="'100%'"
+                   :width="'240px'"
                   :isMultiple="true"
                   :parame="{storeId:formData.stores || ''}"
                   id="id"
@@ -69,8 +66,6 @@
                 >
                 </select-page>
             </el-form-item>
-          </el-col>
-           <el-col :span="7">
             <el-form-item label="支付方式" prop="paymentCode">
               <el-select class="order_sel"  @change="getPaymentScenario" filterable v-model="formData.paymentCode">
                 <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentData"></el-option>
@@ -79,39 +74,30 @@
           </el-col>
         </el-row>
         <el-row>
-         
-         
-          <el-col :span="7">
+          <el-col :span="24">
             <el-form-item label="支付场景" prop="paymentScenarioCode">
               <el-select class="order_sel" v-model="formData.paymentScenarioCode" filterable>
                 <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentScenarioData"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-           <el-col :span="7">
-            <el-form-item label="交易金额" prop="paymentScenarioCode" class="paymentScenarioCod">
-              <el-input type="number" min="0" style="width:50%;margin-right: 5px;"  size="small" v-model="formData.startAmount" placeholder="请输入金额"></el-input>
-              -
-              <el-input type="number" min="0" style="width:50%;margin-left: 5px;" size="small" v-model="formData.endAmount" placeholder="请输入金额"></el-input>
+            <el-form-item label="交易金额" prop="paymentScenarioCode">
+              <div class="el-input" style="display: flex;justify-content: space-between;">
+                   <el-input type="number" min="0" style="width:47%;"  size="small" v-model="formData.startAmount" placeholder="0"></el-input>
+                    -
+                    <el-input type="number" min="0" style="width:47%;" size="small" v-model="formData.endAmount" placeholder="999999.99"></el-input>
+              </div>
             </el-form-item>
-          </el-col>
-          <el-col :span="7">
-            <el-form-item label="交易状态" prop="tradingStatusCode">
-              <el-select style="margin-right: 16px;" class="order_sel" collapse-tags multiple v-model="formData.tradingStatusCode">
+             <el-form-item label="交易状态" prop="tradingStatusCode">
+              <el-select  class="order_sel" collapse-tags multiple v-model="formData.tradingStatusCode">
                 <el-option :key="item.codes" :label="item.name" :value="item.codes" v-for="item in tradingStatusData"></el-option>
               </el-select>
-                
              </el-form-item>
-             
-          </el-col>
-          <el-col :span="2">
-             <el-button style="margin-left: 24px;" :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-          </el-col>
-          
+             <el-form-item>
+              <el-button  :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+            </el-form-item>
+          </el-col> 
         </el-row>
-       
       </el-form>
-  
     </div>
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
@@ -292,7 +278,7 @@ export default {
       }
     },
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
     },
     isAdd () {
       if (moment(this.formData.transactionTime[1]).startOf('day').valueOf() === moment().startOf('day').valueOf()) {
@@ -605,6 +591,10 @@ export default {
   text-align: right;
   padding: 20px 0;
 }
+.xdd_row{
+  display: flex;
+}
+
 .order_sel{
   width:100%
 }
