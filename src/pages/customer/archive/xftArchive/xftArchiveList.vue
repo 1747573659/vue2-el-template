@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="search-box">
-      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="100px">
+      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-row>
           <el-col :span="21">
             <el-form-item label="申请时间">

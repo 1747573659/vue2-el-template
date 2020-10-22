@@ -144,7 +144,7 @@ export default {
     box-shadow: 0px 6px 12px 0px rgba(230, 233, 240, 1);
     display: flex;
     position: fixed;
-    z-index: 1001;
+    z-index: 2000;
     &_logo {
       width: 200px;
       height: 100%;
