@@ -82,11 +82,12 @@
             </el-form-item>
             <el-form-item label="交易金额" prop="paymentScenarioCode">
               <div class="el-input2" style="display: flex;justify-content: space-between;">
-                    <el-input-number v-model="formData.startAmount" controls-position="right" style="width: 47%;margin-right: 10px;"  size="small"  :min="0" placeholder="0"></el-input-number>
-            
+                    <!-- <el-input-number v-model="formData.startAmount" controls-position="right" style="width: 47%;margin-right: 10px;"  size="small"  :min="0" placeholder="0"></el-input-number>
                     -
-                    <el-input type="number" min="0" style="width:102%;margin-left: 10px;" size="small" v-model="formData.endAmount" placeholder="999999.99"></el-input>
-                   
+                    <el-input-number v-model="formData.endAmount" controls-position="right" style="width: 47%;margin-left: 10px;"  size="small"  :min="0" placeholder="999999.99"></el-input-number> -->
+                    <el-input type="number" min="0" style="width:47%;margin-right: 10px;"  size="small" v-model="formData.startAmount" placeholder="0"></el-input>
+                    -
+                    <el-input type="number" min="0" style="width:47%;margin-left: 10px;" size="small" v-model="formData.endAmount" placeholder="999999.99"></el-input>
                     
               </div>
             </el-form-item>
@@ -586,6 +587,9 @@ export default {
 }
 .el-input2 /deep/ .el-input{
   width:100%!important
+}
+.el-input2 /deep/ .el-input__inner{
+        padding-right: 5px;
 }
 .xdd_tip i{
     color: #3377FF;
