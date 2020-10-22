@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" :width="'843px'" right>
+    <el-dialog :title="dialogTitle" :visible.sync="orderDetailVisible" :width="'883px'" right>
       <div class="table-content" v-if="this.type === 'order'">
         <div class="table-item">
           <div class="table-item-content left-content">
@@ -267,7 +267,7 @@ export default {
   
 .table-content {
   border: 1px solid #E6E9F0;
-  width:780px;
+  width:820px;
     margin-top: 10px;
     margin-bottom: -10px;
     margin-right: 10px;
@@ -283,7 +283,7 @@ export default {
       padding: 10px;
       width: 50%;
       display: flex;
-      padding: 18px 0;
+      padding: 15px 0;
       .table-item-title{
         width: 130px;
         text-align: right;

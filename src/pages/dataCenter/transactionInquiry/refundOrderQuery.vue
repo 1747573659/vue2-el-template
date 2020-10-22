@@ -50,8 +50,8 @@
         <el-table-column label="门店名称" prop="tradeStoreName"></el-table-column>
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="退款人" prop="refundPerson"></el-table-column>
-        <el-table-column align="right" label="申请退款金额" prop="amount"></el-table-column>
-        <el-table-column align="right" label="退还用户金额" prop="refundAmount"></el-table-column>
+        <el-table-column align="right" label="申请退款金额" prop="amount" :width="106"></el-table-column>
+        <el-table-column align="right" label="退还用户金额" prop="refundAmount" :width="106"></el-table-column>
         <el-table-column label="退款状态" prop="refundStatusName"></el-table-column>
         <el-table-column align="right" label="操作">
           <template slot-scope="scope">

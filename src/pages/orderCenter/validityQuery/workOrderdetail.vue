@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div class="km-container__inner">
     <div class="app-form data-box">
       <el-form
         :model="ruleForm"
@@ -295,6 +295,8 @@ export default {
   padding: 30px 6%;
   // margin: 24px;
 }
+
+
 .el-icon-upload{
   color: #D3DBEB;
 }

@@ -1,20 +1,20 @@
 <template>
-  <div class="app-container" v-permission.page="'WORKORDERMANAGEMENT_ADD'">
+  <div class="km-container__inner" v-permission.page="'WORKORDERMANAGEMENT_ADD'">
     <div class="app-form data-box">
       <el-form
         :model="ruleForm"
         :rules="rules"
         ref="ruleForm"
         label-width="100px"
-        class="demo-ruleForm"
+        class="xdd-btn-block__w240"
         :disabled="isEdit"
       >
         <el-form-item label="工单标题：" prop="demandName">
-          <el-input class="km_input_width"  v-model="ruleForm.demandName"></el-input>
+          <el-input  v-model="ruleForm.demandName"></el-input>
         </el-form-item>
         <el-form-item label="工单类型：" prop="orderType">
           <el-radio-group v-model="ruleForm.orderType">
-            <el-radio label="1">问题</el-radio>
+            <el-radio label="1" style="margin-right: 88px;">问题</el-radio>
             <el-radio label="2">需求</el-radio>
           </el-radio-group>
         </el-form-item>
@@ -52,15 +52,15 @@
           </el-dialog>
         </el-form-item>
         <el-form-item label="公司名称：" prop="custName">
-          <el-input class="km_input_width" v-model="ruleForm.custName"></el-input>
+          <el-input  v-model="ruleForm.custName"></el-input>
         </el-form-item>
         <el-form-item label="联系人：" prop="linkName">
-          <el-input class="km_input_width" v-model="ruleForm.linkName"></el-input>
+          <el-input  v-model="ruleForm.linkName"></el-input>
         </el-form-item>
         <el-form-item label="联系方式：" prop="linkPhone">
-          <el-input class="km_input_width" v-model="ruleForm.linkPhone"></el-input>
+          <el-input  v-model="ruleForm.linkPhone"></el-input>
         </el-form-item>
-        <el-form-item v-if="!isEdit">
+        <el-form-item v-if="!isEdit" style="padding-bottom: 10px;">
           <el-button :disabled="isDisabled" size="small" type="primary" @click="submitForm('ruleForm')">提交</el-button>
           <!-- <el-button  type="primary" plain @click="resetForm('ruleForm')">重置</el-button> -->
           <el-button size="small" @click="cance()" >关闭</el-button>
@@ -297,8 +297,29 @@ export default {
 <style lang="scss" scoped>
 .app-form {
   background: #fff;
-  padding: 30px 30%;
+  height: 100%;
+  margin-bottom: 0px;
+  padding-top: 32px;
   // margin-top: 46px;
+}
+/deep/.el-input__count{
+    right: 56px;
+    bottom: -5px;
+    background: transparent;
+}
+.km-container__inner{
+  min-height: calc(100vh - 26px);
+}
+.xdd-btn-block__w240{
+  width: 545px;
+  margin: 32px auto;
+}
+.xdd-btn-block__w240 /deep/ .el-input__inner{
+  height: 32px;
+}
+.demandDec /deep/ textarea{
+  width:400px;
+  height:120px
 }
 .el-icon-upload{
   color: #D3DBEB;
