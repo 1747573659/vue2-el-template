@@ -1,5 +1,5 @@
 <template>
-  <div v-permission.page="'AGENT_MANAGE_EDIT'">
+  <div v-permission.page="'AGENT_MANAGE_EDIT'" class="km-container__inner">
     <base-edit :isEdit="isEdit"></base-edit>
   </div>
 </template>
