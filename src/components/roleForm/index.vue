@@ -1,5 +1,5 @@
 <template>
-  <div class="data-box">
+  <div>
     <div class="km-setting-roleAdd">
       <el-form
         ref="form"

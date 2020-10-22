@@ -24,7 +24,7 @@
       </div>
     </el-upload>
     <div class="upload-require">
-      要求图片清晰可见，2.2MB以内
+      要求图片清晰可见，2MB以内
       <el-popover
         class="upload-example-popover"
         placement="bottom"

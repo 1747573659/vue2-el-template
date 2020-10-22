@@ -123,8 +123,8 @@
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="交易状态" prop="orderStatusName"></el-table-column>
         <el-table-column align="right" label="交易金额" prop="amount"></el-table-column>
-        <el-table-column align="right" label="申请退款金额" prop="refundAmount"></el-table-column>
-        <el-table-column align="right" label="操作" width="140px">
+        <el-table-column align="right" label="申请退款金额" prop="refundAmount" :width="106"></el-table-column>
+        <el-table-column align="right" label="操作" >
           <template slot-scope="scope">
             <el-button @click="handleDetails(scope.row)" size="small" type="text" >详情</el-button>
             <el-button
@@ -249,7 +249,7 @@ export default {
         tradingTypeCode: '',
         paymentCode: '',
         paymentScenarioCode: '',
-        tradingStatusCode: [],
+        tradingStatusCode: ["2","3","4"],
         clerkInfos:"",
         startAmount:"",
         endAmount:""
@@ -531,7 +531,7 @@ export default {
     async getAllTradeStatus () {
       const res = await queryAllTradeStatus()
       this.tradingStatusData = [{ codes: '', name: '全部' }, ...res]
-      this.formData.tradingStatusCode = ['']
+      this.formData.tradingStatusCode = ['2','3','4']
     },
     async getPaymentScenario () {
       this.formData.paymentScenarioCode = ''
