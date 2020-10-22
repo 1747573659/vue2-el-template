@@ -1,6 +1,6 @@
 <template>
   <div v-permission.page="'MERCHANT_SET_EDIT'" class="km-container__inner">
-    <div class="data-box">
+    <div>
       <div class="com-edit-wrapper">
         <el-form :model="ruleForm" size="small" :rules="rules" ref="ruleForm" label-width="150px" class="com-edit-ruleForm">
           <div class="com-edit-item" style="padding-top: 0">

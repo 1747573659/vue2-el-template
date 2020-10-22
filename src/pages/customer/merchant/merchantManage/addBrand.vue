@@ -1,6 +1,6 @@
 <template>
-  <div v-permission.page="'BRAND_SET_ADD'" class="km-container__inner">
-    <div class="data-box">
+  <div v-permission.page="'BRAND_SET_ADD'">
+    <div class="km-container__inner">
       <div class="com-edit-wrapper">
         <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
           <div class="com-edit-item" style="padding-top: 0">
