@@ -103,7 +103,8 @@
         </el-table-column>
         <el-table-column
           prop="createTime"
-          label="微信认证状态">
+          label="微信认证状态"
+          width="120">
           <template slot-scope="scope">
             {{wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus]}}
           </template>
