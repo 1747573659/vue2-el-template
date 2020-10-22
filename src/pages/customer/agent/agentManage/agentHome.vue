@@ -2,7 +2,7 @@
   <div class="">
     <div class="search-box">
       <el-row>
-        <el-col :span="21">
+        <el-col >
           <el-form :inline="true" size="small"  :model="form" class="xdd-btn-block__w240">
             <el-form-item label="代理商信息：" >
               <el-input v-model="form.id" maxlength="50" placeholder="请输入代理商编号/名称" clearable></el-input>
@@ -19,19 +19,20 @@
             <el-form-item>
               <el-button type="primary" @click="getPageList">查询</el-button>
             </el-form-item>
+
+            <el-form-item style="float: right;margin-right: 0;">
+              <el-button v-permission="'AGENT_MANAGE_ADD'" type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
+              <el-dropdown style="margin-left: 12px;">
+                <el-button size="small">
+                  更多
+                </el-button>
+                <el-dropdown-menu slot="dropdown">
+                  <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
+                  <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
+                </el-dropdown-menu>
+              </el-dropdown>
+            </el-form-item>
           </el-form>
-        </el-col>
-        <el-col :span="3" style="text-align: right;">
-          <el-button v-permission="'AGENT_MANAGE_ADD'" type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
-          <el-dropdown style="margin-left: 12px;">
-            <el-button size="small">
-              更多
-            </el-button>
-            <el-dropdown-menu slot="dropdown">
-              <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
-              <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
-            </el-dropdown-menu>
-          </el-dropdown>
         </el-col>
       </el-row>
     </div>
