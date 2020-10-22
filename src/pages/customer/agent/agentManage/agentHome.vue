@@ -2,9 +2,9 @@
   <div class="">
     <div class="search-box">
       <el-row>
-        <el-col :span="20">
-          <el-form :inline="true" size="small" label-width="100px" :model="form" class="xdd-btn-block__w240">
-            <el-form-item label="代理商信息：">
+        <el-col :span="21">
+          <el-form :inline="true" size="small"  :model="form" class="xdd-btn-block__w240">
+            <el-form-item label="代理商信息：" >
               <el-input v-model="form.id" maxlength="50" placeholder="请输入代理商编号/名称" clearable></el-input>
             </el-form-item>
             <el-form-item label="手机号：">
@@ -21,7 +21,7 @@
             </el-form-item>
           </el-form>
         </el-col>
-        <el-col :span="4" style="text-align: right;">
+        <el-col :span="3" style="text-align: right;">
           <el-button v-permission="'AGENT_MANAGE_ADD'" type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
           <el-dropdown style="margin-left: 12px;">
             <el-button size="small">
@@ -383,7 +383,7 @@ export default {
   height: 56px;
   line-height: 56px;
   background: #f7f9fc;
-  font-weight: 500;
+  font-weight: 700;
   color: #3D4966;
 }
 ul {

@@ -1,5 +1,5 @@
 <template>
-  <div v-permission.page="'AGENT_MANAGE_ADD'">
+  <div v-permission.page="'AGENT_MANAGE_ADD'" class="km-container__inner">
     <base-edit></base-edit>
   </div>
 </template>
