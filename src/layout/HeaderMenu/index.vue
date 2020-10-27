@@ -38,18 +38,22 @@
           <i class="el-icon-arrow-down el-icon--right"></i>
         </div>
         <el-dropdown-menu slot="dropdown">
-          <el-dropdown-item :command="1">修改密码</el-dropdown-item>
-          <el-dropdown-item :command="2">退出账号</el-dropdown-item>
+          <el-dropdown-item :command="1">个人信息</el-dropdown-item>
+          <el-dropdown-item :command="2">修改密码</el-dropdown-item>
+          <el-dropdown-item :command="3">退出账号</el-dropdown-item>
         </el-dropdown-menu>
       </el-dropdown>
       <!-- 修改密码 -->
-      <km-dropout :status.sync="dropStatus"></km-dropout>
+      <km-dropout :status.sync="dropOutStatus"></km-dropout>
+      <!-- 修改个人信息 -->
+      <km-dropInformation :status.sync="dropInfoStatus"></km-dropInformation>
     </div>
   </section>
 </template>
 
 <script>
 import dropOutView from './component/dropOut'
+import dropInformationView from './component/dropInformation'
 import { logout } from '@/api/login'
 import { getLocal } from '@/utils/storage'
 import { mapGetters, mapActions } from 'vuex'
@@ -58,11 +62,13 @@ import home from '@/router/modules/home'
 
 export default {
   components: {
-    'km-dropout': dropOutView
+    'km-dropout': dropOutView,
+    'km-dropInformation': dropInformationView
   },
   data() {
     return {
-      dropStatus: false,
+      dropOutStatus: false,
+      dropInfoStatus: false,
       userName: JSON.parse(getLocal('userInfo')).userName,
       routeMenus: [],
       isDropdown: false
@@ -103,7 +109,9 @@ export default {
   methods: {
     ...mapActions(['setAsideRoutes', 'setBasePath']),
     handleDropDown(command) {
-      if (command === 1) this.dropStatus = true
+      console.info(command)
+      if (command === 1) this.dropInfoStatus = true
+      else if (command === 2) this.dropOutStatus = true
       else this.handleLoginOut()
     },
     handleLoginOut() {

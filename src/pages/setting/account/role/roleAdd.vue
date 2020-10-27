@@ -3,7 +3,7 @@
     <div class="km-setting-roleAdd">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
         <el-form-item label="角色名称" prop="name">
-          <el-input v-model="form.name" style="width:240px"></el-input>
+          <el-input v-model="form.name" maxlength="50" style="width:240px"></el-input>
         </el-form-item>
         <el-form-item label="描述">
           <el-input v-model="form.remark" maxlength="250" style="width:240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>

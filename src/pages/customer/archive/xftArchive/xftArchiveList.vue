@@ -61,6 +61,7 @@
       <el-table
         v-loading="tableLoading"
         :max-height="tableMaxHeight"
+        :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" 
         @sort-change="tableSortChange"
         :data="tableData"
         style="width: 100%">

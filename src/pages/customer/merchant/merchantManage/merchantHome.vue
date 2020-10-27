@@ -238,10 +238,11 @@ export default {
       await this.queryShopListByPage()
       this.$message.success('操作成功！')
     },
-    async handleOperate(idStr, val) {
-      await updateStatus({ idStr, status: val === 0 ? 1 : 0 })
-      await this.queryShopListByPage()
-      this.$message.success('操作成功！')
+    handleOperate(idStr, val) {
+      updateStatus({ idStr, status: val === 0 ? 1 : 0 }).then(() => {
+        this.queryShopListByPage()
+        this.$message.success('操作成功！')
+      }).catch(() => {})
     },
     async resetPsw(userId) {
       await resetPassword({ userId })

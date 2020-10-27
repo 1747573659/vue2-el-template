@@ -46,7 +46,7 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
+      <el-table :data="tableData" :max-height="tableMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
@@ -98,7 +98,17 @@
             >
             <el-button type="text" size="small" @click="handlePushDetail({ status: 'detail' }, scope.row)" v-else>详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleStopUse(scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-if="scope.row.archiveBaseDTO.auditStatus !== 0" @click="handleStopUse(scope.row)">{{
+              scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
+            }}</el-button>
+            <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else style="margin-left: 12px;">
+              <p style="margin-bottom: 10px;">确定删除所选数据吗？</p>
+              <div style="text-align: right; margin: 0">
+                <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
+                <el-button type="primary" size="mini" @click="handleDraftList(scope.$index)">确定</el-button>
+              </div>
+              <el-button type="text" size="small" slot="reference">删除</el-button>
+            </el-popover>
             <el-button
               type="text"
               size="small"
@@ -152,6 +162,7 @@ export default {
   name: 'wxArchive',
   data() {
     return {
+      visible: false,
       statusOptions,
       deactivateOptions,
       form: {
@@ -192,6 +203,12 @@ export default {
     this.handleQueryPage()
   },
   methods: {
+    handleDraftCancel(index) {
+      this.$refs[`popover${index}`].doClose()
+    },
+    handleDraftList(index) {
+      
+    },
     handlePushDetail(query, row = {}) {
       this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
     },
