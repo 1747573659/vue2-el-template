@@ -1,6 +1,8 @@
 <template>
   <section>
     <div class="search-box">
+      <div style="height:40px;width:100%;background: rgba(255, 96, 16, 0.08);
+        margin-bottom: 16px;border: 1px solid rgba(255, 96, 16, 0.4);border-radius: 2px;"></div>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -102,7 +104,7 @@
               scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
             }}</el-button>
             <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else style="margin-left: 12px;">
-              <p style="margin-bottom: 10px;">确定删除所选数据吗？</p>
+              <p style="margin-bottom: 15px;">确定删除所选数据吗？</p>
               <div style="text-align: right; margin: 0">
                 <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
                 <el-button type="primary" size="mini" @click="handleDraftList(scope.$index)">确定</el-button>
@@ -207,7 +209,7 @@ export default {
       this.$refs[`popover${index}`].doClose()
     },
     handleDraftList(index) {
-      
+      this.$refs[`popover${index}`].doClose()
     },
     handlePushDetail(query, row = {}) {
       this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
@@ -215,7 +217,6 @@ export default {
     handleReason(row) {
       if (row.archiveBaseDTO.auditStatus === 4) {
         this.reasonMsg = row.archiveBaseDTO.auditRemark
-
         this.isReason = true
       }
     },
@@ -264,7 +265,7 @@ export default {
       }
     },
     handleStopUse: async function(row) {
-      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 }).then
+      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 })
       await this.handleQueryPage()
       this.$message.success('修改成功')
     },
