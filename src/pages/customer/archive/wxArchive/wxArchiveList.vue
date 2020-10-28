@@ -1,8 +1,16 @@
 <template>
   <section>
     <div class="search-box">
-      <div style="height:40px;width:100%;background: rgba(255, 96, 16, 0.08);
-        margin-bottom: 16px;border: 1px solid rgba(255, 96, 16, 0.4);border-radius: 2px;"></div>
+      <section class="p-count_con">
+        <img src="../../../../assets/images/icon/mark.png" alt="提示">
+        <div class="p-count_item">草稿：10</div>
+        <div class="p-count_item">待审核：10</div>
+        <div class="p-count_item">资料补充待审核：10</div>
+        <div class="p-count_item">平台审核中：10</div>
+        <div class="p-count_item">资料待补充：10</div>
+        <div class="p-count_item">未通过审核编辑中：10</div>
+        <div class="p-count_item">未通过审核：10</div>
+      </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -41,7 +49,16 @@
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <el-button v-permission="'WXARCHIVE_LIST_ADD'" type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button>
+              <el-button
+                v-permission="'WXARCHIVE_LIST_ADD'"
+                type="primary"
+                class="e-general-add"
+                size="small"
+                plain
+                icon="el-icon-plus"
+                @click="handlePushDetail({ action: 'add' })"
+                >新增</el-button
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -87,7 +104,12 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="210">
           <template slot-scope="scope">
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)" v-if="scope.row.archiveBaseDTO.auditStatus === 2"
+            <el-button
+              type="text"
+              size="small"
+              v-permission="'WXARCHIVE_LIST_EDIT'"
+              @click="handlePushDetail({ status: 'edit' }, scope.row)"
+              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
             >
             <el-button
@@ -103,32 +125,15 @@
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-if="scope.row.archiveBaseDTO.auditStatus !== 0" @click="handleStopUse(scope.row)">{{
               scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
             }}</el-button>
-            <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else style="margin-left: 12px;">
-              <p style="margin-bottom: 15px;">确定删除所选数据吗？</p>
-              <div style="text-align: right; margin: 0">
+            <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">
+              <p class="e-popover_prompt">确定删除所选数据吗？</p>
+              <div class="e-popover_action">
                 <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
                 <el-button type="primary" size="mini" @click="handleDraftList(scope.$index)">确定</el-button>
               </div>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popover>
-            <el-button
-              type="text"
-              size="small"
-              v-if="scope.row.hasArchive"
-              @click="
-                $router.push({
-                  name: 'wxArchiveDetail',
-                  query: {
-                    id: scope.row.archiveBaseDTO.id,
-                    legalPersonName: scope.row.archiveExpandDTO.legalPersonName,
-                    merchantShortName: scope.row.archiveBaseDTO.merchantShortName,
-                    companyName: scope.row.archiveBaseDTO.companyName,
-                    bankCard: scope.row.archiveExpandDTO.bankCard
-                  }
-                })
-              "
-              >进件详情</el-button
-            >
+            <el-button type="text" size="small" v-if="scope.row.hasArchive" @click="handlePushLinComDetail">进件详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -210,6 +215,12 @@ export default {
     },
     handleDraftList(index) {
       this.$refs[`popover${index}`].doClose()
+    },
+    handlePushLinComDetail(row) {
+      this.$router.push({
+        name: 'wxArchiveDetail',
+        query: { id: row.id, legalPersonName: row.legalPersonName, merchantShortName: row.merchantShortName, companyName: row.companyName, bankCard: row.bankCard }
+      })
     },
     handlePushDetail(query, row = {}) {
       this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
@@ -295,12 +306,35 @@ export default {
       float: right;
     }
     &_btnLabel {
-      // width: 100px;
       padding-left: 30px;
       text-align: right;
     }
   }
+  &-count {
+    &_con {
+      background: rgba(255, 96, 16, 0.08);
+      margin: 0 8px 16px 8px;
+      border: 1px solid rgba(255, 96, 16, 0.4);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #3d4966;
+      img{
+        width: 14px;
+        height: 14px;
+        margin-right: 8px;
+      }
+    }
+    &_item {
+      &:not(:last-child) {
+        margin-right: 30px;
+      }
+    }
+  }
 }
+
 .e {
   &-general {
     &-btn {
@@ -312,6 +346,17 @@ export default {
     &_tabOrange {
       color: #ff6010;
       cursor: pointer;
+    }
+  }
+  &-popover {
+    &_con {
+      margin-left: 12px;
+    }
+    &_prompt {
+      margin-bottom: 15px;
+    }
+    &_action {
+      text-align: right;
     }
   }
 }

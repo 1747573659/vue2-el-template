@@ -332,32 +332,6 @@
           <div class="p-wxArchive-itemTitle">法人信息</div>
           <el-row class="p-wxArchive-baseInfo">
             <el-col :span="12">
-              <el-form-item label="法人姓名" prop="archiveExpandVO.legalPersonName">
-                <el-input v-model="form.archiveExpandVO.legalPersonName" placeholder="法人姓名" style="width: 240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="证件类型" prop="archiveExpandVO.idType">
-                <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="证件类型" style="width: 240px">
-                  <el-option label="身份证" value="1"></el-option>
-                  <el-option label="护照" value="2"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="证件号码" prop="archiveExpandVO.idNumber">
-                <el-input v-model="form.archiveExpandVO.idNumber" placeholder="证件号码" style="width: 240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
-                <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
-                <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.idEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
               <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
                 <upload-pic
                   alt="身份证正面照"
@@ -381,6 +355,32 @@
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idBackUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"
                 ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="法人姓名" prop="archiveExpandVO.legalPersonName">
+                <el-input v-model="form.archiveExpandVO.legalPersonName" placeholder="法人姓名" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件类型" prop="archiveExpandVO.idType">
+                <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="证件类型" style="width: 240px">
+                  <el-option label="身份证" value="1"></el-option>
+                  <el-option label="护照" value="2"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件号码" prop="archiveExpandVO.idNumber">
+                <el-input v-model="form.archiveExpandVO.idNumber" placeholder="证件号码" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
+                <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+                <span style="margin: 0 10px;">至</span>
+                <span v-if="!form.archiveExpandVO.idEnd && formDisabled && pageAction === 'detail'">长期有效</span>
+                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12">
