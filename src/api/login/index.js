@@ -1,19 +1,34 @@
 import request from '@/utils/request'
 
 const urlLinks = {
-  // 登陆接口
   login: '/login',
-  // 登出
   logout: '/logout',
-  // 修改密码
   modifyPwd: '/modifyPwd',
-  // 获取登录用的验证码
   captcha: '/captcha',
-  // 校验验证码
   validCaptcha: '/validCaptcha',
-  //
-  getMenuInfo: '/getMenuInfo'
+  getMenuInfo: '/getMenuInfo',
+  queryUser: '/user/queryUser',
+  modifyUserMobile: '/user/modifyUserMobile'
 }
+
+// 修改登录用户联系方式
+export function modifyUserMobile(data) {
+  return request({
+    url: urlLinks.modifyUserMobile,
+    method: 'post',
+    data: data
+  })
+}
+
+// 查询登录用户
+export function queryUser(data) {
+  return request({
+    url: urlLinks.queryUser,
+    method: 'post',
+    data: data
+  })
+}
+
 // 获取路由权限
 export function getMenuInfo(data) {
   return request({

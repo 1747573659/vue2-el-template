@@ -95,6 +95,7 @@ export default {
     }
   },
   mounted() {
+    console.info(this.dropOutStatus)
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
@@ -109,7 +110,6 @@ export default {
   methods: {
     ...mapActions(['setAsideRoutes', 'setBasePath']),
     handleDropDown(command) {
-      console.info(command)
       if (command === 1) this.dropInfoStatus = true
       else if (command === 2) this.dropOutStatus = true
       else this.handleLoginOut()

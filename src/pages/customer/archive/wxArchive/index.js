@@ -2,7 +2,7 @@ export const statusOptions = [
   { value: '', label: '全部' },
   { value: 0, label: '草稿' },
   { value: 1, label: '未通过审核编辑中' },
-  { value: 2, label: '代理商待审核' },
+  { value: 2, label: '待审核' },
   { value: 3, label: '平台审核中' },
   { value: 4, label: '未通过审核' },
   { value: 5, label: '账号申请中' },

@@ -2,7 +2,7 @@
   <section>
     <div class="search-box">
       <section class="p-count_con">
-        <img src="../../../../assets/images/icon/mark.png" alt="提示">
+        <img src="../../../../assets/images/icon/mark.png" alt="提示" />
         <div class="p-count_item">草稿：10</div>
         <div class="p-count_item">待审核：10</div>
         <div class="p-count_item">资料补充待审核：10</div>
@@ -163,15 +163,15 @@
 <script>
 import { statusOptions, deactivateOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
-import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse } from '@/api/wxArchive'
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus } from '@/api/wxArchive'
 
 export default {
   name: 'wxArchive',
   data() {
     return {
-      visible: false,
       statusOptions,
       deactivateOptions,
+      countData: [],
       form: {
         createTime: '',
         auditStatus: '',
@@ -208,8 +208,28 @@ export default {
     this.getXiaoWeiArchiveStatus()
     this.getXiaoWeiUpgradeStatus()
     this.handleQueryPage()
+    this.handleQueryTotalByStatus()
   },
   methods: {
+    handleQueryTotalByStatus: async function() {
+      const data = {
+        orders: { createTime: this.sortStatus },
+        startTime: this.form.createTime?.[0] ?? '',
+        endTime: this.form.createTime?.[1] ?? '',
+        auditStatus: this.form.auditStatus,
+        companyName: this.form.msg,
+        bankCard: this.form.msg,
+        merchantName: this.form.msg,
+        merchantShortName: this.form.msg,
+        stopUse: this.form.stopUse,
+        page: this.currentPage,
+        row: this.pageSize
+      }
+      try {
+        const res = await queryTotalByStatus(data)
+        this.countData = res
+      } catch (error) {}
+    },
     handleDraftCancel(index) {
       this.$refs[`popover${index}`].doClose()
     },
@@ -234,6 +254,7 @@ export default {
     handleSearch() {
       this.currentPage = 1
       this.isSearchLock = true
+      this.handleQueryTotalByStatus()
       this.handleQueryPage().finally(() => {
         this.isSearchLock = false
       })
@@ -321,7 +342,7 @@ export default {
       padding: 12px 16px;
       font-size: 14px;
       color: #3d4966;
-      img{
+      img {
         width: 14px;
         height: 14px;
         margin-right: 8px;

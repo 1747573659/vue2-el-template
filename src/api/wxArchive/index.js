@@ -18,8 +18,19 @@ const urlLinks = {
   submitToVerify: 'archive/general/submitToVerify',
   businessCategory: 'archive/general/businessCategory',
   generalView: 'archive/general/view',
-  queryBySubMchId: 'archive/general/queryBySubMchId'
+  queryBySubMchId: 'archive/general/queryBySubMchId',
+  queryTotalByStatus: 'archive/general/queryTotalByStatus'
 }
+
+// 汇总统计
+export function queryTotalByStatus(data) {
+  return request({
+    url: urlLinks.queryTotalByStatus,
+    method: 'POST',
+    data
+  })
+}
+
 // 验证账户
 export function queryBySubMchId(data) {
   return request({

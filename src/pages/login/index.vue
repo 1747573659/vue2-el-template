@@ -26,7 +26,8 @@
           </el-form>
           <el-button type="primary" :loading="isLoading" @click.native.prevent="handleLogin" class="e-form_btn">登录</el-button>
           <div class="p-login_regist">
-            <el-checkbox v-model="isRegist">已阅读并同意</el-checkbox>
+            <!-- <el-checkbox v-model="isRegist"></el-checkbox> -->
+            已阅读并同意
             <a href="http://ceshi-file-oss.oss-cn-hangzhou.aliyuncs.com/legalNotices/privacyPolicy.html" target="_blank">《用户使用协议》</a>
           </div>
         </div>

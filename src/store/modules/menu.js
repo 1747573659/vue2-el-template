@@ -64,7 +64,7 @@ const mutations = {
   },
   DEL_CACHED_VIEW: (state, view) => {
     for (let i = 0; i < state.cachedViews.length; i++) {
-      if (state.cachedViews[i].path === view.path) {
+      if (state.cachedViews[i] === view.name) {
         state.cachedViews.splice(i, 1)
         break
       }

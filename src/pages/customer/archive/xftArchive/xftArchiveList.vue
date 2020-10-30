@@ -1,6 +1,16 @@
 <template>
   <div>
     <div class="search-box">
+      <section class="p-count_con">
+        <img src="../../../../assets/images/icon/mark.png" alt="提示">
+        <div class="p-count_item">草稿：10</div>
+        <div class="p-count_item">待审核：10</div>
+        <div class="p-count_item">资料补充待审核：10</div>
+        <div class="p-count_item">平台审核中：10</div>
+        <div class="p-count_item">资料待补充：10</div>
+        <div class="p-count_item">未通过审核编辑中：10</div>
+        <div class="p-count_item">未通过审核：10</div>
+      </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-row>
           <el-col :span="21">
@@ -136,7 +146,15 @@
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
             <el-button v-if="[3,5,6,7,9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
             <el-button v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
-            <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
+            <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
+            <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">
+              <p class="e-popover_prompt">确定删除所选数据吗？</p>
+              <div class="e-popover_action">
+                <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
+                <el-button type="primary" size="mini" @click="handleDraftList(scope.$index)">确定</el-button>
+              </div>
+              <el-button type="text" size="small" slot="reference">删除</el-button>
+            </el-popover>
             <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
@@ -432,5 +450,43 @@ export default {
   font-weight: 400;
   color: #FF6010;
   cursor: pointer;
+}
+.p{
+  &-count {
+    &_con {
+      background: rgba(255, 96, 16, 0.08);
+      margin: 0 8px 16px 8px;
+      border: 1px solid rgba(255, 96, 16, 0.4);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      padding: 12px 16px;
+      font-size: 14px;
+      color: #3d4966;
+      img{
+        width: 14px;
+        height: 14px;
+        margin-right: 8px;
+      }
+    }
+    &_item {
+      &:not(:last-child) {
+        margin-right: 30px;
+      }
+    }
+  }
+}
+.e{
+  &-popover {
+    &_con {
+      margin-left: 12px;
+    }
+    &_prompt {
+      margin-bottom: 15px;
+    }
+    &_action {
+      text-align: right;
+    }
+  }
 }
 </style>

@@ -1,23 +1,23 @@
 <template>
   <section>
-    <el-dialog class="p-drop_con" title="个人信息" :before-close="handleDiaClose" :visible.sync="status" append-to-body width="508px">
+    <el-dialog class="p-drop_con" title="个人信息" :before-close="handleDiaClose" @open="getUserInfo" :visible.sync="status" append-to-body width="508px">
       <section class="p-drop_info">
         <el-form class="e-drop_info" ref="passForm" :model="form" :rules="rules" size="small" label-width="100px">
           <el-form-item label="账号">
-            <el-input v-model="form.account" placeholder="账号" disabled></el-input>
+            <el-input v-model="form.loginName" placeholder="账号" disabled></el-input>
           </el-form-item>
           <el-form-item label="姓名" prop="name">
             <el-input v-model="form.name" maxlength="30" placeholder="姓名"></el-input>
           </el-form-item>
           <el-form-item label="手机号" prop="phone">
-            <el-input v-model="form.phone" maxlength="11" placeholder="手机号"></el-input>
+            <el-input v-model="form.mobile" maxlength="11" placeholder="手机号"></el-input>
           </el-form-item>
         </el-form>
         <el-button type="text" @click="phoneDiaStatus = true">修改</el-button>
       </section>
       <div slot="footer">
         <el-button @click="handleDiaClose" class="e-drop_cancel" size="small">取消</el-button>
-        <el-button type="primary" :loading="isLoading" @click="handleModify" size="small">确认修改</el-button>
+        <el-button type="primary" :loading="isLoading" @click="handleUserInfo" size="small">确认修改</el-button>
       </div>
     </el-dialog>
     <el-dialog class="p-drop_con" title="修改联系人手机号" :before-close="handlePhoneDiaClose" :visible.sync="phoneDiaStatus" append-to-body width="508px">
@@ -27,6 +27,14 @@
         </el-form-item>
         <el-form-item label="验证码" prop="code">
           <el-input v-model="phoneForm.code" maxlength="6" placeholder="验证码"></el-input>
+          <el-button
+            size="small"
+            class="e-drop_resend"
+            :class="{ 'e-drop-resend_clicked': isClick, 'e-drop-resend_disabled': isDisabled }"
+            @click="handleSendCode"
+            :disabled="isDisabled"
+            >{{ sendBtnText }}</el-button
+          >
         </el-form-item>
       </el-form>
       <div slot="footer">
@@ -38,7 +46,9 @@
 </template>
 
 <script>
-const userInfo = localStorage.userInfo ? JSON.parse(localStorage.userInfo) : ''
+import { queryUser, modifyUserMobile } from '@/api/login'
+import { createAuthCode } from '@/api/sms/sms'
+
 const cardholderPhone = (rule, value, callback) => {
   if (!/^1[3456789]\d{9}$/.test(value)) {
     callback('请输入正确的电话号码')
@@ -59,18 +69,23 @@ export default {
       isLoading: false,
       phoneDiaLoading: false,
       form: {
-        account: userInfo?.loginName ?? '',
-        name: userInfo?.userName ?? '',
-        phone: ''
+        loginName: '',
+        name: '',
+        mobile: ''
       },
       rules: {
         name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
-        phone: [
+        mobile: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
           { required: true, validator: cardholderPhone, trigger: ['blur', 'change'] }
         ]
       },
+      isClick: false,
+      isDisabled: false,
       phoneDiaStatus: false,
+      sendBtnText: '发送验证码',
+      countdownTime: 60,
+      countdownTimer: null,
       phoneForm: {
         nPhone: '',
         code: ''
@@ -85,16 +100,45 @@ export default {
     }
   },
   methods: {
+    handleSendCode() {
+      this.$refs.phoneForm.validateField('nPhone', async errorMessage => {
+        if (!errorMessage) {
+          try {
+            let res = await createAuthCode({ mobile: this.phoneForm.nPhone })
+            this.isClick = false
+            this.isDisabled = true
+            this.sendBtnText = `重新发送${this.countdownTime}s`
+            this.countdownTimer = setInterval(() => {
+              this.countdownTime -= 1
+              this.sendBtnText = `重新发送${this.countdownTime}s`
+              if (!this.countdownTime) {
+                this.handleResetCodeBtn()
+              }
+            }, 1000)
+          } catch (e) {
+          } finally {
+          }
+        }
+      })
+    },
+    handleResetCodeBtn() {
+      this.countdownTime = 60
+      this.isClick = true
+      this.isDisabled = false
+      this.sendBtnText = '重新发送'
+      clearInterval(this.countdownTimer)
+      this.countdownTimer = null
+    },
     handleDiaClose() {
       this.$emit('update:status', false)
       this.$refs.passForm.resetFields()
     },
-    handleModify() {
+    handleUserInfo: async function() {
       this.$refs.passForm.validate(async valid => {
         if (valid) {
           try {
             this.isLoading = true
-            // await modifyPwd({ newPassword: this.passwordInfo.newPass, oldPassword: this.passwordInfo.oldPass })
+            await modifyUserMobile({ name:this.form.loginName, mobile: this.phoneForm.nPhone, codeKey: this.phoneForm.code })
             this.handleDiaClose()
             this.$message({ message: '修改成功', type: 'success' })
           } catch (e) {
@@ -106,6 +150,7 @@ export default {
     },
     handlePhoneDiaClose() {
       this.phoneDiaStatus = false
+      this.handleResetCodeBtn()
       this.$refs.phoneForm.resetFields()
     },
     handlePhoneDiaModify() {
@@ -113,9 +158,8 @@ export default {
         if (valid) {
           try {
             this.phoneDiaLoading = true
-            // await modifyPwd({ newPassword: this.passwordInfo.newPass, oldPassword: this.passwordInfo.oldPass })
-            // this.handleDiaClose()
-            this.form.phone = this.phoneForm.nPhone
+            
+            this.form.mobile = this.phoneForm.nPhone
             this.handlePhoneDiaClose()
             this.$message({ message: '手机号修改成功', type: 'success' })
           } catch (e) {
@@ -124,6 +168,12 @@ export default {
           }
         }
       })
+    },
+    getUserInfo: async function() {
+      try {
+        const res = await queryUser()
+        this.form = res
+      } catch (error) {}
     }
   }
 }
@@ -158,6 +208,26 @@ export default {
       width: 300px;
       margin: 0 auto;
       margin-bottom: -16px;
+      /deep/ .el-form-item {
+        &:nth-child(2) {
+          .el-input {
+            width: 55%;
+          }
+          .el-button {
+            margin-left: 8px;
+          }
+          .e-drop_resend {
+            padding: 8px 9px;
+          }
+          .e-drop-resend_clicked {
+            padding: 8px 15px;
+          }
+          .e-drop-resend_disabled {
+            padding: 8px 0px;
+            width: 90px;
+          }
+        }
+      }
     }
   }
 }
