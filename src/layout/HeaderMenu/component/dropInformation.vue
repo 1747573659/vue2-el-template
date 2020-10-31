@@ -9,8 +9,8 @@
           <el-form-item label="姓名" prop="name">
             <el-input v-model="form.name" maxlength="30" placeholder="姓名"></el-input>
           </el-form-item>
-          <el-form-item label="手机号" prop="phone">
-            <el-input v-model="form.mobile" maxlength="11" placeholder="手机号"></el-input>
+          <el-form-item label="手机号" prop="mobile">
+            <el-input v-model="form.mobile" maxlength="11" placeholder="手机号" disabled></el-input>
           </el-form-item>
         </el-form>
         <el-button type="text" @click="phoneDiaStatus = true">修改</el-button>
@@ -46,7 +46,7 @@
 </template>
 
 <script>
-import { queryUser, modifyUserMobile } from '@/api/login'
+import { queryUser, modifyUserMobile, modifyUserName } from '@/api/login'
 import { createAuthCode } from '@/api/sms/sms'
 
 const cardholderPhone = (rule, value, callback) => {
@@ -138,7 +138,7 @@ export default {
         if (valid) {
           try {
             this.isLoading = true
-            await modifyUserMobile({ name:this.form.loginName, mobile: this.phoneForm.nPhone, codeKey: this.phoneForm.code })
+            await modifyUserName({ name: this.form.name })
             this.handleDiaClose()
             this.$message({ message: '修改成功', type: 'success' })
           } catch (e) {
@@ -158,7 +158,7 @@ export default {
         if (valid) {
           try {
             this.phoneDiaLoading = true
-            
+            await modifyUserMobile({ mobile: this.phoneForm.nPhone, codeKey: this.phoneForm.code })
             this.form.mobile = this.phoneForm.nPhone
             this.handlePhoneDiaClose()
             this.$message({ message: '手机号修改成功', type: 'success' })
@@ -173,6 +173,7 @@ export default {
       try {
         const res = await queryUser()
         this.form = res
+        this.form.mobile = '18565715357'
       } catch (error) {}
     }
   }

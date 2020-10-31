@@ -95,7 +95,6 @@ export default {
     }
   },
   mounted() {
-    console.info(this.dropOutStatus)
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {

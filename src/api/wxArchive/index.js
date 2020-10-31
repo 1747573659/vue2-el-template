@@ -1,6 +1,4 @@
 import request from '@/utils/request'
-import { getLocal } from '@/utils/storage'
-import axios from 'axios'
 import qs from 'qs'
 
 const urlLinks = {
@@ -19,7 +17,25 @@ const urlLinks = {
   businessCategory: 'archive/general/businessCategory',
   generalView: 'archive/general/view',
   queryBySubMchId: 'archive/general/queryBySubMchId',
-  queryTotalByStatus: 'archive/general/queryTotalByStatus'
+  queryTotalByStatus: 'archive/general/queryTotalByStatus',
+  delList: 'archive/general/del',
+  imageOCR: 'common/imageOcr'
+}
+
+// 汇总统计
+export function imageOCR(data) {
+  return request({
+    url: urlLinks.imageOCR,
+    method: 'POST'
+  })
+}
+
+// 汇总统计
+export function delList(data) {
+  return request({
+    url: `${urlLinks.delList}/${data.id}`,
+    method: 'POST'
+  })
 }
 
 // 汇总统计
@@ -42,12 +58,9 @@ export function queryBySubMchId(data) {
 
 // 签约
 export function generalView(data) {
-  return axios({
-    url: `${process.env.VUE_APP_BASE_API}/${urlLinks.generalView}/${data.id}/${data.flag}`,
+  return request({
+    url: `${urlLinks.generalView}/${data.id}/${data.flag}`,
     method: 'POST',
-    headers: {
-      token: getLocal('token')
-    },
     responseType: 'arraybuffer'
   })
 }

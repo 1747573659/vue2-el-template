@@ -818,6 +818,7 @@ export default {
       if (this.formDisabled) alert('hahahah')
     },
     setUploadSrc(res, type, url) {
+      console.info(res)
       this.form[type][url] = res.data.path
     },
     areaChange(value) {

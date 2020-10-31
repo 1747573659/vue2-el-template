@@ -61,13 +61,11 @@ export function downloadBufferFile (url, data, method = 'GET', paramsFormat = 'x
         data,
         responseType: 'blob' // 必须是arraybuffer类型
       }).then(response => {
-        console.log(response)
         if(response.headers['content-type']==='application/json;charset=UTF-8'){
          const data=response.data
          const reader = new FileReader()
          reader.addEventListener('loadend', function (e) {
            let data=JSON.parse(e.target.result)
-           console.log(data)
            if(data.code===195001){
             MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
               confirmButtonText: '重新登录',
@@ -120,7 +118,6 @@ function handleDownloadBufferFile (response, data) {
       a.href = url
       a.download = fileName // 命名下载名称
       a.click() // 点击触发下载
-      console.log(url)
       window.URL.revokeObjectURL(url) // 下载完成进行释放
     }
   } else {
@@ -134,7 +131,6 @@ function handleDownloadBufferFile (response, data) {
       a.href = url
       a.download = data || '二维码' // 命名下载名称
       a.click() // 点击触发下载
-      console.log(url)
       window.URL.revokeObjectURL(url) // 下载完成进行释放
     }
   }

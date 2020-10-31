@@ -129,7 +129,7 @@
               <p class="e-popover_prompt">确定删除所选数据吗？</p>
               <div class="e-popover_action">
                 <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
-                <el-button type="primary" size="mini" @click="handleDraftList(scope.$index)">确定</el-button>
+                <el-button type="primary" size="mini" @click="handleDraftList(scope)">确定</el-button>
               </div>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popover>
@@ -163,7 +163,7 @@
 <script>
 import { statusOptions, deactivateOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
-import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus } from '@/api/wxArchive'
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 
 export default {
   name: 'wxArchive',
@@ -233,8 +233,14 @@ export default {
     handleDraftCancel(index) {
       this.$refs[`popover${index}`].doClose()
     },
-    handleDraftList(index) {
-      this.$refs[`popover${index}`].doClose()
+    handleDraftList: async function(scope) {
+      try {
+        await delList({ id: scope.row.archiveBaseDTO.id })
+        this.handleQueryPage()
+      } catch (error) {
+      } finally {
+        this.$refs[`popover${scope.$index}`].doClose()
+      }
     },
     handlePushLinComDetail(row) {
       this.$router.push({

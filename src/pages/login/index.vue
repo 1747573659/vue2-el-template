@@ -21,17 +21,19 @@
               <label class="e-form_label">验证码</label>
               <img @click="captcha" :src="codeKeyUrl" alt="验证码" class="e-form_code" />
               <el-input v-model.trim="loginForm.codeKey" placeholder="请输入验证码" @keyup.enter.native="handleLogin"></el-input>
-              <span class="el-form-item__error" v-if="showRegistErr">请勾选同意用户使用协议</span>
             </el-form-item>
           </el-form>
-          <el-button type="primary" :loading="isLoading" @click.native.prevent="handleLogin" class="e-form_btn">登录</el-button>
+          <el-button type="primary" :loading="isLoading" @click.native="handleLogin" class="e-form_btn">登录</el-button>
           <div class="p-login_regist">
-            <!-- <el-checkbox v-model="isRegist"></el-checkbox> -->
-            已阅读并同意
+            点击登录即代表你同意
             <a href="http://ceshi-file-oss.oss-cn-hangzhou.aliyuncs.com/legalNotices/privacyPolicy.html" target="_blank">《用户使用协议》</a>
           </div>
         </div>
       </section>
+      <footer class="p-login_record">
+        <p>Copyright © 1999-2019 Shenzhen Kemai Technology Co.,Ltd</p>
+        <p>深圳市科脉技术股份有限公司版权所有 粤ICP备10037982号</p>
+      </footer>
     </div>
   </section>
 </template>
@@ -49,8 +51,6 @@ export default {
       }
     }
     return {
-      isRegist: true,
-      showRegistErr: false,
       isLoading: false,
       codeKeyUrl: '',
       usedCoedKey: '',
@@ -81,42 +81,39 @@ export default {
   },
   methods: {
     handleLogin() {
-      if (this.isRegist) {
-        if (this.showRegistErr) this.showRegistErr = false
-        this.$refs.ruleForm.validate(async valid => {
-          if (valid) {
-            this.isLoading = true
-            this.validCaptcha()
-              .then(() => {
-                this.$store
-                  .dispatch('login', this.loginForm)
-                  .then(() => {
-                    const routes = this.$store.getters.routes
-                    const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
-                    // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
-                    if (this.redirect) {
-                      const rotationData = this.redirect.split('/')
-                      rotationData.shift()
-                      if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
-                        this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
-                      } else utilRoutePoint()
+      this.$refs.ruleForm.validate(async valid => {
+        if (valid) {
+          this.isLoading = true
+          this.validCaptcha()
+            .then(() => {
+              this.$store
+                .dispatch('login', this.loginForm)
+                .then(() => {
+                  const routes = this.$store.getters.routes
+                  const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
+                  // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
+                  if (this.redirect) {
+                    const rotationData = this.redirect.split('/')
+                    rotationData.shift()
+                    if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
+                      this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
                     } else utilRoutePoint()
-                  })
-                  .catch(err => {
-                    this.loginForm.codeKey = ''
-                    this.captcha()
-                  })
-                  .finally(() => {
-                    this.isLoading = false
-                  })
-              })
-              .catch(() => {
-                this.captcha()
-                this.isLoading = false
-              })
-          }
-        })
-      } else this.showRegistErr = true
+                  } else utilRoutePoint()
+                })
+                .catch(err => {
+                  this.loginForm.codeKey = ''
+                  this.captcha()
+                })
+                .finally(() => {
+                  this.isLoading = false
+                })
+            })
+            .catch(() => {
+              this.captcha()
+              this.isLoading = false
+            })
+        }
+      })
     },
     async validCaptcha() {
       const data = {
@@ -152,9 +149,14 @@ export default {
       background-color: #fff;
       height: inherit;
       padding: 38px 30px;
+      display: flex;
+      flex-direction: column;
       > header {
         padding-left: 24px;
         margin-bottom: 76px;
+      }
+      > section{
+        flex-grow: 2;
       }
     }
     &_logo {
@@ -176,6 +178,12 @@ export default {
       > a {
         color: #1a92fe;
       }
+    }
+    &_record {
+      text-align: center;
+      line-height: 2;
+      font-size: 14px;
+      color: #8f9bb3;
     }
   }
   &-loginForm {

@@ -94,6 +94,7 @@ export default {
       })
     },
     uploadSuccess(res, file) {
+      console.info(file)
       this.imageUrl = res.data.path
       this.$emit('on-success', res)
     },

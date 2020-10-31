@@ -1,14 +1,35 @@
 import request from '@/utils/request'
+import qs from 'qs'
 
 const urlLinks = {
-  login: '/login',
-  logout: '/logout',
-  modifyPwd: '/modifyPwd',
-  captcha: '/captcha',
-  validCaptcha: '/validCaptcha',
-  getMenuInfo: '/getMenuInfo',
-  queryUser: '/user/queryUser',
-  modifyUserMobile: '/user/modifyUserMobile'
+  login: 'login',
+  logout: 'logout',
+  modifyPwd: 'modifyPwd',
+  captcha: 'captcha',
+  validCaptcha: 'validCaptcha',
+  getMenuInfo: 'getMenuInfo',
+  queryUser: 'user/queryUser',
+  modifyUserMobile: 'user/modifyUserMobile',
+  modifyUserName: 'user/modifyUserName',
+  popUpsByAuditStatus: 'archive/xdd/popUpsByAuditStatus'
+}
+
+// 驳回和资料待补充状态
+export function popUpsByAuditStatus(data) {
+  return request({
+    url: urlLinks.popUpsByAuditStatus,
+    method: 'post',
+    data
+  })
+}
+
+// 修改用户名
+export function modifyUserName(data) {
+  return request({
+    url: urlLinks.modifyUserName,
+    method: 'post',
+    data: qs.stringify(data)
+  })
 }
 
 // 修改登录用户联系方式
