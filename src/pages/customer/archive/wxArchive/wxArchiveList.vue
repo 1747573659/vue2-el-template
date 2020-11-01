@@ -1,15 +1,11 @@
 <template>
   <section>
     <div class="search-box">
-      <section class="p-count_con">
+      <section class="p-count_con" v-if="countData.length > 0">
         <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-        <div class="p-count_item">草稿：10</div>
-        <div class="p-count_item">待审核：10</div>
-        <div class="p-count_item">资料补充待审核：10</div>
-        <div class="p-count_item">平台审核中：10</div>
-        <div class="p-count_item">资料待补充：10</div>
-        <div class="p-count_item">未通过审核编辑中：10</div>
-        <div class="p-count_item">未通过审核：10</div>
+        <template v-for="item in countData">
+          <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+        </template>
       </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
@@ -49,16 +45,7 @@
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <el-button
-                v-permission="'WXARCHIVE_LIST_ADD'"
-                type="primary"
-                class="e-general-add"
-                size="small"
-                plain
-                icon="el-icon-plus"
-                @click="handlePushDetail({ action: 'add' })"
-                >新增</el-button
-              >
+              <el-button v-permission="'WXARCHIVE_LIST_ADD'" type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -104,12 +91,7 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="210">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              v-permission="'WXARCHIVE_LIST_EDIT'"
-              @click="handlePushDetail({ status: 'edit' }, scope.row)"
-              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)" v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
             >
             <el-button
@@ -161,7 +143,7 @@
 </template>
 
 <script>
-import { statusOptions, deactivateOptions } from './index'
+import { statusOptions, deactivateOptions, countOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 
@@ -171,6 +153,7 @@ export default {
     return {
       statusOptions,
       deactivateOptions,
+      countOptions,
       countData: [],
       form: {
         createTime: '',
@@ -227,7 +210,11 @@ export default {
       }
       try {
         const res = await queryTotalByStatus(data)
-        this.countData = res
+        for (const item of res) {
+          for (const ele of this.countOptions) {
+            if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+          }
+        }
       } catch (error) {}
     },
     handleDraftCancel(index) {

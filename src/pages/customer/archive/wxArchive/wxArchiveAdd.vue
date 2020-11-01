@@ -335,11 +335,12 @@
               <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
                 <upload-pic
                   alt="身份证正面照"
+                  :hasBase64="true"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.idFrontUrl"
                   :exampleImg="exampleImg.idFrontUrl"
                   uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idFrontUrl')"
+                  @on-success="(value, base64Code) => setUploadSrcAndBase64(value, base64Code, 'archiveExpandVO', 'idFrontUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"
                 ></upload-pic>
               </el-form-item>
@@ -589,9 +590,9 @@ export default {
       vm.getBranchPage()
       vm.getBusinessCategory()
       // 修改顶部tag
-      const tags = { edit: '编辑', detail: '详情', copy: '新增' }
-      let pageStatus = vm.$route.query.status ? tags[vm.$route.query.status] : '新增'
-      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
+      // const tags = { edit: '编辑', detail: '详情', copy: '新增' }
+      // let pageStatus = vm.$route.query.status ? tags[vm.$route.query.status] : '新增'
+      // document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
     })
   },
   methods: {
@@ -817,8 +818,10 @@ export default {
     imgClick() {
       if (this.formDisabled) alert('hahahah')
     },
+    setUploadSrcAndBase64(res, base64Code, type, url) {
+      this.form[type][url] = res.data.path
+    },
     setUploadSrc(res, type, url) {
-      console.info(res)
       this.form[type][url] = res.data.path
     },
     areaChange(value) {

@@ -9,6 +9,13 @@ export const statusOptions = [
   { value: 6, label: '账号部分申请通过' },
   { value: 7, label: '账号全部申请通过' }
 ]
+export const countOptions = [
+  { value: 0, label: '草稿' },
+  { value: 2, label: '待审核' },
+  { value: 3, label: '平台审核中' },
+  { value: 8, label: '未通过审核' },
+  { value: 1, label: '未通过审核编辑中' }
+]
 
 export const deactivateOptions = [
   { value: '', label: '全部' },
