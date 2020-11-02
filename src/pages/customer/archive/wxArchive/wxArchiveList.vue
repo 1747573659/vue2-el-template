@@ -1,12 +1,14 @@
 <template>
   <section>
     <div class="search-box">
-      <section class="p-count_con" v-if="countData.length > 0">
-        <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-        <template v-for="item in countData">
-          <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
-        </template>
-      </section>
+      <div class="p-count">
+        <section class="p-count_con" v-if="countData.length > 0">
+          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+          <template v-for="item in countData">
+            <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+          </template>
+        </section>
+      </div>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -45,7 +47,16 @@
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <el-button v-permission="'WXARCHIVE_LIST_ADD'" type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button>
+              <el-button
+                v-permission="'WXARCHIVE_LIST_ADD'"
+                type="primary"
+                class="e-general-add"
+                size="small"
+                plain
+                icon="el-icon-plus"
+                @click="handlePushDetail({ action: 'add' })"
+                >新增</el-button
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -91,7 +102,12 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="210">
           <template slot-scope="scope">
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)" v-if="scope.row.archiveBaseDTO.auditStatus === 2"
+            <el-button
+              type="text"
+              size="small"
+              v-permission="'WXARCHIVE_LIST_EDIT'"
+              @click="handlePushDetail({ status: 'edit' }, scope.row)"
+              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
             >
             <el-button
@@ -325,9 +341,10 @@ export default {
     }
   }
   &-count {
+    min-height: 44px;
+    margin: 0 8px 16px 8px;
     &_con {
       background: rgba(255, 96, 16, 0.08);
-      margin: 0 8px 16px 8px;
       border: 1px solid rgba(255, 96, 16, 0.4);
       border-radius: 2px;
       display: flex;

@@ -229,11 +229,12 @@
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
                 <upload-pic
                   alt="营业执照"
+                  :hasBase64="true"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.businessLicenseUrl"
                   :exampleImg="exampleImg.businessLicenseUrl"
                   uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'businessLicenseUrl')"
+                  @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
                 ></upload-pic>
               </el-form-item>
@@ -258,10 +259,25 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
-                <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+                <el-date-picker
+                  v-model="form.archiveExpandVO.licValidityBigen"
+                  type="date"
+                  clearable
+                  placeholder="开始日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+                <el-date-picker
+                  v-else
+                  v-model="form.archiveExpandVO.licValidityEnd"
+                  type="date"
+                  clearable
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -282,9 +298,21 @@
                 <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               </el-form-item>
             </el-col>
-            <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)">
+            <el-col
+              :span="24"
+              v-if="
+                form.archiveBaseVO.archiveType === 9 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)
+              "
+            >
               <el-form-item label="售卖商品描述" prop="archiveExpandVO.sellShopDescribe">
-                <el-input v-model="form.archiveExpandVO.sellShopDescribe" type="textarea" :autosize="{ minRows: 3 }" maxlength="140" show-word-limit style="width: 240px"></el-input>
+                <el-input
+                  v-model="form.archiveExpandVO.sellShopDescribe"
+                  type="textarea"
+                  :autosize="{ minRows: 3 }"
+                  maxlength="140"
+                  show-word-limit
+                  style="width: 240px"
+                ></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
@@ -294,10 +322,25 @@
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
-                <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+                <el-date-picker
+                  v-model="form.archiveExpandVO.orgInstitutionBigen"
+                  type="date"
+                  clearable
+                  placeholder="开始日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.orgInstitutionEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+                <el-date-picker
+                  v-else
+                  v-model="form.archiveExpandVO.orgInstitutionEnd"
+                  type="date"
+                  clearable
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
@@ -340,7 +383,7 @@
                   :imagePath="form.archiveExpandVO.idFrontUrl"
                   :exampleImg="exampleImg.idFrontUrl"
                   uploadUrlPath="/uploadFile"
-                  @on-success="(value, base64Code) => setUploadSrcAndBase64(value, base64Code, 'archiveExpandVO', 'idFrontUrl')"
+                  @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idFrontUrl', 'face')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"
                 ></upload-pic>
               </el-form-item>
@@ -349,11 +392,12 @@
               <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
                 <upload-pic
                   alt="身份证背面照"
+                  :hasBase64="true"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.idBackUrl"
                   :exampleImg="exampleImg.idBackUrl"
                   uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'idBackUrl')"
+                  @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idBackUrl', 'back')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"
                 ></upload-pic>
               </el-form-item>
@@ -381,7 +425,15 @@
                 <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.idEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" type="date" clearable placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+                <el-date-picker
+                  v-else
+                  v-model="form.archiveExpandVO.idEnd"
+                  type="date"
+                  clearable
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -495,8 +547,12 @@
     </section>
     <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
       <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
-      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}</el-button>
-      <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'">拒绝</el-button>
+      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{
+        [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存'
+      }}</el-button>
+      <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true" v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'"
+        >拒绝</el-button
+      >
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
     <!-- dialog -->
@@ -512,7 +568,14 @@
       </div>
     </el-dialog>
     <!-- image-preview -->
-    <el-image-preview ref="imageViewer" v-if="showViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="handleClosePreview" class="e-preview-con"></el-image-preview>
+    <el-image-preview
+      ref="imageViewer"
+      v-if="showViewer"
+      :initial-index="imageIndex"
+      :url-list="previewList"
+      :on-close="handleClosePreview"
+      class="e-preview-con"
+    ></el-image-preview>
   </section>
 </template>
 
@@ -525,7 +588,7 @@ import { detailValidate, formObj, rateOptions, refundForm, refundRules } from '.
 import { filterReview } from './filters'
 import { deepClone } from '@/utils'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
-import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory } from '@/api/wxArchive'
+import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, searchCompanyInfo } from '@/api/wxArchive'
 
 export default {
   mixins: [fileServer],
@@ -557,7 +620,7 @@ export default {
         businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
         businessSiteTwoUrl: require('@/assets/images/xftArchive/shop_in.png'),
         businessSiteThreeUrl: require('@/assets/images/xftArchive/goods.png'),
-        businessLicenseUrl: require('@/assets/images/xftArchive/goods.png'),
+        businessLicenseUrl: require('@/assets/images/xftArchive/business_license.jpg'),
         idFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
         idBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
         hardIdUrl: require('@/assets/images/xftArchive/people_id.png'),
@@ -815,10 +878,37 @@ export default {
         if (res.results.length !== 10) this.isMaxPage = true
       }
     },
-    imgClick() {
-      if (this.formDisabled) alert('hahahah')
+    setIdCardAndBase64(res, base64Code, type, url, side) {
+      const OCRData = {
+        image: base64Code.split(',')[1],
+        imageCode: 'idcard',
+        side
+      }
+      this.$message.success('正在进行图片解析')
+      imageOCR(OCRData).then(res => {
+        this.$message.success('图片解析成功')
+        if (side === 'face') {
+          this.form.archiveExpandVO.legalPersonName = res.name
+          this.form.archiveExpandVO.idNumber = res.num
+        } else {
+          this.form.archiveExpandVO.idBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
+          this.form.archiveExpandVO.idEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
+        }
+      })
+      this.form[type][url] = res.data.path
     },
-    setUploadSrcAndBase64(res, base64Code, type, url) {
+    setBusinessLicenseAndBase64(res, base64Code, type, url, side) {
+      const OCRData = {
+        image: base64Code.split(',')[1],
+        imageCode: 'business_license'
+      }
+      this.$message.success('正在进行图片解析')
+      imageOCR(OCRData).then(async res => {
+        this.$message.success('图片解析成功')
+        this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
+        this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
+        const companyInfo = await searchCompanyInfo({ key: res.name })
+      })
       this.form[type][url] = res.data.path
     },
     setUploadSrc(res, type, url) {

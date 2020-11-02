@@ -19,18 +19,30 @@ const urlLinks = {
   queryBySubMchId: 'archive/general/queryBySubMchId',
   queryTotalByStatus: 'archive/general/queryTotalByStatus',
   delList: 'archive/general/del',
-  imageOCR: 'common/imageOcr'
+  imageOCR: 'common/imageOcr',
+  searchCompanyInfo: '/common/searchCompanyInfo'
 }
 
-// 汇总统计
-export function imageOCR(data) {
+// 企查查
+export function searchCompanyInfo(data) {
   return request({
-    url: urlLinks.imageOCR,
-    method: 'POST'
+    url: urlLinks.searchCompanyInfo,
+    method: 'POST',
+    data
   })
 }
 
-// 汇总统计
+// 图片识别
+export function imageOCR(data) {
+  return request({
+    url: urlLinks.imageOCR,
+    method: 'POST',
+    data: data,
+    timeout: 1 * 60 * 1000 // 分 * 秒 * 毫秒
+  })
+}
+
+// 删除草稿
 export function delList(data) {
   return request({
     url: `${urlLinks.delList}/${data.id}`,

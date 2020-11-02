@@ -35,8 +35,37 @@ const urlLinks = {
   queryContactQrCode: '/archive/xdd/queryContactQrCode',
   // 查询子商户号
   querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
-  querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf'
+  querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf',
+  queryTotalByStatus: 'archive/general/queryTotalByStatus',
+  delList: 'archive/general/del',
+  imageOCR: 'common/imageOcr'
 }
+
+// 图片识别
+export function imageOCR(data) {
+  return request({
+    url: urlLinks.imageOCR,
+    method: 'POST'
+  })
+}
+
+// 删除草稿
+export function delList(data) {
+  return request({
+    url: `${urlLinks.delList}/${data.id}`,
+    method: 'POST'
+  })
+}
+
+// 汇总统计
+export function queryTotalByStatus(data) {
+  return request({
+    url: urlLinks.queryTotalByStatus,
+    method: 'POST',
+    data
+  })
+}
+
 // 分页查询
 export function queryPage(data) {
   return request({

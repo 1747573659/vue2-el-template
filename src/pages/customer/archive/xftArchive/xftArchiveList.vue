@@ -1,47 +1,27 @@
 <template>
   <div>
     <div class="search-box">
-      <section class="p-count_con">
-        <img src="../../../../assets/images/icon/mark.png" alt="提示">
-        <div class="p-count_item">草稿：10</div>
-        <div class="p-count_item">待审核：10</div>
-        <div class="p-count_item">资料补充待审核：10</div>
-        <div class="p-count_item">平台审核中：10</div>
-        <div class="p-count_item">资料待补充：10</div>
-        <div class="p-count_item">未通过审核编辑中：10</div>
-        <div class="p-count_item">未通过审核：10</div>
+      <section class="p-count_con" v-if="countData.length > 0">
+        <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+        <template v-for="item in countData">
+          <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+        </template>
       </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
         <el-row>
           <el-col :span="21">
             <el-form-item label="申请时间">
-              <el-date-picker
-                v-model="form.time"
-                type="daterange"
-                range-separator="至"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                value-format="yyyy-MM-dd">
+              <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
               </el-date-picker>
             </el-form-item>
             <el-form-item label="资料状态">
               <el-select style="width: 240px" clearable v-model="form.auditStatus" placeholder="全部">
-                <el-option
-                  v-for="item in auditStatusOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
+                <el-option v-for="item in auditStatusOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="认证状态">
               <el-select style="width: 240px" clearable v-model="form.wxCertStatus" placeholder="全部">
-                <el-option
-                  v-for="item in wxCertStatusOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id">
-                </el-option>
+                <el-option v-for="item in wxCertStatusOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -51,12 +31,7 @@
         </el-form-item>
         <el-form-item label="停用">
           <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-            <el-option
-              v-for="item in statusList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
+            <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item style="padding-left:30px">
@@ -71,87 +46,56 @@
       <el-table
         v-loading="tableLoading"
         :max-height="tableMaxHeight"
-        :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" 
+        :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }"
         @sort-change="tableSortChange"
         :data="tableData"
-        style="width: 100%">
-        <el-table-column
-          prop="archiveBaseDTO.createTime"
-          label="申请时间"
-          sortable="custom"
-          width="110">
-        </el-table-column>
-        <el-table-column
-          prop="archiveBaseDTO.id"
-          label="资料ID"
-          width="100">
-        </el-table-column>
-        <el-table-column
-          prop="archiveBaseDTO.merchantName"
-          label="商户名称">
-        </el-table-column>
-        <el-table-column
-          prop="archiveBaseDTO.merchantShortName"
-          label="商户简称">
-        </el-table-column>
-        <el-table-column
-          prop="archiveBaseDTO.companyName"
-          label="公司名称">
-        </el-table-column>
-        <el-table-column
-          prop="archiveExpandDTO.bankCard"
-          label="银行卡号">
-        </el-table-column>
-        <el-table-column
-          prop="archiveBaseDTO.auditStatus"
-          label="资料状态"
-          width="140">
+        style="width: 100%"
+      >
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"> </el-table-column>
+        <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"> </el-table-column>
+        <el-table-column prop="archiveBaseDTO.merchantName" label="商户名称"> </el-table-column>
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"> </el-table-column>
+        <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"> </el-table-column>
+        <el-table-column prop="archiveExpandDTO.bankCard" label="银行卡号"> </el-table-column>
+        <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态" width="140">
           <template slot-scope="scope">
             <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
-              {{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}
+              {{ auditStatusList[scope.row.archiveBaseDTO.auditStatus] }}
             </span>
-            <span v-else>{{auditStatusList[scope.row.archiveBaseDTO.auditStatus]}}</span>
+            <span v-else>{{ auditStatusList[scope.row.archiveBaseDTO.auditStatus] }}</span>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="微信认证状态"
-          width="130">
+        <el-table-column prop="createTime" label="微信认证状态" width="130">
           <template slot-scope="scope">
-            {{wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus]}}
+            {{ wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus] }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="archiveBaseDTO.fixFeeRate"
-          label="费率"
-          width="80">
+        <el-table-column prop="archiveBaseDTO.fixFeeRate" label="费率" width="80">
           <template slot-scope="scope">
-            {{scope.row.archiveBaseDTO.fixFeeRate ? (scope.row.archiveBaseDTO.fixFeeRate / 100) + '%' : '--'}}
+            {{ scope.row.archiveBaseDTO.fixFeeRate ? scope.row.archiveBaseDTO.fixFeeRate / 100 + '%' : '--' }}
           </template>
         </el-table-column>
-        <el-table-column
-          prop="archiveBaseDTO.stopUse"
-          label="停用"
-          width="80">
+        <el-table-column prop="archiveBaseDTO.stopUse" label="停用" width="80">
           <template slot-scope="scope">
-            {{scope.row.archiveBaseDTO.stopUse ? '是' : '否'}}
+            {{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}
           </template>
         </el-table-column>
-        <el-table-column
-          label="操作"
-          align="right"
-          width="170px">
+        <el-table-column label="操作" align="right" width="170px">
           <template slot-scope="scope">
-            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0,1,4,8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small"
+              >编辑</el-button
+            >
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
-            <el-button v-if="[3,5,6,7,9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
+            <el-button v-if="[3, 5, 6, 7, 9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
             <el-button v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
-            <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'}}</el-button>
+            <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{
+              scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'
+            }}</el-button>
             <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">
               <p class="e-popover_prompt">确定删除所选数据吗？</p>
               <div class="e-popover_action">
                 <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
-                <el-button type="primary" size="mini" @click="handleDraftList(scope.$index)">确定</el-button>
+                <el-button type="primary" size="mini" @click="handleDraftList(scope)">确定</el-button>
               </div>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popover>
@@ -162,7 +106,13 @@
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
                 <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item v-permission="'XFT_LIST_SHOP_QRCODE'" style="color: #3377FF" v-if="[3,4,5].includes(scope.row.archiveBaseDTO.wxCertStatus)" @click.native="shopQRCode(scope.row)">商户扫码认证</el-dropdown-item>
+                <el-dropdown-item
+                  v-permission="'XFT_LIST_SHOP_QRCODE'"
+                  style="color: #3377FF"
+                  v-if="[3, 4, 5].includes(scope.row.archiveBaseDTO.wxCertStatus)"
+                  @click.native="shopQRCode(scope.row)"
+                  >商户扫码认证</el-dropdown-item
+                >
               </el-dropdown-menu>
             </el-dropdown>
           </template>
@@ -176,17 +126,17 @@
           :page-sizes="[10, 15, 30]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage">
+          :total="totalPage"
+        >
         </el-pagination>
       </div>
     </div>
-    <el-dialog
-      title="商户微信实名认证指引流程"
-      :visible.sync="certificationVisible"
-      width="507px"
-      class="certification-dialog">
-      <div class="certification-dialog-text">1. 商户联系人：<span style="color: #FF6010">{{this.certificationForm.contact}}(手机尾号{{this.certificationForm.contactPhone}})</span>微信扫描下方二维码，按照指引补充或修改联系人信息</div>
-      <img v-if="certificationVisible" :src="imgSrc" class="certification-dialog-img" alt="qrcode">
+    <el-dialog title="商户微信实名认证指引流程" :visible.sync="certificationVisible" width="507px" class="certification-dialog">
+      <div class="certification-dialog-text">
+        1. 商户联系人：<span style="color: #FF6010">{{ this.certificationForm.contact }}(手机尾号{{ this.certificationForm.contactPhone }})</span
+        >微信扫描下方二维码，按照指引补充或修改联系人信息
+      </div>
+      <img v-if="certificationVisible" :src="imgSrc" class="certification-dialog-img" alt="qrcode" />
       <div class="certification-dialog-text">2. 完成信息补充后，引导公司法人完成法人的实名认证（或对公账户验证）</div>
       <div class="certification-dialog-text">3. 完成1-2两步操作之后，即完成了微信关于系统风控，用户资金安全的监管要求，开户成功！</div>
       <span slot="footer" class="dialog-footer">
@@ -197,18 +147,20 @@
 </template>
 
 <script>
-import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode } from '@/api/xftArchive'
+import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode, queryTotalByStatus, delList } from '@/api/xftArchive'
 export default {
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter(to, from, next) {
     next(vm => {
       // 通过 `vm` 访问组件实例
       vm.currentPage = 1
       vm.getList()
+      vm.handleQueryTotalByStatus()
     })
   },
   name: 'xftArchive',
   data() {
     return {
+      countData: [],
       certificationForm: {},
       form: {
         createTime: '',
@@ -220,29 +172,29 @@ export default {
         status: 0
       },
       auditStatusOptions: [
-        {id: '', name: '全部'},
-        {id: 0, name: '草稿'},
-        {id: 1, name: '未通过审核编辑中'},
-        {id: 2, name: '待审核'},
-        {id: 3, name: '平台审核中'},
-        {id: 4, name: '未通过审核'},
-        {id: 5, name: '账号申请中'},
-        {id: 6, name: '账号部分申请通过'},
-        {id: 7, name: '账号全部申请通过'},
-        {id: 8, name: '资料待补充'},
-        {id: 9, name: '资料补充待审核'}
+        { id: '', name: '全部' },
+        { id: 0, name: '草稿' },
+        { id: 1, name: '未通过审核编辑中' },
+        { id: 2, name: '待审核' },
+        { id: 3, name: '平台审核中' },
+        { id: 4, name: '未通过审核' },
+        { id: 5, name: '账号申请中' },
+        { id: 6, name: '账号部分申请通过' },
+        { id: 7, name: '账号全部申请通过' },
+        { id: 8, name: '资料待补充' },
+        { id: 9, name: '资料补充待审核' }
       ],
       wxCertStatusOptions: [
-        {id: '', name: '全部'},
-        {id: 0, name: '未认证'},
-        {id: 1, name: '编辑中'},
-        {id: 2, name: '审核中'},
-        {id: 3, name: '待确认联系信息'},
-        {id: 4, name: '待账户验证'},
-        {id: 5, name: '审核通过'},
-        {id: 6, name: '审核驳回'},
-        {id: 7, name: '已冻结'},
-        {id: 8, name: '已作废'},
+        { id: '', name: '全部' },
+        { id: 0, name: '未认证' },
+        { id: 1, name: '编辑中' },
+        { id: 2, name: '审核中' },
+        { id: 3, name: '待确认联系信息' },
+        { id: 4, name: '待账户验证' },
+        { id: 5, name: '审核通过' },
+        { id: 6, name: '审核驳回' },
+        { id: 7, name: '已冻结' },
+        { id: 8, name: '已作废' }
       ],
       auditStatusList: {
         0: '草稿',
@@ -270,9 +222,9 @@ export default {
         8: '已作废'
       },
       statusList: [
-        {id: '', name:'全部'},
-        {id: 1, name:'是'},
-        {id: 0, name:'否'}
+        { id: '', name: '全部' },
+        { id: 1, name: '是' },
+        { id: 0, name: '否' }
       ],
       tableData: [],
       currentPage: 1,
@@ -281,11 +233,58 @@ export default {
       certificationVisible: false,
       cxLoading: false,
       tableLoading: false,
-      imgSrc: ''
+      imgSrc: '',
+      countOptions: [
+        { value: 0, label: '草稿' },
+        { value: 2, label: '待审核' },
+        { value: 9, label: '资料补充待审核' },
+        { value: 3, label: '平台审核中' },
+        { value: 8, label: '资料待补充' },
+        { value: 1, label: '未通过审核编辑中' },
+        { value: 4, label: '未通过审核' }
+      ]
     }
   },
   methods: {
-    tableSortChange({column, prop, order}) {
+    handleQueryTotalByStatus: async function() {
+      let data = {
+        orders: {
+          createTime: this.form.createTime
+        },
+        startTime: this.form.time && this.form.time.length > 0 ? this.form.time[0] + ' 00:00:00' : '',
+        endTime: this.form.time && this.form.time.length > 0 ? this.form.time[1] + ' 23:59:59' : '',
+        auditStatusList: this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
+        merchantName: this.form.name,
+        merchantShortName: this.form.name,
+        companyName: this.form.name,
+        bankCard: this.form.name,
+        wxCertStatus: this.form.wxCertStatus,
+        stopUse: this.form.status,
+        page: this.currentPage,
+        rows: this.pageSize
+      }
+      try {
+        const res = await queryTotalByStatus(data)
+        for (const item of res) {
+          for (const ele of this.countOptions) {
+            if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+          }
+        }
+      } catch (error) {}
+    },
+    handleDraftCancel(index) {
+      this.$refs[`popover${index}`].doClose()
+    },
+    handleDraftList: async function(scope) {
+      try {
+        await delList({ id: scope.row.archiveBaseDTO.id })
+        this.getList()
+      } catch (error) {
+      } finally {
+        this.$refs[`popover${scope.$index}`].doClose()
+      }
+    },
+    tableSortChange({ column, prop, order }) {
       if (order === 'ascending') {
         this.form.createTime = 'asc'
       } else if (order === 'descending') {
@@ -300,16 +299,16 @@ export default {
       this.$router.push({ name: 'xftArchiveAdd' })
     },
     edit(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
     },
-    check(row){
-      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
+    check(row) {
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
     },
-    detail(row){
-      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id }})
+    detail(row) {
+      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
     },
     copy(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { isCopy: true, id: row.archiveBaseDTO.id }})
+      this.$router.push({ name: 'xftArchiveAdd', query: { isCopy: true, id: row.archiveBaseDTO.id } })
     },
     search() {
       this.cxLoading = true
@@ -318,14 +317,14 @@ export default {
     },
     async changeStatus(row) {
       let data = {
-        'archiveId': row.archiveBaseDTO.id,
-        'stopUse': row.archiveBaseDTO.stopUse ? 0 : 1
+        archiveId: row.archiveBaseDTO.id,
+        stopUse: row.archiveBaseDTO.stopUse ? 0 : 1
       }
-      try{
+      try {
         const res = await stopUse(data)
         this.getList()
         this.$message.success('操作成功')
-      } catch(error) {}
+      } catch (error) {}
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -339,7 +338,7 @@ export default {
     statusClick(row) {
       this.$alert(row.archiveBaseDTO.auditRemark)
     },
-    async shopQRCode (row) {
+    async shopQRCode(row) {
       this.certificationForm.contact = row.archiveBaseDTO.contact
       this.certificationForm.contactPhone = row.archiveBaseDTO.contactPhone.substring(7)
       let data = {
@@ -352,33 +351,34 @@ export default {
         this.certificationVisible = true
       } catch (error) {}
     },
-    archiveDetail (row) {
-      this.$router.push({ name: 'xftArchiveDetail', query: {id: row.archiveBaseDTO.id} })
+    archiveDetail(row) {
+      this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id } })
     },
     async getList() {
       this.tableLoading = true
       let data = {
-        'orders': {
-          'createTime': this.form.createTime
+        orders: {
+          createTime: this.form.createTime
         },
-        'startTime': this.form.time && this.form.time.length > 0 ? this.form.time[0] + ' 00:00:00' : '',
-        'endTime': this.form.time && this.form.time.length > 0 ? this.form.time[1] + ' 23:59:59' : '',
-        'auditStatusList': this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
-        'merchantName': this.form.name,
-        'merchantShortName': this.form.name,
-        'companyName': this.form.name,
-        'bankCard': this.form.name,
+        startTime: this.form.time && this.form.time.length > 0 ? this.form.time[0] + ' 00:00:00' : '',
+        endTime: this.form.time && this.form.time.length > 0 ? this.form.time[1] + ' 23:59:59' : '',
+        auditStatusList: this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
+        merchantName: this.form.name,
+        merchantShortName: this.form.name,
+        companyName: this.form.name,
+        bankCard: this.form.name,
         // 'auditStatusList': this.form.auditStatus,
-        'wxCertStatus': this.form.wxCertStatus,
-        'stopUse': this.form.status,
-        'page': this.currentPage,
-        'rows': this.pageSize,
+        wxCertStatus: this.form.wxCertStatus,
+        stopUse: this.form.status,
+        page: this.currentPage,
+        rows: this.pageSize
       }
       try {
         const res = await queryPage(data)
         this.tableData = res.results
         this.totalPage = res.totalCount
-      } catch (e) {} finally {
+      } catch (e) {
+      } finally {
         this.cxLoading = false
         this.tableLoading = false
       }
@@ -395,8 +395,8 @@ export default {
           callback: action => {
             this.getList()
           }
-        });
-      } catch(error) {}
+        })
+      } catch (error) {}
     }
   },
   computed: {
@@ -404,8 +404,7 @@ export default {
       return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
     }
   },
-  mounted() {
-  }
+  mounted() {}
 }
 </script>
 
@@ -419,7 +418,7 @@ export default {
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
-      color: #3D4966;
+      color: #3d4966;
       margin-bottom: 12px;
       line-height: 22px;
     }
@@ -441,17 +440,17 @@ export default {
 }
 .el-dropdown-link {
   font-size: 18px;
-  color: #3377FF;
+  color: #3377ff;
   cursor: pointer;
 }
 .table-text-color {
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
-  color: #FF6010;
+  color: #ff6010;
   cursor: pointer;
 }
-.p{
+.p {
   &-count {
     &_con {
       background: rgba(255, 96, 16, 0.08);
@@ -463,7 +462,7 @@ export default {
       padding: 12px 16px;
       font-size: 14px;
       color: #3d4966;
-      img{
+      img {
         width: 14px;
         height: 14px;
         margin-right: 8px;
@@ -476,7 +475,7 @@ export default {
     }
   }
 }
-.e{
+.e {
   &-popover {
     &_con {
       margin-left: 12px;
