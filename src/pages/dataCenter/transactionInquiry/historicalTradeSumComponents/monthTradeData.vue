@@ -67,11 +67,11 @@
             <div class="sum-card-title">
               交易总额(元)
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">当前过滤条件的交易总额<br/>(未扣除退款订单金额)</div>
+                <div slot="content">当前过滤条件的交易总额<br />(未扣除退款订单金额)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payAmount}}</div>
+            <div class="sum-card-money">{{ tableData.payAmount }}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -79,11 +79,11 @@
             <div class="sum-card-title">
               交易笔数
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">当前过滤条件的交易笔数<br/>(未扣除退款订单金额)</div>
+                <div slot="content">当前过滤条件的交易笔数<br />(未扣除退款订单金额)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payCount}}</div>
+            <div class="sum-card-money">{{ tableData.payCount }}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -95,7 +95,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
           </div>
         </el-col>
       </el-row>
@@ -103,7 +103,7 @@
       <div id="eChart" style="width: 100%;height:400px;"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table">
-      <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
+        <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
         <el-table-column label="日期" prop="payDate"></el-table-column>
         <el-table-column label="交易总额(元)" prop="payAmount">
           <template slot-scope="scope">{{ scope.row.payAmount }}</template>
@@ -112,9 +112,7 @@
         <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
-            <el-button @click="detail(scope.row)" type="text" size="small"
-              >详情</el-button
-            >
+            <el-button @click="detail(scope.row)" type="text" size="small">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -146,10 +144,10 @@ export default {
       paymentList: [],
       questionIcon: require('@/assets/images/icon/questioin.png'),
       searchObjectList: [
-        { id: '', name: '全部'},
-        { id: 1, name: '代理商'},
-        { id: 2, name: '商户'},
-        { id: 3, name: '门店'},
+        { id: '', name: '全部' },
+        { id: 1, name: '代理商' },
+        { id: 2, name: '商户' },
+        { id: 3, name: '门店' }
       ],
       tableLoading: false,
       ObjContentList: [],
@@ -159,18 +157,30 @@ export default {
       eChartsDataList: [],
       cxLoading: false,
       pickerOptions: {
-        onPick: ({maxDate, minDate}) => {
+        onPick: ({ maxDate, minDate }) => {
           if (minDate) {
             const day31 = 31 * 24 * 3600 * 1000
             maxTime = moment(minDate.getTime()).add(12, 'months')
             minTime = moment(minDate.getTime()).subtract(12, 'months')
           }
         },
-        disabledDate: (time) => {
+        disabledDate: time => {
           if (maxTime) {
-            return time.getTime() > moment().endOf('day').valueOf() || time.getTime() > maxTime || time.getTime() < minTime
+            return (
+              time.getTime() >
+                moment()
+                  .endOf('day')
+                  .valueOf() ||
+              time.getTime() > maxTime ||
+              time.getTime() < minTime
+            )
           }
-          return time.getTime() > moment().endOf('day').valueOf()
+          return (
+            time.getTime() >
+            moment()
+              .endOf('day')
+              .valueOf()
+          )
         }
       }
     }
@@ -186,11 +196,19 @@ export default {
     this.loadingChart()
   },
   created() {
-    this.form.time = [moment((new Date()).getTime()).subtract(12, 'months').format('YYYY-MM'), moment((new Date()).getTime()).format('YYYY-MM')]
+    this.form.time = [
+      moment(new Date().getTime())
+        .subtract(12, 'months')
+        .format('YYYY-MM'),
+      moment(new Date().getTime()).format('YYYY-MM')
+    ]
   },
   methods: {
     detail(row) {
-      this.$router.push({ name: 'historicalTradeSumDetail', query: { type: 3, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id } })
+      this.$router.push({
+        name: 'historicalTradeSumDetail',
+        query: { type: 3, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id }
+      })
     },
     dateChange(value) {
       console.log(value)
@@ -267,14 +285,15 @@ export default {
     },
     setSearchTime(type) {},
     async getList() {
+      this.tableLoading = true
       let data = {
         type: 3,
-        adminId: null,
-        agentId: null,
-        storeId: null,
+        adminId: this.form.searchObject === 2 ? this.form.id : '',
+        agentId: this.form.searchObject === 1 ? this.form.id : '',
+        storeId: this.form.searchObject === 3 ? this.form.id : '',
         startTime: this.form.time[0],
         endTime: this.form.time[1],
-        payMethod: null
+        payMethod: this.form.payMethod
       }
       try {
         const res = await cashierData(data)
@@ -288,13 +307,16 @@ export default {
           this.eChartsDataList = this.eChartsDataList.reverse()
         }
         this.loadingChart()
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        this.tableLoading = false
+      }
     },
     async getpaymentMethodVoList() {
       try {
         const res = await paymentMethodVoList()
         this.paymentList = res
-        this.paymentList.unshift({ id: '', name: '全部'},)
+        this.paymentList.unshift({ id: '', name: '全部' })
       } catch (error) {}
     },
     loadingChart() {

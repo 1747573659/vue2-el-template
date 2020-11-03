@@ -287,6 +287,7 @@ export default {
       }
     },
     async getList() {
+      this.tableLoading = true
       let data = {
         type: 2,
         adminId: this.form.searchObject === 2 ? this.form.id : '',
@@ -309,7 +310,9 @@ export default {
         }
         this.totalPage = this.tableData.cashierMockDTOS.length || 0
         this.loadingChart()
-      } catch (error) {}
+      } catch (error) {} finally {
+        this.tableLoading = false
+      }
     },
     detail(row) {
       this.$router.push({ name: 'historicalTradeSumDetail', query: { type: 2, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id } })
