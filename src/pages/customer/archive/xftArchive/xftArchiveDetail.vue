@@ -73,9 +73,9 @@
           align="right"
           width="320px">
           <template slot-scope="scope">
+            <el-button @click="querySubShop(scope.row)" v-if="['7', '30'].includes(scope.row.channelCode)" type="text" size="small">查询子商户号</el-button>
             <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">子商户号授权</el-button>
             <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">查询授权状态</el-button>
-            <el-button @click="querySubShop(scope.row)" v-if="['7', '30'].includes(scope.row.channelCode)" type="text" size="small">查询子商户号</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -112,7 +112,7 @@
               <span v-for="(item, index) in subShopForm.wxSubMchIds" :key="index">{{item + (index === subShopForm.wxSubMchIds.length - 1 ? '' : ',')}}</span>
             </el-col>
             <el-col :span="6" v-if="subShopForm.wxSubMchIds">
-              <el-button style="float:right" @click="copy(subShopForm.wxSubMchIds[0])" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.wxSubMchIds)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -122,7 +122,7 @@
               <span v-for="(item, index) in subShopForm.aliSmids" :key="index">{{item + (index === subShopForm.aliSmids.length - 1 ? '' : ',')}}</span>
             </el-col>
             <el-col :span="6" v-if="subShopForm.aliSmids">
-              <el-button style="float:right" @click="copy(subShopForm.aliSmids[0])" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.aliSmids)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -132,7 +132,7 @@
               <span v-for="(item, index) in subShopForm.unionPayMchIds" :key="index">{{item + (index === subShopForm.unionPayMchIds.length - 1 ? '' : ',')}}</span>
             </el-col>
             <el-col :span="6" v-if="subShopForm.unionPayMchIds">
-              <el-button style="float:right" @click="copy(subShopForm.unionPayMchIds[0])" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.unionPayMchIds)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -142,7 +142,7 @@
               <span v-for="(item, index) in subShopForm.corMchNos" :key="index">{{item + (index === subShopForm.corMchNos.length - 1 ? '' : ',')}}</span>
             </el-col>
             <el-col :span="6" v-if="subShopForm.corMchNos">
-              <el-button style="float:right" @click="copy(subShopForm.corMchNos[0])" type="text" size="small">复制</el-button>
+              <el-button style="float:right" @click="copy(subShopForm.corMchNos)" type="text" size="small">复制</el-button>
             </el-col>
           </el-row>
         </el-form-item>
@@ -184,7 +184,15 @@ export default {
     }
   },
   methods: {
-    copy (value) {
+    copy (list) {
+      let value = ''
+      list.forEach((item,index) => {
+        if (index === list.length - 1) {
+          value += item
+        } else {
+          value += (item + ',')
+        }
+      })
       let transfer = document.createElement('input')
       document.body.appendChild(transfer)
       transfer.value = value // 这里表示想要复制的内容

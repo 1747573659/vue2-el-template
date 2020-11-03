@@ -52,11 +52,11 @@
             <div class="sum-card-title">
               交易总额(元)
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">当前过滤条件的交易总额<br/>(未扣除退款订单金额)</div>
+                <div slot="content">当前过滤条件的交易总额<br />(未扣除退款订单金额)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payAmount}}</div>
+            <div class="sum-card-money">{{ tableData.payAmount }}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -64,11 +64,11 @@
             <div class="sum-card-title">
               交易笔数
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">当前过滤条件的交易笔数<br/>(未扣除退款订单金额)</div>
+                <div slot="content">当前过滤条件的交易笔数<br />(未扣除退款订单金额)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payCount}}</div>
+            <div class="sum-card-money">{{ tableData.payCount }}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -80,7 +80,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
           </div>
         </el-col>
       </el-row>
@@ -88,8 +88,7 @@
       <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table">
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="所属代理商" prop="agentName"></el-table-column>
-        <el-table-column label="交易总额(元)" prop="payAmount">
-        </el-table-column>
+        <el-table-column label="交易总额(元)" prop="payAmount"> </el-table-column>
         <el-table-column label="交易笔数" prop="payCount"></el-table-column>
         <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
       </el-table>
@@ -207,7 +206,7 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.form.id= null
+      this.form.id = null
     },
     handleCurrentChange() {},
     handleSizeChange() {},
@@ -216,8 +215,9 @@ export default {
     },
     setSearchTime(type) {},
     async getList() {
+      this.tableLoading = true
       let data = {
-        adminId:  this.$route.query.searchObject === '2' ? this.$route.query.id : this.searchType === 1 ? this.form.id : '',
+        adminId: this.$route.query.searchObject === '2' ? this.$route.query.id : this.searchType === 1 ? this.form.id : '',
         agentId: this.$route.query.searchObject === '1' ? this.$route.query.id : this.searchType === 2 ? this.form.id : '',
         dataTime: this.$route.query.payDate,
         payMethod: this.$route.query.payMethod,
@@ -226,7 +226,11 @@ export default {
       try {
         const res = await detail(data)
         this.tableData = res
-      } catch (error) {}
+        this.totalPage = res.totalCount
+      } catch (error) {
+      } finally {
+        this.tableLoading = false
+      }
     }
   }
 }
