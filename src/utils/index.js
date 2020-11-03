@@ -19,7 +19,7 @@ import { Message, MessageBox } from 'element-ui'
  * @param {string} 请求方法(默认为get请求)
  * @param {string} paramsFormat 请求参数格式(默认为x-www-form-urlencoded格式)
  */
-export function downloadBufferFile (url, data, method = 'GET', paramsFormat = 'x-www-form-urlencoded') {
+export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-www-form-urlencoded') {
   if (method === 'GET') {
     return axios({
       url,
@@ -62,49 +62,49 @@ export function downloadBufferFile (url, data, method = 'GET', paramsFormat = 'x
         responseType: 'blob' // 必须是arraybuffer类型
       }).then(response => {
         console.log(response)
-        if(response.headers['content-type']==='application/json;charset=UTF-8'){
-         const data=response.data
-         const reader = new FileReader()
-         reader.addEventListener('loadend', function (e) {
-           let data=JSON.parse(e.target.result)
-           console.log(data)
-           if(data.code===195001){
-            MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
-              confirmButtonText: '重新登录',
-              type: 'warning',
-              showClose: false,
-              showCancelButton: false,
-              closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
-              beforeClose: action => {
-                if (action === 'cancel') {
-                  location.reload()
-                } else {
-                  store.dispatch('FedLogOut').then(() => {
-                    location.reload() // 为了重新实例化vue-router对象 避免bug
-                    // this.$router.push({path: '/login'})
-                  })
+        if (response.headers['content-type'] === 'application/json;charset=UTF-8') {
+          const data = response.data
+          const reader = new FileReader()
+          reader.addEventListener('loadend', function (e) {
+            let data = JSON.parse(e.target.result)
+            console.log(data)
+            if (data.code === 195001) {
+              MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
+                confirmButtonText: '重新登录',
+                type: 'warning',
+                showClose: false,
+                showCancelButton: false,
+                closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
+                beforeClose: action => {
+                  if (action === 'cancel') {
+                    location.reload()
+                  } else {
+                    store.dispatch('FedLogOut').then(() => {
+                      location.reload() // 为了重新实例化vue-router对象 避免bug
+                      // this.$router.push({path: '/login'})
+                    })
+                  }
                 }
-              }
-            }).catch(err => {
-              console.log(err)
-            })
-          }else{
-            Message.error(data.msg)
-          }
-         })
-         reader.readAsText(data)
-        }else{
+              }).catch(err => {
+                console.log(err)
+              })
+            } else {
+              Message.error(data.msg)
+            }
+          })
+          reader.readAsText(data)
+        } else {
           setTimeout(() => {
             handleDownloadBufferFile(response)
           }, 0)
         }
-        
+
       })
     }
   }
 }
 
-function handleDownloadBufferFile (response, data) {
+function handleDownloadBufferFile(response, data) {
   let url = window.URL.createObjectURL(response.data) // 表示一个指定的file对象或Blob对象
   let fileName = '' // filename名称截取
   if ((response.headers['content-disposition'] && response.headers['content-disposition'].length) || (response.headers['Content-Disposition'] && response.headers['Content-Disposition'].length)) {
