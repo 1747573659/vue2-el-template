@@ -483,7 +483,7 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" class="archive-form-item" v-if="isExchangeFeeRate">
+            <el-col :span="12" class="archive-form-item">
               <el-form-item label="享钱汇银费率" prop="archiveBaseVO.exchangeFeeRate">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
                   <el-option v-for="item in fixFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
