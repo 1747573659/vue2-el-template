@@ -1,7 +1,7 @@
 <template>
   <div v-permission.page="'XFT_LIST_ADD,XFT_LIST_EDIT'">
     <div class="xft-add" v-loading="addLoading">
-      <div class="header" v-if="!isCopy">
+      <div class="header" v-if="!isCopy && auditStatus !== undefined">
         <el-row>
           <el-col :span="12" class="title-text" v-if="auditStatus !== undefined">
             <span class="archive-title">进件状态：</span>
@@ -195,7 +195,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
-                <upload-pic alt="营业执照" :imagePath="form.archiveExpandVO.businessLicenseUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.businessLicenseUrl') }" :exampleImg="exampleImg.businessLicenseUrl" @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"> </upload-pic>
+                <upload-pic alt="营业执照" :hasBase64="true" :imagePath="form.archiveExpandVO.businessLicenseUrl" :fileServer="fileServer" @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')" :exampleImg="exampleImg.businessLicenseUrl" @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"> </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -233,6 +233,18 @@
         </div>
         <div class="title">法人信息</div>
         <div class="form-info">
+          <el-row>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
+                <upload-pic alt="身份证正面照" :hasBase64="true" :imagePath="form.archiveExpandVO.idFrontUrl" :fileServer="fileServer" @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idFrontUrl', 'face')" :exampleImg="exampleImg.idFrontUrl" @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" class="archive-form-item">
+              <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
+                <upload-pic alt="身份证背面照" :hasBase64="true" :imagePath="form.archiveExpandVO.idBackUrl" :fileServer="fileServer" @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idBackUrl', 'back')" :exampleImg="exampleImg.idBackUrl" @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"> </upload-pic>
+              </el-form-item>
+            </el-col>
+          </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="法人姓名" prop="archiveExpandVO.legalPersonName">
@@ -278,25 +290,13 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
-                <upload-pic alt="身份证正面照" :imagePath="form.archiveExpandVO.idFrontUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.idFrontUrl') }" :exampleImg="exampleImg.idFrontUrl" @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"> </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
-                <upload-pic alt="身份证背面照" :imagePath="form.archiveExpandVO.idBackUrl" :fileServer="fileServer" @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.idBackUrl') }" :exampleImg="exampleImg.idBackUrl" @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"> </upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
         </div>
         <div class="title">银行卡信息</div>
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
-                <el-select style="width: 240px" @change="acctTypeChange" :disabled="form.archiveBaseVO.merchantType === 4" clearable v-model="form.archiveExpandVO.acctType" placeholder="全部">
+                <el-select style="width: 240px" :disabled="form.archiveBaseVO.merchantType === 4" clearable v-model="form.archiveExpandVO.acctType" placeholder="全部">
                   <el-option v-for="item in acctTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
@@ -461,7 +461,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通星POS刷卡" prop="archiveBaseVO.isOpenXingPos" style="width: 100%">
-                <el-switch style="display: block" :active-value="2" :inactive-value="1" @change="isOpenXingPosChange" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
+                <el-switch style="display: block" :active-value="2" :inactive-value="1" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB"> </el-switch>
               </el-form-item>
             </el-col>
           </el-row>
@@ -483,11 +483,14 @@
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" class="archive-form-item" v-if="isExchangeFeeRate">
+            <el-col :span="12" class="archive-form-item">
               <el-form-item label="享钱汇银费率" prop="archiveBaseVO.exchangeFeeRate">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
                   <el-option v-for="item in fixFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
+                <el-tooltip effect="dark" content="享钱汇银费率填写和手续费率一致" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>
@@ -544,7 +547,8 @@ import {
   audit,
   submit,
   refuse,
-  detail
+  detail,
+  imageOCR
 } from '@/api/xftArchive'
 
 export default {
@@ -753,6 +757,12 @@ export default {
         { id: 2, name: '虚拟'}
       ],
       fixFeeRateList: [
+        { id: 8, name: '0.' + '08'+'%'},
+        { id: 10, name: '0.' + '10'+'%'},
+        { id: 15, name: '0.' + '15'+'%'},
+        { id: 18, name: '0.' + '18'+'%'},
+        { id: 20, name: '0.' + '20'+'%'},
+        { id: 23, name: '0.' + '23'+'%'},
         { id: 25, name: '0.' + '25'+'%'},
         { id: 28, name: '0.' + '28'+'%'},
         { id: 30, name: '0.' + '30'+'%'},
@@ -864,6 +874,43 @@ export default {
       this.form.archiveExpandVO.licValidityBigen = value[0]
       this.form.archiveExpandVO.licValidityEnd = value[1]
     },
+    setBusinessLicenseAndBase64(res, base64Code, type, url, side) {
+      const OCRData = {
+        image: base64Code.split(',')[1],
+        imageCode: 'business_license'
+      }
+      this.$message.success('正在进行图片解析')
+      imageOCR(OCRData).then(async res => {
+        this.$message.success('图片解析成功')
+        this.form.archiveExpandVO.licId = res.reg_num
+        this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
+        this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
+        // try {
+        //   const companyInfo = await searchCompanyInfo({ key: res.name })
+        //   this.$toast.success('企查查成功')
+        // } catch (error) {}
+      })
+      this.form[type][url] = res.data.path
+    },
+    setIdCardAndBase64(res, base64Code, type, url, side) {
+      const OCRData = {
+        image: base64Code.split(',')[1],
+        imageCode: 'idcard',
+        side
+      }
+      this.$message.success('正在进行图片解析')
+      imageOCR(OCRData).then(res => {
+        this.$message.success('图片解析成功')
+        if (side === 'face') {
+          this.form.archiveExpandVO.legalPersonName = res.name
+          this.form.archiveExpandVO.idNumber = res.num
+        } else {
+          this.form.archiveExpandVO.idBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
+          this.form.archiveExpandVO.idEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
+        }
+      })
+      this.form[type][url] = res.data.path
+    },
     uploadSuccess(res, type) {
       switch(type) {
         case 'archiveOtherVO.signboardUrl':
@@ -889,12 +936,6 @@ export default {
           break
         case 'archiveExpandVO.businessLicenseUrl':
           this.form.archiveExpandVO.businessLicenseUrl = res.data.path
-          break
-        case 'archiveExpandVO.idFrontUrl':
-          this.form.archiveExpandVO.idFrontUrl = res.data.path
-          break
-        case 'archiveExpandVO.idBackUrl':
-          this.form.archiveExpandVO.idBackUrl = res.data.path
           break
         case 'archiveExpandVO.bankCardFrontUrl':
           this.form.archiveExpandVO.bankCardFrontUrl = res.data.path
@@ -930,10 +971,6 @@ export default {
           this.form.archiveOtherVO.cardholderIdCardFront = res.data.path
           break
       }
-    },
-    isOpenXingPosChange(value) {
-    },
-    acctTypeChange(value) {
     },
     merchantTypeChange(value) {
       if (value === 4) {
@@ -1054,9 +1091,6 @@ export default {
         this.isExchangeFeeRate = res
       } catch (error) {}
     },
-    imgClick() {
-      if (this.formDisabled) alert('hahahah')
-    },
     areaChange(value) {
       this.form.archiveBaseVO.province = value[0]
       this.form.archiveBaseVO.city = value[1]
@@ -1157,19 +1191,19 @@ export default {
           this.form.archiveBaseVO.id = null
           this.form.archiveExpandVO.id = null
           this.form.archiveOtherVO.id = null
-          this.form.archiveExpandVO.bankCard = null
-          this.form.archiveExpandVO.bankSub = null
-          this.form.archiveExpandVO.bankSubName = null
+          // this.form.archiveExpandVO.bankCard = null
+          // this.form.archiveExpandVO.bankSub = null
+          // this.form.archiveExpandVO.bankSubName = null
           this.bankAreaList = []
-          this.form.archiveExpandVO.bankProvince = null
-          this.form.archiveExpandVO.bankProvinceName = null
-          this.form.archiveExpandVO.bankCity = null
-          this.form.archiveExpandVO.bankCityName = null
-          this.form.archiveExpandVO.bankAccountName = null
+          // this.form.archiveExpandVO.bankProvince = null
+          // this.form.archiveExpandVO.bankProvinceName = null
+          // this.form.archiveExpandVO.bankCity = null
+          // this.form.archiveExpandVO.bankCityName = null
+          // this.form.archiveExpandVO.bankAccountName = null
           this.form.archiveExpandVO.cardholderPhone = null
           this.form.archiveExpandVO.cardholderIdNumber = null
-          this.form.archiveExpandVO.bankCardFrontUrl = null
-          this.form.archiveExpandVO.bankCardBackUrl = null
+          // this.form.archiveExpandVO.bankCardFrontUrl = null
+          // this.form.archiveExpandVO.bankCardBackUrl = null
           this.form.archiveBaseVO.auditStatus = null
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus

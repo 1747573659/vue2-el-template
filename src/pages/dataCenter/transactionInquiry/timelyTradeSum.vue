@@ -48,11 +48,11 @@
             <div class="sum-card-title">
               交易总额(元)
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">当前过滤条件的交易总额<br/>(未扣除退款订单金额)</div>
+                <div slot="content">当前过滤条件的交易总额<br />(未扣除退款订单金额)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payAmount}}</div>
+            <div class="sum-card-money">{{ tableData.payAmount }}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -60,11 +60,11 @@
             <div class="sum-card-title">
               交易笔数
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">当前过滤条件的交易笔数<br/>(未扣除退款订单金额)</div>
+                <div slot="content">当前过滤条件的交易笔数<br />(未扣除退款订单金额)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payCount}}</div>
+            <div class="sum-card-money">{{ tableData.payCount }}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -76,7 +76,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
           </div>
         </el-col>
       </el-row>
@@ -84,20 +84,11 @@
       <div id="eChart" style="width: 100%;height:400px;"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table">
-      <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
+        <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
         <el-table-column label="日期" prop="payDate"></el-table-column>
-        <el-table-column label="交易总额(元)" prop="payAmount">
-          <template slot-scope="scope">{{ scope.row.payAmount }}</template>
-        </el-table-column>
+        <el-table-column label="交易总额(元)" prop="payAmount"></el-table-column>
         <el-table-column label="交易笔数" prop="payCount"></el-table-column>
         <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="操作">
-          <template slot-scope="scope">
-            <el-button v-if="[1, 2, ''].includes(form.searchObject)" @click="detail(scope.row)" type="text" size="small"
-              >详情</el-button
-            >
-          </template>
-        </el-table-column>
       </el-table>
     </div>
   </div>
@@ -130,10 +121,10 @@ export default {
       paymentList: [],
       ObjContentList: [],
       searchObjectList: [
-        { id: '', name: '全部'},
-        { id: 1, name: '代理商'},
-        { id: 2, name: '商户'},
-        { id: 3, name: '门店'},
+        { id: '', name: '全部' },
+        { id: 1, name: '代理商' },
+        { id: 2, name: '商户' },
+        { id: 3, name: '门店' }
       ],
       tableLoading: false,
       tableData: {},
@@ -141,7 +132,7 @@ export default {
       searchString: '',
       eChartsDateList: [],
       eChartsDataList: [],
-      cxLoading: false,
+      cxLoading: false
     }
   },
   computed: {
@@ -154,7 +145,14 @@ export default {
     this.getList()
   },
   created() {
-    this.form.time = [moment((new Date()).getTime()).subtract(7, 'days').format('YYYY-MM-DD'), moment((new Date()).getTime()).subtract(1, 'days').format('YYYY-MM-DD')]
+    this.form.time = [
+      moment(new Date().getTime())
+        .subtract(7, 'days')
+        .format('YYYY-MM-DD'),
+      moment(new Date().getTime())
+        .subtract(1, 'days')
+        .format('YYYY-MM-DD')
+    ]
   },
   methods: {
     searchObjectChange(value) {
@@ -229,25 +227,47 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.form.id= null
+      this.form.id = null
     },
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
     },
     setSearchTime(type) {
-      switch(type) {
+      switch (type) {
         case 'yesterday':
-          this.form.time = [moment((new Date()).getTime()).subtract(1, 'days').format('YYYY-MM-DD'), moment((new Date()).getTime()).subtract(1, 'days').format('YYYY-MM-DD')]
+          this.form.time = [
+            moment(new Date().getTime())
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD'),
+            moment(new Date().getTime())
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD')
+          ]
           break
         case 'week':
-          this.form.time = [moment((new Date()).getTime()).subtract(7, 'days').format('YYYY-MM-DD'), moment((new Date()).getTime()).subtract(1, 'days').format('YYYY-MM-DD')]
+          this.form.time = [
+            moment(new Date().getTime())
+              .subtract(7, 'days')
+              .format('YYYY-MM-DD'),
+            moment(new Date().getTime())
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD')
+          ]
           break
         case 'month':
-          this.form.time = [moment((new Date()).getTime()).subtract(30, 'days').format('YYYY-MM-DD'), moment((new Date()).getTime()).subtract(1, 'days').format('YYYY-MM-DD')]
+          this.form.time = [
+            moment(new Date().getTime())
+              .subtract(30, 'days')
+              .format('YYYY-MM-DD'),
+            moment(new Date().getTime())
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD')
+          ]
           break
       }
     },
     async getList() {
+      this.tableLoading = true
       let data = {
         type: 1,
         adminId: this.form.searchObject === 2 ? this.form.id : '',
@@ -268,16 +288,22 @@ export default {
         }
         this.totalPage = this.tableData.cashierMockDTOS.length || 0
         this.loadingChart()
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        this.tableLoading = false
+      }
     },
     detail(row) {
-      this.$router.push({ name: 'historicalTradeSumDetail', query: { type: 2, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id } })
+      this.$router.push({
+        name: 'historicalTradeSumDetail',
+        query: { type: 2, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id }
+      })
     },
     async getpaymentMethodVoList() {
       try {
         const res = await paymentMethodVoList()
         this.paymentList = res
-        this.paymentList.unshift({ id: '', name: '全部'},)
+        this.paymentList.unshift({ id: '', name: '全部' })
       } catch (error) {}
     },
     loadingChart() {
@@ -423,13 +449,13 @@ export default {
     font-size: 12px;
     font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
-    color: #3D4966;
+    color: #3d4966;
   }
   .echart-tooltip-bot {
     font-size: 18px;
     font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
-    color: #3D4966;
+    color: #3d4966;
   }
 }
 .e-icon-question {

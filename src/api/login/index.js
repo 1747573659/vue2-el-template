@@ -5,13 +5,31 @@ const urlLinks = {
   login: 'login',
   logout: 'logout',
   modifyPwd: 'modifyPwd',
-  captcha: 'captcha',
-  validCaptcha: 'validCaptcha',
   getMenuInfo: 'getMenuInfo',
   queryUser: 'user/queryUser',
   modifyUserMobile: 'user/modifyUserMobile',
   modifyUserName: 'user/modifyUserName',
-  popUpsByAuditStatus: 'archive/xdd/popUpsByAuditStatus'
+  popUpsByAuditStatus: 'archive/xdd/popUpsByAuditStatus',
+  initImg: '/initImg',
+  checkSliderImg: '/checkSliderImg'
+}
+
+// 滑动验证码-获取图形验证码
+export function initImg(data) {
+  return request({
+    url: urlLinks.initImg,
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
+// 滑动验证码-图形验证码验证结果
+export function checkSliderImg(data) {
+  return request({
+    url: urlLinks.checkSliderImg,
+    method: 'post',
+    data: qs.stringify(data)
+  })
 }
 
 // 驳回和资料待补充状态
@@ -56,24 +74,6 @@ export function getMenuInfo(data) {
     timeout: 1000,
     url: urlLinks.getMenuInfo,
     method: 'post',
-    data: data
-  })
-}
-
-// 校验验证码
-export function validCaptcha(data) {
-  return request({
-    url: urlLinks.validCaptcha,
-    method: 'post',
-    data: data
-  })
-}
-
-// 登陆接口
-export function captcha(data) {
-  return request({
-    url: urlLinks.captcha,
-    method: 'get',
     data: data
   })
 }
