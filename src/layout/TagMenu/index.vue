@@ -166,7 +166,7 @@ export default {
   &-tag {
     &_active {
       background: #fff;
-      color: #1a92fd;
+      color: #3377ff;
       border-bottom: 1px solid #fff;
     }
     &_close {

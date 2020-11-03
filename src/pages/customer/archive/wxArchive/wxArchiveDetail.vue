@@ -28,7 +28,7 @@
           <template slot-scope="scope">
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_SIGNNOW'" v-if="scope.row.status === 3 && scope.row.updateStatus === null" @click="handleSignUp(scope.row, 1)">立即签约</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_SIGNUPDATE'" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 4" @click="handleSignUp(scope.row, 2)">升级签约</el-button>
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_VERIFY'" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 2">验证账户</el-button>
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_VERIFY'" v-else-if="[3, 4].includes(scope.row.status) && scope.row.updateStatus === 2" @click="handleVerifyAccount(scope.row)">验证账户</el-button>
             <span v-else>--</span>
           </template>
         </el-table-column>

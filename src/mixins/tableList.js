@@ -99,9 +99,6 @@ const listMixins = {
     }
 
   },
-  created () {
-    // console.log(`list mixin creatd`)
-  },
   computed: {
     queryParams () {
       let tempObj = {}

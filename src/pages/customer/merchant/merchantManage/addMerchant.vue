@@ -282,7 +282,6 @@ export default {
       this.ruleForm.logo = res.data.path
     },
     areaChange(value) {
-      console.log(value)
       if (value.length === 0) {
         this.ruleForm.districtCode = ''
       } else if (value.length === 2) {

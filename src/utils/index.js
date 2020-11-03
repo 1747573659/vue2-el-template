@@ -61,30 +61,28 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
         data,
         responseType: 'blob' // 必须是arraybuffer类型
       }).then(response => {
-        console.log(response)
-        if (response.headers['content-type'] === 'application/json;charset=UTF-8') {
-          const data = response.data
-          const reader = new FileReader()
-          reader.addEventListener('loadend', function (e) {
-            let data = JSON.parse(e.target.result)
-            console.log(data)
-            if (data.code === 195001) {
-              MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
-                confirmButtonText: '重新登录',
-                type: 'warning',
-                showClose: false,
-                showCancelButton: false,
-                closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
-                beforeClose: action => {
-                  if (action === 'cancel') {
-                    location.reload()
-                  } else {
-                    store.dispatch('FedLogOut').then(() => {
-                      location.reload() // 为了重新实例化vue-router对象 避免bug
-                      // this.$router.push({path: '/login'})
-                    })
-                  }
+        if(response.headers['content-type']==='application/json;charset=UTF-8'){
+         const data=response.data
+         const reader = new FileReader()
+         reader.addEventListener('loadend', function (e) {
+           let data=JSON.parse(e.target.result)
+           if(data.code===195001){
+            MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
+              confirmButtonText: '重新登录',
+              type: 'warning',
+              showClose: false,
+              showCancelButton: false,
+              closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
+              beforeClose: action => {
+                if (action === 'cancel') {
+                  location.reload()
+                } else {
+                  store.dispatch('FedLogOut').then(() => {
+                    location.reload() // 为了重新实例化vue-router对象 避免bug
+                    // this.$router.push({path: '/login'})
+                  })
                 }
+              }
               }).catch(err => {
                 console.log(err)
               })
@@ -120,7 +118,6 @@ function handleDownloadBufferFile(response, data) {
       a.href = url
       a.download = fileName // 命名下载名称
       a.click() // 点击触发下载
-      console.log(url)
       window.URL.revokeObjectURL(url) // 下载完成进行释放
     }
   } else {
@@ -134,7 +131,6 @@ function handleDownloadBufferFile(response, data) {
       a.href = url
       a.download = data || '二维码' // 命名下载名称
       a.click() // 点击触发下载
-      console.log(url)
       window.URL.revokeObjectURL(url) // 下载完成进行释放
     }
   }

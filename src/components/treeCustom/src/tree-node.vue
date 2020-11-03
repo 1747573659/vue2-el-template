@@ -181,11 +181,6 @@ export default {
     'node.checked' (val) {
       this.handleSelectChange(val, this.node.indeterminate)
     },
-    // 'node.disabled' (val) {
-    //   console.log('val :', val)
-    //   this.node.disabled = val
-    // },
-
     'node.expanded' (val) {
       this.$nextTick(() => {
         this.expanded = val

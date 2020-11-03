@@ -299,7 +299,6 @@ export default {
         'thirdSn': this.formData.thirdSn
       }
       Object.keys(params).forEach(key => {
-        console.log(params[key])
         if (!params[key]) {
           delete params[key]
         }
