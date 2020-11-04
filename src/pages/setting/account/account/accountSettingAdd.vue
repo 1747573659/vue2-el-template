@@ -165,4 +165,7 @@ export default {
 .clicked {
   padding: 8px 7px;
 }
+.data-box {
+  min-height: calc(100vh - 56px - 48px - 32px);
+}
 </style>

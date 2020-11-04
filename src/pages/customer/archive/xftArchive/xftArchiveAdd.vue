@@ -486,7 +486,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="享钱汇银费率" prop="archiveBaseVO.exchangeFeeRate">
                 <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
-                  <el-option v-for="item in fixFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                  <el-option v-for="item in exchangeFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
                 <el-tooltip effect="dark" content="享钱汇银费率填写和手续费率一致" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -757,6 +757,17 @@ export default {
         { id: 2, name: '虚拟'}
       ],
       fixFeeRateList: [
+        { id: 23, name: '0.' + '23'+'%'},
+        { id: 25, name: '0.' + '25'+'%'},
+        { id: 28, name: '0.' + '28'+'%'},
+        { id: 30, name: '0.' + '30'+'%'},
+        { id: 35, name: '0.' + '35'+'%'},
+        { id: 38, name: '0.' + '38'+'%'},
+        { id: 45, name: '0.' + '45'+'%'},
+        { id: 55, name: '0.' + '55'+'%'},
+        { id: 60, name: '0.' + '60'+'%'},
+      ],
+      exchangeFeeRateList: [
         { id: 8, name: '0.' + '08'+'%'},
         { id: 10, name: '0.' + '10'+'%'},
         { id: 15, name: '0.' + '15'+'%'},

@@ -196,12 +196,13 @@ export default {
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
     }
   },
   activated() {
     this.currentPage = 1
     this.handleQueryPage()
+    this.handleQueryTotalByStatus()
   },
   mounted() {
     this.getXiaoWeiArchiveStatus()
@@ -226,6 +227,7 @@ export default {
       }
       try {
         const res = await queryTotalByStatus(data)
+        this.countData = []
         for (const item of res) {
           for (const ele of this.countOptions) {
             if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
