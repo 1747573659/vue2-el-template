@@ -70,6 +70,27 @@ const dataCenter = {
           meta: { title: '退款订单查询',name: 'refundOrderQuery',cache: true }
         }
       ]
+    },
+    {
+      
+      path: 'userData',
+      name: 'userData',
+      code: 'DATACENTER_TRANSACTIONINQUIRY',
+      redirect: { name: 'newStatistics' },
+      component: kmContainer,
+      meta: {
+        title: '用户数据',
+        name: 'userData'
+      },
+      children: [
+        {
+          path: 'newStatistics',
+          component: () => import('@/pages/dataCenter/userData/newStatistics.vue'),
+          name: 'newStatistics',
+          code: 'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM',
+          meta: { title: '新增统计', name: 'newStatistics' }
+        }
+      ]
     }
   ]
 }

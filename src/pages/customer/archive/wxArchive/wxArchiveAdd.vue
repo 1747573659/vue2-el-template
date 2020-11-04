@@ -1,6 +1,6 @@
 <template>
   <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
-    <header>
+    <header v-if="pageAction && pageAction !== 'add'">
       <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
         <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
           <label>进件状态：</label>
@@ -799,15 +799,15 @@ export default {
         this.form.archiveBaseVO.id = null
         this.form.archiveExpandVO.id = null
         this.form.archiveOtherVO.id = null
-        this.form.archiveExpandVO.openingPermitUrl = null
-        this.form.archiveExpandVO.bankCardFrontUrl = null
-        this.form.archiveExpandVO.bank = null
-        this.form.archiveExpandVO.bankSub = null
-        this.form.archiveExpandVO.bankCard = null
-        this.form.archiveExpandVO.bankAccountName = null
-        this.form.archiveExpandVO.bankProvince = null
-        this.form.archiveExpandVO.bankCity = null
-        this.form.archiveExpandVO.bankArea = null
+        // this.form.archiveExpandVO.openingPermitUrl = null
+        // this.form.archiveExpandVO.bankCardFrontUrl = null
+        // this.form.archiveExpandVO.bank = null
+        // this.form.archiveExpandVO.bankSub = null
+        // this.form.archiveExpandVO.bankCard = null
+        // this.form.archiveExpandVO.bankAccountName = null
+        // this.form.archiveExpandVO.bankProvince = null
+        // this.form.archiveExpandVO.bankCity = null
+        // this.form.archiveExpandVO.bankArea = null
         this.bankAreaList = []
         this.$nextTick(() => {
           this.$refs.form.clearValidate()
@@ -905,9 +905,14 @@ export default {
       this.$message.success('正在进行图片解析')
       imageOCR(OCRData).then(async res => {
         this.$message.success('图片解析成功')
+        this.form.archiveExpandVO.licId = res.reg_num
+        this.form.archiveExpandVO.businessScope = res.business
         this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
         this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
-        const companyInfo = await searchCompanyInfo({ key: res.name })
+        // try {
+        //   const companyInfo = await searchCompanyInfo({ key: res.name })
+        //   this.$toast.success('企查查成功')
+        // } catch (error) {}
       })
       this.form[type][url] = res.data.path
     },

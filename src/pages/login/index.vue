@@ -17,13 +17,8 @@
               <label class="e-form_label">密码</label>
               <el-input clearable type="password" v-model.trim="loginForm.password" @keyup.enter.native="handleLogin" placeholder="请输入密码"></el-input>
             </el-form-item>
-            <el-form-item>
-              <label class="e-form_label">验证码</label>
-              <img @click="captcha" :src="codeKeyUrl" alt="验证码" class="e-form_code" />
-              <el-input v-model.trim="loginForm.codeKey" placeholder="请输入验证码" @keyup.enter.native="handleLogin"></el-input>
-            </el-form-item>
           </el-form>
-          <el-button type="primary" :loading="isLoading" @click.native="handleLogin" class="e-form_btn">登录</el-button>
+          <el-button type="primary" :loading="isLoading" @click.native="handleSubmitCode" class="e-form_btn">登录</el-button>
           <div class="p-login_regist">
             点击登录即代表你同意
             <a href="http://ceshi-file-oss.oss-cn-hangzhou.aliyuncs.com/legalNotices/privacyPolicy.html" target="_blank">《用户使用协议》</a>
@@ -35,13 +30,34 @@
         <p>深圳市科脉技术股份有限公司版权所有 粤ICP备10037982号</p>
       </footer>
     </div>
+    <section class="login_nocolor">
+      <el-dialog :visible.sync="loginVisible" width="318px" :close-on-click-modal="false">
+        <slide-login
+          v-if="loginVisible"
+          :loading="loading"
+          :text="text"
+          :title="title"
+          :status.sync="status"
+          :slide-block-img-bg="slideBlockImgBg"
+          :slide-block-img="slideBlockImg"
+          :slideH="170"
+          :offsetY="offsetY"
+          @close="close"
+          @getMouseUpData="mouseUp"
+          @refresh="refresh"
+        >
+        </slide-login>
+      </el-dialog>
+    </section>
   </section>
 </template>
 
 <script>
-import { captcha, validCaptcha } from '@/api/login'
+import { checkSliderImg, initImg } from '@/api/login'
+import slideLogin from './components/slide-login'
 
 export default {
+  components: { slideLogin },
   data() {
     var userNamePass = (rule, value, callback) => {
       if (/^1[3456789]\d{9}$/.test(value)) {
@@ -52,8 +68,17 @@ export default {
     }
     return {
       isLoading: false,
-      codeKeyUrl: '',
-      usedCoedKey: '',
+      loginVisible: false,
+      loading: false,
+      text: '拖动滑块完成校验',
+      title: '请完成安全校验',
+      slideBlockImgBg: '',
+      slideBlockImg: '',
+      offsetX: 0,
+      offsetY: 0,
+      status: 'pendding',
+      key: '',
+
       loginForm: {
         userName: '',
         password: '',
@@ -76,62 +101,105 @@ export default {
       immediate: true
     }
   },
-  mounted() {
-    this.captcha()
-  },
   methods: {
+    initImg: async function() {
+      try {
+        this.loginVisible = true
+        this.loading = true
+        const res = await initImg()
+        // 请求接口获取图片和图片对应的位置
+        this.slideBlockImgBg = res.sourceImage
+        this.slideBlockImg = res.newImage
+        this.offsetY = res.y
+        this.key = res.sliderToken
+      } catch (err) {
+      } finally {
+        this.loading = false
+      }
+    },
+    // 刷新图片验证
+    refresh() {
+      this.initImg()
+    },
+    // 关闭图片验证
+    close() {
+      this.loginVisible = false
+    },
+    // 验证
+    mouseUp: async function(imgX) {
+      try {
+        const data = {
+          X: imgX,
+          Y: this.offsetY,
+          token: this.key
+        }
+        const res = await checkSliderImg(data)
+        this.status = 'success'
+        setTimeout(() => {
+          this.loginVisible = false
+          this.handleLogin()
+        }, 500)
+      } catch (error) {
+        this.status = 'fail'
+        // this.initImg()
+      }
+    },
+    handleSubmitCode() {
+      this.$refs.ruleForm.validate(async valid => {
+        if (valid) {
+          this.initImg()
+        }
+      })
+    },
     handleLogin() {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
           this.isLoading = true
-          this.validCaptcha()
+          this.$store
+            .dispatch('login', this.loginForm)
             .then(() => {
-              this.$store
-                .dispatch('login', this.loginForm)
-                .then(() => {
-                  const routes = this.$store.getters.routes
-                  const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
-                  // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
-                  if (this.redirect) {
-                    const rotationData = this.redirect.split('/')
-                    rotationData.shift()
-                    if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
-                      this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
-                    } else utilRoutePoint()
-                  } else utilRoutePoint()
-                })
-                .catch(err => {
-                  this.loginForm.codeKey = ''
-                  this.captcha()
-                })
-                .finally(() => {
-                  this.isLoading = false
-                })
+              const routes = this.$store.getters.routes
+              const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
+              // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
+              if (this.redirect) {
+                const rotationData = this.redirect.split('/')
+                rotationData.shift()
+                if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
+                  this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
+                } else utilRoutePoint()
+              } else utilRoutePoint()
             })
-            .catch(() => {
-              this.captcha()
+            .catch(err => {
+              this.loginForm.codeKey = ''
+              // this.captcha()
+            })
+            .finally(() => {
               this.isLoading = false
             })
         }
       })
-    },
-    async validCaptcha() {
-      const data = {
-        codeKey: this.usedCoedKey,
-        codeVal: this.loginForm.codeKey
-      }
-      let res = await validCaptcha(data)
-    },
-    async captcha() {
-      const res = await captcha()
-      this.codeKeyUrl = res.code || ''
-      this.usedCoedKey = res.codeKey
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.login_nocolor {
+  /deep/ .el-dialog {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    margin-left: -159px;
+    margin-top: -184px !important;
+    border-radius: 4px;
+    .el-dialog__header {
+      display: none;
+    }
+    .el-dialog__body {
+      padding: 0;
+    }
+  }
+}
 .p {
   &-login {
     display: flex;
@@ -155,7 +223,7 @@ export default {
         padding-left: 24px;
         margin-bottom: 76px;
       }
-      > section{
+      > section {
         flex-grow: 2;
       }
     }
