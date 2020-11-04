@@ -323,4 +323,7 @@ export default {
     }
   }
 }
+.data-box {
+  min-height: calc(100vh - 56px - 48px - 32px);
+}
 </style>

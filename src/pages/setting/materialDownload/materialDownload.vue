@@ -126,7 +126,7 @@ export default {
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 64.5 - 32 - 116
     }
   },
   mounted() {
