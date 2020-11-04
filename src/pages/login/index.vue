@@ -78,19 +78,24 @@ export default {
       offsetY: 0,
       status: 'pendding',
       key: '',
-
       loginForm: {
         userName: '',
         password: '',
         codeKey: ''
       },
       loginRules: {
-        userName: [{ required: true, trigger: 'blur', validator: userNamePass }],
-        password: [{ required: true, trigger: 'blur', message: '请输入密码' }]
+        userName: [
+          { required: true, trigger: 'blur', validator: userNamePass },
+          { required: true, trigger: 'change', message: '请输入密码'}
+        ],
+        password: [{ required: true, trigger: 'change', message: '请输入密码' }]
       },
       redirect: '',
       query: ''
     }
+  },
+  mounted() {
+    this.initImg()
   },
   watch: {
     $route: {
@@ -104,7 +109,6 @@ export default {
   methods: {
     initImg: async function() {
       try {
-        this.loginVisible = true
         this.loading = true
         const res = await initImg()
         // 请求接口获取图片和图片对应的位置
@@ -147,7 +151,7 @@ export default {
     handleSubmitCode() {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
-          this.initImg()
+          this.loginVisible = true
         }
       })
     },
