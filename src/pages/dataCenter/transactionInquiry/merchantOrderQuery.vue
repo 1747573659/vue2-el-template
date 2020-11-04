@@ -6,7 +6,7 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="商户名称" prop="shopId">
-               <select-page
+              <select-page
                 :request="queryMerchantAdminPage"
                 :bvalue.sync="formData.shopId"
                 :name="'companyName'"
@@ -34,40 +34,39 @@
             </el-form-item>
           </el-col>
         </el-row>
-            
         <el-row>
           <el-col :span="24">
             <el-form-item label="门店名称" prop="storeName">
-                <select-page
-                  :request="getStorePage"
-                  :bvalue.sync="formData.stores"
-                  :name="'name'"
-                  :isMultiple="true"
-                  searchName="storeName"
-                   :width="'240px'"
-                  :parame="{adminId:formData.shopId || ''}"
-                  id="id"
-                  placeholder="门店名称"
-                >
-                </select-page>
-            </el-form-item>
-          
-            <el-form-item  label="收银员" prop="cashier">
               <select-page
-                  :request="queryClerkPageByStore"
-                  :bvalue.sync="formData.clerkInfos"
-                  :name="'name'"
-                  searchName="name"
-                   :width="'240px'"
-                  :isMultiple="true"
-                  :parame="{storeId:formData.stores || ''}"
-                  id="id"
-                  :placeholder="'收银员'"
-                >
-                </select-page>
+                :request="getStorePage"
+                :bvalue.sync="formData.stores"
+                :name="'name'"
+                :isMultiple="true"
+                searchName="storeName"
+                :width="'240px'"
+                :parame="{ adminId: formData.shopId || '' }"
+                id="id"
+                placeholder="门店名称"
+              >
+              </select-page>
+            </el-form-item>
+
+            <el-form-item label="收银员" prop="cashier">
+              <select-page
+                :request="queryClerkPageByStore"
+                :bvalue.sync="formData.clerkInfos"
+                :name="'name'"
+                searchName="name"
+                :width="'240px'"
+                :isMultiple="true"
+                :parame="{ storeId: formData.stores || '' }"
+                id="id"
+                :placeholder="'收银员'"
+              >
+              </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
-              <el-select class="order_sel"  @change="getPaymentScenario" filterable v-model="formData.paymentCode">
+              <el-select class="order_sel" @change="getPaymentScenario" filterable v-model="formData.paymentCode">
                 <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentData"></el-option>
               </el-select>
             </el-form-item>
@@ -82,61 +81,54 @@
             </el-form-item>
             <el-form-item label="交易金额" prop="paymentScenarioCode">
               <div class="el-input2" style="display: flex;justify-content: space-between;">
-                    <!-- <el-input-number v-model="formData.startAmount" controls-position="right" style="width: 47%;margin-right: 10px;"  size="small"  :min="0" placeholder="0"></el-input-number>
-                    -
-                    <el-input-number v-model="formData.endAmount" controls-position="right" style="width: 47%;margin-left: 10px;"  size="small"  :min="0" placeholder="999999.99"></el-input-number> -->
-                    <el-input type="number" min="0" style="width:47%;margin-right: 10px;"  size="small" v-model="formData.startAmount" placeholder="0"></el-input>
-                    -
-                    <el-input type="number" min="0" style="width:47%;margin-left: 10px;" size="small" v-model="formData.endAmount" placeholder="999999.99"></el-input>
-                    
+                <el-input-number ref="startAmount" v-model="formData.startAmount" controls-position="right" :min="0" placeholder="0" style="width: 108px;"></el-input-number>
+                <span style="margin:0 8px"> - </span>
+                <el-input-number
+                  ref="endAmount"
+                  v-model="formData.endAmount"
+                  controls-position="right"
+                  :min="0"
+                  :max="999999.99"
+                  placeholder="999999.99"
+                  style="width: 108px;"
+                ></el-input-number>
               </div>
             </el-form-item>
-             <el-form-item label="交易状态" prop="tradingStatusCode">
-              <el-select  class="order_sel" collapse-tags multiple v-model="formData.tradingStatusCode">
+            <el-form-item label="交易状态" prop="tradingStatusCode">
+              <el-select class="order_sel" collapse-tags multiple v-model="formData.tradingStatusCode">
                 <el-option :key="item.codes" :label="item.name" :value="item.codes" v-for="item in tradingStatusData"></el-option>
               </el-select>
-             </el-form-item>
-             <el-form-item>
-              <el-button  :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
             </el-form-item>
-          </el-col> 
+            <el-form-item>
+              <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
     </div>
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tabLock">
-
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
-        
-        <el-table-column  label="商户名称" prop="shopName"></el-table-column>
+        <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName">
-            <template slot-scope="scope"> 
-             {{scope.row.merchantName}}({{scope.row.storeName}})
-           </template>
+          <template slot-scope="scope"> {{ scope.row.merchantName }}({{ scope.row.storeName }}) </template>
         </el-table-column>
         <el-table-column :width="110" label="交易时间" prop="createDate"></el-table-column>
         <el-table-column :min-width="134" label="支付订单号" prop="orders"></el-table-column>
         <el-table-column label="确认码" prop="confirmCode"></el-table-column>
         <el-table-column label="收银员" prop="workerName">
-           <template slot-scope="scope"> 
-             {{scope.row.workerName?scope.row.workerName:"没有"}}
-           </template>
+          <template slot-scope="scope">
+            {{ scope.row.workerName ? scope.row.workerName : '没有' }}
+          </template>
         </el-table-column>
-        <!-- <el-table-column label="支付通道" prop="aisleName"></el-table-column>
-        <el-table-column label="交易渠道" prop="payChannelType"></el-table-column> -->
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="交易状态" prop="orderStatusName"></el-table-column>
         <el-table-column align="right" label="交易金额" prop="amount"></el-table-column>
         <el-table-column align="right" label="申请退款金额" prop="refundAmount" :width="106"></el-table-column>
-        <el-table-column align="right" label="操作" >
+        <el-table-column align="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleDetails(scope.row)" size="small" type="text" >详情</el-button>
-            <el-button
-              @click="handleDelRow(scope.row)"
-              size="small"
-              type="text"
-              v-if="(scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4)"
-            >退款详情</el-button>
+            <el-button @click="handleDetails(scope.row)" size="small" type="text">详情</el-button>
+            <el-button @click="handleDelRow(scope.row)" size="small" type="text" v-if="scope.row.paymentStatus === 3 || scope.row.paymentStatus === 4">退款详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -157,13 +149,13 @@
     <el-dialog :visible.sync="centerDialogVisible" right title="导出记录">
       <el-table :data="exportList" style="width: 100%" v-loading="exportLoading">
         <el-table-column label="文件名称">
-          <template slot-scope="scope">{{scope.row.name}}</template>
+          <template slot-scope="scope">{{ scope.row.name }}</template>
         </el-table-column>
         <el-table-column label="导出时间" prop="downloadTime"></el-table-column>
         <el-table-column label="操作人" prop="operator">
           <template slot-scope="scope">
-            <div>{{scope.row.operator}}</div>
-            <div>{{scope.row.loginName}}</div>
+            <div>{{ scope.row.operator }}</div>
+            <div>{{ scope.row.loginName }}</div>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="100">
@@ -171,7 +163,9 @@
             <el-link :disabled="scope.row.status !== 1" :href="scope.row.url" :underline="false" target="_blank">
               <el-button :disabled="scope.row.status !== 1" size="small" type="text" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DOWNLOAD')">下载</el-button>
             </el-link>
-            <el-button @click="deleteExprot(scope.row)" size="small" style="margin-left:5px;" type="text" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DEL')">删除</el-button>
+            <el-button @click="deleteExprot(scope.row)" size="small" style="margin-left:5px;" type="text" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DEL')"
+              >删除</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
@@ -220,7 +214,7 @@ export default {
     orderDetailDialog,
     selectPage
   },
-  data () {
+  data() {
     return {
       exportPage: 1,
       exportPageSize: 10,
@@ -246,35 +240,54 @@ export default {
       paymentScenarioData: [],
       tradingStatusData: [],
       formData: {
-        transactionTime: [moment().startOf('day').valueOf(), moment().endOf('day').valueOf()],
+        transactionTime: [
+          moment()
+            .startOf('day')
+            .valueOf(),
+          moment()
+            .endOf('day')
+            .valueOf()
+        ],
         shopId: '',
-        stores: "",
+        stores: '',
         tradingChanneCode: '',
         tradingTypeCode: '',
         paymentCode: '',
         paymentScenarioCode: '',
-        tradingStatusCode: ["2","3","4"],
-        clerkInfos:"",
-        startAmount:"",
-        endAmount:""
+        tradingStatusCode: ['2', '3', '4'],
+        clerkInfos: '',
+        startAmount: '',
+        endAmount: ''
       },
       // 选择弹窗
 
       pickerOptions: {
-        disabledDate (time) {
+        disabledDate(time) {
           return (
-            time.getTime() > moment().endOf('day').valueOf() ||
-            time.getTime() < moment().subtract(6, 'months').valueOf()
+            time.getTime() >
+              moment()
+                .endOf('day')
+                .valueOf() ||
+            time.getTime() <
+              moment()
+                .subtract(6, 'months')
+                .valueOf()
           )
         }
       }
     }
   },
   computed: {
-    isSubtract () {
+    isSubtract() {
       if (
-        moment(this.formData.transactionTime[0]).startOf('day').subtract(1, 'days').valueOf() ===
-        moment().startOf('day').subtract(6, 'months').valueOf()
+        moment(this.formData.transactionTime[0])
+          .startOf('day')
+          .subtract(1, 'days')
+          .valueOf() ===
+        moment()
+          .startOf('day')
+          .subtract(6, 'months')
+          .valueOf()
       ) {
         return true
       } else {
@@ -284,26 +297,37 @@ export default {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
     },
-    isAdd () {
-      if (moment(this.formData.transactionTime[1]).startOf('day').valueOf() === moment().startOf('day').valueOf()) {
+    isAdd() {
+      if (
+        moment(this.formData.transactionTime[1])
+          .startOf('day')
+          .valueOf() ===
+        moment()
+          .startOf('day')
+          .valueOf()
+      ) {
         return true
       } else {
         return false
       }
     }
   },
-  created () {
+  created() {
     const conditionType = [
       { type: 1, name: 'tradingChannelData' },
       { type: 2, name: 'tradingTypeData' },
       { type: 3, name: 'paymentData' }
     ]
-    conditionType.forEach((item) => {
-      this.getConditionType(item.type).then((res) => {
+    conditionType.forEach(item => {
+      this.getConditionType(item.type).then(res => {
         this[item.name] = [{ code: '', name: '全部' }, ...res]
       })
     })
     this.getAllTradeStatus()
+  },
+  mounted() {
+    this.$refs.startAmount.$el.childNodes[2].childNodes[1].value = ''
+    this.$refs.endAmount.$el.childNodes[2].childNodes[1].value = ''
   },
   methods: {
     remoteMethod(value) {
@@ -317,9 +341,9 @@ export default {
       // 只有value有值的时候才去请求接口
       if (value) {
         let data = {
-          'name': value,
-          "page": this.selectPageNo,
-          "rows": 10
+          name: value,
+          page: this.selectPageNo,
+          rows: 10
         }
         import('@/api/setting/account').then(async module => {
           const res = await module.queryPage(data)
@@ -341,7 +365,7 @@ export default {
         this.remoteMethod(this.searchString)
       }
     },
-     // 如果点击了清除按钮则将相关数据清空
+    // 如果点击了清除按钮则将相关数据清空
     shopClear() {
       this.isMaxPage = false
       this.shopList = []
@@ -355,13 +379,11 @@ export default {
       this.searchString = ''
       this.selectPageNo = 1
     },
-    shopChange(value) {
-    },
-    async handleDetails (row) {
+    shopChange(value) {},
+    async handleDetails(row) {
       this.dialogForm = {}
       const data = {
         orderId: row.id,
-        // 'orderId': '9115882679906900459209030',
         shopId: row.shopId
       }
       try {
@@ -375,13 +397,12 @@ export default {
         this.$refs.orderDetailDialog.orderDetailVisible = true
       } catch {}
     },
-    async handleDelRow (row) {
+    async handleDelRow(row) {
       this.dialogForm = {}
       const data = {
         dataSource: 1,
         paySn: row.id,
-        'sn': '',
-        //shopId: row.shopId
+        sn: ''
       }
       try {
         const res = await refundOrderdetail(data)
@@ -389,24 +410,24 @@ export default {
           this.$message('暂无数据')
           return
         }
-        res.shopName=row.shopName
-        res.paymentAmount=row.paymentAmount
-        res.orderStatusName=row.orderStatusName
+        res.shopName = row.shopName
+        res.paymentAmount = row.paymentAmount
+        res.orderStatusName = row.orderStatusName
         this.dialogForm2 = res
         this.dialogForm2.shopName = row.shopName
         this.$refs.orderDetailDialog2.orderDetailVisible = true
       } catch {}
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.exportPage = val
       this.exportRecord()
     },
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.exportPage = 1
       this.exportPageSize = val
       this.exportRecord()
     },
-    async deleteExprot (row) {
+    async deleteExprot(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -416,14 +437,14 @@ export default {
           let data = {
             id: row.id
           }
-          deleteRecord(data).then((res) => {
+          deleteRecord(data).then(res => {
             this.$message.success('删除成功')
             this.exportRecord()
           })
         })
         .catch(() => {})
     },
-    async exportRecord () {
+    async exportRecord() {
       this.centerDialogVisible = true
       this.exportLoading = true
       const data = {
@@ -437,54 +458,63 @@ export default {
         this.exportLoading = false
       } catch {}
     },
-    handleTabCurrent (val) {
+    handleTabCurrent(val) {
       this.pageNo = val
       this.getQueryPage()
     },
-    handleTabSize (val) {
+    handleTabSize(val) {
       this.pageNo = 1
       this.pageSize = val
       this.getQueryPage()
     },
-    handleReset () {
-      this.formData.stores=""
-      this.formData.clerkInfos=""
-      this.formData.shopId=''
-      this.formData.startAmount=''
-      this.formData.endAmount=''
+    handleReset() {
+      this.formData.stores = ''
+      this.formData.clerkInfos = ''
+      this.formData.shopId = ''
+      this.formData.startAmount = ''
+      this.formData.endAmount = ''
       this.tabData = []
       this.$refs.form.resetFields()
-      this.$set(this.formData, 'transactionTime', [moment().startOf('day').valueOf(), moment().endOf('day').valueOf()])
+      this.$set(this.formData, 'transactionTime', [
+        moment()
+          .startOf('day')
+          .valueOf(),
+        moment()
+          .endOf('day')
+          .valueOf()
+      ])
     },
-    handleSearch () {
+    handleSearch() {
       if (this.formData.shopId) {
-        if ((this.formData.transactionTime[1]-this.formData.transactionTime[0])>60*24*60*1000*31) {
+        if (this.formData.transactionTime[1] - this.formData.transactionTime[0] > 60 * 24 * 60 * 1000 * 31) {
           this.$message.error('统计时间间隔不超过31天')
           return false
         }
-        if(this.formData.startAmount<0 || this.formData.endAmount<0){
+        if (this.formData.startAmount < 0 || this.formData.endAmount < 0) {
           this.$message.error('金额不能为负数')
           return false
         }
-        
-        if((this.formData.startAmount && !this.formData.endAmount) || !this.formData.startAmount && this.formData.endAmount){
+
+        if ((this.formData.startAmount && !this.formData.endAmount) || (!this.formData.startAmount && this.formData.endAmount)) {
           this.$message.error('请输入交易金额范围')
           return false
         }
-        if(this.formData.startAmount> this.formData.endAmount){
+        if (this.formData.startAmount > this.formData.endAmount) {
           this.$message.error('最小金额不能大于最大金额')
           return false
         }
         this.pageNo = 1
         this.searchLock = true
-        this.getQueryPage().catch(() => {}).finally(() => {
-          this.searchLock = false
-        })
+        this.getQueryPage()
+          .catch(() => {})
+          .finally(() => {
+            this.searchLock = false
+          })
       } else {
         this.$message.error('请先选择商户')
       }
     },
-    async getQueryPage () {
+    async getQueryPage() {
       if (this.formData.tradingStatusCode.includes(0)) {
         this.formData.tradingStatusCode.push(5)
       }
@@ -503,13 +533,19 @@ export default {
         orderTypes: this.formData.tradingTypeCode !== '' ? [this.formData.tradingTypeCode] : [], // 交易类型集合
         paymentMethods: this.formData.paymentCode !== '' ? [this.formData.paymentCode] : [], // 支付方式集合
         paymentPlugins: this.formData.paymentScenarioCode !== '' ? [this.formData.paymentScenarioCode] : [], // 支付场景集合
-        paymentStatus: paymentStatus.length > 0 ? paymentStatus.toString().split(',').map(Number) : [], // 交易状态集合
+        paymentStatus:
+          paymentStatus.length > 0
+            ? paymentStatus
+                .toString()
+                .split(',')
+                .map(Number)
+            : [], // 交易状态集合
         shopId: this.formData.shopId, // 商户ID
         // shopId: 70, // 商户ID
-        stores: this.formData.stores?[this.formData.stores]:[], // 门店ID集合
-        clerkInfos: this.formData.clerkInfos?[this.formData.clerkInfos]:[], // 门店ID集合
+        stores: this.formData.stores ? [this.formData.stores] : [], // 门店ID集合
+        clerkInfos: this.formData.clerkInfos ? [this.formData.clerkInfos] : [], // 门店ID集合
         startAmount: this.formData.startAmount, // 门店ID集合
-        endAmount: this.formData.endAmount, // 门店ID集合
+        endAmount: this.formData.endAmount // 门店ID集合
       }
       this.tabLock = true
       try {
@@ -517,27 +553,28 @@ export default {
         this.tabData = res.results || []
         this.pageNo = res.page
         this.pageTotal = res.totalCount
-      } catch (error) {} finally {
+      } catch (error) {
+      } finally {
         this.tabLock = false
       }
     },
 
-    queryMerchantAdminPage (e) {
+    queryMerchantAdminPage(e) {
       return queryMerchantAdminPage(e)
     },
-    getStorePage (e) {
+    getStorePage(e) {
       return queryStorePage(e)
     },
-     queryClerkPageByStore (e) {
+    queryClerkPageByStore(e) {
       return queryClerkPageByStore(e)
     },
 
-    async getAllTradeStatus () {
+    async getAllTradeStatus() {
       const res = await queryAllTradeStatus()
       this.tradingStatusData = [{ codes: '', name: '全部' }, ...res]
-      this.formData.tradingStatusCode = ['2','3','4']
+      this.formData.tradingStatusCode = ['2', '3', '4']
     },
-    async getPaymentScenario () {
+    async getPaymentScenario() {
       this.formData.paymentScenarioCode = ''
       this.paymentScenarioData = []
       if (this.formData.paymentCode) {
@@ -547,12 +584,12 @@ export default {
         this.paymentScenarioData = [{ code: '', name: '全部' }, ...res]
       }
     },
-    getConditionType (type = 1) {
+    getConditionType(type = 1) {
       const res = queryAllCondition({ conditionType: type })
       return res || []
     },
 
-    setSearchTime (status) {
+    setSearchTime(status) {
       let varyStartDate = moment(this.formData.transactionTime[0])
       let varyEndDate = moment(this.formData.transactionTime[1])
       if (status === 'add') {
@@ -574,25 +611,36 @@ export default {
     width: 100%;
   }
 }
-.xdd_tip{
-    background: #E5EDFD;
-    border: 1px solid #A6C4FE;
-    padding: 8px 30px;
-    margin-bottom: 20px;
-    color: #3D4966;
-    font-size: 14px;
+.xdd_tip {
+  background: #e5edfd;
+  border: 1px solid #a6c4fe;
+  padding: 8px 30px;
+  margin-bottom: 20px;
+  color: #3d4966;
+  font-size: 14px;
 }
-.el-input2{
-  width:240px
+.el-input2 {
+  /deep/ {
+    .el-input {
+      width: 100%;
+    }
+    .el-input-number__increase,
+    .el-input-number__decrease {
+      width: 25px;
+    }
+    .el-input-number.is-controls-right .el-input__inner{
+      padding-left: 10px;
+    }
+    .el-input-number .el-input__inner{
+      text-align: left;
+    }
+    .el-input-number.is-controls-right .el-input__inner{
+      padding-right: 25px;
+    }
+  }
 }
-.el-input2 /deep/ .el-input{
-  width:100%!important
-}
-.el-input2 /deep/ .el-input__inner{
-        padding-right: 5px;
-}
-.xdd_tip i{
-    color: #3377FF;
+.xdd_tip i {
+  color: #3377ff;
 }
 .el-pagination-box {
   text-align: right;
@@ -604,19 +652,18 @@ export default {
   text-align: right;
   padding: 20px 0;
 }
-.xdd_row{
+.xdd_row {
   display: flex;
 }
 
-.order_sel{
-  width:100%
+.order_sel {
+  width: 100%;
 }
-.paymentScenarioCod{
-  /deep/.el-form-item__content{
+.paymentScenarioCod {
+  /deep/.el-form-item__content {
     justify-content: space-between;
     display: flex;
   }
-  
 }
 .pure {
   &-btn {

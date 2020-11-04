@@ -77,18 +77,14 @@
       <el-table :max-height="tableMaxHeight" :data="tabData" ref="table">
         <el-table-column :width="110" label="交易时间" prop="createDate"></el-table-column>
         <el-table-column :min-width="134" label="支付订单号" prop="orders"></el-table-column>
-
         <el-table-column label="确认码" prop="confirmCode"></el-table-column>
-
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
-
         <el-table-column label="收银员" prop="workerName">
           <template slot-scope="scope">
             {{ scope.row.workerName ? scope.row.workerName : '没有' }}
           </template>
         </el-table-column>
-
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
         <el-table-column label="交易状态" prop="orderStatusName"></el-table-column>
         <el-table-column align="right" label="交易金额" prop="amount"></el-table-column>

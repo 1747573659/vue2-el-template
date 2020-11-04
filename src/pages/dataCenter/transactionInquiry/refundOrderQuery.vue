@@ -1,43 +1,38 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i>
-支付订单号 与 退款订单号 至少输入一个，支付订单号无需选择商户，退款订单号必须选择商户；
-只支持查询近半年内的退款订单；</div>
+      <div class="xdd_tip"><i class="el-icon-info"></i> 支付订单号 与 退款订单号 至少输入一个，支付订单号无需选择商户，退款订单号必须选择商户； 只支持查询近半年内的退款订单；</div>
       <el-form :inline="true" label-width="100px" @submit.native.prevent class="xdd-btn-block__w240" size="small">
         <el-row :span="24">
           <el-form-item label="商户">
-               <select-page
-                :request="queryMerchantAdminPage"
-                :bvalue.sync="formData.shopAdminId"
-                :name="'companyName'"
-                searchName="id"
-                id="id"
-                :width="'240px'"
-                :placeholder="'商户名称'"
-              >
-              </select-page>
-            </el-form-item>
-            <el-form-item label="退款订单号">
-              <el-input  clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
-            </el-form-item>
-       
-            <el-form-item  label="退款状态">
-              <el-select  v-model="formData.status">
-                <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in statusList"></el-option>
-              </el-select>
-            </el-form-item>
-        
+            <select-page
+              :request="queryMerchantAdminPage"
+              :bvalue.sync="formData.shopAdminId"
+              :name="'companyName'"
+              searchName="id"
+              id="id"
+              :width="'240px'"
+              :placeholder="'商户名称'"
+            >
+            </select-page>
+          </el-form-item>
+          <el-form-item label="退款订单号">
+            <el-input clearable placeholder="请输入退款订单号" oninput="value=value.replace(/[\W]/g,'')" size="small" v-model.trim="formData.sn"></el-input>
+          </el-form-item>
+          <el-form-item label="退款状态">
+            <el-select v-model="formData.status">
+              <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in statusList"></el-option>
+            </el-select>
+          </el-form-item>
           <el-col :span="24">
             <el-form-item label="支付订单号">
-              <el-input  clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
+              <el-input clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
             </el-form-item>
-             <el-form-item>
-              <el-button  :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+            <el-form-item>
+              <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-    
       </el-form>
     </div>
     <!-- 内容展示区域 -->
@@ -55,7 +50,7 @@
         <el-table-column label="退款状态" prop="refundStatusName"></el-table-column>
         <el-table-column align="right" label="操作">
           <template slot-scope="scope">
-            <el-button @click="handleDetails(scope.row)"  size="small" type="text">详情</el-button>
+            <el-button @click="handleDetails(scope.row)" size="small" type="text">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -73,22 +68,12 @@
         ></el-pagination>
       </div>
     </div>
-
-    <order-detail-dialog
-      ref="orderDetailDialog"
-      :dialogTitle="dialogTitle"
-      :form="dialogForm"
-      type='refund'
-    />
+    <order-detail-dialog ref="orderDetailDialog" :dialogTitle="dialogTitle" :form="dialogForm" type="refund" />
   </div>
 </template>
 
 <script>
-import {
-  refundOrderQueryPage,
-  refundOrderdetail,
-  queryMerchantAdminPage
-} from '@/api/transtionManagement'
+import { refundOrderQueryPage, refundOrderdetail, queryMerchantAdminPage } from '@/api/transtionManagement'
 import orderDetailDialog from './components/orderDetailDialog'
 import selectPage from '@/components/selectPage2/index.vue'
 export default {
@@ -97,7 +82,7 @@ export default {
     selectPage,
     orderDetailDialog
   },
-  data () {
+  data() {
     return {
       orderType: '',
       processOrderNum: '',
@@ -125,7 +110,7 @@ export default {
       ]
     }
   },
-  beforeRouteEnter (to, from, next) {
+  beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.formData.order = vm.$route.query.id
       if (vm.$route.query.id) {
@@ -136,15 +121,15 @@ export default {
   computed: {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
-    },
+    }
   },
   methods: {
-    async handleDetails (row) {
+    async handleDetails(row) {
       this.dialogForm = {}
       const data = {
-        dataSource:3,
-        paySn:row.paySn,
-        'sn': row.sn
+        dataSource: 3,
+        paySn: row.paySn,
+        sn: row.sn
       }
       try {
         const res = await refundOrderdetail(data)
@@ -157,12 +142,12 @@ export default {
         this.$refs.orderDetailDialog.orderDetailVisible = true
       } catch {}
     },
-    queryMerchantAdminPage (e) {
+    queryMerchantAdminPage(e) {
       return queryMerchantAdminPage(e)
     },
-    handleSearch () {
-      if(!this.formData.shopAdminId){
-        this.$message.error("请先选择商户")
+    handleSearch() {
+      if (!this.formData.shopAdminId) {
+        this.$message.error('请先选择商户')
         return
       }
       if (!this.formData.sn && !this.formData.order) {
@@ -178,7 +163,7 @@ export default {
         this.searchLock = false
       }
     },
-    handleReset () {
+    handleReset() {
       //this.$refs.selectPage.clearAll()
       this.formData = {
         order: '',
@@ -188,27 +173,27 @@ export default {
       }
       this.tabData = []
     },
-    handleTabCurrent (val) {
+    handleTabCurrent(val) {
       this.pageNo = val
       this.handleQueryPage()
     },
-    handleTabSize (val) {
+    handleTabSize(val) {
       this.pageNo = 1
       this.pageSize = val
       this.handleQueryPage()
     },
-    async handleQueryPage () {
+    async handleQueryPage() {
       if (!this.formData.order && !this.formData.sn) {
         this.$message.error('请输入支付订单号或者退款订单号')
         return
       }
       let params = {
-        'order': this.formData.order,
-        'page': this.pageNo,
-        'rows': this.pageSize,
-        'sn': this.formData.sn,
-        'shopId': this.formData.shopAdminId,
-        'status': this.formData.status
+        order: this.formData.order,
+        page: this.pageNo,
+        rows: this.pageSize,
+        sn: this.formData.sn,
+        shopId: this.formData.shopAdminId,
+        status: this.formData.status
       }
       Object.keys(params).forEach(key => {
         if (!params[key]) {
@@ -223,10 +208,10 @@ export default {
       this.tabLock = true
       this.tabLock = false
     },
-    setInputNum () {
+    setInputNum() {
       this.orderType = this.orderType.replace(/[^\d]/g, '')
     },
-    setInputNumOrInto () {
+    setInputNumOrInto() {
       this.processOrderNum = this.processOrderNum.replace(/[\W]/g, '')
     }
   }
@@ -240,16 +225,16 @@ export default {
   background: #fff;
   padding-bottom: 20px;
 }
-.xdd_tip{
-    background: #E5EDFD;
-    border: 1px solid #A6C4FE;
-    padding: 8px 30px;
-    margin-bottom: 20px;
-    color: #3D4966;
-    font-size: 14px;
+.xdd_tip {
+  background: #e5edfd;
+  border: 1px solid #a6c4fe;
+  padding: 8px 30px;
+  margin-bottom: 20px;
+  color: #3d4966;
+  font-size: 14px;
 }
-.xdd_tip i{
-    color: #3377FF;
+.xdd_tip i {
+  color: #3377ff;
 }
 .pure {
   &-dialog {

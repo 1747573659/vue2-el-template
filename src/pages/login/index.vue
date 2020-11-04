@@ -20,7 +20,7 @@
           </el-form>
           <el-button type="primary" :loading="isLoading" @click.native="handleSubmitCode" class="e-form_btn">登录</el-button>
           <div class="p-login_regist">
-            点击登录即代表你同意
+            登录即代表你同意
             <a href="http://ceshi-file-oss.oss-cn-hangzhou.aliyuncs.com/legalNotices/privacyPolicy.html" target="_blank">《用户使用协议》</a>
           </div>
         </div>
@@ -240,6 +240,7 @@ export default {
     &_regist {
       margin-top: 20px;
       font-size: 12px;
+      color: #807e7e;
       /deep/ .el-checkbox__label {
         color: #807e7e !important;
       }
