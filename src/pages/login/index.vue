@@ -133,8 +133,8 @@ export default {
     mouseUp: async function(imgX) {
       try {
         const data = {
-          X: imgX,
-          Y: this.offsetY,
+          x: imgX,
+          y: this.offsetY,
           token: this.key
         }
         const res = await checkSliderImg(data)
