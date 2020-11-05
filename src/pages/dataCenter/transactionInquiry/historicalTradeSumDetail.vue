@@ -133,14 +133,14 @@ export default {
       questionIcon: require('@/assets/images/icon/questioin.png'),
       isMaxPage: false,
       currentPage: 1,
-      pageSize: 15,
+      pageSize: 10,
       totalPage: 0,
       cxLoading: false
     }
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
+      return document.documentElement.clientHeight - 56 - 48 - 120 - 108 - 48 - 76
     }
   },
   mounted() {
@@ -208,8 +208,15 @@ export default {
       this.selectPageNo = 1
       this.form.id = null
     },
-    handleCurrentChange() {},
-    handleSizeChange() {},
+    handleCurrentChange(val) {
+      this.currentPage = val
+      this.getList()
+    },
+    handleSizeChange(val) {
+      this.pageSize = val
+      this.currentPage = 1
+      this.getList
+    },
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
     },

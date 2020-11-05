@@ -46,7 +46,7 @@
       <!-- 修改密码 -->
       <km-dropout :status.sync="dropOutStatus"></km-dropout>
       <!-- 修改个人信息 -->
-      <km-dropInformation :status.sync="dropInfoStatus"></km-dropInformation>
+      <km-dropInformation @change="userInfoChange" :status.sync="dropInfoStatus"></km-dropInformation>
     </div>
   </section>
 </template>
@@ -112,6 +112,9 @@ export default {
       if (command === 1) this.dropInfoStatus = true
       else if (command === 2) this.dropOutStatus = true
       else this.handleLoginOut()
+    },
+    userInfoChange () {
+      this.userName = JSON.parse(getLocal('userInfo')).userName
     },
     handleLoginOut() {
       this.$confirm('确认退出吗?', '提示', {

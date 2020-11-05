@@ -46,7 +46,7 @@ export function modifyUserName(data) {
   return request({
     url: urlLinks.modifyUserName,
     method: 'post',
-    data: qs.stringify(data)
+    params: data
   })
 }
 
@@ -55,7 +55,7 @@ export function modifyUserMobile(data) {
   return request({
     url: urlLinks.modifyUserMobile,
     method: 'post',
-    data: data
+    params: data
   })
 }
 
@@ -64,7 +64,7 @@ export function queryUser(data) {
   return request({
     url: urlLinks.queryUser,
     method: 'post',
-    data: data
+    params: data
   })
 }
 
