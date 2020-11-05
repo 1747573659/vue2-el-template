@@ -808,7 +808,8 @@ export default {
         // this.form.archiveExpandVO.bankProvince = null
         // this.form.archiveExpandVO.bankCity = null
         // this.form.archiveExpandVO.bankArea = null
-        this.bankAreaList = []
+        // this.bankAreaList = []
+        this.form.archiveBaseVO.auditStatus = null
         this.$nextTick(() => {
           this.$refs.form.clearValidate()
         })

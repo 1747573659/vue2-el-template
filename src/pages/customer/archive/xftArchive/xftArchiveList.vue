@@ -266,8 +266,8 @@ export default {
       try {
         const res = await queryTotalByStatus(data)
         this.countData = []
-        for (const item of res) {
-          for (const ele of this.countOptions) {
+        for (const ele of this.countOptions) {
+          for (const item of res) {
             if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
           }
         }
@@ -315,6 +315,7 @@ export default {
       this.cxLoading = true
       this.currentPage = 1
       this.getList()
+      this.handleQueryTotalByStatus()
     },
     async changeStatus(row) {
       let data = {

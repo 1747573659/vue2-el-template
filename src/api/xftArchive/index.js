@@ -36,7 +36,7 @@ const urlLinks = {
   // 查询子商户号
   querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
   querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf',
-  queryTotalByStatus: 'archive/general/queryTotalByStatus',
+  queryTotalByStatus: '/archive/xdd/queryTotalByStatus',
   delList: 'archive/general/del',
   imageOCR: 'common/imageOcr'
 }
@@ -45,7 +45,8 @@ const urlLinks = {
 export function imageOCR(data) {
   return request({
     url: urlLinks.imageOCR,
-    method: 'POST'
+    method: 'POST',
+    data
   })
 }
 
