@@ -177,7 +177,6 @@ export default {
       try {
         const res = await queryUser()
         this.form = res
-        this.form.mobile = '18565715357'
       } catch (error) {}
     }
   }
