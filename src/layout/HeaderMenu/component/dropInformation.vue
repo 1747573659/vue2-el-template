@@ -2,7 +2,7 @@
   <section>
     <el-dialog class="p-drop_con" title="个人信息" :before-close="handleDiaClose" @open="getUserInfo" :visible.sync="status" append-to-body width="508px">
       <section class="p-drop_info">
-        <el-form class="e-drop_info" ref="passForm" :model="form" :rules="rules" size="small" label-width="100px">
+        <el-form class="e-drop_info" ref="passForm" :model="form" label-suffix=":" :rules="rules" size="small" label-width="100px">
           <el-form-item label="账号">
             <el-input v-model="form.loginName" placeholder="账号" disabled></el-input>
           </el-form-item>
@@ -21,7 +21,7 @@
       </div>
     </el-dialog>
     <el-dialog class="p-drop_con" title="修改联系人手机号" :before-close="handlePhoneDiaClose" :visible.sync="phoneDiaStatus" append-to-body width="508px">
-      <el-form class="e-drop_phone" ref="phoneForm" :model="phoneForm" :rules="phoneRules" size="small" label-width="80px">
+      <el-form class="e-drop_phone" ref="phoneForm" :model="phoneForm" label-suffix=":" :rules="phoneRules" size="small" label-width="80px">
         <el-form-item label="新手机" prop="nPhone">
           <el-input v-model="phoneForm.nPhone" maxlength="11" placeholder="新手机"></el-input>
         </el-form-item>
@@ -48,7 +48,7 @@
 <script>
 import { queryUser, modifyUserMobile, modifyUserName } from '@/api/login'
 import { createAuthCode } from '@/api/sms/sms'
-
+import { setLocal, getLocal } from '@/utils/storage'
 const cardholderPhone = (rule, value, callback) => {
   if (!/^1[3456789]\d{9}$/.test(value)) {
     callback('请输入正确的电话号码')
@@ -93,7 +93,7 @@ export default {
       phoneRules: {
         nPhone: [
           { required: true, message: '手机号不能为空', trigger: 'blur' },
-          { required: true, validator: cardholderPhone, trigger: ['blur', 'change'] }
+          { required: true, validator: cardholderPhone, trigger: 'blur' }
         ],
         code: [{ required: true, message: '验证码不能为空', trigger: 'blur' }]
       }
@@ -139,8 +139,12 @@ export default {
           try {
             this.isLoading = true
             await modifyUserName({ name: this.form.name })
+            let usedUserInfo = JSON.parse(getLocal('userInfo'))
+            usedUserInfo.userName = this.form.name
+            setLocal('userInfo', JSON.stringify(usedUserInfo))
             this.handleDiaClose()
             this.$message({ message: '修改成功', type: 'success' })
+            this.$emit('change')
           } catch (e) {
           } finally {
             this.isLoading = false

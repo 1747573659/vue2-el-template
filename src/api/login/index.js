@@ -46,7 +46,7 @@ export function modifyUserName(data) {
   return request({
     url: urlLinks.modifyUserName,
     method: 'post',
-    data: qs.stringify(data)
+    params: data
   })
 }
 
