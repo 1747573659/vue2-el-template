@@ -55,7 +55,7 @@ export function modifyUserMobile(data) {
   return request({
     url: urlLinks.modifyUserMobile,
     method: 'post',
-    params: data
+    data: qs.stringify(data)
   })
 }
 
@@ -64,7 +64,7 @@ export function queryUser(data) {
   return request({
     url: urlLinks.queryUser,
     method: 'post',
-    params: data
+    data: qs.stringify(data)
   })
 }
 

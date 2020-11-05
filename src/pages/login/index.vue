@@ -26,8 +26,8 @@
         </div>
       </section>
       <footer class="p-login_record">
-        <p>Copyright © 1999-2019 Shenzhen Kemai Technology Co.,Ltd</p>
-        <p>深圳市科脉技术股份有限公司版权所有 粤ICP备10037982号</p>
+        <p>Copyright © 1999-2020 粤ICP备10037982号</p>
+        <p>深圳市科脉技术股份有限公司 版权所有</p>
       </footer>
     </div>
     <section class="login_nocolor">
@@ -63,7 +63,7 @@ export default {
       if (/^1[3456789]\d{9}$/.test(value)) {
         callback()
       } else {
-        callback('请输入用户名')
+        callback('请输入账号')
       }
     }
     return {
@@ -86,7 +86,7 @@ export default {
       loginRules: {
         userName: [
           { required: true, trigger: 'blur', validator: userNamePass },
-          { required: true, trigger: 'change', message: '请输入密码'}
+          { required: true, trigger: 'change', message: '请输入账号'}
         ],
         password: [{ required: true, trigger: 'change', message: '请输入密码' }]
       },
@@ -226,6 +226,7 @@ export default {
       > header {
         padding-left: 24px;
         margin-bottom: 76px;
+        text-align: center;
       }
       > section {
         flex-grow: 2;
@@ -264,6 +265,7 @@ export default {
       font-size: 28px;
       font-weight: 500;
       color: rgba(31, 46, 77, 1);
+      text-align: center;
     }
     &_con {
       margin-top: 40px;

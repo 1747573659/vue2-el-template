@@ -13,8 +13,8 @@ export const countOptions = [
   { value: 0, label: '草稿' },
   { value: 2, label: '待审核' },
   { value: 3, label: '平台审核中' },
-  { value: 8, label: '未通过审核' },
-  { value: 1, label: '未通过审核编辑中' }
+  { value: 1, label: '未通过审核编辑中' },
+  { value: 4, label: '未通过审核' }
 ]
 
 export const deactivateOptions = [

@@ -223,13 +223,13 @@ export default {
         merchantShortName: this.form.msg,
         stopUse: this.form.stopUse,
         page: this.currentPage,
-        row: this.pageSize
+        rows: this.pageSize
       }
       try {
         const res = await queryTotalByStatus(data)
         this.countData = []
-        for (const item of res) {
-          for (const ele of this.countOptions) {
+        for (const ele of this.countOptions) {
+          for (const item of res) {
             if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
           }
         }
@@ -295,7 +295,7 @@ export default {
         merchantShortName: this.form.msg,
         stopUse: this.form.stopUse,
         page: this.currentPage,
-        row: this.pageSize
+        rows: this.pageSize
       }
       try {
         this.isTabLock = true
