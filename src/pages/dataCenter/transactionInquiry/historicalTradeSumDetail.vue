@@ -8,7 +8,7 @@
             <el-form-item label="商户" prop="paymentCode">
               <select-page
                 style="width: 240px"
-                :value="form.ObjContent"
+                :value="form.name"
                 @remoteMethod="remoteMethod"
                 @loadMore="loadMore"
                 id="id"
@@ -17,14 +17,14 @@
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus(1)"
                 @change="selectPageChange"
-                @clear="selectPageClear"
+                @clear="selectPageClear(1)"
               >
               </select-page>
             </el-form-item>
             <el-form-item label="代理商" prop="paymentCode">
               <select-page
                 style="width: 240px"
-                :value="form.ObjContent"
+                :value="form.companyName"
                 @remoteMethod="remoteMethod"
                 @loadMore="loadMore"
                 id="id"
@@ -33,7 +33,7 @@
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus(2)"
                 @change="selectPageChange"
-                @clear="selectPageClear"
+                @clear="selectPageClear(2)"
               >
               </select-page>
             </el-form-item>
@@ -122,7 +122,12 @@ export default {
     return {
       searchType: null, // 1:代理商, 2:商户
       activeIndex: '1',
-      form: {},
+      form: {
+        agentId: null,
+        adminId: null,
+        name: '',
+        companyName: ''
+      },
       paymentData: {},
       tableLoading: false,
       ObjContentList: [],
@@ -179,7 +184,7 @@ export default {
             this.isMaxPage = true
           }
         } else {
-          this.isMaxPage
+          this.isMaxPage = true
         }
       } catch (error) {}
     },
@@ -199,7 +204,20 @@ export default {
       this.remoteMethod()
     },
     selectPageChange(value) {
-      this.form.id = value
+      if (this.searchType === 1) {
+        this.form.adminId = value
+      } else {
+        this.form.agentId = value
+      }
+      this.ObjContentList.forEach(item => {
+        if (item.id === value) {
+          if (this.searchType === 2) {
+            this.form.companyName = item.companyName
+          } else {
+            this.form.name = item.name
+          }
+        }
+      })
     },
     // 如果点击了清除按钮则将相关数据清空
     selectPageClear() {
@@ -225,8 +243,8 @@ export default {
     async getList() {
       this.tableLoading = true
       let data = {
-        adminId: this.$route.query.searchObject === '2' ? this.$route.query.id : this.searchType === 1 ? this.form.id : '',
-        agentId: this.$route.query.searchObject === '1' ? this.$route.query.id : this.searchType === 2 ? this.form.id : '',
+        adminId: this.$route.query.searchObject === '2' ? this.$route.query.id : this.form.adminId,
+        agentId: this.$route.query.searchObject === '1' ? this.$route.query.id : this.form.agentId,
         dataTime: this.$route.query.payDate,
         payMethod: this.$route.query.payMethod,
         type: this.$route.query.type

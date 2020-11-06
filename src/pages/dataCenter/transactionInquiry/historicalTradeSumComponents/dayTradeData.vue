@@ -260,6 +260,15 @@ export default {
     },
     selectPageChange(value) {
       this.form.id = value
+      this.ObjContentList.forEach(item => {
+        if (item.id === value) {
+          if (this.form.searchObject === 2) {
+            this.form.ObjContent = item.companyName
+          } else {
+            this.form.ObjContent = item.name
+          }
+        }
+      })
     },
     // 如果点击了清除按钮则将相关数据清空
     selectPageClear() {
