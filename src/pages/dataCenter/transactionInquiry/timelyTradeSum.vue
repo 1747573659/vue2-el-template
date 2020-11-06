@@ -278,6 +278,8 @@ export default {
       try {
         const res = await cashierData(data)
         this.tableData = res
+        this.eChartsDateList = []
+        this.eChartsDataList = []
         if (this.tableData.cashierMockDTOS) {
           this.tableData.cashierMockDTOS.forEach(item => {
             this.eChartsDateList.push(item.payDate)
