@@ -150,38 +150,38 @@ export default {
   methods: {
     async remoteMethod(value) {
       // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
-      if (!value || (this.searchString !== '' && value !== this.searchString)) {
+      if (this.searchString !== '' && value !== this.searchString) {
         this.selectPageNo = 1
         this.searchString = ''
         this.isMaxPage = false
         this.ObjContentList = []
       }
       // 只有value有值的时候才去请求接口
-      if (value) {
-        let data = {
-          id: value,
-          page: this.selectPageNo,
-          rows: 10
-        }
-        try {
-          let res
-          if (this.searchType === 1) {
-            res = await queryAgentPage(data)
-            this.selectPageName = 'name'
-          } else if (this.searchType === 2) {
-            res = await queryShopListByPage(data)
-            this.selectPageName = 'companyName'
-          }
-          // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
-          if (res.results && res.results.length !== 0) {
-            this.ObjContentList = this.ObjContentList.concat(res.results)
-            this.searchString = value
-            if (res.results?.length !== 10) {
-              this.isMaxPage = true
-            }
-          }
-        } catch (error) {}
+      let data = {
+        id: value,
+        page: this.selectPageNo,
+        rows: 10
       }
+      try {
+        let res
+        if (this.searchType === 1) {
+          res = await queryAgentPage(data)
+          this.selectPageName = 'name'
+        } else if (this.searchType === 2) {
+          res = await queryShopListByPage(data)
+          this.selectPageName = 'companyName'
+        }
+        // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
+        if (res.results && res.results.length !== 0) {
+          this.ObjContentList = this.ObjContentList.concat(res.results)
+          this.searchString = value
+          if (res.results?.length !== 10) {
+            this.isMaxPage = true
+          }
+        } else {
+          this.isMaxPage
+        }
+      } catch (error) {}
     },
     loadMore() {
       // 如果不是最后一页就加载下一页
@@ -196,6 +196,7 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
+      this.remoteMethod()
     },
     selectPageChange(value) {
       this.form.id = value

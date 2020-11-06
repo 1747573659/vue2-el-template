@@ -44,6 +44,7 @@
                 @loadMore="loadMore"
                 id="id"
                 :name="selectPageName"
+                :disabled="form.searchObject === ''"
                 :options="ObjContentList"
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus"
@@ -197,6 +198,7 @@ export default {
   },
   methods: {
     searchObjectChange(value) {
+      console.log('11')
       this.form.id = null
       this.form.ObjContent = null
       this.isMaxPage = false
@@ -205,46 +207,42 @@ export default {
       this.selectPageNo = 1
     },
     async remoteMethod(value) {
-      if (!this.form.searchObject) {
-        this.$message.warning('请先选择查询对象')
-        return
-      }
-      // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
-      if (!value || (this.searchString !== '' && value !== this.searchString)) {
+      // 当输入新的值的时候，就把相关数据进行清空
+      if (this.searchString !== '' && value !== this.searchString) {
         this.selectPageNo = 1
         this.searchString = ''
         this.isMaxPage = false
         this.ObjContentList = []
       }
       // 只有value有值的时候才去请求接口
-      if (value) {
-        let data = {
-          id: value,
-          page: this.selectPageNo,
-          rows: 10
-        }
-        try {
-          let res
-          if (this.form.searchObject === 1) {
-            res = await queryAgentPage(data)
-            this.selectPageName = 'name'
-          } else if (this.form.searchObject === 2) {
-            res = await queryShopListByPage(data)
-            this.selectPageName = 'companyName'
-          } else if (this.form.searchObject === 3) {
-            res = await queryStorePage(data)
-            this.selectPageName = 'name'
-          }
-          // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
-          if (res.results && res.results.length !== 0) {
-            this.ObjContentList = this.ObjContentList.concat(res.results)
-            this.searchString = value
-            if (res.results?.length !== 10) {
-              this.isMaxPage = true
-            }
-          }
-        } catch (error) {}
+      let data = {
+        id: value,
+        page: this.selectPageNo,
+        rows: 10
       }
+      try {
+        let res
+        if (this.form.searchObject === 1) {
+          res = await queryAgentPage(data)
+          this.selectPageName = 'name'
+        } else if (this.form.searchObject === 2) {
+          res = await queryShopListByPage(data)
+          this.selectPageName = 'companyName'
+        } else if (this.form.searchObject === 3) {
+          res = await queryStorePage(data)
+          this.selectPageName = 'name'
+        }
+        // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
+        if (res.results && res.results.length !== 0) {
+          this.ObjContentList = this.ObjContentList.concat(res.results)
+          this.searchString = value
+          if (res.results?.length !== 10) {
+            this.isMaxPage = true
+          }
+        } else {
+          this.isMaxPage = true
+        }
+      } catch (error) {}
     },
     loadMore() {
       // 如果不是最后一页就加载下一页
@@ -258,6 +256,7 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
+      this.remoteMethod()
     },
     selectPageChange(value) {
       this.form.id = value
