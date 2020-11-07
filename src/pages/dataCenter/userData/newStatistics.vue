@@ -8,6 +8,7 @@
         :queryFormList.sync="queryFormList"
         :queryParams="queryParams"
         @search="handleFilter"
+        :timeinterval="6"
       >
         <template v-slot:formheader>
           <el-form-item label="代理商">
@@ -49,7 +50,9 @@ import { queryAgentPage } from "@/api/customer/agent";
 import { userdataCount } from "@/api/dataCenter/userData.js";
 import selectPage from "@/components/selectPage2/index.vue";
 import { downloadBufferFile } from "@/utils";
+import moment from 'moment'
 const DOWNLOAD_URL = process.env.VUE_APP_BASE_API;
+
 export default {
   name: "newStatistics",
   mixins: [listMixins],
@@ -58,6 +61,12 @@ export default {
     baseTable,
     queryGroup,
   },
+  // moment("YYYY-MM-DD")
+    //         .startOf('day')
+    //         .valueOf(),
+    //       moment()
+    //         .endOf('day')
+    //         .valueOf()
   data() {
     return {
       queryFormList: [
@@ -66,7 +75,7 @@ export default {
           name: 'time',
           label: '日期：',
           placeholder: '请选择日期',
-          value: []
+          value: [moment().subtract(7, 'days').format("YYYY-MM-DD"),moment().subtract(1, 'days').format("YYYY-MM-DD")]
         }
       ],
       list: [],
@@ -80,6 +89,10 @@ export default {
       },
       total: 0,
       headers: [
+         {
+          type: "index",
+          title: "序号"
+        },
         {
           key: "agentName",
           title: "代理商名称",
@@ -150,6 +163,10 @@ export default {
 };
 </script>
 <style lang="scss" scoped>
+/deep/.xdd-btn-block__w240{
+      position: relative;
+    left: -44px;
+}
 .xdd_tip{
     background: #E5EDFD;
     border: 1px solid #A6C4FE;

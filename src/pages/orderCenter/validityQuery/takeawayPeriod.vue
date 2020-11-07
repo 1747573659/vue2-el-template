@@ -187,10 +187,15 @@ export default {
     },
   },
   mounted() {
+  
     this.handleFilter();
   },
 };
 </script>
 
 <style lang="scss" scoped>
+  /deep/.xdd-btn-block__w240{
+   position: relative;
+    left: -53px;
+  }
 </style>
