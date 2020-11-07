@@ -124,6 +124,7 @@
 <script>
 import selectPage from '@/components/selectPage'
 import moment from 'moment'
+import { getLocal } from '@/utils/storage'
 import { paymentMethodVoList, cashierData, queryAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
 
 export default {
@@ -197,6 +198,9 @@ export default {
   computed: {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
+    },
+    isSalesman () {
+      return Boolean(JSON.parse(getLocal('userInfo')).clerkId)
     }
   },
   mounted() {
@@ -204,6 +208,13 @@ export default {
     this.getList()
   },
   created() {
+    if (this.isSalesman) {
+      this.searchObjectList = [
+        { id: '', name: '全部' },
+        { id: 2, name: '商户' },
+        { id: 3, name: '门店' }
+      ]
+    }
     this.form.time = [
       moment(new Date().getTime())
         .subtract(7, 'days')
