@@ -68,6 +68,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   props: {
     queryParams: {
@@ -77,6 +78,10 @@ export default {
     queryFormList: {
       type: Array,
       default: () => []
+    },
+    timeinterval:{
+      type: Number,
+      default: 0
     },
     // 可在下方css里随意加类名自定义样式，使用时传入名字即可
     className: {
@@ -89,20 +94,50 @@ export default {
     }
   },
   data () {
+    let maxTime = ''
+    let minTime = ''
+    let _this=this
     return {
       resetData: '',
       pickerBeginDateBefore: {
+        onPick: ({ maxDate, minDate }) => {
+          if (minDate) {
+            const day31 = _this.timeinterval*31 * 24 * 3600 * 1000
+            maxTime = minDate.getTime() + day31
+            minTime = minDate.getTime() - day31
+          }
+        },
         disabledDate (time) {
-          // return time.getTime() > Date.now()
-          let date = new Date()
-          return time.getTime() > new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate(),
-            23,
-            59,
-            59
-          ).getTime()
+          
+          if(_this.timeinterval){
+            if (maxTime) {
+              return (
+                time.getTime() >
+                  moment()
+                    .endOf('day')
+                    .valueOf() ||
+                time.getTime() > maxTime ||
+                time.getTime() < minTime
+              )
+            }
+            return (
+              time.getTime() >
+              moment()
+                .endOf('day')
+                .valueOf()
+            )
+          }else{
+              let date = new Date()
+            return time.getTime() > new Date(
+              date.getFullYear(),
+              date.getMonth(),
+              date.getDate(),
+              23,
+              59,
+              59
+            ).getTime()
+          }
+          
         }
       }
     }
@@ -130,6 +165,7 @@ export default {
 
 <style scoped lang="scss">
 .query-group-container {
+     
   .xdd_small-btn{
 
   }
