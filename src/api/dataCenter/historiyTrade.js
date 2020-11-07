@@ -4,6 +4,7 @@ const urlLinks = {
   paymentMethodVoList: '/cashier/paymentMethodVoList',
   cashierData: '/cashier/data',
   queryAgentPage: '/agent/queryAgentPage',
+  queryNewAgentPage: '/agent/queryNewAgentPage',
   queryShopListByPage: '/shop/queryShopListByPage',
   queryStorePage: '/store/queryStorePage',
   detail: '/cashier/detail'
@@ -45,6 +46,13 @@ export function queryStorePage(data) {
 export function detail(data) {
   return request({
     url: urlLinks.detail,
+    method: 'post',
+    data
+  })
+}
+export function queryNewAgentPage(data) {
+  return request({
+    url: urlLinks.queryNewAgentPage,
     method: 'post',
     data
   })

@@ -56,7 +56,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payAmount }}</div>
+            <div class="sum-card-money">{{tableData.payAmount}}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -68,7 +68,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payCount }}</div>
+            <div class="sum-card-money">{{tableData.payCount}}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -80,7 +80,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
+            <div class="sum-card-money">{{tableData.unitAmount}}</div>
           </div>
         </el-col>
       </el-row>
@@ -111,7 +111,7 @@
 <script>
 import selectPage from '@/components/selectPage'
 import moment from 'moment'
-import { detail, queryAgentPage, queryShopListByPage } from '@/api/dataCenter/historiyTrade'
+import { detail, queryNewAgentPage, queryShopListByPage } from '@/api/dataCenter/historiyTrade'
 
 export default {
   name: 'historicalTradeSumDetail',
@@ -155,7 +155,7 @@ export default {
   methods: {
     async remoteMethod(value) {
       // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
-      if (this.searchString !== '' && value !== this.searchString) {
+      if (value !== this.searchString) {
         this.selectPageNo = 1
         this.searchString = ''
         this.isMaxPage = false
@@ -163,14 +163,14 @@ export default {
       }
       // 只有value有值的时候才去请求接口
       let data = {
-        id: value,
+        id: value || '',
         page: this.selectPageNo,
         rows: 10
       }
       try {
         let res
         if (this.searchType === 1) {
-          res = await queryAgentPage(data)
+          res = await queryNewAgentPage(data)
           this.selectPageName = 'name'
         } else if (this.searchType === 2) {
           res = await queryShopListByPage(data)
