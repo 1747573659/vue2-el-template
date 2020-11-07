@@ -75,7 +75,7 @@ export default {
           name: 'time',
           label: '日期：',
           placeholder: '请选择日期',
-          value: [moment().subtract(7, 'days').format("YYYY-MM-DD"),moment().format("YYYY-MM-DD")]
+          value: [moment().subtract(7, 'days').format("YYYY-MM-DD"),moment().subtract(1, 'days').format("YYYY-MM-DD")]
         }
       ],
       list: [],
