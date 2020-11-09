@@ -16,7 +16,7 @@
               :request="queryAgentPage"
               :bvalue.sync="tableParam.userId"
               :name="'name'"
-              :parame="{'id':''}"
+              :parame="{'id':' '}"
               searchName="id"
               :width="'240px'"
               id="userId"
