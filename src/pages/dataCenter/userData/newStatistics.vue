@@ -10,8 +10,8 @@
         @search="handleFilter"
         :timeinterval="6"
       >
-        <template v-slot:formheader>
-          <el-form-item label="代理商">
+        <template v-slot:formfooter>
+          <el-form-item label="代理商：">
             <select-page
               :request="queryAgentPage"
               :bvalue.sync="tableParam.userId"
@@ -165,7 +165,7 @@ export default {
 <style lang="scss" scoped>
 /deep/.xdd-btn-block__w240{
       position: relative;
-    left: -44px;
+    left: -37px;
 }
 .xdd_tip{
     background: #E5EDFD;
