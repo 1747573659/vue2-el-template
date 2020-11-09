@@ -3,7 +3,7 @@ import request from '@/utils/request'
 const urlLinks = {
   queryChannel: '/agent/queryChannel',
   queryAgentPage: '/agent/queryAgentPage',
-  queryAgentPageNew: '/agent/queryAgentPageNew',
+  queryAgentPageNew: '/agent/queryNewAgentPage',
   updateStatus: '/agent/updateStatus',
   queryAgentById: '/agent/queryAgentById',
   queryRole: '/role/queryRole',
