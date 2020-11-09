@@ -3,6 +3,7 @@ import request from '@/utils/request'
 const urlLinks = {
   queryChannel: '/agent/queryChannel',
   queryAgentPage: '/agent/queryAgentPage',
+  queryAgentPageNew: '/agent/queryAgentPageNew',
   updateStatus: '/agent/updateStatus',
   queryAgentById: '/agent/queryAgentById',
   queryRole: '/role/queryRole',
@@ -31,6 +32,14 @@ export function queryChannel() {
 export function queryAgentPage(data) {
   return request({
     url: urlLinks.queryAgentPage,
+    method: 'post',
+    data
+  })
+}
+// 分页查询代理商信息
+export function queryAgentPageNew(data) {
+  return request({
+    url: urlLinks.queryAgentPageNew,
     method: 'post',
     data
   })

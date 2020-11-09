@@ -46,7 +46,7 @@
 import listMixins from "@/mixins/tableList";
 import baseTable from "@/components/baseTable";
 import queryGroup from "@/components/queryGroup";
-import { queryAgentPage } from "@/api/customer/agent";
+import { queryAgentPageNew } from "@/api/customer/agent";
 import { userdataCount } from "@/api/dataCenter/userData.js";
 import selectPage from "@/components/selectPage2/index.vue";
 import { downloadBufferFile } from "@/utils";
@@ -154,7 +154,7 @@ export default {
     //   );
     // },
     queryAgentPage(e) {
-      return queryAgentPage(e);
+      return queryAgentPageNew(e);
     },
   },
   mounted() {
