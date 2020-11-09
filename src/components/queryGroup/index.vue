@@ -57,10 +57,9 @@
           ></el-date-picker>
         </el-form-item>
       </template>
+      <slot name="formfooter"></slot>
       <el-button size="small" class="xdd_small-btn" @click="search" type="primary">查询</el-button>
-      <slot name="formfoot"></slot>
-      
-      </el-col>
+      <slot name="formfoot"></slot></el-col>
       </el-row>
     </el-form>
     <slot name="foot"></slot>
