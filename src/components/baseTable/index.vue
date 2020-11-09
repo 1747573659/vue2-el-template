@@ -161,7 +161,7 @@ export default {
       }
     },
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 146
+      return document.documentElement.clientHeight - 56 - 48 - 120.5 - 48 - 76
     },
     pageSizes: {
       get () {
