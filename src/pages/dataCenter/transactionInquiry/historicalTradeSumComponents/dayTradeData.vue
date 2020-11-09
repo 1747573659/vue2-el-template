@@ -366,10 +366,10 @@ export default {
           })
           this.eChartsDateList = this.eChartsDateList.reverse()
           this.eChartsDataList = this.eChartsDataList.reverse()
+          this.$nextTick(() => {
+            this.loadingChart()
+          })
         }
-        this.$nextTick(() => {
-          this.loadingChart()
-        })
       } catch (error) {
       } finally {
         this.tableLoading = false

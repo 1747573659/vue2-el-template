@@ -309,11 +309,10 @@ export default {
           })
           this.eChartsDateList = this.eChartsDateList.reverse()
           this.eChartsDataList = this.eChartsDataList.reverse()
+          this.$nextTick(() => {
+            this.loadingChart()
+          })
         }
-        this.totalPage = this.tableData.cashierMockDTOS.length || 0
-        this.$nextTick(() => {
-          this.loadingChart()
-        })
       } catch (error) {
       } finally {
         this.tableLoading = false
