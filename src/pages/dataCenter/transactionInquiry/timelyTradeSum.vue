@@ -61,7 +61,7 @@
             <div class="sum-card-title">
               交易笔数
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">当前过滤条件的交易笔数<br />(未扣除退款订单金额)</div>
+                <div slot="content">当前过滤条件的交易笔数<br />(未扣除退款订单笔数)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
@@ -309,11 +309,10 @@ export default {
           })
           this.eChartsDateList = this.eChartsDateList.reverse()
           this.eChartsDataList = this.eChartsDataList.reverse()
+          this.$nextTick(() => {
+            this.loadingChart()
+          })
         }
-        this.totalPage = this.tableData.cashierMockDTOS.length || 0
-        this.$nextTick(() => {
-          this.loadingChart()
-        })
       } catch (error) {
       } finally {
         this.tableLoading = false
