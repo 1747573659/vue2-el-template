@@ -154,7 +154,7 @@ export default {
     //   );
     // },
     queryAgentPage(e) {
-      return queryAgentPage(e);
+      return queryAgentPageNew(e);
     },
   },
   mounted() {
