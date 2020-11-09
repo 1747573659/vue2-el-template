@@ -53,7 +53,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payAmount }}</div>
+            <div class="sum-card-money">{{tableData.payAmount}}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -65,7 +65,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payCount }}</div>
+            <div class="sum-card-money">{{tableData.payCount}}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -77,12 +77,12 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
+            <div class="sum-card-money">{{tableData.unitAmount}}</div>
           </div>
         </el-col>
       </el-row>
       <!-- ECHARTS -->
-      <div id="eChart" style="width: 100%;height:400px;"></div>
+      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%;height:400px;"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
@@ -99,7 +99,7 @@
 import selectPage from '@/components/selectPage'
 import { getLocal } from '@/utils/storage'
 import moment from 'moment'
-import { paymentMethodVoList, cashierData, queryAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
+import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
 
 export default {
   name: 'dayTradeData',
@@ -181,7 +181,7 @@ export default {
         return
       }
       // 当输入新的值的时候，就把相关数据进行情况
-      if (this.searchString !== '' && value !== this.searchString) {
+      if (value !== this.searchString) {
         this.selectPageNo = 1
         this.searchString = ''
         this.isMaxPage = false
@@ -189,14 +189,14 @@ export default {
       }
       // 只有value有值的时候才去请求接口
       let data = {
-        id: value,
+        id: value || '',
         page: this.selectPageNo,
         rows: 10
       }
       try {
         let res
         if (this.form.searchObject === 1) {
-          res = await queryAgentPage(data)
+          res = await queryNewAgentPage(data)
           this.selectPageName = 'name'
         } else if (this.form.searchObject === 2) {
           res = await queryShopListByPage(data)
@@ -311,7 +311,9 @@ export default {
           this.eChartsDataList = this.eChartsDataList.reverse()
         }
         this.totalPage = this.tableData.cashierMockDTOS.length || 0
-        this.loadingChart()
+        this.$nextTick(() => {
+          this.loadingChart()
+        })
       } catch (error) {
       } finally {
         this.tableLoading = false

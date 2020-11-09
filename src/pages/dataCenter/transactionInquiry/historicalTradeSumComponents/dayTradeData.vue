@@ -74,7 +74,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payAmount }}</div>
+            <div class="sum-card-money">{{tableData.payAmount}}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -86,7 +86,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payCount }}</div>
+            <div class="sum-card-money">{{tableData.payCount}}</div>
           </div>
         </el-col>
         <el-col :span="8" class="sum-card-item">
@@ -98,7 +98,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
+            <div class="sum-card-money">{{tableData.unitAmount}}</div>
           </div>
         </el-col>
       </el-row>
@@ -125,7 +125,7 @@
 import selectPage from '@/components/selectPage'
 import moment from 'moment'
 import { getLocal } from '@/utils/storage'
-import { paymentMethodVoList, cashierData, queryAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
+import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
 
 export default {
   name: 'dayTradeData',
@@ -236,7 +236,7 @@ export default {
     },
     async remoteMethod(value) {
       // 当输入新的值的时候，就把相关数据进行清空
-      if (this.searchString !== '' && value !== this.searchString) {
+      if (value !== this.searchString) {
         this.selectPageNo = 1
         this.searchString = ''
         this.isMaxPage = false
@@ -244,14 +244,14 @@ export default {
       }
       // 只有value有值的时候才去请求接口
       let data = {
-        id: value,
+        id: value || '',
         page: this.selectPageNo,
         rows: 10
       }
       try {
         let res
         if (this.form.searchObject === 1) {
-          res = await queryAgentPage(data)
+          res = await queryNewAgentPage(data)
           this.selectPageName = 'name'
         } else if (this.form.searchObject === 2) {
           res = await queryShopListByPage(data)
@@ -362,7 +362,7 @@ export default {
         if (this.tableData.cashierMockDTOS) {
           this.tableData.cashierMockDTOS.forEach(item => {
             this.eChartsDateList.push(item.payDate)
-            this.eChartsDataList.push(item.payAmount)
+            // this.eChartsDataList.push(item.payAmount)
           })
           this.eChartsDateList = this.eChartsDateList.reverse()
           this.eChartsDataList = this.eChartsDataList.reverse()
