@@ -161,8 +161,8 @@ export default {
         onPick: ({ maxDate, minDate }) => {
           if (minDate) {
             const day31 = 31 * 24 * 3600 * 1000
-            maxTime = moment(minDate.getTime()).add(12, 'months')
-            minTime = moment(minDate.getTime()).subtract(12, 'months')
+            maxTime = moment(minDate.getTime()).add(11, 'months')
+            minTime = moment(minDate.getTime()).subtract(11, 'months')
           }
         },
         disabledDate: time => {
@@ -208,7 +208,7 @@ export default {
     }
     this.form.time = [
       moment(new Date().getTime())
-        .subtract(12, 'months')
+        .subtract(11, 'months')
         .format('YYYY-MM'),
       moment(new Date().getTime()).format('YYYY-MM')
     ]
@@ -325,6 +325,7 @@ export default {
           this.$nextTick(() => {
             this.loadingChart()
           })
+          this.tableData.cashierMockDTOS = this.tableData.cashierMockDTOS.reverse()
         }
       } catch (error) {
       } finally {

@@ -367,6 +367,7 @@ export default {
           this.$nextTick(() => {
             this.loadingChart()
           })
+          this.tableData.cashierMockDTOS = this.tableData.cashierMockDTOS.reverse()
         }
       } catch (error) {
       } finally {
