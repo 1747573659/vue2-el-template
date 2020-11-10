@@ -1,7 +1,6 @@
 <template>
   <div>
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i>单次查询日期的最长跨度为31天</div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
