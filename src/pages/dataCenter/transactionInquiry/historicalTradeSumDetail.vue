@@ -37,7 +37,7 @@
               </select-page>
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
-              <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
+              <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -152,6 +152,10 @@ export default {
   },
   created() {},
   methods: {
+    search() {
+      this.currentPage = 1
+      this.getList()
+    },
     async remoteMethod(value) {
       // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
       if (value !== this.searchString) {
