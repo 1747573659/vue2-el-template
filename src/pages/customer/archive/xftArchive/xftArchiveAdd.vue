@@ -909,8 +909,8 @@ export default {
           this.form.archiveExpandVO.legalPersonName = res.name
           this.form.archiveExpandVO.idNumber = res.num
         } else {
-          this.form.archiveExpandVO.idBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
-          this.form.archiveExpandVO.idEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
+          this.form.archiveExpandVO.legalPersonValidityBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
+          this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
         }
       })
       this.form[type][url] = res.data.path
