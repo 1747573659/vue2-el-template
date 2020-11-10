@@ -290,7 +290,7 @@ export default {
       try {
         const res = await queryXftPage(data)
         this.tableData = res.results
-        this.totalPage = res.totalPage
+        this.totalPage = res.totalCount
       } catch (e) {} finally {
         this.tableLoading = false
       }
