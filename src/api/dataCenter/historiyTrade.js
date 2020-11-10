@@ -5,7 +5,7 @@ const urlLinks = {
   cashierData: '/cashier/data',
   queryAgentPage: '/agent/queryAgentPage',
   queryNewAgentPage: '/agent/queryNewAgentPage',
-  queryShopListByPage: '/shop/queryShopListByPage',
+  queryShopListByPage: '/shop/queryShopListByNameAndId',
   queryStorePage: '/store/queryStorePage',
   detail: '/cashier/detail'
 }

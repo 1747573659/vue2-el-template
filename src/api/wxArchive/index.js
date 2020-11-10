@@ -7,7 +7,7 @@ const urlLinks = {
   xiaoWeiUpgradeStatus: 'archive/general/xiaoWeiUpgradeStatus',
   generalStopUse: 'archive/general/stopUse',
   generalDetail: 'archive/general/generalDetail',
-  queryShopListByPage: 'shop/queryShopListByPage',
+  queryShopListByPage: 'shop/queryShopListByNameAndId',
   queryBankPage: 'branch/queryBankPage',
   queryBranchPage: 'branch/queryBranchPage',
   submit: 'archive/general/submit',

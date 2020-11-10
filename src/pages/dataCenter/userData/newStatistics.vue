@@ -17,7 +17,7 @@
               :request="queryAgentPage"
               :bvalue.sync="tableParam.userId"
               :name="'name'"
-              searchName="id"
+              searchName="userId"
               :width="'240px'"
               :placeholder="'代理商名称'"
             >
@@ -133,6 +133,7 @@ export default {
   },
   methods: {
     handleFilter(e) {
+      console.info(e)
       this.loading = true;
       let data = Object.assign(this.tableParam, e);
       userdataCount(data)

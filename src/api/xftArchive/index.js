@@ -8,7 +8,7 @@ const urlLinks = {
   // 查询所有证书类型
   queryCertType: '/archive/xdd/queryCertType',
   // 分页查询商户信息
-  queryShopListByPage: '/shop/queryShopListByPage',
+  queryShopListByPage: '/shop/queryShopListByNameAndId',
   // 开户支行
   getBankCnapByName: '/archive/xdd/getBankCnapByName',
   // 是否显示享钱汇商费率

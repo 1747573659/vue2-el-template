@@ -5,7 +5,7 @@ import qs from 'qs'
 const urlLinks = {
   queryAllConditionByType: `/shopOrder/queryAllConditionByType`,
   queryStorePage: `/storeClerkManager/queryStorePageByShop`,
-  queryMerchantAdminPage: `/shop/queryShopListByPage`,
+  queryMerchantAdminPage: `/shop/queryShopListByNameAndId`,
   queryClerkPageByStore: `/storeClerkManager/queryClerkPageByStore`,
   queryPaySceneByType: `/shopOrder/queryPaySceneByType`,
   querySummary: `/shopOrder/querySummary`,
