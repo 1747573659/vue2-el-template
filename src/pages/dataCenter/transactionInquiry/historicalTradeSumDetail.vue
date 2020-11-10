@@ -204,9 +204,9 @@ export default {
     },
     selectPageChange(value) {
       if (this.searchType === 1) {
-        this.form.adminId = value
+        this.form.agentId= value
       } else {
-        this.form.agentId = value
+        this.form.adminId = value
       }
       this.ObjContentList.forEach(item => {
         if (item.id === value) {
