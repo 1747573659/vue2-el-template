@@ -340,11 +340,10 @@ export default {
           backgroundColor: '#FFFFFF',
           trigger: 'axis',
           axisPointer: {
-            type: 'none',
-            snap: true
-            // lineStyle: {
-            //   type: 'dashed'
-            // }
+            type: 'line',
+            lineStyle: {
+              type: 'dashed'
+            }
           },
           formatter: params => {
             return `
@@ -403,6 +402,11 @@ export default {
             data: this.eChartsDataList,
             itemStyle: {
               color: '#3377FF'
+            },
+            label: {
+              show: true,
+              position: "top",
+              fontSize: 15
             }
             // symbol:'circle'
           }
