@@ -53,7 +53,6 @@
             :picker-options="pickerBeginDateBefore"
             @change="daterangeChange"
             v-model="item.value"
-            :default-time="['00:00:00', '23:59:59']"
           ></el-date-picker>
         </el-form-item>
       </template>
@@ -100,14 +99,14 @@ export default {
       resetData: '',
       pickerBeginDateBefore: {
         onPick: ({ maxDate, minDate }) => {
+          console.log(maxDate, minDate)
           if (minDate) {
-            const day31 = _this.timeinterval*31 * 24 * 3600 * 1000
-            maxTime = minDate.getTime() + day31
-            minTime = minDate.getTime() - day31
+            //const day31 = _this.timeinterval*31 * 24 * 3600 * 1000
+            maxTime = moment(minDate.getTime()).add(_this.timeinterval, 'months')
+            minTime = moment(minDate.getTime()).subtract(_this.timeinterval, 'months')
           }
         },
         disabledDate (time) {
-          
           if(_this.timeinterval){
             if (maxTime) {
               return (
@@ -119,24 +118,14 @@ export default {
                 time.getTime() < minTime
               )
             }
+          }else{
             return (
               time.getTime() >
               moment()
                 .endOf('day')
                 .valueOf()
             )
-          }else{
-              let date = new Date()
-            return time.getTime() > new Date(
-              date.getFullYear(),
-              date.getMonth(),
-              date.getDate(),
-              23,
-              59,
-              59
-            ).getTime()
           }
-          
         }
       }
     }
