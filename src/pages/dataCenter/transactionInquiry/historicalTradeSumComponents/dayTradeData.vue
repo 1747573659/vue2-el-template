@@ -169,7 +169,7 @@ export default {
       pickerOptions: {
         onPick: ({ maxDate, minDate }) => {
           if (minDate) {
-            const day31 = 31 * 24 * 3600 * 1000
+            const day31 = 30 * 24 * 3600 * 1000
             maxTime = minDate.getTime() + day31
             minTime = minDate.getTime() - day31
           }
