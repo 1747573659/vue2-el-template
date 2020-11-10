@@ -8,22 +8,6 @@
             <el-form-item label="商户" prop="paymentCode">
               <select-page
                 style="width: 240px"
-                :value="form.name"
-                @remoteMethod="remoteMethod"
-                @loadMore="loadMore"
-                id="id"
-                :name="selectPageName"
-                :options="ObjContentList"
-                :isMaxPage="isMaxPage"
-                @focus="selectPageFocus(1)"
-                @change="selectPageChange"
-                @clear="selectPageClear(1)"
-              >
-              </select-page>
-            </el-form-item>
-            <el-form-item label="代理商" prop="paymentCode">
-              <select-page
-                style="width: 240px"
                 :value="form.companyName"
                 @remoteMethod="remoteMethod"
                 @loadMore="loadMore"
@@ -34,6 +18,22 @@
                 @focus="selectPageFocus(2)"
                 @change="selectPageChange"
                 @clear="selectPageClear(2)"
+              >
+              </select-page>
+            </el-form-item>
+            <el-form-item label="代理商" prop="paymentCode">
+              <select-page
+                style="width: 240px"
+                :value="form.name"
+                @remoteMethod="remoteMethod"
+                @loadMore="loadMore"
+                id="id"
+                :name="selectPageName"
+                :options="ObjContentList"
+                :isMaxPage="isMaxPage"
+                @focus="selectPageFocus(1)"
+                @change="selectPageChange"
+                @clear="selectPageClear(1)"
               >
               </select-page>
             </el-form-item>
@@ -247,7 +247,9 @@ export default {
         agentId: this.$route.query.searchObject === '1' ? this.$route.query.id : this.form.agentId,
         dataTime: this.$route.query.payDate,
         payMethod: this.$route.query.payMethod,
-        type: this.$route.query.type
+        type: this.$route.query.type,
+        page: this.currentPage,
+        rows: this.pageSize
       }
       try {
         const res = await detail(data)

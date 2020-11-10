@@ -46,7 +46,8 @@ export function imageOCR(data) {
   return request({
     url: urlLinks.imageOCR,
     method: 'POST',
-    data
+    data,
+    timeout: 1 * 60 * 1000 // 分 * 秒 * 毫秒
   })
 }
 

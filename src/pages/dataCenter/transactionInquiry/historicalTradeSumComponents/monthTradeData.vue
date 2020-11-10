@@ -322,8 +322,6 @@ export default {
             this.eChartsDateList.push(item.payDate)
             this.eChartsDataList.push(item.payAmount)
           })
-          this.eChartsDateList = this.eChartsDateList.reverse()
-          this.eChartsDataList = this.eChartsDataList.reverse()
           this.$nextTick(() => {
             this.loadingChart()
           })
