@@ -280,6 +280,7 @@ export default {
       try {
         await delList({ id: scope.row.archiveBaseDTO.id })
         this.getList()
+        this.handleQueryTotalByStatus()
       } catch (error) {
       } finally {
         this.$refs[`popover${scope.$index}`].doClose()
