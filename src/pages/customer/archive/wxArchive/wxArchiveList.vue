@@ -2,7 +2,7 @@
   <section>
     <div class="search-box">
       <div class="p-count">
-        <section class="p-count_con" v-if="countData.length > 0">
+        <section class="p-count_con">
           <img src="../../../../assets/images/icon/mark.png" alt="提示" />
           <template v-for="item in countData">
             <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
@@ -242,6 +242,7 @@ export default {
       try {
         await delList({ id: scope.row.archiveBaseDTO.id })
         this.handleQueryPage()
+        this.handleQueryTotalByStatus()
       } catch (error) {
       } finally {
         this.$refs[`popover${scope.$index}`].doClose()
