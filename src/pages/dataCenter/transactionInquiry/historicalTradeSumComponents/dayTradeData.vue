@@ -416,6 +416,7 @@ export default {
           }
         },
         xAxis: {
+          boundaryGap: false,
           data: this.eChartsDateList,
           axisLine: {
             show: false,
