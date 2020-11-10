@@ -13,13 +13,12 @@
         <template v-slot:formfooter>
           <el-form-item label="代理商：">
             <select-page
+              :isNeedinitId="true"
               :request="queryAgentPage"
               :bvalue.sync="tableParam.userId"
               :name="'name'"
-              :parame="{'id':' '}"
               searchName="id"
               :width="'240px'"
-              id="userId"
               :placeholder="'代理商名称'"
             >
             </select-page>
