@@ -94,8 +94,8 @@ export default {
               this.$router.push({ name: menus[0].children[0].children[0].name })
             }
           }
-          this.delCachedView(item)
         }
+        this.delCachedView(item)
       })
     },
     isActive(route) {
