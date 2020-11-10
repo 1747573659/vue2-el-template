@@ -247,7 +247,9 @@ export default {
         agentId: this.$route.query.searchObject === '1' ? this.$route.query.id : this.form.agentId,
         dataTime: this.$route.query.payDate,
         payMethod: this.$route.query.payMethod,
-        type: this.$route.query.type
+        type: this.$route.query.type,
+        page: this.currentPage,
+        rows: this.pageSize
       }
       try {
         const res = await detail(data)
