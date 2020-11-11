@@ -17,7 +17,8 @@
               :request="queryAgentPage"
               :bvalue.sync="tableParam.userId"
               :name="'name'"
-              searchName="userId"
+              searchName="id"
+              id="userId"
               :width="'240px'"
               :placeholder="'代理商名称'"
             >
