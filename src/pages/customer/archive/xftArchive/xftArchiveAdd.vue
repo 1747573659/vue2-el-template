@@ -1133,7 +1133,6 @@ export default {
     },
     async toAdd() {
       this.$refs.form.validate(async (valid) => {
-        console.log(valid)
         if (valid) {
           try {
             const res = await audit(this.form)
