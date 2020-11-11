@@ -5,7 +5,7 @@
         <el-row>
           <el-col :span="21">
             <el-form-item label="查询对象" prop="paymentCode">
-              <el-select class="order_sel" filterable v-model="form.searchObject">
+              <el-select class="order_sel" filterable v-model="form.searchObject" @change="searchObjectChange">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in searchObjectList"></el-option>
               </el-select>
             </el-form-item>
@@ -148,6 +148,14 @@ export default {
     }
   },
   methods: {
+    searchObjectChange(value) {
+      this.form.id = null
+      this.form.ObjContent = null
+      this.isMaxPage = false
+      this.ObjContentList = []
+      this.searchString = ''
+      this.selectPageNo = 1
+    },
     async remoteMethod(value) {
       if (!this.form.searchObject) {
         this.$message.warning('请先选择查询对象')

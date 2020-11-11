@@ -544,8 +544,8 @@ export default {
         // shopId: 70, // 商户ID
         stores: this.formData.stores ? [this.formData.stores] : [], // 门店ID集合
         clerkInfos: this.formData.clerkInfos ? [this.formData.clerkInfos] : [], // 门店ID集合
-        startAmount: this.formData.startAmount, // 门店ID集合
-        endAmount: this.formData.endAmount // 门店ID集合
+        startAmount: this.formData.startAmount || null, // 门店ID集合
+        endAmount: this.formData.endAmount || null // 门店ID集合
       }
       this.tabLock = true
       try {

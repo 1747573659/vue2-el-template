@@ -226,7 +226,6 @@ export default {
   },
   methods: {
     searchObjectChange(value) {
-      console.log('11')
       this.form.id = null
       this.form.ObjContent = null
       this.isMaxPage = false
