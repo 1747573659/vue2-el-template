@@ -123,14 +123,9 @@
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-if="scope.row.archiveBaseDTO.auditStatus !== 0" @click="handleStopUse(scope.row)">{{
               scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
             }}</el-button>
-            <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">
-              <p class="e-popover_prompt">确定删除所选数据吗？</p>
-              <div class="e-popover_action">
-                <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
-                <el-button type="primary" size="mini" @click="handleDraftList(scope)">确定</el-button>
-              </div>
+            <el-popconfirm class="e-popover_con" @onConfirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
               <el-button type="text" size="small" slot="reference">删除</el-button>
-            </el-popover>
+            </el-popconfirm>
             <el-button type="text" size="small" v-if="scope.row.hasArchive" @click="handlePushLinComDetail">进件详情</el-button>
           </template>
         </el-table-column>
@@ -235,18 +230,12 @@ export default {
         }
       } catch (error) {}
     },
-    handleDraftCancel(index) {
-      this.$refs[`popover${index}`].doClose()
-    },
     handleDraftList: async function(scope) {
       try {
         await delList({ id: scope.row.archiveBaseDTO.id })
         this.handleQueryPage()
         this.handleQueryTotalByStatus()
-      } catch (error) {
-      } finally {
-        this.$refs[`popover${scope.$index}`].doClose()
-      }
+      } catch (error) {}
     },
     handlePushLinComDetail(row) {
       this.$router.push({

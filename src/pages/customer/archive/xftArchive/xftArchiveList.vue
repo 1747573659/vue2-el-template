@@ -91,14 +91,17 @@
             <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{
               scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'
             }}</el-button>
-            <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">
+            <el-popconfirm class="e-popover_con" @onConfirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
+              <el-button type="text" size="small" slot="reference">删除</el-button>
+            </el-popconfirm>
+            <!-- <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">
               <p class="e-popover_prompt">确定删除所选数据吗？</p>
               <div class="e-popover_action">
                 <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
                 <el-button type="primary" size="mini" @click="handleDraftList(scope)">确定</el-button>
               </div>
               <el-button type="text" size="small" slot="reference">删除</el-button>
-            </el-popover>
+            </el-popover> -->
             <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
               <span class="el-dropdown-link">
                 ···
@@ -273,18 +276,12 @@ export default {
         }
       } catch (error) {}
     },
-    handleDraftCancel(index) {
-      this.$refs[`popover${index}`].doClose()
-    },
     handleDraftList: async function(scope) {
       try {
         await delList({ id: scope.row.archiveBaseDTO.id })
         this.getList()
         this.handleQueryTotalByStatus()
-      } catch (error) {
-      } finally {
-        this.$refs[`popover${scope.$index}`].doClose()
-      }
+      } catch (error) {}
     },
     tableSortChange({ column, prop, order }) {
       if (order === 'ascending') {
