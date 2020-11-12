@@ -49,13 +49,6 @@
 import { queryUser, modifyUserMobile, modifyUserName } from '@/api/login'
 import { createAuthCode } from '@/api/sms/sms'
 import { setLocal, getLocal } from '@/utils/storage'
-const cardholderPhone = (rule, value, callback) => {
-  if (!/^1[3456789]\d{9}$/.test(value)) {
-    callback('请输入正确的电话号码')
-  } else {
-    callback()
-  }
-}
 
 export default {
   props: {
@@ -65,6 +58,15 @@ export default {
     }
   },
   data() {
+    const cardholderPhone = (rule, value, callback) => {
+      if (!/^1[3456789]\d{9}$/.test(value)) {
+        callback('请输入正确的电话号码')
+      } else if (value === this.form.mobile) {
+        callback('新旧手机一样，无需修改')
+      } else {
+        callback()
+      }
+    }
     return {
       isLoading: false,
       phoneDiaLoading: false,
@@ -74,11 +76,7 @@ export default {
         mobile: ''
       },
       rules: {
-        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }],
-        mobile: [
-          { required: true, message: '手机号不能为空', trigger: 'blur' },
-          { required: true, validator: cardholderPhone, trigger: ['blur', 'change'] }
-        ]
+        name: [{ required: true, message: '姓名不能为空', trigger: 'blur' }]
       },
       isClick: false,
       isDisabled: false,
