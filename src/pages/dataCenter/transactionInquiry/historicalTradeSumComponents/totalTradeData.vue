@@ -320,4 +320,7 @@ export default {
   height: 14px;
   margin: 2px 0 0 2px;
 }
+.data-box {
+  min-height: calc(100vh - 56px - 48px - 32px - 61px - 64px);
+}
 </style>

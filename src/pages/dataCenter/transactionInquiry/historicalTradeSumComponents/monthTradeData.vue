@@ -10,7 +10,9 @@
                 style="width: 240px"
                 v-model="form.time"
                 class="search-date"
+                :clearable="false"
                 type="monthrange"
+                @blur="clearDisabled"
                 range-separator="至"
                 :picker-options="pickerOptions"
                 start-placeholder="开始日期"
@@ -124,15 +126,14 @@ import selectPage from '@/components/selectPage'
 import { getLocal } from '@/utils/storage'
 import moment from 'moment'
 import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
-
+let maxTime = ''
+let minTime = ''
 export default {
   name: 'weekTradeData',
   components: {
     selectPage
   },
   data() {
-    let maxTime = ''
-    let minTime = ''
     return {
       activeIndex: '1',
       form: {
@@ -214,6 +215,10 @@ export default {
     ]
   },
   methods: {
+    clearDisabled () {
+      maxTime = ''
+      minTime = ''
+    },
     searchObjectChange(value) {
       this.form.id = null
       this.form.ObjContent = null

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i>单次查询日期的最长跨度为31天</div>
+      <div class="xdd_tip"><i class="el-icon-info"></i>单次查询日期的最长跨度为31天；查询对象为“全部” 或 代理商过滤时，结果会包括下级代理商的交易数据</div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
@@ -15,6 +15,7 @@
                 :picker-options="pickerOptions"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                @blur="clearDisabled"
                 value-format="yyyy-MM-dd"
               >
               </el-date-picker>
@@ -126,15 +127,14 @@ import selectPage from '@/components/selectPage'
 import moment from 'moment'
 import { getLocal } from '@/utils/storage'
 import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
-
+let maxTime = ''
+let minTime = ''
 export default {
   name: 'dayTradeData',
   components: {
     selectPage
   },
   data() {
-    let maxTime = ''
-    let minTime = ''
     return {
       questionIcon: require('@/assets/images/icon/questioin.png'),
       selectPageNo: 1,
@@ -176,21 +176,9 @@ export default {
         },
         disabledDate: time => {
           if (maxTime) {
-            return (
-              time.getTime() >
-                moment()
-                  .endOf('day')
-                  .valueOf() ||
-              time.getTime() > maxTime ||
-              time.getTime() < minTime
-            )
+            return (time.getTime() > (moment().endOf('day').valueOf() - 24 * 3600 * 1000) || time.getTime() > maxTime || time.getTime() < minTime)
           }
-          return (
-            time.getTime() >
-            moment()
-              .endOf('day')
-              .valueOf()
-          )
+          return (time.getTime() > (moment().endOf('day').valueOf() - 24 * 3600 * 1000))
         }
       }
     }
@@ -225,6 +213,10 @@ export default {
     ]
   },
   methods: {
+    clearDisabled () {
+      maxTime = ''
+      minTime = ''
+    },
     searchObjectChange(value) {
       this.form.id = null
       this.form.ObjContent = null
