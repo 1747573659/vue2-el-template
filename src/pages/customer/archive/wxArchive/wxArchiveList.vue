@@ -181,7 +181,7 @@ export default {
       isTabLock: false,
       isReason: false, // 异常状态原因
       reasonMsg: '',
-      sortStatus: '', // 时间排序状态
+      sortStatus: 'desc', // 时间排序状态
       xiaoWeiArchiveData: [],
       xiaoWeiUpgradeData: [],
       tableData: [],
