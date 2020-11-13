@@ -132,6 +132,13 @@ export default {
   mounted() {
     this.getRoleList()
     if (this.$route.query.id) this.queryUserById()
+    this.$nextTick(() => {
+      if (this.$route.query.id) {
+        document.querySelector('.e-tag_active span').innerText = `账号设置/编辑`
+      } else {
+        document.querySelector('.e-tag_active span').innerText = `账号设置/新增`
+      }
+    })
   },
   computed: {
     loginName() {
