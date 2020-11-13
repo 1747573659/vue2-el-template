@@ -1,6 +1,6 @@
 <template>
   <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
-    <header v-if="pageAction && pageAction !== 'add'">
+    <header v-if="pageAction && pageAction !== 'add' && $route.query.status !== 'copy'">
       <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
         <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
           <label>进件状态：</label>
@@ -768,6 +768,12 @@ export default {
     handleVerify: async function() {
       this.$refs.form.validate(async valid => {
         if (valid) {
+          if (this.$route.query.status === 'copy') {
+            this.form.archiveBaseVO.auditTime = ''
+            this.form.archiveBaseVO.bossAuditTime = ''
+            this.form.archiveBaseVO.createTime = ''
+            this.form.archiveBaseVO.auditStatus = ''
+          }
           try {
             const res = await submitToVerify(this.form)
             this.$store.dispatch('delTagView', this.$route).then(() => {
@@ -823,7 +829,9 @@ export default {
           if (!errorMessage) {
             try {
               if (this.$route.query.status === 'copy') {
-                this.form.archiveBaseVO.createTime = null
+                this.form.archiveBaseVO.auditTime = ''
+                this.form.archiveBaseVO.bossAuditTime = ''
+                this.form.archiveBaseVO.createTime = ''
                 this.form.archiveBaseVO.auditStatus = ''
               }
               const res = await submit(this.form)

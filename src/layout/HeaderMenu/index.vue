@@ -196,7 +196,7 @@ export default {
     }
     &_avator {
       vertical-align: top;
-      margin: 0 14px 0 24px;
+      margin: 0 0 0 24px;
       width: 32px;
       height: 32px;
       img {

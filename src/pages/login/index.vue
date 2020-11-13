@@ -213,8 +213,7 @@ export default {
     &_picture {
       flex: 1 1 auto;
       height: 100%;
-      background: url('../../assets/images/login/login.jpg') no-repeat center;
-      background-size: 100% 100%;
+      background: url('../../assets/images/login/login.jpg') center center no-repeat;
     }
     &_con {
       width: 32%;

@@ -1117,7 +1117,12 @@ export default {
       } catch(error) {}
     },
     async toSave() {
-      if(this.$route.query.isCopy) this.form.archiveBaseVO.createTime = null
+      if(this.$route.query.isCopy) {
+        this.form.archiveBaseVO.auditTime = ''
+        this.form.archiveBaseVO.bossAuditTime = ''
+        this.form.archiveBaseVO.createTime = ''
+        this.form.archiveBaseVO.auditStatus = ''
+      }
       this.$refs.form.validateField('archiveBaseVO.merchantId', async (errorMessage) => {
         if (!errorMessage) {
           try {
@@ -1134,6 +1139,12 @@ export default {
     async toAdd() {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
+          if(this.$route.query.isCopy) {
+            this.form.archiveBaseVO.auditTime = ''
+            this.form.archiveBaseVO.bossAuditTime = ''
+            this.form.archiveBaseVO.createTime = ''
+            this.form.archiveBaseVO.auditStatus = ''
+          }
           try {
             const res = await audit(this.form)
             this.$store.dispatch('delTagView', this.$route).then(() => {
