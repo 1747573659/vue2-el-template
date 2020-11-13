@@ -196,7 +196,7 @@ export default {
     }
     &_avator {
       vertical-align: top;
-      margin: 0 14px 0 24px;
+      margin: 0 10px 0 24px;
       width: 32px;
       height: 32px;
       img {
@@ -236,7 +236,7 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
       display: inline-block;
-      width: 80px;
+      max-width: 100px;
       text-align: right;
     }
   }
