@@ -1230,13 +1230,20 @@ export default {
   },
   mounted() {
     this.getIndustrIdList()
+    this.$nextTick(()=> {
+      let pageStatus = ''
+      if (this.auditStatus && this.isDetail) pageStatus ='详情'
+      else if([0,1,4,8].includes(this.auditStatus)) pageStatus ='编辑'
+      else pageStatus = '新增'
+      document.querySelector('.e-tag_active span').innerText = `享付通资质进件/${pageStatus}`
+    })
   },
   created() {
     if (this.$route.query.isCopy) {
       this.isCopy = true
     }
     this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
-    if ([2, 3,5,6,7,9].includes(this.auditStatus)) {
+    if ([2,3,5,6,7,9].includes(this.auditStatus)) {
       this.isDetail = true
     }
     if (this.$route.query.id) {

@@ -643,6 +643,13 @@ export default {
   filters: {
     filterReview
   },
+  mounted() {
+    this.$nextTick(() => {
+      const tags = { edit: '编辑', detail: '详情', copy: '新增' }
+      let pageStatus = this.$route.query.status ? tags[this.$route.query.status] : '新增'
+      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
+    })
+  },
   beforeRouteEnter(to, from, next) {
     next(vm => {
       vm.form = deepClone(formObj)
@@ -652,10 +659,6 @@ export default {
       vm.getBankPage()
       vm.getBranchPage()
       vm.getBusinessCategory()
-      // 修改顶部tag
-      // const tags = { edit: '编辑', detail: '详情', copy: '新增' }
-      // let pageStatus = vm.$route.query.status ? tags[vm.$route.query.status] : '新增'
-      // document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
     })
   },
   methods: {
