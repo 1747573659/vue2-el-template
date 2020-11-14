@@ -8,7 +8,7 @@
           @search="handleFilter"
         >
           <template v-slot:formfoot >
-              <router-link  v-permission="'WORKORDERMANAGEMENT_ADD' && showAdd" to="/customer/workorder/workOrderManagementdetail">
+              <router-link v-if="showAdd"  v-permission="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
                 <el-button icon="el-icon-plus" type="primary"
                   size="small"
                   plain class="float_right">新增</el-button>
