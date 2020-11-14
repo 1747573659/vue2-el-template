@@ -196,11 +196,9 @@ export default {
       queryWorkOrderList(this.tableParam).then((res)=>{
         this.list=res.results || []
         this.total=res.totalCount || 0
-        if (!res) {
-          this.showAdd = false
-        } else {
-          this.showAdd = true
-        }
+        this.showAdd = true
+      }).catch(error => {
+        this.showAdd = false
       }).finally(()=>{
         this.loading=false
       })
