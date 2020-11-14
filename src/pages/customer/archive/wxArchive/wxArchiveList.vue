@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="search-box">
-      <div class="p-count">
+      <div class="p-count" v-if="countData.length > 0">
         <section class="p-count_con">
           <img src="../../../../assets/images/icon/mark.png" alt="提示" />
           <template v-for="item in countData">
