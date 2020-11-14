@@ -110,7 +110,7 @@ export default {
       list: [],
       total:0,
       loading:false,
-      showAdd: false,
+      showAdd: true,
       tableParam:{
           page:1,
           rows:10,
@@ -198,6 +198,8 @@ export default {
         this.total=res.totalCount || 0
         if (!res) {
           this.showAdd = false
+        } else {
+          this.showAdd = true
         }
       }).finally(()=>{
         this.loading=false
