@@ -52,7 +52,7 @@
               iconColor="#FFA033"
               title="确定删除所选数据吗？"
               placement="top-start"
-              @onConfirm="del(scope.row)"
+              @confirm="del(scope.row)"
             >
               <el-button slot="reference" type="text" size="small">删除</el-button>
             </el-popconfirm>

@@ -91,7 +91,7 @@
             <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{
               scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'
             }}</el-button>
-            <el-popconfirm class="e-popover_con" @onConfirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
+            <el-popconfirm class="e-popover_con" @confirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
             <!-- <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">

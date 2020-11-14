@@ -123,7 +123,7 @@
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-if="scope.row.archiveBaseDTO.auditStatus !== 0" @click="handleStopUse(scope.row)">{{
               scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
             }}</el-button>
-            <el-popconfirm class="e-popover_con" @onConfirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
+            <el-popconfirm class="e-popover_con" @confirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
             <el-button type="text" size="small" v-if="scope.row.hasArchive" @click="handlePushLinComDetail">进件详情</el-button>

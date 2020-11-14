@@ -71,7 +71,7 @@
               iconColor="#FFA033"
               title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
               placement="top-start"
-              @onConfirm="resetPsw(scope.row.userId)"
+              @confirm="resetPsw(scope.row.userId)"
             >
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>

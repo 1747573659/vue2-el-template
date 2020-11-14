@@ -32,7 +32,7 @@
         <el-table-column label="操作" align="right" width="100px">
           <template slot-scope="scope">
             <el-button v-permission="'AGENT_ROLE_EDIT'" size="small" type="text" @click="edit(scope.row.id)">编辑</el-button>
-            <el-popconfirm v-permission="'AGENT_ROLE_DEL'" style="margin-left: 12px" iconColor="#FFA033" title="确定删除所选数据吗？确认则删除角色及账号对应的角色关系" placement="top-start" @onConfirm="handleDelete(scope.row.num, scope.row.id)">
+            <el-popconfirm v-permission="'AGENT_ROLE_DEL'" style="margin-left: 12px" iconColor="#FFA033" title="确定删除所选数据吗？确认则删除角色及账号对应的角色关系" placement="top-start" @confirm="handleDelete(scope.row.num, scope.row.id)">
               <el-button slot="reference" size="small" type="text">删除</el-button>
             </el-popconfirm>
           </template>
