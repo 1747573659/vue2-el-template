@@ -3,10 +3,10 @@
     <div class="km-setting-roleAdd">
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
         <el-form-item label="角色名称" prop="name">
-          <el-input v-model="form.name" style="width:240px"></el-input>
+          <el-input v-model="form.name" maxlength="50" style="width: 240px"></el-input>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input v-model="form.remark" maxlength="250" style="width:240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
+          <el-input v-model="form.remark" maxlength="250" style="width: 240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
         </el-form-item>
         <el-form-item label="PC后台权限">
           <tree-custom :data="pcData" show-checkbox ref="treePC" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultPCList" :props="defaultProps">
@@ -24,12 +24,12 @@
     </div>
   </div>
 </template>
-
 <script>
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
+import { routeTreeLevel } from '@/utils/modules/routeTree.js'
 export default {
-  name:'roleAdd',
+  name: 'roleAdd',
   components: {},
   data() {
     var nameRule = async (rule, value, callback) => {
@@ -70,7 +70,7 @@ export default {
   },
   methods: {
     // 递归选中的id
-    getCheckIdInitForPC (arr, list) {
+    getCheckIdInitForPC(arr, list) {
       var temp = []
       if (arr && arr.length > 0) {
         arr.forEach(item => {
@@ -80,7 +80,7 @@ export default {
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function (array, item) {
+            const traverse = function(array, item) {
               array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
@@ -94,18 +94,19 @@ export default {
         })
       }
       // let obj = this.toChildrenNum(list)
-      function t2 (array) {
-        array.length > 0 && array.forEach(item => {
-          if (item['children'].length === 0) {
-            this.defaultPCList.push(item.id)
-          } else {
-            t2.call(this, item['children'])
-          }
-        })
+      function t2(array) {
+        array.length > 0 &&
+          array.forEach(item => {
+            if (item['children'].length === 0) {
+              this.defaultPCList.push(item.id)
+            } else {
+              t2.call(this, item['children'])
+            }
+          })
       }
       t2.call(this, temp)
     },
-    getCheckIdInitForAPP (arr, list) {
+    getCheckIdInitForAPP(arr, list) {
       var temp = []
       if (arr && arr.length > 0) {
         arr.forEach(item => {
@@ -113,9 +114,14 @@ export default {
           if (!item.parentId) {
             temp.push(item)
           }
+          if (item.name === '查看') {
+            item.disabled = true
+            item.checked = true
+            list.push(item)
+          }
           if (item.parentId) {
             // 递归操作
-            const traverse = function (array, item) {
+            const traverse = function(array, item) {
               array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
@@ -129,14 +135,15 @@ export default {
         })
       }
       // let obj = this.toChildrenNum(list)
-      function t2 (array) {
-        array.length > 0 && array.forEach(item => {
-          if (item['children'].length === 0) {
-            this.defaultAPPList.push(item.id)
-          } else {
-            t2.call(this, item['children'])
-          }
-        })
+      function t2(array) {
+        array.length > 0 &&
+          array.forEach(item => {
+            if (item['children'].length === 0) {
+              this.defaultAPPList.push(item.id)
+            } else {
+              t2.call(this, item['children'])
+            }
+          })
       }
       t2.call(this, temp)
     },
@@ -206,47 +213,83 @@ export default {
     },
     async queryAllPCMenu(id) {
       try {
+        if (id) {
+          this.queryRoleById()
+        }
         const res = await queryAllPCMenu({ roleId: id })
+        var cid = 444444
         let newRouteTree = routeTree(res.allMenus)
-        // var cid = 444444
-        // newRouteTree.forEach(itemOne => {
-        //   if (itemOne && itemOne.children) {
-        //     itemOne.children.forEach(itemTwo => {
-        //       if (itemTwo && itemTwo.children) {
-        //         itemTwo.children.forEach(itemThree => {
-        //           cid++
-        //           if (itemThree && itemThree.children) {
-        //             itemThree.children.push({
-        //               'id': cid,
-        //               'name': '查看',
-        //               'code': 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
-        //               'iconCls': null,
-        //               'url': null,
-        //               'lever': 4,
-        //               'parentId': itemThree.id,
-        //               'remark': null,
-        //               'creatorId': null,
-        //               'createTime': null,
-        //               'modifierId': null,
-        //               'modifyTime': null,
-        //               'type': 4,
-        //               'parentName': null,
-        //               'children': [
-        //               ],
-        //               'disabled': false,
-        //               'checked': false,
-        //               'viewPath': null,
-        //               'sort': null,
-        //               'domainType': null,
-        //               'appId': null,
-        //               'menuType': 2
-        //             })
-        //           }
-        //         })
-        //       }
-        //     })
-        //   }
-        // })
+        let isNodeCheck, isDisabled
+        let sysMenuThree =
+          routeTreeLevel(res.roleMenus || [])
+            .filter(item => item.lever === 3)
+            .map(item => item.id) || []
+        newRouteTree.forEach(itemOne => {
+          if (itemOne && itemOne.children) {
+            itemOne.children.forEach(itemTwo => {
+              if (itemTwo && itemTwo.children) {
+                itemTwo.children.forEach(itemThree => {
+                  cid++
+                  if (itemThree && itemThree.children) {
+                    if (sysMenuThree.includes(itemThree.id)) {
+                      isNodeCheck = true
+                      isDisabled = true
+                      res.roleMenus.push({
+                        id: cid,
+                        name: '查看',
+                        code: 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
+                        iconCls: null,
+                        url: null,
+                        lever: 4,
+                        parentId: itemThree.id,
+                        remark: null,
+                        creatorId: null,
+                        createTime: null,
+                        modifierId: null,
+                        modifyTime: null,
+                        type: 4,
+                        appId: null,
+                        parentName: null,
+                        children: null,
+                        viewPath: null,
+                        sort: null,
+                        domainType: null,
+                        menuType: 2
+                      })
+                    } else {
+                      isNodeCheck = false
+                      isDisabled = false
+                    }
+                    itemThree.children.push({
+                      id: cid,
+                      name: '查看',
+                      code: 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
+                      iconCls: null,
+                      url: null,
+                      lever: 4,
+                      parentId: itemThree.id,
+                      remark: null,
+                      creatorId: null,
+                      createTime: null,
+                      modifierId: null,
+                      modifyTime: null,
+                      type: 4,
+                      parentName: null,
+                      children: [],
+                      disabled: isNodeCheck,
+                      checked: isDisabled,
+                      viewPath: null,
+                      sort: null,
+                      domainType: null,
+                      appId: null,
+                      menuType: 2
+                    })
+                  }
+                })
+              }
+            })
+          }
+        })
         this.pcData = [
           {
             id: -1,
@@ -254,7 +297,7 @@ export default {
             children: newRouteTree || []
           }
         ]
-        this.getCheckIdInitForPC(res.roleMenus || [], this.pcData.children)
+        id && this.getCheckIdInitForPC(res.roleMenus || [], res.allMenus || [])
       } catch (e) {}
     },
     async queryRoleById() {
@@ -270,13 +313,16 @@ export default {
   mounted() {
     this.queryAllPCMenu(this.$route.query.id || '')
     this.queryAllAPPMenu(this.$route.query.id || '')
-    if (this.$route.query.id) {
-      this.queryRoleById()
-    }
+    this.$nextTick(() => {
+      if (this.$route.query.id) {
+        document.querySelector('.e-tag_active span').innerText = `角色管理/编辑`
+      } else {
+        document.querySelector('.e-tag_active span').innerText = `角色管理/新增`
+      }
+    })
   }
 }
 </script>
-
 <style lang="scss" scoped>
 .km-setting-roleAdd {
   display: flex;

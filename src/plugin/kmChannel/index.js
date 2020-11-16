@@ -16,6 +16,9 @@ import * as filters from '@/filters'
 // directive
 import permission from '@/directive/permission/index.js'
 
+// ECharts
+import * as echarts from 'echarts'
+
 // 功能插件
 
 export default {
@@ -31,6 +34,9 @@ export default {
     Vue.use(permission)
     // Element
     Vue.use(ElementUI)
+    // echarts
+    Vue.prototype.$echarts = echarts
+
     // 插件
   }
 }

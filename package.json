@@ -5,16 +5,19 @@
   "scripts": {
     "serve:dev": "vue-cli-service serve --mode serve_dev",
     "serve:test": "vue-cli-service serve --mode serve_test",
+    "serve:pre": "vue-cli-service serve --mode serve_pre",
     "serve:pro": "vue-cli-service serve --mode serve_pro",
     "build:dev": "vue-cli-service build --mode build_dev",
     "build:test": "vue-cli-service build --mode build_test",
+    "build:pre": "vue-cli-service build --mode build_pre",
     "build:pro": "vue-cli-service build --mode build_pro",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
     "axios": "^0.20.0",
     "core-js": "^3.6.5",
-    "element-ui": "^2.13.2",
+    "echarts": "^4.9.0",
+    "element-ui": "^2.14.1",
     "moment": "^2.29.0",
     "qs": "^6.9.4",
     "vue": "^2.6.12",

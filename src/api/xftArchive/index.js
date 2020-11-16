@@ -8,7 +8,7 @@ const urlLinks = {
   // 查询所有证书类型
   queryCertType: '/archive/xdd/queryCertType',
   // 分页查询商户信息
-  queryShopListByPage: '/shop/queryShopListByPage',
+  queryShopListByPage: '/shop/queryShopListByNameAndId',
   // 开户支行
   getBankCnapByName: '/archive/xdd/getBankCnapByName',
   // 是否显示享钱汇商费率
@@ -35,8 +35,39 @@ const urlLinks = {
   queryContactQrCode: '/archive/xdd/queryContactQrCode',
   // 查询子商户号
   querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
-  querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf'
+  querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf',
+  queryTotalByStatus: '/archive/xdd/queryTotalByStatus',
+  delList: 'archive/general/del',
+  imageOCR: 'common/imageOcr'
 }
+
+// 图片识别
+export function imageOCR(data) {
+  return request({
+    url: urlLinks.imageOCR,
+    method: 'POST',
+    data,
+    timeout: 1 * 60 * 1000 // 分 * 秒 * 毫秒
+  })
+}
+
+// 删除草稿
+export function delList(data) {
+  return request({
+    url: `${urlLinks.delList}/${data.id}`,
+    method: 'POST'
+  })
+}
+
+// 汇总统计
+export function queryTotalByStatus(data) {
+  return request({
+    url: urlLinks.queryTotalByStatus,
+    method: 'POST',
+    data
+  })
+}
+
 // 分页查询
 export function queryPage(data) {
   return request({

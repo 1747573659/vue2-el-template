@@ -53,14 +53,12 @@
             :picker-options="pickerBeginDateBefore"
             @change="daterangeChange"
             v-model="item.value"
-            :default-time="['00:00:00', '23:59:59']"
           ></el-date-picker>
         </el-form-item>
       </template>
+      <slot name="formfooter"></slot>
       <el-button size="small" class="xdd_small-btn" @click="search" type="primary">查询</el-button>
-      <slot name="formfoot"></slot>
-      
-      </el-col>
+      <slot name="formfoot"></slot></el-col>
       </el-row>
     </el-form>
     <slot name="foot"></slot>
@@ -68,6 +66,7 @@
 </template>
 
 <script>
+import moment from 'moment'
 export default {
   props: {
     queryParams: {
@@ -77,6 +76,10 @@ export default {
     queryFormList: {
       type: Array,
       default: () => []
+    },
+    timeinterval:{
+      type: Number,
+      default: 0
     },
     // 可在下方css里随意加类名自定义样式，使用时传入名字即可
     className: {
@@ -89,20 +92,40 @@ export default {
     }
   },
   data () {
+    let maxTime = ''
+    let minTime = ''
+    let _this=this
     return {
       resetData: '',
       pickerBeginDateBefore: {
+        onPick: ({ maxDate, minDate }) => {
+          console.log(maxDate, minDate)
+          if (minDate) {
+            //const day31 = _this.timeinterval*31 * 24 * 3600 * 1000
+            maxTime = moment(minDate.getTime()).add(_this.timeinterval, 'months')
+            minTime = moment(minDate.getTime()).subtract(_this.timeinterval, 'months')
+          }
+        },
         disabledDate (time) {
-          // return time.getTime() > Date.now()
-          let date = new Date()
-          return time.getTime() > new Date(
-            date.getFullYear(),
-            date.getMonth(),
-            date.getDate(),
-            23,
-            59,
-            59
-          ).getTime()
+          if(_this.timeinterval){
+            if (maxTime) {
+              return (
+                time.getTime() >
+                  moment()
+                    .endOf('day')
+                    .valueOf() ||
+                time.getTime() > maxTime ||
+                time.getTime() < minTime
+              )
+            }
+          }else{
+            return (
+              time.getTime() >
+              moment()
+                .endOf('day')
+                .valueOf()
+            )
+          }
         }
       }
     }
@@ -130,6 +153,7 @@ export default {
 
 <style scoped lang="scss">
 .query-group-container {
+     
   .xdd_small-btn{
 
   }

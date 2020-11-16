@@ -5,7 +5,7 @@ import { Message, MessageBox } from 'element-ui'
 // import { errorLog } from '@/utils' // 异常状态码封装
 
 let config = {
-  timeout: 5 * 1000, // request timeout 60s
+  timeout: 60 * 1000, // request timeout 60s
   withCredentials: false, // 跨域请求时是否需要凭证
   baseURL: process.env.VUE_APP_BASE_API // url = base url + request url
 }

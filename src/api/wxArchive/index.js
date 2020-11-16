@@ -1,6 +1,4 @@
 import request from '@/utils/request'
-import { getLocal } from '@/utils/storage'
-import axios from 'axios'
 import qs from 'qs'
 
 const urlLinks = {
@@ -9,7 +7,7 @@ const urlLinks = {
   xiaoWeiUpgradeStatus: 'archive/general/xiaoWeiUpgradeStatus',
   generalStopUse: 'archive/general/stopUse',
   generalDetail: 'archive/general/generalDetail',
-  queryShopListByPage: 'shop/queryShopListByPage',
+  queryShopListByPage: 'shop/queryShopListByNameAndId',
   queryBankPage: 'branch/queryBankPage',
   queryBranchPage: 'branch/queryBranchPage',
   submit: 'archive/general/submit',
@@ -18,8 +16,49 @@ const urlLinks = {
   submitToVerify: 'archive/general/submitToVerify',
   businessCategory: 'archive/general/businessCategory',
   generalView: 'archive/general/view',
-  queryBySubMchId: 'archive/general/queryBySubMchId'
+  queryBySubMchId: 'archive/general/queryBySubMchId',
+  queryTotalByStatus: 'archive/general/queryTotalByStatus',
+  delList: 'archive/general/del',
+  imageOCR: 'common/imageOcr',
+  searchCompanyInfo: '/common/searchCompanyInfo'
 }
+
+// 企查查
+export function searchCompanyInfo(data) {
+  return request({
+    url: urlLinks.searchCompanyInfo,
+    method: 'POST',
+    data
+  })
+}
+
+// 图片识别
+export function imageOCR(data) {
+  return request({
+    url: urlLinks.imageOCR,
+    method: 'POST',
+    data: data,
+    timeout: 1 * 60 * 1000 // 分 * 秒 * 毫秒
+  })
+}
+
+// 删除草稿
+export function delList(data) {
+  return request({
+    url: `${urlLinks.delList}/${data.id}`,
+    method: 'POST'
+  })
+}
+
+// 汇总统计
+export function queryTotalByStatus(data) {
+  return request({
+    url: urlLinks.queryTotalByStatus,
+    method: 'POST',
+    data
+  })
+}
+
 // 验证账户
 export function queryBySubMchId(data) {
   return request({
@@ -31,12 +70,9 @@ export function queryBySubMchId(data) {
 
 // 签约
 export function generalView(data) {
-  return axios({
-    url: `${process.env.VUE_APP_BASE_API}/${urlLinks.generalView}/${data.id}/${data.flag}`,
+  return request({
+    url: `${urlLinks.generalView}/${data.id}/${data.flag}`,
     method: 'POST',
-    headers: {
-      token: getLocal('token')
-    },
     responseType: 'arraybuffer'
   })
 }

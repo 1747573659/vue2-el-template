@@ -10,9 +10,9 @@
         label-width="110px"
         style="width: 384.30px"
       >
-        <el-form-item label="账号" class="km-setting-baseInfo-text">
+        <!-- <el-form-item label="账号" class="km-setting-baseInfo-text">
           <span>{{ form.loginName }}</span>
-        </el-form-item>
+        </el-form-item> -->
         <el-form-item label="经销商编号" class="km-setting-baseInfo-text">
           <span>{{ form.agentId }}</span>
         </el-form-item>
@@ -119,7 +119,11 @@ export default {
   data() {
     var mobileRule = (rule, value, callback) => {
       if ((/^1[3456789]\d{9}$/.test(value))) {
-        callback()
+        if (value === this.form.mobile) {
+          callback('新旧手机一样,无需修改')
+        } else {
+          callback()
+        }
       } else {
         callback('请输入正确的手机号')
       }
@@ -322,5 +326,8 @@ export default {
       width: 90px;
     }
   }
+}
+.data-box {
+  min-height: calc(100vh - 56px - 48px - 32px);
 }
 </style>

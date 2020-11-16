@@ -1,6 +1,14 @@
 <template>
   <section>
     <div class="search-box">
+      <div class="p-count" v-if="countData.length > 0">
+        <section class="p-count_con">
+          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+          <template v-for="item in countData">
+            <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+          </template>
+        </section>
+      </div>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -39,14 +47,23 @@
           </el-col>
           <el-col :span="3">
             <el-form-item class="p-general_fr">
-              <el-button v-permission="'WXARCHIVE_LIST_ADD'" type="primary" class="e-general-add" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ action: 'add' })">新增</el-button>
+              <el-button
+                v-permission="'WXARCHIVE_LIST_ADD'"
+                type="primary"
+                class="e-general-add"
+                size="small"
+                plain
+                icon="el-icon-plus"
+                @click="handlePushDetail({ action: 'add' })"
+                >新增</el-button
+              >
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
     </div>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData" :max-height="tableMaxHeight" @sort-change="handleTabSort">
+      <el-table :data="tableData" :max-height="tableMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
         <el-table-column prop="merchantName" label="商户名称"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
@@ -85,7 +102,12 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="210">
           <template slot-scope="scope">
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)" v-if="scope.row.archiveBaseDTO.auditStatus === 2"
+            <el-button
+              type="text"
+              size="small"
+              v-permission="'WXARCHIVE_LIST_EDIT'"
+              @click="handlePushDetail({ status: 'edit' }, scope.row)"
+              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
             >
             <el-button
@@ -98,25 +120,13 @@
             >
             <el-button type="text" size="small" @click="handlePushDetail({ status: 'detail' }, scope.row)" v-else>详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" @click="handleStopUse(scope.row)">{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</el-button>
-            <el-button
-              type="text"
-              size="small"
-              v-if="scope.row.hasArchive"
-              @click="
-                $router.push({
-                  name: 'wxArchiveDetail',
-                  query: {
-                    id: scope.row.archiveBaseDTO.id,
-                    legalPersonName: scope.row.archiveExpandDTO.legalPersonName,
-                    merchantShortName: scope.row.archiveBaseDTO.merchantShortName,
-                    companyName: scope.row.archiveBaseDTO.companyName,
-                    bankCard: scope.row.archiveExpandDTO.bankCard
-                  }
-                })
-              "
-              >进件详情</el-button
-            >
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-if="scope.row.archiveBaseDTO.auditStatus !== 0" @click="handleStopUse(scope.row)">{{
+              scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
+            }}</el-button>
+            <el-popconfirm class="e-popover_con" @confirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
+              <el-button type="text" size="small" slot="reference">删除</el-button>
+            </el-popconfirm>
+            <el-button type="text" size="small" v-if="scope.row.hasArchive" @click="handlePushLinComDetail">进件详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -144,9 +154,9 @@
 </template>
 
 <script>
-import { statusOptions, deactivateOptions } from './index'
+import { statusOptions, deactivateOptions, countOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
-import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse } from '@/api/wxArchive'
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 
 export default {
   name: 'wxArchive',
@@ -154,6 +164,8 @@ export default {
     return {
       statusOptions,
       deactivateOptions,
+      countOptions,
+      countData: [],
       form: {
         createTime: '',
         auditStatus: '',
@@ -164,7 +176,7 @@ export default {
       isTabLock: false,
       isReason: false, // 异常状态原因
       reasonMsg: '',
-      sortStatus: '', // 时间排序状态
+      sortStatus: 'desc', // 时间排序状态
       xiaoWeiArchiveData: [],
       xiaoWeiUpgradeData: [],
       tableData: [],
@@ -179,32 +191,71 @@ export default {
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
     }
   },
   activated() {
     this.currentPage = 1
     this.handleQueryPage()
+    this.handleQueryTotalByStatus()
   },
   mounted() {
     this.getXiaoWeiArchiveStatus()
     this.getXiaoWeiUpgradeStatus()
     this.handleQueryPage()
+    this.handleQueryTotalByStatus()
   },
   methods: {
+    handleQueryTotalByStatus: async function() {
+      const data = {
+        orders: { createTime: this.sortStatus },
+        startTime: this.form.createTime?.[0] ?? '',
+        endTime: this.form.createTime?.[1] ?? '',
+        auditStatus: this.form.auditStatus,
+        companyName: this.form.msg,
+        bankCard: this.form.msg,
+        merchantName: this.form.msg,
+        merchantShortName: this.form.msg,
+        stopUse: this.form.stopUse,
+        page: this.currentPage,
+        rows: this.pageSize
+      }
+      try {
+        const res = await queryTotalByStatus(data)
+        this.countData = []
+        for (const ele of this.countOptions) {
+          for (const item of res) {
+            if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+          }
+        }
+      } catch (error) {}
+    },
+    handleDraftList: async function(scope) {
+      try {
+        await delList({ id: scope.row.archiveBaseDTO.id })
+        this.handleQueryPage()
+        this.handleQueryTotalByStatus()
+      } catch (error) {}
+    },
+    handlePushLinComDetail(row) {
+      this.$router.push({
+        name: 'wxArchiveDetail',
+        query: { id: row.id, legalPersonName: row.legalPersonName, merchantShortName: row.merchantShortName, companyName: row.companyName, bankCard: row.bankCard }
+      })
+    },
     handlePushDetail(query, row = {}) {
       this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
     },
     handleReason(row) {
       if (row.archiveBaseDTO.auditStatus === 4) {
         this.reasonMsg = row.archiveBaseDTO.auditRemark
-
         this.isReason = true
       }
     },
     handleSearch() {
       this.currentPage = 1
       this.isSearchLock = true
+      this.handleQueryTotalByStatus()
       this.handleQueryPage().finally(() => {
         this.isSearchLock = false
       })
@@ -234,7 +285,7 @@ export default {
         merchantShortName: this.form.msg,
         stopUse: this.form.stopUse,
         page: this.currentPage,
-        row: this.pageSize
+        rows: this.pageSize
       }
       try {
         this.isTabLock = true
@@ -247,7 +298,7 @@ export default {
       }
     },
     handleStopUse: async function(row) {
-      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 }).then
+      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 })
       await this.handleQueryPage()
       this.$message.success('修改成功')
     },
@@ -277,12 +328,36 @@ export default {
       float: right;
     }
     &_btnLabel {
-      // width: 100px;
       padding-left: 30px;
       text-align: right;
     }
   }
+  &-count {
+    min-height: 44px;
+    margin: 0 8px 16px 8px;
+    &_con {
+      background: rgba(255, 96, 16, 0.08);
+      border: 1px solid rgba(255, 96, 16, 0.4);
+      border-radius: 2px;
+      display: flex;
+      align-items: center;
+      padding: 10px 16px;
+      font-size: 14px;
+      color: #3d4966;
+      img {
+        width: 16px;
+        height: 16px;
+        margin-right: 8px;
+      }
+    }
+    &_item {
+      &:not(:last-child) {
+        margin-right: 30px;
+      }
+    }
+  }
 }
+
 .e {
   &-general {
     &-btn {
@@ -294,6 +369,17 @@ export default {
     &_tabOrange {
       color: #ff6010;
       cursor: pointer;
+    }
+  }
+  &-popover {
+    &_con {
+      margin-left: 12px;
+    }
+    &_prompt {
+      margin-bottom: 15px;
+    }
+    &_action {
+      text-align: right;
     }
   }
 }

@@ -9,6 +9,7 @@
       remote
       @focus="focus"
       @change="change"
+      :disabled="disabled"
       @clear="clear"
       :placeholder="placeholder"
       :remote-method="remoteMethod"
@@ -40,6 +41,10 @@ export default {
     value: {
       type: String,
       default: ''
+    },
+    disabled: {
+      type: Boolean,
+      default: false
     },
     isMaxPage: {
       type: Boolean,

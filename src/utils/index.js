@@ -19,7 +19,7 @@ import { Message, MessageBox } from 'element-ui'
  * @param {string} 请求方法(默认为get请求)
  * @param {string} paramsFormat 请求参数格式(默认为x-www-form-urlencoded格式)
  */
-export function downloadBufferFile (url, data, method = 'GET', paramsFormat = 'x-www-form-urlencoded') {
+export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-www-form-urlencoded') {
   if (method === 'GET') {
     return axios({
       url,
@@ -61,14 +61,12 @@ export function downloadBufferFile (url, data, method = 'GET', paramsFormat = 'x
         data,
         responseType: 'blob' // 必须是arraybuffer类型
       }).then(response => {
-        console.log(response)
         if(response.headers['content-type']==='application/json;charset=UTF-8'){
-         const data=response.data
-         const reader = new FileReader()
-         reader.addEventListener('loadend', function (e) {
-           let data=JSON.parse(e.target.result)
-           console.log(data)
-           if(data.code===195001){
+        const data=response.data
+        const reader = new FileReader()
+        reader.addEventListener('loadend', function (e) {
+          let data=JSON.parse(e.target.result)
+          if(data.code===195001){
             MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
               confirmButtonText: '重新登录',
               type: 'warning',
@@ -85,26 +83,26 @@ export function downloadBufferFile (url, data, method = 'GET', paramsFormat = 'x
                   })
                 }
               }
-            }).catch(err => {
-              console.log(err)
-            })
-          }else{
-            Message.error(data.msg)
-          }
-         })
-         reader.readAsText(data)
-        }else{
+              }).catch(err => {
+                console.log(err)
+              })
+            } else {
+              Message.error(data.msg)
+            }
+          })
+          reader.readAsText(data)
+        } else {
           setTimeout(() => {
             handleDownloadBufferFile(response)
           }, 0)
         }
-        
+
       })
     }
   }
 }
 
-function handleDownloadBufferFile (response, data) {
+function handleDownloadBufferFile(response, data) {
   let url = window.URL.createObjectURL(response.data) // 表示一个指定的file对象或Blob对象
   let fileName = '' // filename名称截取
   if ((response.headers['content-disposition'] && response.headers['content-disposition'].length) || (response.headers['Content-Disposition'] && response.headers['Content-Disposition'].length)) {
@@ -120,7 +118,6 @@ function handleDownloadBufferFile (response, data) {
       a.href = url
       a.download = fileName // 命名下载名称
       a.click() // 点击触发下载
-      console.log(url)
       window.URL.revokeObjectURL(url) // 下载完成进行释放
     }
   } else {
@@ -134,7 +131,6 @@ function handleDownloadBufferFile (response, data) {
       a.href = url
       a.download = data || '二维码' // 命名下载名称
       a.click() // 点击触发下载
-      console.log(url)
       window.URL.revokeObjectURL(url) // 下载完成进行释放
     }
   }

@@ -13,7 +13,7 @@
                   </el-select>
                 </el-form-item>
                 <el-form-item label="品牌名称：" prop="name">
-                  <el-input v-model="ruleForm.name" maxlength="50" placeholder=""></el-input>
+                  <el-input v-model="ruleForm.name" maxlength="30" placeholder=""></el-input>
                 </el-form-item>
                 <el-form-item label="品牌LOGO：">
                   <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">

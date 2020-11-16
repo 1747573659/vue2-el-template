@@ -37,7 +37,7 @@
         <el-table-column label="操作" align="right" width="180">
           <template slot-scope="scope">
             <el-button v-permission="'BRAND_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
-            <el-popconfirm v-permission="'BRAND_SET_DEL'" style="margin: 0 12px" iconColor="#FFA033" title="确定删除所选数据吗？确定后删除品牌信息" placement="top-start" @onConfirm="handleDelete(scope.row.storeNum, scope.row.id)">
+            <el-popconfirm v-permission="'BRAND_SET_DEL'" style="margin: 0 12px" iconColor="#FFA033" title="确定删除所选数据吗？确定后删除品牌信息" placement="top-start" @confirm="handleDelete(scope.row.storeNum, scope.row.id)">
               <el-button slot="reference" size="small" type="text">删除</el-button>
             </el-popconfirm>
             <el-button v-permission="'BRAND_SET_STOPANDSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{ scope.row.status | fiterOperateStatus }}</el-button>

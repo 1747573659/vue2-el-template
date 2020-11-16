@@ -66,7 +66,7 @@
               iconColor="#FFA033"
               title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
               placement="top-start"
-              @onConfirm="resetPsw(scope.row)"
+              @confirm="resetPsw(scope.row)"
             >
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
@@ -76,7 +76,7 @@
               iconColor="#FFA033"
               title="确定删除所选数据吗？"
               placement="top-start"
-              @onConfirm="del(scope.row)"
+              @confirm="del(scope.row)"
             >
               <el-button slot="reference" type="text" size="small">删除</el-button>
             </el-popconfirm>

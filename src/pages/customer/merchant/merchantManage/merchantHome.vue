@@ -79,7 +79,7 @@
           <template slot-scope="scope">
             <el-button v-permission="'MERCHANT_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-button v-if="scope.row.status !== 2" v-permission="'MERCHANT_SET_STOPORSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{ scope.row.status | fiterOperateStatus }}</el-button>
-            <el-popconfirm v-permission="'MERCHANT_SET_RESETPWD'" style="margin-left: 12px" iconColor="#FFA033" title="你确定要重置密码吗？确定后将对应账号的密码更新为888888" placement="top-start" @onConfirm="resetPsw(scope.row.userId)">
+            <el-popconfirm v-permission="'MERCHANT_SET_RESETPWD'" style="margin-left: 12px" iconColor="#FFA033" title="你确定要重置密码吗？确定后将对应账号的密码更新为888888" placement="top-start" @confirm="resetPsw(scope.row.userId)">
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
           </template>
@@ -238,10 +238,11 @@ export default {
       await this.queryShopListByPage()
       this.$message.success('操作成功！')
     },
-    async handleOperate(idStr, val) {
-      await updateStatus({ idStr, status: val === 0 ? 1 : 0 })
-      await this.queryShopListByPage()
-      this.$message.success('操作成功！')
+    handleOperate(idStr, val) {
+      updateStatus({ idStr, status: val === 0 ? 1 : 0 }).then(() => {
+        this.queryShopListByPage()
+        this.$message.success('操作成功！')
+      }).catch(() => {})
     },
     async resetPsw(userId) {
       await resetPassword({ userId })

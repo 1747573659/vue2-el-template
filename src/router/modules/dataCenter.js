@@ -12,16 +12,63 @@ const dataCenter = {
   },
   children: [
     {
+      
+      path: 'userData',
+      name: 'userData',
+      code: 'DATACENTER_USERDATA',
+      redirect: { name: 'newStatistics' },
+      component: kmContainer,
+      meta: {
+        title: '用户数据',
+        name: 'userData'
+      },
+      children: [
+        {
+          path: 'newStatistics',
+          component: () => import('@/pages/dataCenter/userData/newStatistics.vue'),
+          name: 'newStatistics',
+          code: 'DATACENTER_USERDATA_NEWSTATISTICS',
+          meta: { title: '新增统计', name: 'newStatistics' }
+        }
+      ]
+    },
+    {
       path: 'transactionInquiry',
       name: 'transactionInquiry',
       code: 'DATACENTER_TRANSACTIONINQUIRY',
-      redirect: { name: 'merchantOrderQuery' },
+      redirect: { name: 'timelyTradeSum' },
       component: kmContainer,
       meta: {
         title: '交易数据',
         name: 'transactionInquiry'
       },
       children: [
+        {
+          path: 'timelyTradeSum',
+          component: () => import('@/pages/dataCenter/transactionInquiry/timelyTradeSum.vue'),
+          name: 'timelyTradeSum',
+          code: 'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM',
+          meta: { title: '实时交易汇总', name: 'timelyTradeSum' ,cache: true }
+        },
+        {
+          path: 'historicalTradeSum',
+          component: () => import('@/pages/dataCenter/transactionInquiry/historicalTradeSum.vue'),
+          name: 'historicalTradeSum',
+          code: 'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM',
+          meta: { title: '历史交易汇总', name: 'historicalTradeSum' ,cache: true }
+        },
+        {
+          path: 'historicalTradeSumDetail',
+          name: 'historicalTradeSumDetail',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          component: () => import('@/pages/dataCenter/transactionInquiry/historicalTradeSumDetail.vue'),
+          meta: {
+            title: '交易明细',
+            name: 'historicalTradeSumDetail',
+            cache: false
+          }
+        },
         {
           path: 'merchantOrderQuery',
           component: () => import('@/pages/dataCenter/transactionInquiry/merchantOrderQuery.vue'),
@@ -45,6 +92,7 @@ const dataCenter = {
         }
       ]
     }
+    
   ]
 }
 export default dataCenter

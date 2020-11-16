@@ -1,8 +1,8 @@
-export default function xftValidator () {
+export default function xftValidator() {
   var contactPhone = (rule, value, callback) => {
     if (!value) {
       callback(new Error('请输入负责人电话'))
-    } else if (!(/^1[3456789]\d{9}$/.test(value))) {
+    } else if (!/^1[3456789]\d{9}$/.test(value)) {
       callback(new Error('请输入正确的电话号码'))
     } else {
       callback()
@@ -11,7 +11,7 @@ export default function xftValidator () {
   var cardholderPhone = (rule, value, callback) => {
     if (!value) {
       callback('请输入预留手机号')
-    } else if (!(/^1[3456789]\d{9}$/.test(value))) {
+    } else if (!/^1[3456789]\d{9}$/.test(value)) {
       callback('请输入正确的电话号码')
     } else {
       callback()
@@ -23,6 +23,15 @@ export default function xftValidator () {
       callback(new Error('请输入商户简称'))
     } else if (!value.match(/^[\u4E00-\u9FA5A-Za-z0-9]+$/g)) {
       callback(new Error('不可输入特殊字符'))
+    } else {
+      callback()
+    }
+  }
+  var validFeeRate = (rule, value, callback) => {
+    if (parseFloat(value) === 0) {
+      callback('费率不能为0')
+    } else if (!value) {
+      callback('请选择费率')
     } else {
       callback()
     }
@@ -81,7 +90,7 @@ export default function xftValidator () {
     'archiveOtherVO.privateAuthorization': [{ required: true, message: '请上传第三方对私结算授权函', trigger: 'change' }],
     'archiveBaseVO.isOpenXingPos': [{ required: true, message: '请上传第三方对私结算授权函', trigger: 'change' }],
     'archiveOtherVO.cardholderIdCardFront': [{ required: true, message: '请上传持卡人身份证正面照', trigger: 'change' }],
-    'archiveBaseVO.fixFeeRate': [{ required: true, message: '请选择费率', trigger: 'change' }],
-    'archiveBaseVO.exchangeFeeRate': [{ required: true, message: '请选择享钱汇银费率', trigger: 'change' }],
+    'archiveBaseVO.fixFeeRate': [{ required: true, validator: validFeeRate, trigger: ['blur', 'change'] }],
+    'archiveBaseVO.exchangeFeeRate': [{ required: true, validator: validFeeRate, trigger: ['blur', 'change'] }]
   }
 }

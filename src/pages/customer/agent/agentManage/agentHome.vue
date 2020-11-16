@@ -2,9 +2,9 @@
   <div class="">
     <div class="search-box">
       <el-row>
-        <el-col >
-          <el-form :inline="true" size="small"  :model="form" class="xdd-btn-block__w240">
-            <el-form-item label="代理商信息：" >
+        <el-col>
+          <el-form :inline="true" size="small" :model="form" class="xdd-btn-block__w240">
+            <el-form-item label="代理商信息：">
               <el-input v-model="form.id" maxlength="50" placeholder="请输入代理商编号/名称" clearable></el-input>
             </el-form-item>
             <el-form-item label="手机号：">
@@ -12,8 +12,7 @@
             </el-form-item>
             <el-form-item label="BD经理：">
               <el-select v-model="form.channelManagerId" filterable clearable placeholder="请选择BD经理">
-                <el-option v-for="item in channelManagerOptions" :key="item.id" :label="item.name" :value="item.id">
-                </el-option>
+                <el-option v-for="item in channelManagerOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -37,20 +36,24 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table v-loading="loading" :max-height="tableMaxHeight" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
+      <el-table
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        ref="multipleTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="代理商编号"></el-table-column>
         <el-table-column prop="name" label="代理商名称"></el-table-column>
         <el-table-column prop="mobile" label="手机"></el-table-column>
-        <el-table-column prop="channelManagerName" label="BD经理">
-        </el-table-column>
+        <el-table-column prop="channelManagerName" label="BD经理"> </el-table-column>
         <el-table-column prop="proportion" label="分成比例">
-          <template slot-scope="scope">
-            {{ scope.row.proportion || 0 }}%
-          </template>
+          <template slot-scope="scope"> {{ scope.row.proportion || 0 }}% </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180px">
-        </el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="180px"> </el-table-column>
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
             {{ scope.row.status | fiterStatus }}
@@ -59,8 +62,17 @@
         <el-table-column label="操作" align="right" width="280px">
           <template slot-scope="scope">
             <el-button v-permission="'AGENT_MANAGE_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
-            <el-button v-permission="'AGENT_MANAGE_STOPANDSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{ scope.row.status | fiterOperateStatus }}</el-button>
-            <el-popconfirm v-permission="'AGENT_MANAGE_PSW'" style="margin-left: 12px" iconColor="#FFA033" title="你确定要重置密码吗？确定后将对应账号的密码更新为888888" placement="top-start" @onConfirm="resetPsw(scope.row.userId)">
+            <el-button v-permission="'AGENT_MANAGE_STOPANDSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{
+              scope.row.status | fiterOperateStatus
+            }}</el-button>
+            <el-popconfirm
+              v-permission="'AGENT_MANAGE_PSW'"
+              style="margin-left: 12px"
+              iconColor="#FFA033"
+              title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
+              placement="top-start"
+              @confirm="resetPsw(scope.row.userId)"
+            >
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
             <el-button v-permission="'AGENT_MANAGE_QUATA'" style="margin-left: 12px;" size="small" type="text" @click="handleQuota(scope.row.userId)">分配应用配额</el-button>
@@ -68,7 +80,15 @@
         </el-table-column>
       </el-table>
       <div v-show="total > 0" class="km-page-block">
-        <el-pagination @size-change="getPageList" @current-change="handleCurrentChange" :current-page.sync="form.page" :page-sizes="[10, 15, 30]" :page-size.sync="form.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination
+          @size-change="getPageList"
+          @current-change="handleCurrentChange"
+          :current-page.sync="form.page"
+          :page-sizes="[10, 15, 30]"
+          :page-size.sync="form.rows"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        >
         </el-pagination>
       </div>
 
@@ -88,17 +108,14 @@
               <div class="dialog-right-content">
                 <div class="quota-item" v-for="item in quotaItems" :key="item.payType">
                   <span>
-                    <el-checkbox v-model="item.checked" :disabled="item.quotaNo === 0" @change="changeCheckbox(item)">
-                    </el-checkbox>
-                    {{ item.payType | fiterQuotaPayType }}（剩余配额
-                    <span style="color: #FF6010">{{ item.quotaNo }}</span>，建议售价：<span style="color: #FF6010">{{
-                      (item.saleAmount / 100).toFixed(2)
-                    }}</span>元）
+                    <el-checkbox v-model="item.checked" :disabled="item.quotaNo === 0" @change="changeCheckbox(item)"> </el-checkbox>
+                    {{ item.payType | fiterQuotaPayType }}（剩余配额 <span style="color: #FF6010">{{ item.quotaNo }}</span
+                    >，建议售价：<span style="color: #FF6010">{{ (item.saleAmount / 100).toFixed(2) }}</span
+                    >元）
                   </span>
                   <span>
                     分配
-                    <el-input class="content_input" size="small" v-model="item.input" :disabled="!item.checked" @input="checkoutQuotaValue(item)">
-                    </el-input>
+                    <el-input class="content_input" size="small" v-model="item.input" :disabled="!item.checked" @input="checkoutQuotaValue(item)"> </el-input>
                     个配额
                   </span>
                 </div>
@@ -123,14 +140,7 @@
 </template>
 
 <script>
-import {
-  queryChannel,
-  queryAgentPage,
-  updateStatus,
-  queryAppQuotaAndPrice,
-  queryAgentAppAndQuota,
-  distributeAppQuota,
-} from '@/api/customer/agent'
+import { queryChannel, queryAgentPage, updateStatus, queryAppQuotaAndPrice, queryAgentAppAndQuota, distributeAppQuota } from '@/api/customer/agent'
 import { resetPassword } from '@/api/setting/account'
 import { isPositiveInteger } from '@/utils/common'
 
@@ -166,7 +176,7 @@ export default {
       } else if (val === 3) {
         return '按单付费'
       }
-    },
+    }
   },
   data() {
     return {
@@ -183,32 +193,30 @@ export default {
         id: '',
         mobile: '',
         page: 1,
-        rows: 10,
+        rows: 10
       },
       tableData: [],
       total: 0,
-      multipleSelection: [],
+      multipleSelection: []
     }
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
     },
     sumTotal() {
       let sum
       if (this.quotaItems.length === 0) {
         sum = 0
       } else {
-        const result = this.quotaItems.map(
-          (item) => (Number(item.input) * item.saleAmount) / 100
-        )
+        const result = this.quotaItems.map(item => (Number(item.input) * item.saleAmount) / 100)
         sum = result.reduce((accumulator, currentValue) => {
           return accumulator + currentValue
         })
       }
 
       return sum.toFixed(2)
-    },
+    }
   },
   created() {
     this.queryChannel()
@@ -242,7 +250,7 @@ export default {
 
           selectPayType.push({
             num: Number(item.input),
-            type: item.payType,
+            type: item.payType
           })
         }
       }
@@ -256,7 +264,7 @@ export default {
         id: this.quotaActiveId,
         payTypeVOS: selectPayType,
         price: Number(this.sumTotal) * 100,
-        userId: this.activeUserId,
+        userId: this.activeUserId
       }
 
       distributeAppQuota(params).then(() => {
@@ -269,15 +277,15 @@ export default {
       }
     },
     queryAgentAppAndQuota() {
-      queryAgentAppAndQuota().then((res) => {
+      queryAgentAppAndQuota().then(res => {
         this.quotaNameOptions = res
       })
     },
     queryAppQuotaAndPrice(id) {
       this.quotaLoading = true
       queryAppQuotaAndPrice({ id })
-        .then((res) => {
-          this.quotaItems = res.appQuotaDTOS.map((item) => {
+        .then(res => {
+          this.quotaItems = res.appQuotaDTOS.map(item => {
             return { ...item, ...{ checked: false, input: '' } }
           })
         })
@@ -312,10 +320,10 @@ export default {
         return
       }
 
-      const idStr = this.multipleSelection.map((item) => item.id).join(',')
+      const idStr = this.multipleSelection.map(item => item.id).join(',')
       const params = {
         idStr,
-        status,
+        status
       }
       await updateStatus(params)
       await this.queryAgentPage()
@@ -329,14 +337,14 @@ export default {
       this.queryAgentPage()
     },
     queryChannel() {
-      queryChannel().then((res) => {
+      queryChannel().then(res => {
         this.channelManagerOptions = res
       })
     },
     queryAgentPage() {
       this.loading = true
       queryAgentPage(this.form)
-        .then((res) => {
+        .then(res => {
           this.tableData = res.results
           this.total = res.totalCount
         })
@@ -353,13 +361,13 @@ export default {
     },
     addShop() {
       this.$router.push({
-        path: '/customer/agent/addAgent',
+        path: '/customer/agent/addAgent'
       })
     },
     handleEdit(id) {
       this.$router.push({ path: '/customer/agent/editAgent', query: { id } })
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -385,7 +393,7 @@ export default {
   line-height: 56px;
   background: #f7f9fc;
   font-weight: 700;
-  color: #3D4966;
+  color: #3d4966;
 }
 ul {
   margin: 0;

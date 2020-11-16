@@ -55,6 +55,10 @@ export default {
       type: Boolean,
       default: false
     },
+    isNeedinitId:{
+      type: Boolean,
+      default: false
+    },
     id:{
       type: String,
       default: 'id'
@@ -157,10 +161,19 @@ export default {
         }
         this.isInit=false
       }else{
-        data = {
+        if(this.isNeedinitId){
+          data = {
+          [this.searchName]:"",
           page:this.page,
           rows: 10,
         }
+        }else{
+          data = {
+          page:this.page,
+          rows: 10,
+        }
+        }
+        
       }
       this.request(Object.assign(data,this.parame)).then((res)=>{
         if(!res.results) this.isMaxPage=true

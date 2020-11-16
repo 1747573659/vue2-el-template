@@ -1,6 +1,12 @@
 <template>
   <section class="p-tags_con" ref="tagMenu">
-    <div class="p-tags_item" v-for="(item, index) in baseArr" :key="item.path" :class="{ 'e-tag_active': isActive(item), 'p-tags_closable': index > 0 }" @click="handleJumpPage(item, item.query)">
+    <div
+      class="p-tags_item"
+      v-for="(item, index) in baseArr"
+      :key="item.path"
+      :class="{ 'e-tag_active': isActive(item), 'p-tags_closable': index > 0 }"
+      @click="handleJumpPage(item, item.query)"
+    >
       <span>{{ item.title }}</span>
       <i class="el-icon-close" @click.stop="handleClose(item)"></i>
     </div>
@@ -9,7 +15,9 @@
         <i class="el-icon-arrow-down"></i>
       </span>
       <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item v-for="item in dropArr" :key="item.name" :command="{ item: item, query: item.query }" :class="{ 'e-tag_active': isActive(item) }">{{ item.title }}</el-dropdown-item>
+        <el-dropdown-item v-for="item in dropArr" :key="item.name" :command="{ item: item, query: item.query }" :class="{ 'e-tag_active': isActive(item) }">{{
+          item.title
+        }}</el-dropdown-item>
       </el-dropdown-menu>
     </el-dropdown>
   </section>
@@ -77,7 +85,7 @@ export default {
         if (this.isActive(item)) {
           const latestView = views.slice(-1)[0]
           if (latestView) {
-            this.$router.push({ path: latestView.path, query: latestView.query ? {} : latestView.query })
+            this.$router.push({ path: latestView.path, query: latestView.query ? latestView.query : {} })
           } else {
             const menus = this.routes
             if (JSON.stringify(menus).includes('home')) {
@@ -86,8 +94,8 @@ export default {
               this.$router.push({ name: menus[0].children[0].children[0].name })
             }
           }
-          this.delCachedView(item)
         }
+        this.delCachedView(item)
       })
     },
     isActive(route) {
@@ -166,7 +174,7 @@ export default {
   &-tag {
     &_active {
       background: #fff;
-      color: #1a92fd;
+      color: #3377ff;
       border-bottom: 1px solid #fff;
     }
     &_close {
@@ -179,7 +187,7 @@ export default {
   &-tags {
     &_dropdown {
       padding: 0;
-      /deep/ .el-dropdown-link{
+      /deep/ .el-dropdown-link {
         padding: 0 10px;
         display: inline-block;
       }

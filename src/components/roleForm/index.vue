@@ -11,13 +11,13 @@
         style="width: 800px"
       >
         <el-form-item label="角色名称" prop="name">
-          <el-input v-model="form.name" style="width:240px"></el-input>
+          <el-input v-model="form.name" style="width: 240px"></el-input>
         </el-form-item>
         <el-form-item label="描述">
           <el-input
             v-model="form.remark"
             maxlength="250"
-            style="width:240px"
+            style="width: 240px"
             :autosize="{ minRows: 6 }"
             type="textarea"
           ></el-input>
@@ -64,7 +64,6 @@
     </div>
   </div>
 </template>
-
 <script>
 import {
   addRole,
@@ -72,10 +71,11 @@ import {
   queryAllAPPMenu,
   queryRoleById,
   checkRoleName,
-} from '@/api/setting/account'
-import { routeTree } from '@/utils'
+} from "@/api/setting/account";
+import { routeTree } from "@/utils";
+import { routeTreeLevel } from "@/utils/modules/routeTree.js";
 export default {
-  name: 'RoleForm',
+  name: "RoleForm",
   props: {
     // 新增页or编辑页
     isEdit: {
@@ -97,145 +97,145 @@ export default {
   data() {
     var nameRule = async (rule, value, callback) => {
       if (value.length === 0) {
-        callback('请输入角色名称')
+        callback("请输入角色名称");
       } else if (value.length > 50) {
-        callback('角色名称应少于50个字符')
+        callback("角色名称应少于50个字符");
       } else if (value !== this.form.usedName) {
         // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
         try {
-          const res = await checkRoleName({ name: value, type: this.type })
-          callback(res)
+          const res = await checkRoleName({ name: value, type: this.type });
+          callback(res);
         } catch (e) {}
       }
-    }
+    };
     return {
       rules: {
-        name: [{ required: true, trigger: 'blur', validator: nameRule }],
+        name: [{ required: true, trigger: "blur", validator: nameRule }],
       },
       form: {
         id: null,
-        usedName: '',
-        name: '',
-        remark: '',
-        menuIdsPC: '',
-        menuIdsAPP: '',
+        usedName: "",
+        name: "",
+        remark: "",
+        menuIdsPC: "",
+        menuIdsAPP: "",
       },
       submitLoading: false,
       pcData: [],
       appData: [],
       defaultProps: {
-        children: 'children',
-        label: 'name',
+        children: "children",
+        label: "name",
       },
       defaultPCList: [],
       defaultAPPList: [],
-    }
+    };
   },
   methods: {
     // 递归选中的id
     getCheckIdInitForPC(arr, list) {
-      var temp = []
+      var temp = [];
       if (arr && arr.length > 0) {
         arr.forEach((item) => {
-          item['children'] = []
+          item["children"] = [];
           if (!item.parentId) {
-            temp.push(item)
+            temp.push(item);
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function(array, item) {
+            const traverse = function (array, item) {
               array.forEach((cItem) => {
                 if (cItem.id === item.parentId) {
-                  cItem['children'].push(item)
+                  cItem["children"].push(item);
                 } else {
-                  traverse(cItem['children'], item)
+                  traverse(cItem["children"], item);
                 }
-              })
-            }
-            traverse(temp, item)
+              });
+            };
+            traverse(temp, item);
           }
-        })
+        });
       }
       // let obj = this.toChildrenNum(list)
       function t2(array) {
         array.length > 0 &&
           array.forEach((item) => {
-            if (item['children'].length === 0) {
-              this.defaultPCList.push(item.id)
+            if (item["children"].length === 0) {
+              this.defaultPCList.push(item.id);
             } else {
-              t2.call(this, item['children'])
+              t2.call(this, item["children"]);
             }
-          })
+          });
       }
-      t2.call(this, temp)
+      t2.call(this, temp);
     },
     getCheckIdInitForAPP(arr, list) {
-      var temp = []
+      var temp = [];
       if (arr && arr.length > 0) {
         arr.forEach((item) => {
-          item['children'] = []
+          item["children"] = [];
           if (!item.parentId) {
-            temp.push(item)
+            temp.push(item);
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function(array, item) {
+            const traverse = function (array, item) {
               array.forEach((cItem) => {
                 if (cItem.id === item.parentId) {
-                  cItem['children'].push(item)
+                  cItem["children"].push(item);
                 } else {
-                  traverse(cItem['children'], item)
+                  traverse(cItem["children"], item);
                 }
-              })
-            }
-            traverse(temp, item)
+              });
+            };
+            traverse(temp, item);
           }
-        })
+        });
       }
       // let obj = this.toChildrenNum(list)
       function t2(array) {
         array.length > 0 &&
           array.forEach((item) => {
-            if (item['children'].length === 0) {
-              this.defaultAPPList.push(item.id)
+            if (item["children"].length === 0) {
+              this.defaultAPPList.push(item.id);
             } else {
-              t2.call(this, item['children'])
+              t2.call(this, item["children"]);
             }
-          })
+          });
       }
-      t2.call(this, temp)
+      t2.call(this, temp);
     },
     getCheckIdList(tree) {
-      let checkIdList = []
-      const traverse = function(node) {
-        const childNodes = node.root ? node.root.childNodes : node.childNodes
+      let checkIdList = [];
+      const traverse = function (node) {
+        const childNodes = node.root ? node.root.childNodes : node.childNodes;
         childNodes.forEach((child) => {
           if (child.checked || child.indeterminate) {
-            if (child.data.code !== 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW') {
-              checkIdList.push(child.key)
+            if (child.data.code !== "COMMON_HEADQUARTERS_MANAGEMENT_VIEW") {
+              checkIdList.push(child.key);
             }
           }
-          traverse(child)
-        })
-      }
-      traverse(tree)
+          traverse(child);
+        });
+      };
+      traverse(tree);
       if (checkIdList[0] === -1) {
-        return checkIdList.slice(1).join(',')
+        return checkIdList.slice(1).join(",");
       } else {
-        return checkIdList.join(',')
+        return checkIdList.join(",");
       }
     },
     cancel() {
-      this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ path: this.router })
-      })
+      this.$store.dispatch("delTagView", this.$route).then(() => {
+        this.$router.push({ path: this.router });
+      });
     },
     async onSubmit() {
       this.$refs.form.validate(async (valid) => {
         if (valid) {
-          this.submitLoading = true
-          this.form.menuIdsPC = this.getCheckIdList(this.$refs.treePC)
-          this.form.menuIdsAPP = this.getCheckIdList(this.$refs.treeE)
+          this.submitLoading = true;
+          this.form.menuIdsPC = this.getCheckIdList(this.$refs.treePC);
+          this.form.menuIdsAPP = this.getCheckIdList(this.$refs.treeE);
           let data = {
             id: this.form.id || null,
             menuIdsAPP: this.form.menuIdsAPP,
@@ -243,107 +243,142 @@ export default {
             name: this.form.name,
             remark: this.form.remark,
             type: this.type,
-          }
+          };
           try {
-            const res = await addRole(data)
-            this.$message.success('操作成功')
-            this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ path: this.router })
-            })
+            const res = await addRole(data);
+            this.$message.success("操作成功");
+            this.$store.dispatch("delTagView", this.$route).then(() => {
+              this.$router.push({ path: this.router });
+            });
           } catch (e) {
           } finally {
-            this.submitLoading = false
+            this.submitLoading = false;
           }
         }
-      })
+      });
     },
     async queryAllAPPMenu(id) {
       try {
-        const res = await queryAllAPPMenu({ roleId: id })
+        const res = await queryAllAPPMenu({ roleId: id });
         this.appData = [
           {
             id: -1,
-            name: '访问权限',
+            name: "访问权限",
             children: routeTree(res.allMenus) || [],
           },
-        ]
-        this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children)
+        ];
+        this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children);
       } catch (e) {}
     },
     async queryAllPCMenu(id) {
       try {
-        const res = await queryAllPCMenu({ roleId: id })
-        let newRouteTree = routeTree(res.allMenus)
-        // var cid = 444444
-        // newRouteTree.forEach(itemOne => {
-        //   if (itemOne && itemOne.children) {
-        //     itemOne.children.forEach(itemTwo => {
-        //       if (itemTwo && itemTwo.children) {
-        //         itemTwo.children.forEach(itemThree => {
-        //           cid++
-        //           if (itemThree && itemThree.children) {
-        //             itemThree.children.push({
-        //               'id': cid,
-        //               'name': '查看',
-        //               'code': 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
-        //               'iconCls': null,
-        //               'url': null,
-        //               'lever': 4,
-        //               'parentId': itemThree.id,
-        //               'remark': null,
-        //               'creatorId': null,
-        //               'createTime': null,
-        //               'modifierId': null,
-        //               'modifyTime': null,
-        //               'type': 4,
-        //               'parentName': null,
-        //               'children': [
-        //               ],
-        //               'disabled': false,
-        //               'checked': false,
-        //               'viewPath': null,
-        //               'sort': null,
-        //               'domainType': null,
-        //               'appId': null,
-        //               'menuType': 2
-        //             })
-        //           }
-        //         })
-        //       }
-        //     })
-        //   }
-        // })
+        if (id) {
+          this.queryRoleById();
+        }
+        const res = await queryAllPCMenu({ roleId: id });
+        var cid = 444444;
+        let newRouteTree = routeTree(res.allMenus);
+        let isNodeCheck, isDisabled;
+        let sysMenuThree =
+          routeTreeLevel(res.roleMenus || [])
+            .filter((item) => item.lever === 3)
+            .map((item) => item.id) || [];
+        newRouteTree.forEach((itemOne) => {
+          if (itemOne && itemOne.children) {
+            itemOne.children.forEach((itemTwo) => {
+              if (itemTwo && itemTwo.children) {
+                itemTwo.children.forEach((itemThree) => {
+                  cid++;
+                  if (itemThree && itemThree.children) {
+                    if (sysMenuThree.includes(itemThree.id)) {
+                      isNodeCheck = true;
+                      isDisabled = true;
+                      res.roleMenus.push({
+                        id: cid,
+                        name: "查看",
+                        code: "COMMON_HEADQUARTERS_MANAGEMENT_VIEW",
+                        iconCls: null,
+                        url: null,
+                        lever: 4,
+                        parentId: itemThree.id,
+                        remark: null,
+                        creatorId: null,
+                        createTime: null,
+                        modifierId: null,
+                        modifyTime: null,
+                        type: 4,
+                        appId: null,
+                        parentName: null,
+                        children: null,
+                        viewPath: null,
+                        sort: null,
+                        domainType: null,
+                        menuType: 2,
+                      });
+                    } else {
+                      isNodeCheck = false;
+                      isDisabled = false;
+                    }
+                    itemThree.children.push({
+                      id: cid,
+                      name: "查看",
+                      code: "COMMON_HEADQUARTERS_MANAGEMENT_VIEW",
+                      iconCls: null,
+                      url: null,
+                      lever: 4,
+                      parentId: itemThree.id,
+                      remark: null,
+                      creatorId: null,
+                      createTime: null,
+                      modifierId: null,
+                      modifyTime: null,
+                      type: 4,
+                      parentName: null,
+                      children: [],
+                      disabled: isNodeCheck,
+                      checked: isDisabled,
+                      viewPath: null,
+                      sort: null,
+                      domainType: null,
+                      appId: null,
+                      menuType: 2,
+                    });
+                  }
+                });
+              }
+            });
+          }
+        });
         this.pcData = [
           {
             id: -1,
-            name: '访问权限',
+            name: "访问权限",
             children: newRouteTree || [],
           },
-        ]
-        this.getCheckIdInitForPC(res.roleMenus || [], this.pcData.children)
+        ];
+        id && this.getCheckIdInitForPC(res.roleMenus || [], res.allMenus || []);
       } catch (e) {}
     },
     async queryRoleById() {
       try {
-        const res = await queryRoleById({ id: this.$route.query.id })
-        this.form.id = res.id
-        this.form.name = res.name
-        this.form.usedName = res.name
-        this.form.remark = res.remark
+        const res = await queryRoleById({ id: this.$route.query.id });
+        this.form.id = res.id;
+        this.form.name = res.name;
+        this.form.usedName = res.name;
+        this.form.remark = res.remark;
       } catch (e) {}
     },
   },
   mounted() {
-    const id = this.isEdit ? Number(this.$route.query.id) : ''
-    this.queryAllPCMenu(id)
-    this.queryAllAPPMenu(id)
+    const id = this.isEdit ? Number(this.$route.query.id) : "";
+    this.queryAllPCMenu(id);
+    this.queryAllAPPMenu(id);
     if (this.isEdit) {
-      this.queryRoleById()
+      this.queryRoleById();
     }
   },
-}
+};
 </script>
-
 <style lang="scss" scoped>
 .km-setting-roleAdd {
   display: flex;
