@@ -341,12 +341,12 @@ export default {
       border-radius: 2px;
       display: flex;
       align-items: center;
-      padding: 12px 16px;
+      padding: 10px 16px;
       font-size: 14px;
       color: #3d4966;
       img {
-        width: 14px;
-        height: 14px;
+        width: 16px;
+        height: 16px;
         margin-right: 8px;
       }
     }
