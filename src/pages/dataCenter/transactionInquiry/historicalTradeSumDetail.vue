@@ -246,8 +246,8 @@ export default {
     async getList() {
       this.tableLoading = true
       let data = {
-        adminId: this.$route.query.searchObject === '2' ? this.$route.query.id : this.form.adminId,
-        agentId: this.$route.query.searchObject === '1' ? this.$route.query.id : this.form.agentId,
+        adminId: String(this.$route.query.searchObject) === '2' ? this.$route.query.id : this.form.adminId,
+        agentId: String(this.$route.query.searchObject) === '1' ? this.$route.query.id : this.form.agentId,
         dataTime: this.$route.query.payDate,
         payMethod: this.$route.query.payMethod,
         type: this.$route.query.type,
