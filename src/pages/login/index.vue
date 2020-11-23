@@ -145,14 +145,11 @@ export default {
         }, 500)
       } catch (error) {
         this.status = 'fail'
-        // this.initImg()
       }
     },
     handleSubmitCode() {
       this.$refs.ruleForm.validate(async valid => {
-        if (valid) {
-          this.loginVisible = true
-        }
+        if (valid) this.loginVisible = true
       })
     },
     handleLogin() {
@@ -175,7 +172,6 @@ export default {
             })
             .catch(err => {
               this.loginForm.codeKey = ''
-              // this.captcha()
             })
             .finally(() => {
               this.isLoading = false
