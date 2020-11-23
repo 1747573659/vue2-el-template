@@ -74,7 +74,10 @@ export default function xftValidator() {
     'archiveExpandVO.bankSub': [{ required: true, message: '请选择开户支行', trigger: 'change' }],
     'archiveExpandVO.bankProvince': [{ required: true, message: '请选择开户支行所在省市', trigger: 'change' }],
     'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'blur' }],
-    'archiveExpandVO.bankCard': [{ required: true, message: '请输入银行账号', trigger: 'blur' }],
+    'archiveExpandVO.bankCard': [
+      { required: true, message: '请输入银行账号', trigger: 'blur' },
+      { type: 'string', required: true, pattern: /^[1-9]\d{8,22}$/, message: '请输入正确银行账号', trigger: 'change'}
+    ],
     'archiveExpandVO.cardholderPhone': [{ required: true, validator: cardholderPhone, trigger: 'blur' }],
     'archiveExpandVO.cardholderIdType': [{ required: true, message: '请选择持卡人证件类型', trigger: 'change' }],
     'archiveExpandVO.cardholderIdNumber': [{ required: true, message: '持卡人证件号码', trigger: 'blur' }],

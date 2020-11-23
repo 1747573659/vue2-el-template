@@ -5,7 +5,7 @@
         <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
           <div class="com-edit-item">
             <div class="com-edit-title">
-              <span>应用列表</span>
+              <span>基本信息</span>
             </div>
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">

@@ -84,7 +84,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalPage">
@@ -310,7 +310,7 @@ export default {
 <style lang="scss" scoped>
 .author-dialog {
   /deep/.el-dialog__body {
-    height: 380px;
+    height: 436px;
     .author-dialog-text {
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -322,12 +322,12 @@ export default {
       margin-bottom: 12px;
     }
     .author-dialog-img {
-      top: 50%;
       position: absolute;
       left: 50%;
-      transform: translate(-50%);
-      width: 152px;
-      height: 152px;
+      transform: translateX(-50%);
+      margin-top: 10px;
+      width: 240px;
+      height: 240px;
     }
   }
 }

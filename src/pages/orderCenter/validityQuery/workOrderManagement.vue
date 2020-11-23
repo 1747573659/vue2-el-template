@@ -67,13 +67,6 @@ export default {
           placeholder: '工单编号/标题/描述/提交人',
           value: '',
         },
-        // {
-        //   type: 'input',
-        //   name: 'sheetNo',
-        //   label: '工单编号',
-        //   placeholder: '工单编号',
-        //   value: ''
-        // },
         {
           type: 'select',
           name: 'orderType',

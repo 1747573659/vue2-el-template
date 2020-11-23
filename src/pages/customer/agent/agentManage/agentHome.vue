@@ -48,7 +48,7 @@
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="代理商编号"></el-table-column>
         <el-table-column prop="name" label="代理商名称"></el-table-column>
-        <el-table-column prop="mobile" label="手机"></el-table-column>
+        <el-table-column prop="mobile" label="手机" width="140"></el-table-column>
         <el-table-column prop="channelManagerName" label="BD经理"> </el-table-column>
         <el-table-column prop="proportion" label="分成比例">
           <template slot-scope="scope"> {{ scope.row.proportion || 0 }}% </template>
@@ -84,7 +84,7 @@
           @size-change="getPageList"
           @current-change="handleCurrentChange"
           :current-page.sync="form.page"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size.sync="form.rows"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"
