@@ -71,11 +71,15 @@
         <el-table-column
           label="操作"
           align="right"
-          width="320px">
+          width="380px">
           <template slot-scope="scope">
             <el-button @click="querySubShop(scope.row)" v-if="['7', '30'].includes(scope.row.channelCode)" type="text" size="small">查询子商户号</el-button>
-            <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">子商户号授权</el-button>
-            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">查询授权状态</el-button>
+            <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">子商户号授权</el-button>
+            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">查询授权状态</el-button>
+            <!-- <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">电子签约</el-button> -->
+            <el-button @click="signUpOL(scope.row)" type="text" size="small">电子签约</el-button>
+            <!-- <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">查询商户信息</el-button> -->
+            <el-button @click="shopInfo(scope.row)" type="text" size="small">查询商户信息</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -99,6 +103,36 @@
       <div class="author-dialog-text">1. 确认商户联系人：<span style="color: #FF6010">{{authorForm.contactName}}(手机尾号{{authorForm.contactPhone}})</span>已在微信客户端内为<span style="color: #FF6010">{{authorForm.shopName}}</span>完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”</div>
       <div class="author-dialog-text">2. 商户联系人：扫描下方小程序二维码，按照流程指引为特约商户号完成授权</div>
       <img :src="imgSrc" class="author-dialog-img" alt="qrcode">
+    </el-dialog>
+    <el-dialog
+      title="电子签约"
+      :visible.sync="signUpVisible"
+      width="507px"
+      class="author-dialog">
+      <div class="author-dialog-text">请商户<span style="color: #FF6010">{{signUpForm.shopName}}</span>负责人<span style="color: #FF6010">{{signUpForm.contactName}}</span>,使用手机号码<span style="color: #FF6010">{{signUpForm.contactPhone}}</span>扫描下方二维码，完成交行签约</div>
+      <img :src="imgSrc" class="author-dialog-img" alt="qrcode">
+    </el-dialog>
+    <el-dialog
+      title="查询商户信息"
+      :visible.sync="shopInfoVisible"
+      width="507px"
+      class="shop-info-dialog">
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">商户状态：</div>
+        <div class="shop-info-item-content">正常</div>
+      </div>
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">微信子商户号：</div>
+        <div class="shop-info-item-content">415891937</div>
+      </div>
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">支付宝子商户号：</div>
+        <div class="shop-info-item-content">2088010449633323</div>
+      </div>
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">银联子商户号：</div>
+        <div class="shop-info-item-content">--</div>
+      </div>
     </el-dialog>
     <el-dialog
       title="子商户信息"
@@ -166,7 +200,14 @@ import {
 export default {
   data() {
     return {
+      signUpVisible: false,
+      shopInfoVisible: false,
       authorForm: {},
+      signUpForm: {
+        shopName: '张店区于汗成便利店',
+        contactName: '刘燕',
+        contactPhone: '1654516515'
+      },
       subShopForm: {
         wxSubMchIds: '',
         aliSmids: '',
@@ -276,6 +317,12 @@ export default {
       this.currentPage = 1
       this.getList()
     },
+    signUpOL(row) {
+      this.signUpVisible = true
+    },
+    shopInfo(row) {
+      this.shopInfoVisible = true
+    },
     handleCurrentChange(value) {
       this.currentPage = value
       this.getList()
@@ -341,5 +388,14 @@ export default {
   display: flex;
   align-items: center;
   line-height: 32px;
+}
+.shop-info-dialog {
+  .shop-info-item {
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    // .shop-info-item-label {}
+    // .shop-info-item-content {}
+  }
 }
 </style>
