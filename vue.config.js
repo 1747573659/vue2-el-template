@@ -26,8 +26,7 @@ const getProxyTable = apiObj => {
 }
 
 module.exports = {
-  // 如果是开发环境打包,那么输出的根目录为/kmchannel/
-  publicPath: process.env.VUE_APP_FLAG === 'dev' && process.env.NODE_ENV === 'production' ? '/kmchannel/' : '/',
+  publicPath: '/',
   outputDir: 'km-channel-h5', // 打包输出目录名
   // assetsDir: 'static',
   productionSourceMap: false, // 去掉生产环境.map文件
