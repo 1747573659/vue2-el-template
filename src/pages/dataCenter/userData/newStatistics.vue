@@ -147,6 +147,10 @@ export default {
         {
           key: 'storeTotal',
           title: '门店总数'
+        },
+        {
+          key: 'topAgentName',
+          title: '上级代理商'
         }
       ]
     }
