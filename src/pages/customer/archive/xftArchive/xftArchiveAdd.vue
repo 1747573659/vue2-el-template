@@ -13,7 +13,7 @@
           </el-col>
         </el-row>
       </div>
-      <el-form :disabled="isDetail" ref="form" :rules="rules" class="xft-add-form" size="small" label-suffix=":" :inline="true" :model="form" label-width="190px">
+      <el-form :disabled="isDetail" ref="form" :rules="rules" class="xft-add-form" size="small" label-suffix=":" :inline="true" :model="form" label-width="210px">
         <div class="title">基本信息</div>
         <div class="form-info">
           <el-row>
@@ -1295,7 +1295,7 @@ export default {
   .form-info {
     padding-top: 24px;
     .archive-form-item {
-      padding-left: 10%;
+      // padding-left: 10%;
       .el-switch {
         line-height: 32px;
       }

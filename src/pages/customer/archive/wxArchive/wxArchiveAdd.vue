@@ -15,7 +15,7 @@
       </el-row>
     </header>
     <section>
-      <el-form ref="form" :model="form" :rules="rules" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="200px">
+      <el-form ref="form" :model="form" :rules="rules" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="210px">
         <div class="p-wxArchive-item">
           <div class="p-wxArchive-itemTitle">基本信息</div>
           <el-row class="p-wxArchive-baseInfo">
