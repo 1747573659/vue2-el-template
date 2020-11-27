@@ -838,9 +838,6 @@ export default {
                 this.form.archiveBaseVO.auditStatus = ''
               }
               const res = await submit(this.form)
-              this.$store.dispatch('delTagView', this.$route).then(() => {
-                this.$router.push({ name: 'wxArchive' })
-              })
               this.$message.success('保存成功')
             } catch (error) {}
           }
@@ -930,9 +927,6 @@ export default {
     },
     setUploadSrc(res, type, url) {
       this.form[type][url] = res.data.path
-    },
-    areaChange(value) {
-      console.log(value)
     }
   }
 }

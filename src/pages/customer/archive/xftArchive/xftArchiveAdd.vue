@@ -870,7 +870,6 @@ export default {
       }
     },
     legalPersonValidityChange(value) {
-      console.log(this.form.archiveExpandVO.legalPersonValidity)
       this.form.archiveExpandVO.legalPersonValidityBegin = value[0]
       this.form.archiveExpandVO.legalPersonValidityEnd = value[1]
     },
@@ -1127,12 +1126,8 @@ export default {
         if (!errorMessage) {
           try {
             const res = await submit(this.form)
-            this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ path: 'xftArchive' })
-            })
             this.$message.success('保存成功')
           } catch(error) {}
-          console.log(this.form)
         }
       })
     },

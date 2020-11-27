@@ -18,7 +18,6 @@ export default function xftValidator() {
     }
   }
   var merchantShortNameCheck = (rule, value, callback) => {
-    console.log(!value.match(/^[\u4E00-\u9FA5A-Za-z0-9]+$/g))
     if (value === '') {
       callback(new Error('请输入商户简称'))
     } else if (!value.match(/^[\u4E00-\u9FA5A-Za-z0-9]+$/g)) {
