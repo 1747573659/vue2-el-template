@@ -352,7 +352,7 @@ export default {
       } catch (error) {}
     },
     archiveDetail(row) {
-      this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id } })
+      this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id, contact: row.archiveBaseDTO.contact, contactPhone: row.archiveBaseDTO.contactPhone } })
     },
     async getList() {
       this.tableLoading = true
