@@ -392,6 +392,30 @@
                 <el-input style="width:240px" v-model="form.archiveExpandVO.cardholderIdNumber" placeholder=""></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1 && form.archiveExpandVO.cardholderType  === 2">
+                <el-form-item label="持卡人证件有效期" prop="archiveExpandVO.licValidityBigen">
+                <el-date-picker
+                  style="width: 140px"
+                  value-format="yyyy-MM-dd"
+                  v-model="form.archiveExpandVO.licValidityBigen"
+                  type="date"
+                  placeholder="选择日期">
+                </el-date-picker>
+                <span style="margin: 5px">至</span>
+                <span
+                  v-if="[3,5,6,7,9].includes(auditStatus) && !form.archiveExpandVO.licValidityEnd">
+                  长期有效
+                </span>
+                <el-date-picker
+                  v-else
+                  style="width: 140px"
+                  value-format="yyyy-MM-dd"
+                  v-model="form.archiveExpandVO.licValidityEnd"
+                  type="date"
+                  placeholder="选择日期">
+                </el-date-picker>
+              </el-form-item>
+            </el-col>
           </el-row>
           <el-row v-if="form.archiveExpandVO.acctType === 1">
             <el-col :span="12" class="archive-form-item">
