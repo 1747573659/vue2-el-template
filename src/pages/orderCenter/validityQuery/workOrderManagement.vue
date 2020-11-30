@@ -18,6 +18,7 @@
     </div>
     <div class="data-box">
         <base-table
+          :tableMaxHeight="tableMaxHeight"
           :columns="headers"
           :list="list"
           @getList="queryWorkOrderList"
@@ -50,7 +51,11 @@ export default {
     baseTable,
     queryGroup
   },
-  
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
+    },
+  }, 
   data () {
     return {
       queryFormList: [

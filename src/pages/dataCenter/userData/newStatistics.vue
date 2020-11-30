@@ -61,6 +61,7 @@
         </el-col>
       </el-row>
       <base-table
+        :tableMaxHeight="tableMaxHeight"
         :columns="headers"
         :list="list"
         :total="total"
@@ -154,6 +155,11 @@ export default {
         }
       ]
     }
+  },
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 120.5 - 32 - 16 - 108 - 20 - 36 - 40
+    },
   },
   methods: {
     handleFilter(e) {

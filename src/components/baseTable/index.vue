@@ -1,4 +1,3 @@
-
 <template>
   <div class="base-table-container">
     <el-row>
@@ -7,30 +6,11 @@
           <!--   -->
           <template v-for="(column, index) in columns">
             <!-- 复选框 -->
-            <el-table-column
-              :key="index"
-              v-if="column.type === 'selection'"
-              type="selection"
-              width="55"
-            ></el-table-column>
+            <el-table-column :key="index" v-if="column.type === 'selection'" type="selection" width="55"></el-table-column>
             <!-- 序号 -->
-            <el-table-column
-              :key="index"
-              v-else-if="column.type === 'index'"
-              type="index"
-              :index="continuousIndex"
-              width="60"
-              label="序号"
-            ></el-table-column>
+            <el-table-column :key="index" v-else-if="column.type === 'index'" type="index" :index="continuousIndex" width="60" label="序号"></el-table-column>
             <!-- 具体内容 -->
-            <el-table-column
-              :key="index"
-              v-else
-              :align="column.position"
-              :label="column.title"
-              :width="column.width"
-              :show-overflow-tooltip="column.showOverflowTooltip"
-            >
+            <el-table-column :key="index" v-else :align="column.position" :label="column.title" :width="column.width" :show-overflow-tooltip="column.showOverflowTooltip">
               <template slot-scope="scope">
                 <!-- 仅仅显示文字 -->
                 <label v-if="!column.hidden">
@@ -40,11 +20,7 @@
                     <template v-for="(operate, index) in column.operates">
                       <el-button
                         :key="index"
-                        v-if="
-                          operate.escape && operate.escape(scope.row).isShow !== undefined
-                            ? operate.escape(scope.row).isShow
-                            : true
-                        "
+                        v-if="operate.escape && operate.escape(scope.row).isShow !== undefined ? operate.escape(scope.row).isShow : true"
                         :disabled="(operate.escape && operate.escape(scope.row).disabled) || false"
                         @click="handleClick(operate, scope.row)"
                         type="text"
@@ -119,6 +95,10 @@ import Pagination from '@/components/Pagination'
 export default {
   components: { Pagination },
   props: {
+    tableMaxHeight:{
+      type: Number,
+      default: 300
+    },
     // 核心数据
     list: {
       type: Array,
@@ -153,46 +133,40 @@ export default {
   },
   computed: {
     currentPage: {
-      get () {
+      get() {
         return this.page
       },
-      set (val) {
+      set(val) {
         this.$emit('update:page', val)
       }
     },
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 120.5 - 48 - 76
-    },
     pageSizes: {
-      get () {
+      get() {
         return this.rows
       },
-      set (val) {
+      set(val) {
         this.$emit('update:rows', val)
       }
     }
   },
   methods: {
     // 让index序号连续
-    continuousIndex (index) {
+    continuousIndex(index) {
       return index + (this.currentPage - 1) * this.pageSizes + 1
     },
     // 页码变化触发获取数据
-    getList (obj) {
+    getList(obj) {
       this.$emit('getList', obj)
     },
     // 处理点击事件
-    handleClick (action, data) {
+    handleClick(action, data) {
       // emit事件
       this.$emit(`${action.emitKey}`, data)
     },
     // 选中变化
-    handleSelectionChange (val) {
+    handleSelectionChange(val) {
       this.$emit('changeSelect', val)
     }
   }
 }
 </script>
-
-<style scoped lang="scss">
-</style>
