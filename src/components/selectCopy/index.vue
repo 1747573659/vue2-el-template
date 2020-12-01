@@ -1,6 +1,6 @@
 <template>
   <!-- 功能:单选且筛选时候具有可以复制label值的功能 -->
-  <!-- 陈南方 2020-12-01 -->
+  <!-- 陈南方 2020-12-01   :value.sync='绑定的值，其他相同' -->
   <el-select
     @change="change"
     @visible-change="visibleChange"
