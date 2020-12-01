@@ -120,8 +120,8 @@ export default {
         rows: 10,
         userId: '',
         topAgentUser: '',
-        startTime: '',
-        endTime: ''
+        startDate: '',
+        endDate: ''
       },
       total: 0,
       headers: [
