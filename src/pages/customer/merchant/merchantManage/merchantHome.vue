@@ -45,20 +45,18 @@
         <el-row>
           <el-col :span="20">
             <el-form-item label="代理商：">
-              <el-select
-                v-model="form.topAgentId"
+              <selectCopy
+                :value.sync="form.topAgentId"
                 placeholder="请输入代理商"
                 filterable
                 clearable
-              >
-                <el-option
-                  v-for="item in topAgentOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
-                </el-option>
-              </el-select>
+                :options="topAgentOptions"
+                :optionsItem="{
+                  key: 'id',
+                  label: 'name',
+                  value: 'id',
+                }"
+              />
             </el-form-item>
             <el-form-item label="状态：">
               <el-select
@@ -201,20 +199,18 @@
           class="xdd-btn-block__w240"
         >
           <el-form-item label="新业务员：" prop="clerkId">
-            <el-select
-              v-model="clerkForm.clerkId"
+            <selectCopy
+              :value.sync="clerkForm.clerkId"
               placeholder="请选择业务员"
               filterable
               clearable
-            >
-              <el-option
-                v-for="item in newClerkOptions"
-                :key="item.id"
-                :label="item.name"
-                :value="item.id"
-              >
-              </el-option>
-            </el-select>
+              :options="newClerkOptions"
+              :optionsItem="{
+                key: 'id',
+                label: 'name',
+                value: 'id',
+              }"
+            ></selectCopy>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">

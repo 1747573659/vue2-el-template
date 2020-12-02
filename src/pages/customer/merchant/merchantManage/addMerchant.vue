@@ -80,20 +80,18 @@
                   </el-select>
                 </el-form-item> -->
                 <el-form-item label="业务员：">
-                  <el-select
-                    v-model="ruleForm.clerkId"
+                  <selectCopy
+                    :value.sync="ruleForm.clerkId"
                     placeholder=""
                     filterable
                     clearable
-                  >
-                    <el-option
-                      v-for="item in clerkOptions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    >
-                    </el-option>
-                  </el-select>
+                    :options="clerkOptions"
+                    :optionsItem="{
+                      key: 'id',
+                      label: 'name',
+                      value: 'id',
+                    }"
+                  ></selectCopy>
                 </el-form-item>
               </div>
             </div>
@@ -197,13 +195,14 @@ import AreaSelect from "@/components/areaSelect";
 import PicUpload from "@/components/picUpload";
 import picUploadMixin from "@/mixins/picUpload";
 import { isMPRelaxed, isEmail } from "@/utils/common";
-
+import selectCopy from "@/components/selectCopy";
 export default {
   name: "addMerchant",
   components: {
     BrandSelect,
     AreaSelect,
     PicUpload,
+    selectCopy,
   },
   mixins: [picUploadMixin],
   data() {
