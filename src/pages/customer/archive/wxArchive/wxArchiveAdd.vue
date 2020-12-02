@@ -852,24 +852,24 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
-                <el-select
-                  v-model="form.archiveExpandVO.bankSub"
+                <selectCopy
+                  style="width: 240px"
+                  :remoteMethod="handleBranchRemote"
+                  :value.sync="form.archiveExpandVO.bankSub"
+                  @focus="handleBranchPage"
                   filterable
                   clearable
+                  reserveKeyword
                   remote
-                  reserve-keyword
                   placeholder="所属支行"
-                  :remote-method="handleBranchRemote"
-                  @focus="handleBranchPage"
-                  style="width: 240px"
+                  :options="branchOptions"
+                  :optionsItem="{
+                    key: 'bCode',
+                    label: 'bName',
+                    value: 'bCode',
+                  }"
                 >
-                  <el-option
-                    v-for="item in branchOptions"
-                    :key="item.bCode"
-                    :label="item.bName"
-                    :value="item.bCode"
-                  ></el-option>
-                </el-select>
+                </selectCopy>
               </el-form-item>
             </el-col>
             <el-col :span="12">

@@ -1,6 +1,7 @@
 <template>
   <div>
     <el-select
+      :id="domID"
       :style="{ width: width }"
       class="select-page"
       v-model="selValue"
@@ -18,6 +19,7 @@
       :placeholder="placeText"
       :remote-method="remoteMethod"
       @clear="clear()"
+      @visible-change="visibleChange"
     >
       <el-option
         v-for="item in options"
@@ -37,6 +39,7 @@
 export default {
   data() {
     return {
+      domID: `domID${Math.floor(Math.random() * 100000000 + 1)}`, //随机生成一个唯一ID
       isMaxPage: false,
       options: [],
       page: 1,
@@ -148,6 +151,22 @@ export default {
     }
   },
   methods: {
+    // 选项展开关闭回掉
+    visibleChange(event) {
+      if (event) {
+        // 如果展开
+        let label = "";
+        for (let i = 0; i < this.options.length; i++) {
+          const item = this.options[i];
+          if (this.selValue === item[this.id]) {
+            label = item[this.name];
+          }
+        }
+        setTimeout(() => {
+          document.getElementById(this.domID).value = label || ""; //通过ID原生绑定
+        }, 200);
+      }
+    },
     clear() {
       this.page = 1;
       this.options = [];
