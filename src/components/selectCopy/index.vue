@@ -119,7 +119,7 @@ export default {
   },
   data() {
     return {
-      domID: `dom${Math.floor(Math.random() * 100000000 + 1)}`, //随机生成一个唯一ID
+      domID: `domID${Math.floor(Math.random() * 100000000 + 1)}`, //随机生成一个唯一ID
       bindValue: "", //绑定的值
     };
   },
