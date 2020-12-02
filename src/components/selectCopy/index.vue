@@ -111,13 +111,13 @@ export default {
   methods: {
     // 选项展开关闭回掉
     visibleChange(event) {
-      if (event && this.bindValue) {
-        // 如果展开且有值
+      if (event) {
+        // 如果展开
         let label = "";
         for (let i = 0; i < this.options.length; i++) {
           const valueField = this.optionsItem.value;
           const labelField = this.optionsItem.label;
-          if (this.bindValue == this.options[i][valueField]) {
+          if (this.bindValue === this.options[i][valueField]) {
             label = this.options[i][labelField];
           }
         }
