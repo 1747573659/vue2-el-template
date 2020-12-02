@@ -20,9 +20,9 @@
   >
     <el-option
       v-for="item in options"
-      :key="item.value"
-      :label="item.label"
-      :value="item.value"
+      :key="item[optionsItem.key]"
+      :label="item[optionsItem.label]"
+      :value="item[optionsItem.value]"
     >
     </el-option>
   </el-select>
@@ -38,8 +38,18 @@ export default {
       type: Array,
       default: () => [],
     }, //选项
+    optionsItem: {
+      type: Object,
+      default() {
+        return {
+          key: "value",
+          label: "label",
+          value: "value",
+        };
+      },
+    }, //绑定带每一项要取的字段
     value: {
-      type: String || Number,
+      type: [String, Number],
       default: "",
     }, //传进来绑定的值
     multiple: {
@@ -105,8 +115,10 @@ export default {
         // 如果展开且有值
         let label = "";
         for (let i = 0; i < this.options.length; i++) {
-          if (this.bindValue == this.options[i].value) {
-            label = this.options[i].label;
+          const valueField = this.optionsItem.value;
+          const labelField = this.optionsItem.label;
+          if (this.bindValue == this.options[i][valueField]) {
+            label = this.options[i][labelField];
           }
         }
         setTimeout(() => {
