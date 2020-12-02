@@ -126,9 +126,10 @@ export default {
         }, 200);
       }
     },
-    change() {
+    change(...value) {
       // 更新数据
       this.$emit("update:value", this.bindValue);
+      this.$emit("change", value);
     },
   },
 };

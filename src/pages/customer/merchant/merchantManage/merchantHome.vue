@@ -27,20 +27,18 @@
               ></el-input>
             </el-form-item>
             <el-form-item label="业务员：">
-              <el-select
-                v-model="form.clerkId"
-                placeholder="请输入业务员"
+              <selectCopy
                 filterable
+                :value.sync="form.clerkId"
+                placeholder="请输入业务员"
                 clearable
-              >
-                <el-option
-                  v-for="item in clerkOptions"
-                  :key="item.id"
-                  :label="item.name"
-                  :value="item.id"
-                >
-                </el-option>
-              </el-select>
+                :options="clerkOptions"
+                :optionsItem="{
+                  key: 'id',
+                  label: 'name',
+                  value: 'id',
+                }"
+              ></selectCopy>
             </el-form-item>
           </el-col>
         </el-row>
@@ -241,9 +239,11 @@ import {
   updateClerk,
 } from "@/api/customer/merchant";
 import { resetPassword } from "@/api/setting/account";
+import selectCopy from "@/components/selectCopy";
 
 export default {
   name: "merchantManage",
+  components: { selectCopy },
   filters: {
     fiterStatus(val) {
       if (val === 0) {
