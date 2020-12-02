@@ -4,6 +4,7 @@
   <el-select
     @change="change"
     @visible-change="visibleChange"
+    @focus="focus"
     v-model="bindValue"
     :id="domID"
     :placeholder="placeholder"
@@ -17,6 +18,9 @@
     :name="name"
     :autocomplete="autocomplete"
     :filterable="filterable"
+    :remote="remote"
+    :reserve-keyword="reserveKeyword"
+    :remote-method="remoteMethod"
   >
     <el-option
       v-for="item in options"
@@ -92,6 +96,17 @@ export default {
       type: Boolean,
       default: false, //是否可搜索
     },
+    remote: {
+      type: Boolean,
+      default: false, //是否为远程搜索
+    },
+    reserveKeyword: {
+      type: Boolean,
+      default: false, //多选且可搜索时，是否在选中一个选项后保留当前的搜索关键词
+    },
+    remoteMethod: {
+      type: Function, //远程搜索方法
+    },
   },
   watch: {
     value: {
@@ -109,6 +124,9 @@ export default {
     };
   },
   methods: {
+    focus(event) {
+      this.$emit("focus", event);
+    },
     // 选项展开关闭回掉
     visibleChange(event) {
       if (event) {
