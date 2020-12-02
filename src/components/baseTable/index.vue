@@ -2,7 +2,7 @@
   <div class="base-table-container">
     <el-row>
       <el-col :span="24">
-        <el-table :max-height="tableMaxHeight" v-loading="loading" :data="list" @selection-change="handleSelectionChange" v-bind="$attrs">
+        <el-table :max-height="hasMaxHeight ? tableMaxHeight : 'auto'" v-loading="loading" :data="list" @selection-change="handleSelectionChange" v-bind="$attrs">
           <!--   -->
           <template v-for="(column, index) in columns">
             <!-- 复选框 -->
@@ -95,6 +95,10 @@ import Pagination from '@/components/Pagination'
 export default {
   components: { Pagination },
   props: {
+    hasMaxHeight:{
+      type: Boolean,
+      default: true
+    },
     tableMaxHeight:{
       type: Number,
       default: 300

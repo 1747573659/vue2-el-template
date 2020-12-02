@@ -44,9 +44,11 @@ router.beforeEach((to, from, next) => {
     }
   } else {
     if (to.name !== 'login') {
-      if (to.query && Object.keys(to.query).length > 0) {
-        next({ path: `/login?redirect=${to.path}&query=${JSON.stringify(to.query)}` })
-      } else next({ name: 'login' })
+      next({ name: 'login' })
+    // 当前页面有查询条件时，退出登录跳转退出页面并携带参数
+    //   if (to.query && Object.keys(to.query).length > 0) {
+    //     next({ path: `/login?redirect=${to.path}&query=${JSON.stringify(to.query)}` })
+    //   } else next({ name: 'login' })
     } else next()
   }
 })

@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="search-box">
       <div class="xdd_tip"><i class="el-icon-info"></i>单次查询月份的最长跨度为6个月</div>
-      <query-group className="xdd-btn-block__w240" :queryFormList.sync="queryFormList" :queryParams="queryParams" @search="handleFilter" :timeinterval="6">
+      <query-group className="xdd-btn-block__w240" :isClearable="false" :queryFormList.sync="queryFormList" :queryParams="queryParams" @search="handleFilter" :timeinterval="6">
         <template v-slot:formfooter>
           <el-form-item label="代理商：">
             <select-page
@@ -61,6 +61,7 @@
         </el-col>
       </el-row>
       <base-table
+        :hasMaxHeight="false"
         :tableMaxHeight="tableMaxHeight"
         :columns="headers"
         :list="list"
