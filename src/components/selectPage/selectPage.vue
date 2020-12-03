@@ -84,10 +84,24 @@ export default {
     // 选项展开关闭回掉
     visibleChange(event) {
       if (event) {
+        if (!this.options.length) {
+          // 如果options为空，下面走没有意义所以return
+          if (this.selectValue) {
+            //筛选一下获取options
+            this.remoteMethod(this.selectValue);
+            setTimeout(() => {
+              this.visibleChange(true);
+            }, 400); //由于之前的人没有写回掉，所以先通过计时器自己回掉
+          }
+          return;
+        }
         // 如果展开
         let label = "";
         for (let i = 0; i < this.options.length; i++) {
-          if (this.selectValue === this.options[i][this.value]) {
+          if (
+            this.selectValue === this.options[i][this.value] ||
+            this.echoValue === this.options[i][this.label]
+          ) {
             label = this.options[i][this.label];
           }
         }
