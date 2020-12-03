@@ -29,6 +29,11 @@
         <el-form-item label="商户信息">
           <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
         </el-form-item>
+        <el-form-item label="当前通道">
+          <el-select style="width: 240px" clearable v-model="form.channel" placeholder="全部">
+            <el-option v-for="item in channelList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="停用">
           <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
             <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -53,10 +58,23 @@
       >
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"> </el-table-column>
         <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"> </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantName" label="商户名称"> </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"> </el-table-column>
-        <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"> </el-table-column>
-        <el-table-column prop="archiveExpandDTO.bankCard" label="银行卡号"> </el-table-column>
+        <el-table-column prop="archiveBaseDTO.merchantName" label="商户名称/公司名称">
+          <template slot-scope="scope">
+            <div>{{scope.row.archiveBaseDTO.merchantName}}</div>
+            <div>{{scope.row.archiveBaseDTO.companyName}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号">
+          <template slot-scope="scope">
+            <div>{{scope.row.archiveBaseDTO.merchantShortName}}</div>
+            <div>{{scope.row.archiveExpandDTO.bankCard}}</div>
+          </template></el-table-column>
+        <el-table-column prop="archiveChannelList" label="已进件通道" width="140" class-name="archived-channel">
+          <template slot-scope="scope">
+            <div v-for="item in scope.row.archiveChannelList" :key="item.channelCode">{{item.channelName}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="useBankChannelCodeName" label="当前通道" width="140"> </el-table-column>
         <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态" width="140">
           <template slot-scope="scope">
             <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
@@ -172,7 +190,8 @@ export default {
         auditStatusList: [],
         auditStatus: '',
         wxCertStatus: '',
-        status: 0
+        status: 0,
+        channel: ''
       },
       auditStatusOptions: [
         { id: '', name: '全部' },
@@ -229,6 +248,7 @@ export default {
         { id: 1, name: '是' },
         { id: 0, name: '否' }
       ],
+      channelList: [],
       tableData: [],
       currentPage: 1,
       totalPage: 0,
@@ -486,6 +506,13 @@ export default {
     &_action {
       text-align: right;
     }
+  }
+}
+</style>
+<style lang="scss">
+.archived-channel {
+  .cell {
+    display: block!important;
   }
 }
 </style>
