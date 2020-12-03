@@ -34,6 +34,10 @@
 <script>
 export default {
   props: {
+    isCopy: {
+      type: Boolean,
+      default: false,
+    }, //是否可以复制
     placeholder: {
       type: String,
       default: "",
@@ -129,7 +133,7 @@ export default {
     },
     // 选项展开关闭回掉
     visibleChange(event) {
-      if (event) {
+      if (this.isCopy && event) {
         // 如果展开
         let label = "";
         for (let i = 0; i < this.options.length; i++) {
