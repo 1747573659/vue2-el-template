@@ -91,7 +91,7 @@ export default {
             this.remoteMethod(this.selectValue);
             setTimeout(() => {
               this.visibleChange(true);
-            }, 400); //由于之前的人没有写回掉，所以先通过计时器自己回掉
+            }, 500); //由于之前的人没有写回掉，所以先通过计时器自己回掉
           }
           return;
         }
