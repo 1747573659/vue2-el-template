@@ -117,8 +117,22 @@ export default {
       if (event) {
         // 如果展开
         let label = "";
+        if (!this.options.length) {
+          // 如果options为空，下面走没有意义所以return
+          if (this.bindValue) {
+            //     //筛选一下获取options
+            this.remoteMethod(this.bindValue);
+            setTimeout(() => {
+              this.visibleChange(true);
+            }, 500); //由于之前的人没有写回掉，所以先通过计时器自己回掉
+          }
+          return;
+        }
         for (let i = 0; i < this.options.length; i++) {
-          if (this.bindValue === this.options[i].id) {
+          if (
+            this.bindValue === this.options[i].id ||
+            this.value === this.options[i].name //回写时候没有传ID进来，只能根据ID匹配
+          ) {
             label = this.options[i].name;
           }
         }

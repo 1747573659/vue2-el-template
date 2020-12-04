@@ -49,3 +49,23 @@ export  function routeTreeLevel(routes) {
   })
   return arr
 }
+
+
+// 数据排序
+function compare(property) {
+  return function (a, b) {
+    let value1 = a[property];
+    let value2 = b[property];
+    return value1 - value2;
+  };
+}
+// 排序数据
+export function sortData(arr = []) {
+  arr = arr.sort(compare("sort"));
+  arr.map((item) => {
+    if (item.children && item.children.length) {
+      sortData(item.children); //递归
+    }
+  });
+  return arr;
+}

@@ -154,11 +154,25 @@ export default {
     // 选项展开关闭回掉
     visibleChange(event) {
       if (event) {
+        if (!this.options.length) {
+          // 如果options为空，下面走没有意义所以return
+          if (this.selValue) {
+            //筛选一下获取options
+            this.remoteMethod(this.selValue);
+            setTimeout(() => {
+              this.visibleChange(true);
+            }, 500); //由于之前的人没有写回掉，所以先通过计时器自己回掉
+          }
+          return;
+        }
         // 如果展开
         let label = "";
         for (let i = 0; i < this.options.length; i++) {
           const item = this.options[i];
-          if (this.selValue === item[this.id]) {
+          if (
+            this.selValue === item[this.id] ||
+            this.bvalue === item[this.name]
+          ) {
             label = item[this.name];
           }
         }
