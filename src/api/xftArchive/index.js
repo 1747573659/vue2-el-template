@@ -37,10 +37,19 @@ const urlLinks = {
   querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
   querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf',
   queryTotalByStatus: '/archive/xdd/queryTotalByStatus',
+  // 通道下拉列表查询
+  queryBankChannelType: '/archive/xdd/queryBankChannelType',
   delList: 'archive/general/del',
   imageOCR: 'common/imageOcr'
 }
 
+// 通道下拉列表查询
+export function queryBankChannelType() {
+  return request({
+    url: urlLinks.queryBankChannelType,
+    method: 'POST'
+  })
+}
 // 图片识别
 export function imageOCR(data) {
   return request({

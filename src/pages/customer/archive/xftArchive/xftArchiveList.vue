@@ -30,8 +30,8 @@
           <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
         </el-form-item>
         <el-form-item label="当前通道">
-          <el-select style="width: 240px" clearable v-model="form.channel" placeholder="全部">
-            <el-option v-for="item in channelList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+          <el-select style="width: 240px" clearable v-model="form.channelTypeCode" placeholder="全部">
+            <el-option v-for="item in channelList" :key="item.channelCode" :label="item.channelName" :value="item.channelCode"> </el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="停用">
@@ -168,7 +168,7 @@
 </template>
 
 <script>
-import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode, queryTotalByStatus, delList } from '@/api/xftArchive'
+import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode, queryTotalByStatus, delList, queryBankChannelType } from '@/api/xftArchive'
 export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -176,6 +176,7 @@ export default {
       vm.currentPage = 1
       vm.getList()
       vm.handleQueryTotalByStatus()
+      vm.getQueryBankChannelType()
     })
   },
   name: 'xftArchive',
@@ -191,7 +192,7 @@ export default {
         auditStatus: '',
         wxCertStatus: '',
         status: 0,
-        channel: ''
+        channelTypeCode: ''
       },
       auditStatusOptions: [
         { id: '', name: '全部' },
@@ -374,6 +375,13 @@ export default {
     archiveDetail(row) {
       this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id } })
     },
+    async getQueryBankChannelType () {
+      try {
+        let res = await queryBankChannelType()
+        this.channelList = res
+        this.channelList.unshift({channelCode: '', channelName: '全部'})
+      } catch (error) {}
+    },
     async getList() {
       this.tableLoading = true
       let data = {
@@ -385,6 +393,7 @@ export default {
         auditStatusList: this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
         merchantName: this.form.name,
         merchantShortName: this.form.name,
+        channelTypeCode: this.form.channelTypeCode,
         companyName: this.form.name,
         bankCard: this.form.name,
         // 'auditStatusList': this.form.auditStatus,

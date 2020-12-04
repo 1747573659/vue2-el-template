@@ -60,6 +60,15 @@
                 }"
               />
             </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="21">
+            <el-form-item label="支付场景">
+              <el-select style="width: 240px" clearable v-model="form.payScene" placeholder="全部">
+                <el-option v-for="item in paySceneList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button
                 type="primary"
@@ -78,7 +87,7 @@
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tableLoading">
       <el-row>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               交易总额(元)
@@ -92,7 +101,7 @@
             <div class="sum-card-money">{{ tableData.payAmount }}</div>
           </div>
         </el-col>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               交易笔数
@@ -106,7 +115,7 @@
             <div class="sum-card-money">{{ tableData.payCount }}</div>
           </div>
         </el-col>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               客单价(元)
@@ -116,6 +125,48 @@
               </el-tooltip>
             </div>
             <div class="sum-card-money">{{ tableData.unitAmount }}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户优惠(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">
+                  由商家承担的参与微信/支付宝/银联<br>
+                  活动的优惠券核销金额
+                </div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户实退(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">
+                  退还用户银行卡或零钱账户的<br>
+                  金额+平台优惠券退款金额
+                </div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户实收(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">交易总额-商家优惠-商家实退</div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{tableData.unitAmount}}</div>
           </div>
         </el-col>
       </el-row>
@@ -135,6 +186,9 @@
         ></el-table-column>
         <el-table-column label="交易笔数" prop="payCount"></el-table-column>
         <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
+        <el-table-column label="商家优惠(元)" prop="unitAmount"></el-table-column>
+        <el-table-column label="商家实退(元)" prop="unitAmount"></el-table-column>
+        <el-table-column label="商家实收(元)" prop="unitAmount"></el-table-column>
       </el-table>
     </div>
   </div>
