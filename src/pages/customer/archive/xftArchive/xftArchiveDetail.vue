@@ -131,7 +131,7 @@
       </div>
       <div class="shop-info-item">
         <div class="shop-info-item-label">银联子商户号：</div>
-        <div class="shop-info-item-content">{{shopInfoForm.unionMchtId}}</div>
+        <div class="shop-info-item-content">{{shopInfoForm.mchId}}</div>
       </div>
     </el-dialog>
     <el-dialog
@@ -209,7 +209,7 @@ export default {
         status: 0,
         wechatMchtId: '',
         alipayMchtId: '',
-        unionMchtId: ''
+        mchId: ''
       },
       authorForm: {},
       signUpForm: {
@@ -358,7 +358,7 @@ export default {
           status: statusArr[res.status] || '--',
           wechatMchtId: res.wechatMchtId || '--',
           alipayMchtId: res.alipayMchtId || '--',
-          unionMchtId: res.unionMchtId || '--'
+          mchId: res.mchId || '--'
         }
       } catch (error) {} finally {
         this.shopInfoVisible = true
