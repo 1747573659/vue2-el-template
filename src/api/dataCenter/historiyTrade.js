@@ -7,7 +7,16 @@ const urlLinks = {
   queryNewAgentPage: '/agent/queryNewAgentPage',
   queryShopListByPage: '/shop/queryShopListByNameAndId',
   queryStorePage: '/store/queryStorePage',
-  detail: '/cashier/detail'
+  detail: '/cashier/detail',
+  paymentPluginVoList: '/cashier/paymentPluginVoList'
+}
+
+export function paymentPluginVoList(data) {
+  return request({
+    url: urlLinks.paymentPluginVoList,
+    method: 'post',
+    data
+  })
 }
 export function paymentMethodVoList() {
   return request({

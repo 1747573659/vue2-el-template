@@ -45,25 +45,17 @@
               </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
-              <selectCopy
-                class="order_sel"
-                filterable
-                :options="paymentList"
-                :value.sync="form.payMethod"
-                :optionsItem="{
-                  key: 'id',
-                  label: 'name',
-                  value: 'id',
-                }"
-              ></selectCopy>
+              <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
+                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="21">
             <el-form-item label="支付场景">
-              <el-select style="width: 240px" clearable v-model="form.payScene" placeholder="全部">
-                <el-option v-for="item in paySceneList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              <el-select style="width: 240px" clearable v-model="form.payPlugin" placeholder="全部">
+                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
@@ -136,7 +128,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.shopCouponAmount}}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -151,7 +143,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.merchantRefundAmount}}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -163,7 +155,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.receiptAmount}}</div>
           </div>
         </el-col>
       </el-row>
@@ -182,6 +174,7 @@ import {
   queryNewAgentPage,
   queryShopListByPage,
   queryStorePage,
+  paymentPluginVoList
 } from "@/api/dataCenter/historiyTrade";
 
 export default {
@@ -201,7 +194,9 @@ export default {
         payMethod: "",
         searchObject: "",
         ObjContent: "",
+        payPlugin: ''
       },
+      payPluginList: [{id: '', name: '全部'}],
       paymentList: [],
       questionIcon: require("@/assets/images/icon/questioin.png"),
       ObjContentList: [],
@@ -243,6 +238,23 @@ export default {
     }
   },
   methods: {
+    async payMethodChange (value) {
+      let childs = ''
+      console.log(value)
+      this.paymentList.forEach(item => {
+        if (item.id === value) {
+          childs = item.childs.split(',')
+        }
+      })
+      let data = {
+        childs
+      }
+      try {
+        let res = await paymentPluginVoList(data)
+        this.payPluginList = res
+        this.payPluginList.unshift({id: '', name: '全部'})
+      } catch (error) {}
+    },
     searchObjectChange(value) {
       this.form.id = null;
       this.form.ObjContent = null;
@@ -347,6 +359,7 @@ export default {
         agentId: this.form.searchObject === 1 ? this.form.id : "",
         storeId: this.form.searchObject === 3 ? this.form.id : "",
         payMethod: this.form.payMethod,
+        payPlugin: this.form.payPlugin
       };
       try {
         const res = await cashierData(data);

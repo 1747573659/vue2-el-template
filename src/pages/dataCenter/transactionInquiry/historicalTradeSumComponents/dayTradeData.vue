@@ -53,25 +53,17 @@
               >
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
-              <selectCopy
-                class="order_sel"
-                filterable
-                :value.sync="form.payMethod"
-                :options="paymentList"
-                :optionsItem="{
-                  key: 'id',
-                  label: 'name',
-                  value: 'id',
-                }"
-              />
+              <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
+                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="21">
             <el-form-item label="支付场景">
-              <el-select style="width: 240px" clearable v-model="form.payScene" placeholder="全部">
-                <el-option v-for="item in paySceneList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              <el-select style="width: 240px" clearable filterable v-model="form.payPlugin" placeholder="全部">
+                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="查询对象" prop="paymentCode">
@@ -175,7 +167,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.shopCouponAmount}}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -190,7 +182,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.merchantRefundAmount}}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -202,7 +194,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.receiptAmount}}</div>
           </div>
         </el-col>
       </el-row>
@@ -226,9 +218,9 @@
         ></el-table-column>
         <el-table-column label="交易笔数" prop="payCount"></el-table-column>
         <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="商家优惠(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="商家实退(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="商家实收(元)" prop="unitAmount"></el-table-column>
+        <el-table-column label="商家优惠(元)" prop="shopCouponAmount"></el-table-column>
+        <el-table-column label="商家实退(元)" prop="merchantRefundAmount"></el-table-column>
+        <el-table-column label="商家实收(元)" prop="receiptAmount"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button
@@ -255,6 +247,7 @@ import {
   queryNewAgentPage,
   queryShopListByPage,
   queryStorePage,
+  paymentPluginVoList
 } from "@/api/dataCenter/historiyTrade";
 import selectCopy from "@/components/selectCopy";
 let maxTime = "";
@@ -277,9 +270,9 @@ export default {
         payMethod: "",
         searchObject: "",
         ObjContent: "",
-        payScene: '',
+        payPlugin: ''
       },
-      paySceneList: [],
+      payPluginList: [{id: '', name: '全部'}],
       paymentList: [],
       ObjContentList: [],
       searchObjectList: [
@@ -293,6 +286,9 @@ export default {
         payAmount: 0,
         payCount: 0,
         unitAmount: 0,
+        merchantRefundAmount: 0,
+        shopCouponAmount: 0,
+        receiptAmount: 0,
         cashierMockDTOS: [],
       },
       searchString: "",
@@ -349,6 +345,23 @@ export default {
     ];
   },
   methods: {
+    async payMethodChange (value) {
+      let childs = ''
+      console.log(value)
+      this.paymentList.forEach(item => {
+        if (item.id === value) {
+          childs = item.childs.split(',')
+        }
+      })
+      let data = {
+        childs
+      }
+      try {
+        let res = await paymentPluginVoList(data)
+        this.payPluginList = res
+        this.payPluginList.unshift({id: '', name: '全部'})
+      } catch (error) {}
+    },
     clearDisabled() {
       maxTime = "";
       minTime = "";
@@ -480,6 +493,7 @@ export default {
         startTime: this.form.time ? this.form.time[0] : "",
         endTime: this.form.time ? this.form.time[1] : "",
         payMethod: this.form.payMethod,
+        payPlugin: this.form.payPlugin
       };
       try {
         const res = await cashierData(data);
