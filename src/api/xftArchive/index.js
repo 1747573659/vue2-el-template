@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import axios from 'axios'
 
 const urlLinks = {
   // 分页查询
@@ -37,10 +38,32 @@ const urlLinks = {
   querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
   querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf',
   queryTotalByStatus: '/archive/xdd/queryTotalByStatus',
+  // 电子签约
+  mchICBSign: '/archive/xdd/mchICBSign',
+  queryCommunicationMerchantInfo: '/archive/xdd/queryCommunicationMerchantInfo',
   delList: 'archive/general/del',
   imageOCR: 'common/imageOcr'
 }
-
+// 查询商户信息
+export function queryCommunicationMerchantInfo(data) {
+  return request({
+    url: urlLinks.queryCommunicationMerchantInfo,
+    method: 'POST',
+    params: data
+  })
+}
+// 电子签约
+export function mchICBSign(data) {
+  return axios({
+    url: process.env.VUE_APP_BASE_API + urlLinks.mchICBSign,
+    method: 'POST',
+    params: data,
+    headers: {
+      token: localStorage.getItem('token') || ''
+    },
+    responseType: 'arraybuffer'
+  })
+}
 // 图片识别
 export function imageOCR(data) {
   return request({
