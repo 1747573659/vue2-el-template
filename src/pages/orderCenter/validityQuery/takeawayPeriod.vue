@@ -1,5 +1,9 @@
 <template>
   <div class="app-container">
+    <el-tabs v-model="activeTab" @tab-click="handleClick" class="tp-tabs">
+      <el-tab-pane label="商户授权模式" name="1"></el-tab-pane>
+      <el-tab-pane label="门店授权模式" name="2"></el-tab-pane>
+    </el-tabs>
     <div class="search-box">
       <query-group
         className="xdd-btn-block__w240"
@@ -10,6 +14,7 @@
         <template v-slot:formheader>
           <el-form-item label="商户">
             <select-page
+              v-if="activeTab === '2'"
               :request="queryMerchantAdminPage"
               :bvalue.sync="tableParam.userId"
               :name="'companyName'"
@@ -19,11 +24,21 @@
               :placeholder="'商户名称'"
             >
             </select-page>
+            <select-page
+              v-else
+              :request="queryMerchantAdminPage"
+              :bvalue.sync="tableParam.merchantAdminId"
+              :name="'companyName'"
+              searchName="id"
+              :width="'240px'"
+              id="id"
+              :placeholder="'商户名称1'"
+            >
+            </select-page>
           </el-form-item>
         </template>
-
         <template v-slot:formfoot>
-              <el-button v-permission.page="'ACCOUNT_ROLE_ADD,ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD_EXPORT'"  size="small" @click="wmdownloadExcel">导出</el-button>
+          <el-button v-permission.page="'ACCOUNT_ROLE_ADD,ORDERCENTER_VALIDITYQUERY_TAKEAWAYPERIOD_EXPORT'"  size="small" @click="wmdownloadExcel">导出</el-button>
         </template>
       </query-group>
     </div>
@@ -46,7 +61,7 @@ import listMixins from "@/mixins/tableList";
 import baseTable from "@/components/baseTable";
 import queryGroup from "@/components/queryGroup";
 import { queryMerchantAdminPage } from "@/api/transtionManagement";
-import { wmdownloadExcel, queryWmTermPage } from "@/api/orderCenter";
+import { wmdownloadExcel, queryWmTermPage, queryWmWhitePage, downloadWmWhiteExcel } from "@/api/orderCenter";
 import selectPage from "@/components/selectPage2/index.vue";
 import {downloadBufferFile} from "@/utils"
 const DOWNLOAD_URL= process.env.VUE_APP_BASE_API
@@ -60,6 +75,7 @@ export default {
   },
   data() {
     return {
+      activeTab: '1',
       queryFormList: [
         {
           type: "select",
@@ -83,18 +99,25 @@ export default {
               label: "已过期",
               value: "-1",
             },
-          ],
+          ],  
         },
       ],
       list: [],
       loading: false,
-      tableParam: {
+      tableParam: {},
+      tableParam1: {
+        page: 1,
+        rows: 10,
+        merchantAdminId: ''
+      },
+      tableParam2: {
         page: 1,
         rows: 10,
         userId: "",
       },
       total:0,
-      headers: [
+      headers: [],
+      headers2: [
         {
           key: "shopName",
           title: "商户",
@@ -162,32 +185,122 @@ export default {
           title: "到期日期",
         },
       ],
+      headers1: [
+        {
+          key: "shopName",
+          title: "商户",
+          escape: (row) => {
+            return "["+row.shopId+"]"+row.shopName
+          }
+        },
+        {
+          key: "appStatus",
+          title: "状态",
+          escape: (row) => {
+            let str = "";
+            switch (row.appStatus) {
+              case 1:
+                str = "有效";
+                break;
+              case 2:
+                str = "快到期";
+                break;
+              case -1:
+                str = "已过期";
+                break;
+              default:
+                str = "--";
+                break;
+            }
+            return str
+          },
+        },
+        {
+          key: "quotaType",
+          title: "收费类型",
+          escape: (row) => {
+            let str = "";
+            switch (row.quotaType) {
+              case 1:
+                str = "试用";
+                break;
+              case 2:
+                str = "按年收费";
+                break;
+              case 3:
+                str = "按单收费";
+                break;
+              default:
+                str = "--";
+                break;
+            }
+            return str
+          }
+        },
+        {
+          key: "buyTime",
+          title: "开通日期",
+        },
+        {
+          key: "expireTime",
+          title: "到期日期",
+        },
+      ],
     };
   },
 
   methods: {
+    handleClick(tab, event) {
+      if (this.activeTab === '1') {
+        this.headers = this.headers1
+        this.tableParam = this.tableParam1
+      } else {
+        this.headers = this.headers2
+        this.tableParam = this.tableParam2
+      }
+      this.handleFilter()
+    },
     handleFilter(e) {
       this.loading = true;
-      let data = Object.assign(this.tableParam, e);
-      queryWmTermPage(data)
-        .then((res) => {
-          this.list = res.results || [];
-          this.total=res.totalCount || 0
-        })
-        .finally(() => {
-          this.loading = false;
-        });
+      if (this.activeTab === '1') {
+        let data = Object.assign(this.tableParam, e);
+        queryWmWhitePage(data)
+          .then((res) => {
+            this.list = res.results || [];
+            this.total=res.totalCount || 0
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      } else {
+        let data = Object.assign(this.tableParam, e);
+        queryWmTermPage(data)
+          .then((res) => {
+            this.list = res.results || [];
+            this.total=res.totalCount || 0
+          })
+          .finally(() => {
+            this.loading = false;
+          });
+      }
     },
     wmdownloadExcel() {
       let data = Object.assign(this.tableParam, this.queryParams);
-      downloadBufferFile(DOWNLOAD_URL+"/wm/downloadExcel",data,"POST","json")
+      if (this.activeTab === '1') {
+        downloadBufferFile(DOWNLOAD_URL+"/wm/downloadWmWhiteExcel",data,"POST","json")
+      } else {
+        downloadBufferFile(DOWNLOAD_URL+"/wm/downloadExcel",data,"POST","json")
+      }
     },
     queryMerchantAdminPage(e) {
       return queryMerchantAdminPage(e);
     },
   },
+  created() {
+    this.tableParam = this.tableParam1
+    this.headers = this.headers1
+  },
   mounted() {
-  
     this.handleFilter();
   },
 };
@@ -197,5 +310,20 @@ export default {
   /deep/.xdd-btn-block__w240{
    position: relative;
     left: -53px;
+  }
+  .tp-tabs {
+    /deep/.el-tabs__header {
+      padding: 10px 24px;
+      background-color: #ffffff;
+    }
+    /deep/.el-tabs__item.is-active {
+      color: #3377FF!important;
+    }
+    /deep/.el-tabs__active-bar {
+        background-color: #3377FF;
+    }
+    /deep/.el-tabs__item:hover {
+      color: #3B83FF!important;
+    }
   }
 </style>

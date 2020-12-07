@@ -5,6 +5,23 @@ import qs from 'qs'
 const urlLinks = {
   wmdownloadExcel: `/wm/downloadExcel`,
   queryWmTermPage: `/wm/queryWmTermPage`,
+  queryWmWhitePage: `/wm/queryWmWhitePage`,
+  downloadWmWhiteExcel: `/wm/downloadWmWhiteExcel`,
+}
+
+export function downloadWmWhiteExcel (data) {
+  return request({
+    url: urlLinks.downloadWmWhiteExcel,
+    method: 'POST',
+    data
+  })
+}
+export function queryWmWhitePage (data) {
+  return request({
+    url: urlLinks.queryWmWhitePage,
+    method: 'POST',
+    data
+  })
 }
 export function queryWmTermPage (data) {
   return request({
