@@ -410,6 +410,7 @@ export default {
       margin-bottom: 12px;
     }
     .author-dialog-img {
+      top: 50%;
       position: absolute;
       left: 50%;
       transform: translate(-50%,-20%);
