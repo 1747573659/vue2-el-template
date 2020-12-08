@@ -353,7 +353,7 @@ export default {
       }
       try {
         let res = await queryCommunicationMerchantInfo(data)
-        const statusArr = ['正常', '注销', '停用', '限制入账', '未激活(表示入驻成功但商户还未电子签约)', '入驻中']
+        const statusArr = ['正常', '注销', '停用', '限制入账', '未激活 (表示入驻成功但商户还未电子签约)', '入驻中']
         this.shopInfoForm = {
           status: statusArr[res.status] || '--',
           wechatMchtId: res.wechatMchtId || '--',
