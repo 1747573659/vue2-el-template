@@ -61,7 +61,7 @@
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">
                 <el-form-item label="品牌名称：" prop="merchantName">
-                  <el-input v-model="ruleForm.merchantName" maxlength="30" placeholder="商户名称需与营业执照一致"></el-input>
+                  <el-input v-model="ruleForm.merchantName" maxlength="30"></el-input>
                 </el-form-item>
                 <el-form-item label="品牌LOGO：">
                   <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
