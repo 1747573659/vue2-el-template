@@ -35,11 +35,6 @@
               </el-form-item>
             </el-col>
             <el-col>
-              <el-form-item label="交易状态">
-                <el-select v-model="form.auditStatus" class="p-general_formWidth" clearable placeholder="全部">
-                  <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
               <el-form-item label="停用">
                 <el-select v-model="form.stopUse" class="p-general_formWidth" clearable placeholder="全部">
                   <el-option v-for="item in deactivateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
@@ -70,16 +65,16 @@
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
-        <el-table-column prop="merchantName" label="商户/公司名称">
+        <el-table-column prop="merchantName" label="商户/公司名称" width="200">
           <template slot-scope="scope">
-            <div>{{scope.row.merchantName}}</div>
-            <div>{{scope.row.archiveBaseDTO.companyName}}</div>
+            <div class="archive-table-oneline">{{scope.row.merchantName || '--'}}</div>
+            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.companyName || '--'}}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号">
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
           <template slot-scope="scope">
-            <div>{{scope.row.archiveBaseDTO.merchantShortName}}</div>
-            <div>{{scope.row.archiveExpandDTO.bankCard}}</div>
+            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantShortName || '--'}}</div>
+            <div class="archive-table-oneline">{{scope.row.archiveExpandDTO.bankCard || '--'}}</div>
           </template>
         </el-table-column>
         <el-table-column label="进件类型">
@@ -396,5 +391,10 @@ export default {
       text-align: right;
     }
   }
+}
+.archive-table-oneline {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

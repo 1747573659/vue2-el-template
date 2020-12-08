@@ -58,23 +58,32 @@
       >
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"> </el-table-column>
         <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"> </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantName" label="商户名称/公司名称">
+        <el-table-column prop="archiveBaseDTO.merchantName" label="商户/公司名称" width="200">
           <template slot-scope="scope">
-            <div>{{scope.row.archiveBaseDTO.merchantName}}</div>
-            <div>{{scope.row.archiveBaseDTO.companyName}}</div>
+            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantName || '--'}}</div>
+            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.companyName || '--'}}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号">
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
           <template slot-scope="scope">
-            <div>{{scope.row.archiveBaseDTO.merchantShortName}}</div>
-            <div>{{scope.row.archiveExpandDTO.bankCard}}</div>
+            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantShortName || '--'}}</div>
+            <div class="archive-table-oneline">{{scope.row.archiveExpandDTO.bankCard || '--'}}</div>
           </template></el-table-column>
         <el-table-column prop="archiveChannelList" label="已进件通道" width="140" class-name="archived-channel">
           <template slot-scope="scope">
-            <div v-for="item in scope.row.archiveChannelList" :key="item.channelCode">{{item.channelName}}</div>
+            <div v-if="scope.row.archiveChannelList">
+              <div v-for="item in scope.row.archiveChannelList" :key="item.channelCode">{{item.channelName}}</div>
+            </div>
+            <div v-else>
+              --
+            </div>
           </template>
         </el-table-column>
-        <el-table-column prop="useBankChannelCodeName" label="当前通道" width="140"> </el-table-column>
+        <el-table-column prop="useBankChannelCodeName" label="当前通道" width="140">
+          <template slot-scope="scope">
+            {{ scope.row.archiveBaseDTO.wxCertStatus || '--' }}
+          </template>
+        </el-table-column>
         <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态" width="140">
           <template slot-scope="scope">
             <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
