@@ -242,7 +242,7 @@
           v-if="pageTotal"
           :current-page="pageNo"
           :page-size="pageSize"
-          :page-sizes="[10, 15, 20, 25]"
+          :page-sizes="[10, 30, 50]"
           :total="pageTotal"
           @current-change="handleTabCurrent"
           @size-change="handleTabSize"
@@ -300,7 +300,7 @@
         <el-pagination
           :current-page="exportPage"
           :page-size="exportPageSize"
-          :page-sizes="[10, 15, 20, 25]"
+          :page-sizes="[10, 30, 50]"
           :total="exportPageTotal"
           @current-change="handleCurrentChange"
           @size-change="handleSizeChange"

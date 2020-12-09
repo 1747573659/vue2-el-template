@@ -1442,13 +1442,10 @@ export default {
       this.form[type][url] = res.data.path;
     },
     setUploadSrc(res, type, url) {
-      this.form[type][url] = res.data.path;
-    },
-    areaChange(value) {
-      console.log(value);
-    },
-  },
-};
+      this.form[type][url] = res.data.path
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

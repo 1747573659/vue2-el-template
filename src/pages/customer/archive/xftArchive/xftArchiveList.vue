@@ -107,7 +107,7 @@
             {{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="170px">
+        <el-table-column label="操作" align="right" width="180px">
           <template slot-scope="scope">
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small"
               >编辑</el-button
@@ -121,18 +121,8 @@
             <el-popconfirm class="e-popover_con" @confirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
-            <!-- <el-popover :ref="`popover${scope.$index}`" placement="top-start" width="170" v-else class="e-popover_con">
-              <p class="e-popover_prompt">确定删除所选数据吗？</p>
-              <div class="e-popover_action">
-                <el-button size="mini" type="text" @click="handleDraftCancel(scope.$index)">取消</el-button>
-                <el-button type="primary" size="mini" @click="handleDraftList(scope)">确定</el-button>
-              </div>
-              <el-button type="text" size="small" slot="reference">删除</el-button>
-            </el-popover> -->
             <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
-              <span class="el-dropdown-link">
-                ···
-              </span>
+              <el-button type="text" size="small">更多</el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
                 <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
@@ -153,7 +143,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalPage"
@@ -382,7 +372,7 @@ export default {
       } catch (error) {}
     },
     archiveDetail(row) {
-      this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id } })
+      this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id, contact: row.archiveBaseDTO.contact, contactPhone: row.archiveBaseDTO.contactPhone } })
     },
     async getQueryBankChannelType () {
       try {
@@ -439,7 +429,7 @@ export default {
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 168.5 - 32 - 76 - 16
     }
   },
   mounted() {}

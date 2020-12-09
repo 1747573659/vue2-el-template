@@ -12,7 +12,7 @@
         >
           <div class="com-edit-item">
             <div class="com-edit-title">
-              <span>应用列表</span>
+              <span>基本信息</span>
             </div>
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">

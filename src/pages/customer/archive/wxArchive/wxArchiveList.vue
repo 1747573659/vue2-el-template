@@ -200,7 +200,7 @@ export default {
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
+      return document.documentElement.clientHeight - 56 - 48 - 168.5 - 32 - 76 - 16
     }
   },
   activated() {
@@ -342,7 +342,6 @@ export default {
     }
   }
   &-count {
-    min-height: 44px;
     margin: 0 8px 16px 8px;
     &_con {
       background: rgba(255, 96, 16, 0.08);

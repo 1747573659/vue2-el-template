@@ -13,7 +13,7 @@
           </el-col>
         </el-row>
       </div>
-      <el-form :disabled="isDetail" ref="form" :rules="rules" class="xft-add-form" size="small" label-suffix=":" :inline="true" :model="form" label-width="190px">
+      <el-form :disabled="isDetail" ref="form" :rules="rules" class="xft-add-form" size="small" label-suffix=":" :inline="true" :model="form" label-width="210px">
         <div class="title">基本信息</div>
         <div class="form-info">
           <el-row>
@@ -870,7 +870,6 @@ export default {
       }
     },
     legalPersonValidityChange(value) {
-      console.log(this.form.archiveExpandVO.legalPersonValidity)
       this.form.archiveExpandVO.legalPersonValidityBegin = value[0]
       this.form.archiveExpandVO.legalPersonValidityEnd = value[1]
     },
@@ -1127,12 +1126,8 @@ export default {
         if (!errorMessage) {
           try {
             const res = await submit(this.form)
-            this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ path: 'xftArchive' })
-            })
             this.$message.success('保存成功')
           } catch(error) {}
-          console.log(this.form)
         }
       })
     },
@@ -1295,7 +1290,7 @@ export default {
   .form-info {
     padding-top: 24px;
     .archive-form-item {
-      padding-left: 10%;
+      // padding-left: 10%;
       .el-switch {
         line-height: 32px;
       }

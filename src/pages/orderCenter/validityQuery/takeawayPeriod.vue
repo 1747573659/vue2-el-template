@@ -44,6 +44,7 @@
     </div>
     <div class="data-box">
       <base-table
+        :tableMaxHeight="tableMaxHeight"
         :columns="headers"
         :list="list"
         :loading="loading"
@@ -248,7 +249,11 @@ export default {
       ],
     };
   },
-
+  computed: {
+    tableMaxHeight() {
+      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
+    },
+  },
   methods: {
     handleClick(tab, event) {
       if (this.activeTab === '1') {

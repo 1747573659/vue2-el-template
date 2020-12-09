@@ -146,16 +146,16 @@ export default {
   methods: {
     initImg: async function () {
       try {
-        this.loading = true;
-        const res = await initImg();
+        this.loading = true
+        const res = await initImg()
         // 请求接口获取图片和图片对应的位置
-        this.slideBlockImgBg = res.sourceImage;
-        this.slideBlockImg = res.newImage;
-        this.offsetY = res.y;
-        this.key = res.sliderToken;
+        this.slideBlockImgBg = res.sourceImage
+        this.slideBlockImg = res.newImage
+        this.offsetY = res.y
+        this.key = res.sliderToken
       } catch (err) {
       } finally {
-        this.loading = false;
+        this.loading = false
       }
     },
     // 刷新图片验证
@@ -181,16 +181,13 @@ export default {
           this.handleLogin();
         }, 500);
       } catch (error) {
-        this.status = "fail";
-        // this.initImg()
+        this.status = 'fail'
       }
     },
     handleSubmitCode() {
-      this.$refs.ruleForm.validate(async (valid) => {
-        if (valid) {
-          this.loginVisible = true;
-        }
-      });
+      this.$refs.ruleForm.validate(async valid => {
+        if (valid) this.loginVisible = true
+      })
     },
     handleLogin() {
       this.$refs.ruleForm.validate(async (valid) => {
@@ -222,9 +219,8 @@ export default {
                 } else utilRoutePoint();
               } else utilRoutePoint();
             })
-            .catch((err) => {
-              this.loginForm.codeKey = "";
-              // this.captcha()
+            .catch(err => {
+              this.loginForm.codeKey = ''
             })
             .finally(() => {
               this.isLoading = false;
