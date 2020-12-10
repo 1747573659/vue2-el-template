@@ -19,6 +19,7 @@ const orderCenter = {
       component: kmContainer,
       meta: {
         title: '有效期查询',
+        icon: 'el-icon-menu',
         name: 'validityQuery'
       },
       children: [

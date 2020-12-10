@@ -72,7 +72,8 @@ export default {
     },
     handleTagViews() {
       if (this.$route.name) {
-        this.setTagViews(this.$route)
+        if (this.tagViews.length === 15 && !this.tagViews.some(item => item.name === this.$route.name)) this.$message({ type: 'warning', message: '最大支持15个页签，请关闭其他页签后重试' })
+        else this.setTagViews(this.$route)
         this.setCachedViews(this.$route)
       }
     },

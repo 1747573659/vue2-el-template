@@ -22,6 +22,7 @@ const customer = {
       component: kmContainer,
       meta: {
         title: '商户管理',
+        icon: 'el-icon-menu',
         name: 'merchant'
       },
       children: [{
@@ -106,6 +107,7 @@ const customer = {
       component: kmContainer,
       meta: {
         title: '进件管理',
+        icon: 'el-icon-menu',
         name: 'archive'
       },
       children: [{
@@ -186,6 +188,7 @@ const customer = {
       component: kmContainer,
       meta: {
         title: '代理商管理',
+        icon: 'el-icon-menu',
         name: 'agent'
       },
       children: [{
@@ -270,6 +273,7 @@ const customer = {
       component: kmContainer,
       meta: {
         title: '工单管理',
+        icon: 'el-icon-menu',
         name: 'workorder'
       },
       children: [{

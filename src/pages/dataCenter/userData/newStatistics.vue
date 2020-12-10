@@ -134,7 +134,6 @@ export default {
   },
   methods: {
     handleFilter(e) {
-      console.info(e)
       this.loading = true;
       let data = Object.assign(this.tableParam, e);
       userdataCount(data)
