@@ -7,7 +7,7 @@
           <el-form-item label="代理商：">
             <select-page
               :isNeedinitId="true"
-              :request="queryAgentPage"
+              :request="queryNewAgentPageFun"
               :bvalue.sync="tableParam.userId"
               :name="'name'"
               searchName="id"
@@ -78,6 +78,9 @@ import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
 import { queryAgentPageNew } from '@/api/customer/agent'
+import {
+  queryNewAgentPage,
+} from "@/api/dataCenter/historiyTrade";
 import { userdataCount } from '@/api/dataCenter/userData.js'
 import selectPage from '@/components/selectPage2/index.vue'
 import { downloadBufferFile } from '@/utils'
@@ -181,6 +184,9 @@ export default {
     },
     queryAgentPage(e) {
       return queryAgentPageNew(e)
+    },
+    queryNewAgentPageFun (e) {
+      return queryNewAgentPage(e)
     }
   },
   mounted() {
