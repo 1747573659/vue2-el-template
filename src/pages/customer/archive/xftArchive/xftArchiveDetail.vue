@@ -71,11 +71,15 @@
         <el-table-column
           label="操作"
           align="right"
-          width="320px">
+          width="380px">
           <template slot-scope="scope">
             <el-button @click="querySubShop(scope.row)" v-if="['7', '30'].includes(scope.row.channelCode)" type="text" size="small">查询子商户号</el-button>
-            <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">子商户号授权</el-button>
-            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="scope.row.channelCode === '7' || scope.row.channelCode === '20' || scope.row.channelCode === '22' || scope.row.channelCode === '25' || scope.row.channelCode === '27' || scope.row.channelCode === '29' || scope.row.channelCode === '30'">查询授权状态</el-button>
+            <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">子商户号授权</el-button>
+            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">查询授权状态</el-button>
+            <el-button @click="signUpOL(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">电子签约</el-button>
+            <!-- <el-button @click="signUpOL(scope.row)" type="text" size="small">电子签约</el-button> -->
+            <el-button @click="shopInfo(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">查询商户信息</el-button>
+            <!-- <el-button @click="shopInfo(scope.row)" type="text" size="small">查询商户信息</el-button> -->
           </template>
         </el-table-column>
       </el-table>
@@ -84,7 +88,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           :current-page="currentPage"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
           :total="totalPage">
@@ -99,6 +103,36 @@
       <div class="author-dialog-text">1. 确认商户联系人：<span style="color: #FF6010">{{authorForm.contactName}}(手机尾号{{authorForm.contactPhone}})</span>已在微信客户端内为<span style="color: #FF6010">{{authorForm.shopName}}</span>完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”</div>
       <div class="author-dialog-text">2. 商户联系人：扫描下方小程序二维码，按照流程指引为特约商户号完成授权</div>
       <img :src="imgSrc" class="author-dialog-img" alt="qrcode">
+    </el-dialog>
+    <el-dialog
+      title="电子签约"
+      :visible.sync="signUpVisible"
+      width="507px"
+      class="author-dialog">
+      <div class="author-dialog-text">请商户<span style="color: #FF6010">{{signUpForm.shopName}}</span>负责人<span style="color: #FF6010">{{signUpForm.contact}}</span>,使用手机号码<span style="color: #FF6010">{{signUpForm.contactPhone}}</span>扫描下方二维码，完成交行签约</div>
+      <img :src="codeSrc" class="author-dialog-img signup-img" alt="qrcode">
+    </el-dialog>
+    <el-dialog
+      title="查询商户信息"
+      :visible.sync="shopInfoVisible"
+      width="507px"
+      class="shop-info-dialog">
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">商户状态：</div>
+        <div class="shop-info-item-content">{{shopInfoForm.status}}</div>
+      </div>
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">微信子商户号：</div>
+        <div class="shop-info-item-content">{{shopInfoForm.wechatMchtId}}</div>
+      </div>
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">支付宝子商户号：</div>
+        <div class="shop-info-item-content">{{shopInfoForm.alipayMchtId}}</div>
+      </div>
+      <div class="shop-info-item">
+        <div class="shop-info-item-label">银联子商户号：</div>
+        <div class="shop-info-item-content">{{shopInfoForm.mchId}}</div>
+      </div>
     </el-dialog>
     <el-dialog
       title="子商户信息"
@@ -161,12 +195,28 @@ import {
   queryContactInfo,
   queryAuthorizationStatus,
   querySubMerchantNo,
-  querySubMchIdForSxf
+  querySubMchIdForSxf,
+  mchICBSign,
+  queryCommunicationMerchantInfo
 } from '@/api/xftArchive'
 export default {
   data() {
     return {
+      signUpVisible: false,
+      shopInfoVisible: false,
+      codeSrc: '',
+      shopInfoForm: {
+        status: 0,
+        wechatMchtId: '',
+        alipayMchtId: '',
+        mchId: ''
+      },
       authorForm: {},
+      signUpForm: {
+        shopName: '张店区于汗成便利店',
+        contact: '刘燕',
+        contactPhone: '1654516515'
+      },
       subShopForm: {
         wxSubMchIds: '',
         aliSmids: '',
@@ -276,6 +326,44 @@ export default {
       this.currentPage = 1
       this.getList()
     },
+    async signUpOL(row) {
+      this.signUpForm = {
+        shopName: row.shopName,
+        contactPhone: this.$route.query.contactPhone,
+        contact: this.$route.query.contact
+      }
+      let data = {
+        baseInfoId: row.baseinfoId,
+        channelCode: '27'
+      }
+      try {
+        let res = await mchICBSign(data)
+        this.codeSrc =
+          'data:image/png;base64,' +
+          btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+      } catch (error) {
+      } finally {
+        this.signUpVisible = true
+      }
+    },
+    async shopInfo(row) {
+      let data = {
+        baseInfoId: row.baseinfoId,
+        channelCode: '27'
+      }
+      try {
+        let res = await queryCommunicationMerchantInfo(data)
+        const statusArr = ['正常', '注销', '停用', '限制入账', '未激活 (表示入驻成功但商户还未电子签约)', '入驻中']
+        this.shopInfoForm = {
+          status: statusArr[res.status] || '--',
+          wechatMchtId: res.wechatMchtId || '--',
+          alipayMchtId: res.alipayMchtId || '--',
+          mchId: res.mchId || '--'
+        }
+      } catch (error) {} finally {
+        this.shopInfoVisible = true
+      }
+    },
     handleCurrentChange(value) {
       this.currentPage = value
       this.getList()
@@ -310,7 +398,7 @@ export default {
 <style lang="scss" scoped>
 .author-dialog {
   /deep/.el-dialog__body {
-    height: 380px;
+    height: 436px;
     .author-dialog-text {
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -325,9 +413,13 @@ export default {
       top: 50%;
       position: absolute;
       left: 50%;
-      transform: translate(-50%);
+      transform: translate(-50%,-20%);
       width: 152px;
       height: 152px;
+    }
+    .signup-img {
+      width: 200px;
+      height: 200px
     }
   }
 }
@@ -341,5 +433,14 @@ export default {
   display: flex;
   align-items: center;
   line-height: 32px;
+}
+.shop-info-dialog {
+  .shop-info-item {
+    padding-bottom: 15px;
+    display: flex;
+    align-items: center;
+    // .shop-info-item-label {}
+    // .shop-info-item-content {}
+  }
 }
 </style>

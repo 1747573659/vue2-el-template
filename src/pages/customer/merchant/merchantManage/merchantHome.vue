@@ -86,7 +86,7 @@
         </el-table-column>
       </el-table>
       <div v-show="total > 0" class="km-page-block">
-        <el-pagination @size-change="getPageList" @current-change="handleCurrentChange" :current-page.sync="form.page" :page-sizes="[10, 15, 30]" :page-size.sync="form.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination @size-change="getPageList" @current-change="handleCurrentChange" :current-page.sync="form.page" :page-sizes="[10, 30, 50]" :page-size.sync="form.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
         </el-pagination>
       </div>
       <el-dialog title="移交业务员" :visible.sync="dialogFormVisible" width="510px">

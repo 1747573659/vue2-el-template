@@ -3,10 +3,10 @@
     <main class="p-home">
       <img src="../../assets/images/home/home.png" alt="首页" />
     </main>
-    <el-dialog :visible.sync="auditStatus" title="提示" width="490px">
+    <el-dialog :visible.sync="xftAuditStatus" title="提示" width="490px">
       <p>您的享付通进件资料被驳回，请修改或补充资料后重新提交！</p>
       <div slot="footer">
-        <el-button @click="auditStatus = false" size="small">取消</el-button>
+        <el-button @click="handleAuditStatus" size="small">取消</el-button>
         <el-button type="primary" @click="$router.push({ name: 'xftArchive' })" size="small">前往</el-button>
       </div>
     </el-dialog>
@@ -15,24 +15,20 @@
 
 <script>
 import { popUpsByAuditStatus } from '@/api/login'
+import { mapGetters, mapMutations } from 'vuex'
 
 export default {
-  data() {
-    return {
-      auditStatus: false
-    }
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.getPopUpsByAuditStatus()
+  computed: {
+    ...mapGetters({
+      xftAuditStatus: 'xftAuditStatus' 
     })
   },
   methods: {
-    getPopUpsByAuditStatus: async function() {
-      try {
-        const res = await popUpsByAuditStatus()
-        this.auditStatus = Boolean(res)
-      } catch (error) {}
+    ...mapMutations({
+      setAuditStatus: 'SET_AUDITSTATUS'
+    }),
+    handleAuditStatus(){
+      this.setAuditStatus(false)
     }
   }
 }

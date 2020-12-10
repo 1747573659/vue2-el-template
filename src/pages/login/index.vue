@@ -11,11 +11,11 @@
           <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="p-loginForm_con" @submit.native.prevent>
             <el-form-item prop="userName">
               <label class="e-form_label">账号</label>
-              <el-input clearable v-model.trim="loginForm.userName" @keyup.enter.native="handleLogin" placeholder="请输入用户名"></el-input>
+              <el-input clearable v-model.trim="loginForm.userName" @keyup.enter.native="handleSubmitCode" placeholder="请输入用户名"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <label class="e-form_label">密码</label>
-              <el-input clearable type="password" v-model.trim="loginForm.password" @keyup.enter.native="handleLogin" placeholder="请输入密码"></el-input>
+              <el-input clearable type="password" v-model.trim="loginForm.password" @keyup.enter.native="handleSubmitCode" placeholder="请输入密码"></el-input>
             </el-form-item>
           </el-form>
           <el-button type="primary" :loading="isLoading" @click.native="handleSubmitCode" class="e-form_btn">登录</el-button>
@@ -145,14 +145,11 @@ export default {
         }, 500)
       } catch (error) {
         this.status = 'fail'
-        // this.initImg()
       }
     },
     handleSubmitCode() {
       this.$refs.ruleForm.validate(async valid => {
-        if (valid) {
-          this.loginVisible = true
-        }
+        if (valid) this.loginVisible = true
       })
     },
     handleLogin() {
@@ -175,7 +172,6 @@ export default {
             })
             .catch(err => {
               this.loginForm.codeKey = ''
-              // this.captcha()
             })
             .finally(() => {
               this.isLoading = false

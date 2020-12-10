@@ -19,7 +19,7 @@
   }
   th,
   td {
-    padding: 16px 0px;
+    padding: 13px 0px;
   }
   .cell {
     padding-left: 12px;
@@ -30,6 +30,7 @@
     display: -webkit-box;
     -webkit-line-clamp: 2;
     -webkit-box-orient: vertical;
+    line-height: 1.5;
   }
 }
 .el-table--enable-row-hover .el-table__body tr:hover > td {

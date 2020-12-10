@@ -270,7 +270,7 @@ export default {
   display: flex;
   height: 25px;
   line-height: 25px;
-  margin: 14px 0 21px 0;
+  margin-bottom: 21px;
   justify-content: space-between;
   align-items: center;
   .km-slide-login__title {
