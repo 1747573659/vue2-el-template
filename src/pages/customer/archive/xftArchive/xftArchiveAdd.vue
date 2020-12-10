@@ -227,6 +227,9 @@
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>
@@ -287,6 +290,9 @@
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>

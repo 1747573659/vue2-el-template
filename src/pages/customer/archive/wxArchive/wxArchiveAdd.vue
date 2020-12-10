@@ -477,6 +477,9 @@
                   value-format="yyyy-MM-dd"
                   style="width: 140px"
                 ></el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -754,6 +757,9 @@
                   value-format="yyyy-MM-dd"
                   style="width: 140px"
                 ></el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col :span="12">
