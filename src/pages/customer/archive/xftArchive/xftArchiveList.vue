@@ -81,7 +81,7 @@
         </el-table-column>
         <el-table-column prop="useBankChannelCodeName" label="当前通道" width="140">
           <template slot-scope="scope">
-            {{ scope.row.archiveBaseDTO.wxCertStatus || '--' }}
+            {{ scope.row.archiveBaseDTO.useBankChannelCodeName || '--' }}
           </template>
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态" width="140">
