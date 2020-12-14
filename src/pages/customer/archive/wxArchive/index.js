@@ -169,7 +169,7 @@ const cardholderPhone = (rule, value, callback) => {
 const asyncLicId = (rule, value, callback) => {
   if (!value) {
     callback('请输入营业执照注册号')
-  } else if (!/(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10}$)|(^\d{15}$)/.test(value)) {
+  } else if (!/(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10,12}$)|(^\d{15,20}$)/.test(value)) {
     callback('请输入正确营业执照注册号')
   } else {
     callback()
