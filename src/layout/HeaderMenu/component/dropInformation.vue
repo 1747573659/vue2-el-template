@@ -7,7 +7,7 @@
             <el-input v-model="form.loginName" placeholder="账号" disabled></el-input>
           </el-form-item>
           <el-form-item label="姓名" prop="name">
-            <el-input v-model="form.name" maxlength="30" placeholder="姓名"></el-input>
+            <el-input v-model.trim="form.name" maxlength="30" placeholder="姓名"></el-input>
           </el-form-item>
           <el-form-item label="手机号" prop="mobile">
             <el-input v-model="form.mobile" maxlength="11" placeholder="手机号" disabled></el-input>
