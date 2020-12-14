@@ -32,7 +32,7 @@
               searchName="id"
               :width="'240px'"
               id="id"
-              :placeholder="'商户名称1'"
+              :placeholder="'商户名称'"
             >
             </select-page>
           </el-form-item>

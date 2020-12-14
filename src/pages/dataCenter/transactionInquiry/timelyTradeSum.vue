@@ -2,7 +2,7 @@
   <div>
     <div class="search-box">
       <div class="xdd_tip">
-        <i class="el-icon-info"></i>单次查询日期的最长跨度为31天
+        <i class="el-icon-info"></i>查询对象为“全部”或代理商过滤时，结果会包括下级代理商的交易数据
       </div>
       <el-form
         :inline="true"
