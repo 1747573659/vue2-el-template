@@ -20,7 +20,7 @@
           <el-form-item label="上级代理商：">
             <select-page
               :isNeedinitId="true"
-              :request="queryAgentPage"
+              :request="queryNewAgentPageFun"
               :bvalue.sync="tableParam.topAgentUser"
               :name="'name'"
               searchName="id"
