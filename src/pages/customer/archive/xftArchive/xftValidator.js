@@ -34,7 +34,10 @@ export default function xftValidator() {
     'archiveBaseVO.merchantShortName': [{ required: true, message: '请输入商户简称', trigger: 'blur' }],
     'archiveBaseVO.province': [{ required: true, message: '请选择地区', trigger: 'change' }],
     'archiveBaseVO.address': [{ required: true, message: '请输入详细地址', trigger: 'blur' }],
-    'archiveBaseVO.serviceTel': [{ required: true, message: '请输入客服电话', trigger: 'blur' }],
+    'archiveBaseVO.serviceTel': [
+      { required: true, message: '请输入客服电话', trigger: 'blur' },
+      { pattern: /(^(\d{11})$|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/, message: '请输入正确的客服电话', trigger: ['blur', 'change'] }
+    ],
     'archiveBaseVO.contact': [{ required: true, message: '请输入负责人', trigger: 'blur' }],
     'archiveBaseVO.idNumber': [{ required: true, message: '请输入负责人证件号码', trigger: 'blur' }],
     'archiveBaseVO.contactPhone': [{ required: true, validator: contactPhone, trigger: 'blur' }],

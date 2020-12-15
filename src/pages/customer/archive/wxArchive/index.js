@@ -157,33 +157,6 @@ export const formObj = {
     typeAptitudeUrl: '' // 类目特殊资质
   }
 }
-const cardholderPhone = (rule, value, callback) => {
-  if (!value) {
-    callback('请输入联系人电话')
-  } else if (!/^1[3456789]\d{9}$/.test(value)) {
-    callback('请输入正确的电话号码')
-  } else {
-    callback()
-  }
-}
-const asyncLicId = (rule, value, callback) => {
-  if (!value) {
-    callback('请输入营业执照注册号')
-  } else if (!/(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10,12}$)|(^\d{15,20}$)/.test(value)) {
-    callback('请输入正确营业执照注册号')
-  } else {
-    callback()
-  }
-}
-const asyncIdNumber = (rule, value, callback) => {
-  if (!value) {
-    callback('请输入证件号码')
-  } else if (!/(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/.test(value)) {
-    callback('请输入正确证件号码')
-  } else {
-    callback()
-  }
-}
 
 export const detailValidate = {
   'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户', trigger: 'change' }],
@@ -194,7 +167,10 @@ export const detailValidate = {
   'archiveBaseVO.area': [{ required: true, message: '请输入地区', trigger: 'change' }],
   'archiveBaseVO.address': [{ required: true, message: '请输入详细地址', trigger: 'change' }],
   'archiveBaseVO.contact': [{ required: true, message: '请输入联系人', trigger: 'change' }],
-  'archiveBaseVO.contactPhone': [{ required: true, validator: cardholderPhone, trigger: ['blur', 'change'] }],
+  'archiveBaseVO.contactPhone': [
+    { required: true, message: '请输入联系人电话', trigger: 'change' },
+    { pattern: /^1[3456789]\d{9}$/, message: '请输入正确的电话号码', trigger: ['blur', 'change'] }
+  ],
   'archiveBaseVO.email': [
     { required: true, message: '请输入邮箱', trigger: 'change' },
     { type: 'email', message: '请输入正确的邮箱地址', trigger: ['blur', 'change'] }
@@ -205,7 +181,10 @@ export const detailValidate = {
   'archiveOtherVO.businessSiteThreeUrl': [{ required: true, message: '请输入经营场所照3', trigger: 'change' }],
   'archiveExpandVO.licType': [{ required: true, message: '请输入证件类型', trigger: 'change' }],
   'archiveExpandVO.businessLicenseUrl': [{ required: true, message: '请输入营业执照', trigger: 'change' }],
-  'archiveExpandVO.licId': [{ required: true, validator: asyncLicId, trigger: ['blur', 'change'] }],
+  'archiveExpandVO.licId': [
+    { required: true, message: '请输入营业执照注册号', trigger: 'change' },
+    { pattern: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10,12}$)|(^\d{15,20}$)/, message: '请输入正确营业执照注册号', trigger: ['blur', 'change'] }
+  ],
   'archiveExpandVO.licValidityBigen': [{ required: true, message: '请输入营业执照有效期', trigger: 'change' }],
   'archiveExpandVO.businessScope': [{ required: true, message: '请输入经营范围', trigger: 'change' }],
   'archiveExpandVO.businessCategoryRemark': [{ required: true, message: '请输入经营类目', trigger: 'change' }],
@@ -216,7 +195,10 @@ export const detailValidate = {
   'archiveExpandVO.taxRegistrationUrl': [{ required: true, message: '请输入税务登记证', trigger: 'change' }],
   'archiveExpandVO.legalPersonName': [{ required: true, message: '请输入法人姓名', trigger: 'change' }],
   'archiveExpandVO.idType': [{ required: true, message: '请输入证件类型', trigger: 'change' }],
-  'archiveExpandVO.idNumber': [{ required: true, validator: asyncIdNumber, trigger: ['blur', 'change'] }],
+  'archiveExpandVO.idNumber': [
+    { required: true, message: '请输入证件号码', trigger: 'change' },
+    { pattern: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/, message: '请输入正确证件号码', trigger: ['blur', 'change'] }
+  ],
   'archiveExpandVO.idBegin': [{ required: true, message: '请输入证件有效期', trigger: 'change' }],
   'archiveExpandVO.idFrontUrl': [{ required: true, message: '请输入身份证正面照', trigger: 'change' }],
   'archiveExpandVO.idBackUrl': [{ required: true, message: '请输入身份证背面照', trigger: 'change' }],

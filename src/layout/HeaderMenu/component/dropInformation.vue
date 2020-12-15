@@ -4,13 +4,13 @@
       <section class="p-drop_info">
         <el-form class="e-drop_info" ref="passForm" :model="form" label-suffix=":" :rules="rules" size="small" label-width="100px">
           <el-form-item label="账号">
-            <el-input v-model="form.loginName" placeholder="账号" disabled></el-input>
+            <el-input v-model.trim="form.loginName" placeholder="账号" disabled></el-input>
           </el-form-item>
           <el-form-item label="姓名" prop="name">
-            <el-input v-model="form.name" maxlength="30" placeholder="姓名"></el-input>
+            <el-input v-model.trim="form.name" maxlength="30" placeholder="姓名"></el-input>
           </el-form-item>
           <el-form-item label="手机号" prop="mobile">
-            <el-input v-model="form.mobile" maxlength="11" placeholder="手机号" disabled></el-input>
+            <el-input v-model.trim="form.mobile" maxlength="11" placeholder="手机号" disabled></el-input>
           </el-form-item>
         </el-form>
         <el-button type="text" @click="phoneDiaStatus = true">修改</el-button>
