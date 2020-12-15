@@ -1228,6 +1228,7 @@ export default {
           this.form.archiveBaseVO.id = null
           this.form.archiveExpandVO.id = null
           this.form.archiveOtherVO.id = null
+          this.form.archiveBaseVO.wxCertStatus = null
           // this.form.archiveExpandVO.bankCard = null
           // this.form.archiveExpandVO.bankSub = null
           // this.form.archiveExpandVO.bankSubName = null
