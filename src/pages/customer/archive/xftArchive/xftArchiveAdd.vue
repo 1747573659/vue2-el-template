@@ -211,6 +211,7 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.licValidityBigen"
+                  @change="(value) => timeChange(value, 'licValidityBigen')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
@@ -224,6 +225,7 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.licValidityEnd"
+                  @change="(value) => timeChange(value, 'licValidityEnd')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
@@ -274,6 +276,7 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.legalPersonValidityBegin"
+                  @change="(value) => timeChange(value, 'legalPersonValidityBegin')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
@@ -287,6 +290,7 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.legalPersonValidityEnd"
+                  @change="(value) => timeChange(value, 'legalPersonValidityEnd')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
@@ -1105,6 +1109,24 @@ export default {
       this.form.archiveBaseVO.city = value[1]
       this.form.archiveBaseVO.area = value[2]
     },
+    timeChange(value, bindvalue) {
+      if (!value) {
+        switch(bindvalue) {
+          case 'licValidityBigen':
+            this.form.archiveExpandVO.licValidityBigen = ''
+            break
+          case 'licValidityEnd':
+            this.form.archiveExpandVO.licValidityBigen = ''
+            break
+          case 'legalPersonValidityBegin':
+            this.form.archiveExpandVO.legalPersonValidityBegin = ''
+            break
+          case 'legalPersonValidityEnd':
+            this.form.archiveExpandVO.legalPersonValidityEnd = ''
+            break
+        }
+      }
+    },
     bankAreaChange(value) {
       this.form.archiveExpandVO.bankProvince = value[0]
       this.form.archiveExpandVO.bankCity = value[1]
@@ -1199,7 +1221,7 @@ export default {
         this.form.archiveExpandVO.cardType = 1
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
-        this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
+        // this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
         this.bankAreaKey = Symbol('bankAreaKey')
         if (this.isCopy) {
