@@ -93,10 +93,6 @@ export default {
               value: "1",
             },
             {
-              label: "快到期",
-              value: "2",
-            },
-            {
               label: "已过期",
               value: "-1",
             },
@@ -259,9 +255,57 @@ export default {
       if (this.activeTab === '1') {
         this.headers = this.headers1
         this.tableParam = this.tableParam1
+        this.queryFormList = [
+          {
+            type: "select",
+            name: "appStatus",
+            label: "状态",
+            value: "",
+            options: [
+              {
+                label: "全部",
+                value: "",
+              },
+              {
+                label: "有效",
+                value: "1",
+              },
+              {
+                label: "已过期",
+                value: "-1",
+              },
+            ],  
+          },
+        ]
       } else {
         this.headers = this.headers2
         this.tableParam = this.tableParam2
+        this.queryFormList = [
+          {
+            type: "select",
+            name: "appStatus",
+            label: "状态",
+            value: "",
+            options: [
+              {
+                label: "全部",
+                value: "",
+              },
+              {
+                label: "有效",
+                value: "1",
+              },
+              {
+                label: "快到期",
+                value: "2",
+              },
+              {
+                label: "已过期",
+                value: "-1",
+              },
+            ]
+          }
+        ]
       }
       this.handleFilter()
     },
