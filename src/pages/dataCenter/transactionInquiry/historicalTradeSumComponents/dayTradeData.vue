@@ -372,7 +372,9 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.remoteMethod()
+      if (!this.form.ObjContent) {
+        this.remoteMethod()
+      }
     },
     selectPageChange(value) {
       this.form.id = value
@@ -393,6 +395,7 @@ export default {
       this.searchString = ''
       this.selectPageNo = 1
       this.form.id = null
+      this.form.ObjContent = ''
     },
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
