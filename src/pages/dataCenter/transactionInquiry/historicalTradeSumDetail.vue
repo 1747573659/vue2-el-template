@@ -45,7 +45,7 @@
     </div>
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tableLoading">
-      <el-row>
+      <el-row style="padding-bottom: 20px">
         <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
@@ -94,7 +94,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.shopCouponAmount}}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -109,7 +109,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.merchantRefundAmount}}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -121,7 +121,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{tableData.receiptAmount}}</div>
           </div>
         </el-col>
       </el-row>
@@ -132,9 +132,9 @@
         <el-table-column label="交易总额(元)" prop="payAmount"> </el-table-column>
         <el-table-column label="交易笔数" prop="payCount"></el-table-column>
         <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="商家优惠(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="商家实退(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="商家实收(元)" prop="unitAmount"></el-table-column>
+        <el-table-column label="商家优惠(元)" prop="shopCouponAmount"></el-table-column>
+        <el-table-column label="商家实退(元)" prop="merchantRefundAmount"></el-table-column>
+        <el-table-column label="商家实收(元)" prop="receiptAmount"></el-table-column>
       </el-table>
       <div class="el-pagination-box">
         <el-pagination
