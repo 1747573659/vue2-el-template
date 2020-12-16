@@ -68,7 +68,8 @@ const setting = {
           component: _import('setting/account/role/roleAdd'),
           meta: {
             title: '角色管理/新增',
-            name: 'roleAdd'
+            name: 'roleAdd',
+            cache: true
           }
         },
         {
@@ -90,7 +91,8 @@ const setting = {
           component: _import('setting/account/account/accountSettingAdd'),
           meta: {
             title: '账号设置/新增',
-            name: 'accountSettingAdd'
+            name: 'accountSettingAdd',
+            cache: true
           }
         }
       ]
