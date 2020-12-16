@@ -77,6 +77,7 @@ export default function xftValidator() {
     'archiveExpandVO.cardholderPhone': [{ required: true, validator: cardholderPhone, trigger: 'blur' }],
     'archiveExpandVO.cardholderIdType': [{ required: true, message: '请选择持卡人证件类型', trigger: 'change' }],
     'archiveExpandVO.cardholderIdNumber': [{ required: true, message: '持卡人证件号码', trigger: 'blur' }],
+    'archiveExpandVO.cardholderIdBegin': [{ required: true, message: '请输入持卡人证件有效期', trigger: 'blur' }],
     'archiveExpandVO.bankCardFrontUrl': [{ required: true, message: '请上传银行卡正面照', trigger: 'change' }],
     'archiveExpandVO.bankCardBackUrl': [{ required: true, message: '请上传身份证背面照', trigger: 'change' }],
     'archiveExpandVO.openingPermitUrl': [{ required: true, message: '请上传开户许可证', trigger: 'change' }],
