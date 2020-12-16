@@ -1,5 +1,6 @@
 import request from '@/utils/request'
 import axios from 'axios'
+import qs from 'qs'
 
 const urlLinks = {
   // 分页查询
@@ -162,7 +163,7 @@ export function refuse(data) {
   return request({
     url: urlLinks.refuse,
     method: 'POST',
-    data
+    data: qs.stringify(data)
   })
 }
 // 查询授权状态

@@ -886,12 +886,12 @@ export default {
       imageOCR(OCRData).then(async res => {
         this.$message.success('图片解析成功')
         this.form.archiveExpandVO.licId = res.reg_num
-        this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
-        this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
-        // try {
-        //   const companyInfo = await searchCompanyInfo({ key: res.name })
-        //   this.$toast.success('企查查成功')
-        // } catch (error) {}
+        if(/^((?!2999)\d{8})$/.test(res.establish_date)){
+          this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
+        }
+        if(/^((?!2999)\d{8})$/.test(res.valid_period)){
+          this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
+        }
       })
       this.form[type][url] = res.data.path
     },
@@ -908,8 +908,12 @@ export default {
           this.form.archiveExpandVO.legalPersonName = res.name
           this.form.archiveExpandVO.idNumber = res.num
         } else {
-          this.form.archiveExpandVO.legalPersonValidityBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
-          this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
+          if(/^((?!2999)\d{8})$/.test(res.start_date)){
+            this.form.archiveExpandVO.legalPersonValidityBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
+          }
+          if(/^((?!2999)\d{8})$/.test(res.end_date)){
+            this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
+          }
         }
       })
       this.form[type][url] = res.data.path
