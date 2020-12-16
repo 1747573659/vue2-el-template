@@ -53,7 +53,10 @@ export default function xftValidator() {
     'archiveOtherVO.contractOfTenancy2': [{ required: true, message: '请上传租赁合同照二', trigger: 'change' }],
     'archiveOtherVO.contractOfTenancy3': [{ required: true, message: '请上传租赁合同照三', trigger: 'change' }],
     'archiveExpandVO.businessLicenseUrl': [{ required: true, message: '请上传营业执照', trigger: 'change' }],
-    'archiveExpandVO.licId': [{ required: true, message: '请输入营业执照注册号', trigger: 'blur' }],
+    'archiveExpandVO.licId': [
+      { required: true, message: '请输入营业执照注册号', trigger: ['blur', 'change'] },
+      { pattern: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10,12}$)|(^\d{15,20}$)/, message: '请输入正确营业执照注册号', trigger: ['blur', 'change'] }
+    ],
     'archiveExpandVO.licValidityBigen': [{ required: true, message: '请选择营业执照有效期', trigger: 'change' }],
     'archiveExpandVO.legalPersonName': [{ required: true, message: '请输入法人姓名', trigger: 'blur' }],
     'archiveExpandVO.cardType': [{ required: true, message: '请选择证件类型', trigger: 'change' }],

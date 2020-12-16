@@ -182,7 +182,7 @@ export const detailValidate = {
   'archiveExpandVO.licType': [{ required: true, message: '请输入证件类型', trigger: 'change' }],
   'archiveExpandVO.businessLicenseUrl': [{ required: true, message: '请输入营业执照', trigger: 'change' }],
   'archiveExpandVO.licId': [
-    { required: true, message: '请输入营业执照注册号', trigger: 'change' },
+    { required: true, message: '请输入营业执照注册号', trigger: ['blur', 'change'] },
     { pattern: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10,12}$)|(^\d{15,20}$)/, message: '请输入正确营业执照注册号', trigger: ['blur', 'change'] }
   ],
   'archiveExpandVO.licValidityBigen': [{ required: true, message: '请输入营业执照有效期', trigger: 'change' }],
