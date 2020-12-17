@@ -309,7 +309,9 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.remoteMethod()
+      if (!this.form.ObjContent) {
+        this.remoteMethod()
+      }
     },
     selectPageChange(value) {
       this.form.id = value
@@ -330,6 +332,7 @@ export default {
       this.searchString = ''
       this.selectPageNo = 1
       this.form.id = null
+      this.form.ObjContent = ''
     },
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
@@ -386,7 +389,7 @@ export default {
         if (this.tableData.cashierMockDTOS) {
           this.tableData.cashierMockDTOS.forEach(item => {
             this.eChartsDateList.push(item.payDate)
-            this.eChartsDataList.push(item.payAmount)
+            this.eChartsDataList.push(item.receiptAmount)
           })
           this.$nextTick(() => {
             this.loadingChart()
@@ -433,7 +436,7 @@ export default {
                   ${params[0].axisValueLabel}
                 </p>
                 <p style="font-size: 18px;">
-                  <span class="echart-tooltip-bot-title">交易总额:</span>${params[0].data}
+                  <span class="echart-tooltip-bot-title">商户实收:</span>${params[0].data}
                 </p>
               </div>
             `

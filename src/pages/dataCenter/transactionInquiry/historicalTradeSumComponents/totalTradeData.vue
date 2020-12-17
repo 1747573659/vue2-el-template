@@ -1,6 +1,10 @@
 <template>
   <div>
     <div class="search-box">
+      <div class="xdd_tip">
+        <i class="el-icon-info"></i>
+        查询对象为“全部” 或 代理商过滤时，结果会包括下级代理商的交易数据
+      </div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
@@ -285,7 +289,9 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.remoteMethod()
+      if (!this.form.ObjContent) {
+        this.remoteMethod()
+      }
     },
     selectPageChange(value) {
       this.form.id = value
@@ -305,6 +311,7 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
+      this.form.ObjContent = ''
     },
     handleCurrentChange() {},
     handleSizeChange() {},

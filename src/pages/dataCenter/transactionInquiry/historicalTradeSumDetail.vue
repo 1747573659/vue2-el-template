@@ -55,7 +55,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payAmount}}</div>
+            <div class="sum-card-money">{{ tableData.payAmount }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -67,7 +67,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payCount}}</div>
+            <div class="sum-card-money">{{ tableData.payCount }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -79,7 +79,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -88,13 +88,13 @@
               商户优惠(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
-                  由商家承担的参与微信/支付宝/银联<br>
+                  由商家承担的参与微信/支付宝/银联<br />
                   活动的优惠券核销金额
                 </div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.shopCouponAmount}}</div>
+            <div class="sum-card-money">{{ tableData.shopCouponAmount }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -103,13 +103,13 @@
               商户实退(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
-                  退还用户银行卡或零钱账户的<br>
+                  退还用户银行卡或零钱账户的<br />
                   金额+平台优惠券退款金额
                 </div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.merchantRefundAmount}}</div>
+            <div class="sum-card-money">{{ tableData.merchantRefundAmount }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -121,7 +121,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.receiptAmount}}</div>
+            <div class="sum-card-money">{{ tableData.receiptAmount }}</div>
           </div>
         </el-col>
       </el-row>
@@ -249,11 +249,13 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.remoteMethod()
+      if (!this.form.companyName) {
+        this.remoteMethod()
+      }
     },
     selectPageChange(value) {
       if (this.searchType === 1) {
-        this.form.agentId= value
+        this.form.agentId = value
       } else {
         this.form.adminId = value
       }
@@ -274,6 +276,8 @@ export default {
       this.searchString = ''
       this.selectPageNo = 1
       this.form.id = null
+      this.form.companyName = ''
+      this.form.name = ''
     },
     handleCurrentChange(val) {
       this.currentPage = val

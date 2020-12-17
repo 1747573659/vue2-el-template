@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i>单次查询月份的最长跨度为12个月</div>
+      <div class="xdd_tip">
+        <i class="el-icon-info"></i>
+        单次查询月份的最长跨度为12个月；查询对象为“全部” 或 代理商过滤时，结果会包括下级代理商的交易数据
+      </div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
@@ -364,7 +367,9 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.remoteMethod()
+      if (!this.form.ObjContent) {
+        this.remoteMethod()
+      }
     },
     selectPageChange(value) {
       this.form.id = value
@@ -384,6 +389,7 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
+      this.form.ObjContent = ''
     },
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
@@ -408,7 +414,7 @@ export default {
         if (this.tableData.cashierMockDTOS) {
           this.tableData.cashierMockDTOS.forEach(item => {
             this.eChartsDateList.push(item.payDate)
-            this.eChartsDataList.push(item.payAmount)
+            this.eChartsDataList.push(item.receiptAmount)
           })
           this.$nextTick(() => {
             this.loadingChart()
@@ -449,7 +455,7 @@ export default {
                   ${params[0].axisValueLabel}
                 </p>
                 <p style="font-size: 18px;">
-                  <span class="echart-tooltip-bot-title">交易总额:</span>${params[0].data}
+                  <span class="echart-tooltip-bot-title">商户实收:</span>${params[0].data}
                 </p>
               </div>
             `

@@ -1,16 +1,17 @@
 <template>
   <div class="app-container">
-    <el-tabs v-model="activeTab" @tab-click="handleClick" class="tp-tabs">
-      <el-tab-pane label="商户授权模式" name="1"></el-tab-pane>
-      <el-tab-pane label="门店授权模式" name="2"></el-tab-pane>
-    </el-tabs>
+    <el-menu :default-active="activeTab" class="el-menu-sum" mode="horizontal" @select="handleClick">
+      <el-menu-item index="1">商户授权模式</el-menu-item>
+      <el-menu-item index="2">门店授权模式</el-menu-item>
+    </el-menu>
     <div class="search-box">
       <query-group
         className="xdd-btn-block__w240"
         :queryFormList.sync="queryFormList"
         :queryParams="queryParams"
-        @search="handleFilter"
+        @search="(e) => handleFilter(e, 'isSearch')"
       >
+      <!-- ↑↑↑ 上一个人的代码写的太难改了，我只能这样改，写成这样并不是我本意 -->
         <template v-slot:formheader>
           <el-form-item label="商户">
             <select-page
@@ -251,7 +252,9 @@ export default {
     },
   },
   methods: {
-    handleClick(tab, event) {
+    handleClick(key, keyPath) {
+      console.log(key, keyPath)
+      this.activeTab = String(key)
       if (this.activeTab === '1') {
         this.headers = this.headers1
         this.tableParam = this.tableParam1
@@ -309,8 +312,11 @@ export default {
       }
       this.handleFilter()
     },
-    handleFilter(e) {
-      this.loading = true;
+    handleFilter(e, type) {
+      this.loading = true
+      if (type === 'isSearch') {
+        this.tableParam.page = 1
+      }
       if (this.activeTab === '1') {
         let data = Object.assign(this.tableParam, e);
         queryWmWhitePage(data)
@@ -375,4 +381,22 @@ export default {
       color: #3B83FF!important;
     }
   }
+  .el-menu-sum {
+  margin-left: 16px;
+  /deep/.el-menu-item {
+    font-size: 16px;
+    font-family: PingFangSC-Regular, PingFang SC;
+    font-weight: 400;
+    color: #3d4966;
+  }
+  /deep/.el-menu-item.is-active {
+    border-bottom: 2px solid #3377ff;
+  }
+  /deep/.el-menu-item.is-active {
+    font-size: 16px;
+    font-family: PingFangSC-Medium, PingFang SC;
+    font-weight: 600;
+    color: #1f2e4d;
+  }
+}
 </style>
