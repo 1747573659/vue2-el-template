@@ -21,16 +21,8 @@
       @clear="clear()"
       @visible-change="visibleChange"
     >
-      <el-option
-        v-for="item in options"
-        :key="item[id]"
-        :label="item[name]"
-        :value="item[id]"
-      >
-      </el-option>
-      <div class="loading-page">
-        {{ isMaxPage ? "已全部加载完毕" : "正在加载下一页" }}
-      </div>
+      <el-option v-for="item in options" :key="item[id]" :label="item[name]" :value="item[id]"> </el-option>
+      <div class="loading-page">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}</div>
     </el-select>
   </div>
 </template>
@@ -43,111 +35,108 @@ export default {
       isMaxPage: false,
       options: [],
       page: 1,
-      placeText: "",
-      disabled: false,
-    };
+      placeText: '',
+      disabled: false
+    }
   },
   props: {
     placeholder: {
       type: String,
-      default: "",
+      default: ''
     },
     bvalue: {
       type: [String, Array, Number],
-      default: "",
+      default: ''
     },
     isMultiple: {
       type: Boolean,
-      default: false,
+      default: false
     },
     isNeedinitId: {
       type: Boolean,
-      default: false,
+      default: false
     },
     id: {
       type: String,
-      default: "id",
+      default: 'id'
     },
     name: {
       type: String,
-      default: "label",
+      default: 'label'
     },
     searchName: {
       type: String,
-      default: "",
+      default: ''
     },
     parame: {
       type: Object,
-      default: null,
+      default: null
     },
     request: {
       type: Function,
-      default: null,
+      default: null
     },
     width: {
       type: String,
-      default: "",
-    },
+      default: ''
+    }
   },
   computed: {
     selValue: {
       get() {
-        return this.bvalue;
+        return this.bvalue
       },
       set(val) {
-        this.$emit("update:bvalue", val);
-      },
-    },
+        this.$emit('update:bvalue', val)
+      }
+    }
   },
   directives: {
     loadmore: {
       // 指令的定义
-      bind: function (el, binding) {
+      bind: function(el, binding) {
         // 获取km-ui定义好的scroll盒子
-        const SELECTWRAP_DOM = el.querySelector(
-          ".el-select-dropdown .el-select-dropdown__wrap"
-        );
-        SELECTWRAP_DOM.addEventListener("scroll", function () {
-          const CONDITION =
-            this.scrollHeight - this.scrollTop <= this.clientHeight;
+        const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap')
+        SELECTWRAP_DOM.addEventListener('scroll', function() {
+          const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight
           if (CONDITION) {
-            binding.value();
+            binding.value()
           }
-        });
-      },
-    },
+        })
+      }
+    }
   },
   watch: {
-    parame: function (val, oldVal) {
+    parame: function(val, oldVal) {
       if (val) {
         Object.keys(val).forEach((value, index) => {
           if (val[value] && val[value] !== oldVal[value]) {
-            this.selValue = "";
-            this.isInit = true;
-            this.options = [];
-            this.page = 1;
-            this.isMaxPage = false;
-            this.remoteMethod();
+            this.selValue = ''
+            this.isInit = true
+            this.options = []
+            this.page = 1
+            this.isMaxPage = false
+            this.remoteMethod()
           }
-          if (val[value] === "") {
-            this.selValue = "";
-            this.isInit = true;
-            this.options = [];
-            this.page = 1;
-            this.disabled = true;
-            this.isMaxPage = false;
+          if (val[value] === '') {
+            this.selValue = ''
+            this.isInit = true
+            this.options = []
+            this.page = 1
+            this.disabled = true
+            this.isMaxPage = false
           }
-        });
+        })
       }
-    },
+    }
   },
   mounted() {
-    this.isInit = false;
+    this.isInit = false
     if (!this.isMultiple) {
-      this.remoteMethod();
+      this.remoteMethod()
     } else {
-      this.placeText = "全部";
-      this.disabled = true;
+      this.placeText = '全部'
+      this.disabled = true
     }
   },
   methods: {
@@ -158,88 +147,85 @@ export default {
           // 如果options为空，下面走没有意义所以return
           if (this.selValue) {
             //筛选一下获取options
-            this.remoteMethod(this.selValue);
+            this.remoteMethod(this.selValue)
             setTimeout(() => {
-              this.visibleChange(true);
-            }, 500); //由于之前的人没有写回掉，所以先通过计时器自己回掉
+              this.visibleChange(true)
+            }, 500) //由于之前的人没有写回掉，所以先通过计时器自己回掉
           }
-          return;
+          return
         }
         // 如果展开
-        let label = "";
+        let label = ''
         for (let i = 0; i < this.options.length; i++) {
-          const item = this.options[i];
-          if (
-            this.selValue === item[this.id] ||
-            this.bvalue === item[this.name]
-          ) {
-            label = item[this.name];
+          const item = this.options[i]
+          if (this.selValue === item[this.id] || this.bvalue === item[this.name]) {
+            label = item[this.name]
           }
         }
         setTimeout(() => {
-          document.getElementById(this.domID).value = label || ""; //通过ID原生绑定
-        }, 200);
+          document.getElementById(this.domID).value = label || '' //通过ID原生绑定
+        }, 200)
       }
     },
     clear() {
-      this.page = 1;
-      this.options = [];
-      this.remoteMethod();
+      this.page = 1
+      this.options = []
+      this.remoteMethod()
     },
     remoteMethod(query) {
-      let data = {};
+      let data = {}
       if (query !== undefined) {
-        this.options = [];
-        this.page = 1;
-        this.isMaxPage = false;
+        this.options = []
+        this.page = 1
+        this.isMaxPage = false
         data = {
           page: this.page,
           rows: 10,
-          [this.searchName]: query,
-        };
-        this.isInit = false;
+          [this.searchName]: query
+        }
+        this.isInit = false
       } else {
         if (this.isNeedinitId) {
           data = {
-            [this.searchName]: "",
+            [this.searchName]: '',
             page: this.page,
-            rows: 10,
-          };
+            rows: 10
+          }
         } else {
           data = {
             page: this.page,
-            rows: 10,
-          };
+            rows: 10
+          }
         }
       }
       this.request(Object.assign(data, this.parame))
-        .then((res) => {
-          if (!res.results) this.isMaxPage = true;
-          if (res.results && res.results.length < 10) this.isMaxPage = true;
+        .then(res => {
+          if (!res.results) this.isMaxPage = true
+          if (res.results && res.results.length < 10) this.isMaxPage = true
           if (this.isInit && !res.results) {
-            this.placeText = "全部";
-            this.disabled = true;
+            this.placeText = '全部'
+            this.disabled = true
           } else {
             if (!this.isMultiple) {
-              this.placeText = "请选择" + this.placeholder;
+              this.placeText = '请选择' + this.placeholder
             } else {
-              this.placeText = "全部";
+              this.placeText = '全部'
             }
             //this.placeText="请选择"+this.placeholder
-            this.isInit = false;
-            this.disabled = false;
+            this.isInit = false
+            this.disabled = false
           }
-          this.page++;
+          this.page++
           if (query !== undefined) {
-            this.options = res.results || [];
+            this.options = res.results || []
           } else {
-            this.options = this.options.concat(res.results || []);
+            this.options = this.options.concat(res.results || [])
           }
         })
-        .finally(() => {});
-    },
-  },
-};
+        .finally(() => {})
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

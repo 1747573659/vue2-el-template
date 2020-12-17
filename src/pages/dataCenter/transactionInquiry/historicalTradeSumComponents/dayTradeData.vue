@@ -34,7 +34,7 @@
           <el-col :span="21">
             <el-form-item label="支付场景">
               <el-select style="width: 240px" clearable filterable v-model="form.payPlugin" placeholder="全部">
-                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="查询对象" prop="paymentCode">
@@ -44,11 +44,7 @@
                 :value.sync="form.searchObject"
                 @change="searchObjectChange"
                 :options="searchObjectList"
-                :optionsItem="{
-                  key: 'id',
-                  label: 'name',
-                  value: 'id'
-                }"
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               />
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
@@ -160,7 +156,7 @@
         </el-col>
       </el-row>
       <!-- ECHARTS -->
-      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%; height: 400px"></div>
+      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%;height:400px;"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table" style="padding-top: 16px">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
@@ -395,7 +391,6 @@ export default {
       this.searchString = ''
       this.selectPageNo = 1
       this.form.id = null
-      this.form.ObjContent = ''
     },
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
@@ -443,8 +438,7 @@ export default {
         storeId: this.form.searchObject === 3 ? this.form.id : '',
         startTime: this.form.time ? this.form.time[0] : '',
         endTime: this.form.time ? this.form.time[1] : '',
-        payMethod: this.form.payMethod,
-        payPlugin: this.form.payPlugin
+        payMethod: this.form.payMethod
       }
       try {
         const res = await cashierData(data)
@@ -469,13 +463,7 @@ export default {
     detail(row) {
       this.$router.push({
         name: 'historicalTradeSumDetail',
-        query: {
-          type: 2,
-          payDate: row.payDate,
-          payMethod: this.form.payMethod,
-          searchObject: this.form.searchObject,
-          id: this.form.id
-        }
+        query: { type: 2, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id }
       })
     },
     async getpaymentMethodVoList() {

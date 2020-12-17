@@ -3,56 +3,25 @@
     <div class="p-login_picture"></div>
     <div class="p-login_con">
       <header>
-        <img
-          src="../../assets/images/menu/logo.png"
-          class="p-login_logo"
-          alt="logo"
-        />
+        <img src="../../assets/images/menu/logo.png" class="p-login_logo" alt="logo" />
       </header>
       <section>
         <div class="p-login_form">
           <header class="p-loginForm_head">欢迎登录渠道管理系统</header>
-          <el-form
-            :model="loginForm"
-            :rules="loginRules"
-            ref="ruleForm"
-            class="p-loginForm_con"
-            @submit.native.prevent
-          >
+          <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="p-loginForm_con" @submit.native.prevent>
             <el-form-item prop="userName">
               <label class="e-form_label">账号</label>
-              <el-input
-                clearable
-                v-model.trim="loginForm.userName"
-                @keyup.enter.native="handleLogin"
-                placeholder="请输入用户名"
-              ></el-input>
+              <el-input clearable v-model.trim="loginForm.userName" @keyup.enter.native="handleSubmitCode" placeholder="请输入用户名"></el-input>
             </el-form-item>
             <el-form-item prop="password">
               <label class="e-form_label">密码</label>
-              <el-input
-                clearable
-                type="password"
-                v-model.trim="loginForm.password"
-                @keyup.enter.native="handleLogin"
-                placeholder="请输入密码"
-              ></el-input>
+              <el-input clearable type="password" v-model.trim="loginForm.password" @keyup.enter.native="handleSubmitCode" placeholder="请输入密码"></el-input>
             </el-form-item>
           </el-form>
-          <el-button
-            type="primary"
-            :loading="isLoading"
-            @click.native="handleSubmitCode"
-            class="e-form_btn"
-            >登录</el-button
-          >
+          <el-button type="primary" :loading="isLoading" @click.native="handleSubmitCode" class="e-form_btn">登录</el-button>
           <div class="p-login_regist">
             登录即代表你同意
-            <a
-              href="http://ceshi-file-oss.oss-cn-hangzhou.aliyuncs.com/legalNotices/privacyPolicy.html"
-              target="_blank"
-              >《用户使用协议》</a
-            >
+            <a href="http://ceshi-file-oss.oss-cn-hangzhou.aliyuncs.com/legalNotices/privacyPolicy.html" target="_blank">《用户使用协议》</a>
           </div>
         </div>
       </section>
@@ -62,11 +31,7 @@
       </footer>
     </div>
     <section class="login_nocolor">
-      <el-dialog
-        :visible.sync="loginVisible"
-        width="318px"
-        :close-on-click-modal="false"
-      >
+      <el-dialog :visible.sync="loginVisible" width="318px" :close-on-click-modal="false">
         <slide-login
           v-if="loginVisible"
           :loading="loading"
@@ -88,63 +53,61 @@
 </template>
 
 <script>
-import { checkSliderImg, initImg } from "@/api/login";
-import slideLogin from "./components/slide-login";
+import { checkSliderImg, initImg } from '@/api/login'
+import slideLogin from './components/slide-login'
 
 export default {
   components: { slideLogin },
   data() {
     var userNamePass = (rule, value, callback) => {
       if (/^1[3456789]\d{9}$/.test(value)) {
-        callback();
+        callback()
       } else {
-        callback("请输入账号");
+        callback('请输入账号')
       }
-    };
+    }
     return {
       isLoading: false,
       loginVisible: false,
       loading: false,
-      text: "拖动滑块完成校验",
-      title: "请完成安全校验",
-      slideBlockImgBg: "",
-      slideBlockImg: "",
+      text: '拖动滑块完成校验',
+      title: '请完成安全校验',
+      slideBlockImgBg: '',
+      slideBlockImg: '',
       offsetX: 0,
       offsetY: 0,
-      status: "pendding",
-      key: "",
+      status: 'pendding',
+      key: '',
       loginForm: {
-        userName: "",
-        password: "",
-        codeKey: "",
+        userName: '',
+        password: '',
+        codeKey: ''
       },
       loginRules: {
         userName: [
-          { required: true, trigger: "blur", validator: userNamePass },
-          { required: true, trigger: "change", message: "请输入账号" },
+          { required: true, trigger: 'blur', validator: userNamePass },
+          { required: true, trigger: 'change', message: '请输入账号'}
         ],
-        password: [
-          { required: true, trigger: "change", message: "请输入密码" },
-        ],
+        password: [{ required: true, trigger: 'change', message: '请输入密码' }]
       },
-      redirect: "",
-      query: "",
-    };
+      redirect: '',
+      query: ''
+    }
   },
   mounted() {
-    this.initImg();
+    this.initImg()
   },
   watch: {
     $route: {
-      handler: function (route) {
-        this.redirect = route.query && route.query.redirect;
-        this.query = route.query && route.query.query;
+      handler: function(route) {
+        this.redirect = route.query && route.query.redirect
+        this.query = route.query && route.query.query
       },
-      immediate: true,
-    },
+      immediate: true
+    }
   },
   methods: {
-    initImg: async function () {
+    initImg: async function() {
       try {
         this.loading = true
         const res = await initImg()
@@ -160,26 +123,26 @@ export default {
     },
     // 刷新图片验证
     refresh() {
-      this.initImg();
+      this.initImg()
     },
     // 关闭图片验证
     close() {
-      this.loginVisible = false;
+      this.loginVisible = false
     },
     // 验证
-    mouseUp: async function (imgX) {
+    mouseUp: async function(imgX) {
       try {
         const data = {
           x: imgX,
           y: this.offsetY,
-          token: this.key,
-        };
-        const res = await checkSliderImg(data);
-        this.status = "success";
+          token: this.key
+        }
+        const res = await checkSliderImg(data)
+        this.status = 'success'
         setTimeout(() => {
-          this.loginVisible = false;
-          this.handleLogin();
-        }, 500);
+          this.loginVisible = false
+          this.handleLogin()
+        }, 500)
       } catch (error) {
         this.status = 'fail'
       }
@@ -190,46 +153,34 @@ export default {
       })
     },
     handleLogin() {
-      this.$refs.ruleForm.validate(async (valid) => {
+      this.$refs.ruleForm.validate(async valid => {
         if (valid) {
-          this.isLoading = true;
+          this.isLoading = true
           this.$store
-            .dispatch("login", this.loginForm)
+            .dispatch('login', this.loginForm)
             .then(() => {
-              const routes = this.$store.getters.routes;
-              const utilRoutePoint = () =>
-                this.$router.push({
-                  path: JSON.stringify(routes).includes("home")
-                    ? "/"
-                    : routes[0].redirect,
-                });
+              const routes = this.$store.getters.routes
+              const utilRoutePoint = () => this.$router.push({ path: JSON.stringify(routes).includes('home') ? '/' : routes[0].redirect })
               // 重定向存在时，跳转重定向路径，不存在时，判断是否包含home,包含跳转home，不包含跳转routes首个路由，由于系统基础路由默认包含home，故此判断暂时多余
               if (this.redirect) {
-                const rotationData = this.redirect.split("/");
-                rotationData.shift();
-                if (
-                  rotationData.every((item) =>
-                    JSON.stringify(routes).includes(item)
-                  )
-                ) {
-                  this.$router.push({
-                    path: this.redirect,
-                    query: this.query ? JSON.parse(this.query) : "",
-                  });
-                } else utilRoutePoint();
-              } else utilRoutePoint();
+                const rotationData = this.redirect.split('/')
+                rotationData.shift()
+                if (rotationData.every(item => JSON.stringify(routes).includes(item))) {
+                  this.$router.push({ path: this.redirect, query: this.query ? JSON.parse(this.query) : '' })
+                } else utilRoutePoint()
+              } else utilRoutePoint()
             })
             .catch(err => {
               this.loginForm.codeKey = ''
             })
             .finally(() => {
-              this.isLoading = false;
-            });
+              this.isLoading = false
+            })
         }
-      });
-    },
-  },
-};
+      })
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
@@ -258,8 +209,7 @@ export default {
     &_picture {
       flex: 1 1 auto;
       height: 100%;
-      background: url("../../assets/images/login/login.jpg") center center
-        no-repeat;
+      background: url('../../assets/images/login/login.jpg') center center no-repeat;
     }
     &_con {
       width: 32%;

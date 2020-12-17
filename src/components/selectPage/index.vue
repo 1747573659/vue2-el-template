@@ -17,9 +17,7 @@
       :remote-method="remoteMethod"
     >
       <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-      <div class="loading-page">
-        {{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}
-      </div>
+      <div class="loading-page">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}</div>
     </el-select>
   </div>
 </template>

@@ -1,19 +1,8 @@
 <template>
   <div>
     <div class="search-box">
-      <div class="xdd_tip">
-        <i class="el-icon-info"></i>查询对象为“全部”或代理商过滤时，结果会包括下级代理商的交易数据
-      </div>
-      <el-form
-        :inline="true"
-        :model="form"
-        label-suffix=":"
-        @submit.native.prevent
-        label-width="80px"
-        ref="form"
-        size="small"
-        class="xdd-btn-block__w240"
-      >
+      <div class="xdd_tip"><i class="el-icon-info"></i>查询对象为“全部”或代理商过滤时，结果会包括下级代理商的交易数据</div>
+      <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
             <el-form-item label="查询对象" prop="paymentCode">
@@ -23,11 +12,7 @@
                 :value.sync="form.searchObject"
                 @change="searchObjectChange"
                 :options="searchObjectList"
-                :optionsItem="{
-                  key: 'id',
-                  label: 'name',
-                  value: 'id',
-                }"
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               />
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
@@ -49,7 +34,7 @@
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
               <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
-                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -58,17 +43,11 @@
           <el-col :span="21">
             <el-form-item label="支付场景">
               <el-select style="width: 240px" clearable v-model="form.payPlugin" filterable placeholder="全部">
-                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
-              <el-button
-                type="primary"
-                class="km-archive-search"
-                :loading="cxLoading"
-                @click="getList"
-                >查询</el-button
-              >
+              <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
               <!-- <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出</el-button>
               <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出记录</el-button> -->
             </el-form-item>
@@ -84,9 +63,7 @@
             <div class="sum-card-title">
               交易总额(元)
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">
-                  当前过滤条件的交易总额<br />(未扣除退款订单金额)
-                </div>
+                <div slot="content">当前过滤条件的交易总额<br />(未扣除退款订单金额)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
@@ -98,9 +75,7 @@
             <div class="sum-card-title">
               交易笔数
               <el-tooltip effect="dark" placement="top">
-                <div slot="content">
-                  当前过滤条件的交易笔数<br />(未扣除退款订单笔数)
-                </div>
+                <div slot="content">当前过滤条件的交易笔数<br />(未扣除退款订单笔数)</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
@@ -125,13 +100,13 @@
               商户优惠(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
-                  由商家承担的参与微信/支付宝/银联<br>
+                  由商家承担的参与微信/支付宝/银联<br />
                   活动的优惠券核销金额
                 </div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.shopCouponAmount}}</div>
+            <div class="sum-card-money">{{ tableData.shopCouponAmount }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -140,13 +115,13 @@
               商户实退(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
-                  退还用户银行卡或零钱账户的<br>
+                  退还用户银行卡或零钱账户的<br />
                   金额+平台优惠券退款金额
                 </div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.merchantRefundAmount}}</div>
+            <div class="sum-card-money">{{ tableData.merchantRefundAmount }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -158,24 +133,17 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.receiptAmount}}</div>
+            <div class="sum-card-money">{{ tableData.receiptAmount }}</div>
           </div>
         </el-col>
       </el-row>
       <!-- ECHARTS -->
-      <div
-        id="eChart"
-        v-if="tableData.cashierMockDTOS"
-        style="width: 100%; height: 400px"
-      ></div>
+      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%;height:400px;"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
         <el-table-column label="日期" prop="payDate"></el-table-column>
-        <el-table-column
-          label="交易总额(元)"
-          prop="payAmount"
-        ></el-table-column>
+        <el-table-column label="交易总额(元)" prop="payAmount"></el-table-column>
         <el-table-column label="交易笔数" prop="payCount"></el-table-column>
         <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
         <el-table-column label="商家优惠(元)" prop="shopCouponAmount"></el-table-column>
@@ -187,85 +155,82 @@
 </template>
 
 <script>
-import selectPage from "@/components/selectPage";
-import { getLocal } from "@/utils/storage";
-import moment from "moment";
-import selectCopy from "@/components/selectCopy";
-import {
-  paymentMethodVoList,
-  cashierData,
-  queryNewAgentPage,
-  queryShopListByPage,
-  queryStorePage,
-  paymentPluginVoList
-} from "@/api/dataCenter/historiyTrade";
+import selectPage from '@/components/selectPage'
+import { getLocal } from '@/utils/storage'
+import moment from 'moment'
+import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList } from '@/api/dataCenter/historiyTrade'
+import selectCopy from '@/components/selectCopy'
 
 export default {
-  name: "dayTradeData",
+  name: 'dayTradeData',
   components: {
     selectPage,
-    selectCopy,
+    selectCopy
   },
   data() {
-    let maxTime = "";
-    let minTime = "";
+    let maxTime = ''
+    let minTime = ''
     return {
       selectPageNo: 1,
-      activeIndex: "1",
+      activeIndex: '1',
       isMaxPage: false,
-      selectPageName: "",
+      selectPageName: '',
       form: {
         time: [],
-        payMethod: "",
-        searchObject: "",
-        ObjContent: "",
+        payMethod: '',
+        searchObject: '',
+        ObjContent: '',
         payPlugin: ''
       },
-      payPluginList: [{id: '', name: '全部'}],
+      payPluginList: [{ id: '', name: '全部' }],
       paymentList: [],
       ObjContentList: [],
       searchObjectList: [
-        { id: "", name: "全部" },
-        { id: 1, name: "代理商" },
-        { id: 2, name: "商户" },
-        { id: 3, name: "门店" },
+        { id: '', name: '全部' },
+        { id: 1, name: '代理商' },
+        { id: 2, name: '商户' },
+        { id: 3, name: '门店' }
       ],
       tableLoading: false,
       tableData: {},
-      questionIcon: require("@/assets/images/icon/questioin.png"),
-      searchString: "",
+      questionIcon: require('@/assets/images/icon/questioin.png'),
+      searchString: '',
       eChartsDateList: [],
       eChartsDataList: [],
-      cxLoading: false,
-    };
+      cxLoading: false
+    }
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210;
+      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
     },
     isSalesman() {
-      return Boolean(JSON.parse(getLocal("userInfo")).clerkId);
-    },
+      return Boolean(JSON.parse(getLocal('userInfo')).clerkId)
+    }
   },
   mounted() {
-    this.getpaymentMethodVoList();
-    this.getList();
+    this.getpaymentMethodVoList()
+    this.getList()
   },
   created() {
     if (this.isSalesman) {
       this.searchObjectList = [
-        { id: "", name: "全部" },
-        { id: 2, name: "商户" },
-        { id: 3, name: "门店" },
-      ];
+        { id: '', name: '全部' },
+        { id: 2, name: '商户' },
+        { id: 3, name: '门店' }
+      ]
     }
     this.form.time = [
-      moment(new Date().getTime()).subtract(7, "days").format("YYYY-MM-DD"),
-      moment(new Date().getTime()).subtract(1, "days").format("YYYY-MM-DD"),
-    ];
+      moment(new Date().getTime())
+        .subtract(7, 'days')
+        .format('YYYY-MM-DD'),
+      moment(new Date().getTime())
+        .subtract(1, 'days')
+        .format('YYYY-MM-DD')
+    ]
   },
   methods: {
-    async payMethodChange (value) {
+    async payMethodChange(value) {
       let childs = ''
       console.log(value)
       this.paymentList.forEach(item => {
@@ -279,195 +244,189 @@ export default {
       try {
         let res = await paymentPluginVoList(data)
         this.payPluginList = res
-        this.payPluginList.unshift({id: '', name: '全部'})
+        this.payPluginList.unshift({ id: '', name: '全部' })
       } catch (error) {}
     },
     searchObjectChange(value) {
-      this.form.id = null;
-      this.form.ObjContent = null;
-      this.isMaxPage = false;
-      this.ObjContentList = [];
-      this.searchString = "";
-      this.selectPageNo = 1;
+      this.form.id = null
+      this.form.ObjContent = null
+      this.isMaxPage = false
+      this.ObjContentList = []
+      this.searchString = ''
+      this.selectPageNo = 1
     },
     async remoteMethod(value) {
       if (!this.form.searchObject) {
-        this.$message.warning("请先选择查询对象");
-        return;
+        this.$message.warning('请先选择查询对象')
+        return
       }
       // 当输入新的值的时候，就把相关数据进行情况
       if (value !== this.searchString) {
-        this.selectPageNo = 1;
-        this.searchString = "";
-        this.isMaxPage = false;
-        this.ObjContentList = [];
+        this.selectPageNo = 1
+        this.searchString = ''
+        this.isMaxPage = false
+        this.ObjContentList = []
       }
       // 只有value有值的时候才去请求接口
       let data = {
-        id: value || "",
+        id: value || '',
         page: this.selectPageNo,
-        rows: 10,
-      };
+        rows: 10
+      }
       try {
-        let res;
+        let res
         if (this.form.searchObject === 1) {
-          res = await queryNewAgentPage(data);
-          this.selectPageName = "name";
+          res = await queryNewAgentPage(data)
+          this.selectPageName = 'name'
         } else if (this.form.searchObject === 2) {
-          res = await queryShopListByPage(data);
-          this.selectPageName = "companyName";
+          res = await queryShopListByPage(data)
+          this.selectPageName = 'companyName'
         } else if (this.form.searchObject === 3) {
-          res = await queryStorePage(data);
-          this.selectPageName = "name";
+          res = await queryStorePage(data)
+          this.selectPageName = 'name'
         }
         // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
         if (res.results && res.results.length !== 0) {
-          this.ObjContentList = this.ObjContentList.concat(res.results);
-          this.searchString = value;
+          this.ObjContentList = this.ObjContentList.concat(res.results)
+          this.searchString = value
           if (res.results?.length !== 10) {
-            this.isMaxPage = true;
+            this.isMaxPage = true
           }
         } else {
-          this.isMaxPage = true;
+          this.isMaxPage = true
         }
       } catch (error) {}
     },
     loadMore() {
       // 如果不是最后一页就加载下一页
       if (!this.isMaxPage) {
-        this.selectPageNo++;
-        this.remoteMethod(this.searchString);
+        this.selectPageNo++
+        this.remoteMethod(this.searchString)
       }
     },
     selectPageFocus() {
-      this.isMaxPage = false;
-      this.ObjContentList = [];
-      this.searchString = "";
-      this.selectPageNo = 1;
-      this.remoteMethod();
+      this.isMaxPage = false
+      this.ObjContentList = []
+      this.searchString = ''
+      this.selectPageNo = 1
+      this.remoteMethod()
     },
     selectPageChange(value) {
-      this.form.id = value;
-      this.ObjContentList.forEach((item) => {
+      this.form.id = value
+      this.ObjContentList.forEach(item => {
         if (item.id === value) {
           if (this.form.searchObject === 2) {
-            this.form.ObjContent = item.companyName;
+            this.form.ObjContent = item.companyName
           } else {
-            this.form.ObjContent = item.name;
+            this.form.ObjContent = item.name
           }
         }
-      });
+      })
     },
     // 如果点击了清除按钮则将相关数据清空
     selectPageClear() {
-      this.isMaxPage = false;
-      this.ObjContentList = [];
-      this.searchString = "";
-      this.selectPageNo = 1;
-      this.form.id = null;
+      this.isMaxPage = false
+      this.ObjContentList = []
+      this.searchString = ''
+      this.selectPageNo = 1
+      this.form.id = null
     },
     handleSelect(key, keyPath) {
-      this.activeIndex = String(key);
+      this.activeIndex = String(key)
     },
     setSearchTime(type) {
       switch (type) {
-        case "yesterday":
+        case 'yesterday':
           this.form.time = [
             moment(new Date().getTime())
-              .subtract(1, "days")
-              .format("YYYY-MM-DD"),
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD'),
             moment(new Date().getTime())
-              .subtract(1, "days")
-              .format("YYYY-MM-DD"),
-          ];
-          break;
-        case "week":
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD')
+          ]
+          break
+        case 'week':
           this.form.time = [
             moment(new Date().getTime())
-              .subtract(7, "days")
-              .format("YYYY-MM-DD"),
+              .subtract(7, 'days')
+              .format('YYYY-MM-DD'),
             moment(new Date().getTime())
-              .subtract(1, "days")
-              .format("YYYY-MM-DD"),
-          ];
-          break;
-        case "month":
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD')
+          ]
+          break
+        case 'month':
           this.form.time = [
             moment(new Date().getTime())
-              .subtract(30, "days")
-              .format("YYYY-MM-DD"),
+              .subtract(30, 'days')
+              .format('YYYY-MM-DD'),
             moment(new Date().getTime())
-              .subtract(1, "days")
-              .format("YYYY-MM-DD"),
-          ];
-          break;
+              .subtract(1, 'days')
+              .format('YYYY-MM-DD')
+          ]
+          break
       }
     },
     async getList() {
-      this.tableLoading = true;
+      this.tableLoading = true
       let data = {
         type: 1,
-        adminId: this.form.searchObject === 2 ? this.form.id : "",
-        agentId: this.form.searchObject === 1 ? this.form.id : "",
-        storeId: this.form.searchObject === 3 ? this.form.id : "",
+        adminId: this.form.searchObject === 2 ? this.form.id : '',
+        agentId: this.form.searchObject === 1 ? this.form.id : '',
+        storeId: this.form.searchObject === 3 ? this.form.id : '',
         payMethod: this.form.payMethod,
         payPlugin: this.form.payPlugin
-      };
+      }
       try {
-        const res = await cashierData(data);
-        this.tableData = res;
-        this.eChartsDateList = [];
-        this.eChartsDataList = [];
+        const res = await cashierData(data)
+        this.tableData = res
+        this.eChartsDateList = []
+        this.eChartsDataList = []
         if (this.tableData.cashierMockDTOS) {
-          this.tableData.cashierMockDTOS.forEach((item) => {
-            this.eChartsDateList.push(item.payDate);
-            this.eChartsDataList.push(item.payAmount);
-          });
+          this.tableData.cashierMockDTOS.forEach(item => {
+            this.eChartsDateList.push(item.payDate)
+            this.eChartsDataList.push(item.payAmount)
+          })
           this.$nextTick(() => {
-            this.loadingChart();
-          });
-          this.tableData.cashierMockDTOS = this.tableData.cashierMockDTOS.reverse();
+            this.loadingChart()
+          })
+          this.tableData.cashierMockDTOS = this.tableData.cashierMockDTOS.reverse()
         }
       } catch (error) {
       } finally {
-        this.tableLoading = false;
+        this.tableLoading = false
       }
     },
     detail(row) {
       this.$router.push({
-        name: "historicalTradeSumDetail",
-        query: {
-          type: 2,
-          payDate: row.payDate,
-          payMethod: this.form.payMethod,
-          searchObject: this.form.searchObject,
-          id: this.form.id,
-        },
-      });
+        name: 'historicalTradeSumDetail',
+        query: { type: 2, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id }
+      })
     },
     async getpaymentMethodVoList() {
       try {
-        const res = await paymentMethodVoList();
-        this.paymentList = res;
-        this.paymentList.unshift({ id: "", name: "全部" });
+        const res = await paymentMethodVoList()
+        this.paymentList = res
+        this.paymentList.unshift({ id: '', name: '全部' })
       } catch (error) {}
     },
     loadingChart() {
       // 基于准备好的dom，初始化echarts实例
-      let myChart = this.$echarts.init(document.getElementById("eChart"));
+      let myChart = this.$echarts.init(document.getElementById('eChart'))
       // 指定图表的配置项和数据
       let option = {
         tooltip: {
           padding: [18, 16],
-          backgroundColor: "#FFFFFF",
-          trigger: "axis",
+          backgroundColor: '#FFFFFF',
+          trigger: 'axis',
           axisPointer: {
-            type: "line",
+            type: 'line',
             lineStyle: {
-              type: "dashed",
-            },
+              type: 'dashed'
+            }
           },
-          formatter: (params) => {
+          formatter: params => {
             return `
               <div style="font-family: PingFangSC-Regular, PingFang SC;font-weight: 400;color: #3D4966;box-shadow: 0px 4px 16px 0px rgba(31, 46, 77, 0.2);padding: 18px 16px">
                 <p style="font-size: 12px;margin-bottom: 12px">
@@ -477,8 +436,8 @@ export default {
                   <span class="echart-tooltip-bot-title">交易总额:</span>${params[0].data}
                 </p>
               </div>
-            `;
-          },
+            `
+          }
         },
         xAxis: {
           boundaryGap: false,
@@ -486,60 +445,60 @@ export default {
           axisLine: {
             show: false,
             lineStyle: {
-              type: "solid",
-              color: "#D3DBEB",
-              width: "1",
-            },
+              type: 'solid',
+              color: '#D3DBEB',
+              width: '1'
+            }
           },
           axisLabel: {
-            color: "#3D4966",
+            color: '#3D4966',
             fontWeight: 400,
-            fontSize: 14,
-          },
+            fontSize: 14
+          }
         },
         yAxis: {
           axisLine: {
             show: false,
             lineStyle: {
-              type: "solid",
-              color: "#D3DBEB",
-              width: "1",
-            },
+              type: 'solid',
+              color: '#D3DBEB',
+              width: '1'
+            }
           },
           axisLabel: {
-            color: "#3D4966",
+            color: '#3D4966',
             fontWeight: 400,
-            fontSize: 14,
+            fontSize: 14
           },
           splitLine: {
             lineStyle: {
-              color: "#E6E9F0",
-              type: "dashed",
-            },
-          },
+              color: '#E6E9F0',
+              type: 'dashed'
+            }
+          }
         },
         series: [
           {
-            name: "销量",
-            type: "line",
+            name: '销量',
+            type: 'line',
             data: this.eChartsDataList,
             itemStyle: {
-              color: "#3377FF",
+              color: '#3377FF'
             },
             label: {
               show: true,
-              position: "top",
-              fontSize: 15,
-            },
+              position: 'top',
+              fontSize: 15
+            }
             // symbol:'circle'
-          },
-        ],
-      };
+          }
+        ]
+      }
       // 使用刚指定的配置项和数据显示图表。
-      myChart.setOption(option);
-    },
-  },
-};
+      myChart.setOption(option)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>

@@ -13,15 +13,8 @@
     @focus="clearSelectPage"
     @change="changeSelectPage"
   >
-    <el-option
-      v-for="item in options"
-      :key="item[value]"
-      :label="item[label]"
-      :value="item[value]"
-    ></el-option>
-    <div class="e-select-load">
-      {{ isMaxPage ? "已全部加载完毕" : "正在加载下一页..." }}
-    </div>
+    <el-option v-for="item in options" :key="item[value]" :label="item[label]" :value="item[value]"></el-option>
+    <div class="e-select-load">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页...' }}</div>
   </el-select>
 </template>
 
@@ -30,55 +23,52 @@ export default {
   props: {
     placeholder: {
       type: String,
-      default: "",
+      default: ''
     },
     options: {
       type: [Array, Object],
-      default: () => [],
+      default: () => []
     },
     isMaxPage: {
       type: Boolean,
-      default: false,
+      default: false
     },
     label: {
       type: String,
-      default: "name",
+      default: 'name'
     },
     value: {
       type: String,
-      default: "id",
+      default: 'id'
     },
     echoValue: {
       type: String,
-      default: "",
-    },
+      default: ''
+    }
   },
   data() {
     return {
       domID: `domID${Math.floor(Math.random() * 100000000 + 1)}`, //随机生成一个唯一ID
-      selectValue: "",
-    };
+      selectValue: ''
+    }
   },
   directives: {
     loadmore: {
-      bind: function (el, binding) {
-        const SELECTWRAP_DOM = el.querySelector(
-          ".el-select-dropdown .el-select-dropdown__wrap"
-        );
-        SELECTWRAP_DOM.addEventListener("scroll", function () {
-          const CONDITION =
-            this.scrollHeight - this.scrollTop <= this.clientHeight;
+      bind: function(el, binding) {
+        const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap')
+        SELECTWRAP_DOM.addEventListener('scroll', function() {
+          const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight
           if (CONDITION) {
-            binding.value();
+            binding.value()
           }
-        });
-      },
-    },
+        })
+      }
+    }
   },
   watch: {
     echoValue(val) {
-      this.selectValue = val;
-    },
+      this.selectValue = val
+    }
   },
   methods: {
     // 选项展开关闭回掉
@@ -88,43 +78,40 @@ export default {
           // 如果options为空，下面走没有意义所以return
           if (this.selectValue) {
             //筛选一下获取options
-            this.remoteMethod(this.selectValue);
+            this.remoteMethod(this.selectValue)
             setTimeout(() => {
-              this.visibleChange(true);
-            }, 500); //由于之前的人没有写回掉，所以先通过计时器自己回掉
+              this.visibleChange(true)
+            }, 500) //由于之前的人没有写回掉，所以先通过计时器自己回掉
           }
-          return;
+          return
         }
         // 如果展开
-        let label = "";
+        let label = ''
         for (let i = 0; i < this.options.length; i++) {
-          if (
-            this.selectValue === this.options[i][this.value] ||
-            this.echoValue === this.options[i][this.label]
-          ) {
-            label = this.options[i][this.label];
+          if (this.selectValue === this.options[i][this.value] || this.echoValue === this.options[i][this.label]) {
+            label = this.options[i][this.label]
           }
         }
         setTimeout(() => {
-          document.getElementById(this.domID).value = label || ""; //通过ID原生绑定
-        }, 200);
+          document.getElementById(this.domID).value = label || '' //通过ID原生绑定
+        }, 200)
       }
     },
     remoteMethod(query) {
-      if (query !== "") this.$emit("remoteMethod", query);
-      else this.$emit("resetSelectPage");
+      if (query !== '') this.$emit('remoteMethod', query)
+      else this.$emit('resetSelectPage')
     },
     selectLoadMore() {
-      this.$emit("selectPageMore");
+      this.$emit('selectPageMore')
     },
     clearSelectPage() {
-      this.$emit("resetSelectPage");
+      this.$emit('resetSelectPage')
     },
     changeSelectPage() {
-      this.$emit("changeSelectPage", this.selectValue);
-    },
-  },
-};
+      this.$emit('changeSelectPage', this.selectValue)
+    }
+  }
+}
 </script>
 
 <style lang="scss" scoped>
