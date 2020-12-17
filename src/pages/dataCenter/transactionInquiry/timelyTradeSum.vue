@@ -420,12 +420,12 @@ export default {
         this.eChartsDataList = [];
         if (this.tableData.cashierMockDTOS) {
           this.tableData.cashierMockDTOS.forEach((item) => {
-            this.eChartsDateList.push(item.payDate);
-            this.eChartsDataList.push(item.payAmount);
-          });
+            this.eChartsDateList.push(item.payDate)
+            this.eChartsDataList.push(item.receiptAmount)
+          })
           this.$nextTick(() => {
             this.loadingChart();
-          });
+          })
           this.tableData.cashierMockDTOS = this.tableData.cashierMockDTOS.reverse();
         }
       } catch (error) {
@@ -474,7 +474,7 @@ export default {
                   ${params[0].axisValueLabel}
                 </p>
                 <p style="font-size: 18px;">
-                  <span class="echart-tooltip-bot-title">交易总额:</span>${params[0].data}
+                  <span class="echart-tooltip-bot-title">商户实收:</span>${params[0].data}
                 </p>
               </div>
             `;

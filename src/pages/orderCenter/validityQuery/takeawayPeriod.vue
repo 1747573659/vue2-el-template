@@ -9,8 +9,9 @@
         className="xdd-btn-block__w240"
         :queryFormList.sync="queryFormList"
         :queryParams="queryParams"
-        @search="handleFilter"
+        @search="(e) => handleFilter(e, 'isSearch')"
       >
+      <!-- ↑↑↑ 上一个人的代码写的太难改了，我只能这样改，写成这样并不是我本意 -->
         <template v-slot:formheader>
           <el-form-item label="商户">
             <select-page
@@ -309,8 +310,11 @@ export default {
       }
       this.handleFilter()
     },
-    handleFilter(e) {
-      this.loading = true;
+    handleFilter(e, type) {
+      this.loading = true
+      if (type === 'isSearch') {
+        this.tableParam.page = 1
+      }
       if (this.activeTab === '1') {
         let data = Object.assign(this.tableParam, e);
         queryWmWhitePage(data)
