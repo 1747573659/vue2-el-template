@@ -161,12 +161,12 @@
       <el-table :data="tableData.cashierMockDTOS" ref="table">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
         <el-table-column label="日期" prop="payDate"></el-table-column>
-        <el-table-column label="交易总额(元)" prop="payAmount"></el-table-column>
-        <el-table-column label="交易笔数" prop="payCount"></el-table-column>
-        <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
-        <el-table-column label="商家优惠(元)" prop="shopCouponAmount"></el-table-column>
-        <el-table-column label="商家实退(元)" prop="merchantRefundAmount"></el-table-column>
-        <el-table-column label="商家实收(元)" prop="receiptAmount"></el-table-column>
+        <el-table-column align="right" label="交易总额(元)" prop="payAmount"></el-table-column>
+        <el-table-column align="right" label="交易笔数" prop="payCount"></el-table-column>
+        <el-table-column align="right" label="客单价(元)" prop="unitAmount"></el-table-column>
+        <el-table-column align="right" label="商家优惠(元)" prop="shopCouponAmount"></el-table-column>
+        <el-table-column align="right" label="商家实退(元)" prop="merchantRefundAmount"></el-table-column>
+        <el-table-column align="right" label="商家实收(元)" prop="receiptAmount"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button @click="detail(scope.row)" type="text" size="small">详情</el-button>
