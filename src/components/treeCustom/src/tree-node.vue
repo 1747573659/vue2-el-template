@@ -366,8 +366,8 @@ export default {
 .tree-custom-children1,
 .tree-custom-children2 {
   // height: 299px;
-  min-height: 398px;
-  height: 398px;
+  min-height: 474px;
+  height: 474px;
   width: 130px;
   border-right: 1px solid #d5d5d5;
 }

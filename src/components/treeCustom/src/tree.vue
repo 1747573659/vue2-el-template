@@ -523,8 +523,8 @@ export default {
     border-radius: 4px 4px 0px 0px;
     width: 390px;
     // height: 350px;
-    min-height: 450px;
-    height: 450px;
+    min-height: 526px;
+    height: 526px;
     // overflow: hidden;
     position: relative;
     float: left;
@@ -535,8 +535,8 @@ export default {
     width: 122px;
     margin-left: 18px;
     // height: 350px;
-    min-height: 450px;
-    height: 450px;
+    min-height: 526px;
+    height: 526px;
     // overflow: hidden;
     position: relative;
     float: left;
