@@ -456,8 +456,8 @@ export default {
     }
     .certification-dialog-img {
       margin: 18px 30px 30px;
-      width: 152px;
-      height: 152px;
+      width: 240px;
+      height: 240px;
     }
   }
 }
