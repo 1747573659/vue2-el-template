@@ -73,7 +73,7 @@
         <el-table-column prop="archiveChannelList" label="已进件通道" width="140" class-name="archived-channel">
           <template slot-scope="scope">
             <div v-if="scope.row.archiveChannelList">
-              <div v-for="item in scope.row.archiveChannelList" :key="item.channelCode">{{ item.channelName }}</div>
+              <div v-for="(item, index) in scope.row.archiveChannelList" :key="index">{{ item.channelName }}</div>
             </div>
             <div v-else>
               --
