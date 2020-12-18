@@ -60,19 +60,20 @@
         <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"> </el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantName" label="商户/公司名称" width="200">
           <template slot-scope="scope">
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantName || '--'}}</div>
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.companyName || '--'}}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
           <template slot-scope="scope">
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantShortName || '--'}}</div>
-            <div class="archive-table-oneline">{{scope.row.archiveExpandDTO.bankCard || '--'}}</div>
-          </template></el-table-column>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
+          </template></el-table-column
+        >
         <el-table-column prop="archiveChannelList" label="已进件通道" width="140" class-name="archived-channel">
           <template slot-scope="scope">
             <div v-if="scope.row.archiveChannelList">
-              <div v-for="item in scope.row.archiveChannelList" :key="item.channelCode">{{item.channelName}}</div>
+              <div v-for="item in scope.row.archiveChannelList" :key="item.channelCode">{{ item.channelName }}</div>
             </div>
             <div v-else>
               --
@@ -374,11 +375,11 @@ export default {
     archiveDetail(row) {
       this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id, contact: row.archiveBaseDTO.contact, contactPhone: row.archiveBaseDTO.contactPhone } })
     },
-    async getQueryBankChannelType () {
+    async getQueryBankChannelType() {
       try {
         let res = await queryBankChannelType()
         this.channelList = res
-        this.channelList.unshift({channelCode: '', channelName: '全部'})
+        this.channelList.unshift({ channelCode: '', channelName: '全部' })
       } catch (error) {}
     },
     async getList() {
@@ -520,7 +521,7 @@ export default {
 <style lang="scss">
 .archived-channel {
   .cell {
-    display: block!important;
+    display: block !important;
   }
 }
 </style>
