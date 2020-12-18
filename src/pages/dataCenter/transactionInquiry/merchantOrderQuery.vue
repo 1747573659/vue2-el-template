@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近半年内的交易流水，单次查询日期的最长跨度为31天</div>
+      <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近一年内的交易流水，单次查询日期的最长跨度为31天</div>
       <el-form :inline="true" :model="formData" @submit.native.prevent label-width="100px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="24">
@@ -281,7 +281,7 @@ export default {
                 .valueOf() ||
             time.getTime() <
               moment()
-                .subtract(6, 'months')
+                .subtract(12, 'months')
                 .valueOf()
           )
         }
