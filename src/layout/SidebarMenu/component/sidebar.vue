@@ -86,7 +86,7 @@ export default {
       font-weight: bold;
     }
     /deep/ .el-menu-item {
-      padding-left: 43px !important;
+      padding-left: 60px !important;
       font-weight: 400;
     }
     /deep/ .el-submenu__icon-arrow {

@@ -116,6 +116,7 @@ import {
 } from "@/api/setting/baseInfo"
 import { createAuthCode, modifyMobile } from '@/api/sms/sms'
 export default {
+  name: 'baseInfoIndex',
   data() {
     var mobileRule = (rule, value, callback) => {
       if ((/^1[3456789]\d{9}$/.test(value))) {

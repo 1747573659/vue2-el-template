@@ -9,7 +9,7 @@
           <div class="com-edit-block">
             <div class="com-edit-ruleForm__content">
               <el-form-item label="代理商名称：" prop="name">
-                <el-input v-model="ruleForm.name" maxlength="50" placeholder=""></el-input>
+                <el-input v-model.trim="ruleForm.name" maxlength="50" placeholder=""></el-input>
               </el-form-item>
               <el-form-item label="地区" prop="districtCode">
                 <area-select :areaList="areaValue" :key="areaKey" @change="areaChange"></area-select>

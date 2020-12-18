@@ -20,6 +20,7 @@ const dataCenter = {
       component: kmContainer,
       meta: {
         title: '用户数据',
+        icon: 'el-icon-menu',
         name: 'userData'
       },
       children: [
@@ -40,6 +41,7 @@ const dataCenter = {
       component: kmContainer,
       meta: {
         title: '交易数据',
+        icon: 'el-icon-menu',
         name: 'transactionInquiry'
       },
       children: [

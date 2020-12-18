@@ -230,6 +230,7 @@ export default {
     &-con {
       display: flex;
       align-items: center;
+      height: 56px;
     }
     &-name {
       overflow: hidden;
