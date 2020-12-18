@@ -67,14 +67,14 @@
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
         <el-table-column prop="merchantName" label="商户/公司名称" width="200">
           <template slot-scope="scope">
-            <div class="archive-table-oneline">{{scope.row.merchantName || '--'}}</div>
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.companyName || '--'}}</div>
+            <div class="archive-table-oneline">{{ scope.row.merchantName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
           <template slot-scope="scope">
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantShortName || '--'}}</div>
-            <div class="archive-table-oneline">{{scope.row.archiveExpandDTO.bankCard || '--'}}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
           </template>
         </el-table-column>
         <el-table-column label="进件类型">
@@ -109,7 +109,7 @@
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="210">
+        <el-table-column label="操作" fixed="right" align="right" width="210">
           <template slot-scope="scope">
             <el-button
               type="text"

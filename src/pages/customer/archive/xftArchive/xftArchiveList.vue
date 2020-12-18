@@ -108,7 +108,7 @@
             {{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="180px">
+        <el-table-column label="操作" fixed="right" align="right" width="180px">
           <template slot-scope="scope">
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small"
               >编辑</el-button

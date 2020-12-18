@@ -504,6 +504,7 @@
             <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
                 <selectCopy
+                  isCopy
                   style="width: 240px"
                   :remoteMethod="handleBranchRemote"
                   :value.sync="form.archiveExpandVO.bankSub"
