@@ -32,22 +32,21 @@ export default {
   },
   data() {
     return {
-      activeIndex: '1',
+      activeIndex: '1'
     }
   },
-  computed: {
-  },
+  computed: {},
   methods: {
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
-    },
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .el-menu-sum {
-  margin-left: 16px;
+  // margin-left: 16px;
   /deep/.el-menu-item {
     font-size: 16px;
     font-family: PingFangSC-Regular, PingFang SC;
