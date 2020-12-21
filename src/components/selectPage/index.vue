@@ -85,8 +85,11 @@ export default {
   computed: {
   },
   watch: {
-    value() {
-      this.bindValue = this.value
+    value:{
+      handler (val) {
+        if (val) this.bindValue = this.value
+      },
+      immediate: true
     },
     options() {
       if (this.options?.length > 0) {
