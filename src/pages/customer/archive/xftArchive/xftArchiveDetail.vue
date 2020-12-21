@@ -81,7 +81,13 @@
         }}</span
         >完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”
       </div>
-      <div class="author-dialog-text">2. 商户联系人：扫描下方小程序二维码，按照流程指引为特约商户号完成授权</div>
+      <div class="author-dialog-text">
+        2. 商户联系人：<span style="color: #FF6010">{{ authorForm.contactName }}(手机尾号{{ authorForm.contactPhone }})</span>扫描下方小程序二维码，按照流程指引为特约商户号<span
+          v-if="authorForm.wxSubMchId"
+          >“<span style="color: #FF6010">{{ authorForm.wxSubMchId }}</span
+          >”</span
+        >完成授权
+      </div>
       <img :src="imgSrc" class="author-dialog-img" alt="qrcode" />
     </el-dialog>
     <el-dialog title="电子签约" :visible.sync="signUpVisible" width="507px" class="author-dialog">
@@ -229,7 +235,8 @@ export default {
         this.authorForm = {
           contactName: res.contactName,
           contactPhone: res.contactPhone.substring(7),
-          shopName: row.shopName
+          shopName: row.shopName,
+          wxSubMchId: row.wxSubMchId
         }
         switch (row.channelCode) {
           case '7':
@@ -375,7 +382,7 @@ export default {
       margin-bottom: 12px;
     }
     .author-dialog-img {
-      top: 50%;
+      top: 52%;
       position: absolute;
       left: 50%;
       transform: translate(-50%, -20%);
