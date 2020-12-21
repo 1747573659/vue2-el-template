@@ -1149,6 +1149,7 @@ export default {
         this.form.archiveBaseVO.bossAuditTime = ''
         this.form.archiveBaseVO.createTime = ''
         this.form.archiveBaseVO.auditStatus = ''
+        this.form.archiveBaseVO.useChannelCode = ''
       }
       this.$refs.form.validateField('archiveBaseVO.merchantId', async (errorMessage) => {
         if (!errorMessage) {
@@ -1167,6 +1168,7 @@ export default {
             this.form.archiveBaseVO.bossAuditTime = ''
             this.form.archiveBaseVO.createTime = ''
             this.form.archiveBaseVO.auditStatus = ''
+             this.form.archiveBaseVO.useChannelCode = ''
           }
           try {
             const res = await audit(this.form)

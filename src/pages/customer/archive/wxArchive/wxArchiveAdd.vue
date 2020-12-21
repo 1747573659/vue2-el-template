@@ -784,6 +784,7 @@ export default {
             this.form.archiveBaseVO.bossAuditTime = ''
             this.form.archiveBaseVO.createTime = ''
             this.form.archiveBaseVO.auditStatus = ''
+            this.form.archiveBaseVO.useChannelCode = ''
           }
           try {
             const res = await submitToVerify(this.form)
@@ -844,6 +845,7 @@ export default {
                 this.form.archiveBaseVO.bossAuditTime = ''
                 this.form.archiveBaseVO.createTime = ''
                 this.form.archiveBaseVO.auditStatus = ''
+                this.form.archiveBaseVO.useChannelCode = ''
               }
               const res = await submit(this.form)
               this.$message.success('保存成功')

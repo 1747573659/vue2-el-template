@@ -291,6 +291,8 @@ export default {
   methods: {
     async payMethodChange(value) {
       let childs = ''
+      this.payPluginList = []
+      this.form.payPlugin = ''
       console.log(value)
       this.paymentList.forEach(item => {
         if (item.id === value) {
