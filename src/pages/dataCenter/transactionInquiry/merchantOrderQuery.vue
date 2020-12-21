@@ -248,7 +248,7 @@ export default {
       tradingChannelData: [],
       tradingTypeData: [],
       paymentData: [],
-      paymentScenarioData: [],
+      paymentScenarioData: [{ code: '', name: '全部' }],
       tradingStatusData: [],
       formData: {
         transactionTime: [
