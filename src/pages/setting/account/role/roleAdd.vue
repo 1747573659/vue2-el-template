@@ -27,7 +27,7 @@
 <script>
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
-import { routeTreeLevel } from '@/utils/modules/routeTree.js'
+import { routeTreeLevel, sortData } from '@/utils/modules/routeTree.js'
 export default {
   name: 'roleAdd',
   components: {},
@@ -209,6 +209,7 @@ export default {
           }
         ]
         this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children)
+        sortData(this.appData[0].children)
       } catch (e) {}
     },
     async queryAllPCMenu(id) {
@@ -298,6 +299,7 @@ export default {
           }
         ]
         id && this.getCheckIdInitForPC(res.roleMenus || [], res.allMenus || [])
+        sortData(this.pcData[0].children)
       } catch (e) {}
     },
     async queryRoleById() {

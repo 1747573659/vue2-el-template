@@ -1,5 +1,7 @@
 <template>
   <el-select
+    :id="domID"
+    @visible-change="visibleChange"
     v-model="selectValue"
     v-loadmore="selectLoadMore"
     filterable
@@ -46,6 +48,7 @@ export default {
   },
   data() {
     return {
+      domID: `domID${Math.floor(Math.random() * 100000000 + 1)}`, //随机生成一个唯一ID
       selectValue: ''
     }
   },
@@ -68,6 +71,32 @@ export default {
     }
   },
   methods: {
+    // 选项展开关闭回掉
+    visibleChange(event) {
+      if (event) {
+        if (!this.options.length) {
+          // 如果options为空，下面走没有意义所以return
+          if (this.selectValue) {
+            //筛选一下获取options
+            this.remoteMethod(this.selectValue)
+            setTimeout(() => {
+              this.visibleChange(true)
+            }, 500) //由于之前的人没有写回掉，所以先通过计时器自己回掉
+          }
+          return
+        }
+        // 如果展开
+        let label = ''
+        for (let i = 0; i < this.options.length; i++) {
+          if (this.selectValue === this.options[i][this.value] || this.echoValue === this.options[i][this.label]) {
+            label = this.options[i][this.label]
+          }
+        }
+        setTimeout(() => {
+          document.getElementById(this.domID).value = label || '' //通过ID原生绑定
+        }, 200)
+      }
+    },
     remoteMethod(query) {
       if (query !== '') this.$emit('remoteMethod', query)
       else this.$emit('resetSelectPage')

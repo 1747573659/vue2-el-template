@@ -29,6 +29,11 @@
         <el-form-item label="商户信息">
           <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
         </el-form-item>
+        <el-form-item label="当前通道">
+          <el-select style="width: 240px" clearable v-model="form.channelTypeCode" placeholder="全部">
+            <el-option v-for="item in channelList" :key="item.channelCode" :label="item.channelName" :value="item.channelCode"> </el-option>
+          </el-select>
+        </el-form-item>
         <el-form-item label="停用">
           <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
             <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -53,21 +58,22 @@
       >
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"> </el-table-column>
         <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"> </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantName" label="商户/公司名称" min-width="200">
+        <el-table-column prop="archiveBaseDTO.merchantName" label="商户/公司名称" width="200">
           <template slot-scope="scope">
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantName || '--'}}</div>
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.companyName || '--'}}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" min-width="200">
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
           <template slot-scope="scope">
-            <div class="archive-table-oneline">{{scope.row.archiveBaseDTO.merchantShortName || '--'}}</div>
-            <div class="archive-table-oneline">{{scope.row.archiveExpandDTO.bankCard || '--'}}</div>
-          </template></el-table-column>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
+          </template></el-table-column
+        >
         <el-table-column prop="archiveChannelList" label="已进件通道" width="140" class-name="archived-channel">
           <template slot-scope="scope">
             <div v-if="scope.row.archiveChannelList">
-              <div v-for="item in scope.row.archiveChannelList" :key="item.channelCode">{{item.channelName}}</div>
+              <div v-for="(item, index) in scope.row.archiveChannelList" :key="index">{{ item.channelName }}</div>
             </div>
             <div v-else>
               --
@@ -76,7 +82,7 @@
         </el-table-column>
         <el-table-column prop="useBankChannelCodeName" label="当前通道" width="140">
           <template slot-scope="scope">
-            {{ scope.row.archiveBaseDTO.wxCertStatus || '--' }}
+            {{ scope.row.useBankChannelCodeName || '--' }}
           </template>
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态" width="140">
@@ -102,7 +108,7 @@
             {{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="180px">
+        <el-table-column label="操作" fixed="right" align="right" width="180px">
           <template slot-scope="scope">
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small"
               >编辑</el-button
@@ -162,7 +168,7 @@
 </template>
 
 <script>
-import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode, queryTotalByStatus, delList } from '@/api/xftArchive'
+import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode, queryTotalByStatus, delList, queryBankChannelType } from '@/api/xftArchive'
 export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
@@ -170,6 +176,7 @@ export default {
       vm.currentPage = 1
       vm.getList()
       vm.handleQueryTotalByStatus()
+      vm.getQueryBankChannelType()
     })
   },
   name: 'xftArchive',
@@ -184,7 +191,8 @@ export default {
         auditStatusList: [],
         auditStatus: '',
         wxCertStatus: '',
-        status: 0
+        status: 0,
+        channelTypeCode: ''
       },
       auditStatusOptions: [
         { id: '', name: '全部' },
@@ -241,6 +249,7 @@ export default {
         { id: 1, name: '是' },
         { id: 0, name: '否' }
       ],
+      channelList: [],
       tableData: [],
       currentPage: 1,
       totalPage: 0,
@@ -366,6 +375,13 @@ export default {
     archiveDetail(row) {
       this.$router.push({ name: 'xftArchiveDetail', query: { id: row.archiveBaseDTO.id, contact: row.archiveBaseDTO.contact, contactPhone: row.archiveBaseDTO.contactPhone } })
     },
+    async getQueryBankChannelType() {
+      try {
+        let res = await queryBankChannelType()
+        this.channelList = res
+        this.channelList.unshift({ channelCode: '', channelName: '全部' })
+      } catch (error) {}
+    },
     async getList() {
       this.tableLoading = true
       let data = {
@@ -377,6 +393,7 @@ export default {
         auditStatusList: this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
         merchantName: this.form.name,
         merchantShortName: this.form.name,
+        channelTypeCode: this.form.channelTypeCode,
         companyName: this.form.name,
         bankCard: this.form.name,
         // 'auditStatusList': this.form.auditStatus,
@@ -439,8 +456,8 @@ export default {
     }
     .certification-dialog-img {
       margin: 18px 30px 30px;
-      width: 152px;
-      height: 152px;
+      width: 240px;
+      height: 240px;
     }
   }
 }
@@ -498,6 +515,13 @@ export default {
     &_action {
       text-align: right;
     }
+  }
+}
+</style>
+<style lang="scss">
+.archived-channel {
+  .cell {
+    display: block !important;
   }
 }
 </style>

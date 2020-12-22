@@ -45,10 +45,14 @@
                   </el-select>
                 </el-form-item> -->
                 <el-form-item label="业务员：">
-                  <el-select v-model="ruleForm.clerkId" placeholder="" filterable clearable>
-                    <el-option v-for="item in clerkOptions" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
-                  </el-select>
+                  <selectCopy
+                    :value.sync="ruleForm.clerkId"
+                    placeholder=""
+                    filterable
+                    clearable
+                    :options="clerkOptions"
+                    :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+                  ></selectCopy>
                 </el-form-item>
               </div>
             </div>
@@ -72,15 +76,13 @@
                 </el-form-item>
                 <el-form-item label="ERP行业：" prop="industryId" class="msg-block">
                   <el-select v-model="ruleForm.industryId" placeholder="请选择行业" clearable>
-                    <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
+                    <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                   </el-select>
                   <span class="msg">注：使用科脉ERP才需要选择此项</span>
                 </el-form-item>
                 <el-form-item label="ERP产品：" prop="erpProductId" class="msg-block">
                   <el-select v-model="ruleForm.erpProductId" placeholder="请选择产品" clearable>
-                    <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
+                    <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                   </el-select>
                   <span class="msg">注：使用科脉ERP才需要选择此项</span>
                 </el-form-item>
@@ -98,18 +100,13 @@
 </template>
 
 <script>
-import {
-  addShop,
-  queryClerkList,
-  queryTradeById,
-  queryProductInfoByIndustryId,
-  checkShopName,
-} from '@/api/customer/merchant'
+import { addShop, queryClerkList, queryTradeById, queryProductInfoByIndustryId, checkShopName } from '@/api/customer/merchant'
 import BrandSelect from '@/components/brandSelect'
 import AreaSelect from '@/components/areaSelect'
 import PicUpload from '@/components/picUpload'
 import picUploadMixin from '@/mixins/picUpload'
 import { isMPRelaxed, isEmail } from '@/utils/common'
+import selectCopy from '@/components/selectCopy'
 
 export default {
   name: 'addMerchant',
@@ -117,6 +114,7 @@ export default {
     BrandSelect,
     AreaSelect,
     PicUpload,
+    selectCopy
   },
   mixins: [picUploadMixin],
   data() {
@@ -153,7 +151,7 @@ export default {
       if (value === '') {
         callback('请输入商户名称')
       } else if (value !== this.checkShopName) {
-        checkShopName({ name: value }).then((res) => {
+        checkShopName({ name: value }).then(res => {
           if (res) {
             callback(res)
           } else {
@@ -177,7 +175,7 @@ export default {
       typeOptions: [
         { id: 1, name: '普通连锁（单品牌）' },
         { id: 2, name: '多品牌连锁（多公众号）' },
-        { id: 3, name: '单店' },
+        { id: 3, name: '单店' }
       ],
       psw: 888888,
       options: [],
@@ -195,70 +193,68 @@ export default {
         mobile: '',
         shortName: '',
         tradeTypeId: '',
-        type: 2,
+        type: 2
       },
       rules: {
         companyName: {
           required: true,
           validator: validatorCompanyName,
-          trigger: 'blur',
+          trigger: 'blur'
         },
         shortName: {
           required: true,
           message: '请输入商户简称',
-          trigger: 'blur',
+          trigger: 'blur'
         },
         districtCode: {
           required: true,
           message: '请选择地址',
-          trigger: 'change',
+          trigger: 'change'
         },
         address: {
           required: true,
           message: '请输入详细地址',
-          trigger: 'blur',
+          trigger: 'blur'
         },
         contactor: {
           required: true,
           message: '请输入运营者姓名',
-          trigger: 'blur',
+          trigger: 'blur'
         },
         mobile: {
           required: true,
           validator: validatorMobile,
-          trigger: 'blur',
+          trigger: 'blur'
         },
         email: {
           required: true,
           validator: validatorEmail,
-          trigger: 'blur',
+          trigger: 'blur'
         },
         merchantName: {
           required: true,
           message: '请输入品牌名称',
-          trigger: 'blur',
+          trigger: 'blur'
         },
         // logo: { required: true, message: '请选择图片' },
         tradeTypeId: {
           required: true,
           validator: validatorTradeType,
-          trigger: 'change',
+          trigger: 'change'
         },
-        type: { required: true, message: '请选择商户类型', trigger: 'change' },
-      },
+        type: { required: true, message: '请选择商户类型', trigger: 'change' }
+      }
     }
   },
   watch: {
-    'ruleForm.industryId': function (val) {
+    'ruleForm.industryId': function(val) {
       this.ruleForm.erpProductId = ''
       if (val === '') {
         this.erpProductOptions = []
       } else {
-        queryProductInfoByIndustryId({ industryId: val }).then(
-          (erpProductRes) => {
-            this.erpProductOptions = erpProductRes
-          }
-        )
+        queryProductInfoByIndustryId({ industryId: val }).then(erpProductRes => {
+          this.erpProductOptions = erpProductRes
+        })
       }
     },
     brandValue(val) {
@@ -267,7 +263,7 @@ export default {
       } else {
         this.ruleForm.tradeTypeId = ''
       }
-    },
+    }
   },
   created() {
     this.queryClerkList()
@@ -291,22 +287,22 @@ export default {
       }
     },
     queryProductInfoByIndustryId() {
-      queryProductInfoByIndustryId({ industryId: 0 }).then((industryRes) => {
+      queryProductInfoByIndustryId({ industryId: 0 }).then(industryRes => {
         this.industryOptions = industryRes
       })
     },
     queryTradeById() {
-      queryTradeById({ id: 0 }).then((res) => {
+      queryTradeById({ id: 0 }).then(res => {
         this.tradeTypeOptions = res
       })
     },
     queryClerkList() {
-      queryClerkList().then((res) => {
+      queryClerkList().then(res => {
         this.clerkOptions = res
       })
     },
     submitForm() {
-      this.$refs['ruleForm'].validate((valid) => {
+      this.$refs['ruleForm'].validate(valid => {
         if (valid) {
           this.submitLoading = true
           addShop(this.ruleForm)
@@ -326,8 +322,8 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ path: '/customer/merchant/merchantManage' })
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

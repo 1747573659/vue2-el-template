@@ -65,9 +65,18 @@
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
-        <el-table-column prop="merchantName" label="商户名称"></el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称"></el-table-column>
-        <el-table-column prop="archiveBaseDTO.companyName" label="公司名称"></el-table-column>
+        <el-table-column prop="merchantName" label="商户/公司名称" width="200">
+          <template slot-scope="scope">
+            <div class="archive-table-oneline">{{ scope.row.merchantName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
+          <template slot-scope="scope">
+            <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
+            <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
+          </template>
+        </el-table-column>
         <el-table-column label="进件类型">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</span>
@@ -100,7 +109,7 @@
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="210">
+        <el-table-column label="操作" fixed="right" align="right" width="210">
           <template slot-scope="scope">
             <el-button
               type="text"
@@ -381,5 +390,10 @@ export default {
       text-align: right;
     }
   }
+}
+.archive-table-oneline {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

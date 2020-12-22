@@ -211,6 +211,7 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.licValidityBigen"
+                  @change="(value) => timeChange(value, 'licValidityBigen')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
@@ -224,9 +225,13 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.licValidityEnd"
+                  @change="(value) => timeChange(value, 'licValidityEnd')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>
@@ -271,6 +276,7 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.legalPersonValidityBegin"
+                  @change="(value) => timeChange(value, 'legalPersonValidityBegin')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
@@ -284,9 +290,13 @@
                   style="width: 140px"
                   value-format="yyyy-MM-dd"
                   v-model="form.archiveExpandVO.legalPersonValidityEnd"
+                  @change="(value) => timeChange(value, 'legalPersonValidityEnd')"
                   type="date"
                   placeholder="选择日期">
                 </el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
           </el-row>
@@ -1127,6 +1137,24 @@ export default {
       this.form.archiveBaseVO.city = value[1]
       this.form.archiveBaseVO.area = value[2]
     },
+    timeChange(value, bindvalue) {
+      if (!value) {
+        switch(bindvalue) {
+          case 'licValidityBigen':
+            this.form.archiveExpandVO.licValidityBigen = ''
+            break
+          case 'licValidityEnd':
+            this.form.archiveExpandVO.licValidityBigen = ''
+            break
+          case 'legalPersonValidityBegin':
+            this.form.archiveExpandVO.legalPersonValidityBegin = ''
+            break
+          case 'legalPersonValidityEnd':
+            this.form.archiveExpandVO.legalPersonValidityEnd = ''
+            break
+        }
+      }
+    },
     bankAreaChange(value) {
       this.form.archiveExpandVO.bankProvince = value[0]
       this.form.archiveExpandVO.bankCity = value[1]
@@ -1149,6 +1177,7 @@ export default {
         this.form.archiveBaseVO.bossAuditTime = ''
         this.form.archiveBaseVO.createTime = ''
         this.form.archiveBaseVO.auditStatus = ''
+        this.form.archiveBaseVO.useChannelCode = ''
       }
       this.$refs.form.validateField('archiveBaseVO.merchantId', async (errorMessage) => {
         if (!errorMessage) {
@@ -1167,6 +1196,7 @@ export default {
             this.form.archiveBaseVO.bossAuditTime = ''
             this.form.archiveBaseVO.createTime = ''
             this.form.archiveBaseVO.auditStatus = ''
+             this.form.archiveBaseVO.useChannelCode = ''
           }
           try {
             const res = await audit(this.form)
@@ -1221,13 +1251,14 @@ export default {
         this.form.archiveExpandVO.cardType = 1
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
-        this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
+        // this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
         this.bankAreaKey = Symbol('bankAreaKey')
         if (this.isCopy) {
           this.form.archiveBaseVO.id = null
           this.form.archiveExpandVO.id = null
           this.form.archiveOtherVO.id = null
+          this.form.archiveBaseVO.wxCertStatus = null
           // this.form.archiveExpandVO.bankCard = null
           // this.form.archiveExpandVO.bankSub = null
           // this.form.archiveExpandVO.bankSubName = null

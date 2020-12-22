@@ -39,12 +39,23 @@ const urlLinks = {
   querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
   querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf',
   queryTotalByStatus: '/archive/xdd/queryTotalByStatus',
+  // 通道下拉列表查询
+  queryBankChannelType: '/archive/xdd/queryBankChannelType',
   // 电子签约
   mchICBSign: '/archive/xdd/mchICBSign',
   queryCommunicationMerchantInfo: '/archive/xdd/queryCommunicationMerchantInfo',
   delList: 'archive/general/del',
   imageOCR: 'common/imageOcr'
 }
+  
+// 通道下拉列表查询
+export function queryBankChannelType() {
+  return request({
+    url: urlLinks.queryBankChannelType,
+    method: 'POST'
+  })
+}
+
 // 查询商户信息
 export function queryCommunicationMerchantInfo(data) {
   return request({

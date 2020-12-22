@@ -11,9 +11,14 @@
               <el-input v-model="form.mobile" maxlength="11" placeholder="请输入手机号" clearable></el-input>
             </el-form-item>
             <el-form-item label="BD经理：">
-              <el-select v-model="form.channelManagerId" filterable clearable placeholder="请选择BD经理">
-                <el-option v-for="item in channelManagerOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-              </el-select>
+              <selectCopy
+                :options="channelManagerOptions"
+                :valus.sync="form.channelManagerId"
+                filterable
+                clearable
+                placeholder="请选择BD经理"
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+              ></selectCopy>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getPageList">查询</el-button>
@@ -49,7 +54,7 @@
         <el-table-column prop="id" label="代理商编号"></el-table-column>
         <el-table-column prop="name" label="代理商名称"></el-table-column>
         <el-table-column prop="mobile" label="手机" width="140"></el-table-column>
-        <el-table-column prop="channelManagerName" label="BD经理"> </el-table-column>
+        <el-table-column prop="channelManagerName" label="BD经理"></el-table-column>
         <el-table-column prop="proportion" label="分成比例">
           <template slot-scope="scope"> {{ scope.row.proportion || 0 }}% </template>
         </el-table-column>
@@ -143,10 +148,11 @@
 import { queryChannel, queryAgentPage, updateStatus, queryAppQuotaAndPrice, queryAgentAppAndQuota, distributeAppQuota } from '@/api/customer/agent'
 import { resetPassword } from '@/api/setting/account'
 import { isPositiveInteger } from '@/utils/common'
+import selectCopy from '@/components/selectCopy'
 
 export default {
   name: 'agentManage',
-  components: {},
+  components: { selectCopy },
   filters: {
     fiterStatus(val) {
       if (val === 0) {

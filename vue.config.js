@@ -32,6 +32,7 @@ module.exports = {
   productionSourceMap: false, // 去掉生产环境.map文件
   // 开发时的配置
   devServer: {
+    // host: '192.168.241.10',
     port: 80,
     open: false, // 不自动打开浏览器
     disableHostCheck: true,

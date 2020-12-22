@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近半年内的交易流水，单次查询日期的最长跨度为31天</div>
+      <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近一年内的交易流水，单次查询日期的最长跨度为31天</div>
       <el-form :inline="true" :model="formData" @submit.native.prevent label-width="100px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="24">
@@ -66,18 +66,27 @@
               </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
-              <el-select class="order_sel" @change="getPaymentScenario" filterable v-model="formData.paymentCode">
-                <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentData"></el-option>
-              </el-select>
+              <selectCopy
+                class="order_sel"
+                @change="getPaymentScenario"
+                filterable
+                :value.sync="formData.paymentCode"
+                :options="paymentData"
+                :optionsItem="{ key: 'code', label: 'name', value: 'code' }"
+              />
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="24">
             <el-form-item label="支付场景" prop="paymentScenarioCode">
-              <el-select class="order_sel" v-model="formData.paymentScenarioCode" filterable>
-                <el-option :key="item.code" :label="item.name" :value="item.code" v-for="item in paymentScenarioData"></el-option>
-              </el-select>
+              <selectCopy
+                class="order_sel"
+                :value.sync="formData.paymentScenarioCode"
+                filterable
+                :options="paymentScenarioData"
+                :optionsItem="{ key: 'code', label: 'name', value: 'code' }"
+              />
             </el-form-item>
             <el-form-item label="交易金额" prop="paymentScenarioCode">
               <div class="el-input2" style="display: flex;justify-content: space-between;">
@@ -207,12 +216,14 @@ import {
   refundOrderdetail
 } from '@/api/transtionManagement'
 import { downloadBufferFile } from '@/utils/index'
+import selectCopy from '@/components/selectCopy'
 
 export default {
   name: 'merchantOrderQuery',
   components: {
     orderDetailDialog,
-    selectPage
+    selectPage,
+    selectCopy
   },
   data() {
     return {
@@ -237,7 +248,7 @@ export default {
       tradingChannelData: [],
       tradingTypeData: [],
       paymentData: [],
-      paymentScenarioData: [],
+      paymentScenarioData: [{ code: '', name: '全部' }],
       tradingStatusData: [],
       formData: {
         transactionTime: [
@@ -270,7 +281,7 @@ export default {
                 .valueOf() ||
             time.getTime() <
               moment()
-                .subtract(6, 'months')
+                .subtract(12, 'months')
                 .valueOf()
           )
         }
@@ -628,13 +639,13 @@ export default {
     .el-input-number__decrease {
       width: 25px;
     }
-    .el-input-number.is-controls-right .el-input__inner{
+    .el-input-number.is-controls-right .el-input__inner {
       padding-left: 10px;
     }
-    .el-input-number .el-input__inner{
+    .el-input-number .el-input__inner {
       text-align: left;
     }
-    .el-input-number.is-controls-right .el-input__inner{
+    .el-input-number.is-controls-right .el-input__inner {
       padding-right: 25px;
     }
   }

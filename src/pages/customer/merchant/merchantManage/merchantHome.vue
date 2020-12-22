@@ -11,25 +11,32 @@
               <el-input v-model="form.mobile" maxlength="11" placeholder="请输入手机号" clearable></el-input>
             </el-form-item>
             <el-form-item label="业务员：">
-              <el-select v-model="form.clerkId" placeholder="请输入业务员" filterable clearable>
-                <el-option v-for="item in clerkOptions" :key="item.id" :label="item.name" :value="item.id">
-                </el-option>
-              </el-select>
+              <selectCopy
+                filterable
+                :value.sync="form.clerkId"
+                placeholder="请输入业务员"
+                clearable
+                :options="clerkOptions"
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+              ></selectCopy>
             </el-form-item>
           </el-col>
         </el-row>
         <el-row>
           <el-col :span="20">
             <el-form-item label="代理商：">
-              <el-select v-model="form.topAgentId" placeholder="请输入代理商" filterable clearable>
-                <el-option v-for="item in topAgentOptions" :key="item.id" :label="item.name" :value="item.id">
-                </el-option>
-              </el-select>
+              <selectCopy
+                :value.sync="form.topAgentId"
+                placeholder="请输入代理商"
+                filterable
+                clearable
+                :options="topAgentOptions"
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+              />
             </el-form-item>
             <el-form-item label="状态：">
               <el-select v-model="form.status" placeholder="请输入状态" clearable>
-                <el-option v-for="item in statusOptions" :key="item.id" :label="item.name" :value="item.id">
-                </el-option>
+                <el-option v-for="item in statusOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
             <el-form-item>
@@ -55,47 +62,71 @@
       </el-form>
     </div>
     <div class="data-box">
-      <el-table v-loading="loading" :max-height="tableMaxHeight" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%" @selection-change="handleSelectionChange">
-        <el-table-column type="selection" width="40"> </el-table-column>
-        <el-table-column prop="id" label="商户编号"> </el-table-column>
-        <el-table-column prop="companyName" label="商户名称"> </el-table-column>
-        <el-table-column prop="contactor" label="运营者"> </el-table-column>
+      <el-table
+        v-loading="loading"
+        :max-height="tableMaxHeight"
+        ref="multipleTable"
+        :data="tableData"
+        tooltip-effect="dark"
+        style="width: 100%"
+        @selection-change="handleSelectionChange"
+      >
+        <el-table-column type="selection" width="40"></el-table-column>
+        <el-table-column prop="id" label="商户编号"></el-table-column>
+        <el-table-column prop="companyName" label="商户名称"></el-table-column>
+        <el-table-column prop="contactor" label="运营者"></el-table-column>
         <el-table-column prop="mobile" label="手机"> </el-table-column>
-        <el-table-column prop="merchantNumber" label="品牌数">
-        </el-table-column>
+        <el-table-column prop="merchantNumber" label="品牌数"></el-table-column>
         <el-table-column prop="storeNum" label="门店数">
-          <template slot-scope="scope">
-            {{ scope.row.storeNum || 0 }}</template>
+          <template slot-scope="scope"> {{ scope.row.storeNum || 0 }}</template>
         </el-table-column>
-        <el-table-column prop="agentName" label="所属代理商"> </el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180">
-        </el-table-column>
+        <el-table-column prop="agentName" label="所属代理商"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
         <el-table-column prop="status" label="状态">
-          <template slot-scope="scope">{{
-            scope.row.status | fiterStatus
-          }}</template>
+          <template slot-scope="scope">{{ scope.row.status | fiterStatus }}</template>
         </el-table-column>
         <el-table-column label="操作" align="right" width="180">
           <template slot-scope="scope">
             <el-button v-permission="'MERCHANT_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
-            <el-button v-if="scope.row.status !== 2" v-permission="'MERCHANT_SET_STOPORSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{ scope.row.status | fiterOperateStatus }}</el-button>
-            <el-popconfirm v-permission="'MERCHANT_SET_RESETPWD'" style="margin-left: 12px" iconColor="#FFA033" title="你确定要重置密码吗？确定后将对应账号的密码更新为888888" placement="top-start" @confirm="resetPsw(scope.row.userId)">
+            <el-button v-if="scope.row.status !== 2" v-permission="'MERCHANT_SET_STOPORSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{
+              scope.row.status | fiterOperateStatus
+            }}</el-button>
+            <el-popconfirm
+              v-permission="'MERCHANT_SET_RESETPWD'"
+              style="margin-left: 12px"
+              iconColor="#FFA033"
+              title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
+              placement="top-start"
+              @confirm="resetPsw(scope.row.userId)"
+            >
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
       <div v-show="total > 0" class="km-page-block">
-        <el-pagination @size-change="getPageList" @current-change="handleCurrentChange" :current-page.sync="form.page" :page-sizes="[10, 30, 50]" :page-size.sync="form.rows" layout="total, sizes, prev, pager, next, jumper" :total="total">
+        <el-pagination
+          @size-change="getPageList"
+          @current-change="handleCurrentChange"
+          :current-page.sync="form.page"
+          :page-sizes="[10, 15, 30]"
+          :page-size.sync="form.rows"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="total"
+        >
         </el-pagination>
       </div>
       <el-dialog title="移交业务员" :visible.sync="dialogFormVisible" width="510px">
         <el-form :model="clerkForm" :rules="clerkRules" ref="clerkForm" size="small" label-width="100px" class="xdd-btn-block__w240">
           <el-form-item label="新业务员：" prop="clerkId">
-            <el-select v-model="clerkForm.clerkId" placeholder="请选择业务员" filterable clearable>
-              <el-option v-for="item in newClerkOptions" :key="item.id" :label="item.name" :value="item.id">
-              </el-option>
-            </el-select>
+            <selectCopy
+              :value.sync="clerkForm.clerkId"
+              placeholder="请选择业务员"
+              filterable
+              clearable
+              :options="newClerkOptions"
+              :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+            ></selectCopy>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -108,17 +139,13 @@
 </template>
 
 <script>
-import {
-  queryShopListByPage,
-  queryClerkList,
-  queryAgentPage,
-  updateStatus,
-  updateClerk,
-} from '@/api/customer/merchant'
+import { queryShopListByPage, queryClerkList, queryAgentPage, updateStatus, updateClerk } from '@/api/customer/merchant'
 import { resetPassword } from '@/api/setting/account'
+import selectCopy from '@/components/selectCopy'
 
 export default {
   name: 'merchantManage',
+  components: { selectCopy },
   filters: {
     fiterStatus(val) {
       if (val === 0) {
@@ -135,12 +162,12 @@ export default {
       } else if (val === 1) {
         return '停用'
       }
-    },
+    }
   },
   computed: {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 112 - 32 - 116
-    },
+    }
   },
   data() {
     return {
@@ -152,7 +179,7 @@ export default {
         { id: '', name: '全部' },
         { id: 0, name: '停用' },
         { id: 1, name: '启用' },
-        { id: 2, name: '待审核' },
+        { id: 2, name: '待审核' }
       ],
       loading: false,
       total: 0,
@@ -163,16 +190,16 @@ export default {
         page: 1,
         rows: 10,
         status: '',
-        topAgentId: '',
+        topAgentId: ''
       },
       clerkForm: {
-        clerkId: '',
+        clerkId: ''
       },
       clerkRules: {
-        clerkId: { required: true, message: '请选择业务员', trigger: 'change' },
+        clerkId: { required: true, message: '请选择业务员', trigger: 'change' }
       },
       tableData: [],
-      multipleSelection: [],
+      multipleSelection: []
     }
   },
   watch: {
@@ -180,7 +207,7 @@ export default {
       if (!val) {
         this.$refs['clerkForm'].resetFields()
       }
-    },
+    }
   },
   created() {
     this.queryClerkList()
@@ -192,12 +219,12 @@ export default {
   },
   methods: {
     onClerkConfirm() {
-      this.$refs['clerkForm'].validate(async (valid) => {
+      this.$refs['clerkForm'].validate(async valid => {
         if (valid) {
-          const idStr = this.multipleSelection.map((item) => item.id).join(',')
+          const idStr = this.multipleSelection.map(item => item.id).join(',')
           const params = {
             idStr,
-            clerkId: this.clerkForm.clerkId,
+            clerkId: this.clerkForm.clerkId
           }
 
           await updateClerk(params)
@@ -220,7 +247,7 @@ export default {
         return this.$message.error('请先选择数据')
       }
 
-      const flag = multipleSelection.some((item) => {
+      const flag = multipleSelection.some(item => {
         return item.status !== 0 && item.status !== 1
       })
 
@@ -228,10 +255,10 @@ export default {
         return this.$message.error('您选择了未通过审核的用户，请重新选择')
       }
 
-      const idStr = multipleSelection.map((item) => item.id).join(',')
+      const idStr = multipleSelection.map(item => item.id).join(',')
       const params = {
         idStr,
-        status,
+        status
       }
 
       await updateStatus(params)
@@ -239,10 +266,12 @@ export default {
       this.$message.success('操作成功！')
     },
     handleOperate(idStr, val) {
-      updateStatus({ idStr, status: val === 0 ? 1 : 0 }).then(() => {
-        this.queryShopListByPage()
-        this.$message.success('操作成功！')
-      }).catch(() => {})
+      updateStatus({ idStr, status: val === 0 ? 1 : 0 })
+        .then(() => {
+          this.queryShopListByPage()
+          this.$message.success('操作成功！')
+        })
+        .catch(() => {})
     },
     async resetPsw(userId) {
       await resetPassword({ userId })
@@ -254,17 +283,17 @@ export default {
         channelManagerId: '',
         mobile: '',
         page: 1,
-        rows: 100,
+        rows: 100
       }
 
-      queryAgentPage(params).then((res) => {
+      queryAgentPage(params).then(res => {
         if (res && res.results) {
           this.topAgentOptions = [{ id: '', name: '全部' }, ...res.results]
         }
       })
     },
     queryClerkList() {
-      queryClerkList().then((res) => {
+      queryClerkList().then(res => {
         this.clerkOptions = [{ id: '', name: '全部' }, ...res]
         this.newClerkOptions = res
       })
@@ -279,7 +308,7 @@ export default {
     queryShopListByPage() {
       this.loading = true
       queryShopListByPage(this.form)
-        .then((res) => {
+        .then(res => {
           this.tableData = res.results
           this.total = res.totalCount
         })
@@ -296,17 +325,15 @@ export default {
     },
     addShop() {
       this.$router.push({
-        path: '/customer/merchant/addMerchant',
+        path: '/customer/merchant/addMerchant'
       })
     },
     handleEdit(id) {
       this.$router.push({
         path: '/customer/merchant/editMerchant',
-        query: { id },
+        query: { id }
       })
-    },
-  },
+    }
+  }
 }
 </script>
-
-<style lang="scss" scoped></style>

@@ -1,13 +1,22 @@
 <template>
   <div>
     <div class="search-box">
+      <div class="xdd_tip">
+        <i class="el-icon-info"></i>
+        查询对象为“全部” 或 代理商过滤时，结果会包括下级代理商的交易数据
+      </div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
             <el-form-item label="查询对象" prop="paymentCode">
-              <el-select class="order_sel" filterable v-model="form.searchObject" @change="searchObjectChange">
-                <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in searchObjectList"></el-option>
-              </el-select>
+              <selectCopy
+                class="order_sel"
+                @change="searchObjectChange"
+                filterable
+                :options="searchObjectList"
+                :value.sync="form.searchObject"
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+              ></selectCopy>
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
               <select-page
@@ -27,14 +36,21 @@
               </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
-              <el-select class="order_sel" filterable v-model="form.payMethod">
-                <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in paymentList"></el-option>
+              <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
+                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-row>
+          <el-col :span="21">
+            <el-form-item label="支付场景">
+              <el-select style="width: 240px" clearable v-model="form.payPlugin" placeholder="全部">
+                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-              <!-- <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出</el-button>
-              <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出记录</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -43,7 +59,7 @@
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tableLoading">
       <el-row>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               交易总额(元)
@@ -52,10 +68,10 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payAmount}}</div>
+            <div class="sum-card-money">{{ tableData.payAmount }}</div>
           </div>
         </el-col>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               交易笔数
@@ -64,10 +80,10 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payCount}}</div>
+            <div class="sum-card-money">{{ tableData.payCount }}</div>
           </div>
         </el-col>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               客单价(元)
@@ -76,7 +92,49 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户优惠(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">
+                  由商家承担的参与微信/支付宝/银联<br />
+                  活动的优惠券核销金额
+                </div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{ tableData.shopCouponAmount }}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户实退(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">
+                  退还用户银行卡或零钱账户的<br />
+                  金额+平台优惠券退款金额
+                </div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{ tableData.merchantRefundAmount }}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户实收(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">交易总额-商家优惠-商家实退</div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{ tableData.receiptAmount }}</div>
           </div>
         </el-col>
       </el-row>
@@ -88,12 +146,14 @@
 import moment from 'moment'
 import { getLocal } from '@/utils/storage'
 import selectPage from '@/components/selectPage'
-import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
+import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList } from '@/api/dataCenter/historiyTrade'
+import selectCopy from '@/components/selectCopy'
 
 export default {
   name: 'monthTradeData',
   components: {
-    selectPage
+    selectPage,
+    selectCopy
   },
   data() {
     return {
@@ -105,8 +165,10 @@ export default {
         time: [],
         payMethod: '',
         searchObject: '',
-        ObjContent: ''
+        ObjContent: '',
+        payPlugin: ''
       },
+      payPluginList: [{ id: '', name: '全部' }],
       paymentList: [],
       questionIcon: require('@/assets/images/icon/questioin.png'),
       ObjContentList: [],
@@ -130,7 +192,7 @@ export default {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
     },
-    isSalesman () {
+    isSalesman() {
       return Boolean(JSON.parse(getLocal('userInfo')).clerkId)
     }
   },
@@ -148,6 +210,25 @@ export default {
     }
   },
   methods: {
+    async payMethodChange(value) {
+      this.payPluginList = []
+      this.form.payPlugin = ''
+      let childs = ''
+      console.log(value)
+      this.paymentList.forEach(item => {
+        if (item.id === value) {
+          childs = item.childs.split(',')
+        }
+      })
+      let data = {
+        childs
+      }
+      try {
+        let res = await paymentPluginVoList(data)
+        this.payPluginList = res
+        this.payPluginList.unshift({ id: '', name: '全部' })
+      } catch (error) {}
+    },
     searchObjectChange(value) {
       this.form.id = null
       this.form.ObjContent = null
@@ -210,7 +291,9 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.remoteMethod()
+      if (!this.form.ObjContent) {
+        this.remoteMethod()
+      }
     },
     selectPageChange(value) {
       this.form.id = value
@@ -230,6 +313,7 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
+      this.form.ObjContent = ''
     },
     handleCurrentChange() {},
     handleSizeChange() {},
@@ -251,7 +335,8 @@ export default {
         adminId: this.form.searchObject === 2 ? this.form.id : '',
         agentId: this.form.searchObject === 1 ? this.form.id : '',
         storeId: this.form.searchObject === 3 ? this.form.id : '',
-        payMethod: this.form.payMethod
+        payMethod: this.form.payMethod,
+        payPlugin: this.form.payPlugin
       }
       try {
         const res = await cashierData(data)

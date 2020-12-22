@@ -278,6 +278,9 @@
                   value-format="yyyy-MM-dd"
                   style="width: 140px"
                 ></el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -482,36 +485,39 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="银行" prop="archiveExpandVO.bank">
-                <el-select
-                  v-model="form.archiveExpandVO.bank"
+                <selectCopy
+                  :remoteMethod="handleBankRemote"
+                  @focus="handleBankPage"
+                  style="width: 240px"
+                  :value.sync="form.archiveExpandVO.bank"
                   filterable
                   clearable
                   remote
-                  reserve-keyword
+                  reserveKeyword
                   placeholder="银行"
-                  :remote-method="handleBankRemote"
-                  @focus="handleBankPage"
-                  style="width: 240px"
+                  :options="bankOptions"
+                  :optionsItem="{ key: 'bankCode', label: 'bankName', value: 'bankCode' }"
                 >
-                  <el-option v-for="item in bankOptions" :key="item.bankCode" :label="item.bankName" :value="item.bankCode"></el-option>
-                </el-select>
+                </selectCopy>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
-                <el-select
-                  v-model="form.archiveExpandVO.bankSub"
+                <selectCopy
+                  isCopy
+                  style="width: 240px"
+                  :remoteMethod="handleBranchRemote"
+                  :value.sync="form.archiveExpandVO.bankSub"
+                  @focus="handleBranchPage"
                   filterable
                   clearable
+                  reserveKeyword
                   remote
-                  reserve-keyword
                   placeholder="所属支行"
-                  :remote-method="handleBranchRemote"
-                  @focus="handleBranchPage"
-                  style="width: 240px"
+                  :options="branchOptions"
+                  :optionsItem="{ key: 'bCode', label: 'bName', value: 'bCode' }"
                 >
-                  <el-option v-for="item in branchOptions" :key="item.bCode" :label="item.bName" :value="item.bCode"></el-option>
-                </el-select>
+                </selectCopy>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -584,6 +590,7 @@ import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
 import fileServer from '@/mixins/fileServe'
+import selectCopy from '@/components/selectCopy'
 import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
 import { filterReview } from './filters'
 import { deepClone } from '@/utils'
@@ -596,7 +603,8 @@ export default {
     selectPage,
     uploadPic,
     areaSelect,
-    ElImagePreview
+    ElImagePreview,
+    selectCopy
   },
   data() {
     return {
@@ -776,6 +784,7 @@ export default {
             this.form.archiveBaseVO.bossAuditTime = ''
             this.form.archiveBaseVO.createTime = ''
             this.form.archiveBaseVO.auditStatus = ''
+            this.form.archiveBaseVO.useChannelCode = ''
           }
           try {
             const res = await submitToVerify(this.form)
@@ -836,6 +845,7 @@ export default {
                 this.form.archiveBaseVO.bossAuditTime = ''
                 this.form.archiveBaseVO.createTime = ''
                 this.form.archiveBaseVO.auditStatus = ''
+                this.form.archiveBaseVO.useChannelCode = ''
               }
               const res = await submit(this.form)
               this.$message.success('保存成功')

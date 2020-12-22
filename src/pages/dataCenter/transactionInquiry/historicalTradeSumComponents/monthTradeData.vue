@@ -1,7 +1,10 @@
 <template>
   <div>
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i>单次查询月份的最长跨度为12个月</div>
+      <div class="xdd_tip">
+        <i class="el-icon-info"></i>
+        单次查询月份的最长跨度为12个月；查询对象为“全部” 或 代理商过滤时，结果会包括下级代理商的交易数据
+      </div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
@@ -23,9 +26,14 @@
               </el-date-picker>
             </el-form-item>
             <el-form-item label="查询对象" prop="paymentCode">
-              <el-select class="order_sel" filterable v-model="form.searchObject" @change="searchObjectChange">
-                <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in searchObjectList"></el-option>
-              </el-select>
+              <selectCopy
+                class="order_sel"
+                @change="searchObjectChange"
+                filterable
+                :value.sync="form.searchObject"
+                :options="searchObjectList"
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+              />
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
               <select-page
@@ -49,14 +57,17 @@
         <el-row>
           <el-col :span="21">
             <el-form-item label="支付方式" prop="paymentCode">
-              <el-select class="order_sel" filterable v-model="form.payMethod">
-                <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in paymentList"></el-option>
+              <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
+                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="支付场景">
+              <el-select style="width: 240px" clearable filterable v-model="form.payPlugin" placeholder="全部">
+                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-              <!-- <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出</el-button>
-              <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出记录</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>
@@ -65,7 +76,7 @@
     <!-- 内容展示区域 -->
     <div class="data-box" v-loading="tableLoading">
       <el-row>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               交易总额(元)
@@ -74,10 +85,10 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payAmount}}</div>
+            <div class="sum-card-money">{{ tableData.payAmount }}</div>
           </div>
         </el-col>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               交易笔数
@@ -86,10 +97,10 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.payCount}}</div>
+            <div class="sum-card-money">{{ tableData.payCount }}</div>
           </div>
         </el-col>
-        <el-col :span="8" class="sum-card-item">
+        <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
               客单价(元)
@@ -98,7 +109,49 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{tableData.unitAmount}}</div>
+            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户优惠(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">
+                  由商家承担的参与微信/支付宝/银联<br />
+                  活动的优惠券核销金额
+                </div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{ tableData.shopCouponAmount }}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户实退(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">
+                  退还用户银行卡或零钱账户的<br />
+                  金额+平台优惠券退款金额
+                </div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{ tableData.merchantRefundAmount }}</div>
+          </div>
+        </el-col>
+        <el-col :span="4" class="sum-card-item">
+          <div class="sum-card">
+            <div class="sum-card-title">
+              商户实收(元)
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">交易总额-商家优惠-商家实退</div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </div>
+            <div class="sum-card-money">{{ tableData.receiptAmount }}</div>
           </div>
         </el-col>
       </el-row>
@@ -108,9 +161,12 @@
       <el-table :data="tableData.cashierMockDTOS" ref="table">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
         <el-table-column label="日期" prop="payDate"></el-table-column>
-        <el-table-column label="交易总额(元)" prop="payAmount"></el-table-column>
-        <el-table-column label="交易笔数" prop="payCount"></el-table-column>
-        <el-table-column label="客单价(元)" prop="unitAmount"></el-table-column>
+        <el-table-column align="right" label="交易总额(元)" prop="payAmount"></el-table-column>
+        <el-table-column align="right" label="交易笔数" prop="payCount"></el-table-column>
+        <el-table-column align="right" label="客单价(元)" prop="unitAmount"></el-table-column>
+        <el-table-column align="right" label="商家优惠(元)" prop="shopCouponAmount"></el-table-column>
+        <el-table-column align="right" label="商家实退(元)" prop="merchantRefundAmount"></el-table-column>
+        <el-table-column align="right" label="商家实收(元)" prop="receiptAmount"></el-table-column>
         <el-table-column label="操作">
           <template slot-scope="scope">
             <el-button @click="detail(scope.row)" type="text" size="small">详情</el-button>
@@ -125,13 +181,15 @@
 import selectPage from '@/components/selectPage'
 import { getLocal } from '@/utils/storage'
 import moment from 'moment'
-import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage } from '@/api/dataCenter/historiyTrade'
+import selectCopy from '@/components/selectCopy'
+import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList } from '@/api/dataCenter/historiyTrade'
 let maxTime = ''
 let minTime = ''
 export default {
   name: 'weekTradeData',
   components: {
-    selectPage
+    selectPage,
+    selectCopy
   },
   data() {
     return {
@@ -140,8 +198,10 @@ export default {
         time: [],
         payMethod: '',
         searchObject: '',
-        ObjContent: ''
+        ObjContent: '',
+        payPlugin: ''
       },
+      payPluginList: [{ id: '', name: '全部' }],
       paymentList: [],
       questionIcon: require('@/assets/images/icon/questioin.png'),
       searchObjectList: [
@@ -191,7 +251,7 @@ export default {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
     },
-    isSalesman () {
+    isSalesman() {
       return Boolean(JSON.parse(getLocal('userInfo')).clerkId)
     }
   },
@@ -215,7 +275,26 @@ export default {
     ]
   },
   methods: {
-    clearDisabled () {
+    async payMethodChange(value) {
+      this.payPluginList = []
+      this.form.payPlugin = ''
+      let childs = ''
+      console.log(value)
+      this.paymentList.forEach(item => {
+        if (item.id === value) {
+          childs = item.childs.split(',')
+        }
+      })
+      let data = {
+        childs
+      }
+      try {
+        let res = await paymentPluginVoList(data)
+        this.payPluginList = res
+        this.payPluginList.unshift({ id: '', name: '全部' })
+      } catch (error) {}
+    },
+    clearDisabled() {
       maxTime = ''
       minTime = ''
     },
@@ -290,7 +369,9 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.remoteMethod()
+      if (!this.form.ObjContent) {
+        this.remoteMethod()
+      }
     },
     selectPageChange(value) {
       this.form.id = value
@@ -310,6 +391,7 @@ export default {
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
+      this.form.ObjContent = ''
     },
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
@@ -323,7 +405,8 @@ export default {
         storeId: this.form.searchObject === 3 ? this.form.id : '',
         startTime: this.form.time[0],
         endTime: this.form.time[1],
-        payMethod: this.form.payMethod
+        payMethod: this.form.payMethod,
+        payPlugin: this.form.payPlugin
       }
       try {
         const res = await cashierData(data)
@@ -333,7 +416,7 @@ export default {
         if (this.tableData.cashierMockDTOS) {
           this.tableData.cashierMockDTOS.forEach(item => {
             this.eChartsDateList.push(item.payDate)
-            this.eChartsDataList.push(item.payAmount)
+            this.eChartsDataList.push(item.receiptAmount)
           })
           this.$nextTick(() => {
             this.loadingChart()
@@ -374,7 +457,7 @@ export default {
                   ${params[0].axisValueLabel}
                 </p>
                 <p style="font-size: 18px;">
-                  <span class="echart-tooltip-bot-title">交易总额:</span>${params[0].data}
+                  <span class="echart-tooltip-bot-title">商户实收:</span>${params[0].data}
                 </p>
               </div>
             `
@@ -428,7 +511,7 @@ export default {
             },
             label: {
               show: true,
-              position: "top",
+              position: 'top',
               fontSize: 15
             }
             // symbol:'circle'

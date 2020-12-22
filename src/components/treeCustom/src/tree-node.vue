@@ -2,7 +2,7 @@
   <div
     class="el-tree-node"
     @click.stop="handleClick"
-    @contextmenu="($event) => this.handleContextMenu($event)"
+    @contextmenu="$event => this.handleContextMenu($event)"
     v-show="node.visible"
     :class="{
       'is-expanded': expanded,
@@ -24,54 +24,29 @@
     ref="node"
   >
     <!-- :style="{ 'padding-left': (node.level - 1) * tree.indent + 'px' }" -->
-    <div :class="['tree-custom-header' + node.level, 'tree-custom-header'] ">
+    <div :class="['tree-custom-header' + node.level, 'tree-custom-header']">
       <!-- <div v-if="">
       </div> -->
       <!-- :style="{ 'left': (node.level - 2) * tree.indent*6 + 'px'}"
         style="position: absolute; top:50px; padding-left: 15px; width: 110px; box-sizing:border-box;" -->
       <div class="el-tree-node__content">
-        <el-checkbox
-          v-if="showCheckbox"
-          v-model="node.checked"
-          :indeterminate="node.indeterminate"
-          :disabled="!!node.data.disabled"
-          @click.native.stop
-          @change="handleCheckChange"
-        >
+        <el-checkbox v-if="showCheckbox" v-model="node.checked" :indeterminate="node.indeterminate" :disabled="!!node.data.disabled" @click.native.stop @change="handleCheckChange">
         </el-checkbox>
-        <span
-          v-if="node.loading"
-          class="el-tree-node__loading-icon el-icon-loading"
-        >
-        </span>
+        <span v-if="node.loading" class="el-tree-node__loading-icon el-icon-loading"> </span>
         <node-content :node="node"></node-content>
       </div>
     </div>
-    <div
-      :class="['tree-custom-header-clone'] "
-      v-if="node.level === 4"
-    >
+    <div :class="['tree-custom-header-clone']" v-if="node.level === 4">
       <div class="el-tree-node__content">
-        <el-checkbox
-          v-if="showCheckbox"
-          v-model="node.checked"
-          :indeterminate="node.indeterminate"
-          :disabled="!!node.disabled"
-          @click.native.stop
-          @change="handleCheckChange"
-        >
+        <el-checkbox v-if="showCheckbox" v-model="node.checked" :indeterminate="node.indeterminate" :disabled="!!node.disabled" @click.native.stop @change="handleCheckChange">
         </el-checkbox>
-        <span
-          v-if="node.loading"
-          class="el-tree-node__loading-icon el-icon-loading"
-        >
-        </span>
+        <span v-if="node.loading" class="el-tree-node__loading-icon el-icon-loading"> </span>
       </div>
     </div>
     <el-collapse-transition>
       <div
         class="el-tree-node__children custom-el-tree-node__children"
-        :class="['tree-custom-children' + node.level ]"
+        :class="['tree-custom-children' + node.level]"
         v-if="!renderAfterExpand || childNodeRendered"
         v-show="expanded"
         role="group"
@@ -391,8 +366,8 @@ export default {
 .tree-custom-children1,
 .tree-custom-children2 {
   // height: 299px;
-  min-height: 398px;
-  height: 398px;
+  min-height: 474px;
+  height: 474px;
   width: 130px;
   border-right: 1px solid #d5d5d5;
 }
