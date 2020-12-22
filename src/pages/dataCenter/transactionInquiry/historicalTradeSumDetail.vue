@@ -127,8 +127,8 @@
       </el-row>
       <!-- TABLE -->
       <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table">
-        <el-table-column align="right" label="商户名称" prop="shopName"></el-table-column>
-        <el-table-column align="right" label="所属代理商" prop="agentName"></el-table-column>
+        <el-table-column label="商户名称" prop="shopName"></el-table-column>
+        <el-table-column label="所属代理商" prop="agentName"></el-table-column>
         <el-table-column align="right" label="交易总额(元)" prop="payAmount"> </el-table-column>
         <el-table-column align="right" label="交易笔数" prop="payCount"></el-table-column>
         <el-table-column align="right" label="客单价(元)" prop="unitAmount"></el-table-column>
