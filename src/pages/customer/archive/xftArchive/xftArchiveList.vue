@@ -7,7 +7,7 @@
           <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
         </template>
       </section>
-      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px">
+      <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="75px">
         <el-row>
           <el-col :span="21">
             <el-form-item label="申请时间">
@@ -39,7 +39,7 @@
             <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
           </el-select>
         </el-form-item>
-        <el-form-item style="padding-left:30px">
+        <el-form-item style="padding-left:10px">
           <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
