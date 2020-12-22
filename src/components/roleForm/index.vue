@@ -1,303 +1,257 @@
 <template>
   <div>
     <div class="km-setting-roleAdd">
-      <el-form
-        ref="form"
-        size="small"
-        :rules="rules"
-        label-suffix=":"
-        :model="form"
-        label-width="110px"
-        style="width: 800px"
-      >
+      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
         <el-form-item label="角色名称" prop="name">
           <el-input v-model="form.name" style="width: 240px"></el-input>
         </el-form-item>
         <el-form-item label="描述">
-          <el-input
-            v-model="form.remark"
-            maxlength="250"
-            style="width: 240px"
-            :autosize="{ minRows: 6 }"
-            type="textarea"
-          ></el-input>
+          <el-input v-model="form.remark" maxlength="250" style="width: 240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
         </el-form-item>
         <el-form-item label="PC后台权限">
-          <tree-custom
-            :data="pcData"
-            show-checkbox
-            ref="treePC"
-            node-key="id"
-            accordion
-            :default-expanded-keys="[-1]"
-            :default-checked-keys="defaultPCList"
-            :props="defaultProps"
-          >
+          <tree-custom :data="pcData" show-checkbox ref="treePC" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultPCList" :props="defaultProps">
           </tree-custom>
         </el-form-item>
         <el-form-item label="E助手权限">
-          <tree-custom
-            :data="appData"
-            show-checkbox
-            ref="treeE"
-            node-key="id"
-            accordion
-            :default-expanded-keys="[-1]"
-            :default-checked-keys="defaultAPPList"
-            :props="defaultProps"
-          >
+          <tree-custom :data="appData" show-checkbox ref="treeE" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultAPPList" :props="defaultProps">
           </tree-custom>
         </el-form-item>
         <el-form-item label="">
-          <el-button
-            class="channel-setting-save"
-            :loading="submitLoading"
-            type="primary"
-            @click="onSubmit"
-            >保存</el-button
-          >
-          <el-button class="channel-setting-save" @click="cancel"
-            >取消</el-button
-          >
+          <el-button class="channel-setting-save" :loading="submitLoading" type="primary" @click="onSubmit">保存</el-button>
+          <el-button class="channel-setting-save" @click="cancel">取消</el-button>
         </el-form-item>
       </el-form>
     </div>
   </div>
 </template>
 <script>
-import {
-  addRole,
-  queryAllPCMenu,
-  queryAllAPPMenu,
-  queryRoleById,
-  checkRoleName,
-} from "@/api/setting/account";
-import { routeTree } from "@/utils";
-import { routeTreeLevel, sortData } from "@/utils/modules/routeTree.js";
+import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
+import { routeTree } from '@/utils'
+import { routeTreeLevel, sortData } from '@/utils/modules/routeTree.js'
 export default {
-  name: "RoleForm",
+  name: 'RoleForm',
   props: {
     // 新增页or编辑页
     isEdit: {
       type: Boolean,
-      default: false,
+      default: false
     },
     // 接口参数：代理商传1，员工传2
     type: {
       require: true,
       type: Number,
-      default: 1,
+      default: 1
     },
     // 角色首页路由路径
     router: {
       require: true,
-      type: String,
-    },
+      type: String
+    }
   },
   data() {
     var nameRule = async (rule, value, callback) => {
       if (value.length === 0) {
-        callback("请输入角色名称");
+        callback('请输入角色名称')
       } else if (value.length > 50) {
-        callback("角色名称应少于50个字符");
+        callback('角色名称应少于50个字符')
       } else if (value !== this.form.usedName) {
         // 当编辑的时候，如果当前修改后的名字和原本的名字一样则不触发校验
         try {
-          const res = await checkRoleName({ name: value, type: this.type });
-          callback(res);
+          const res = await checkRoleName({ name: value, type: this.type })
+          callback(res)
         } catch (e) {}
       }
-    };
+    }
     return {
       rules: {
-        name: [{ required: true, trigger: "blur", validator: nameRule }],
+        name: [{ required: true, trigger: 'blur', validator: nameRule }]
       },
       form: {
         id: null,
-        usedName: "",
-        name: "",
-        remark: "",
-        menuIdsPC: "",
-        menuIdsAPP: "",
+        usedName: '',
+        name: '',
+        remark: '',
+        menuIdsPC: '',
+        menuIdsAPP: ''
       },
       submitLoading: false,
       pcData: [],
       appData: [],
       defaultProps: {
-        children: "children",
-        label: "name",
+        children: 'children',
+        label: 'name'
       },
       defaultPCList: [],
-      defaultAPPList: [],
-    };
+      defaultAPPList: []
+    }
   },
   methods: {
     // 递归选中的id
     getCheckIdInitForPC(arr, list) {
-      var temp = [];
+      var temp = []
       if (arr && arr.length > 0) {
-        arr.forEach((item) => {
-          item["children"] = [];
+        arr.forEach(item => {
+          item['children'] = []
           if (!item.parentId) {
-            temp.push(item);
+            temp.push(item)
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function (array, item) {
-              array.forEach((cItem) => {
+            const traverse = function(array, item) {
+              array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
-                  cItem["children"].push(item);
+                  cItem['children'].push(item)
                 } else {
-                  traverse(cItem["children"], item);
+                  traverse(cItem['children'], item)
                 }
-              });
-            };
-            traverse(temp, item);
+              })
+            }
+            traverse(temp, item)
           }
-        });
+        })
       }
       // let obj = this.toChildrenNum(list)
       function t2(array) {
         array.length > 0 &&
-          array.forEach((item) => {
-            if (item["children"].length === 0) {
-              this.defaultPCList.push(item.id);
+          array.forEach(item => {
+            if (item['children'].length === 0) {
+              this.defaultPCList.push(item.id)
             } else {
-              t2.call(this, item["children"]);
+              t2.call(this, item['children'])
             }
-          });
+          })
       }
-      t2.call(this, temp);
+      t2.call(this, temp)
     },
     getCheckIdInitForAPP(arr, list) {
-      var temp = [];
+      var temp = []
       if (arr && arr.length > 0) {
-        arr.forEach((item) => {
-          item["children"] = [];
+        arr.forEach(item => {
+          item['children'] = []
           if (!item.parentId) {
-            temp.push(item);
+            temp.push(item)
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function (array, item) {
-              array.forEach((cItem) => {
+            const traverse = function(array, item) {
+              array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
-                  cItem["children"].push(item);
+                  cItem['children'].push(item)
                 } else {
-                  traverse(cItem["children"], item);
+                  traverse(cItem['children'], item)
                 }
-              });
-            };
-            traverse(temp, item);
+              })
+            }
+            traverse(temp, item)
           }
-        });
+        })
       }
       // let obj = this.toChildrenNum(list)
       function t2(array) {
         array.length > 0 &&
-          array.forEach((item) => {
-            if (item["children"].length === 0) {
-              this.defaultAPPList.push(item.id);
+          array.forEach(item => {
+            if (item['children'].length === 0) {
+              this.defaultAPPList.push(item.id)
             } else {
-              t2.call(this, item["children"]);
+              t2.call(this, item['children'])
             }
-          });
+          })
       }
-      t2.call(this, temp);
+      t2.call(this, temp)
     },
     getCheckIdList(tree) {
-      let checkIdList = [];
-      const traverse = function (node) {
-        const childNodes = node.root ? node.root.childNodes : node.childNodes;
-        childNodes.forEach((child) => {
+      let checkIdList = []
+      const traverse = function(node) {
+        const childNodes = node.root ? node.root.childNodes : node.childNodes
+        childNodes.forEach(child => {
           if (child.checked || child.indeterminate) {
-            if (child.data.code !== "COMMON_HEADQUARTERS_MANAGEMENT_VIEW") {
-              checkIdList.push(child.key);
+            if (child.data.code !== 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW') {
+              checkIdList.push(child.key)
             }
           }
-          traverse(child);
-        });
-      };
-      traverse(tree);
+          traverse(child)
+        })
+      }
+      traverse(tree)
       if (checkIdList[0] === -1) {
-        return checkIdList.slice(1).join(",");
+        return checkIdList.slice(1).join(',')
       } else {
-        return checkIdList.join(",");
+        return checkIdList.join(',')
       }
     },
     cancel() {
-      this.$store.dispatch("delTagView", this.$route).then(() => {
-        this.$router.push({ path: this.router });
-      });
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ path: this.router })
+      })
     },
     async onSubmit() {
-      this.$refs.form.validate(async (valid) => {
+      this.$refs.form.validate(async valid => {
         if (valid) {
-          this.submitLoading = true;
-          this.form.menuIdsPC = this.getCheckIdList(this.$refs.treePC);
-          this.form.menuIdsAPP = this.getCheckIdList(this.$refs.treeE);
+          this.submitLoading = true
+          this.form.menuIdsPC = this.getCheckIdList(this.$refs.treePC)
+          this.form.menuIdsAPP = this.getCheckIdList(this.$refs.treeE)
           let data = {
             id: this.form.id || null,
             menuIdsAPP: this.form.menuIdsAPP,
             menuIdsPC: this.form.menuIdsPC,
             name: this.form.name,
             remark: this.form.remark,
-            type: this.type,
-          };
+            type: this.type
+          }
           try {
-            const res = await addRole(data);
-            this.$message.success("操作成功");
-            this.$store.dispatch("delTagView", this.$route).then(() => {
-              this.$router.push({ path: this.router });
-            });
+            const res = await addRole(data)
+            this.$message.success('操作成功')
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ path: this.router })
+            })
           } catch (e) {
           } finally {
-            this.submitLoading = false;
+            this.submitLoading = false
           }
         }
-      });
+      })
     },
     async queryAllAPPMenu(id) {
       try {
-        const res = await queryAllAPPMenu({ roleId: id });
+        const res = await queryAllAPPMenu({ roleId: id })
         this.appData = [
           {
             id: -1,
-            name: "访问权限",
-            children: routeTree(res.allMenus) || [],
-          },
-        ];
-        this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children);
-        sortData(this.appData[0].children);
+            name: '访问权限',
+            children: routeTree(res.allMenus) || []
+          }
+        ]
+        this.getCheckIdInitForAPP(res.roleMenus || [], this.appData.children)
+        sortData(this.appData[0].children)
       } catch (e) {}
     },
     async queryAllPCMenu(id) {
       try {
         if (id) {
-          this.queryRoleById();
+          this.queryRoleById()
         }
-        const res = await queryAllPCMenu({ roleId: id });
-        var cid = 444444;
-        let newRouteTree = routeTree(res.allMenus);
-        let isNodeCheck, isDisabled;
+        const res = await queryAllPCMenu({ roleId: id })
+        var cid = 444444
+        let newRouteTree = routeTree(res.allMenus)
+        let isNodeCheck, isDisabled
         let sysMenuThree =
           routeTreeLevel(res.roleMenus || [])
-            .filter((item) => item.lever === 3)
-            .map((item) => item.id) || [];
-        newRouteTree.forEach((itemOne) => {
+            .filter(item => item.lever === 3)
+            .map(item => item.id) || []
+        newRouteTree.forEach(itemOne => {
           if (itemOne && itemOne.children) {
-            itemOne.children.forEach((itemTwo) => {
+            itemOne.children.forEach(itemTwo => {
               if (itemTwo && itemTwo.children) {
-                itemTwo.children.forEach((itemThree) => {
-                  cid++;
+                itemTwo.children.forEach(itemThree => {
+                  cid++
                   if (itemThree && itemThree.children) {
                     if (sysMenuThree.includes(itemThree.id)) {
-                      isNodeCheck = true;
-                      isDisabled = true;
+                      isNodeCheck = true
+                      isDisabled = true
                       res.roleMenus.push({
                         id: cid,
-                        name: "查看",
-                        code: "COMMON_HEADQUARTERS_MANAGEMENT_VIEW",
+                        name: '查看',
+                        code: 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
                         iconCls: null,
                         url: null,
                         lever: 4,
@@ -312,18 +266,18 @@ export default {
                         parentName: null,
                         children: null,
                         viewPath: null,
-                        sort: null,
+                        sort: 100,
                         domainType: null,
-                        menuType: 2,
-                      });
+                        menuType: 2
+                      })
                     } else {
-                      isNodeCheck = false;
-                      isDisabled = false;
+                      isNodeCheck = false
+                      isDisabled = false
                     }
                     itemThree.children.push({
                       id: cid,
-                      name: "查看",
-                      code: "COMMON_HEADQUARTERS_MANAGEMENT_VIEW",
+                      name: '查看',
+                      code: 'COMMON_HEADQUARTERS_MANAGEMENT_VIEW',
                       iconCls: null,
                       url: null,
                       lever: 4,
@@ -339,47 +293,47 @@ export default {
                       disabled: isNodeCheck,
                       checked: isDisabled,
                       viewPath: null,
-                      sort: null,
+                      sort: 100,
                       domainType: null,
                       appId: null,
-                      menuType: 2,
-                    });
+                      menuType: 2
+                    })
                   }
-                });
+                })
               }
-            });
+            })
           }
-        });
+        })
         this.pcData = [
           {
             id: -1,
-            name: "访问权限",
-            children: newRouteTree || [],
-          },
-        ];
-        id && this.getCheckIdInitForPC(res.roleMenus || [], res.allMenus || []);
-        sortData(this.pcData[0].children);
+            name: '访问权限',
+            children: newRouteTree || []
+          }
+        ]
+        id && this.getCheckIdInitForPC(res.roleMenus || [], res.allMenus || [])
+        sortData(this.pcData[0].children)
       } catch (e) {}
     },
     async queryRoleById() {
       try {
-        const res = await queryRoleById({ id: this.$route.query.id });
-        this.form.id = res.id;
-        this.form.name = res.name;
-        this.form.usedName = res.name;
-        this.form.remark = res.remark;
+        const res = await queryRoleById({ id: this.$route.query.id })
+        this.form.id = res.id
+        this.form.name = res.name
+        this.form.usedName = res.name
+        this.form.remark = res.remark
       } catch (e) {}
-    },
-  },
-  mounted() {
-    const id = this.isEdit ? Number(this.$route.query.id) : "";
-    this.queryAllPCMenu(id);
-    this.queryAllAPPMenu(id);
-    if (this.isEdit) {
-      this.queryRoleById();
     }
   },
-};
+  mounted() {
+    const id = this.isEdit ? Number(this.$route.query.id) : ''
+    this.queryAllPCMenu(id)
+    this.queryAllAPPMenu(id)
+    if (this.isEdit) {
+      this.queryRoleById()
+    }
+  }
+}
 </script>
 <style lang="scss" scoped>
 .km-setting-roleAdd {

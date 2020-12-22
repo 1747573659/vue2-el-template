@@ -370,7 +370,7 @@ export default {
 <style lang="scss" scoped>
 .author-dialog {
   /deep/.el-dialog__body {
-    height: 436px;
+    height: 550px;
     .author-dialog-text {
       font-size: 14px;
       font-family: PingFangSC-Regular, PingFang SC;
@@ -382,16 +382,16 @@ export default {
       margin-bottom: 12px;
     }
     .author-dialog-img {
-      top: 52%;
+      top: 48%;
       position: absolute;
       left: 50%;
       transform: translate(-50%, -20%);
-      width: 240px;
-      height: 240px;
+      width: 350px;
+      height: 350px;
     }
     .signup-img {
-      width: 200px;
-      height: 200px;
+      width: 300px;
+      height: 300px;
     }
   }
 }
