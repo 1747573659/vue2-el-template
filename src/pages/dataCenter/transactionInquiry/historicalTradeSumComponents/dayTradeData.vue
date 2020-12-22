@@ -167,7 +167,7 @@
         <el-table-column align="right" label="商家优惠(元)" prop="shopCouponAmount"></el-table-column>
         <el-table-column align="right" label="商家实退(元)" prop="merchantRefundAmount"></el-table-column>
         <el-table-column align="right" label="商家实收(元)" prop="receiptAmount"></el-table-column>
-        <el-table-column label="操作">
+        <el-table-column label="操作" fixed="right" align="right">
           <template slot-scope="scope">
             <el-button v-if="[1, 2, ''].includes(form.searchObject)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
           </template>
