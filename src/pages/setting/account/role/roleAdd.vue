@@ -253,7 +253,7 @@ export default {
                         parentName: null,
                         children: null,
                         viewPath: null,
-                        sort: null,
+                        sort: 100,
                         domainType: null,
                         menuType: 2
                       })
@@ -280,7 +280,7 @@ export default {
                       disabled: isNodeCheck,
                       checked: isDisabled,
                       viewPath: null,
-                      sort: null,
+                      sort: 100,
                       domainType: null,
                       appId: null,
                       menuType: 2
