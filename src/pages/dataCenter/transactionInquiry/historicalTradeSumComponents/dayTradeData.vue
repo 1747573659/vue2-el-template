@@ -5,38 +5,6 @@
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="21">
-            <el-form-item label="日期">
-              <el-date-picker
-                v-model="form.time"
-                type="daterange"
-                :clearable="false"
-                class="search-date"
-                range-separator="至"
-                :picker-options="pickerOptions"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                @blur="clearDisabled"
-                value-format="yyyy-MM-dd"
-              >
-              </el-date-picker>
-              <el-button @click="setSearchTime('yesterday')" class="pure-btn_space" size="small" type="default">昨天</el-button>
-              <el-button @click="setSearchTime('week')" size="small" type="default">近7天</el-button>
-              <el-button @click="setSearchTime('month')" size="small" type="default">近30天</el-button>
-            </el-form-item>
-            <el-form-item label="支付方式" prop="paymentCode">
-              <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
-                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="21">
-            <el-form-item label="支付场景">
-              <el-select style="width: 240px" clearable filterable v-model="form.payPlugin" placeholder="全部">
-                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item label="查询对象" prop="paymentCode">
               <selectCopy
                 class="order_sel"
@@ -64,13 +32,45 @@
               >
               </select-page>
             </el-form-item>
-            <el-form-item label="" prop="paymentCode">
-              <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-              <!-- <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出</el-button>
-              <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出记录</el-button> -->
+            <el-form-item label="支付方式" prop="paymentCode">
+              <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
+                <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
             </el-form-item>
           </el-col>
         </el-row>
+        <el-row>
+          <el-col :span="21">
+            <el-form-item label="支付场景">
+              <el-select style="width: 240px" clearable filterable v-model="form.payPlugin" placeholder="全部">
+                <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="日期">
+              <el-date-picker
+                v-model="form.time"
+                type="daterange"
+                :clearable="false"
+                class="search-date"
+                range-separator="至"
+                :picker-options="pickerOptions"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                @blur="clearDisabled"
+                value-format="yyyy-MM-dd"
+              >
+              </el-date-picker>
+              <el-button @click="setSearchTime('yesterday')" class="pure-btn_space" size="small" type="default">昨天</el-button>
+              <el-button @click="setSearchTime('week')" size="small" type="default">近7天</el-button>
+              <el-button @click="setSearchTime('month')" size="small" type="default">近30天</el-button>
+            </el-form-item>
+          </el-col>
+        </el-row>
+        <el-form-item label="" prop="paymentCode" style="padding-left: 80px">
+          <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
+          <!-- <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出</el-button>
+          <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出记录</el-button> -->
+        </el-form-item>
       </el-form>
     </div>
     <!-- 内容展示区域 -->
