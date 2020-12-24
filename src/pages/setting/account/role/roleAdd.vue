@@ -29,7 +29,7 @@ import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName 
 import { routeTree } from '@/utils'
 import { routeTreeLevel, sortData } from '@/utils/modules/routeTree.js'
 export default {
-  name: 'roleAdd',
+  // name: 'roleAdd',
   components: {},
   data() {
     var nameRule = async (rule, value, callback) => {
@@ -67,6 +67,17 @@ export default {
       defaultPCList: [],
       defaultAPPList: []
     }
+  },
+  beforeRouteEnter(to,from,next){
+    next(vm=>{
+      vm.$nextTick(() => {
+        if (vm.$route.query.id) {
+          document.querySelector('.e-tag_active span').innerText = `角色管理/编辑`
+        } else {
+          document.querySelector('.e-tag_active span').innerText = `角色管理/新增`
+        }
+      })
+    })
   },
   methods: {
     // 递归选中的id

@@ -86,6 +86,17 @@ export default {
       isAdd: true
     };
   },
+  beforeRouteEnter(to,from,next){
+    next(vm=>{
+      vm.$nextTick(() => {
+        if (vm.$route.query.id) {
+          document.querySelector('.e-tag_active span').innerText = `角色管理/编辑`
+        } else {
+          document.querySelector('.e-tag_active span').innerText = `角色管理/新增`
+        }
+      })
+    })
+  },
   methods: {
     async onSubmit() {
       this.$refs.form.validate(async valid => {
@@ -132,13 +143,6 @@ export default {
   mounted() {
     this.getRoleList()
     if (this.$route.query.id) this.queryUserById()
-    this.$nextTick(() => {
-      if (this.$route.query.id) {
-        document.querySelector('.e-tag_active span').innerText = `账号设置/编辑`
-      } else {
-        document.querySelector('.e-tag_active span').innerText = `账号设置/新增`
-      }
-    })
   },
   computed: {
     loginName() {

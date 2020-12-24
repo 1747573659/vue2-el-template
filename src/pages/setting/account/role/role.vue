@@ -9,40 +9,21 @@
           <el-button type="primary" class="km-role-search" @click="search" :loading="cxLoading">查询</el-button>
         </el-form-item>
         <el-form-item style="float:right">
-          <el-button type="primary" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'"  @click="add">新增</el-button>
+          <el-button type="primary" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'" @click="add">新增</el-button>
         </el-form-item>
       </el-form>
     </div>
     <div class="data-box">
-      <el-table
-        v-loading="tableLoading"
-        :max-height="tableMaxHeight"
-        :data="tableData"
-        style="width: 100%">
-        <el-table-column
-          prop="name"
-          label="角色名称">
-        </el-table-column>
-        <el-table-column
-          prop="remark"
-          label="描述">
-        </el-table-column>
-        <el-table-column
-          prop="num"
-          label="关联账号数量"
-          header-align="left"
-          align="right">
+      <el-table v-loading="tableLoading" :max-height="tableMaxHeight" :data="tableData" style="width: 100%">
+        <el-table-column prop="name" label="角色名称"> </el-table-column>
+        <el-table-column prop="remark" label="描述"> </el-table-column>
+        <el-table-column prop="num" label="关联账号数量" header-align="left" align="right">
           <template slot-scope="scope">
-            <div class="table-num">{{scope.row.num}}</div>
+            <div class="table-num">{{ scope.row.num }}</div>
           </template>
         </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="创建时间">
-        </el-table-column>
-        <el-table-column
-          label="操作"
-          align="right">
+        <el-table-column prop="createTime" label="创建时间"> </el-table-column>
+        <el-table-column label="操作" align="right">
           <template slot-scope="scope">
             <el-button @click="edit(scope.row)" type="text" size="small" v-permission="'ACCOUNT_ROLE_EDIT'">编辑</el-button>
             <el-popconfirm
@@ -67,7 +48,8 @@
           :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
+          :total="total"
+        >
         </el-pagination>
       </div>
     </div>
@@ -78,7 +60,7 @@
 import { queryPage, deleteSysRole } from '@/api/setting/account'
 
 export default {
-  name:'roleManagement',
+  name: 'roleManagement',
   data() {
     return {
       form: {
@@ -91,6 +73,11 @@ export default {
       tableLoading: false,
       cxLoading: false
     }
+  },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getList()
+    })
   },
   methods: {
     search() {
@@ -106,18 +93,15 @@ export default {
     },
     async del(row) {
       if (row.num) {
-        this.$message.error({message:'角色有关联的账号，不能删除'})
+        this.$message.error({ message: '角色有关联的账号，不能删除' })
         return
       }
-      let data = {
-        roleId: row.id
-      }
       try {
-        const res = await deleteSysRole(data)
+        await deleteSysRole({ roleId: row.id })
+        if (this.tableData.length - 1 === 0) this.currentPage = Math.ceil((this.total - 1) / this.pageSize) || 1
         this.getList()
-        this.$message.success({message:'删除成功!'})
-      } catch(e) {
-      } finally {}
+        this.$message.success({ message: '删除成功!' })
+      } catch (e) {}
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -128,7 +112,7 @@ export default {
       this.currentPage = value
       this.getList()
     },
-    async getList () {
+    async getList() {
       this.tableLoading = true
       let data = {
         name: this.form.name,
@@ -150,9 +134,6 @@ export default {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
-  },
-  mounted() {
-    this.getList()
   }
 }
 </script>
