@@ -488,7 +488,7 @@ export default {
       border-radius: 2px;
       display: flex;
       align-items: center;
-      padding: 10px 16px;
+      padding: 7px 16px;
       font-size: 14px;
       color: #3d4966;
       img {

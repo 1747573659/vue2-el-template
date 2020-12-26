@@ -208,7 +208,10 @@ export const detailValidate = {
   'archiveExpandVO.bank': [{ required: true, message: '请输入银行', trigger: 'change' }],
   'archiveExpandVO.bankName': [{ required: true, message: '请输入银行', trigger: 'change' }],
   'archiveExpandVO.bankSub': [{ required: true, message: '请输入所属支行', trigger: 'change' }],
-  'archiveExpandVO.bankCard': [{ required: true, message: '请输入银行账号', trigger: 'change' }],
+  'archiveExpandVO.bankCard': [
+    { required: true, message: '请输入银行账号', trigger: 'blur' },
+    { pattern: /^[1-9]\d{7,29}$/, message: '请输入正确银行账号', trigger: 'change'}
+  ],
   'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'change' }],
   'archiveExpandVO.bankArea': [{ required: true, message: '请输入银行所在地区', trigger: 'change' }],
   'archiveBaseVO.fixFeeRate': [{ required: true, message: '请选择小微交易费率', trigger: 'change' }]

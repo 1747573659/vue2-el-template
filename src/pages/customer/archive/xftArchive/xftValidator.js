@@ -1,30 +1,10 @@
 export default function xftValidator() {
-  var contactPhone = (rule, value, callback) => {
-    if (!value) {
-      callback(new Error('请输入负责人电话'))
-    } else if (!/^1[3456789]\d{9}$/.test(value)) {
-      callback(new Error('请输入正确的电话号码'))
-    } else {
-      callback()
-    }
-  }
-  var cardholderPhone = (rule, value, callback) => {
-    if (!value) {
-      callback('请输入预留手机号')
-    } else if (!/^1[3456789]\d{9}$/.test(value)) {
-      callback('请输入正确的电话号码')
-    } else {
-      callback()
-    }
-  }
-  var validFeeRate = (rule, value, callback) => {
-    if (parseFloat(value) === 0) {
-      callback('费率不能为0')
-    } else if (!value) {
-      callback('请选择费率')
-    } else {
-      callback()
-    }
+  const validatorRules = {
+    serviceTel: /(^(\d{11})$|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/,
+    idNumber: /^[A-Za-z0-9]+$/,
+    mobildPhone: /^(?:(?:\+|00)86)?1(?:(?:3[\d])|(?:4[5-7|9])|(?:5[0-3|5-9])|(?:6[5-7])|(?:7[0-8])|(?:8[\d])|(?:9[1|8|9]))\d{8}$/,
+    licId: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10,12}$)|(^\d{15,20}$)/,
+    bankCard: /^[1-9]\d{7,29}$/
   }
   return {
     'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户', trigger: 'change' }],
@@ -36,12 +16,21 @@ export default function xftValidator() {
     'archiveBaseVO.address': [{ required: true, message: '请输入详细地址', trigger: 'blur' }],
     'archiveBaseVO.serviceTel': [
       { required: true, message: '请输入客服电话', trigger: 'blur' },
-      { pattern: /(^(\d{11})$|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/, message: '请输入正确的客服电话', trigger: ['blur', 'change'] }
+      { pattern: validatorRules.serviceTel, message: '请输入正确的客服电话', trigger: 'change' }
     ],
     'archiveBaseVO.contact': [{ required: true, message: '请输入负责人', trigger: 'blur' }],
-    'archiveBaseVO.idNumber': [{ required: true, message: '请输入负责人证件号码', trigger: 'blur' }],
-    'archiveBaseVO.contactPhone': [{ required: true, validator: contactPhone, trigger: 'blur' }],
-    'archiveBaseVO.email': [{ required: true, message: '请输入邮箱', trigger: 'blur' }],
+    'archiveBaseVO.idNumber': [
+      { required: true, message: '请输入负责人证件号码', trigger: 'blur' },
+      { pattern: validatorRules.idNumber, message: '请输入正确的负责人证件号码', trigger: 'change' }
+    ],
+    'archiveBaseVO.contactPhone': [
+      { required: true, message: '请输入负责人电话', trigger: 'blur' },
+      { pattern: validatorRules.mobildPhone, message: '请输入正确的负责人电话', trigger: 'change' }
+    ],
+    'archiveBaseVO.email': [
+      { required: true, message: '请输入邮箱', trigger: 'blur' },
+      { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
+    ],
     'archiveBaseVO.mchDealType': [{ required: true, message: '请选择经营类型', trigger: 'change' }],
     'archiveBaseVO.industrId': [{ required: true, message: '请选择经营类目', trigger: 'change' }],
     'archiveExpandVO.certType': [{ required: true, message: '请选择登记证书类型', trigger: 'change' }],
@@ -53,13 +42,16 @@ export default function xftValidator() {
     'archiveOtherVO.contractOfTenancy3': [{ required: true, message: '请上传租赁合同照三', trigger: 'change' }],
     'archiveExpandVO.businessLicenseUrl': [{ required: true, message: '请上传营业执照', trigger: 'change' }],
     'archiveExpandVO.licId': [
-      { required: true, message: '请输入营业执照注册号', trigger: ['blur', 'change'] },
-      { pattern: /(^(?:(?![IOZSV])[\dA-Z]){2}\d{6}(?:(?![IOZSV])[\dA-Z]){10,12}$)|(^\d{15,20}$)/, message: '请输入正确营业执照注册号', trigger: ['blur', 'change'] }
+      { required: true, message: '请输入营业执照注册号', trigger: 'blur' },
+      { pattern: validatorRules.licId, message: '请输入正确营业执照注册号', trigger: 'change' }
     ],
     'archiveExpandVO.licValidityBigen': [{ required: true, message: '请选择营业执照有效期', trigger: 'change' }],
     'archiveExpandVO.legalPersonName': [{ required: true, message: '请输入法人姓名', trigger: 'blur' }],
     'archiveExpandVO.cardType': [{ required: true, message: '请选择证件类型', trigger: 'change' }],
-    'archiveExpandVO.idNumber': [{ required: true, message: '请输入证件号码', trigger: 'blur' }],
+    'archiveExpandVO.idNumber': [
+      { required: true, message: '请输入证件号码', trigger: 'blur' },
+      { pattern: validatorRules.idNumber, message: '请输入正确的证件号码', trigger: 'change' }
+    ],
     'archiveExpandVO.legalPersonValidityBegin': [{ required: true, message: '请选择证件有效期', trigger: 'change' }],
     'archiveExpandVO.idFrontUrl': [{ required: true, message: '请上传身份证正面照', trigger: 'change' }],
     'archiveExpandVO.idBackUrl': [{ required: true, message: '请上传身份证背面照', trigger: 'change' }],
@@ -71,9 +63,12 @@ export default function xftValidator() {
     'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'blur' }],
     'archiveExpandVO.bankCard': [
       { required: true, message: '请输入银行账号', trigger: 'blur' },
-      { type: 'string', required: true, pattern: /^[1-9]\d{8,22}$/, message: '请输入正确银行账号', trigger: 'change'}
+      { pattern: validatorRules.bankCard, message: '请输入正确银行账号', trigger: 'change' }
     ],
-    'archiveExpandVO.cardholderPhone': [{ required: true, validator: cardholderPhone, trigger: 'blur' }],
+    'archiveExpandVO.cardholderPhone': [
+      { required: true, message: '请输入预留手机号', trigger: 'blur' },
+      { pattern: validatorRules.mobildPhone, message: '请输入正确的预留手机号', trigger: 'change' }
+    ],
     'archiveExpandVO.cardholderIdType': [{ required: true, message: '请选择持卡人证件类型', trigger: 'change' }],
     'archiveExpandVO.cardholderIdNumber': [{ required: true, message: '持卡人证件号码', trigger: 'blur' }],
     'archiveExpandVO.cardholderIdBegin': [{ required: true, message: '请输入持卡人证件有效期', trigger: 'blur' }],
@@ -89,7 +84,17 @@ export default function xftValidator() {
     'archiveOtherVO.privateAuthorization': [{ required: true, message: '请上传第三方对私结算授权函', trigger: 'change' }],
     'archiveBaseVO.isOpenXingPos': [{ required: true, message: '请上传第三方对私结算授权函', trigger: 'change' }],
     'archiveOtherVO.cardholderIdCardFront': [{ required: true, message: '请上传持卡人身份证正面照', trigger: 'change' }],
-    'archiveBaseVO.fixFeeRate': [{ required: true, validator: validFeeRate, trigger: ['blur', 'change'] }],
-    'archiveBaseVO.exchangeFeeRate': [{ required: true, validator: validFeeRate, trigger: ['blur', 'change'] }]
+    'archiveBaseVO.fixFeeRate': [
+      { required: true, message: '请选择费率', trigger: 'blur' },
+      { validator(rule, value, callback, source, options){
+        parseFloat(value) === 0 ? callback(new Error('费率不能为0')) : callback([])
+      }}
+    ],
+    'archiveBaseVO.exchangeFeeRate': [
+      { required: true, message: '请选择费率', trigger: 'blur' },
+      { validator(rule, value, callback, source, options){
+        parseFloat(value) === 0 ? callback(new Error('费率不能为0')) : callback([])
+      }}
+    ]
   }
 }

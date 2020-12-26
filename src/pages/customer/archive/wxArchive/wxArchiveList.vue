@@ -65,13 +65,13 @@
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tableMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
-        <el-table-column prop="merchantName" label="商户/公司名称" width="200">
+        <el-table-column prop="merchantName" label="商户/公司名称" width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.merchantName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
@@ -99,12 +99,12 @@
             <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="费率" width="80">
+        <el-table-column label="费率" width="75">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="停用" width="60">
+        <el-table-column label="停用" width="55">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
@@ -349,7 +349,7 @@ export default {
       border-radius: 2px;
       display: flex;
       align-items: center;
-      padding: 10px 16px;
+      padding: 7px 16px;
       font-size: 14px;
       color: #3d4966;
       img {

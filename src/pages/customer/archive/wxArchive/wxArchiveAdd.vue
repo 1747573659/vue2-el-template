@@ -551,7 +551,7 @@
         </div>
       </el-form>
     </section>
-    <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
+    <!-- <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
       <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
       <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{
         [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存'
@@ -560,7 +560,7 @@
         >拒绝</el-button
       >
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
-    </div>
+    </div> -->
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
@@ -953,7 +953,9 @@ export default {
 .p {
   &-wxArchive {
     &-con {
-      margin: 16px 16px 72px;
+      // margin: 16px 16px 72px;
+      margin: 16px 16px 0;
+      margin-bottom: 100px;
       background-color: #fff;
       header {
         min-height: 72px;
