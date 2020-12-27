@@ -87,7 +87,7 @@
                   <span class="msg">注：使用科脉ERP才需要选择此项</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
+                  <el-button type="primary" :loading="submitLoading" @click="submitForm">保存</el-button>
                   <el-button @click="onCancel">取消</el-button>
                 </el-form-item>
               </div>
@@ -107,6 +107,7 @@ import PicUpload from '@/components/picUpload'
 import picUploadMixin from '@/mixins/picUpload'
 import { isMPRelaxed, isEmail } from '@/utils/common'
 import selectCopy from '@/components/selectCopy'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'addMerchant',
@@ -271,6 +272,7 @@ export default {
     this.queryTradeById()
   },
   methods: {
+    ...mapActions(['delCachedView']),
     onRemove() {
       this.ruleForm.logo = ''
     },
@@ -309,6 +311,7 @@ export default {
             .then(() => {
               this.$message.success('保存成功！')
               this.$store.dispatch('delTagView', this.$route).then(() => {
+                this.delCachedView(this.$route)
                 this.$router.push({ path: '/customer/merchant/merchantManage' })
               })
             })
@@ -320,6 +323,7 @@ export default {
     },
     onCancel() {
       this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.delCachedView(this.$route)
         this.$router.push({ path: '/customer/merchant/merchantManage' })
       })
     }

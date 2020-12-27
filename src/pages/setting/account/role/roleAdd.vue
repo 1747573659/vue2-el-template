@@ -28,6 +28,8 @@
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
 import { routeTreeLevel, sortData } from '@/utils/modules/routeTree.js'
+import { mapActions } from 'vuex'
+
 export default {
   name: 'roleAdd',
   components: {},
@@ -68,7 +70,11 @@ export default {
       defaultAPPList: []
     }
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {})
+  },
   methods: {
+    ...mapActions(['delCachedView']),
     // 递归选中的id
     getCheckIdInitForPC(arr, list) {
       var temp = []
@@ -169,6 +175,7 @@ export default {
     },
     cancel() {
       this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.delCachedView(this.$route)
         this.$router.push({ name: 'roleManagement' })
       })
     },
@@ -189,6 +196,7 @@ export default {
             const res = await addRole(data)
             this.$message.success('操作成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.delCachedView(this.$route)
               this.$router.push({ name: 'roleManagement' })
             })
           } catch (e) {
@@ -316,11 +324,7 @@ export default {
     this.queryAllPCMenu(this.$route.query.id || '')
     this.queryAllAPPMenu(this.$route.query.id || '')
     this.$nextTick(() => {
-      if (this.$route.query.id) {
-        document.querySelector('.e-tag_active span').innerText = `角色管理/编辑`
-      } else {
-        document.querySelector('.e-tag_active span').innerText = `角色管理/新增`
-      }
+      document.querySelector('.e-tag_active span').innerText = `角色管理/${this.$route.query.id ? '编辑' : '新增'}`
     })
   }
 }

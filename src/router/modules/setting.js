@@ -57,7 +57,7 @@ const setting = {
           meta: {
             title: '角色管理',
             name: 'roleManagement',
-            cache: true
+            cache: false
           }
         },
         {
