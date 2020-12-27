@@ -9,7 +9,7 @@
       </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="75px">
         <el-row>
-          <el-col :span="21">
+          <el-col>
             <el-form-item label="申请时间">
               <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
               </el-date-picker>
@@ -25,28 +25,35 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col>
+            <el-form-item label="商户信息">
+              <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="当前通道">
+              <el-select style="width: 240px" clearable v-model="form.channelTypeCode" placeholder="全部">
+                <el-option v-for="item in channelList" :key="item.channelCode" :label="item.channelName" :value="item.channelCode"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="停用">
+              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+                <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col>
+            <el-form-item style="padding-left:75px">
+              <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
+              <el-button class="km-archive-search" :loading="cxLoading" @click="search">导出</el-button>
+              <el-button class="km-archive-search" :loading="cxLoading" @click="search">导出记录</el-button>
+            </el-form-item>
+            <el-form-item style="float:right">
+              <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
+            </el-form-item>
+          </el-col>
         </el-row>
-        <el-form-item label="商户信息">
-          <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="当前通道">
-          <el-select style="width: 240px" clearable v-model="form.channelTypeCode" placeholder="全部">
-            <el-option v-for="item in channelList" :key="item.channelCode" :label="item.channelName" :value="item.channelCode"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="停用">
-          <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-            <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item style="padding-left:10px">
-          <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
-        </el-form-item>
-        <el-form-item style="float:right">
-          <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
-        </el-form-item>
       </el-form>
     </div>
+
     <div class="data-box">
       <el-table
         v-loading="tableLoading"

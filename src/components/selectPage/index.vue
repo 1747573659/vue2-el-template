@@ -9,7 +9,6 @@
       filterable
       clearable
       remote
-      @focus="focus"
       @change="change"
       :disabled="disabled"
       @clear="clear"
@@ -146,6 +145,7 @@ export default {
       this.$emit('clear')
     },
     focus() {
+      console.info(123)
       this.$emit('focus')
     }
   }

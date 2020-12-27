@@ -66,7 +66,7 @@
                 <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="12">
               <el-form-item label="商户类型">
                 <el-radio-group v-model="form.archiveBaseVO.merchantType">
                   <el-radio :label="1">个体工商户</el-radio>
@@ -75,149 +75,6 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
-              <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
-                <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
-                <el-tooltip effect="dark" content="必须与营业执照一致" placement="top">
-                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
-                <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="商户简称" style="width:240px"></el-input>
-                <el-tooltip effect="dark" content="商户简称在消费者付款成功页展示，请认真填写" placement="top">
-                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="地区" prop="archiveBaseVO.area">
-                <area-select :key="areaKey" @change="value => handleArea('area', value)" :areaList="areaList"></area-select>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="详细地址" prop="archiveBaseVO.address">
-                <el-input v-model="form.archiveBaseVO.address" placeholder="详细地址" style="width:240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="联系人" prop="archiveBaseVO.contact">
-                <el-input v-model="form.archiveBaseVO.contact" placeholder="联系人" style="width:240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
-                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width:240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="邮箱" prop="archiveBaseVO.email">
-                <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
-                <upload-pic
-                  alt="门店门头照"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.signboardUrl"
-                  :exampleImg="exampleImg.signboardUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'signboardUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"
-                >
-                </upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="经营场所照1" prop="archiveOtherVO.businessSiteOneUrl">
-                <upload-pic
-                  alt="经营场所照1"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.businessSiteOneUrl"
-                  :exampleImg="exampleImg.businessSiteOneUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteOneUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="经营场所照2" prop="archiveOtherVO.businessSiteTwoUrl">
-                <upload-pic
-                  alt="经营场所照2"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.businessSiteTwoUrl"
-                  :exampleImg="exampleImg.businessSiteTwoUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteTwoUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteTwoUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="经营场所照3" prop="archiveOtherVO.businessSiteThreeUrl">
-                <upload-pic
-                  alt="经营场所照3"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.businessSiteThreeUrl"
-                  :exampleImg="exampleImg.businessSiteThreeUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteThreeUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteThreeUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" v-if="form.archiveBaseVO.archiveType === 9">
-              <el-form-item label="经营场地证明">
-                <upload-pic
-                  alt="经营场地证明"
-                  :showExample="false"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.businessSiteUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" v-if="form.archiveBaseVO.archiveType === 9">
-              <el-form-item label="补充资料1">
-                <upload-pic
-                  alt="补充资料1"
-                  :showExample="false"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.additionalOneUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalOneUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalOneUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" v-if="form.archiveBaseVO.archiveType === 9">
-              <el-form-item label="补充资料2">
-                <upload-pic
-                  alt="补充资料2"
-                  :showExample="false"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.additionalTwoUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalTwoUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalTwoUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
-              <el-form-item label="补充说明" prop="archiveOtherVO.additionalRemark">
-                <el-input v-model="form.archiveOtherVO.additionalRemark" type="textarea" :autosize="{ minRows: 3 }" resize="none" style="width: 240px"></el-input>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="p-wxArchive-item">
-          <div class="p-wxArchive-itemTitle">营业执照</div>
-          <el-row class="p-wxArchive-baseInfo">
-            <el-col :span="24">
               <el-form-item label="证件类型" prop="archiveExpandVO.licType">
                 <el-radio-group v-model="form.archiveExpandVO.licType">
                   <el-radio :label="1">多证合一</el-radio>
@@ -370,6 +227,144 @@
                   @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)"
                 ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
+                <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
+                <el-tooltip effect="dark" content="必须与营业执照一致" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
+                <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="商户简称" style="width:240px"></el-input>
+                <el-tooltip effect="dark" content="商户简称在消费者付款成功页展示，请认真填写" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="地区" prop="archiveBaseVO.area">
+                <area-select :key="areaKey" @change="value => handleArea('area', value)" :areaList="areaList"></area-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="详细地址" prop="archiveBaseVO.address">
+                <el-input v-model="form.archiveBaseVO.address" placeholder="详细地址" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人" prop="archiveBaseVO.contact">
+                <el-input v-model="form.archiveBaseVO.contact" placeholder="联系人" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
+                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="邮箱" prop="archiveBaseVO.email">
+                <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
+                <upload-pic
+                  alt="门店门头照"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.signboardUrl"
+                  :exampleImg="exampleImg.signboardUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'signboardUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"
+                >
+                </upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照1" prop="archiveOtherVO.businessSiteOneUrl">
+                <upload-pic
+                  alt="经营场所照1"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.businessSiteOneUrl"
+                  :exampleImg="exampleImg.businessSiteOneUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteOneUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照2" prop="archiveOtherVO.businessSiteTwoUrl">
+                <upload-pic
+                  alt="经营场所照2"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.businessSiteTwoUrl"
+                  :exampleImg="exampleImg.businessSiteTwoUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteTwoUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteTwoUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="经营场所照3" prop="archiveOtherVO.businessSiteThreeUrl">
+                <upload-pic
+                  alt="经营场所照3"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.businessSiteThreeUrl"
+                  :exampleImg="exampleImg.businessSiteThreeUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteThreeUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteThreeUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.archiveBaseVO.archiveType === 9">
+              <el-form-item label="经营场地证明">
+                <upload-pic
+                  alt="经营场地证明"
+                  :showExample="false"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.businessSiteUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.archiveBaseVO.archiveType === 9">
+              <el-form-item label="补充资料1">
+                <upload-pic
+                  alt="补充资料1"
+                  :showExample="false"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.additionalOneUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalOneUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalOneUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.archiveBaseVO.archiveType === 9">
+              <el-form-item label="补充资料2">
+                <upload-pic
+                  alt="补充资料2"
+                  :showExample="false"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.additionalTwoUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalTwoUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalTwoUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
+              <el-form-item label="补充说明" prop="archiveOtherVO.additionalRemark">
+                <el-input v-model="form.archiveOtherVO.additionalRemark" type="textarea" :autosize="{ minRows: 3 }" resize="none" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -551,7 +546,7 @@
         </div>
       </el-form>
     </section>
-    <!-- <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
+    <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
       <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交审核</el-button>
       <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">{{
         [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存'
@@ -560,7 +555,7 @@
         >拒绝</el-button
       >
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
-    </div> -->
+    </div>
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
@@ -657,6 +652,7 @@ export default {
       let pageStatus = this.$route.query.status ? tags[this.$route.query.status] : '新增'
       document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
     })
+    this.remoteSelect()
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
