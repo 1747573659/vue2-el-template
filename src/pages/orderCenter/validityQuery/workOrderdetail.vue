@@ -58,9 +58,9 @@
           </div>
         </el-form-item>
         <el-form-item label="沟通记录" prop="linkPhone">
-          <div v-for="item in ruleForm.schedules" :key="item.operDate">
-            <span style="margin-right: 20px;">{{ item.operDate }}</span>
-            <span> 沟通记录沟通记录沟通记录沟通记录</span>
+          <div v-for="(item,index) in ruleForm.records" :key="index">
+            <span style="margin-right: 20px;">{{ item.title }}</span>
+            <span>{{item.detail}}</span>
           </div>
         </el-form-item>
 
