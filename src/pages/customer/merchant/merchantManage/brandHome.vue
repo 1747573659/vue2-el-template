@@ -58,6 +58,7 @@ import {
   branchUpdateStatus,
   deleteMerchant,
 } from '@/api/customer/merchant'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'brandHome',
@@ -102,6 +103,7 @@ export default {
     this.queryMerchantListByPage()
   },
   methods: {
+    ...mapActions(['delCachedView']),
     async handleDelete(num, id) {
       if (num > 0) return this.$message.error('该品牌已有门店使用，不能删除')
 
@@ -140,14 +142,13 @@ export default {
       this.queryMerchantListByPage()
     },
     addShop() {
-      this.$router.push({
-        path: '/customer/merchant/addBrand',
+      this.delCachedView({ name: 'addBrand' }).then(()=> {
+        this.$router.push({ path: '/customer/merchant/addBrand' })
       })
     },
     handleEdit(id) {
-      this.$router.push({
-        path: '/customer/merchant/editBrand',
-        query: { id },
+      this.delCachedView({ name: 'editBrand' }).then(()=> {
+        this.$router.push({ path: '/customer/merchant/editBrand', query: { id } })
       })
     },
   },

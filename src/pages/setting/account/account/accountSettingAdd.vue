@@ -4,7 +4,7 @@
       <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
         <el-form-item label="手机 (账号)" prop="loginName">
           <el-input v-model.trim="form.loginName" v-if="isAdd"></el-input>
-          <span v-else>{{form.loginName}}</span>
+          <span v-else>{{ form.loginName }}</span>
         </el-form-item>
         <el-form-item label="姓名" prop="userName">
           <el-input v-model="form.userName"></el-input>
@@ -14,13 +14,7 @@
         </el-form-item>
         <el-form-item label="角色" prop="roleId">
           <el-select style="width: 240px" v-model="form.roleId" placeholder="">
-            <el-option
-              v-for="item in roleList"
-              clearable
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
+            <el-option v-for="item in roleList" clearable :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
@@ -36,19 +30,15 @@
 </template>
 
 <script>
-import {
-  queryRole,
-  insertRole,
-  checkMobile,
-  queryUserById
-} from '@/api/setting/account'
+import { queryRole, insertRole, checkMobile, queryUserById } from '@/api/setting/account'
+
 export default {
   name: 'accountSettingAdd',
   data() {
     var mobileRule = async (rule, value, callback) => {
       if (!this.isAdd) {
         callback()
-      } else if ((/^1[3456789]\d{9}$/.test(value))) {
+      } else if (/^1[3456789]\d{9}$/.test(value)) {
         let data = {
           mobile: value
         }
@@ -71,31 +61,16 @@ export default {
         remark: ''
       },
       rules: {
-        loginName: [
-          { required: true, trigger: "blur", validator: mobileRule }
-        ],
+        loginName: [{ required: true, trigger: 'blur', validator: mobileRule }],
         userName: [
-          { required: true, message: "请输入姓名", trigger: "blur" },
+          { required: true, message: '请输入姓名', trigger: 'blur' },
           { max: 30, message: '长度在 30 个字符以内', trigger: 'blur' }
         ],
-        roleId: [
-          { required: true, message: "请选择角色", trigger: "blur" }
-        ]
+        roleId: [{ required: true, message: '请选择角色', trigger: 'blur' }]
       },
       roleList: {},
       isAdd: true
-    };
-  },
-  beforeRouteEnter(to,from,next){
-    next(vm=>{
-      vm.$nextTick(() => {
-        if (vm.$route.query.id) {
-          document.querySelector('.e-tag_active span').innerText = `角色管理/编辑`
-        } else {
-          document.querySelector('.e-tag_active span').innerText = `角色管理/新增`
-        }
-      })
-    })
+    }
   },
   methods: {
     async onSubmit() {
@@ -119,18 +94,18 @@ export default {
         }
       })
     },
-    cancel () {
+    cancel() {
       this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ path: 'accountSetting' })
       })
     },
-    async getRoleList () {
+    async getRoleList() {
       try {
         const res = await queryRole({})
         this.roleList = res
       } catch (e) {}
     },
-    async queryUserById () {
+    async queryUserById() {
       let data = {
         id: this.$route.query.id
       }
@@ -143,6 +118,9 @@ export default {
   mounted() {
     this.getRoleList()
     if (this.$route.query.id) this.queryUserById()
+    this.$nextTick(() => {
+      document.querySelector('.e-tag_active span').innerText = `账号设置/${this.$route.query.id ? '编辑' : '新增'}`
+    })
   },
   computed: {
     loginName() {

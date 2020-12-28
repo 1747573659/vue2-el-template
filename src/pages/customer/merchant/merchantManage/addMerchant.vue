@@ -87,7 +87,7 @@
                   <span class="msg">注：使用科脉ERP才需要选择此项</span>
                 </el-form-item>
                 <el-form-item>
-                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
+                  <el-button type="primary" :loading="submitLoading" @click="submitForm">保存</el-button>
                   <el-button @click="onCancel">取消</el-button>
                 </el-form-item>
               </div>
