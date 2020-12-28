@@ -45,7 +45,7 @@ const customer = {
           meta: {
             title: '商户管理/新增',
             name: 'addMerchant',
-            cache: true
+            cache: false
           }
         },
         {
@@ -80,7 +80,7 @@ const customer = {
           meta: {
             title: '品牌管理/新增',
             name: 'addBrand',
-            cache: true
+            cache: false
           }
         },
         {
@@ -211,7 +211,7 @@ const customer = {
           meta: {
             title: '代理商管理/新增',
             name: 'addAgent',
-            cache: true
+            cache: false
           }
         },
         {
@@ -246,7 +246,7 @@ const customer = {
           meta: {
             title: '代理商角色管理/新增',
             name: 'addRole',
-            cache: true
+            cache: false
           }
         },
         {
@@ -295,7 +295,7 @@ const customer = {
           code: 'KM_DEFAULT_CODE',
           meta: {
             title: '工单管理/新增',
-            cache: true,
+            cache: false,
             name: 'workOrderManagementdetail'
           }
         },

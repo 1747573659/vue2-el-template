@@ -57,7 +57,7 @@ const setting = {
           meta: {
             title: '角色管理',
             name: 'roleManagement',
-            cache: true
+            cache: false
           }
         },
         {
@@ -69,7 +69,7 @@ const setting = {
           meta: {
             title: '角色管理/新增',
             name: 'roleAdd',
-            cache: true
+            cache: false
           }
         },
         {
@@ -80,7 +80,7 @@ const setting = {
           meta: {
             title: '账号设置',
             name: 'accountSetting',
-            cache: true
+            cache: false
           }
         },
         {
@@ -92,7 +92,7 @@ const setting = {
           meta: {
             title: '账号设置/新增',
             name: 'accountSettingAdd',
-            cache: true
+            cache: false
           }
         }
       ]
