@@ -145,7 +145,8 @@ const customer = {
           component: _import('customer/archive/wxArchive/wxArchiveAdd'),
           meta: {
             title: '普通资质进件/新增',
-            name: 'wxArchiveAdd'
+            name: 'wxArchiveAdd',
+            cache: true
           }
         },
         {
@@ -178,7 +179,8 @@ const customer = {
           component: _import('customer/archive/xftArchive/xftArchiveAdd'),
           meta: {
             title: '享付通资质进件/新增',
-            name: 'xftArchiveAdd'
+            name: 'xftArchiveAdd',
+            cache: true
           }
         },
         {

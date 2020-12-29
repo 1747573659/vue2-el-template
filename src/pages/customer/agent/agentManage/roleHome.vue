@@ -70,10 +70,10 @@ export default {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     },
   },
-  created() {
+  activated() {
     this.queryPage()
   },
-  activated() {
+  mounted() {
     this.queryPage()
   },
   methods: {

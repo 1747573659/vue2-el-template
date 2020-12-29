@@ -469,11 +469,12 @@
               <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
                 <upload-pic
                   alt="银行卡正面照"
+                  :hasBase64="true"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.bankCardFrontUrl"
                   :exampleImg="exampleImg.bankCardFrontUrl"
                   uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'bankCardFrontUrl')"
+                  @on-success="(value, base64Code) => setBankCardAndBase64(value, base64Code, 'archiveExpandVO', 'bankCardFrontUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
                 ></upload-pic>
               </el-form-item>
@@ -593,6 +594,7 @@ import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, searchCompanyInfo } from '@/api/wxArchive'
 
 export default {
+  name: 'wxArchiveAdd',
   mixins: [fileServer],
   components: {
     selectPage,
@@ -646,24 +648,22 @@ export default {
   filters: {
     filterReview
   },
+  activated() {
+    if (this.pageAction === 'detail') {
+      this.handleDetail()
+    }
+  },
   mounted() {
+    this.form = deepClone(formObj)
     this.$nextTick(() => {
       const tags = { edit: '编辑', detail: '详情', copy: '新增' }
       let pageStatus = this.$route.query.status ? tags[this.$route.query.status] : '新增'
       document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
     })
     this.remoteSelect()
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.form = deepClone(formObj)
-      if (vm.pageAction === 'detail') {
-        vm.handleDetail()
-      }
-      vm.getBankPage()
-      vm.getBranchPage()
-      vm.getBusinessCategory()
-    })
+    this.getBankPage()
+    this.getBranchPage()
+    this.getBusinessCategory()
   },
   methods: {
     handleCancel() {
@@ -813,16 +813,6 @@ export default {
         this.form.archiveBaseVO.id = null
         this.form.archiveExpandVO.id = null
         this.form.archiveOtherVO.id = null
-        // this.form.archiveExpandVO.openingPermitUrl = null
-        // this.form.archiveExpandVO.bankCardFrontUrl = null
-        // this.form.archiveExpandVO.bank = null
-        // this.form.archiveExpandVO.bankSub = null
-        // this.form.archiveExpandVO.bankCard = null
-        // this.form.archiveExpandVO.bankAccountName = null
-        // this.form.archiveExpandVO.bankProvince = null
-        // this.form.archiveExpandVO.bankCity = null
-        // this.form.archiveExpandVO.bankArea = null
-        // this.bankAreaList = []
         this.form.archiveBaseVO.auditStatus = null
         this.$nextTick(() => {
           this.$refs.form.clearValidate()
@@ -906,17 +896,17 @@ export default {
           this.form.archiveExpandVO.legalPersonName = res.name
           this.form.archiveExpandVO.idNumber = res.num
         } else {
-          if(/^((?!2999)\d{8})$/.test(res.start_date)){
+          if (/^((?!2999)\d{8})$/.test(res.start_date)) {
             this.form.archiveExpandVO.idBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
           }
-          if(/^((?!2999)\d{8})$/.test(res.end_date)){
+          if (/^((?!2999)\d{8})$/.test(res.end_date)) {
             this.form.archiveExpandVO.idEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
           }
         }
-      })
+      }).catch(err => {})
       this.form[type][url] = res.data.path
     },
-    setBusinessLicenseAndBase64(res, base64Code, type, url, side) {
+    setBusinessLicenseAndBase64(res, base64Code, type, url) {
       const OCRData = {
         image: base64Code.split(',')[1],
         imageCode: 'business_license'
@@ -926,17 +916,29 @@ export default {
         this.$message.success('图片解析成功')
         this.form.archiveExpandVO.licId = res.reg_num
         this.form.archiveExpandVO.businessScope = res.business
-        if(/^((?!2999)\d{8})$/.test(res.establish_date)){
+        this.form.archiveBaseVO.companyName = res.name
+        this.form.archiveBaseVO.address = res.address
+        if (/^((?!2999)\d{8})$/.test(res.establish_date)) {
           this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
         }
-        if(/^((?!2999)\d{8})$/.test(res.valid_period)){
+        if (/^((?!2999)\d{8})$/.test(res.valid_period)) {
           this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
         }
-      })
+      }).catch(err => {})
       this.form[type][url] = res.data.path
     },
-    handleOcrDate(date){
-      return /\d/.test(date) && date.slice(0,4)!=='2099'
+    setBankCardAndBase64(res, base64Code, type, url){
+      console.info(res)
+      const OCRData = {
+        image: base64Code.split(',')[1],
+        imageCode: 'bank_card'
+      }
+      this.$message.success('正在进行图片解析')
+      imageOCR(OCRData).then(async res => {
+        this.$message.success('图片解析成功666')
+        this.form.archiveExpandVO.bankCard = res.card_num
+      }).catch(err => {})
+      this.form[type][url] = res.data.path
     },
     setUploadSrc(res, type, url) {
       this.form[type][url] = res.data.path

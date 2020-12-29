@@ -225,14 +225,14 @@ export default {
       return sum.toFixed(2)
     }
   },
-  created() {
-    this.queryChannel()
-    this.queryAgentPage()
-    this.queryAgentAppAndQuota()
-  },
   activated() {
     this.queryChannel()
     this.queryAgentPage()
+  },
+  mounted() {
+    this.queryChannel()
+    this.queryAgentPage()
+    this.queryAgentAppAndQuota()
   },
   methods: {
     ...mapActions(['delCachedView']),

@@ -75,11 +75,6 @@ export default {
       cxLoading: false
     }
   },
-  // beforeRouteEnter(to, from, next) {
-  //   next(vm => {
-  //     vm.getList()
-  //   })
-  // },
   activated() {
     this.getList()
   },

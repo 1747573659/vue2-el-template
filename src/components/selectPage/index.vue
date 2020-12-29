@@ -15,7 +15,7 @@
       :placeholder="placeholder"
       :remote-method="remoteMethod"
     >
-      <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+      <el-option v-for="(item, index) in options" :key="index" :label="item.name" :value="item.id"> </el-option>
       <div class="loading-page">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}</div>
     </el-select>
   </div>
@@ -79,7 +79,6 @@ export default {
       }
     }
   },
-  computed: {},
   watch: {
     value:{
       handler (val) {
@@ -145,7 +144,6 @@ export default {
       this.$emit('clear')
     },
     focus() {
-      console.info(123)
       this.$emit('focus')
     }
   }
@@ -159,7 +157,6 @@ export default {
 .loading-page {
   margin: 5px 0;
   text-align: center;
-  // color: #212430;
   font-size: 10px;
 }
 </style>

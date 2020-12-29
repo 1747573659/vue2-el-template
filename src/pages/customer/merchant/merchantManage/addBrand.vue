@@ -7,10 +7,18 @@
             <div class="com-edit-block">
               <div class="com-edit-ruleForm__content">
                 <el-form-item label="商户：" prop="adminId">
-                  <el-select v-model="ruleForm.adminId" placeholder="请选择商户" clearable>
-                    <el-option v-for="item in adminOptions" :key="item.id" :label="item.companyName" :value="item.id">
-                    </el-option>
-                  </el-select>
+                  <select-page
+                    style="width:240px"
+                    :isMaxPage="isMaxPage"
+                    :options="selectOptions"
+                    @remoteMethod="remoteSelect"
+                    @selectPageMore="selectPageMore('merchant')"
+                    @resetSelectPage="resetSelectPage"
+                    @changeSelectPage="changeSelectPage"
+                    label="companyName"
+                    value="id"
+                    placeholder="商户"
+                  ></select-page>
                 </el-form-item>
                 <el-form-item label="品牌名称：" prop="name">
                   <el-input v-model="ruleForm.name" maxlength="30" placeholder=""></el-input>
@@ -24,15 +32,13 @@
                 </el-form-item>
                 <el-form-item label="ERP行业：" prop="industryId" class="msg-block">
                   <el-select v-model="ruleForm.industryId" placeholder="请选择行业" clearable>
-                    <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
+                    <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                   </el-select>
                   <span class="msg">注：使用科脉ERP才需要选择此项</span>
                 </el-form-item>
                 <el-form-item label="ERP产品：" prop="erpProductId" class="msg-block">
                   <el-select v-model="ruleForm.erpProductId" placeholder="请选择产品" clearable>
-                    <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id">
-                    </el-option>
+                    <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                   </el-select>
                   <span class="msg">注：使用科脉ERP才需要选择此项</span>
                 </el-form-item>
@@ -50,49 +56,35 @@
 </template>
 
 <script>
-import {
-  queryShopListByPage,
-  queryProductInfoByIndustryId,
-  addMerchant,
-  checkMerchant,
-} from '@/api/customer/merchant'
+import { queryShopListByPage, queryProductInfoByIndustryId, addMerchant, checkMerchant } from '@/api/customer/merchant'
 import BrandSelect from '@/components/brandSelect'
 import PicUpload from '@/components/picUpload'
 import picUploadMixin from '@/mixins/picUpload'
+import selectPage from '@/components/selectPage/selectPage'
 
 export default {
   name: 'addBrand',
   components: {
     BrandSelect,
     PicUpload,
+    selectPage
   },
   mixins: [picUploadMixin],
   data() {
     const validatorTradeType = (rule, value, callback) => {
-      const val = this.brandValue
-      if (val?.length === 0) {
-        callback('请选择品牌行业')
-      } else {
-        callback()
-      }
+      if (this.brandValue?.length === 0) callback('请选择品牌行业')
+      else callback()
     }
-
     const validatorName = (rule, value, callback) => {
-      if (value === '') {
-        callback('请输入品牌名称')
-      } else if (value !== this.validatorName) {
-        checkMerchant({ name: value, adminId: this.ruleForm.adminId }).then((res) => {
-          if (res) {
-            callback(res)
-          } else {
-            callback()
-          }
+      if (value !== this.validatorName) {
+        checkMerchant({ name: value, adminId: this.ruleForm.adminId }).then(res => {
+          if (res) callback(res)
+          else callback()
         })
       } else {
         callback()
       }
     }
-
     return {
       validatorName: '',
       uploadUrl: process.env.VUE_APP_BASE_API + '/oss/uploadFile',
@@ -108,33 +100,32 @@ export default {
         industryId: '',
         logo: '',
         name: '',
-        tradeTypeId: '',
+        tradeTypeId: ''
       },
       rules: {
         adminId: { required: true, message: '请选择商户', trigger: 'change' },
-        // name: { required: true, validatorName: '请输入品牌名称', trigger: 'blur' },
-        name: { required: true, validator: validatorName, trigger: 'blur' },
-        // logo: { required: true, message: '请选择图片' },
-        tradeTypeId: {
-          required: true,
-          validator: validatorTradeType,
-          trigger: 'change',
-        },
+        name: [
+          { required: true, message: '请输入品牌名称', trigger: 'blur' },
+          { validator: validatorName, trigger: 'blur' }
+        ],
+        tradeTypeId: { required: true, validator: validatorTradeType, trigger: 'change' }
       },
       imageUrl: '',
+      isMaxPage: false,
+      selectOptions: [],
+      selectPageNo: 1,
+      searchString: ''
     }
   },
   watch: {
-    'ruleForm.industryId': function (val) {
+    'ruleForm.industryId': function(val) {
       this.ruleForm.erpProductId = ''
       if (val === '') {
         this.erpProductOptions = []
       } else {
-        queryProductInfoByIndustryId({ industryId: val }).then(
-          (erpProductRes) => {
-            this.erpProductOptions = erpProductRes
-          }
-        )
+        queryProductInfoByIndustryId({ industryId: val }).then(erpProductRes => {
+          this.erpProductOptions = erpProductRes
+        })
       }
     },
     brandValue(val) {
@@ -143,13 +134,44 @@ export default {
       } else {
         this.ruleForm.tradeTypeId = ''
       }
-    },
+    }
   },
-  created() {
-    this.queryShopListByPage()
+  mounted() {
     this.queryProductInfoByIndustryId()
+    this.remoteSelect()
   },
   methods: {
+    selectPageMore(type) {
+      if (!this.isMaxPage) {
+        this.selectPageNo++
+        this.remoteSelect(this.searchString)
+      }
+    },
+    resetSelectPage() {
+      this.selectOptions = []
+      this.selectPageNo = 1
+      this.isMaxPage = false
+      this.searchString = ''
+    },
+    changeSelectPage(value) {
+      this.ruleForm.adminId = value
+    },
+    remoteSelect: async function(query) {
+      if (!!this.searchString && query !== this.searchString) {
+        this.resetSelectPage()
+      }
+      const data = {
+        page: this.selectPageNo,
+        rows: 10,
+        id: query
+      }
+      const res = await queryShopListByPage(data)
+      if (res?.results && res.results.length !== 0) {
+        this.searchString = query
+        this.selectOptions = this.selectOptions.concat(res.results)
+        if (res.results.length !== 10) this.isMaxPage = true
+      }
+    },
     onRemove() {
       this.ruleForm.logo = ''
     },
@@ -157,26 +179,12 @@ export default {
       this.ruleForm.logo = res.data.path
     },
     queryProductInfoByIndustryId() {
-      queryProductInfoByIndustryId({ industryId: 0 }).then((industryRes) => {
+      queryProductInfoByIndustryId({ industryId: 0 }).then(industryRes => {
         this.industryOptions = industryRes
       })
     },
-    queryShopListByPage() {
-      const params = {
-        clerkId: '',
-        id: '',
-        mobile: '',
-        page: 1,
-        rows: 500,
-        status: '',
-        topAgentId: '',
-      }
-      queryShopListByPage(params).then((res) => {
-        this.adminOptions = res.results
-      })
-    },
     submitForm() {
-      this.$refs['ruleForm'].validate((valid) => {
+      this.$refs['ruleForm'].validate(valid => {
         if (valid) {
           this.submitLoading = true
           addMerchant(this.ruleForm)
@@ -196,8 +204,8 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ path: '/customer/merchant/brandHome' })
       })
-    },
-  },
+    }
+  }
 }
 </script>
 

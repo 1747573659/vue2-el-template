@@ -45,9 +45,23 @@ const urlLinks = {
   mchICBSign: '/archive/xdd/mchICBSign',
   queryCommunicationMerchantInfo: '/archive/xdd/queryCommunicationMerchantInfo',
   delList: 'archive/general/del',
-  imageOCR: 'common/imageOcr'
+  imageOCR: 'common/imageOcr',
+  // 导出
+  export: '/archive/xdd/export',
+  // 导出记录
+  exportLog: '/archive/xdd/export/log',
+  // 导出分页
+  exportPage: '/archive/xdd/export/log/page'
 }
-  
+
+export function xftArchiveExport (data) {
+  return request({
+    url: urlLinks.export,
+    method: 'post',
+    data
+  })
+}
+
 // 通道下拉列表查询
 export function queryBankChannelType() {
   return request({

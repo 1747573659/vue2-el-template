@@ -96,10 +96,10 @@ export default {
       tableData: [],
     }
   },
-  created() {
+  activated() {
     this.queryMerchantListByPage()
   },
-  activated() {
+  mounted() {
     this.queryMerchantListByPage()
   },
   methods: {

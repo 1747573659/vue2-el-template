@@ -416,9 +416,10 @@
               <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
                 <upload-pic
                   alt="银行卡正面照"
+                  :hasBase64="true"
                   :imagePath="form.archiveExpandVO.bankCardFrontUrl"
                   :fileServer="fileServer"
-                  @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.bankCardFrontUrl') }"
+                  @on-success="(value, base64Code) => setBankCardAndBase64(value, base64Code, 'archiveExpandVO', 'bankCardFrontUrl')"
                   :exampleImg="exampleImg.bankCardFrontUrl"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
                 >
@@ -741,6 +742,7 @@ import xftValidator from './xftValidator'
 import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR } from '@/api/xftArchive'
 
 export default {
+  name: 'xftArchiveAdd',
   mixins: [fileServer],
   components: {
     selectPage,
@@ -1039,6 +1041,29 @@ export default {
       }
     }
   },
+  created() {
+    if (this.$route.query.isCopy) {
+      this.isCopy = true
+    }
+    this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
+    if ([2, 3, 5, 6, 7, 9].includes(this.auditStatus)) {
+      this.isDetail = true
+    }
+    if (this.$route.query.id) {
+      this.getDetail()
+    }
+  },
+  mounted() {
+    this.getIndustrIdList()
+    this.shopRemoteMethod()
+    this.$nextTick(() => {
+      let pageStatus = ''
+      if (this.auditStatus && this.isDetail) pageStatus = '详情'
+      else if ([0, 1, 4, 8].includes(this.auditStatus)) pageStatus = '编辑'
+      else pageStatus = '新增'
+      document.querySelector('.e-tag_active span').innerText = `享付通资质进件/${pageStatus}`
+    })
+  },
   methods: {
     handleClosePreview() {
       this.showViewer = false
@@ -1054,14 +1079,6 @@ export default {
         this.imageIndex = this.previewList.findIndex(item => item === url)
       }
     },
-    legalPersonValidityChange(value) {
-      this.form.archiveExpandVO.legalPersonValidityBegin = value[0]
-      this.form.archiveExpandVO.legalPersonValidityEnd = value[1]
-    },
-    licValidityChange(value) {
-      this.form.archiveExpandVO.licValidityBigen = value[0]
-      this.form.archiveExpandVO.licValidityEnd = value[1]
-    },
     setBusinessLicenseAndBase64(res, base64Code, type, url, side) {
       const OCRData = {
         image: base64Code.split(',')[1],
@@ -1071,13 +1088,15 @@ export default {
       imageOCR(OCRData).then(async res => {
         this.$message.success('图片解析成功')
         this.form.archiveExpandVO.licId = res.reg_num
+        this.form.archiveBaseVO.companyName = res.name
+        this.form.archiveBaseVO.address = res.address
         if (/^((?!2999)\d{8})$/.test(res.establish_date)) {
           this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
         }
         if (/^((?!2999)\d{8})$/.test(res.valid_period)) {
           this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
         }
-      })
+      }).catch(err => {})
       this.form[type][url] = res.data.path
     },
     setIdCardAndBase64(res, base64Code, type, url, side) {
@@ -1100,7 +1119,19 @@ export default {
             this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
           }
         }
-      })
+      }).catch(err => {})
+      this.form[type][url] = res.data.path
+    },
+    setBankCardAndBase64(res, base64Code, type, url){
+      const OCRData = {
+        image: base64Code.split(',')[1],
+        imageCode: 'bank_card'
+      }
+      this.$message.success('正在进行图片解析')
+      imageOCR(OCRData).then(async res => {
+        this.$message.success('图片解析成功')
+        this.from.archiveExpandVO.bankCard = res.reg_num
+      }).catch(err => {})
       this.form[type][url] = res.data.path
     },
     uploadSuccess(res, type) {
@@ -1171,7 +1202,7 @@ export default {
     },
     async shopRemoteMethod(value) {
       // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
-      if (!value || (this.searchStringShop !== '' && value !== this.searchStringShop)) {
+      if (this.searchStringShop !== '' && value !== this.searchStringShop) {
         this.selectPageNoShop = 1
         this.searchStringShop = ''
         this.isMaxPageShop = false
@@ -1224,6 +1255,7 @@ export default {
       // 如果不是最后一页就加载下一页
       if (!this.isMaxPageShop) {
         this.selectPageNoShop++
+        console.info(this.selectPageNoShop)
         this.shopRemoteMethod(this.searchStringShop)
       }
     },
@@ -1399,7 +1431,6 @@ export default {
         this.form.archiveExpandVO.cardType = 1
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
-        // this.form.archiveExpandVO.legalPersonValidity = [res.archiveExpandDTO?.legalPersonValidityBegin, res.archiveExpandDTO?.legalPersonValidityEnd]
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
         this.bankAreaKey = Symbol('bankAreaKey')
         if (this.isCopy) {
@@ -1407,19 +1438,6 @@ export default {
           this.form.archiveExpandVO.id = null
           this.form.archiveOtherVO.id = null
           this.form.archiveBaseVO.wxCertStatus = null
-          // this.form.archiveExpandVO.bankCard = null
-          // this.form.archiveExpandVO.bankSub = null
-          // this.form.archiveExpandVO.bankSubName = null
-          // this.bankAreaList = []
-          // this.form.archiveExpandVO.bankProvince = null
-          // this.form.archiveExpandVO.bankProvinceName = null
-          // this.form.archiveExpandVO.bankCity = null
-          // this.form.archiveExpandVO.bankCityName = null
-          // this.form.archiveExpandVO.bankAccountName = null
-          // this.form.archiveExpandVO.cardholderPhone = null
-          // this.form.archiveExpandVO.cardholderIdNumber = null
-          // this.form.archiveExpandVO.bankCardFrontUrl = null
-          // this.form.archiveExpandVO.bankCardBackUrl = null
           this.form.archiveBaseVO.auditStatus = null
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus
@@ -1428,29 +1446,6 @@ export default {
       } finally {
         this.addLoading = false
       }
-    }
-  },
-  mounted() {
-    this.getIndustrIdList()
-    this.shopRemoteMethod()
-    this.$nextTick(() => {
-      let pageStatus = ''
-      if (this.auditStatus && this.isDetail) pageStatus = '详情'
-      else if ([0, 1, 4, 8].includes(this.auditStatus)) pageStatus = '编辑'
-      else pageStatus = '新增'
-      document.querySelector('.e-tag_active span').innerText = `享付通资质进件/${pageStatus}`
-    })
-  },
-  created() {
-    if (this.$route.query.isCopy) {
-      this.isCopy = true
-    }
-    this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
-    if ([2, 3, 5, 6, 7, 9].includes(this.auditStatus)) {
-      this.isDetail = true
-    }
-    if (this.$route.query.id) {
-      this.getDetail()
     }
   }
 }
@@ -1512,7 +1507,7 @@ export default {
   }
 }
 .bottom {
-  width: 100%;
+  width: calc(100% - 242px);
   background-color: #fff;
   height: 56px;
   position: fixed;

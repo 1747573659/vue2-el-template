@@ -210,12 +210,12 @@ export default {
       }
     }
   },
-  created() {
-    this.queryClerkList()
-    this.queryAgentPage()
+  activated() {
     this.queryShopListByPage()
   },
-  activated() {
+  mounted() {
+    this.queryClerkList()
+    this.queryAgentPage()
     this.queryShopListByPage()
   },
   methods: {

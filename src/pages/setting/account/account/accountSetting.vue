@@ -94,6 +94,14 @@ export default {
       cxLoading: false
     }
   },
+  activated() {
+    this.getList()
+    this.getRoleList()
+  },
+  mounted() {
+    this.getList()
+    this.getRoleList()
+  },
   methods: {
     ...mapActions(['delCachedView']),
     search() {
@@ -180,10 +188,6 @@ export default {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
-  },
-  mounted() {
-    this.getList()
-    this.getRoleList()
   }
 }
 </script>
