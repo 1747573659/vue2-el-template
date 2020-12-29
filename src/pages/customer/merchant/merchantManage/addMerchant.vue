@@ -2,7 +2,7 @@
   <div v-permission.page="'MERCHANT_SET_ADD'" class="km-container__inner">
     <div style="padding-top: 16px;">
       <div class="com-edit-wrapper">
-        <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
+        <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="170px" class="com-edit-ruleForm xdd-btn-block__w240">
           <div class="com-edit-item">
             <div class="com-edit-title">
               <span>基本信息</span>
@@ -21,16 +21,16 @@
                 <el-form-item label="详细地址：" prop="address">
                   <el-input v-model="ruleForm.address" maxlength="50" placeholder=""></el-input>
                 </el-form-item>
-                <el-form-item label="运营者姓名：" prop="contactor">
+                <el-form-item label="联系人：" prop="contactor">
                   <el-input v-model="ruleForm.contactor" maxlength="30" placeholder=""></el-input>
                 </el-form-item>
-                <el-form-item label="运营者手机(账号)：" prop="mobile">
+                <el-form-item label="联系人手机（账号）：" prop="mobile">
                   <el-input v-model="ruleForm.mobile" maxlength="11" placeholder=""></el-input>
                 </el-form-item>
                 <el-form-item label="密码：" required>
                   <el-input v-model="psw" :disabled="true" placeholder=""></el-input>
                 </el-form-item>
-                <el-form-item label="运营者邮箱：" prop="email">
+                <el-form-item label="联系人邮箱：" prop="email">
                   <el-input v-model="ruleForm.email" maxlength="30" placeholder=""></el-input>
                 </el-form-item>
                 <!-- <el-form-item label="商户类型：" prop="type">
@@ -107,7 +107,7 @@ import PicUpload from '@/components/picUpload'
 import picUploadMixin from '@/mixins/picUpload'
 import { isMPRelaxed, isEmail } from '@/utils/common'
 import selectCopy from '@/components/selectCopy'
-
+import { getLocal } from '@/utils/storage'
 export default {
   name: 'addMerchant',
   components: {
@@ -218,7 +218,7 @@ export default {
         },
         contactor: {
           required: true,
-          message: '请输入运营者姓名',
+          message: '请输入联系人姓名',
           trigger: 'blur'
         },
         mobile: {
@@ -300,6 +300,10 @@ export default {
       queryClerkList().then(res => {
         this.clerkOptions = res
       })
+      let usedUserInfo = JSON.parse(getLocal('userInfo'))
+      if (usedUserInfo.clerkId) {
+        this.ruleForm.clerkId = usedUserInfo.clerkId
+      }
     },
     submitForm() {
       this.$refs['ruleForm'].validate(valid => {
@@ -343,7 +347,8 @@ export default {
 }
 .com-edit-ruleForm__content {
   padding-top: 20px;
-  width: 390px;
+  width: auto;
+  margin-right: 130px;
 }
 
 .msg-block {
