@@ -5,10 +5,10 @@
         <el-row>
           <el-col :span="24">
             <el-form-item label="商户信息：">
-              <el-input v-model="form.id" maxlength="50" placeholder="请输入商户编号/名称/运营者" clearable></el-input>
+              <el-input v-model="form.id" maxlength="50" placeholder="请输入商户编号/名称/联系人" clearable></el-input>
             </el-form-item>
-            <el-form-item label="运营者手机：">
-              <el-input v-model="form.mobile" maxlength="11" placeholder="请输入手机号" clearable></el-input>
+            <el-form-item label="账号/手机：">
+              <el-input v-model="form.mobile" maxlength="11" placeholder="请输入账号/联系人手机" clearable></el-input>
             </el-form-item>
             <el-form-item label="业务员：">
               <selectCopy
@@ -74,17 +74,17 @@
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column prop="id" label="商户编号"></el-table-column>
         <el-table-column prop="companyName" label="商户名称"></el-table-column>
-        <el-table-column prop="contactor" label="运营者"></el-table-column>
-        <el-table-column prop="mobile" label="手机"> </el-table-column>
+        <el-table-column prop="loginName" width="136" label="账号"></el-table-column>
+        <el-table-column prop="contactor" width="96" label="联系人"></el-table-column>
+         <el-table-column prop="mobile"  width="136" label="联系人手机"> </el-table-column>
         <el-table-column prop="merchantNumber" label="品牌数"></el-table-column>
         <el-table-column prop="storeNum" label="门店数">
           <template slot-scope="scope"> {{ scope.row.storeNum || 0 }}</template>
         </el-table-column>
         <el-table-column prop="agentName" label="所属代理商"></el-table-column>
-        <el-table-column prop="createTime" label="创建时间" width="180"></el-table-column>
         <el-table-column prop="status" label="状态">
           <template slot-scope="scope">{{ scope.row.status | fiterStatus }}</template>
-        </el-table-column>
+        </el-table-column> 
         <el-table-column label="操作" align="right" width="180">
           <template slot-scope="scope">
             <el-button v-permission="'MERCHANT_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
