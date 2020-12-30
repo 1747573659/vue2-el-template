@@ -896,12 +896,10 @@ export default {
           this.form.archiveExpandVO.legalPersonName = res.name
           this.form.archiveExpandVO.idNumber = res.num
         } else {
-          if (/^((?!2999)\d{8})$/.test(res.start_date)) {
-            this.form.archiveExpandVO.idBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
-          }
-          if (/^((?!2999)\d{8})$/.test(res.end_date)) {
-            this.form.archiveExpandVO.idEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
-          }
+          const startDate = res.start_date.replace(/[年月./-]/g,'-').replace(/日/g,'')
+          const endDate = res.end_date.replace(/[年月./-]/g,'-').replace(/日/g,'')
+          this.form.archiveExpandVO.idBegin = res.start_date && new Date(startDate) ? startDate : ''
+          this.form.archiveExpandVO.idEnd = res.end_date && new Date(endDate) ? endDate : ''
         }
       }).catch(err => {})
       this.form[type][url] = res.data.path
@@ -918,24 +916,20 @@ export default {
         this.form.archiveExpandVO.businessScope = res.business
         this.form.archiveBaseVO.companyName = res.name
         this.form.archiveBaseVO.address = res.address
-        if (/^((?!2999)\d{8})$/.test(res.establish_date)) {
-          this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
-        }
-        if (/^((?!2999)\d{8})$/.test(res.valid_period)) {
-          this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
-        }
+        const validPeriod = res.valid_period.replace(/[年月./-]/g,'-').replace(/日/g,'')
+        this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
+        this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1] : ''
       }).catch(err => {})
       this.form[type][url] = res.data.path
     },
     setBankCardAndBase64(res, base64Code, type, url){
-      console.info(res)
       const OCRData = {
         image: base64Code.split(',')[1],
         imageCode: 'bank_card'
       }
       this.$message.success('正在进行图片解析')
       imageOCR(OCRData).then(async res => {
-        this.$message.success('图片解析成功666')
+        this.$message.success('图片解析成功')
         this.form.archiveExpandVO.bankCard = res.card_num
       }).catch(err => {})
       this.form[type][url] = res.data.path
