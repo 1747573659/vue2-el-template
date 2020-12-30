@@ -49,16 +49,29 @@ const urlLinks = {
   // 导出
   export: '/archive/xdd/export',
   // 导出记录
-  exportLog: '/archive/xdd/export/log',
-  // 导出分页
-  exportPage: '/archive/xdd/export/log/page'
+  exportLog: '/export/log'
 }
 
-export function xftArchiveExport (data) {
+export function xftArchiveExportDel(data) {
   return request({
-    url: urlLinks.export,
+    url: `${urlLinks.exportLog}/${data.id}/del`,
+    method: 'post'
+  })
+}
+
+export function xftArchiveExportLog(data) {
+  return request({
+    url: `${urlLinks.exportLog}/page`,
     method: 'post',
     data
+  })
+}
+
+export function xftArchiveExport(data) {
+  return request({
+    url: `${urlLinks.export}/${data.menu}`,
+    method: 'post',
+    data: data.params
   })
 }
 

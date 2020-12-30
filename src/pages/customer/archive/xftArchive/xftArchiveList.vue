@@ -11,7 +11,14 @@
         <el-row>
           <el-col>
             <el-form-item label="申请时间">
-              <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd"></el-date-picker>
+              <el-date-picker
+                v-model="form.time"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd"
+              ></el-date-picker>
             </el-form-item>
             <el-form-item label="资料状态">
               <el-select style="width: 240px" clearable v-model="form.auditStatus" placeholder="全部">
@@ -167,29 +174,25 @@
         <el-button size="small" style="padding: 8px 22px" @click="certificationVisible = false">关闭</el-button>
       </span>
     </el-dialog>
-    <el-dialog title="导出记录" :visible.sync="exportVisible">
+    <el-dialog class="p-export-con" title="导出记录" :visible.sync="exportVisible">
       <el-table :data="exportLists" v-loading="exportLock">
-        <el-table-column prop="fileName" label="文件名称" width="250"></el-table-column>
-        <el-table-column prop="exportTime" label="导出时间" width="250"></el-table-column>
+        <el-table-column prop="fileName" label="文件名称" width="350"></el-table-column>
+        <el-table-column prop="createTime" label="导出时间" width="250"></el-table-column>
         <el-table-column label="进度">
-          <template slot-scope="scope">
-            <span v-show="scope.row.rate === '1'">生成中</span>
-            <span v-show="scope.row.rate === '2'">已生成</span>
+          <template slot-scope="scope" width="100">
+            <span>{{ scope.row.result === 1 ? '处理中' : scope.row.result === 2 ? '已完成' : '失败' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
-            <div v-if="scope.row.rate === '2'">
-              <el-link target="_blank" :href="scope.row.url" :underline="false">
-                <km-button size="small" type="text" :disabled="scope.row.rate === '1'">下载</km-button>
-              </el-link>
-              <km-button size="small" @click="handleExportDel(scope.row)" type="text" class="p-payment-export_del">删除</km-button>
-            </div>
-            <span v-else>--</span>
+            <el-link v-if="[1, 2].includes(scope.row.result)" :href="scope.row.fileCompleteUrl" :underline="false">
+              <el-button size="small" type="text">下载</el-button>
+            </el-link>
+            <el-button size="small" @click="handleExportDel(scope.row)" type="text" class="p-export_del">删除</el-button>
           </template>
         </el-table-column>
       </el-table>
-      <div class="page-box">
+      <div class="p-export-pagination">
         <el-pagination
           background
           @size-change="handleExportSizeChange"
@@ -198,7 +201,8 @@
           :current-page="exportCurrentPage"
           :page-size="exportPageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="exportPageTotal">
+          :total="exportPageTotal"
+        >
         </el-pagination>
       </div>
     </el-dialog>
@@ -206,7 +210,18 @@
 </template>
 
 <script>
-import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode, queryTotalByStatus, delList, queryBankChannelType, xftArchiveExport } from '@/api/xftArchive'
+import {
+  queryPage,
+  queryCertificationStatus,
+  stopUse,
+  queryContactQrCode,
+  queryTotalByStatus,
+  delList,
+  queryBankChannelType,
+  xftArchiveExport,
+  xftArchiveExportLog,
+  xftArchiveExportDel
+} from '@/api/xftArchive'
 import { mapActions } from 'vuex'
 import moment from 'moment'
 
@@ -322,41 +337,51 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
-    handleExportDel (row) {
+    handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
-        type: 'warning'
-      }).then(() => {
-        // deleteExportById({ id: row.id }).then(() => {
-        //   this.$message({ type: 'success', message: '删除成功' })
-        //   this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
-        //   this.handleExportRecord()
-        // })
-      })
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            xftArchiveExportDel({ id: row.id })
+              .then(() => {
+                this.$message({ type: 'success', message: '删除成功' })
+                if (--this.exportLists.length) this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
+                this.handleExportRecord()
+              })
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
+          } else done()
+        }
+      }).catch(err => {})
     },
-    handleExportCurrentChange (val) {
+    handleExportCurrentChange(val) {
       this.exportCurrentPage = val
       this.handleExportRecord()
     },
-    handleExportSizeChange (val) {
+    handleExportSizeChange(val) {
       this.exportCurrentPage = 1
       this.exportPageSize = val
       this.handleExportRecord()
     },
-    handleExportRecord: async function () {
+    handleExportRecord: async function() {
+      const data = { exportType: 1, page: this.exportCurrentPage, rows: this.exportPageSize }
       try {
         this.exportLock = true
-        // const res = await pageExport({ page: this.exportCurrentPage, rows: this.exportPageSize })
-        // this.exportLists = res.results
-        // this.exportPageTotal = res.totalCount
+        const res = await xftArchiveExportLog(data)
+        this.exportLists = res.results
+        this.exportPageTotal = res.totalCount
       } finally {
         this.exportLock = false
       }
     },
-    handleExportLists(){
-      this.exportVisible = true
+    handleExportLists() {
       this.handleExportRecord()
+      this.exportVisible = true
     },
     handleQueryParams() {
       return {
@@ -376,13 +401,14 @@ export default {
       }
     },
     handleExport: async function() {
-      if(moment(this.form.time[1]).diff(moment(this.form.time[0]), 'days') > 62){
-        this.$message({ type:'warning', message:'导出数据的时间范围最大支持62天，请更改时间条件后重试' })
+      if (moment(this.form.time[1]).diff(moment(this.form.time[0]), 'days') > 62) {
+        this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
         return false
       }
       this.exportLoad = true
       try {
-        await xftArchiveExport(this.handleQueryParams())
+        const res = await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        this.$message({ type: 'success', message: '导出成功' })
       } catch (error) {
       } finally {
         this.exportLoad = false
@@ -395,9 +421,7 @@ export default {
         if (res.length > 0) {
           for (const ele of this.countOptions) {
             for (const item of res) {
-              if (ele.value === item.auditStatus) {
-                this.countData.push({ label: ele.label, total: item.total })
-              }
+              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
             }
           }
         } else this.countData = this.countOptions
@@ -599,6 +623,25 @@ export default {
       &:not(:last-child) {
         margin-right: 30px;
       }
+    }
+  }
+  &-export {
+    &-con {
+      /deep/ {
+        .has-gutter th {
+          padding: 12px 0;
+        }
+        .el-link{
+          vertical-align: inherit;
+        }
+      }
+    }
+    &-pagination {
+      padding-top: 18px;
+      text-align: right;
+    }
+    &_del {
+      margin-left: 8px;
     }
   }
 }
