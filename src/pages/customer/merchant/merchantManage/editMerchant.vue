@@ -43,7 +43,10 @@
                   <el-input v-model="ruleForm.contactor" placeholder=""></el-input>
                 </el-form-item>
                 <el-form-item label="联系人手机（账号）：" prop="mobile" required>
-                  <span>{{ ruleForm.mobile }}</span>
+                  <div style="position: relative">
+                    <el-input disabled v-model="ruleForm.mobile"></el-input>
+                    <el-button @click="dialogVisible = true" style=" position: absolute;right:-46px;top:9px" type="text">修改</el-button>
+                  </div>
                 </el-form-item>
                 <el-form-item label="联系人邮箱：" prop="email">
                   <el-input v-model="ruleForm.email" placeholder=""></el-input>
@@ -69,6 +72,24 @@
         </el-form>
       </div>
     </div>
+
+    <el-dialog class="km-setting-dialog" title="修改联系人手机号" :visible.sync="dialogVisible" width="520px">
+      <el-form ref="dialogForm" :rules="dialogRules" :model="dialogForm" label-suffix=":" size="small" style="width: 60%" label-width="70px">
+        <el-form-item label="新手机" prop="mobile">
+          <el-input maxlength="11" v-model="dialogForm.mobile"></el-input>
+        </el-form-item>
+        <el-form-item label="验证码" prop="codeKey">
+          <el-input style="width: 102px;display:inline-block" maxlength="6" v-model="dialogForm.codeKey"></el-input>
+          <el-button style="float: right" @click="sendCode" class="resend-btn" :class="{ clicked: isClick, disabled: isDisabled }" size="small" :disabled="isDisabled">
+            {{ sendBtnText }}
+          </el-button>
+        </el-form-item>
+      </el-form>
+      <span slot="footer" class="dialog-footer">
+        <el-button size="small" @click="dialogVisible = false" class="km-baseinfo-cancel">取消</el-button>
+        <el-button size="small" @click="confirmEdit" type="primary">确认修改</el-button>
+      </span>
+    </el-dialog>
   </div>
 </template>
 
@@ -76,6 +97,7 @@
 import { queryShopById, queryClerkList, modifyShop, queryDistricDto, checkShopName } from '@/api/customer/merchant'
 import AreaSelect from '@/components/areaSelect'
 import { isEmail } from '@/utils/common'
+import { createAuthCode, shopModifyMobile } from '@/api/sms/sms'
 
 export default {
   name: 'editMerchant',
@@ -83,6 +105,17 @@ export default {
     AreaSelect
   },
   data() {
+    const mobileRule = (rule, value, callback) => {
+      if (/^1[3456789]\d{9}$/.test(value)) {
+        if (value === this.ruleForm.mobile) {
+          callback('新旧手机一样,无需修改')
+        } else {
+          callback()
+        }
+      } else {
+        callback('请输入正确的手机号')
+      }
+    }
     const validatorEmail = (rule, value, callback) => {
       if (value.length === 0) {
         callback('请输入邮箱')
@@ -110,6 +143,19 @@ export default {
     }
 
     return {
+      isClick: false,
+      sendBtnText: '发送验证码',
+      countdownTime: 60,
+      isDisabled: false,
+      dialogRules: {
+        mobile: [{ required: true, trigger: 'blur', validator: mobileRule }],
+        codeKey: [{ required: true, message: '请输入验证码', trigger: 'blur' }]
+      },
+      dialogForm: {
+        mobile: '',
+        codeKey: ''
+      },
+      dialogVisible: false,
       checkShopName: '',
       submitLoading: false,
       areaKey: 0,
@@ -173,6 +219,55 @@ export default {
     this.queryShopById()
   },
   methods: {
+    async confirmEdit() {
+      this.$refs.dialogForm.validate(async valid => {
+        if (valid) {
+          let data = {
+            codeKey: this.dialogForm.codeKey,
+            mobile: this.dialogForm.mobile,
+            shopId: Number(this.$route.query.id)
+          }
+          try {
+            const res = await shopModifyMobile(data)
+            this.$message.success('修改成功')
+            this.ruleForm.mobile = this.dialogForm.mobile
+            this.dialogVisible = false
+            setTimeout(() => {
+              this.resetBtn()
+            }, 500) // 增加延时,防止在消失时看到重新发送, 优化用户体验
+          } catch (e) {}
+        }
+      })
+    },
+    resetBtn() {
+      this.countdownTime = 60
+      this.isClick = true
+      this.isDisabled = false
+      this.sendBtnText = '重新发送'
+    },
+    setCodeText() {
+      this.sendBtnText = `重新发送${this.countdownTime}s`
+      this.countdownTime -= 1
+      if (this.countdownTime <= 0) {
+        this.resetBtn()
+        return
+      }
+      setTimeout(() => {
+        this.setCodeText()
+      }, 1000)
+    },
+    sendCode() {
+      this.$refs.dialogForm.validateField('mobile', async errorMessage => {
+        if (!errorMessage) {
+          try {
+            let res = await createAuthCode({ mobile: this.dialogForm.mobile })
+            this.isClick = false
+            this.isDisabled = true
+            this.setCodeText()
+          } catch (e) {}
+        }
+      })
+    },
     areaChange(value) {
       this.areaValue = value
 
@@ -263,5 +358,21 @@ export default {
   padding-top: 20px;
   width: auto;
   margin-right: 130px;
+}
+.km-setting-dialog {
+  /deep/.el-dialog__body {
+    display: flex;
+    justify-content: center;
+    .resend-btn {
+      padding: 8px 9px;
+    }
+    .clicked {
+      padding: 8px 15px;
+    }
+    .disabled {
+      padding: 8px 0px;
+      width: 90px;
+    }
+  }
 }
 </style>
