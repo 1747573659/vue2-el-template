@@ -77,7 +77,6 @@ export default {
       }
     }
   },
-  computed: {},
   watch: {
     value: {
       handler(val) {
@@ -143,7 +142,6 @@ export default {
       this.$emit('clear')
     },
     focus() {
-      console.info(123)
       this.$emit('focus')
     }
   }
@@ -157,7 +155,6 @@ export default {
 .loading-page {
   margin: 5px 0;
   text-align: center;
-  // color: #212430;
   font-size: 10px;
 }
 </style>

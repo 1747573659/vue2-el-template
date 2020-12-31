@@ -58,6 +58,7 @@
 
 <script>
 import { queryPage, deleteSysRole } from '@/api/setting/account'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'roleManagement',
@@ -74,22 +75,28 @@ export default {
       cxLoading: false
     }
   },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.getList()
-    })
+  activated() {
+    this.getList()
+  },
+  mounted() {
+    this.getList()
   },
   methods: {
+    ...mapActions(['delCachedView']),
     search() {
       this.cxLoading = true
       this.currentPage = 1
       this.getList()
     },
     add() {
-      this.$router.push({ name: 'roleAdd' })
+      this.delCachedView({ name: 'roleAdd' }).then(()=> {
+        this.$router.push({ name: 'roleAdd' })
+      })
     },
     edit(row) {
-      this.$router.push({ name: 'roleAdd', query: { id: row.id } })
+      this.delCachedView({ name: 'roleAdd' }).then(()=> {
+        this.$router.push({ name: 'roleAdd', query: { id: row.id } })
+      })
     },
     async del(row) {
       if (row.num) {

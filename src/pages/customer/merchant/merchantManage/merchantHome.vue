@@ -142,6 +142,7 @@
 import { queryShopListByPage, queryClerkList, queryAgentPage, updateStatus, updateClerk } from '@/api/customer/merchant'
 import { resetPassword } from '@/api/setting/account'
 import selectCopy from '@/components/selectCopy'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'merchantManage',
@@ -209,15 +210,16 @@ export default {
       }
     }
   },
-  created() {
+  activated() {
+    this.queryShopListByPage()
+  },
+  mounted() {
     this.queryClerkList()
     this.queryAgentPage()
     this.queryShopListByPage()
   },
-  activated() {
-    this.queryShopListByPage()
-  },
   methods: {
+    ...mapActions(['delCachedView']),
     onClerkConfirm() {
       this.$refs['clerkForm'].validate(async valid => {
         if (valid) {
@@ -324,14 +326,13 @@ export default {
       this.multipleSelection = val
     },
     addShop() {
-      this.$router.push({
-        path: '/customer/merchant/addMerchant'
+      this.delCachedView({ name: 'addMerchant' }).then(()=> {
+        this.$router.push({ path: '/customer/merchant/addMerchant' })
       })
     },
     handleEdit(id) {
-      this.$router.push({
-        path: '/customer/merchant/editMerchant',
-        query: { id }
+      this.delCachedView({ name: 'editMerchant' }).then(()=> {
+        this.$router.push({ path: '/customer/merchant/editMerchant', query: { id } })
       })
     }
   }

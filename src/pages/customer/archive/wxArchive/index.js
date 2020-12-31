@@ -10,11 +10,11 @@ export const statusOptions = [
   { value: 7, label: '账号全部申请通过' }
 ]
 export const countOptions = [
-  { value: 0, label: '草稿' },
-  { value: 2, label: '待审核' },
-  { value: 3, label: '平台审核中' },
-  { value: 1, label: '未通过审核编辑中' },
-  { value: 4, label: '未通过审核' }
+  { value: 0, label: '草稿', total: 0 },
+  { value: 2, label: '待审核', total: 0 },
+  { value: 3, label: '平台审核中', total: 0 },
+  { value: 1, label: '未通过审核编辑中', total: 0 },
+  { value: 4, label: '未通过审核', total: 0 }
 ]
 
 export const deactivateOptions = [
@@ -90,7 +90,6 @@ export const formObj = {
   archiveBaseVO: {
     userId: '',
     merchantId: '', // 商户
-    // merchantName: '', // 商户名称
     archiveType: 1, // 进件类型
     publicId: '', // 公众号APPID
     appletId: '', // 小程序APPID
@@ -98,11 +97,8 @@ export const formObj = {
     companyName: '', // 公司名称
     merchantShortName: '', // 商户简称
     province: '', // 省
-    // provinceName: '',
     city: '', // 市
-    // cityName: '',
     area: '', // 区
-    // areaName: '',
     address: '', // 详细地址
     contact: '', // 联系人/负责人
     contactPhone: '', // 联系人手机号/负责人联系方式

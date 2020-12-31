@@ -1,14 +1,12 @@
 <template>
   <section>
     <div class="search-box">
-      <div class="p-count" v-if="countData.length > 0">
-        <section class="p-count_con">
-          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-          <template v-for="item in countData">
-            <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
-          </template>
-        </section>
-      </div>
+      <section class="p-count_con">
+        <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+        <template v-for="item in countData">
+          <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+        </template>
+      </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -166,6 +164,7 @@
 import { statusOptions, deactivateOptions, countOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'wxArchive',
@@ -204,17 +203,19 @@ export default {
     }
   },
   activated() {
-    this.currentPage = 1
+    this.countData = countOptions
     this.handleQueryPage()
     this.handleQueryTotalByStatus()
   },
   mounted() {
+    this.countData = countOptions
     this.getXiaoWeiArchiveStatus()
     this.getXiaoWeiUpgradeStatus()
     this.handleQueryPage()
     this.handleQueryTotalByStatus()
   },
   methods: {
+    ...mapActions(['delCachedView']),
     handleQueryTotalByStatus: async function() {
       const data = {
         orders: { createTime: this.sortStatus },
@@ -232,11 +233,13 @@ export default {
       try {
         const res = await queryTotalByStatus(data)
         this.countData = []
-        for (const ele of this.countOptions) {
-          for (const item of res) {
-            if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+        if (res.length > 0) {
+          for (const ele of this.countOptions) {
+            for (const item of res) {
+              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+            }
           }
-        }
+        } else this.countData = countOptions
       } catch (error) {}
     },
     handleDraftList: async function(scope) {
@@ -253,7 +256,9 @@ export default {
       })
     },
     handlePushDetail(query, row = {}) {
-      this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
+      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
+      })
     },
     handleReason(row) {
       if (row.archiveBaseDTO.auditStatus === 4) {
@@ -337,12 +342,10 @@ export default {
       float: right;
     }
     &_btnLabel {
-      padding-left: 30px;
       text-align: right;
     }
   }
   &-count {
-    margin: 0 8px 16px 8px;
     &_con {
       background: rgba(255, 96, 16, 0.08);
       border: 1px solid rgba(255, 96, 16, 0.4);
@@ -352,6 +355,8 @@ export default {
       padding: 7px 16px;
       font-size: 14px;
       color: #3d4966;
+      min-height: 34px;
+      margin: 0 8px 16px 8px;
       img {
         width: 16px;
         height: 16px;
