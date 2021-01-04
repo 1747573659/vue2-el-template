@@ -20,7 +20,7 @@ const urlLinks = {
   checkShopName: '/shop/checkShopName',
   checkMerchant: '/merchant/checkMerchant',
   authShopPage: '/authShop/page',
-  getAllErpProduct: '/auth/center/getAllErpProduct'
+  getAllErpProduct: '/authShop/getAllErpProduct'
 }
 
 export function getAllErpProduct(data) {
