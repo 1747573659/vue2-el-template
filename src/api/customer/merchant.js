@@ -19,6 +19,25 @@ const urlLinks = {
   addMerchant: '/merchant/addMerchant',
   checkShopName: '/shop/checkShopName',
   checkMerchant: '/merchant/checkMerchant',
+  authShopPage: '/authShop/page',
+  getAllErpProduct: '/auth/center/getAllErpProduct'
+}
+
+export function getAllErpProduct(data) {
+  return request({
+    url: urlLinks.getAllErpProduct,
+    method: 'post',
+    data
+  })
+}
+
+// 分页查询软注商户信息
+export function authShopPage(data) {
+  return request({
+    url: urlLinks.authShopPage,
+    method: 'post',
+    data
+  })
 }
 
 // 分页查询商户信息
