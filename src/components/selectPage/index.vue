@@ -80,7 +80,8 @@ export default {
   watch: {
     value: {
       handler(val) {
-        if (val) this.bindValue = this.value
+        // if (val) this.bindValue = this.value
+        this.bindValue = this.value
       },
       immediate: true
     },

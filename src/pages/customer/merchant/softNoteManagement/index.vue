@@ -37,7 +37,20 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="享钱商户:">
-              <selectPage style="width:100%" :bind="form.shopId" @change="getSelectCont" ref="shopName" type="商户名称"></selectPage>
+              <select-page
+                @focus="selectPageFocus"
+                id="id"
+                @change="selectPageChange"
+                @clear="selectPageClear"
+                :name="selectPageName"
+                @remoteMethod="remoteMethod"
+                :isMaxPage="isMaxPage"
+                :options="ObjContentList"
+                :value="form.shopId"
+                @loadMore="loadMore"
+                style="width: 100%"
+              >
+              </select-page>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -136,12 +149,17 @@
 import { authorizationState } from './publicData/authorizationState' // 授权状态
 import { isOnlineState } from './publicData/isOnlineState' // 在线状态
 import { openingState } from './publicData/openingState' // 享钱开通状态
-import selectPage from '@/components/selectPage/index.vue' //选择组件
-import { authShopPage, getAllErpProduct } from '@/api/customer/merchant' //api
+import selectPage from '@/components/selectPage' //选择组件
+import { authShopPage, getAllErpProduct, queryShopListByPage } from '@/api/customer/merchant' //api
 export default {
   components: { selectPage },
   data() {
     return {
+      selectPageNo: 1, //其他地方复制过来的
+      isMaxPage: false,
+      searchString: '',
+      ObjContentList: [],
+      selectPageName: '', //其他地方复制过来的
       pickerOptions: {
         disabledDate: time => {
           return time.getTime() > Date.now()
@@ -178,8 +196,21 @@ export default {
       const res = await getAllErpProduct()
       this.allErpProductList = res
     },
+    selectPageFocus() {
+      this.isMaxPage = false
+      this.ObjContentList = []
+      this.searchString = ''
+      this.selectPageNo = 1
+      if (!this.form.shopId) {
+        this.remoteMethod()
+      }
+    },
+    selectPageChange(value) {
+      this.form.shopId = value
+    },
     // 重置
     reset() {
+      this.selectPageClear()
       this.form = {
         custId: '', // 软注编码
         custName: '', // 商户信息
@@ -191,6 +222,50 @@ export default {
         registrationDate: null // 注册日期
       } // 搜索表单
       this.authShopPage()
+    },
+    loadMore() {
+      // 如果不是最后一页就加载下一页
+      if (!this.isMaxPage) {
+        this.selectPageNo++
+        this.remoteMethod(this.searchString)
+      }
+    },
+    // 如果点击了清除按钮则将相关数据清空
+    selectPageClear() {
+      this.isMaxPage = false
+      this.ObjContentList = []
+      this.searchString = ''
+      this.selectPageNo = 1
+      this.form.shopId = null
+    },
+    async remoteMethod(value) {
+      // 当输入新的值的时候，就把相关数据进行情况
+      if (value !== this.searchString) {
+        this.selectPageNo = 1
+        this.searchString = ''
+        this.isMaxPage = false
+        this.ObjContentList = []
+      }
+      // 只有value有值的时候才去请求接口
+      let data = {
+        id: value || '',
+        page: this.selectPageNo,
+        rows: 10
+      }
+      try {
+        let res = await queryShopListByPage(data)
+        this.selectPageName = 'companyName'
+        // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
+        if (res.results && res.results.length !== 0) {
+          this.ObjContentList = this.ObjContentList.concat(res.results)
+          this.searchString = value
+          if (res.results?.length !== 10) {
+            this.isMaxPage = true
+          }
+        } else {
+          this.isMaxPage = true
+        }
+      } catch (error) {}
     },
     // 分页
     handleSizeChange(val) {
@@ -228,13 +303,6 @@ export default {
       this.tableLoading = false
       this.tableList = res.results
       this.tableTotal = res.totalCount
-    },
-    getSelectCont(content, options, type) {
-      if (type === '所属服务商') {
-      } else if (type === '商户名称') {
-        this.form.shopId = content
-      } else if (type.includes('所属享钱门店')) {
-      }
     }
     // // 详情
     // details(row) {
