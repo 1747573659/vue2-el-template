@@ -66,7 +66,6 @@ export default {
   },
   watch: {
     echoValue(val) {
-      console.info(val)
       this.selectValue = val
     }
   },

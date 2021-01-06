@@ -248,7 +248,6 @@ export default {
   },
   methods: {
     handleClick(key, keyPath) {
-      console.log(key, keyPath)
       this.activeTab = String(key)
       if (this.activeTab === '1') {
         this.headers = this.headers1

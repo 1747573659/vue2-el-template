@@ -1251,7 +1251,6 @@ export default {
       // 如果不是最后一页就加载下一页
       if (!this.isMaxPageShop) {
         this.selectPageNoShop++
-        console.info(this.selectPageNoShop)
         this.shopRemoteMethod(this.searchStringShop)
       }
     },
@@ -1359,6 +1358,12 @@ export default {
         if (!errorMessage) {
           try {
             const res = await submit(this.form)
+            if (!this.form.archiveBaseVO.id) {
+              this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: 0, id: res } })
+              this.isCopy = false
+              this.getDetail()
+              document.querySelector('.e-tag_active span').innerText = `享付通资质进件/编辑`
+            }
             this.$message.success('保存成功')
           } catch (error) {}
         }
@@ -1416,11 +1421,8 @@ export default {
     },
     async getDetail() {
       this.addLoading = true
-      let data = {
-        archiveId: Number(this.$route.query.id)
-      }
       try {
-        const res = await detail(data)
+        const res = await detail({ archiveId: Number(this.$route.query.id) })
         this.form.archiveBaseVO = res.archiveBaseDTO
         this.form.archiveExpandVO = res.archiveExpandDTO
         this.form.archiveOtherVO = res.archiveOtherDTO

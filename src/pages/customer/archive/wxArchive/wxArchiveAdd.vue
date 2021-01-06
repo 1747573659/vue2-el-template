@@ -614,7 +614,7 @@ export default {
       searchString: '',
       isMaxPage: false,
       isDetailLoad: false,
-      form: formObj,
+      form: {},
       rules: detailValidate,
       businessSceneList: [],
       statusList: [],
@@ -648,13 +648,10 @@ export default {
   filters: {
     filterReview
   },
-  activated() {
-    if (this.pageAction === 'detail') {
-      this.handleDetail()
-    }
+  created(){
+    this.form = deepClone(formObj)
   },
   mounted() {
-    this.form = deepClone(formObj)
     this.$nextTick(() => {
       const tags = { edit: '编辑', detail: '详情', copy: '新增' }
       let pageStatus = this.$route.query.status ? tags[this.$route.query.status] : '新增'
@@ -664,6 +661,7 @@ export default {
     this.getBankPage()
     this.getBranchPage()
     this.getBusinessCategory()
+    if (this.pageAction === 'detail') this.handleDetail()
   },
   methods: {
     handleCancel() {
@@ -761,7 +759,7 @@ export default {
             auditRemark: this.refundForm.remark
           }
           try {
-            const res = await refund(data)
+            await refund(data)
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'wxArchive' })
             })
@@ -783,7 +781,7 @@ export default {
             this.form.archiveBaseVO.useChannelCode = ''
           }
           try {
-            const res = await submitToVerify(this.form)
+            await submitToVerify(this.form)
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'wxArchive' })
             })
@@ -795,10 +793,10 @@ export default {
     handleDetail: async function() {
       try {
         this.isDetailLoad = true
-        const res = await detail({ archiveId: this.$route.query.id })
+        const res = await detail({ archiveId: Number(this.$route.query.id) })
         this.form.archiveBaseVO = res?.archiveBaseDTO ?? deepClone(formObj.archiveBaseDTO)
-        this.form.archiveExpandVO = res.archiveExpandDTO ?? deepClone(formObj.archiveExpandDTO)
-        this.form.archiveOtherVO = res.archiveOtherDTO ?? deepClone(formObj.archiveOtherDTO)
+        this.form.archiveExpandVO = res?.archiveExpandDTO ?? deepClone(formObj.archiveExpandDTO)
+        this.form.archiveOtherVO = res?.archiveOtherDTO ?? deepClone(formObj.archiveOtherDTO)
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
@@ -834,6 +832,12 @@ export default {
                 this.form.archiveBaseVO.useChannelCode = ''
               }
               const res = await submit(this.form)
+              if (!this.form.archiveBaseVO.id) {
+                this.$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: res, status: 'edit' } })
+                this.handleDetail()
+                this.pageAction = this.$route.query.action
+                document.querySelector('.e-tag_active span').innerText = `普通资质进件/编辑`
+              }
               this.$message.success('保存成功')
             } catch (error) {}
           }
@@ -890,18 +894,20 @@ export default {
         side
       }
       this.$message.success('正在进行图片解析')
-      imageOCR(OCRData).then(res => {
-        this.$message.success('图片解析成功')
-        if (side === 'face') {
-          this.form.archiveExpandVO.legalPersonName = res.name
-          this.form.archiveExpandVO.idNumber = res.num
-        } else {
-          const startDate = res.start_date.replace(/[年月./-]/g,'-').replace(/日/g,'')
-          const endDate = res.end_date.replace(/[年月./-]/g,'-').replace(/日/g,'')
-          this.form.archiveExpandVO.idBegin = res.start_date && new Date(startDate) ? startDate : ''
-          this.form.archiveExpandVO.idEnd = res.end_date && new Date(endDate) ? endDate : ''
-        }
-      }).catch(err => {})
+      imageOCR(OCRData)
+        .then(res => {
+          this.$message.success('图片解析成功')
+          if (side === 'face') {
+            this.form.archiveExpandVO.legalPersonName = res.name
+            this.form.archiveExpandVO.idNumber = res.num
+          } else {
+            const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+            const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+            this.form.archiveExpandVO.idBegin = res.start_date && new Date(startDate) ? startDate : ''
+            this.form.archiveExpandVO.idEnd = res.end_date && new Date(endDate) ? endDate : ''
+          }
+        })
+        .catch(err => {})
       this.form[type][url] = res.data.path
     },
     setBusinessLicenseAndBase64(res, base64Code, type, url) {
@@ -910,28 +916,32 @@ export default {
         imageCode: 'business_license'
       }
       this.$message.success('正在进行图片解析')
-      imageOCR(OCRData).then(async res => {
-        this.$message.success('图片解析成功')
-        this.form.archiveExpandVO.licId = res.reg_num
-        this.form.archiveExpandVO.businessScope = res.business
-        this.form.archiveBaseVO.companyName = res.name
-        this.form.archiveBaseVO.address = res.address
-        const validPeriod = res.valid_period.replace(/[年月./-]/g,'-').replace(/日/g,'')
-        this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
-        this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1] : ''
-      }).catch(err => {})
+      imageOCR(OCRData)
+        .then(async res => {
+          this.$message.success('图片解析成功')
+          this.form.archiveExpandVO.licId = res.reg_num
+          this.form.archiveExpandVO.businessScope = res.business
+          this.form.archiveBaseVO.companyName = res.name
+          this.form.archiveBaseVO.address = res.address
+          const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
+          this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
+          this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1] : ''
+        })
+        .catch(err => {})
       this.form[type][url] = res.data.path
     },
-    setBankCardAndBase64(res, base64Code, type, url){
+    setBankCardAndBase64(res, base64Code, type, url) {
       const OCRData = {
         image: base64Code.split(',')[1],
         imageCode: 'bank_card'
       }
       this.$message.success('正在进行图片解析')
-      imageOCR(OCRData).then(async res => {
-        this.$message.success('图片解析成功')
-        this.form.archiveExpandVO.bankCard = res.card_num
-      }).catch(err => {})
+      imageOCR(OCRData)
+        .then(async res => {
+          this.$message.success('图片解析成功')
+          this.form.archiveExpandVO.bankCard = res.card_num
+        })
+        .catch(err => {})
       this.form[type][url] = res.data.path
     },
     setUploadSrc(res, type, url) {
@@ -945,9 +955,7 @@ export default {
 .p {
   &-wxArchive {
     &-con {
-      // margin: 16px 16px 72px;
-      margin: 16px 16px 0;
-      margin-bottom: 100px;
+      margin: 16px 16px 100px;
       background-color: #fff;
       header {
         min-height: 72px;
