@@ -199,7 +199,10 @@ export default {
   },
   computed: {
     tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 168.5 - 32 - 76 - 16
+      const headHeight = document.querySelector('.p-head').offsetHeight
+      const tagHeight = document.querySelector('.p-tags_con').offsetHeight
+      const searchBoxHeight = document.querySelector('.search-box').offsetHeight
+      return document.documentElement.clientHeight - headHeight - tagHeight - searchBoxHeight - 32 - 76 - 16
     }
   },
   activated() {
