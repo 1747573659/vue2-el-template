@@ -15,10 +15,25 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="软注产品:">
-              <el-select style="width:100%" filterable v-model="form.productId" placeholder="请选择">
+              <!-- <el-select style="width:100%" filterable v-model="form.productId" placeholder="请选择">
                 <el-option label="全部" value=""> </el-option>
                 <el-option v-for="item in allErpProductList" :key="item.productId" :label="item.productName" :value="item.productId"> </el-option>
-              </el-select>
+              </el-select> -->
+              <select-page
+                placeholder="请输入名称"
+                @focus="selectPageFocusErp"
+                id="id"
+                @change="selectPageChangeErp"
+                @clear="selectPageClearErp"
+                :name="selectPageNameErp"
+                @remoteMethod="remoteMethodErp"
+                :isMaxPage="isMaxPageErp"
+                :options="ObjContentListErp"
+                :value="form.productId"
+                @loadMore="loadMoreErp"
+                style="width: 100%"
+              >
+              </select-page>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -38,6 +53,7 @@
           <el-col :span="8">
             <el-form-item label="享钱商户:">
               <select-page
+                placeholder="请输入名称"
                 @focus="selectPageFocus"
                 id="id"
                 @change="selectPageChange"
@@ -150,11 +166,18 @@ import { authorizationState } from './publicData/authorizationState' // 授权�
 import { isOnlineState } from './publicData/isOnlineState' // 在线状态
 import { openingState } from './publicData/openingState' // 享钱开通状态
 import selectPage from '@/components/selectPage' //选择组件
-import { authShopPage, getAllErpProduct, queryShopListByPage } from '@/api/customer/merchant' //api
+import { authShopPage, queryAuthErpByPage, queryShopListByPage } from '@/api/customer/merchant' //api
 export default {
   components: { selectPage },
   data() {
     return {
+      // erp产品板块
+      selectPageNoErp: 1, //其他地方复制过来的
+      isMaxPageErp: false,
+      searchStringErp: '',
+      ObjContentListErp: [],
+      selectPageNameErp: '', //其他地方复制过来的
+      //享钱板块
       selectPageNo: 1, //其他地方复制过来的
       isMaxPage: false,
       searchString: '',
@@ -188,13 +211,16 @@ export default {
   },
   created() {
     this.authShopPage()
-    this.getAllErpProduct()
   },
   methods: {
-    // 软注产品列表
-    async getAllErpProduct() {
-      const res = await getAllErpProduct()
-      this.allErpProductList = res
+    selectPageFocusErp() {
+      this.isMaxPageErp = false
+      this.ObjContentListErp = []
+      this.searchStringErp = ''
+      this.selectPageNoErp = 1
+      if (!this.form.productId) {
+        this.remoteMethodErp()
+      }
     },
     selectPageFocus() {
       this.isMaxPage = false
@@ -205,23 +231,18 @@ export default {
         this.remoteMethod()
       }
     },
+    selectPageChangeErp(value) {
+      this.form.productId = value
+    },
     selectPageChange(value) {
       this.form.shopId = value
     },
-    // 重置
-    reset() {
-      this.selectPageClear()
-      this.form = {
-        custId: '', // 软注编码
-        custName: '', // 商户信息
-        productId: '', // 软注产品
-        status: '', // 授权状态
-        isOnline: '', // 在线状态
-        shopId: '', // 享钱商户
-        xqOpenStatus: '', // 享钱开通状态
-        registrationDate: null // 注册日期
-      } // 搜索表单
-      this.authShopPage()
+    loadMoreErp() {
+      // 如果不是最后一页就加载下一页
+      if (!this.isMaxPageErp) {
+        this.selectPageNoErp++
+        this.remoteMethodErp(this.searchStringErp)
+      }
     },
     loadMore() {
       // 如果不是最后一页就加载下一页
@@ -230,13 +251,49 @@ export default {
         this.remoteMethod(this.searchString)
       }
     },
+    selectPageClearErp() {
+      this.isMaxPageErp = false
+      this.ObjContentListErp = []
+      this.searchStringErp = ''
+      this.selectPageNoErp = 1
+      this.form.productId = ''
+    },
     // 如果点击了清除按钮则将相关数据清空
     selectPageClear() {
       this.isMaxPage = false
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
-      this.form.shopId = null
+      this.form.shopId = ''
+    },
+    async remoteMethodErp(value) {
+      // 当输入新的值的时候，就把相关数据进行情况
+      if (value !== this.searchStringErp) {
+        this.selectPageNoErp = 1
+        this.searchStringErp = ''
+        this.isMaxPageErp = false
+        this.ObjContentListErp = []
+      }
+      // 只有value有值的时候才去请求接口
+      let data = {
+        name: value || '',
+        page: this.selectPageNoErp,
+        rows: 10
+      }
+      try {
+        let res = await queryAuthErpByPage(data)
+        this.selectPageNameErp = 'name'
+        // 如果分页返回有数据，就将数据加入list，如果接口返回数据长度不为10，则说明为最后一页
+        if (res.length !== 0) {
+          this.ObjContentListErp = this.ObjContentListErp.concat(res)
+          this.searchStringErp = value
+          if (res.length !== 10) {
+            this.isMaxPageErp = true
+          }
+        } else {
+          this.isMaxPageErp = true
+        }
+      } catch (error) {}
     },
     async remoteMethod(value) {
       // 当输入新的值的时候，就把相关数据进行情况
@@ -266,6 +323,22 @@ export default {
           this.isMaxPage = true
         }
       } catch (error) {}
+    },
+    // 重置
+    reset() {
+      this.selectPageClear()
+      this.selectPageClearErp()
+      this.form = {
+        custId: '', // 软注编码
+        custName: '', // 商户信息
+        productId: '', // 软注产品
+        status: '', // 授权状态
+        isOnline: '', // 在线状态
+        shopId: '', // 享钱商户
+        xqOpenStatus: '', // 享钱开通状态
+        registrationDate: null // 注册日期
+      } // 搜索表单
+      this.authShopPage()
     },
     // 分页
     handleSizeChange(val) {

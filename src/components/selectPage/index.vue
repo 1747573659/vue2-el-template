@@ -34,7 +34,7 @@ export default {
   },
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       default: ''
     },
     disabled: {
@@ -54,11 +54,11 @@ export default {
       default: () => []
     },
     id: {
-      type: String,
+      type: [String, Number],
       default: 'id'
     },
     name: {
-      type: String,
+      type: [String, Number],
       default: 'name'
     }
   },

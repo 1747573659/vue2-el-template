@@ -20,9 +20,16 @@ const urlLinks = {
   checkShopName: '/shop/checkShopName',
   checkMerchant: '/merchant/checkMerchant',
   authShopPage: '/authShop/page',
-  getAllErpProduct: '/authShop/getAllErpProduct'
+  getAllErpProduct: '/authShop/getAllErpProduct',
+  queryAuthErpByPage: '/authShop/queryAuthErpByPage'
 }
-
+export function queryAuthErpByPage(data) {
+  return request({
+    url: urlLinks.queryAuthErpByPage,
+    method: 'post',
+    data
+  })
+}
 export function getAllErpProduct(data) {
   return request({
     url: urlLinks.getAllErpProduct,
