@@ -15,10 +15,6 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="软注产品:">
-              <!-- <el-select style="width:100%" filterable v-model="form.productId" placeholder="请选择">
-                <el-option label="全部" value=""> </el-option>
-                <el-option v-for="item in allErpProductList" :key="item.productId" :label="item.productName" :value="item.productId"> </el-option>
-              </el-select> -->
               <select-page
                 placeholder="请输入名称"
                 @focus="selectPageFocusErp"
@@ -387,3 +383,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
+</style>
