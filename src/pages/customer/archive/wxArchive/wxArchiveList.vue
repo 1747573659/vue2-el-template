@@ -61,7 +61,7 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData" :max-height="tableMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
+      <el-table :data="tableData" :max-height="tabMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
         <el-table-column prop="merchantName" label="商户/公司名称" width="190">
           <template slot-scope="scope">
@@ -165,9 +165,11 @@ import { statusOptions, deactivateOptions, countOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 import { mapActions } from 'vuex'
+import { tableMaxHeight, dataMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'wxArchive',
+  mixins: [tableMaxHeight],
   data() {
     return {
       statusOptions,
@@ -196,14 +198,6 @@ export default {
   filters: {
     filterReview,
     filterArchiveStatus
-  },
-  computed: {
-    tableMaxHeight() {
-      const headHeight = document.querySelector('.p-head').offsetHeight
-      const tagHeight = document.querySelector('.p-tags_con').offsetHeight
-      const searchBoxHeight = document.querySelector('.search-box').offsetHeight
-      return document.documentElement.clientHeight - headHeight - tagHeight - searchBoxHeight - 32 - 76 - 16
-    }
   },
   activated() {
     this.countData = countOptions
@@ -332,6 +326,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .p {
   &-general {
     &_row {

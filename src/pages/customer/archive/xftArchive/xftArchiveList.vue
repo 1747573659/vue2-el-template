@@ -62,7 +62,7 @@
     <div class="data-box">
       <el-table
         v-loading="tableLoading"
-        :max-height="tableMaxHeight"
+        :max-height="tabMaxHeight"
         :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }"
         @sort-change="tableSortChange"
         :data="tableData"
@@ -224,9 +224,11 @@ import {
 } from '@/api/xftArchive'
 import { mapActions } from 'vuex'
 import moment from 'moment'
+import { tableMaxHeight, dataMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'xftArchive',
+  mixins: [tableMaxHeight],
   data() {
     return {
       countData: [],
@@ -549,16 +551,16 @@ export default {
         })
       } catch (error) {}
     }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 168.5 - 32 - 76 - 16
-    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .certification-dialog {
   /deep/.el-dialog__body {
     display: flex;

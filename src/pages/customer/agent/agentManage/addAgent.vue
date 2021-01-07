@@ -1,7 +1,5 @@
 <template>
-  <div v-permission.page="'AGENT_MANAGE_ADD'" class="km-container__inner">
-    <base-edit></base-edit>
-  </div>
+  <base-edit v-permission.page="'AGENT_MANAGE_ADD'"></base-edit>
 </template>
 
 <script>
@@ -11,11 +9,6 @@ export default {
   name: 'addAgent',
   components: {
     BaseEdit,
-  },
-  data() {
-    return {}
   }
 }
 </script>
-
-<style lang="scss" scoped></style>

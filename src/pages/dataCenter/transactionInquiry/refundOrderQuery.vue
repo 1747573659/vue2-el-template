@@ -219,6 +219,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .el-pagination-box {
   text-align: right;
   margin-top: 20px;

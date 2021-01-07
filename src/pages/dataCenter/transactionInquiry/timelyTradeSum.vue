@@ -507,6 +507,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .xdd_tip {
   background: #e5edfd;
   border: 1px solid #a6c4fe;

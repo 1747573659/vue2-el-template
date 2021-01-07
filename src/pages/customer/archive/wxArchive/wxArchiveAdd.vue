@@ -955,7 +955,8 @@ export default {
 .p {
   &-wxArchive {
     &-con {
-      margin: 16px 16px 100px;
+      border-top: 16px solid #f7f8fa;
+      border-bottom: 72px solid #f7f8fa;
       background-color: #fff;
       header {
         min-height: 72px;

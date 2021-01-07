@@ -64,11 +64,9 @@
     <div class="data-box">
       <el-table
         v-loading="loading"
-        :max-height="tableMaxHeight"
+        :max-height="tabMaxHeight"
         ref="multipleTable"
         :data="tableData"
-        tooltip-effect="dark"
-        style="width: 100%"
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="40"></el-table-column>
@@ -104,7 +102,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-show="total > 0" class="km-page-block">
+      <div class="km-page-block">
         <el-pagination
           @size-change="getPageList"
           @current-change="handleCurrentChange"
@@ -143,9 +141,11 @@ import { queryShopListByPage, queryClerkList, queryAgentPage, updateStatus, upda
 import { resetPassword } from '@/api/setting/account'
 import selectCopy from '@/components/selectCopy'
 import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'merchantManage',
+  mixins: [tableMaxHeight],
   components: { selectCopy },
   filters: {
     fiterStatus(val) {
@@ -163,11 +163,6 @@ export default {
       } else if (val === 1) {
         return '停用'
       }
-    }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 112 - 32 - 116
     }
   },
   data() {
@@ -338,3 +333,11 @@ export default {
   }
 }
 </script>
+
+<style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
+</style>

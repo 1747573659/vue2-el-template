@@ -1,5 +1,5 @@
 <template>
-  <div style="padding-top: 16px">
+  <div>
     <div class="com-edit-wrapper">
       <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
         <div class="com-edit-item">
@@ -416,15 +416,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.com-edit-item:last-child {
-  padding-top: 30px;
+.com-edit-wrapper{
+  border-top: 16px solid #f7f8fa;
+  border-bottom: 16px solid #f7f8fa;
+  background-color: #fff;
 }
 .com-edit-block {
   display: flex;
   justify-content: center;
 }
 .com-edit-title {
-  padding: 0 16px 16px;
+  padding: 16px;
   border-bottom: 1px solid #e6e9f0;
   line-height: 1;
   color: #1f2e4d;

@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="search-box">
       <el-row>
         <el-col>
@@ -382,6 +382,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .dialog-content {
   display: flex;
   border-radius: 2px;

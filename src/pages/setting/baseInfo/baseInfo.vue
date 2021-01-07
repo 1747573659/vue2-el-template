@@ -220,6 +220,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.data-box{
+  border-top: 16px solid#f7f8fa;
+}
 .km-setting-baseInfo {
   display: flex;
   justify-content: center;
@@ -255,9 +258,5 @@ export default {
       width: 90px;
     }
   }
-}
-
-.data-box {
-  min-height: calc(100vh - 56px - 48px - 32px);
 }
 </style>

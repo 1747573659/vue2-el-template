@@ -1,102 +1,85 @@
 <template>
-  <div v-permission.page="'MERCHANT_SET_ADD'" class="km-container__inner">
-    <div style="padding-top: 16px;">
-      <div class="com-edit-wrapper">
-        <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="170px" class="com-edit-ruleForm xdd-btn-block__w240">
-          <div class="com-edit-item">
-            <div class="com-edit-title">
-              <span>基本信息</span>
-            </div>
-            <div class="com-edit-block">
-              <div class="com-edit-ruleForm__content">
-                <el-form-item label="商户名称：" prop="companyName">
-                  <el-input v-model="ruleForm.companyName" maxlength="50" placeholder="商户名称需与营业执照一致"></el-input>
-                </el-form-item>
-                <el-form-item label="商户简称：" prop="shortName">
-                  <el-input v-model="ruleForm.shortName" maxlength="30" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="地区：" prop="districtCode">
-                  <area-select @change="areaChange"></area-select>
-                </el-form-item>
-                <el-form-item label="详细地址：" prop="address">
-                  <el-input v-model="ruleForm.address" maxlength="50" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="联系人：" prop="contactor">
-                  <el-input v-model="ruleForm.contactor" maxlength="30" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="联系人手机（账号）：" prop="mobile">
-                  <el-input v-model="ruleForm.mobile" maxlength="11" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="密码：" required>
-                  <el-input v-model="psw" :disabled="true" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="联系人邮箱：" prop="email">
-                  <el-input v-model="ruleForm.email" maxlength="30" placeholder=""></el-input>
-                </el-form-item>
-                <!-- <el-form-item label="商户类型：" prop="type">
-                  <el-select v-model="ruleForm.type" placeholder="请选择产品">
-                    <el-option
-                      v-for="item in typeOptions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item> -->
-                <el-form-item label="业务员：">
-                  <selectCopy
-                    :value.sync="ruleForm.clerkId"
-                    placeholder=""
-                    filterable
-                    clearable
-                    :options="clerkOptions"
-                    :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-                  ></selectCopy>
-                </el-form-item>
-              </div>
-            </div>
-          </div>
-
-          <div class="com-edit-item">
-            <div class="com-edit-title">
-              <span>品牌信息</span>
-            </div>
-            <div class="com-edit-block">
-              <div class="com-edit-ruleForm__content">
-                <el-form-item label="品牌名称：" prop="merchantName">
-                  <el-input v-model="ruleForm.merchantName" maxlength="30"></el-input>
-                </el-form-item>
-                <el-form-item label="品牌LOGO：">
-                  <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
-                  </pic-upload>
-                </el-form-item>
-                <el-form-item label="品牌行业：" prop="tradeTypeId">
-                  <brand-select v-model="brandValue"></brand-select>
-                </el-form-item>
-                <el-form-item label="ERP行业：" prop="industryId" class="msg-block">
-                  <el-select v-model="ruleForm.industryId" placeholder="请选择行业" clearable>
-                    <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                  </el-select>
-                  <span class="msg">注：使用科脉ERP才需要选择此项</span>
-                </el-form-item>
-                <el-form-item label="ERP产品：" prop="erpProductId" class="msg-block">
-                  <el-select v-model="ruleForm.erpProductId" placeholder="请选择产品" clearable>
-                    <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                  </el-select>
-                  <span class="msg">注：使用科脉ERP才需要选择此项</span>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" :loading="submitLoading" @click="submitForm">保存</el-button>
-                  <el-button @click="onCancel">取消</el-button>
-                </el-form-item>
-              </div>
-            </div>
-          </div>
-        </el-form>
+  <el-form v-permission.page="'MERCHANT_SET_ADD'" :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="170px" class="com-edit-ruleForm xdd-btn-block__w240">
+    <div class="com-edit-item">
+      <div class="com-edit-title">
+        <span>基本信息</span>
+      </div>
+      <div class="com-edit-block">
+        <div class="com-edit-ruleForm__content">
+          <el-form-item label="商户名称：" prop="companyName">
+            <el-input v-model="ruleForm.companyName" maxlength="50" placeholder="商户名称需与营业执照一致"></el-input>
+          </el-form-item>
+          <el-form-item label="商户简称：" prop="shortName">
+            <el-input v-model="ruleForm.shortName" maxlength="30" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item label="地区：" prop="districtCode">
+            <area-select @change="areaChange"></area-select>
+          </el-form-item>
+          <el-form-item label="详细地址：" prop="address">
+            <el-input v-model="ruleForm.address" maxlength="50" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item label="联系人：" prop="contactor">
+            <el-input v-model="ruleForm.contactor" maxlength="30" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item label="联系人手机（账号）：" prop="mobile">
+            <el-input v-model="ruleForm.mobile" maxlength="11" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item label="密码：" required>
+            <el-input v-model="psw" :disabled="true" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item label="联系人邮箱：" prop="email">
+            <el-input v-model="ruleForm.email" maxlength="30" placeholder=""></el-input>
+          </el-form-item>
+          <el-form-item label="业务员：">
+            <selectCopy
+              :value.sync="ruleForm.clerkId"
+              placeholder=""
+              filterable
+              clearable
+              :options="clerkOptions"
+              :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
+            ></selectCopy>
+          </el-form-item>
+        </div>
       </div>
     </div>
-  </div>
+
+    <div class="com-edit-item">
+      <div class="com-edit-title">
+        <span>品牌信息</span>
+      </div>
+      <div class="com-edit-block">
+        <div class="com-edit-ruleForm__content">
+          <el-form-item label="品牌名称：" prop="merchantName">
+            <el-input v-model="ruleForm.merchantName" maxlength="30"></el-input>
+          </el-form-item>
+          <el-form-item label="品牌LOGO：">
+            <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
+            </pic-upload>
+          </el-form-item>
+          <el-form-item label="品牌行业：" prop="tradeTypeId">
+            <brand-select v-model="brandValue"></brand-select>
+          </el-form-item>
+          <el-form-item label="ERP行业：" prop="industryId" class="msg-block">
+            <el-select v-model="ruleForm.industryId" placeholder="请选择行业" clearable>
+              <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+            </el-select>
+            <span class="msg">注：使用科脉ERP才需要选择此项</span>
+          </el-form-item>
+          <el-form-item label="ERP产品：" prop="erpProductId" class="msg-block">
+            <el-select v-model="ruleForm.erpProductId" placeholder="请选择产品" clearable>
+              <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+            </el-select>
+            <span class="msg">注：使用科脉ERP才需要选择此项</span>
+          </el-form-item>
+          <el-form-item>
+            <el-button type="primary" :loading="submitLoading" @click="submitForm">保存</el-button>
+            <el-button @click="onCancel">取消</el-button>
+          </el-form-item>
+        </div>
+      </div>
+    </div>
+  </el-form>
 </template>
 
 <script>
@@ -332,15 +315,17 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.com-edit-item:last-child {
-  padding-top: 30px;
+.com-edit-ruleForm {
+  border-top: 16px solid #f7f8fa;
+  border-bottom: 16px solid #f7f8fa;
+  background-color: #fff;
 }
 .com-edit-block {
   display: flex;
   justify-content: center;
 }
 .com-edit-title {
-  padding: 0 16px 16px;
+  padding: 16px;
   border-bottom: 1px solid #e6e9f0;
   line-height: 1;
   color: #1f2e4d;

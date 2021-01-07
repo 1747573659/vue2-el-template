@@ -1451,8 +1451,9 @@ export default {
 
 <style lang="scss" scoped>
 .xft-add {
+  border-top: 16px solid #f7f8fa;
+  border-bottom: 72px solid #f7f8fa;
   background-color: #fff;
-  margin: 16px 16px 72px;
   .header {
     height: 72px;
     div {

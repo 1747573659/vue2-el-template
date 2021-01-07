@@ -136,6 +136,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .km-role-search {
   padding: 8px 22px;
 }

@@ -350,6 +350,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .xdd_tip {
   background: #e5edfd;
   border: 1px solid #a6c4fe;
@@ -403,8 +408,5 @@ export default {
   width: 14px;
   height: 14px;
   margin: 2px 0 0 2px;
-}
-.data-box {
-  min-height: calc(100vh - 56px - 48px - 32px - 61px - 64px);
 }
 </style>

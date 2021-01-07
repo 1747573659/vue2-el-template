@@ -1,77 +1,58 @@
 <template>
-  <div v-permission.page="'MERCHANT_SET_EDIT'" class="km-container__inner">
-    <div>
-      <div class="com-edit-wrapper">
-        <el-form :model="ruleForm" size="small" :rules="rules" ref="ruleForm" label-width="170px" class="com-edit-ruleForm">
-          <div class="com-edit-item" style="padding-top: 0">
-            <div class="com-edit-block">
-              <div class="com-edit-ruleForm__content">
-                <el-form-item label="商户编号：">
-                  <span>{{ ruleForm.id || '--' }}</span>
-                </el-form-item>
-                <el-form-item label="商户名称：" prop="companyName">
-                  <el-input v-model="ruleForm.companyName" placeholder="商户名称需与营业执照一致"></el-input>
-                </el-form-item>
-                <el-form-item label="商户简称：" prop="shortName">
-                  <el-input v-model="ruleForm.shortName" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="行业：">
-                  <span>{{ tradeFullName || '--' }}</span>
-                </el-form-item>
-                <!-- <el-form-item label="商户类型：" prop="type">
-                  <el-select
-                    style="width: 240px;"
-                    v-model="ruleForm.type"
-                    placeholder="请选择产品"
-                  >
-                    <el-option
-                      v-for="item in typeOptions"
-                      :key="item.id"
-                      :label="item.name"
-                      :value="item.id"
-                    >
-                    </el-option>
-                  </el-select>
-                </el-form-item> -->
-                <el-form-item label="地区：" prop="districtCode">
-                  <area-select :areaList="areaValue" :key="areaKey" @change="areaChange"></area-select>
-                </el-form-item>
-                <el-form-item label="详细地址：" prop="address">
-                  <el-input v-model="ruleForm.address" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="联系人：" prop="contactor">
-                  <el-input v-model="ruleForm.contactor" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="联系人手机（账号）：" prop="mobile" required>
-                  <div style="position: relative">
-                    <el-input disabled v-model="ruleForm.mobile"></el-input>
-                    <el-button @click="dialogVisible = true" style=" position: absolute;right:-46px;top:9px" type="text">修改</el-button>
-                  </div>
-                </el-form-item>
-                <el-form-item label="联系人邮箱：" prop="email">
-                  <el-input v-model="ruleForm.email" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="业务员：">
-                  <el-select v-model="ruleForm.clerkId" placeholder="请选择业务员" clearable>
-                    <el-option v-for="item in clerkOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                  </el-select>
-                </el-form-item>
-                <el-form-item label="商户密钥：">
-                  <span>{{ signKey || '--' }}</span>
-                </el-form-item>
-                <el-form-item label="创建时间：">
-                  <span>{{ createTime || '--' }}</span>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
-                  <el-button @click="onCancel">取消</el-button>
-                </el-form-item>
+  <div class="data-box" v-permission.page="'MERCHANT_SET_EDIT'">
+    <el-form :model="ruleForm" size="small" :rules="rules" ref="ruleForm" label-width="170px" class="com-edit-ruleForm">
+      <div class="com-edit-item" style="padding-top: 0">
+        <div class="com-edit-block">
+          <div class="com-edit-ruleForm__content">
+            <el-form-item label="商户编号：">
+              <span>{{ ruleForm.id || '--' }}</span>
+            </el-form-item>
+            <el-form-item label="商户名称：" prop="companyName">
+              <el-input v-model="ruleForm.companyName" placeholder="商户名称需与营业执照一致"></el-input>
+            </el-form-item>
+            <el-form-item label="商户简称：" prop="shortName">
+              <el-input v-model="ruleForm.shortName" placeholder=""></el-input>
+            </el-form-item>
+            <el-form-item label="行业：">
+              <span>{{ tradeFullName || '--' }}</span>
+            </el-form-item>
+            <el-form-item label="地区：" prop="districtCode">
+              <area-select :areaList="areaValue" :key="areaKey" @change="areaChange"></area-select>
+            </el-form-item>
+            <el-form-item label="详细地址：" prop="address">
+              <el-input v-model="ruleForm.address" placeholder=""></el-input>
+            </el-form-item>
+            <el-form-item label="联系人：" prop="contactor">
+              <el-input v-model="ruleForm.contactor" placeholder=""></el-input>
+            </el-form-item>
+            <el-form-item label="联系人手机（账号）：" prop="mobile" required>
+              <div style="position: relative">
+                <el-input disabled v-model="ruleForm.mobile"></el-input>
+                <el-button @click="dialogVisible = true" style=" position: absolute;right:-46px;top:9px" type="text">修改</el-button>
               </div>
-            </div>
+            </el-form-item>
+            <el-form-item label="联系人邮箱：" prop="email">
+              <el-input v-model="ruleForm.email" placeholder=""></el-input>
+            </el-form-item>
+            <el-form-item label="业务员：">
+              <el-select v-model="ruleForm.clerkId" placeholder="请选择业务员" clearable>
+                <el-option v-for="item in clerkOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="商户密钥：">
+              <span>{{ signKey || '--' }}</span>
+            </el-form-item>
+            <el-form-item label="创建时间：">
+              <span>{{ createTime || '--' }}</span>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
+              <el-button @click="onCancel">取消</el-button>
+            </el-form-item>
           </div>
-        </el-form>
+        </div>
       </div>
-    </div>
+    </el-form>
 
     <el-dialog class="km-setting-dialog" title="修改联系人手机号" :visible.sync="dialogVisible" width="520px">
       <el-form ref="dialogForm" :rules="dialogRules" :model="dialogForm" label-suffix=":" size="small" style="width: 60%" label-width="70px">
@@ -341,8 +322,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.com-edit-item:last-child {
-  padding-top: 30px;
+.data-box{
+  border-top: 16px solid #f7f8fa;
 }
 .com-edit-block {
   display: flex;

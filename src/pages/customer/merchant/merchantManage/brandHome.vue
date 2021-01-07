@@ -21,7 +21,7 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table v-loading="loading" :max-height="tableMaxHeight" :data="tableData" tooltip-effect="dark" style="width: 100%">
+      <el-table v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="adminId" label="商户编号"> </el-table-column>
         <el-table-column prop="adminName" label="商户名称"> </el-table-column>
         <el-table-column prop="mid" label="品牌编码"> </el-table-column>
@@ -76,11 +76,6 @@ export default {
       } else if (val === 1) {
         return '停用'
       }
-    },
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     },
   },
   data() {
@@ -155,4 +150,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
+</style>

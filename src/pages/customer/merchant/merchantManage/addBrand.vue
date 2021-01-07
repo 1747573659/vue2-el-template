@@ -1,57 +1,53 @@
 <template>
-  <div v-permission.page="'BRAND_SET_ADD'">
-    <div class="km-container__inner">
-      <div class="com-edit-wrapper">
-        <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
-          <div class="com-edit-item" style="padding-top: 0">
-            <div class="com-edit-block">
-              <div class="com-edit-ruleForm__content">
-                <el-form-item label="商户：" prop="adminId">
-                  <select-page
-                    style="width:240px"
-                    :isMaxPage="isMaxPage"
-                    :options="selectOptions"
-                    @remoteMethod="remoteSelect"
-                    @selectPageMore="selectPageMore('merchant')"
-                    @resetSelectPage="resetSelectPage"
-                    @changeSelectPage="changeSelectPage"
-                    label="companyName"
-                    value="id"
-                    placeholder="商户"
-                  ></select-page>
-                </el-form-item>
-                <el-form-item label="品牌名称：" prop="name">
-                  <el-input v-model="ruleForm.name" maxlength="30" placeholder=""></el-input>
-                </el-form-item>
-                <el-form-item label="品牌LOGO：">
-                  <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
-                  </pic-upload>
-                </el-form-item>
-                <el-form-item label="品牌行业：" prop="tradeTypeId">
-                  <brand-select v-model="brandValue"></brand-select>
-                </el-form-item>
-                <el-form-item label="ERP行业：" prop="industryId" class="msg-block">
-                  <el-select v-model="ruleForm.industryId" placeholder="请选择行业" clearable>
-                    <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                  </el-select>
-                  <span class="msg">注：使用科脉ERP才需要选择此项</span>
-                </el-form-item>
-                <el-form-item label="ERP产品：" prop="erpProductId" class="msg-block">
-                  <el-select v-model="ruleForm.erpProductId" placeholder="请选择产品" clearable>
-                    <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-                  </el-select>
-                  <span class="msg">注：使用科脉ERP才需要选择此项</span>
-                </el-form-item>
-                <el-form-item>
-                  <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
-                  <el-button @click="onCancel">取消</el-button>
-                </el-form-item>
-              </div>
-            </div>
+  <div v-permission.page="'BRAND_SET_ADD'" class="com-edit-wrapper">
+    <el-form :model="ruleForm" :rules="rules" size="small" ref="ruleForm" label-width="150px" class="com-edit-ruleForm xdd-btn-block__w240">
+      <div class="com-edit-item" style="padding-top: 0">
+        <div class="com-edit-block">
+          <div class="com-edit-ruleForm__content">
+            <el-form-item label="商户：" prop="adminId">
+              <select-page
+                style="width:240px"
+                :isMaxPage="isMaxPage"
+                :options="selectOptions"
+                @remoteMethod="remoteSelect"
+                @selectPageMore="selectPageMore('merchant')"
+                @resetSelectPage="resetSelectPage"
+                @changeSelectPage="changeSelectPage"
+                label="companyName"
+                value="id"
+                placeholder="商户"
+              ></select-page>
+            </el-form-item>
+            <el-form-item label="品牌名称：" prop="name">
+              <el-input v-model="ruleForm.name" maxlength="30" placeholder=""></el-input>
+            </el-form-item>
+            <el-form-item label="品牌LOGO：">
+              <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.logo" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
+              </pic-upload>
+            </el-form-item>
+            <el-form-item label="品牌行业：" prop="tradeTypeId">
+              <brand-select v-model="brandValue"></brand-select>
+            </el-form-item>
+            <el-form-item label="ERP行业：" prop="industryId" class="msg-block">
+              <el-select v-model="ruleForm.industryId" placeholder="请选择行业" clearable>
+                <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
+              <span class="msg">注：使用科脉ERP才需要选择此项</span>
+            </el-form-item>
+            <el-form-item label="ERP产品：" prop="erpProductId" class="msg-block">
+              <el-select v-model="ruleForm.erpProductId" placeholder="请选择产品" clearable>
+                <el-option v-for="item in erpProductOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
+              <span class="msg">注：使用科脉ERP才需要选择此项</span>
+            </el-form-item>
+            <el-form-item>
+              <el-button type="primary" :loading="submitLoading" @click="submitForm()">保存</el-button>
+              <el-button @click="onCancel">取消</el-button>
+            </el-form-item>
           </div>
-        </el-form>
+        </div>
       </div>
-    </div>
+    </el-form>
   </div>
 </template>
 
@@ -210,8 +206,8 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.com-edit-item:last-child {
-  padding-top: 30px;
+.com-edit-wrapper{
+  border-top: 16px solid #f7f8fa;
 }
 .com-edit-block {
   display: flex;

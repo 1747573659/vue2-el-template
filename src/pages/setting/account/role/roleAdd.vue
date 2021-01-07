@@ -323,6 +323,10 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
+.data-box{
+  border-top: 16px solid#f7f8fa;
+  border-bottom: 16px solid#f7f8fa;
+}
 .km-setting-roleAdd {
   display: flex;
   justify-content: center;
