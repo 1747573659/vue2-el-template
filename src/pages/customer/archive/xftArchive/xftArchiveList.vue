@@ -49,8 +49,8 @@
           <el-col style="padding-left:75px">
             <el-form-item>
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
-              <el-button class="km-archive-search" :loading="exportLoad" @click="handleExport">导出</el-button>
-              <el-button class="km-archive-search" @click="handleExportLists">导出记录</el-button>
+              <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
+              <el-button v-permission="'XFTARCHIVE_LIST_EXPORTLIST'" @click="handleExportLists">导出记录</el-button>
             </el-form-item>
             <el-form-item style="float:right">
               <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
@@ -185,10 +185,13 @@
         </el-table-column>
         <el-table-column label="操作" width="100">
           <template slot-scope="scope">
-            <el-link v-if="[1, 2].includes(scope.row.result)" :href="scope.row.fileCompleteUrl" :underline="false">
-              <el-button size="small" type="text">下载</el-button>
-            </el-link>
-            <el-button size="small" @click="handleExportDel(scope.row)" type="text" class="p-export_del">删除</el-button>
+            <template v-if="scope.row.result === 2">
+              <el-link :href="scope.row.fileCompleteUrl" :underline="false">
+                <el-button size="small" type="text">下载</el-button>
+              </el-link>
+              <el-button size="small" @click="handleExportDel(scope.row)" type="text" class="p-export_del">删除</el-button>
+            </template>
+            <span v-else>--</span>
           </template>
         </el-table-column>
       </el-table>
@@ -409,8 +412,8 @@ export default {
       }
       this.exportLoad = true
       try {
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
         const res = await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
-        this.$message({ type: 'success', message: '导出成功' })
       } catch (error) {
       } finally {
         this.exportLoad = false
@@ -437,13 +440,7 @@ export default {
       } catch (error) {}
     },
     tableSortChange({ column, prop, order }) {
-      if (order === 'ascending') {
-        this.form.createTime = 'asc'
-      } else if (order === 'descending') {
-        this.form.createTime = 'desc'
-      } else {
-        this.form.createTime = ''
-      }
+      this.form.createTime = order ? order.substring(0, order.indexOf('ending')) : ''
       this.currentPage = 1
       this.getList()
     },
@@ -556,7 +553,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
@@ -633,7 +630,7 @@ export default {
         .has-gutter th {
           padding: 12px 0;
         }
-        .el-link{
+        .el-link {
           vertical-align: inherit;
         }
       }
