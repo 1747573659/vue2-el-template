@@ -498,6 +498,16 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
+              <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
+                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
+                <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
                 <selectCopy
                   isCopy
@@ -514,16 +524,6 @@
                   :optionsItem="{ key: 'bCode', label: 'bName', value: 'bCode' }"
                 >
                 </selectCopy>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
-                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
-                <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">

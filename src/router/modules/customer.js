@@ -67,14 +67,14 @@ const customer = {
           code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENT',
           meta: { title: '软注商户管理', cache: true, name: 'softNoteManagement' }
         },
-        {
-          path: 'softNoteManagementDetile',
-          component: _import('customer/merchant/softNoteManagement/softNoteManagementDetile'),
-          name: 'softNoteManagementDetile',
-          hidden: true,
-          code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENTDETILE',
-          meta: { title: '软注商户详情', cache: false, name: 'softNoteManagementDetile' }
-        },
+        // {
+        //   path: 'softNoteManagementDetile',
+        //   component: _import('customer/merchant/softNoteManagement/softNoteManagementDetile'),
+        //   name: 'softNoteManagementDetile',
+        //   hidden: true,
+        //   code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENTDETILE',
+        //   meta: { title: '软注商户详情', cache: false, name: 'softNoteManagementDetile' }
+        // },
         {
           path: 'brandHome',
           name: 'brandHome',

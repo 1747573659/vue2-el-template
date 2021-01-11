@@ -180,7 +180,7 @@
         <el-table-column prop="createTime" label="导出时间" width="250"></el-table-column>
         <el-table-column label="进度">
           <template slot-scope="scope" width="100">
-            <span>{{ scope.row.result === 1 ? '处理中' : scope.row.result === 2 ? '已完成' : '失败' }}</span>
+            <span>{{ scope.row.result === 1 ? '生成中' : scope.row.result === 2 ? '已生成' : '失败' }}</span>
           </template>
         </el-table-column>
         <el-table-column label="操作" width="100">

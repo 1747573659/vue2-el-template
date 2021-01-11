@@ -4,6 +4,9 @@
       <div class="com-edit-item" style="padding-top: 0">
         <div class="com-edit-block">
           <div class="com-edit-ruleForm__content">
+            <el-form-item label="账号：">
+              <span>{{ ruleForm.loginName || '--' }}</span>
+            </el-form-item>
             <el-form-item label="商户编号：">
               <span>{{ ruleForm.id || '--' }}</span>
             </el-form-item>
@@ -275,6 +278,7 @@ export default {
         districtCode: res.districtCode,
         email: res.email,
         id: res.id,
+        loginName: res.loginName,
         mobile: res.mobile,
         shortName: res.shortName,
         type: res.type

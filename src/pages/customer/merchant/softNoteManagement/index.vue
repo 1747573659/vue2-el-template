@@ -35,14 +35,14 @@
           <el-col :span="8">
             <el-form-item label="授权状态:">
               <el-select style="width:100%" filterable v-model="form.status" placeholder="请选择">
-                <el-option v-for="item in authorizationState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in authorizationState" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
           <el-col :span="8">
             <el-form-item label="在线状态:">
               <el-select style="width:100%" filterable v-model="form.isOnline" placeholder="请选择">
-                <el-option v-for="item in isOnlineState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+                <el-option v-for="item in isOnlineState" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -100,10 +100,10 @@
     </div>
     <div class="data-box">
       <el-table v-loading="tableLoading" :data="tableList" style="width: 100%;margin-top:16px">
-        <el-table-column type="index" label="序号" width="70"> </el-table-column>
-        <el-table-column prop="custId" label="软注编码"> </el-table-column>
-        <el-table-column prop="custName" label="软注商户名称"> </el-table-column>
-        <el-table-column prop="productName" label="软注产品"> </el-table-column>
+        <el-table-column type="index" label="序号" width="70"></el-table-column>
+        <el-table-column prop="custId" label="软注编码"></el-table-column>
+        <el-table-column prop="custName" label="软注商户/享钱商户"></el-table-column>
+        <el-table-column prop="productName" label="软注产品"></el-table-column>
         <el-table-column prop="storeType" label="门店类型">
           <template slot-scope="scope">
             <span v-if="scope.row.storeType === '1'">总部</span>
@@ -118,18 +118,17 @@
           </template>
         </el-table-column>
         <el-table-column prop="authCount" label="站点数" width="130px"> </el-table-column>
-        <el-table-column prop="firstLoginDate" label="注册时间/地区">
+        <el-table-column prop="firstLoginDate" label="注册日期/地区">
           <template slot-scope="scope">
             <div>{{ scope.row.firstLoginDate }}</div>
             <div>{{ scope.row.companyProvince }}{{ scope.row.companyCity }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="firstGrantAuthDate" label="首次授权日期" width="130px"> </el-table-column>
+        <el-table-column prop="firstGrantAuthDate" label="首次授权日期" width="130px"></el-table-column>
         <el-table-column label="授权状态">
           <template slot-scope="scope">
-            <span v-if="scope.row.status === '0'">试用中</span>
-            <span v-else-if="scope.row.status === '1'">试用中</span>
-            <span v-else-if="scope.row.status === '2'">授权使用</span>
+            <span v-if="['0','1'].includes(scope.row.status)">试用</span>
+            <span v-else-if="scope.row.status === '2'">正式</span>
             <span v-else-if="scope.row.status === '3'">停用</span>
             <span v-else>--</span>
           </template>
@@ -361,8 +360,8 @@ export default {
         xqOpenStatus: this.form.xqOpenStatus
       }
       if (this.form.registrationDate && this.form.registrationDate.length) {
-        subData.startFirstGrantAuthDate = this.form.registrationDate[0]
-        subData.endFirstGrantAuthDate = this.form.registrationDate[1]
+        subData.startFirstGrantAuthDate = `${this.form.registrationDate[0]} 00:00:00`
+        subData.endFirstGrantAuthDate = `${this.form.registrationDate[1]} 23:59:59`
       }
       if (subData.isOnline === '') {
         delete subData.isOnline
