@@ -523,8 +523,23 @@
             <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1 && form.archiveBaseVO.merchantType === 3">
               <el-form-item label="持卡人类型" prop="archiveExpandVO.cardholderType">
                 <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardholderType" placeholder="全部">
-                  <el-option v-for="item in cardholderTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+                  <el-option v-for="item in cardholderTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 4 && form.archiveExpandVO.acctType === 1">
+              <el-form-item label="法人手持身份证" prop="archiveExpandVO.hardIdUrl">
+                <upload-pic
+                  alt="法人手持身份证"
+                  :showExample="false"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveExpandVO.hardIdUrl"
+                  @on-success="function(res) { return uploadSuccess(res, 'archiveExpandVO.hardIdUrl') }"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.hardIdUrl)"
+                >
+                </upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -893,7 +908,8 @@ export default {
           orgInstitutionEnd: '',
           orgInstitutionUrl: '',
           sellShopDescribe: '',
-          taxRegistrationUrl: ''
+          taxRegistrationUrl: '',
+          hardIdUrl: ''
         },
         archiveOtherVO: {
           additionalFiveUrl: '',
@@ -1164,6 +1180,9 @@ export default {
           break
         case 'archiveExpandVO.openingPermitUrl':
           this.form.archiveExpandVO.openingPermitUrl = res.data.path
+          break
+        case 'archiveExpandVO.hardIdUrl':
+          this.form.archiveExpandVO.hardIdUrl = res.data.path
           break
         case 'archiveOtherVO.cashreceiveIdFrontUrl':
           this.form.archiveOtherVO.cashreceiveIdFrontUrl = res.data.path

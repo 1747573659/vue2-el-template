@@ -58,6 +58,7 @@ export default function xftValidator() {
     'archiveExpandVO.acctType': [{ required: true, message: '请选择账户类型', trigger: 'change' }],
     'archiveExpandVO.cashreceiveType': [{ required: true, message: '请选择收款类型', trigger: 'change' }],
     'archiveExpandVO.cardholderType': [{ required: true, message: '请选择持卡人类型', trigger: 'change' }],
+    'archiveExpandVO.hardIdUrl': [{ required: true, message: '请上传法人手持身份证', trigger: 'change' }],
     'archiveExpandVO.bankSub': [{ required: true, message: '请选择开户支行', trigger: 'change' }],
     'archiveExpandVO.bankProvince': [{ required: true, message: '请选择开户支行所在省市', trigger: 'change' }],
     'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'blur' }],
