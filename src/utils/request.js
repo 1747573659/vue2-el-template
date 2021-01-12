@@ -37,7 +37,7 @@ service.interceptors.response.use(
     const code = response.data?.code
     if (code === 0) return res.data
     else if (code === 195001) {
-      MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
+      MessageBox.confirm('超时未操作或账号在其他设备登录，请重新登录', '重新登录', {
         confirmButtonText: '重新登录',
         type: 'warning',
         showClose: false,

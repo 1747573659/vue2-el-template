@@ -67,7 +67,7 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
         reader.addEventListener('loadend', function (e) {
           let data=JSON.parse(e.target.result)
           if(data.code===195001){
-            MessageBox.confirm('超时未操作，系统已自动登出，请重新登录', '重新登录', {
+            MessageBox.confirm('超时未操作或账号在其他设备登录，请重新登录', '重新登录', {
               confirmButtonText: '重新登录',
               type: 'warning',
               showClose: false,

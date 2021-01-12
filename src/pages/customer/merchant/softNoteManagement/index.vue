@@ -10,7 +10,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item label="商户信息:">
-              <el-input v-model.trim="form.custName" size="small" placeholder="软注商户名称/联系人/手机号" clearable :maxlength="50"></el-input>
+              <el-input v-model.trim="form.authShopMessage" size="small" placeholder="软注商户名称/联系人/手机号" clearable :maxlength="50"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="8">
@@ -104,11 +104,11 @@
         <el-table-column prop="custId" label="软注编码"></el-table-column>
         <el-table-column prop="custName" label="软注商户/享钱商户"></el-table-column>
         <el-table-column prop="productName" label="软注产品"></el-table-column>
-        <el-table-column prop="storeType" label="门店类型">
+        <el-table-column label="门店类型">
           <template slot-scope="scope">
-            <span v-if="scope.row.storeType === '1'">总部</span>
-            <span v-else-if="scope.row.storeType === '2'">连锁分店</span>
-            <span v-else-if="scope.row.storeType === '3'">单店</span>
+            <span v-if="scope.row.storeType === 1">总部</span>
+            <span v-else-if="scope.row.storeType === 2">连锁分店</span>
+            <span v-else-if="scope.row.storeType === 3">单店</span>
           </template>
         </el-table-column>
         <el-table-column prop="contacter" label="软注联系人">
@@ -193,7 +193,7 @@ export default {
       pageSize: 15, // 每页多少条
       form: {
         custId: '', // 软注编码
-        custName: '', // 商户信息
+        authShopMessage: '', // 商户信息
         productId: '', // 软注产品
         status: '', // 授权状态
         isOnline: '', // 在线状态
@@ -325,7 +325,7 @@ export default {
       this.selectPageClearErp()
       this.form = {
         custId: '', // 软注编码
-        custName: '', // 商户信息
+        authShopMessage: '', // 商户信息
         productId: '', // 软注产品
         status: '', // 授权状态
         isOnline: '', // 在线状态
@@ -352,7 +352,7 @@ export default {
         rows: this.pageSize,
         page: this.thisPage,
         custId: this.form.custId,
-        custName: this.form.custName,
+        authShopMessage: this.form.authShopMessage,
         productId: this.form.productId,
         status: this.form.status,
         isOnline: this.form.isOnline,
