@@ -908,8 +908,7 @@ export default {
           orgInstitutionEnd: '',
           orgInstitutionUrl: '',
           sellShopDescribe: '',
-          taxRegistrationUrl: '',
-          hardIdUrl: ''
+          taxRegistrationUrl: ''
         },
         archiveOtherVO: {
           additionalFiveUrl: '',
