@@ -18,14 +18,13 @@
               <select-page
                 placeholder="请输入名称"
                 @focus="selectPageFocusErp"
-                id="id"
+                id="code"
                 @change="selectPageChangeErp"
                 @clear="selectPageClearErp"
                 :name="selectPageNameErp"
                 @remoteMethod="remoteMethodErp"
                 :isMaxPage="isMaxPageErp"
                 :options="ObjContentListErp"
-                :value="form.productId"
                 @loadMore="loadMoreErp"
                 style="width: 100%"
               >
