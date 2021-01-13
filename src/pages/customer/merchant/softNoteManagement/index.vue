@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <el-form :inline="true" ref="form" size="small" :model="form" label-width="100px">
+      <el-form :inline="true" ref="form" size="small" :model="form" label-width="100px" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="8">
             <el-form-item label="软注编码:">
@@ -75,7 +75,7 @@
           <el-col :span="8">
             <el-form-item label="注册日期:">
               <el-date-picker
-                style="width:100%"
+                style="width:240px"
                 v-model="form.registrationDate"
                 type="daterange"
                 range-separator="至"
@@ -127,7 +127,7 @@
         <el-table-column prop="firstGrantAuthDate" label="首次授权日期" width="130px"></el-table-column>
         <el-table-column label="授权状态">
           <template slot-scope="scope">
-            <span v-if="['0','1'].includes(scope.row.status)">试用</span>
+            <span v-if="['0', '1'].includes(scope.row.status)">试用</span>
             <span v-else-if="scope.row.status === '2'">正式</span>
             <span v-else-if="scope.row.status === '3'">停用</span>
             <span v-else>--</span>
@@ -384,7 +384,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
