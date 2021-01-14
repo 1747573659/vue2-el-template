@@ -134,8 +134,8 @@
         </el-table-column>
         <el-table-column prop="onlineStatus" width="88" label="在线状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.onlineStatus === '1'">在线</div>
-            <div v-else-if="scope.row.onlineStatus === '0'">离线</div>
+            <div v-if="scope.row.onlineStatus">在线</div>
+            <div v-else-if="!scope.row.onlineStatus">离线</div>
             <div v-else>--</div>
           </template>
         </el-table-column>
