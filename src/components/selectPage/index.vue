@@ -14,7 +14,7 @@
     :placeholder="placeholder"
     :remote-method="remoteMethod"
   >
-    <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"></el-option>
+    <el-option v-for="item in options" :key="item.id" :label="showValue ? `(${item.id})${item.name}` : item.name" :value="item.id"></el-option>
     <div class="loading-page">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}</div>
   </el-select>
 </template>
@@ -36,6 +36,10 @@ export default {
     value: {
       type: [String, Number],
       default: ''
+    },
+    showValue: {
+      type: Boolean,
+      default: false
     },
     disabled: {
       type: Boolean,
@@ -125,9 +129,11 @@ export default {
             label = this.options[i].name
           }
         }
-        setTimeout(() => {
-          document.getElementById(this.domID).value = label || '' //通过ID原生绑定
-        }, 200)
+        if (!this.showValue) {
+          setTimeout(() => {
+            document.getElementById(this.domID).value = label || '' //通过ID原生绑定
+          }, 200)
+        }
       }
     },
     remoteMethod(query) {

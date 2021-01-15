@@ -51,6 +51,7 @@
                 placeholder="请输入名称"
                 @focus="selectPageFocus"
                 id="id"
+                :showValue="true"
                 @change="selectPageChange"
                 @clear="selectPageClear"
                 :name="selectPageName"
@@ -103,7 +104,7 @@
         <el-table-column prop="custId" label="软注编码"></el-table-column>
         <el-table-column prop="custName" label="软注商户/享钱商户">
           <template slot-scope="scope">
-            <div>{{ scope.row.custName }}/{{ scope.row.merchantName }}</div>
+            <div>{{ scope.row.custName }}{{ scope.row.merchantName ? `/${scope.row.merchantName}` : '' }}</div>
           </template></el-table-column
         >
         <el-table-column prop="productName" label="软注产品">
