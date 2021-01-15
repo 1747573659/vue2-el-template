@@ -115,7 +115,7 @@
             >
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
             <el-button v-if="[3, 5, 6, 7, 9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
-            <el-button v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
+            <el-button v-if="scope.row.archiveBaseDTO.source !== 3" v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{
               scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'
             }}</el-button>

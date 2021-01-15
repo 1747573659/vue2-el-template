@@ -544,7 +544,7 @@
       <el-button v-if="([2].includes(auditStatus) || isCopy) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
       <el-button v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
-    </div> 
+    </div>
     <el-dialog
       title="拒绝原因"
       :visible.sync="refuseDialogVisible"
@@ -572,7 +572,7 @@ import areaSelectForTwo from '@/components/areaSelectForTwo'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
-import { 
+import {
   getWftAllTrade,
   queryCertType,
   queryShopListByPage,
@@ -676,7 +676,7 @@ export default {
           publicId: '',
           remark: '',
           serviceTel: '',
-          source: null,
+          source: 2,
           status: null,
           submitLevel: null,
           superCode: 1,
