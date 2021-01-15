@@ -132,10 +132,10 @@
             <span v-else>--</span>
           </template>
         </el-table-column>
-        <el-table-column prop="onlineStatus" width="88" label="在线状态">
+        <el-table-column prop="isOnline" width="88" label="在线状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.onlineStatus">在线</div>
-            <div v-else-if="!scope.row.onlineStatus">离线</div>
+            <div v-if="scope.row.isOnline">在线</div>
+            <div v-else-if="!scope.row.isOnline">离线</div>
             <div v-else>--</div>
           </template>
         </el-table-column>
