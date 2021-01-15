@@ -101,8 +101,21 @@
       <el-table v-loading="tableLoading" :data="tableList" style="width: 100%;margin-top:16px">
         <el-table-column type="index" label="序号" width="70"></el-table-column>
         <el-table-column prop="custId" label="软注编码"></el-table-column>
-        <el-table-column prop="custName" label="软注商户/享钱商户"></el-table-column>
-        <el-table-column prop="productName" label="软注产品"></el-table-column>
+        <el-table-column prop="custName" label="软注商户/享钱商户">
+          <template slot-scope="scope">
+            <div>{{ scope.row.custName }}/{{ scope.row.merchantName }}</div>
+          </template></el-table-column
+        >
+        <el-table-column prop="productName" label="软注产品">
+          <template slot-scope="scope">
+            <div>
+              {{ scope.row.productId }}
+            </div>
+            <div>
+              {{ scope.row.productName }}
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column label="门店类型">
           <template slot-scope="scope">
             <span v-if="scope.row.storeType === 1">总部</span>
