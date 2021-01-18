@@ -83,7 +83,7 @@
                 value-format="yyyy-MM-dd"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                :clearable="false"
+                :clearable="true"
                 :picker-options="pickerOptions"
               >
               </el-date-picker>
