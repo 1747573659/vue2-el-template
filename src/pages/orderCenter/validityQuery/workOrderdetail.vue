@@ -60,7 +60,7 @@
         <el-form-item label="沟通记录" prop="linkPhone">
           <div v-for="(item, index) in ruleForm.records" :key="index">
             <span v-if="item.title" style="margin-right: 20px;">{{ item.title }}</span>
-            <span>{{ item.detail }}</span>
+            <span v-html="item.detail"></span>
           </div>
         </el-form-item>
 
