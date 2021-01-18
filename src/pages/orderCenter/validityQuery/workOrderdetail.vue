@@ -12,7 +12,7 @@
           <div class="work_item">{{ workProductNo }}</div>
         </el-form-item>
         <el-form-item label="工单描述：" prop="demandDec">
-          <div class="work_item">{{ ruleForm.demandDec }}</div>
+          <div v-html="ruleForm.demandDec" class="work_item"></div>
         </el-form-item>
         <el-form-item v-if="fileList && fileList.length > 0" label="工单素材：" prop="fileName">
           <el-upload
