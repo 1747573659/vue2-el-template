@@ -28,10 +28,19 @@
             <el-form-item label="联系人：" prop="contactor">
               <el-input v-model="ruleForm.contactor" placeholder=""></el-input>
             </el-form-item>
-            <el-form-item label="联系人手机（账号）：" prop="mobile" required>
+            <el-form-item label="联系人手机：" prop="mobile" required>
               <div style="position: relative">
                 <el-input disabled v-model="ruleForm.mobile"></el-input>
-                <el-button @click="dialogVisible = true" style=" position: absolute;right:-46px;top:9px" type="text">修改</el-button>
+                <el-button
+                  @click="
+                    dialogForm.mobile = ''
+                    dialogForm.codeKey = ''
+                    dialogVisible = true
+                  "
+                  style=" position: absolute;right:-46px;top:9px"
+                  type="text"
+                  >修改</el-button
+                >
               </div>
             </el-form-item>
             <el-form-item label="联系人邮箱：" prop="email">
@@ -326,7 +335,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.data-box{
+.data-box {
   border-top: 16px solid #f7f8fa;
 }
 .com-edit-block {
