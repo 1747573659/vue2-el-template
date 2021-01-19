@@ -99,10 +99,10 @@
       </el-form>
     </div>
     <div class="data-box">
-      <el-table v-loading="tableLoading" :data="tableList" style="width: 100%;margin-top:16px">
-        <el-table-column type="index" label="序号" width="70"></el-table-column>
-        <el-table-column prop="custId" label="软注编码"></el-table-column>
-        <el-table-column prop="custName" label="软注商户/享钱商户">
+      <el-table v-loading="tableLoading" :data="tableList" style="width: 100%;">
+        <el-table-column align="right" type="index" label="序号" width="70"></el-table-column>
+        <el-table-column prop="custId" width="180" label="软注编码"></el-table-column>
+        <el-table-column prop="custName" width="146" label="软注商户/享钱商户">
           <template slot-scope="scope">
             <div>{{ scope.row.custName }}{{ scope.row.merchantName ? `/${scope.row.merchantName}` : '' }}</div>
           </template></el-table-column
@@ -130,8 +130,8 @@
             <div>{{ scope.row.contacterMobileNum }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="authCount" label="站点数" width="130px"> </el-table-column>
-        <el-table-column prop="firstLoginDate" label="注册日期/地区">
+        <el-table-column prop="authCount" label="站点数" align="right"> </el-table-column>
+        <el-table-column prop="firstLoginDate" width="146" label="注册日期/地区">
           <template slot-scope="scope">
             <div>{{ scope.row.firstLoginDate }}</div>
             <div>{{ scope.row.companyProvince }}{{ scope.row.companyCity }}</div>
