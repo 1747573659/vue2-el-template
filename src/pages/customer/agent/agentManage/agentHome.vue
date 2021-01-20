@@ -43,7 +43,7 @@
     <div class="data-box">
       <el-table
         v-loading="loading"
-        :max-height="tableMaxHeight"
+        :max-height="tabMaxHeight"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -150,9 +150,11 @@ import { resetPassword } from '@/api/setting/account'
 import { isPositiveInteger } from '@/utils/common'
 import selectCopy from '@/components/selectCopy'
 import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'agentManage',
+  mixins: [tableMaxHeight],
   components: { selectCopy },
   filters: {
     fiterStatus(val) {
@@ -208,9 +210,6 @@ export default {
     }
   },
   computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
-    },
     sumTotal() {
       let sum
       if (this.quotaItems.length === 0) {

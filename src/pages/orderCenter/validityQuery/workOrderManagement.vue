@@ -12,7 +12,7 @@
     </div>
     <div class="data-box">
       <base-table
-        :tableMaxHeight="tableMaxHeight"
+        :tableMaxHeight="tabMaxHeight"
         :columns="headers"
         :list="list"
         @getList="queryWorkOrderList"
@@ -33,18 +33,14 @@ import queryGroup from '@/components/queryGroup'
 import moment from 'moment'
 import { addWorkOrder, queryProductList, queryAgent, queryWorkOrderList, queryOrderDetail } from '@/api/dataCenter/dataCenter.js'
 import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'workOrderManagement',
-  mixins: [listMixins],
+  mixins: [listMixins, tableMaxHeight],
   components: {
     baseTable,
     queryGroup
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
-    }
   },
   data() {
     return {

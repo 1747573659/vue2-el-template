@@ -227,7 +227,7 @@ import {
 } from '@/api/xftArchive'
 import { mapActions } from 'vuex'
 import moment from 'moment'
-import { tableMaxHeight, dataMaxHeight } from '@/mixins/tableMaxHeight'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'xftArchive',

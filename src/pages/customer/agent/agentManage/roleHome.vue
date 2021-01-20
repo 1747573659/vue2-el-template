@@ -18,7 +18,7 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table v-loading="loading" :max-height="tableMaxHeight" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%">
+      <el-table v-loading="loading" :max-height="tabMaxHeight" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="id" label="角色编号"> </el-table-column>
         <el-table-column prop="name" label="角色名称"> </el-table-column>
         <el-table-column prop="remark" label="描述">
@@ -49,9 +49,11 @@
 <script>
 import { queryPage, deleteSysRole } from '@/api/customer/agent'
 import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'agentRole',
+  mixins: [tableMaxHeight],
   data() {
     return {
       loading: false,
@@ -64,11 +66,6 @@ export default {
       },
       tableData: [],
     }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
-    },
   },
   activated() {
     this.queryPage()
