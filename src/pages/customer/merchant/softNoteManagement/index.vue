@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <section>
     <div class="search-box">
       <el-form :inline="true" ref="form" size="small" :model="form" label-width="100px" class="xdd-btn-block__w240">
         <el-row>
@@ -99,7 +99,7 @@
       </el-form>
     </div>
     <div class="data-box">
-      <el-table v-loading="tableLoading" :data="tableList" style="width: 100%;">
+      <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableList" style="width: 100%;">
         <el-table-column align="right" type="index" label="序号" width="70"></el-table-column>
         <el-table-column prop="custId" width="180" label="软注编码"></el-table-column>
         <el-table-column prop="custName" width="146" label="软注商户/享钱商户">
@@ -154,7 +154,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="block" style="margin-top: 16px; text-align: right">
+      <div class="km-page-block">
         <el-pagination
           :current-page="thisPage"
           :total="tableTotal"
@@ -167,7 +167,7 @@
         ></el-pagination>
       </div>
     </div>
-  </div>
+  </section>
 </template>
 <script>
 import { authorizationState } from './publicData/authorizationState' // 授权状态
@@ -175,7 +175,11 @@ import { isOnlineState } from './publicData/isOnlineState' // 在线状态
 import { openingState } from './publicData/openingState' // 享钱开通状态
 import selectPage from '@/components/selectPage' //选择组件
 import { authShopPage, queryAuthErpByPage, queryShopListByPage } from '@/api/customer/merchant' //api
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
 export default {
+  name: 'softNoteManagement',
+  mixins: [tableMaxHeight],
   components: { selectPage },
   data() {
     return {
