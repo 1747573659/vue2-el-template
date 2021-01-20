@@ -61,6 +61,17 @@ const customer = {
           }
         },
         {
+          path: 'brandHome',
+          name: 'brandHome',
+          code: 'KM_CUSTOMER_BRAND_MANAGE',
+          component: _import('customer/merchant/merchantManage/brandHome'),
+          meta: {
+            title: '享钱商户品牌',
+            name: 'brandHome',
+            cache: true
+          }
+        },
+        {
           path: 'softNoteManagement',
           component: _import('customer/merchant/softNoteManagement/index'),
           name: 'softNoteManagement',
@@ -75,17 +86,6 @@ const customer = {
         //   code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENTDETILE',
         //   meta: { title: '软注商户详情', cache: false, name: 'softNoteManagementDetile' }
         // },
-        {
-          path: 'brandHome',
-          name: 'brandHome',
-          code: 'KM_CUSTOMER_BRAND_MANAGE',
-          component: _import('customer/merchant/merchantManage/brandHome'),
-          meta: {
-            title: '享钱商户品牌',
-            name: 'brandHome',
-            cache: true
-          }
-        },
         {
           path: 'addBrand',
           name: 'addBrand',
