@@ -124,20 +124,20 @@
             <span v-else-if="scope.row.storeType === 3">单店</span>
           </template>
         </el-table-column>
-        <el-table-column prop="contacter" label="软注联系人">
+        <el-table-column prop="contacter" label="软注联系人" min-width="115">
           <template slot-scope="scope">
             <div>{{ scope.row.contacter }}</div>
             <div>{{ scope.row.contacterMobileNum }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="authCount" label="站点数" align="right"> </el-table-column>
-        <el-table-column prop="firstLoginDate" width="146" label="注册日期/地区">
+        <el-table-column prop="authCount" label="站点数" align="right"></el-table-column>
+        <el-table-column prop="firstLoginDate" width="120" label="注册日期/地区">
           <template slot-scope="scope">
             <div>{{ scope.row.firstLoginDate }}</div>
             <div>{{ scope.row.companyProvince }}{{ scope.row.companyCity }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="firstGrantAuthDate" label="首次授权日期" width="130px"></el-table-column>
+        <el-table-column prop="firstGrantAuthDate" label="首次授权日期" width="110px"></el-table-column>
         <el-table-column label="授权状态">
           <template slot-scope="scope">
             <span v-if="['0', '1'].includes(scope.row.status)">试用</span>

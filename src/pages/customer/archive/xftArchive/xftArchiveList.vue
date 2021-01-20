@@ -50,7 +50,7 @@
             <el-form-item>
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
               <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
-              <el-button v-permission="'XFTARCHIVE_LIST_EXPORTLIST'" @click="handleExportLists">导出记录</el-button>
+              <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" @click="handleExportLists">导出记录</el-button>
             </el-form-item>
             <el-form-item style="float:right">
               <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
