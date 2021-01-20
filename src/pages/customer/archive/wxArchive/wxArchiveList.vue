@@ -230,7 +230,7 @@ export default {
       try {
         const res = await queryTotalByStatus(data)
         this.countData = []
-        if (res.length > 0) {
+        if (res?.length > 0) {
           for (const ele of this.countOptions) {
             for (const item of res) {
               if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })

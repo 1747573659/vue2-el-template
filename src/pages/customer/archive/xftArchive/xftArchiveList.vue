@@ -174,12 +174,12 @@
         <el-button size="small" style="padding: 8px 22px" @click="certificationVisible = false">关闭</el-button>
       </span>
     </el-dialog>
-    <el-dialog class="p-export-con" title="导出记录" :visible.sync="exportVisible">
+    <el-dialog class="p-export-con" title="导出记录" :visible.sync="exportVisible" custom-class="p-dialog-order">
       <el-table :data="exportLists" v-loading="exportLock">
-        <el-table-column prop="fileName" label="文件名称" width="350"></el-table-column>
-        <el-table-column prop="createTime" label="导出时间" width="250"></el-table-column>
-        <el-table-column label="进度">
-          <template slot-scope="scope" width="100">
+        <el-table-column prop="fileName" label="文件名称"></el-table-column>
+        <el-table-column prop="createTime" label="导出时间" width="180"></el-table-column>
+        <el-table-column label="进度" width="100">
+          <template slot-scope="scope">
             <span>{{ scope.row.result === 1 ? '生成中' : scope.row.result === 2 ? '已生成' : '失败' }}</span>
           </template>
         </el-table-column>
@@ -406,7 +406,7 @@ export default {
       }
     },
     handleExport: async function() {
-      if (moment(this.form.time[1]).diff(moment(this.form.time[0]), 'days') > 62) {
+      if (!this.form.time?.length || moment(this.form.time[1]).diff(moment(this.form.time[0]), 'days') > 62) {
         this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
         return false
       }
@@ -423,7 +423,7 @@ export default {
       try {
         const res = await queryTotalByStatus(this.handleQueryParams())
         this.countData = []
-        if (res.length > 0) {
+        if (res?.length > 0) {
           for (const ele of this.countOptions) {
             for (const item of res) {
               if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
@@ -553,6 +553,21 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+/deep/ .p-dialog-order {
+  display: flex;
+  flex-direction: column;
+  margin: 0 !important;
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  max-height: calc(100% - 30px);
+  max-width: calc(100% - 30px);
+  .el-dialog__body {
+    flex: 1;
+    overflow: auto;
+  }
+}
 .search-box {
   margin-left: -16px;
   margin-right: -16px;
