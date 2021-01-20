@@ -149,6 +149,7 @@
                   maxlength="140"
                   show-word-limit
                   placeholder="会写入商户合同条款或用于后续公众号展示，请谨慎填写"
+                  class="e-wxArchive-textarea"
                   style="width: 240px"
                 ></el-input>
               </el-form-item>
@@ -1018,6 +1019,16 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
       cursor: pointer;
+    }
+    &-textarea {
+      /deep/ {
+        .el-input__count {
+          line-height: 1.3;
+        }
+        .el-textarea__inner{
+          padding-bottom: 20px;
+        }
+      }
     }
   }
   &-preview {
