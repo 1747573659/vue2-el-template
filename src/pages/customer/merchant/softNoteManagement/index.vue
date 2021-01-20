@@ -90,9 +90,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item label="">
+            <el-form-item style="padding-left: 30px;">
               <el-button @click="authShopPage()" size="small" type="primary">查询</el-button>
-              <el-button @click="reset()" size="small" type="primary" plain>重置</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -335,22 +334,6 @@ export default {
           this.isMaxPage = true
         }
       } catch (error) {}
-    },
-    // 重置
-    reset() {
-      this.selectPageClear()
-      this.selectPageClearErp()
-      this.form = {
-        custId: '', // 软注编码
-        authShopMessage: '', // 商户信息
-        productId: '', // 软注产品
-        status: '', // 授权状态
-        isOnline: '', // 在线状态
-        shopId: '', // 享钱商户
-        xqOpenStatus: '', // 享钱开通状态
-        registrationDate: null // 注册日期
-      } // 搜索表单
-      this.authShopPage()
     },
     // 分页
     handleSizeChange(val) {
