@@ -1,7 +1,7 @@
 <template>
   <section>
     <div style="padding-bottom: 16px;" class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData" :max-height="tableMaxHeight">
+      <el-table :data="tableData" :max-height="tabMaxHeight">
         <el-table-column prop="subMchId" label="微信商户号"></el-table-column>
         <el-table-column prop="channelList" label="进件类型"></el-table-column>
         <el-table-column prop="createTime" label="公司名称"></el-table-column>
@@ -100,9 +100,11 @@
 
 <script>
 import { generalDetail, generalView, queryBySubMchId } from '@/api/wxArchive'
-import { detailOptions, updateStatusOptions } from './index.js'
+import { detailOptions, updateStatusOptions } from './index'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
+  mixins: [tableMaxHeight],
   data() {
     return {
       detailOptions,
@@ -118,11 +120,6 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10
-    }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 32 - 116
     }
   },
   mounted() {

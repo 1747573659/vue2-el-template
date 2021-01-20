@@ -29,27 +29,4 @@ const tableMaxHeight = {
   }
 }
 
-const dataMaxHeight = {
-  data() {
-    return {
-      dataMaxHeight: 0
-    }
-  },
-  mounted() {
-    this.$nextTick(() => {
-      this.dataMaxHeight()
-    })
-  },
-  methods: {
-    dataMaxHeight() {
-      const mainHeight = document.documentElement.clientHeight
-      const headHeight = document.querySelector('.p-head').offsetHeight
-      const tagHeight = document.querySelector('.p-tags_con').offsetHeight
-      const searchBoxHeight = document.querySelector('.search-box')?.offsetHeight ?? 0
-      const pageHeight = document.querySelector('.km-page-block')?.offsetHeight ?? 0
-      this.tabMaxHeight = mainHeight - headHeight - tagHeight - searchBoxHeight - pageHeight - 32 - 16
-    }
-  }
-}
-
-export { tableMaxHeight, dataMaxHeight }
+export { tableMaxHeight }

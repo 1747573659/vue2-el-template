@@ -480,6 +480,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
+              <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
+                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
               <el-form-item label="银行" prop="archiveExpandVO.bank">
                 <selectCopy
                   :remoteMethod="handleBankRemote"
@@ -495,11 +500,6 @@
                   :optionsItem="{ key: 'bankCode', label: 'bankName', value: 'bankCode' }"
                 >
                 </selectCopy>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
-                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -648,7 +648,7 @@ export default {
   filters: {
     filterReview
   },
-  created(){
+  created() {
     this.form = deepClone(formObj)
   },
   mounted() {
@@ -922,7 +922,7 @@ export default {
           this.form.archiveExpandVO.licId = res.reg_num
           this.form.archiveExpandVO.businessScope = res.business
           this.form.archiveBaseVO.companyName = res.name
-          this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/,'')
+          this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
           const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
           this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
           this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1] : ''

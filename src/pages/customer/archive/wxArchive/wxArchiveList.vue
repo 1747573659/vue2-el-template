@@ -165,7 +165,7 @@ import { statusOptions, deactivateOptions, countOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 import { mapActions } from 'vuex'
-import { tableMaxHeight, dataMaxHeight } from '@/mixins/tableMaxHeight'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'wxArchive',
@@ -230,7 +230,7 @@ export default {
       try {
         const res = await queryTotalByStatus(data)
         this.countData = []
-        if (res.length > 0) {
+        if (res?.length > 0) {
           for (const ele of this.countOptions) {
             for (const item of res) {
               if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
@@ -326,7 +326,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;

@@ -45,7 +45,7 @@
               </el-select>
             </el-form-item>
           </el-col>
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item label="享钱商户:">
               <select-page
                 placeholder="请输入名称"
@@ -64,7 +64,7 @@
               >
               </select-page>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="8">
             <el-form-item label="享钱开通状态:">
               <el-select style="width:100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
@@ -369,7 +369,7 @@ export default {
         productId: this.form.productId,
         status: this.form.status,
         isOnline: this.form.isOnline,
-        shopId: this.form.shopId,
+        // shopId: this.form.shopId,
         xqOpenStatus: this.form.xqOpenStatus
       }
       if (this.form.registrationDate && this.form.registrationDate.length) {
