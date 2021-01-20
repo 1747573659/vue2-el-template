@@ -45,9 +45,36 @@ const urlLinks = {
   mchICBSign: '/archive/xdd/mchICBSign',
   queryCommunicationMerchantInfo: '/archive/xdd/queryCommunicationMerchantInfo',
   delList: 'archive/general/del',
-  imageOCR: 'common/imageOcr'
+  imageOCR: 'common/imageOcr',
+  // 导出
+  export: '/archive/xdd/export',
+  // 导出记录
+  exportLog: '/export/log'
 }
-  
+
+export function xftArchiveExportDel(data) {
+  return request({
+    url: `${urlLinks.exportLog}/${data.id}/del`,
+    method: 'post'
+  })
+}
+
+export function xftArchiveExportLog(data) {
+  return request({
+    url: `${urlLinks.exportLog}/page`,
+    method: 'post',
+    data
+  })
+}
+
+export function xftArchiveExport(data) {
+  return request({
+    url: `${urlLinks.export}/${data.menu}`,
+    method: 'post',
+    data: data.params
+  })
+}
+
 // 通道下拉列表查询
 export function queryBankChannelType() {
   return request({

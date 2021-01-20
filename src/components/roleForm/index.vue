@@ -1,27 +1,25 @@
 <template>
-  <div>
-    <div class="km-setting-roleAdd">
-      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
-        <el-form-item label="角色名称" prop="name">
-          <el-input v-model="form.name" style="width: 240px"></el-input>
-        </el-form-item>
-        <el-form-item label="描述">
-          <el-input v-model="form.remark" maxlength="250" style="width: 240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
-        </el-form-item>
-        <el-form-item label="PC后台权限">
-          <tree-custom :data="pcData" show-checkbox ref="treePC" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultPCList" :props="defaultProps">
-          </tree-custom>
-        </el-form-item>
-        <el-form-item label="E助手权限">
-          <tree-custom :data="appData" show-checkbox ref="treeE" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultAPPList" :props="defaultProps">
-          </tree-custom>
-        </el-form-item>
-        <el-form-item label="">
-          <el-button class="channel-setting-save" :loading="submitLoading" type="primary" @click="onSubmit">保存</el-button>
-          <el-button class="channel-setting-save" @click="cancel">取消</el-button>
-        </el-form-item>
-      </el-form>
-    </div>
+  <div class="km-setting-roleAdd">
+    <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 800px">
+      <el-form-item label="角色名称" prop="name">
+        <el-input v-model="form.name" style="width: 240px"></el-input>
+      </el-form-item>
+      <el-form-item label="描述">
+        <el-input v-model="form.remark" maxlength="250" style="width: 240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
+      </el-form-item>
+      <el-form-item label="PC后台权限">
+        <tree-custom :data="pcData" show-checkbox ref="treePC" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultPCList" :props="defaultProps">
+        </tree-custom>
+      </el-form-item>
+      <el-form-item label="E助手权限">
+        <tree-custom :data="appData" show-checkbox ref="treeE" node-key="id" accordion :default-expanded-keys="[-1]" :default-checked-keys="defaultAPPList" :props="defaultProps">
+        </tree-custom>
+      </el-form-item>
+      <el-form-item label="">
+        <el-button class="channel-setting-save" :loading="submitLoading" type="primary" @click="onSubmit">保存</el-button>
+        <el-button class="channel-setting-save" @click="cancel">取消</el-button>
+      </el-form-item>
+    </el-form>
   </div>
 </template>
 <script>
@@ -339,6 +337,9 @@ export default {
 .km-setting-roleAdd {
   display: flex;
   justify-content: center;
+  background-color: #fff;
+  border-top: 16px solid #f7f8fa;
+  border-bottom: 16px solid #f7f8fa;
   padding-top: 16px;
 }
 .channel-setting-save {

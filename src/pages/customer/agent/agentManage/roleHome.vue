@@ -48,6 +48,7 @@
 
 <script>
 import { queryPage, deleteSysRole } from '@/api/customer/agent'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'agentRole',
@@ -69,13 +70,14 @@ export default {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     },
   },
-  created() {
-    this.queryPage()
-  },
   activated() {
     this.queryPage()
   },
+  mounted() {
+    this.queryPage()
+  },
   methods: {
+    ...mapActions(['delCachedView']),
     queryPage() {
       this.loading = true
       queryPage(this.form)
@@ -99,14 +101,17 @@ export default {
       this.queryPage()
     },
     add() {
-      this.$router.push({ path: '/customer/agent/addRole' })
+      this.delCachedView({ name: 'addRole' }).then(()=> {
+        this.$router.push({ path: '/customer/agent/addRole' })
+      })
     },
     edit(id) {
-      this.$router.push({ path: '/customer/agent/editRole', query: { id } })
+      this.delCachedView({ name: 'editRole' }).then(()=> {
+        this.$router.push({ path: '/customer/agent/editRole', query: { id } })
+      })
     },
     async handleDelete(num, roleId) {
       if (num > 0) return this.$message.error('角色有关联的账号，不能删除')
-      
       await deleteSysRole({ roleId })
       await this.queryPage()
       this.$message.success('删除成功!')
@@ -115,4 +120,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
+</style>

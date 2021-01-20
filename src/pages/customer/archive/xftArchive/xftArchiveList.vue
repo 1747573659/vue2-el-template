@@ -1,18 +1,24 @@
 <template>
   <div>
     <div class="search-box">
-      <section class="p-count_con" v-if="countData.length > 0">
+      <section class="p-count-con">
         <img src="../../../../assets/images/icon/mark.png" alt="提示" />
         <template v-for="item in countData">
-          <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+          <div class="p-count_item" :key="item.label">{{ item.label }}：{{ item.total }}</div>
         </template>
       </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="75px">
         <el-row>
-          <el-col :span="21">
+          <el-col>
             <el-form-item label="申请时间">
-              <el-date-picker v-model="form.time" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期" value-format="yyyy-MM-dd">
-              </el-date-picker>
+              <el-date-picker
+                v-model="form.time"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd"
+              ></el-date-picker>
             </el-form-item>
             <el-form-item label="资料状态">
               <el-select style="width: 240px" clearable v-model="form.auditStatus" placeholder="全部">
@@ -25,32 +31,38 @@
               </el-select>
             </el-form-item>
           </el-col>
+          <el-col>
+            <el-form-item label="商户信息">
+              <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
+            </el-form-item>
+            <el-form-item label="当前通道">
+              <el-select style="width: 240px" clearable v-model="form.channelTypeCode" placeholder="全部">
+                <el-option v-for="item in channelList" :key="item.channelCode" :label="item.channelName" :value="item.channelCode"> </el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="停用">
+              <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
+                <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col style="padding-left:75px">
+            <el-form-item>
+              <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
+              <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
+              <el-button v-permission="'XFTARCHIVE_LIST_EXPORTLIST'" @click="handleExportLists">导出记录</el-button>
+            </el-form-item>
+            <el-form-item style="float:right">
+              <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
+            </el-form-item>
+          </el-col>
         </el-row>
-        <el-form-item label="商户信息">
-          <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
-        </el-form-item>
-        <el-form-item label="当前通道">
-          <el-select style="width: 240px" clearable v-model="form.channelTypeCode" placeholder="全部">
-            <el-option v-for="item in channelList" :key="item.channelCode" :label="item.channelName" :value="item.channelCode"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item label="停用">
-          <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
-            <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-          </el-select>
-        </el-form-item>
-        <el-form-item style="padding-left:10px">
-          <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
-        </el-form-item>
-        <el-form-item style="float:right">
-          <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
-        </el-form-item>
       </el-form>
     </div>
     <div class="data-box">
       <el-table
         v-loading="tableLoading"
-        :max-height="tableMaxHeight"
+        :max-height="tabMaxHeight"
         :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }"
         @sort-change="tableSortChange"
         :data="tableData"
@@ -75,9 +87,7 @@
             <div v-if="scope.row.archiveChannelList">
               <div v-for="(item, index) in scope.row.archiveChannelList" :key="index">{{ item.channelName }}</div>
             </div>
-            <div v-else>
-              --
-            </div>
+            <div v-else>--</div>
           </template>
         </el-table-column>
         <el-table-column prop="useBankChannelCodeName" label="当前通道" width="140">
@@ -164,22 +174,64 @@
         <el-button size="small" style="padding: 8px 22px" @click="certificationVisible = false">关闭</el-button>
       </span>
     </el-dialog>
+    <el-dialog class="p-export-con" title="导出记录" :visible.sync="exportVisible">
+      <el-table :data="exportLists" v-loading="exportLock">
+        <el-table-column prop="fileName" label="文件名称" width="350"></el-table-column>
+        <el-table-column prop="createTime" label="导出时间" width="250"></el-table-column>
+        <el-table-column label="进度">
+          <template slot-scope="scope" width="100">
+            <span>{{ scope.row.result === 1 ? '生成中' : scope.row.result === 2 ? '已生成' : '失败' }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" width="100">
+          <template slot-scope="scope">
+            <template v-if="scope.row.result === 2">
+              <el-link :href="scope.row.fileCompleteUrl" :underline="false">
+                <el-button size="small" type="text">下载</el-button>
+              </el-link>
+              <el-button size="small" @click="handleExportDel(scope.row)" type="text" class="p-export_del">删除</el-button>
+            </template>
+            <span v-else>--</span>
+          </template>
+        </el-table-column>
+      </el-table>
+      <div class="p-export-pagination">
+        <el-pagination
+          background
+          @size-change="handleExportSizeChange"
+          @current-change="handleExportCurrentChange"
+          :page-sizes="[10, 15, 20, 25]"
+          :current-page="exportCurrentPage"
+          :page-size="exportPageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="exportPageTotal"
+        >
+        </el-pagination>
+      </div>
+    </el-dialog>
   </div>
 </template>
 
 <script>
-import { queryPage, queryCertificationStatus, stopUse, queryContactQrCode, queryTotalByStatus, delList, queryBankChannelType } from '@/api/xftArchive'
+import {
+  queryPage,
+  queryCertificationStatus,
+  stopUse,
+  queryContactQrCode,
+  queryTotalByStatus,
+  delList,
+  queryBankChannelType,
+  xftArchiveExport,
+  xftArchiveExportLog,
+  xftArchiveExportDel
+} from '@/api/xftArchive'
+import { mapActions } from 'vuex'
+import moment from 'moment'
+import { tableMaxHeight, dataMaxHeight } from '@/mixins/tableMaxHeight'
+
 export default {
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      // 通过 `vm` 访问组件实例
-      vm.currentPage = 1
-      vm.getList()
-      vm.handleQueryTotalByStatus()
-      vm.getQueryBankChannelType()
-    })
-  },
   name: 'xftArchive',
+  mixins: [tableMaxHeight],
   data() {
     return {
       countData: [],
@@ -259,27 +311,92 @@ export default {
       tableLoading: false,
       imgSrc: '',
       countOptions: [
-        { value: 0, label: '草稿' },
-        { value: 2, label: '待审核' },
-        { value: 9, label: '资料补充待审核' },
-        { value: 3, label: '平台审核中' },
-        { value: 8, label: '资料待补充' },
-        { value: 1, label: '未通过审核编辑中' },
-        { value: 4, label: '未通过审核' }
-      ]
+        { value: 0, label: '草稿', total: 0 },
+        { value: 2, label: '待审核', total: 0 },
+        { value: 9, label: '资料补充待审核', total: 0 },
+        { value: 3, label: '平台审核中', total: 0 },
+        { value: 8, label: '资料待补充', total: 0 },
+        { value: 1, label: '未通过审核编辑中', total: 0 },
+        { value: 4, label: '未通过审核', total: 0 }
+      ],
+      // dialog
+      exportVisible: false,
+      exportLoad: false,
+      exportLock: false,
+      exportLists: [],
+      exportCurrentPage: 1,
+      exportPageSize: 10,
+      exportPageTotal: 0
     }
   },
+  activated() {
+    this.countData = this.countOptions
+    this.getList()
+    this.handleQueryTotalByStatus()
+  },
+  mounted() {
+    this.countData = this.countOptions
+    this.getList()
+    this.handleQueryTotalByStatus()
+    this.getQueryBankChannelType()
+  },
   methods: {
-    handleQueryTotalByStatus: async function() {
-      let data = {
-        orders: {
-          createTime: this.form.createTime
-        },
+    ...mapActions(['delCachedView']),
+    handleExportDel(row) {
+      this.$confirm('确定要删除这条导出记录吗？', '删除', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            xftArchiveExportDel({ id: row.id })
+              .then(() => {
+                this.$message({ type: 'success', message: '删除成功' })
+                if (--this.exportLists.length) this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
+                this.handleExportRecord()
+              })
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
+          } else done()
+        }
+      }).catch(err => {})
+    },
+    handleExportCurrentChange(val) {
+      this.exportCurrentPage = val
+      this.handleExportRecord()
+    },
+    handleExportSizeChange(val) {
+      this.exportCurrentPage = 1
+      this.exportPageSize = val
+      this.handleExportRecord()
+    },
+    handleExportRecord: async function() {
+      const data = { exportType: 1, page: this.exportCurrentPage, rows: this.exportPageSize }
+      try {
+        this.exportLock = true
+        const res = await xftArchiveExportLog(data)
+        this.exportLists = res.results
+        this.exportPageTotal = res.totalCount
+      } finally {
+        this.exportLock = false
+      }
+    },
+    handleExportLists() {
+      this.handleExportRecord()
+      this.exportVisible = true
+    },
+    handleQueryParams() {
+      return {
+        orders: { createTime: this.form.createTime },
         startTime: this.form.time && this.form.time.length > 0 ? this.form.time[0] + ' 00:00:00' : '',
         endTime: this.form.time && this.form.time.length > 0 ? this.form.time[1] + ' 23:59:59' : '',
         auditStatusList: this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
         merchantName: this.form.name,
         merchantShortName: this.form.name,
+        channelTypeCode: this.form.channelTypeCode,
         companyName: this.form.name,
         bankCard: this.form.name,
         wxCertStatus: this.form.wxCertStatus,
@@ -287,14 +404,32 @@ export default {
         page: this.currentPage,
         rows: this.pageSize
       }
+    },
+    handleExport: async function() {
+      if (moment(this.form.time[1]).diff(moment(this.form.time[0]), 'days') > 62) {
+        this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
+        return false
+      }
+      this.exportLoad = true
       try {
-        const res = await queryTotalByStatus(data)
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+        const res = await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+      } catch (error) {
+      } finally {
+        this.exportLoad = false
+      }
+    },
+    handleQueryTotalByStatus: async function() {
+      try {
+        const res = await queryTotalByStatus(this.handleQueryParams())
         this.countData = []
-        for (const ele of this.countOptions) {
-          for (const item of res) {
-            if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+        if (res.length > 0) {
+          for (const ele of this.countOptions) {
+            for (const item of res) {
+              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+            }
           }
-        }
+        } else this.countData = this.countOptions
       } catch (error) {}
     },
     handleDraftList: async function(scope) {
@@ -305,30 +440,34 @@ export default {
       } catch (error) {}
     },
     tableSortChange({ column, prop, order }) {
-      if (order === 'ascending') {
-        this.form.createTime = 'asc'
-      } else if (order === 'descending') {
-        this.form.createTime = 'desc'
-      } else {
-        this.form.createTime = ''
-      }
+      this.form.createTime = order ? order.substring(0, order.indexOf('ending')) : ''
       this.currentPage = 1
       this.getList()
     },
     add() {
-      this.$router.push({ name: 'xftArchiveAdd' })
+      this.delCachedView({ name: 'xftArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'xftArchiveAdd' })
+      })
     },
     edit(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
+      this.delCachedView({ name: 'xftArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
+      })
     },
     check(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
+      this.delCachedView({ name: 'xftArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
+      })
     },
     detail(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
+      this.delCachedView({ name: 'xftArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: row.archiveBaseDTO.auditStatus, id: row.archiveBaseDTO.id } })
+      })
     },
     copy(row) {
-      this.$router.push({ name: 'xftArchiveAdd', query: { isCopy: true, id: row.archiveBaseDTO.id } })
+      this.delCachedView({ name: 'xftArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'xftArchiveAdd', query: { isCopy: true, id: row.archiveBaseDTO.id } })
+      })
     },
     search() {
       this.cxLoading = true
@@ -384,26 +523,8 @@ export default {
     },
     async getList() {
       this.tableLoading = true
-      let data = {
-        orders: {
-          createTime: this.form.createTime
-        },
-        startTime: this.form.time && this.form.time.length > 0 ? this.form.time[0] + ' 00:00:00' : '',
-        endTime: this.form.time && this.form.time.length > 0 ? this.form.time[1] + ' 23:59:59' : '',
-        auditStatusList: this.form.auditStatus === '' || this.form.auditStatus === null ? null : this.form.auditStatus === 5 ? [5, 10, 11] : [this.form.auditStatus],
-        merchantName: this.form.name,
-        merchantShortName: this.form.name,
-        channelTypeCode: this.form.channelTypeCode,
-        companyName: this.form.name,
-        bankCard: this.form.name,
-        // 'auditStatusList': this.form.auditStatus,
-        wxCertStatus: this.form.wxCertStatus,
-        stopUse: this.form.status,
-        page: this.currentPage,
-        rows: this.pageSize
-      }
       try {
-        const res = await queryPage(data)
+        const res = await queryPage(this.handleQueryParams())
         this.tableData = res.results
         this.totalPage = res.totalCount
       } catch (e) {
@@ -427,17 +548,16 @@ export default {
         })
       } catch (error) {}
     }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 168.5 - 32 - 76 - 16
-    }
-  },
-  mounted() {}
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.search-box {
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .certification-dialog {
   /deep/.el-dialog__body {
     display: flex;
@@ -481,16 +601,17 @@ export default {
 }
 .p {
   &-count {
-    &_con {
+    &-con {
       background: rgba(255, 96, 16, 0.08);
-      margin: 0 8px 16px 8px;
       border: 1px solid rgba(255, 96, 16, 0.4);
       border-radius: 2px;
       display: flex;
       align-items: center;
-      padding: 10px 16px;
+      padding: 7px 16px;
       font-size: 14px;
       color: #3d4966;
+      min-height: 34px;
+      margin: 0 8px 16px 8px;
       img {
         width: 16px;
         height: 16px;
@@ -501,6 +622,25 @@ export default {
       &:not(:last-child) {
         margin-right: 30px;
       }
+    }
+  }
+  &-export {
+    &-con {
+      /deep/ {
+        .has-gutter th {
+          padding: 12px 0;
+        }
+        .el-link {
+          vertical-align: inherit;
+        }
+      }
+    }
+    &-pagination {
+      padding-top: 18px;
+      text-align: right;
+    }
+    &_del {
+      margin-left: 8px;
     }
   }
 }

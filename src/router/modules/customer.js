@@ -1,6 +1,4 @@
-import {
-  _import
-} from '@/utils'
+import { _import } from '@/utils'
 import Layout from '@/layout'
 import kmContainer from '@/components/km-container'
 const customer = {
@@ -12,7 +10,8 @@ const customer = {
     title: '客户管理',
     name: 'customer'
   },
-  children: [{
+  children: [
+    {
       path: 'merchant',
       name: 'merchant',
       code: 'KM_CUSTOMER_MERCHANT',
@@ -25,13 +24,14 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'merchant'
       },
-      children: [{
+      children: [
+        {
           path: 'merchantManage',
           name: 'merchantManage',
           code: 'KM_CUSTOMER_MERCHANT_MANAGE',
           component: _import('customer/merchant/merchantManage/merchantHome'),
           meta: {
-            title: '商户管理',
+            title: '享钱商户管理',
             name: 'merchantManage',
             cache: true
           }
@@ -43,7 +43,7 @@ const customer = {
           hidden: true,
           component: _import('customer/merchant/merchantManage/addMerchant'),
           meta: {
-            title: '商户管理/新增',
+            title: '享钱商户管理/新增',
             name: 'addMerchant',
             cache: false
           }
@@ -55,18 +55,33 @@ const customer = {
           hidden: true,
           component: _import('customer/merchant/merchantManage/editMerchant'),
           meta: {
-            title: '商户管理/编辑',
+            title: '享钱商户管理/编辑',
             name: 'editMerchant',
-            cache: false
+            cache: true
           }
         },
+        {
+          path: 'softNoteManagement',
+          component: _import('customer/merchant/softNoteManagement/index'),
+          name: 'softNoteManagement',
+          code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENT',
+          meta: { title: '软注商户管理', cache: true, name: 'softNoteManagement' }
+        },
+        // {
+        //   path: 'softNoteManagementDetile',
+        //   component: _import('customer/merchant/softNoteManagement/softNoteManagementDetile'),
+        //   name: 'softNoteManagementDetile',
+        //   hidden: true,
+        //   code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENTDETILE',
+        //   meta: { title: '软注商户详情', cache: false, name: 'softNoteManagementDetile' }
+        // },
         {
           path: 'brandHome',
           name: 'brandHome',
           code: 'KM_CUSTOMER_BRAND_MANAGE',
           component: _import('customer/merchant/merchantManage/brandHome'),
           meta: {
-            title: '商户品牌',
+            title: '享钱商户品牌',
             name: 'brandHome',
             cache: true
           }
@@ -92,7 +107,7 @@ const customer = {
           meta: {
             title: '品牌管理/编辑',
             name: 'editBrand',
-            cache: false
+            cache: true
           }
         }
       ]
@@ -110,7 +125,8 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'archive'
       },
-      children: [{
+      children: [
+        {
           path: 'wxArchive',
           name: 'wxArchive',
           code: 'KM_CUSTOMER_ARCHIVE_WX',
@@ -129,7 +145,8 @@ const customer = {
           component: _import('customer/archive/wxArchive/wxArchiveAdd'),
           meta: {
             title: '普通资质进件/新增',
-            name: 'wxArchiveAdd'
+            name: 'wxArchiveAdd',
+            cache: true
           }
         },
         {
@@ -140,7 +157,7 @@ const customer = {
           component: _import('customer/archive/wxArchive/wxArchiveDetail'),
           meta: {
             title: '进件详情',
-            name: 'wxArchiveDetail',
+            name: 'wxArchiveDetail'
           }
         },
         {
@@ -162,7 +179,8 @@ const customer = {
           component: _import('customer/archive/xftArchive/xftArchiveAdd'),
           meta: {
             title: '享付通资质进件/新增',
-            name: 'xftArchiveAdd'
+            name: 'xftArchiveAdd',
+            cache: true
           }
         },
         {
@@ -191,7 +209,8 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'agent'
       },
-      children: [{
+      children: [
+        {
           path: 'agentManage',
           name: 'agentManage',
           code: 'KM_CUSTOMER_AGENT_HOME',
@@ -223,7 +242,7 @@ const customer = {
           meta: {
             title: '代理商管理/编辑',
             name: 'editAgent',
-            cache: false
+            cache: true
           }
         },
         {
@@ -258,7 +277,7 @@ const customer = {
           meta: {
             title: '代理商角色管理/编辑',
             name: 'editRole',
-            cache: false
+            cache: true
           }
         }
       ]
@@ -276,15 +295,16 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'workorder'
       },
-      children: [{
+      children: [
+        {
           path: 'workOrderManagement',
           component: () => import('@/pages/orderCenter/validityQuery/workOrderManagement.vue'),
           name: 'workOrderManagement',
           code: 'WORKORDERMANAGEMENT',
           meta: {
             title: '工单管理',
-            cache: true,
-            name: 'workOrderManagement'
+            name: 'workOrderManagement',
+            cache: true
           }
         },
         {
@@ -295,8 +315,8 @@ const customer = {
           code: 'KM_DEFAULT_CODE',
           meta: {
             title: '工单管理/新增',
-            cache: false,
-            name: 'workOrderManagementdetail'
+            name: 'workOrderManagementdetail',
+            cache: true
           }
         },
         {
