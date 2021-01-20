@@ -66,7 +66,7 @@
       </div>
     </el-form>
 
-    <el-dialog class="km-setting-dialog" title="修改联系人手机号" :visible.sync="dialogVisible" width="520px">
+    <el-dialog class="km-setting-dialog" title="修改联系人手机号" destroy-on-close :visible.sync="dialogVisible" :close-on-click-modal="false" width="520px">
       <el-form ref="dialogForm" :rules="dialogRules" :model="dialogForm" label-suffix=":" size="small" style="width: 60%" label-width="70px">
         <el-form-item label="新手机" prop="mobile">
           <el-input maxlength="11" v-model="dialogForm.mobile"></el-input>
