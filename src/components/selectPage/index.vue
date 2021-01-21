@@ -8,6 +8,7 @@
     filterable
     clearable
     remote
+    @focus="focus"
     @change="change"
     :disabled="disabled"
     @clear="clear"
