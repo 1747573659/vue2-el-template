@@ -5,7 +5,7 @@ VUE_APP_FLAG = 'pro'
 VUE_APP_BASE_API = 'https://scrm-api.platform.kemai.com.cn'
 
 # 老商户系统 url
-VUE_APP_OLD_VERSION = 'http://admin.cs.kemai.com.cn/shiroCas/login'
+VUE_APP_OLD_VERSION = 'http://agent.xiangqianpos.com/shiroCas/login'
 
 # 工单管理 url
 VUE_APP_WORK_ORDER_URL = 'https://weiservice.kemai.com.cn'
