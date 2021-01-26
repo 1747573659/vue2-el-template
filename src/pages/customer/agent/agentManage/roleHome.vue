@@ -18,7 +18,7 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table v-loading="loading" :max-height="tableMaxHeight" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%">
+      <el-table v-loading="loading" :max-height="tabMaxHeight" ref="multipleTable" :data="tableData" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="id" label="角色编号"> </el-table-column>
         <el-table-column prop="name" label="角色名称"> </el-table-column>
         <el-table-column prop="remark" label="描述">
@@ -48,9 +48,12 @@
 
 <script>
 import { queryPage, deleteSysRole } from '@/api/customer/agent'
+import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'agentRole',
+  mixins: [tableMaxHeight],
   data() {
     return {
       loading: false,
@@ -64,18 +67,14 @@ export default {
       tableData: [],
     }
   },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
-    },
-  },
-  created() {
-    this.queryPage()
-  },
   activated() {
     this.queryPage()
   },
+  mounted() {
+    this.queryPage()
+  },
   methods: {
+    ...mapActions(['delCachedView']),
     queryPage() {
       this.loading = true
       queryPage(this.form)
@@ -99,14 +98,17 @@ export default {
       this.queryPage()
     },
     add() {
-      this.$router.push({ path: '/customer/agent/addRole' })
+      this.delCachedView({ name: 'addRole' }).then(()=> {
+        this.$router.push({ path: '/customer/agent/addRole' })
+      })
     },
     edit(id) {
-      this.$router.push({ path: '/customer/agent/editRole', query: { id } })
+      this.delCachedView({ name: 'editRole' }).then(()=> {
+        this.$router.push({ path: '/customer/agent/editRole', query: { id } })
+      })
     },
     async handleDelete(num, roleId) {
       if (num > 0) return this.$message.error('角色有关联的账号，不能删除')
-      
       await deleteSysRole({ roleId })
       await this.queryPage()
       this.$message.success('删除成功!')
@@ -115,4 +117,10 @@ export default {
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
+</style>

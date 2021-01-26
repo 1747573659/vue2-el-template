@@ -1,33 +1,27 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-        <query-group
-          className="xdd-btn-block__w240"
-          :queryParams="queryParams"
-          :queryFormList.sync="queryFormList"
-          @search="handleFilter"
-        >
-          <template v-slot:formfoot >
-              <router-link v-if="showAdd"  v-permission="'WORKORDERMANAGEMENT_ADD'" to="/customer/workorder/workOrderManagementdetail">
-                <el-button icon="el-icon-plus" type="primary"
-                  size="small"
-                  plain class="float_right">新增</el-button>
-              </router-link>
-          </template>
-        </query-group>
+      <query-group className="xdd-btn-block__w240" :queryParams="queryParams" :queryFormList.sync="queryFormList" @search="handleFilter">
+        <template v-slot:formfoot>
+          <el-button v-if="showAdd" v-permission="'WORKORDERMANAGEMENT_ADD'" @click="handlePlus" icon="el-icon-plus" type="primary" size="small" plain class="float_right"
+            >新增</el-button
+          >
+          <router-link to=""></router-link>
+        </template>
+      </query-group>
     </div>
     <div class="data-box">
-        <base-table
-          :tableMaxHeight="tableMaxHeight"
-          :columns="headers"
-          :list="list"
-          @getList="queryWorkOrderList"
-          :loading="loading"
-          :total="total"
-          :page.sync="tableParam.page"
-          :rows.sync="tableParam.rows"
-          @viewResClick="viewResClick"
-        ></base-table>
+      <base-table
+        :tableMaxHeight="tabMaxHeight"
+        :columns="headers"
+        :list="list"
+        @getList="queryWorkOrderList"
+        :loading="loading"
+        :total="total"
+        :page.sync="tableParam.page"
+        :rows.sync="tableParam.rows"
+        @viewResClick="viewResClick"
+      ></base-table>
     </div>
   </div>
 </template>
@@ -37,40 +31,36 @@ import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
 import moment from 'moment'
-import { 
-  addWorkOrder,
-  queryProductList,
-  queryAgent,
-  queryWorkOrderList,
-  queryOrderDetail
-  } from '@/api/dataCenter/dataCenter.js'
+import { addWorkOrder, queryProductList, queryAgent, queryWorkOrderList, queryOrderDetail } from '@/api/dataCenter/dataCenter.js'
+import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
 export default {
   name: 'workOrderManagement',
-  mixins: [listMixins],
+  mixins: [listMixins, tableMaxHeight],
   components: {
     baseTable,
     queryGroup
   },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 172.5 - 32 - 116
-    },
-  }, 
-  data () {
+  data() {
     return {
       queryFormList: [
         {
-           type: 'daterange',
-           label: '提交日期',
-           value:[moment().subtract(30, 'days').format("YYYY-MM-DD"), moment().format("YYYY-MM-DD")],
-         
+          type: 'daterange',
+          label: '提交日期',
+          value: [
+            moment()
+              .subtract(30, 'days')
+              .format('YYYY-MM-DD'),
+            moment().format('YYYY-MM-DD')
+          ]
         },
         {
           type: 'input',
           name: 'title',
           label: '工单信息',
           placeholder: '工单编号/标题/描述/提交人',
-          value: '',
+          value: ''
         },
         {
           type: 'select',
@@ -78,10 +68,10 @@ export default {
           label: '工单类型',
           value: '',
           options: [
-            {value: '', label: '全部'},
-            {value: '1', label: '问题'},
-            {value: '2', label: '需求'}
-          ],
+            { value: '', label: '全部' },
+            { value: '1', label: '问题' },
+            { value: '2', label: '需求' }
+          ]
         },
         {
           type: 'select',
@@ -89,36 +79,36 @@ export default {
           label: '状态',
           value: '',
           options: [
-            {value: '', label: '全部'},
-            {value: '1', label: '待处理'},
-            {value: '2', label: '处理中'},
-            {value: '3', label: '已处理'},
-            {value: '9', label: '已关闭'}
-          ],
+            { value: '', label: '全部' },
+            { value: '1', label: '待处理' },
+            { value: '2', label: '处理中' },
+            { value: '3', label: '已处理' },
+            { value: '9', label: '已关闭' }
+          ]
         },
         {
           type: 'select',
           name: 'productNo',
           label: '产品',
           value: '',
-          options: [],
+          options: []
         }
       ],
-      productOptions:[],
+      productOptions: [],
       list: [],
-      total:0,
-      loading:false,
+      total: 0,
+      loading: false,
       showAdd: true,
-      tableParam:{
-          page:1,
-          rows:10,
-          sheetNo:""
+      tableParam: {
+        page: 1,
+        rows: 10,
+        sheetNo: ''
       },
       headers: [
         {
           key: 'sheetNo',
           title: '工单编号',
-          width:"130"
+          width: '130'
         },
         {
           key: 'demandName',
@@ -127,18 +117,18 @@ export default {
         {
           key: 'orderType',
           title: '工单类型',
-          escape:(row)=>{
-             let str = "";
+          escape: row => {
+            let str = ''
             switch (row.orderType) {
-              case "1":
-                str = "问题";
-                break;
-              case "2":
-                str = "需求";
-                break;
+              case '1':
+                str = '问题'
+                break
+              case '2':
+                str = '需求'
+                break
               default:
-                str = "--";
-                break;
+                str = '--'
+                break
             }
             return str
           }
@@ -158,18 +148,18 @@ export default {
         {
           key: 'orderDate',
           title: '提交时间',
-          width:"180"
+          width: '180'
         },
         {
           key: 'status',
           title: '状态',
-           width:"80",
+          width: '80'
         },
         {
           type: 'operate',
           title: '操作',
-          width:"60",
-          position:"right",
+          width: '60',
+          position: 'right',
           operates: [
             {
               name: '详情',
@@ -181,45 +171,52 @@ export default {
     }
   },
   methods: {
-    handleFilter (e) {
-      Object.assign(this.tableParam,e)
+    ...mapActions(['delCachedView']),
+    handlePlus() {
+      this.delCachedView({ name: 'workOrderManagementdetail' }).then(()=> {
+        this.$router.push({ path: '/customer/workorder/workOrderManagementdetail' })
+      })
+    },
+    handleFilter(e) {
+      Object.assign(this.tableParam, e)
       this.queryWorkOrderList()
     },
-    viewResClick(e){
-      const {sheetNo,orderType}=e
-      this.$router.push({ path: '/customer/workorder/workOrderdetail', query: { sheetNo, orderType}})
+    viewResClick(e) {
+      const { sheetNo, orderType } = e
+      this.$router.push({ path: '/customer/workorder/workOrderdetail', query: { sheetNo, orderType } })
     },
-    queryWorkOrderList(){
-      this.loading=true
-      queryWorkOrderList(this.tableParam).then((res)=>{
-        this.list=res.results || []
-        this.total=res.totalCount || 0
-        this.showAdd = true
-      }).catch(error => {
-        this.showAdd = false
-      }).finally(()=>{
-        this.loading=false
-      })
+    queryWorkOrderList() {
+      this.loading = true
+      queryWorkOrderList(this.tableParam)
+        .then(res => {
+          this.list = res.results || []
+          this.total = res.totalCount || 0
+          this.showAdd = true
+        })
+        .catch(error => {
+          this.showAdd = false
+        })
+        .finally(() => {
+          this.loading = false
+        })
     },
-    queryProductList(){
-      this.productOptions=[
-        {value: '', label: '全部'}
-      ]
+    queryProductList() {
+      this.productOptions = [{ value: '', label: '全部' }]
       queryProductList({
-        productName:""
-      }).then((res)=>{
-        const temp=res.map(res1=>{
+        productName: ''
+      }).then(res => {
+        const temp = res.map(res1 => {
           return {
-            value:res1.productNo,
-            label:res1.productName,
+            value: res1.productNo,
+            label: res1.productName
           }
         })
-        this.productOptions=[...this.productOptions, ...temp]
-        this.queryFormList[this.queryFormList.length-1].options=this.productOptions
+        this.productOptions = [...this.productOptions, ...temp]
+        this.queryFormList[this.queryFormList.length - 1].options = this.productOptions
       })
-    },
+    }
   },
-  activated:function () {
+  activated: function() {
     this.handleFilter(this.queryParams)
   },
   mounted() {
@@ -230,8 +227,13 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-  .float_right{
-    float:right;
-    margin-left: 20px;
-  }
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
+.float_right {
+  float: right;
+  margin-left: 20px;
+}
 </style>

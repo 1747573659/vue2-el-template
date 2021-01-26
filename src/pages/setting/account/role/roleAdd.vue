@@ -28,6 +28,7 @@
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
 import { routeTreeLevel, sortData } from '@/utils/modules/routeTree.js'
+
 export default {
   name: 'roleAdd',
   components: {},
@@ -316,16 +317,16 @@ export default {
     this.queryAllPCMenu(this.$route.query.id || '')
     this.queryAllAPPMenu(this.$route.query.id || '')
     this.$nextTick(() => {
-      if (this.$route.query.id) {
-        document.querySelector('.e-tag_active span').innerText = `角色管理/编辑`
-      } else {
-        document.querySelector('.e-tag_active span').innerText = `角色管理/新增`
-      }
+      document.querySelector('.e-tag_active span').innerText = `角色管理/${this.$route.query.id ? '编辑' : '新增'}`
     })
   }
 }
 </script>
 <style lang="scss" scoped>
+.data-box{
+  border-top: 16px solid#f7f8fa;
+  border-bottom: 16px solid#f7f8fa;
+}
 .km-setting-roleAdd {
   display: flex;
   justify-content: center;

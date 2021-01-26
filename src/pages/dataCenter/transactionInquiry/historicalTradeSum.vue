@@ -46,7 +46,8 @@ export default {
 
 <style lang="scss" scoped>
 .el-menu-sum {
-  // margin-left: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
   /deep/.el-menu-item {
     font-size: 16px;
     font-family: PingFangSC-Regular, PingFang SC;

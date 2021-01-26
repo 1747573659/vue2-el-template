@@ -96,9 +96,11 @@ export default {
       })
     },
     uploadSuccess(res, file) {
-      this.imageUrl = res.data.path
-      if (this.hasBase64) this.$emit('on-success', res, this.imgBase64)
-      else this.$emit('on-success', res)
+      if (res.data) {
+        if (res.data) this.imageUrl = res.data.path
+        if (this.hasBase64) this.$emit('on-success', res, this.imgBase64)
+        else this.$emit('on-success', res)
+      } else this.$message({ type: 'error', message: res.msg })
     },
     handleFileUploaderChange(file) {
       if (this.hasBase64) {

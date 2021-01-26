@@ -7,12 +7,7 @@
         </el-form-item>
         <el-form-item label="角色">
           <el-select style="width: 240px" clearable v-model="form.roleId" placeholder="全选">
-            <el-option
-              v-for="item in roleList"
-              :key="item.id"
-              :label="item.name"
-              :value="item.id">
-            </el-option>
+            <el-option v-for="item in roleList" :key="item.id" :label="item.name" :value="item.id"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item>
@@ -24,42 +19,20 @@
       </el-form>
     </div>
     <div class="data-box">
-      <el-table
-        id="table"
-        :max-height="tableMaxHeight"
-        v-loading="tableLoading"
-        :data="tableData"
-        style="width: 100%">
-        <el-table-column
-          prop="userName"
-          label="姓名">
-        </el-table-column>
-        <el-table-column
-          prop="loginName"
-          label="手机号(账号)">
-        </el-table-column>
-        <el-table-column
-          prop="roleName"
-          label="角色">
-        </el-table-column>
-        <el-table-column
-          prop="createTime"
-          label="创建时间">
-        </el-table-column>
-        <el-table-column
-          prop="status"
-          label="状态">
+      <el-table id="table" :max-height="tableMaxHeight" v-loading="tableLoading" :data="tableData" style="width: 100%">
+        <el-table-column prop="userName" label="姓名"></el-table-column>
+        <el-table-column prop="loginName" label="手机号(账号)"></el-table-column>
+        <el-table-column prop="roleName" label="角色"></el-table-column>
+        <el-table-column prop="createTime" label="创建时间"></el-table-column>
+        <el-table-column prop="status" label="状态">
           <template slot-scope="scope">
-            {{statusList[scope.row.status]}}
+            {{ statusList[scope.row.status] }}
           </template>
         </el-table-column>
-        <el-table-column
-          width="230"
-          label="操作"
-          align="right">
+        <el-table-column width="230" label="操作" align="right">
           <template slot-scope="scope">
             <el-button @click="edit(scope.row)" v-permission="'ACCOUNT_SET_EDIT'" type="text" size="small">编辑</el-button>
-            <el-button @click="status(scope.row)" v-permission="'ACCOUNT_SET_STATUS'" type="text" size="small">{{statusList[scope.row.status === 0 ? 1 : 0]}}</el-button>
+            <el-button @click="status(scope.row)" v-permission="'ACCOUNT_SET_STATUS'" type="text" size="small">{{ statusList[scope.row.status === 0 ? 1 : 0] }}</el-button>
             <el-popconfirm
               v-permission="'ACCOUNT_SET_RESETPWD'"
               style="margin-left: 12px"
@@ -91,7 +64,8 @@
           :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total">
+          :total="total"
+        >
         </el-pagination>
       </div>
     </div>
@@ -99,21 +73,14 @@
 </template>
 
 <script>
-import { 
-  queryUserPage,
-  queryRole,
-  updateStatus,
-  resetPassword,
-  deleteUser
-  } from '@/api/setting/account'
+import { queryUserPage, queryRole, updateStatus, resetPassword, deleteUser } from '@/api/setting/account'
+import { mapActions } from 'vuex'
+
 export default {
-  name:'accountSetting',
+  name: 'accountSetting',
   data() {
     return {
-      statusList: [
-        '停用',
-        '启用'
-      ],
+      statusList: ['停用', '启用'],
       form: {
         userName: '',
         roleId: null
@@ -127,16 +94,27 @@ export default {
       cxLoading: false
     }
   },
+  activated() {
+    this.getList()
+    this.getRoleList()
+  },
+  mounted() {
+    this.getList()
+    this.getRoleList()
+  },
   methods: {
+    ...mapActions(['delCachedView']),
     search() {
       this.cxLoading = true
       this.currentPage = 1
       this.getList()
     },
     edit(row) {
-      this.$router.push({ path: 'accountSettingAdd', query: { id: row.id } }) // row.id ? edit : add
+      this.delCachedView({ name: 'accountSettingAdd' }).then(()=> {
+        this.$router.push({ path: 'accountSettingAdd', query: { id: row.id } })
+      })
     },
-    async status (row) {
+    async status(row) {
       let data = {
         status: row.status ? 0 : 1,
         userId: row.id
@@ -147,7 +125,7 @@ export default {
         this.getList()
       } catch (e) {}
     },
-    async resetPsw (row) {
+    async resetPsw(row) {
       let data = {
         userId: row.id
       }
@@ -155,8 +133,7 @@ export default {
         const res = await resetPassword(data)
         this.getList()
         this.$message.success('重置密码成功!')
-      } catch(e) {
-      } finally {}
+      } catch (e) {}
     },
     async del(row) {
       let data = {
@@ -166,8 +143,7 @@ export default {
         const res = await deleteUser(data)
         this.getList()
         this.$message.success('删除成功!')
-      } catch(e) {
-      } finally {}
+      } catch (e) {}
     },
     handleSizeChange(value) {
       this.pageSize = value
@@ -178,16 +154,18 @@ export default {
       this.currentPage = value
       this.getList()
     },
-    add () {
-      this.$router.push({ path: 'accountSettingAdd' }) // row.id ? edit : add
+    add() {
+      this.delCachedView({ name: 'accountSettingAdd' }).then(()=> {
+        this.$router.push({ path: 'accountSettingAdd' })
+      })
     },
-    async getList () {
+    async getList() {
       this.tableLoading = true
       let data = {
-        'page': this.currentPage,
-        'roleId': this.form.roleId,
-        'rows': this.pageSize,
-        'userName': this.form.userName
+        page: this.currentPage,
+        roleId: this.form.roleId,
+        rows: this.pageSize,
+        userName: this.form.userName
       }
       try {
         const res = await queryUserPage(data)
@@ -199,7 +177,7 @@ export default {
         this.tableLoading = false
       }
     },
-    async getRoleList () {
+    async getRoleList() {
       try {
         const res = await queryRole({})
         this.roleList = res
@@ -210,15 +188,16 @@ export default {
     tableMaxHeight() {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
-  },
-  mounted() {
-    this.getList()
-    this.getRoleList()
-  },
+  }
 }
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .km-role-search {
   padding: 8px 22px;
 }

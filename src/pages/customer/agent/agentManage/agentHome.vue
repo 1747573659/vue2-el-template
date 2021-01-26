@@ -1,5 +1,5 @@
 <template>
-  <div class="">
+  <div>
     <div class="search-box">
       <el-row>
         <el-col>
@@ -43,7 +43,7 @@
     <div class="data-box">
       <el-table
         v-loading="loading"
-        :max-height="tableMaxHeight"
+        :max-height="tabMaxHeight"
         ref="multipleTable"
         :data="tableData"
         tooltip-effect="dark"
@@ -149,9 +149,12 @@ import { queryChannel, queryAgentPage, updateStatus, queryAppQuotaAndPrice, quer
 import { resetPassword } from '@/api/setting/account'
 import { isPositiveInteger } from '@/utils/common'
 import selectCopy from '@/components/selectCopy'
+import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'agentManage',
+  mixins: [tableMaxHeight],
   components: { selectCopy },
   filters: {
     fiterStatus(val) {
@@ -207,9 +210,6 @@ export default {
     }
   },
   computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 112.5 - 32 - 116
-    },
     sumTotal() {
       let sum
       if (this.quotaItems.length === 0) {
@@ -224,16 +224,17 @@ export default {
       return sum.toFixed(2)
     }
   },
-  created() {
-    this.queryChannel()
-    this.queryAgentPage()
-    this.queryAgentAppAndQuota()
-  },
   activated() {
     this.queryChannel()
     this.queryAgentPage()
   },
+  mounted() {
+    this.queryChannel()
+    this.queryAgentPage()
+    this.queryAgentAppAndQuota()
+  },
   methods: {
+    ...mapActions(['delCachedView']),
     checkoutQuotaValue(item) {
       const value = item.input
       if (isPositiveInteger(value)) {
@@ -366,18 +367,25 @@ export default {
       this.multipleSelection = val
     },
     addShop() {
-      this.$router.push({
-        path: '/customer/agent/addAgent'
+      this.delCachedView({ name: 'addAgent' }).then(()=> {
+        this.$router.push({ path: '/customer/agent/addAgent' })
       })
     },
     handleEdit(id) {
-      this.$router.push({ path: '/customer/agent/editAgent', query: { id } })
+      this.delCachedView({ name: 'editAgent' }).then(()=> {
+        this.$router.push({ path: '/customer/agent/editAgent', query: { id } })
+      })
     }
   }
 }
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .dialog-content {
   display: flex;
   border-radius: 2px;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="data-box">
-      <el-table v-loading="tableLoading" :max-height="tableMaxHeight" :data="tableData" style="width: 100%">
+      <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableData" style="width: 100%">
         <el-table-column prop="channelName" label="支付通道"> </el-table-column>
         <el-table-column prop="mchId" label="通道商户号"> </el-table-column>
         <el-table-column prop="shopName" label="公司名称"> </el-table-column>
@@ -170,7 +170,10 @@
 
 <script>
 import { queryXftPage, queryContactInfo, queryAuthorizationStatus, querySubMerchantNo, querySubMchIdForSxf, mchICBSign, queryCommunicationMerchantInfo } from '@/api/xftArchive'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
 export default {
+  mixins: [tableMaxHeight],
   data() {
     return {
       signUpVisible: false,
@@ -354,11 +357,6 @@ export default {
       } finally {
         this.tableLoading = false
       }
-    }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 32 - 116
     }
   },
   mounted() {

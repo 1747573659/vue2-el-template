@@ -21,7 +21,7 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table v-loading="loading" :max-height="tableMaxHeight" :data="tableData" tooltip-effect="dark" style="width: 100%">
+      <el-table v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="adminId" label="商户编号"> </el-table-column>
         <el-table-column prop="adminName" label="商户名称"> </el-table-column>
         <el-table-column prop="mid" label="品牌编码"> </el-table-column>
@@ -58,6 +58,7 @@ import {
   branchUpdateStatus,
   deleteMerchant,
 } from '@/api/customer/merchant'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'brandHome',
@@ -77,11 +78,6 @@ export default {
       }
     },
   },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
-    },
-  },
   data() {
     return {
       form: {
@@ -95,13 +91,14 @@ export default {
       tableData: [],
     }
   },
-  created() {
-    this.queryMerchantListByPage()
-  },
   activated() {
     this.queryMerchantListByPage()
   },
+  mounted() {
+    this.queryMerchantListByPage()
+  },
   methods: {
+    ...mapActions(['delCachedView']),
     async handleDelete(num, id) {
       if (num > 0) return this.$message.error('该品牌已有门店使用，不能删除')
 
@@ -140,18 +137,23 @@ export default {
       this.queryMerchantListByPage()
     },
     addShop() {
-      this.$router.push({
-        path: '/customer/merchant/addBrand',
+      this.delCachedView({ name: 'addBrand' }).then(()=> {
+        this.$router.push({ path: '/customer/merchant/addBrand' })
       })
     },
     handleEdit(id) {
-      this.$router.push({
-        path: '/customer/merchant/editBrand',
-        query: { id },
+      this.delCachedView({ name: 'editBrand' }).then(()=> {
+        this.$router.push({ path: '/customer/merchant/editBrand', query: { id } })
       })
     },
   },
 }
 </script>
 
-<style lang="scss" scoped></style>
+<style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
+</style>

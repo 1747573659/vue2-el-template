@@ -26,7 +26,7 @@
         </div>
       </section>
       <footer class="p-login_record">
-        <p>Copyright © 1999-2020 粤ICP备10037982号</p>
+        <p>Copyright © 1999-{{ new Date().getFullYear() }} 粤ICP备10037982号</p>
         <p>深圳市科脉技术股份有限公司 版权所有</p>
       </footer>
     </div>

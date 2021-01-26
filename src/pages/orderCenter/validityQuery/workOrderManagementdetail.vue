@@ -269,7 +269,6 @@ export default {
         this.dialogImgVisible = true
       } else {
         window.open(file.url)
-        //this.$message.warning('只有图片和视频文件支持预览')
       }
     },
     cance() {
@@ -284,9 +283,9 @@ export default {
 
 <style lang="scss" scoped>
 .p-workorder-detail {
-  margin: 16px 16px 72px;
   padding-top: 32px;
   background-color: #fff;
+  border-top: 16px solid #f7f8fa;
 }
 .upload-demo {
   // display: flex;

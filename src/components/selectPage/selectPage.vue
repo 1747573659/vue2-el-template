@@ -10,10 +10,9 @@
     :placeholder="placeholder"
     :remote-method="remoteMethod"
     @clear="clearSelectPage"
-    @focus="clearSelectPage"
     @change="changeSelectPage"
   >
-    <el-option v-for="item in options" :key="item[value]" :label="item[label]" :value="item[value]"></el-option>
+    <el-option v-for="(item, index) in options" :key="index" :label="item[label]" :value="item[value]"></el-option>
     <div class="e-select-load">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页...' }}</div>
   </el-select>
 </template>
@@ -98,8 +97,10 @@ export default {
       }
     },
     remoteMethod(query) {
-      if (query !== '') this.$emit('remoteMethod', query)
-      else this.$emit('resetSelectPage')
+      if (query || query === '') {
+        this.$emit('resetSelectPage')
+        this.$emit('remoteMethod', query)
+      }
     },
     selectLoadMore() {
       this.$emit('selectPageMore')

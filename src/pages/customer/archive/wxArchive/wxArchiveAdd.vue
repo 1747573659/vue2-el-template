@@ -66,12 +66,168 @@
                 <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
-            <el-col :span="24">
+            <el-col :span="12">
               <el-form-item label="商户类型">
                 <el-radio-group v-model="form.archiveBaseVO.merchantType">
                   <el-radio :label="1">个体工商户</el-radio>
                   <el-radio :label="2">企业</el-radio>
                 </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件类型" prop="archiveExpandVO.licType">
+                <el-radio-group v-model="form.archiveExpandVO.licType">
+                  <el-radio :label="1">多证合一</el-radio>
+                  <el-radio :label="2">旧证</el-radio>
+                </el-radio-group>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
+                <upload-pic
+                  alt="营业执照"
+                  :hasBase64="true"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveExpandVO.businessLicenseUrl"
+                  :exampleImg="exampleImg.businessLicenseUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="类目特殊资质">
+                <upload-pic
+                  alt="类目特殊资质"
+                  :showExample="false"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveOtherVO.typeAptitudeUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'typeAptitudeUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
+                <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
+                <el-date-picker
+                  v-model="form.archiveExpandVO.licValidityBigen"
+                  type="date"
+                  clearable
+                  placeholder="开始日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
+                <span style="margin: 0 10px;">至</span>
+                <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
+                <el-date-picker
+                  v-else
+                  v-model="form.archiveExpandVO.licValidityEnd"
+                  type="date"
+                  clearable
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24">
+              <el-form-item label="经营范围" prop="archiveExpandVO.businessScope">
+                <el-input
+                  v-model="form.archiveExpandVO.businessScope"
+                  type="textarea"
+                  :autosize="{ minRows: 3 }"
+                  maxlength="140"
+                  show-word-limit
+                  placeholder="会写入商户合同条款或用于后续公众号展示，请谨慎填写"
+                  class="e-wxArchive-textarea"
+                  style="width: 240px"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
+              <el-form-item label="经营类目">
+                <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
+              </el-form-item>
+            </el-col>
+            <el-col
+              :span="24"
+              v-if="
+                form.archiveBaseVO.archiveType === 9 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)
+              "
+            >
+              <el-form-item label="售卖商品描述" prop="archiveExpandVO.sellShopDescribe">
+                <el-input
+                  v-model="form.archiveExpandVO.sellShopDescribe"
+                  type="textarea"
+                  :autosize="{ minRows: 3 }"
+                  maxlength="140"
+                  show-word-limit
+                  style="width: 240px"
+                ></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
+              <el-form-item label="组织机构代码号" prop="archiveExpandVO.orgInstitutionCode">
+                <el-input v-model="form.archiveExpandVO.orgInstitutionCode" placeholder="组织机构代码号" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
+              <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
+                <el-date-picker
+                  v-model="form.archiveExpandVO.orgInstitutionBigen"
+                  type="date"
+                  clearable
+                  placeholder="开始日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
+                <span style="margin: 0 10px;">至</span>
+                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && formDisabled && pageAction === 'detail'">长期有效</span>
+                <el-date-picker
+                  v-else
+                  v-model="form.archiveExpandVO.orgInstitutionEnd"
+                  type="date"
+                  clearable
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
+              <el-form-item label="组织机构代码证" prop="archiveExpandVO.orgInstitutionUrl">
+                <upload-pic
+                  alt="组织机构代码证"
+                  :showExample="false"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveExpandVO.orgInstitutionUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'orgInstitutionUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.orgInstitutionUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
+              <el-form-item label="税务登记证" prop="archiveExpandVO.taxRegistrationUrl">
+                <upload-pic
+                  alt="税务登记证"
+                  :showExample="false"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveExpandVO.taxRegistrationUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)"
+                ></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -215,166 +371,6 @@
           </el-row>
         </div>
         <div class="p-wxArchive-item">
-          <div class="p-wxArchive-itemTitle">营业执照</div>
-          <el-row class="p-wxArchive-baseInfo">
-            <el-col :span="24">
-              <el-form-item label="证件类型" prop="archiveExpandVO.licType">
-                <el-radio-group v-model="form.archiveExpandVO.licType">
-                  <el-radio :label="1">多证合一</el-radio>
-                  <el-radio :label="2">旧证</el-radio>
-                </el-radio-group>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
-                <upload-pic
-                  alt="营业执照"
-                  :hasBase64="true"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveExpandVO.businessLicenseUrl"
-                  :exampleImg="exampleImg.businessLicenseUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="类目特殊资质">
-                <upload-pic
-                  alt="类目特殊资质"
-                  :showExample="false"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.typeAptitudeUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'typeAptitudeUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
-                <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号" style="width:240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
-                <el-date-picker
-                  v-model="form.archiveExpandVO.licValidityBigen"
-                  type="date"
-                  clearable
-                  placeholder="开始日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
-                <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker
-                  v-else
-                  v-model="form.archiveExpandVO.licValidityEnd"
-                  type="date"
-                  clearable
-                  placeholder="结束日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
-                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
-                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24">
-              <el-form-item label="经营范围" prop="archiveExpandVO.businessScope">
-                <el-input
-                  v-model="form.archiveExpandVO.businessScope"
-                  type="textarea"
-                  :autosize="{ minRows: 3 }"
-                  maxlength="140"
-                  show-word-limit
-                  placeholder="会写入商户合同条款或用于后续公众号展示，请谨慎填写"
-                  style="width: 240px"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="24" v-if="form.archiveBaseVO.archiveType === 9">
-              <el-form-item label="经营类目">
-                <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
-              </el-form-item>
-            </el-col>
-            <el-col
-              :span="24"
-              v-if="
-                form.archiveBaseVO.archiveType === 9 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)
-              "
-            >
-              <el-form-item label="售卖商品描述" prop="archiveExpandVO.sellShopDescribe">
-                <el-input
-                  v-model="form.archiveExpandVO.sellShopDescribe"
-                  type="textarea"
-                  :autosize="{ minRows: 3 }"
-                  maxlength="140"
-                  show-word-limit
-                  style="width: 240px"
-                ></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
-              <el-form-item label="组织机构代码号" prop="archiveExpandVO.orgInstitutionCode">
-                <el-input v-model="form.archiveExpandVO.orgInstitutionCode" placeholder="组织机构代码号" style="width: 240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
-              <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
-                <el-date-picker
-                  v-model="form.archiveExpandVO.orgInstitutionBigen"
-                  type="date"
-                  clearable
-                  placeholder="开始日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
-                <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker
-                  v-else
-                  v-model="form.archiveExpandVO.orgInstitutionEnd"
-                  type="date"
-                  clearable
-                  placeholder="结束日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
-              <el-form-item label="组织机构代码证" prop="archiveExpandVO.orgInstitutionUrl">
-                <upload-pic
-                  alt="组织机构代码证"
-                  :showExample="false"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveExpandVO.orgInstitutionUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'orgInstitutionUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.orgInstitutionUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" v-if="form.archiveExpandVO.licType === 2">
-              <el-form-item label="税务登记证" prop="archiveExpandVO.taxRegistrationUrl">
-                <upload-pic
-                  alt="税务登记证"
-                  :showExample="false"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveExpandVO.taxRegistrationUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)"
-                ></upload-pic>
-              </el-form-item>
-            </el-col>
-          </el-row>
-        </div>
-        <div class="p-wxArchive-item">
           <div class="p-wxArchive-itemTitle">法人信息</div>
           <el-row class="p-wxArchive-baseInfo">
             <el-col :span="12">
@@ -474,13 +470,19 @@
               <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
                 <upload-pic
                   alt="银行卡正面照"
+                  :hasBase64="true"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.bankCardFrontUrl"
                   :exampleImg="exampleImg.bankCardFrontUrl"
                   uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'bankCardFrontUrl')"
+                  @on-success="(value, base64Code) => setBankCardAndBase64(value, base64Code, 'archiveExpandVO', 'bankCardFrontUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
                 ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
+                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -502,6 +504,11 @@
               </el-form-item>
             </el-col>
             <el-col :span="12">
+              <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
+                <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
               <el-form-item label="所属支行" prop="archiveExpandVO.bankSub">
                 <selectCopy
                   isCopy
@@ -518,16 +525,6 @@
                   :optionsItem="{ key: 'bCode', label: 'bName', value: 'bCode' }"
                 >
                 </selectCopy>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
-                <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12">
-              <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
-                <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -598,6 +595,7 @@ import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, searchCompanyInfo } from '@/api/wxArchive'
 
 export default {
+  name: 'wxArchiveAdd',
   mixins: [fileServer],
   components: {
     selectPage,
@@ -617,7 +615,7 @@ export default {
       searchString: '',
       isMaxPage: false,
       isDetailLoad: false,
-      form: formObj,
+      form: {},
       rules: detailValidate,
       businessSceneList: [],
       statusList: [],
@@ -651,23 +649,20 @@ export default {
   filters: {
     filterReview
   },
+  created() {
+    this.form = deepClone(formObj)
+  },
   mounted() {
     this.$nextTick(() => {
       const tags = { edit: '编辑', detail: '详情', copy: '新增' }
       let pageStatus = this.$route.query.status ? tags[this.$route.query.status] : '新增'
       document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
     })
-  },
-  beforeRouteEnter(to, from, next) {
-    next(vm => {
-      vm.form = deepClone(formObj)
-      if (vm.pageAction === 'detail') {
-        vm.handleDetail()
-      }
-      vm.getBankPage()
-      vm.getBranchPage()
-      vm.getBusinessCategory()
-    })
+    this.remoteSelect()
+    this.getBankPage()
+    this.getBranchPage()
+    this.getBusinessCategory()
+    if (this.pageAction === 'detail') this.handleDetail()
   },
   methods: {
     handleCancel() {
@@ -765,7 +760,7 @@ export default {
             auditRemark: this.refundForm.remark
           }
           try {
-            const res = await refund(data)
+            await refund(data)
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'wxArchive' })
             })
@@ -787,7 +782,7 @@ export default {
             this.form.archiveBaseVO.useChannelCode = ''
           }
           try {
-            const res = await submitToVerify(this.form)
+            await submitToVerify(this.form)
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'wxArchive' })
             })
@@ -799,10 +794,10 @@ export default {
     handleDetail: async function() {
       try {
         this.isDetailLoad = true
-        const res = await detail({ archiveId: this.$route.query.id })
+        const res = await detail({ archiveId: Number(this.$route.query.id) })
         this.form.archiveBaseVO = res?.archiveBaseDTO ?? deepClone(formObj.archiveBaseDTO)
-        this.form.archiveExpandVO = res.archiveExpandDTO ?? deepClone(formObj.archiveExpandDTO)
-        this.form.archiveOtherVO = res.archiveOtherDTO ?? deepClone(formObj.archiveOtherDTO)
+        this.form.archiveExpandVO = res?.archiveExpandDTO ?? deepClone(formObj.archiveExpandDTO)
+        this.form.archiveOtherVO = res?.archiveOtherDTO ?? deepClone(formObj.archiveOtherDTO)
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
@@ -817,16 +812,6 @@ export default {
         this.form.archiveBaseVO.id = null
         this.form.archiveExpandVO.id = null
         this.form.archiveOtherVO.id = null
-        // this.form.archiveExpandVO.openingPermitUrl = null
-        // this.form.archiveExpandVO.bankCardFrontUrl = null
-        // this.form.archiveExpandVO.bank = null
-        // this.form.archiveExpandVO.bankSub = null
-        // this.form.archiveExpandVO.bankCard = null
-        // this.form.archiveExpandVO.bankAccountName = null
-        // this.form.archiveExpandVO.bankProvince = null
-        // this.form.archiveExpandVO.bankCity = null
-        // this.form.archiveExpandVO.bankArea = null
-        // this.bankAreaList = []
         this.form.archiveBaseVO.auditStatus = null
         this.$nextTick(() => {
           this.$refs.form.clearValidate()
@@ -848,6 +833,12 @@ export default {
                 this.form.archiveBaseVO.useChannelCode = ''
               }
               const res = await submit(this.form)
+              if (!this.form.archiveBaseVO.id) {
+                this.$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: res, status: 'edit' } })
+                this.handleDetail()
+                this.pageAction = this.$route.query.action
+                document.querySelector('.e-tag_active span').innerText = `普通资质进件/编辑`
+              }
               this.$message.success('保存成功')
             } catch (error) {}
           }
@@ -904,43 +895,55 @@ export default {
         side
       }
       this.$message.success('正在进行图片解析')
-      imageOCR(OCRData).then(res => {
-        this.$message.success('图片解析成功')
-        if (side === 'face') {
-          this.form.archiveExpandVO.legalPersonName = res.name
-          this.form.archiveExpandVO.idNumber = res.num
-        } else {
-          if(/^((?!2999)\d{8})$/.test(res.start_date)){
-            this.form.archiveExpandVO.idBegin = res.start_date.slice(0, 4) + '-' + res.start_date.slice(4, 6) + '-' + res.start_date.slice(6, 8)
+      imageOCR(OCRData)
+        .then(res => {
+          this.$message.success('图片解析成功')
+          if (side === 'face') {
+            this.form.archiveExpandVO.legalPersonName = res.name
+            this.form.archiveExpandVO.idNumber = res.num
+          } else {
+            const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+            const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+            this.form.archiveExpandVO.idBegin = res.start_date && new Date(startDate) ? startDate : ''
+            this.form.archiveExpandVO.idEnd = res.end_date && new Date(endDate) ? endDate : ''
           }
-          if(/^((?!2999)\d{8})$/.test(res.end_date)){
-            this.form.archiveExpandVO.idEnd = res.end_date.slice(0, 4) + '-' + res.end_date.slice(4, 6) + '-' + res.end_date.slice(6, 8)
-          }
-        }
-      })
+        })
+        .catch(err => {})
       this.form[type][url] = res.data.path
     },
-    setBusinessLicenseAndBase64(res, base64Code, type, url, side) {
+    setBusinessLicenseAndBase64(res, base64Code, type, url) {
       const OCRData = {
         image: base64Code.split(',')[1],
         imageCode: 'business_license'
       }
       this.$message.success('正在进行图片解析')
-      imageOCR(OCRData).then(async res => {
-        this.$message.success('图片解析成功')
-        this.form.archiveExpandVO.licId = res.reg_num
-        this.form.archiveExpandVO.businessScope = res.business
-        if(/^((?!2999)\d{8})$/.test(res.establish_date)){
-          this.form.archiveExpandVO.licValidityBigen = res.establish_date.slice(0, 4) + '-' + res.establish_date.slice(4, 6) + '-' + res.establish_date.slice(6, 8)
-        }
-        if(/^((?!2999)\d{8})$/.test(res.valid_period)){
-          this.form.archiveExpandVO.licValidityEnd = res.valid_period.slice(0, 4) + '-' + res.valid_period.slice(4, 6) + '-' + res.valid_period.slice(6, 8)
-        }
-      })
+      imageOCR(OCRData)
+        .then(async res => {
+          this.$message.success('图片解析成功')
+          this.form.archiveExpandVO.licId = res.reg_num
+          this.form.archiveExpandVO.businessScope = res.business
+          this.form.archiveBaseVO.companyName = res.name
+          this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
+          const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
+          this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
+          this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1] : ''
+        })
+        .catch(err => {})
       this.form[type][url] = res.data.path
     },
-    handleOcrDate(date){
-      return /\d/.test(date) && date.slice(0,4)!=='2099'
+    setBankCardAndBase64(res, base64Code, type, url) {
+      const OCRData = {
+        image: base64Code.split(',')[1],
+        imageCode: 'bank_card'
+      }
+      this.$message.success('正在进行图片解析')
+      imageOCR(OCRData)
+        .then(async res => {
+          this.$message.success('图片解析成功')
+          this.form.archiveExpandVO.bankCard = res.card_num
+        })
+        .catch(err => {})
+      this.form[type][url] = res.data.path
     },
     setUploadSrc(res, type, url) {
       this.form[type][url] = res.data.path
@@ -953,7 +956,8 @@ export default {
 .p {
   &-wxArchive {
     &-con {
-      margin: 16px 16px 72px;
+      border-top: 16px solid #f7f8fa;
+      border-bottom: 72px solid #f7f8fa;
       background-color: #fff;
       header {
         min-height: 72px;
@@ -1015,6 +1019,16 @@ export default {
       white-space: nowrap;
       text-overflow: ellipsis;
       cursor: pointer;
+    }
+    &-textarea {
+      /deep/ {
+        .el-input__count {
+          line-height: 1.3;
+        }
+        .el-textarea__inner{
+          padding-bottom: 20px;
+        }
+      }
     }
   }
   &-preview {

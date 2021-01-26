@@ -86,9 +86,7 @@ export default {
       resetData: '',
       pickerBeginDateBefore: {
         onPick: ({ maxDate, minDate }) => {
-          console.log(maxDate, minDate)
           if (minDate) {
-            //const day31 = _this.timeinterval*31 * 24 * 3600 * 1000
             maxTime = moment(minDate.getTime()).add(_this.timeinterval, 'months')
             minTime = moment(minDate.getTime()).subtract(_this.timeinterval, 'months')
           }

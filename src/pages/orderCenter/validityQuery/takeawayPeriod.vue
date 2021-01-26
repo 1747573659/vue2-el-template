@@ -248,7 +248,6 @@ export default {
   },
   methods: {
     handleClick(key, keyPath) {
-      console.log(key, keyPath)
       this.activeTab = String(key)
       if (this.activeTab === '1') {
         this.headers = this.headers1
@@ -357,6 +356,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box{
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 /deep/.xdd-btn-block__w240 {
   position: relative;
   left: -53px;
@@ -377,7 +381,8 @@ export default {
   }
 }
 .el-menu-sum {
-  // margin-left: 16px;
+  margin-left: -16px;
+  margin-right: -16px;
   /deep/.el-menu-item {
     font-size: 16px;
     font-family: PingFangSC-Regular, PingFang SC;

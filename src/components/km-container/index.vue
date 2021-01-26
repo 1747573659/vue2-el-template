@@ -1,8 +1,10 @@
 <template>
   <div class="km-container">
-    <keep-alive :include="cachedViews">
-      <router-view />
-    </keep-alive>
+    <div class="km-container-con">
+      <keep-alive :include="cachedViews">
+        <router-view />
+      </keep-alive>
+    </div>
   </div>
 </template>
 
@@ -15,3 +17,15 @@ export default {
   }
 }
 </script>
+
+<style lang="scss">
+.km-container {
+  padding: 16px;
+  padding-top: 0;
+  height: inherit;
+  &-con {
+    height: inherit;
+    background-color: #fff;
+  }
+}
+</style>

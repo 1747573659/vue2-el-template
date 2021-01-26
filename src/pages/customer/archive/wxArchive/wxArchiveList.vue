@@ -1,14 +1,12 @@
 <template>
   <section>
     <div class="search-box">
-      <div class="p-count" v-if="countData.length > 0">
-        <section class="p-count_con">
-          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-          <template v-for="item in countData">
-            <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
-          </template>
-        </section>
-      </div>
+      <section class="p-count_con">
+        <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+        <template v-for="item in countData">
+          <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+        </template>
+      </section>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -63,15 +61,15 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="isTabLock">
-      <el-table :data="tableData" :max-height="tableMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
+      <el-table :data="tableData" :max-height="tabMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
-        <el-table-column prop="merchantName" label="商户/公司名称" width="200">
+        <el-table-column prop="merchantName" label="商户/公司名称" width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.merchantName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="200">
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
@@ -99,12 +97,12 @@
             <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="费率" width="80">
+        <el-table-column label="费率" width="75">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="停用" width="60">
+        <el-table-column label="停用" width="55">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
@@ -166,9 +164,12 @@
 import { statusOptions, deactivateOptions, countOptions } from './index'
 import { filterReview, filterArchiveStatus } from './filters'
 import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
+import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'wxArchive',
+  mixins: [tableMaxHeight],
   data() {
     return {
       statusOptions,
@@ -198,23 +199,20 @@ export default {
     filterReview,
     filterArchiveStatus
   },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 168.5 - 32 - 76 - 16
-    }
-  },
   activated() {
-    this.currentPage = 1
+    this.countData = countOptions
     this.handleQueryPage()
     this.handleQueryTotalByStatus()
   },
   mounted() {
+    this.countData = countOptions
     this.getXiaoWeiArchiveStatus()
     this.getXiaoWeiUpgradeStatus()
     this.handleQueryPage()
     this.handleQueryTotalByStatus()
   },
   methods: {
+    ...mapActions(['delCachedView']),
     handleQueryTotalByStatus: async function() {
       const data = {
         orders: { createTime: this.sortStatus },
@@ -232,11 +230,13 @@ export default {
       try {
         const res = await queryTotalByStatus(data)
         this.countData = []
-        for (const ele of this.countOptions) {
-          for (const item of res) {
-            if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+        if (res?.length > 0) {
+          for (const ele of this.countOptions) {
+            for (const item of res) {
+              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+            }
           }
-        }
+        } else this.countData = countOptions
       } catch (error) {}
     },
     handleDraftList: async function(scope) {
@@ -253,7 +253,9 @@ export default {
       })
     },
     handlePushDetail(query, row = {}) {
-      this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
+      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
+      })
     },
     handleReason(row) {
       if (row.archiveBaseDTO.auditStatus === 4) {
@@ -324,6 +326,11 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.search-box {
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 .p {
   &-general {
     &_row {
@@ -337,21 +344,21 @@ export default {
       float: right;
     }
     &_btnLabel {
-      padding-left: 30px;
       text-align: right;
     }
   }
   &-count {
-    margin: 0 8px 16px 8px;
     &_con {
       background: rgba(255, 96, 16, 0.08);
       border: 1px solid rgba(255, 96, 16, 0.4);
       border-radius: 2px;
       display: flex;
       align-items: center;
-      padding: 10px 16px;
+      padding: 7px 16px;
       font-size: 14px;
       color: #3d4966;
+      min-height: 34px;
+      margin: 0 8px 16px 8px;
       img {
         width: 16px;
         height: 16px;

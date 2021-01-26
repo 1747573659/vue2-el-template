@@ -1,25 +1,23 @@
 <template>
-  <div>
-    <el-select
-      :id="domID"
-      @visible-change="visibleChange"
-      class="select-page"
-      v-model="bindValue"
-      v-loadmore="loadMore"
-      filterable
-      clearable
-      remote
-      @focus="focus"
-      @change="change"
-      :disabled="disabled"
-      @clear="clear"
-      :placeholder="placeholder"
-      :remote-method="remoteMethod"
-    >
-      <el-option v-for="item in options" :key="item.id" :label="item.name" :value="item.id"> </el-option>
-      <div class="loading-page">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}</div>
-    </el-select>
-  </div>
+  <el-select
+    :id="domID"
+    @visible-change="visibleChange"
+    class="select-page"
+    v-model="bindValue"
+    v-loadmore="loadMore"
+    filterable
+    clearable
+    remote
+    @focus="focus"
+    @change="change"
+    :disabled="disabled"
+    @clear="clear"
+    :placeholder="placeholder"
+    :remote-method="remoteMethod"
+  >
+    <el-option v-for="item in options" :key="item.id" :label="showValue ? `(${item.id})${item.name}` : item.name" :value="item.id"></el-option>
+    <div class="loading-page">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}</div>
+  </el-select>
 </template>
 
 <script>
@@ -37,8 +35,12 @@ export default {
   },
   props: {
     value: {
-      type: String,
+      type: [String, Number],
       default: ''
+    },
+    showValue: {
+      type: Boolean,
+      default: false
     },
     disabled: {
       type: Boolean,
@@ -57,11 +59,11 @@ export default {
       default: () => []
     },
     id: {
-      type: String,
+      type: [String, Number],
       default: 'id'
     },
     name: {
-      type: String,
+      type: [String, Number],
       default: 'name'
     }
   },
@@ -80,11 +82,11 @@ export default {
       }
     }
   },
-  computed: {},
   watch: {
-    value:{
-      handler (val) {
-        if (val) this.bindValue = this.value
+    value: {
+      handler(val) {
+        // if (val) this.bindValue = this.value
+        this.bindValue = this.value
       },
       immediate: true
     },
@@ -128,9 +130,11 @@ export default {
             label = this.options[i].name
           }
         }
-        setTimeout(() => {
-          document.getElementById(this.domID).value = label || '' //通过ID原生绑定
-        }, 200)
+        if (!this.showValue) {
+          setTimeout(() => {
+            document.getElementById(this.domID).value = label || '' //通过ID原生绑定
+          }, 200)
+        }
       }
     },
     remoteMethod(query) {
@@ -159,7 +163,6 @@ export default {
 .loading-page {
   margin: 5px 0;
   text-align: center;
-  // color: #212430;
   font-size: 10px;
 }
 </style>
