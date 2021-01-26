@@ -68,7 +68,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payAmount }}</div>
+            <div class="sum-card-money">{{ tableData.payAmount || 0 }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -80,7 +80,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.payCount }}</div>
+            <div class="sum-card-money">{{ tableData.payCount || 0 }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -92,7 +92,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.unitAmount }}</div>
+            <div class="sum-card-money">{{ tableData.unitAmount || 0 }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -107,7 +107,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.shopCouponAmount }}</div>
+            <div class="sum-card-money">{{ tableData.shopCouponAmount || 0 }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -122,7 +122,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.merchantRefundAmount }}</div>
+            <div class="sum-card-money">{{ tableData.merchantRefundAmount || 0 }}</div>
           </div>
         </el-col>
         <el-col :span="4" class="sum-card-item">
@@ -134,7 +134,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </div>
-            <div class="sum-card-money">{{ tableData.receiptAmount }}</div>
+            <div class="sum-card-money">{{ tableData.receiptAmount || 0 }}</div>
           </div>
         </el-col>
       </el-row>
@@ -350,7 +350,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
