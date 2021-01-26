@@ -440,7 +440,8 @@ export default {
         storeId: this.form.searchObject === 3 ? this.form.id : '',
         startTime: this.form.time ? this.form.time[0] : '',
         endTime: this.form.time ? this.form.time[1] : '',
-        payMethod: this.form.payMethod
+        payMethod: this.form.payMethod,
+        payPlugin: this.form.payPlugin
       }
       try {
         const res = await cashierData(data)
@@ -566,7 +567,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
