@@ -2,7 +2,7 @@
 VUE_APP_FLAG = 'pro'
 
 # base api
-VUE_APP_BASE_API = 'https://scrm-api.platform.kemai.com.cn'
+VUE_APP_BASE_API = 'https://scrm-api.oc.kemai.com.cn'
 
 # 老商户系统 url
 VUE_APP_OLD_VERSION = 'http://agent.xiangqianpos.com'
