@@ -646,6 +646,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="第三方对私结算授权函" prop="archiveOtherVO.privateAuthorization">
                 <upload-pic
+                  style="display:inline-block"
                   alt="第三方对私结算授权函"
                   :imagePath="form.archiveOtherVO.privateAuthorization"
                   :fileServer="fileServer"
@@ -654,6 +655,7 @@
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.privateAuthorization)"
                 >
                 </upload-pic>
+                <span class="xft-add-template" @click="handlePrivateLetter">下载模板</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -755,7 +757,7 @@ import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
 import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR } from '@/api/xftArchive'
-import moment from 'moment'
+import { downloadForURL } from '@/utils'
 
 export default {
   name: 'xftArchiveAdd',
@@ -1081,6 +1083,10 @@ export default {
     })
   },
   methods: {
+    handlePrivateLetter(){
+      // 下载模板
+      // downloadForURL
+    },
     handleClosePreview() {
       this.showViewer = false
     },
@@ -1510,7 +1516,6 @@ export default {
   .form-info {
     padding-top: 24px;
     .archive-form-item {
-      // padding-left: 10%;
       .el-switch {
         line-height: 32px;
       }
@@ -1521,6 +1526,11 @@ export default {
     /deep/.el-form-item {
       margin-bottom: 24px;
     }
+  }
+  &-template{
+    padding-left: 12px;
+    color: #3377ff;
+    cursor: pointer;
   }
 }
 .bottom {

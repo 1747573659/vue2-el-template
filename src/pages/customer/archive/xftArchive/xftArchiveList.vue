@@ -317,7 +317,8 @@ export default {
         { value: 3, label: '平台审核中', total: 0 },
         { value: 8, label: '资料待补充', total: 0 },
         { value: 1, label: '未通过审核编辑中', total: 0 },
-        { value: 4, label: '未通过审核', total: 0 }
+        { value: 4, label: '未通过审核', total: 0 },
+        { value: 4, label: '微信认证审核驳回', total: 0 }
       ],
       // dialog
       exportVisible: false,
@@ -413,9 +414,8 @@ export default {
       this.exportLoad = true
       try {
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        const res = await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
-      } catch (error) {
-      } finally {
+        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+      } catch (error) {} finally {
         this.exportLoad = false
       }
     },
