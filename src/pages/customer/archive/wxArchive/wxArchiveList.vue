@@ -1,12 +1,14 @@
 <template>
   <section>
     <div class="search-box">
-      <section class="p-count_con">
-        <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-        <template v-for="item in countData">
-          <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
-        </template>
-      </section>
+      <div class="p-count-con">
+        <section class="p-count-main" v-if="countData.length > 0">
+          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+          <template v-for="item in countData">
+            <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+          </template>
+        </section>
+      </div>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-general_row">
           <el-col :span="21">
@@ -161,10 +163,10 @@
 </template>
 
 <script>
-import { statusOptions, deactivateOptions, countOptions } from './index'
-import { filterReview, filterArchiveStatus } from './filters'
-import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 import { mapActions } from 'vuex'
+import { filterReview, filterArchiveStatus } from './filters'
+import { statusOptions, deactivateOptions, countOptions } from './index'
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
@@ -183,12 +185,12 @@ export default {
         stopUse: 0
       },
       isSearchLock: false, // 锁状态
-      isTabLock: false,
       isReason: false, // 异常状态原因
       reasonMsg: '',
       sortStatus: 'desc', // 时间排序状态
       xiaoWeiArchiveData: [],
       xiaoWeiUpgradeData: [],
+      isTabLock: false,
       tableData: [],
       currentPage: 1,
       totalPage: 0,
@@ -213,8 +215,8 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
-    handleQueryTotalByStatus: async function() {
-      const data = {
+    handleQueryTabParams() {
+      return {
         orders: { createTime: this.sortStatus },
         startTime: this.form.createTime?.[0] ?? '',
         endTime: this.form.createTime?.[1] ?? '',
@@ -227,8 +229,10 @@ export default {
         page: this.currentPage,
         rows: this.pageSize
       }
+    },
+    handleQueryTotalByStatus: async function() {
       try {
-        const res = await queryTotalByStatus(data)
+        const res = await queryTotalByStatus(this.handleQueryTabParams())
         this.countData = []
         if (res?.length > 0) {
           for (const ele of this.countOptions) {
@@ -285,25 +289,11 @@ export default {
       this.handleQueryPage()
     },
     handleQueryPage: async function() {
-      const data = {
-        orders: { createTime: this.sortStatus },
-        startTime: this.form.createTime?.[0] ?? '',
-        endTime: this.form.createTime?.[1] ?? '',
-        auditStatus: this.form.auditStatus,
-        companyName: this.form.msg,
-        bankCard: this.form.msg,
-        merchantName: this.form.msg,
-        merchantShortName: this.form.msg,
-        stopUse: this.form.stopUse,
-        page: this.currentPage,
-        rows: this.pageSize
-      }
       try {
         this.isTabLock = true
-        const res = await queryPage(data)
+        const res = await queryPage(this.handleQueryTabParams())
         this.tableData = res.results
         this.totalPage = res.totalCount
-      } catch (error) {
       } finally {
         this.isTabLock = false
       }
@@ -348,7 +338,11 @@ export default {
     }
   }
   &-count {
-    &_con {
+    &-con {
+      min-height: 34px;
+      margin: 0 8px 16px 8px;
+    }
+    &-main {
       background: rgba(255, 96, 16, 0.08);
       border: 1px solid rgba(255, 96, 16, 0.4);
       border-radius: 2px;
@@ -357,8 +351,6 @@ export default {
       padding: 7px 16px;
       font-size: 14px;
       color: #3d4966;
-      min-height: 34px;
-      margin: 0 8px 16px 8px;
       img {
         width: 16px;
         height: 16px;
