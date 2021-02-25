@@ -1,12 +1,14 @@
 <template>
   <div>
     <div class="search-box">
-      <section class="p-count-con">
-        <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-        <template v-for="item in countData">
-          <div class="p-count_item" :key="item.label">{{ item.label }}：{{ item.total }}</div>
-        </template>
-      </section>
+      <div class="p-count-con">
+        <section class="p-count-main" v-if="countData.length>0">
+          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+          <template v-for="item in countData">
+            <div class="p-count_item" :key="item.label">{{ item.label }}：{{ item.total }}</div>
+          </template>
+        </section>
+      </div>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="75px">
         <el-row>
           <el-col>
@@ -125,7 +127,7 @@
             >
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
             <el-button v-if="[3, 5, 6, 7, 9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
-            <el-button v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
+            <el-button v-if="scope.row.archiveBaseDTO.source !== 3" v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{
               scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'
             }}</el-button>
@@ -617,6 +619,10 @@ export default {
 .p {
   &-count {
     &-con {
+      min-height: 34px;
+      margin: 0 8px 16px 8px;
+    }
+    &-main {
       background: rgba(255, 96, 16, 0.08);
       border: 1px solid rgba(255, 96, 16, 0.4);
       border-radius: 2px;
@@ -625,8 +631,6 @@ export default {
       padding: 7px 16px;
       font-size: 14px;
       color: #3d4966;
-      min-height: 34px;
-      margin: 0 8px 16px 8px;
       img {
         width: 16px;
         height: 16px;

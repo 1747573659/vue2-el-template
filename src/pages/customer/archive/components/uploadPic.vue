@@ -2,6 +2,7 @@
   <div>
     <el-upload
       class="avatar-uploader"
+      :disabled="disabled"
       :action="uploadUrl"
       :headers="{ token: token }"
       accept="image/gif,image/jpeg,image/jpg,image/png"
@@ -76,6 +77,10 @@ export default {
       default: true
     },
     hasBase64: {
+      type: Boolean,
+      default: false
+    },
+    disabled: {
       type: Boolean,
       default: false
     }

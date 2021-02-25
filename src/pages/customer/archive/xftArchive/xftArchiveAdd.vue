@@ -20,6 +20,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
+                  :disabled="formYQDisabled"
                   style="width: 240px"
                   :value="form.archiveBaseVO.merchantName"
                   @remoteMethod="shopRemoteMethod"
@@ -39,7 +40,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="商户类型" prop="archiveBaseVO.merchantType">
-                <el-radio-group v-model="form.archiveBaseVO.merchantType" @change="merchantTypeChange">
+                <el-radio-group v-model="form.archiveBaseVO.merchantType" :disabled="formYQDisabled" @change="merchantTypeChange">
                   <el-radio :label="3">持证商户</el-radio>
                   <el-radio :label="4">非持证商户</el-radio>
                 </el-radio-group>
@@ -51,7 +52,7 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通超级码" prop="archiveBaseVO.superCode">
-                <el-radio-group v-model="form.archiveBaseVO.superCode">
+                <el-radio-group v-model="form.archiveBaseVO.superCode" :disabled="formYQDisabled">
                   <el-radio :label="1">是</el-radio>
                   <el-radio :label="2">否</el-radio>
                 </el-radio-group>
@@ -120,7 +121,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.companyName" placeholder=""></el-input>
+                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.companyName" placeholder=""></el-input>
                 <el-tooltip effect="dark" content="必须与营业执照一致" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
@@ -150,19 +151,19 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="客服电话" prop="archiveBaseVO.serviceTel">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.serviceTel" placeholder=""></el-input>
+                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.serviceTel" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="负责人" prop="archiveBaseVO.contact">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.contact" placeholder=""></el-input>
+                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.contact" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="负责人证件号码" prop="archiveBaseVO.idNumber">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.idNumber" clearable placeholder=""></el-input>
+                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.idNumber" clearable placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -179,7 +180,7 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="经营类型" prop="archiveBaseVO.mchDealType">
-                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.mchDealType" placeholder="全部">
+                <el-select style="width: 240px" :disabled="formYQDisabled" clearable v-model="form.archiveBaseVO.mchDealType" placeholder="全部">
                   <el-option v-for="item in mchDealTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -247,9 +248,10 @@
           </el-row>
           <el-row v-if="form.archiveBaseVO.merchantType === 4">
             <el-col :span="12" class="archive-form-item">
-              <el-form-item label="经营场所照" prop="archiveOtherVO.businessSiteOneUrl">
+              <el-form-item label="经营场所照" :disabled="formYQDisabled" prop="archiveOtherVO.businessSiteOneUrl">
                 <upload-pic
                   alt="经营场所照"
+                  :disabled="formYQDisabled"
                   :imagePath="form.archiveOtherVO.businessSiteOneUrl"
                   :fileServer="fileServer"
                   @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl') }"
@@ -262,6 +264,7 @@
               <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
                 <upload-pic
                   alt="租赁合同照一"
+                  :disabled="formYQDisabled"
                   :imagePath="form.archiveOtherVO.contractOfTenancy1"
                   :fileServer="fileServer"
                   @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1') }"
@@ -276,6 +279,7 @@
               <el-form-item label="租赁合同照二" prop="archiveOtherVO.contractOfTenancy2">
                 <upload-pic
                   alt="租赁合同照二"
+                  :disabled="formYQDisabled"
                   :imagePath="form.archiveOtherVO.contractOfTenancy2"
                   :fileServer="fileServer"
                   @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy2') }"
@@ -288,6 +292,7 @@
               <el-form-item label="租赁合同照三" prop="archiveOtherVO.contractOfTenancy3">
                 <upload-pic
                   alt="租赁合同照三"
+                  :disabled="formYQDisabled"
                   :imagePath="form.archiveOtherVO.contractOfTenancy3"
                   :fileServer="fileServer"
                   @on-success="function(res) { return uploadSuccess(res, 'archiveOtherVO.contractOfTenancy3') }"
@@ -480,21 +485,21 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="预留手机号" prop="archiveExpandVO.cardholderPhone">
-                <el-input clearable style="width:240px" v-model="form.archiveExpandVO.cardholderPhone" placeholder=""></el-input>
+                <el-input clearable style="width:240px" :disabled="formYQDisabled" v-model="form.archiveExpandVO.cardholderPhone" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row v-if="form.archiveExpandVO.acctType === 1">
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人证件类型" prop="archiveExpandVO.cardholderIdType">
-                <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.cardholderIdType" placeholder="全部">
+                <el-select style="width: 240px" :disabled="formYQDisabled" clearable v-model="form.archiveExpandVO.cardholderIdType" placeholder="全部">
                   <el-option v-for="item in cardholderIdTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="持卡人证件号码" prop="archiveExpandVO.cardholderIdNumber">
-                <el-input style="width:240px" v-model="form.archiveExpandVO.cardholderIdNumber" placeholder=""></el-input>
+                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveExpandVO.cardholderIdNumber" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col
@@ -533,6 +538,7 @@
               <el-form-item label="法人手持身份证" prop="archiveExpandVO.hardIdUrl">
                 <upload-pic
                   alt="法人手持身份证"
+                  :disabled="formYQDisabled"
                   :showExample="false"
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.hardIdUrl"
@@ -665,7 +671,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开通星POS刷卡" prop="archiveBaseVO.isOpenXingPos" style="width: 100%">
-                <el-switch style="display: block" :active-value="2" :inactive-value="1" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB">
+                <el-switch style="display: block" :disabled="formYQDisabled" :active-value="2" :inactive-value="1" v-model="form.archiveBaseVO.isOpenXingPos" active-color="#3377FF" inactive-color="#D3DBEB">
                 </el-switch>
               </el-form-item>
             </el-col>
@@ -690,14 +696,14 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
-                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.fixFeeRate" placeholder="全部">
+                <el-select style="width: 240px" :disabled="formYQDisabled" clearable v-model="form.archiveBaseVO.fixFeeRate" placeholder="全部">
                   <el-option v-for="item in fixFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="享钱汇银费率" prop="archiveBaseVO.exchangeFeeRate">
-                <el-select style="width: 240px" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
+                <el-select style="width: 240px" :disabled="formYQDisabled" clearable v-model="form.archiveBaseVO.exchangeFeeRate" placeholder="全部">
                   <el-option v-for="item in exchangeFeeRateList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
                 <el-tooltip effect="dark" content="享钱汇银费率填写和手续费率一致" placement="top">
@@ -709,7 +715,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="备注" prop="archiveBaseVO.remark">
-                <el-input style="width: 240px" type="textarea" :autosize="{ minRows: 3 }" placeholder="" v-model="form.archiveBaseVO.remark"> </el-input>
+                <el-input style="width: 240px" :disabled="formYQDisabled" type="textarea" :autosize="{ minRows: 3 }" placeholder="" v-model="form.archiveBaseVO.remark"> </el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -851,7 +857,7 @@ export default {
           publicId: '',
           remark: '',
           serviceTel: '',
-          source: null,
+          source: 2,
           status: null,
           submitLevel: null,
           superCode: 1,
@@ -1025,7 +1031,9 @@ export default {
       },
       previewList: [],
       showViewer: false,
-      imageIndex: 0
+      imageIndex: 0,
+      isArchiveYQ: false,
+      formYQDisabled: false
     }
   },
   computed: {
@@ -1394,24 +1402,38 @@ export default {
       })
     },
     async toAdd() {
-      this.$refs.form.validate(async valid => {
-        if (valid) {
-          if (this.$route.query.isCopy) {
-            this.form.archiveBaseVO.auditTime = ''
-            this.form.archiveBaseVO.bossAuditTime = ''
-            this.form.archiveBaseVO.createTime = ''
-            this.form.archiveBaseVO.auditStatus = ''
-            this.form.archiveBaseVO.useChannelCode = ''
-          }
-          try {
-            const res = await audit(this.form)
-            this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ path: 'xftArchive' })
-            })
-            this.$message.success('提交成功')
-          } catch (error) {}
+      const handleSubReview = async () => {
+        if (this.$route.query.isCopy) {
+          this.form.archiveBaseVO.auditTime = ''
+          this.form.archiveBaseVO.bossAuditTime = ''
+          this.form.archiveBaseVO.createTime = ''
+          this.form.archiveBaseVO.auditStatus = ''
+          this.form.archiveBaseVO.useChannelCode = ''
         }
-      })
+        try {
+          await audit(this.form)
+          this.$store.dispatch('delTagView', this.$route).then(() => {
+            this.$router.push({ path: 'xftArchive' })
+          })
+          this.$message.success('提交成功')
+        } catch (error) {}
+      }
+      if(this.formYQDisabled){
+        const formYQValids = ['archiveBaseDTO.merchantShortName', 'archiveBaseDTO.province', 'archiveBaseDTO.address', 'archiveBaseDTO.industrId', 'archiveExpandDTO.legalPersonName', 'archiveExpandDTO.idNumber', 'archiveExpandDTO.legalPersonValidityBegin', 'archiveBaseDTO.contactPhone', 'archiveBaseDTO.email', 'archiveExpandDTO.bankSubName', 'archiveExpandDTO.bankCity', 'archiveExpandDTO.bankAccountName', 'archiveExpandDTO.bankCard', 'archiveExpandDTO.bankCardFrontUrl', 'archiveExpandDTO.bankCardBackUrl', 'archiveExpandDTO.idFrontUrl', 'archiveExpandDTO.idBackUrl', 'archiveOtherDTO.signboardUrl', 'archiveOtherDTO.cashierDesk']
+        Promise.all(formYQValids.map(item => {
+          return new Promise((resolve, reject) => {
+            this.$refs.form.validateField(item, (error) => {
+              resolve(error)
+            })
+          })
+        })).then(async valid => {
+          if (valid.every(item => item === '')) handleSubReview()
+        })
+      } else {
+        this.$refs.form.validate(async valid => {
+          if (valid) handleSubReview()
+        })
+      } 
     },
     toRefuse() {
       this.refuseForm.remark = ''
@@ -1464,6 +1486,8 @@ export default {
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus
         this.form.archiveExpandVO.openingPermitUrl = res.archiveExpandDTO.openingPermitUrl
+        // this.formYQDisabled = res.archiveBaseDTO.source === 3 && res.archiveBaseDTO.auditStatus === 8
+        this.formYQDisabled = res.archiveBaseDTO.auditStatus === 8
       } catch (error) {
       } finally {
         this.addLoading = false
