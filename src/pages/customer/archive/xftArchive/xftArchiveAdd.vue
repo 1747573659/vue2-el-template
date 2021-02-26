@@ -762,7 +762,7 @@ import areaSelectForTwo from '@/components/areaSelectForTwo'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
-import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR } from '@/api/xftArchive'
+import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR, queryPrivateAuthorization } from '@/api/xftArchive'
 import { downloadForURL } from '@/utils'
 
 export default {
@@ -1091,9 +1091,9 @@ export default {
     })
   },
   methods: {
-    handlePrivateLetter(){
-      // 下载模板
-      // downloadForURL
+    handlePrivateLetter: async function(){
+      const res = await queryPrivateAuthorization()
+      downloadForURL(res[0])
     },
     handleClosePreview() {
       this.showViewer = false
