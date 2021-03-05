@@ -431,7 +431,7 @@ export default {
               if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
             }
           }
-          if(res.wxCertStatuses?.length) this.countData.push({ label: '微信认证审核驳回', total: res.wxCertStatuses[0].wxCertTotal || 0 })
+          if(res.wxCertStatuses?.length) this.countData.push({ label: '微信认证审核驳回', total: res.wxCertStatuses.filter(item => item.wxCertStatus === 6)[0].wxCertTotal || 0 })
         } else this.countData = this.countOptions
       } catch (error) {}
     },
