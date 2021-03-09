@@ -319,7 +319,8 @@ export default {
         { value: 3, label: '平台审核中', total: 0 },
         { value: 8, label: '资料待补充', total: 0 },
         { value: 1, label: '未通过审核编辑中', total: 0 },
-        { value: 4, label: '未通过审核', total: 0 }
+        { value: 4, label: '未通过审核', total: 0 },
+        { value: '', label: '微信认证审核驳回', total: 0 }
       ],
       // dialog
       exportVisible: false,
@@ -415,9 +416,8 @@ export default {
       this.exportLoad = true
       try {
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        const res = await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
-      } catch (error) {
-      } finally {
+        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+      } catch (error) {} finally {
         this.exportLoad = false
       }
     },
@@ -425,12 +425,13 @@ export default {
       try {
         const res = await queryTotalByStatus(this.handleQueryParams())
         this.countData = []
-        if (res?.length > 0) {
+        if (res.auditStatuses?.length > 0) {
           for (const ele of this.countOptions) {
-            for (const item of res) {
+            for (const item of res.auditStatuses) {
               if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
             }
           }
+          if(res.wxCertStatuses?.length) this.countData.push({ label: '微信认证审核驳回', total: res.wxCertStatuses.filter(item => item.wxCertStatus === 6)[0].wxCertTotal || 0 })
         } else this.countData = this.countOptions
       } catch (error) {}
     },
