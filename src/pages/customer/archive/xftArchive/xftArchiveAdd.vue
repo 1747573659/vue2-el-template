@@ -1419,7 +1419,7 @@ export default {
         } catch (error) {}
       }
       if(this.formYQDisabled){
-        const formYQValids = ['archiveBaseDTO.merchantShortName', 'archiveBaseDTO.province', 'archiveBaseDTO.address', 'archiveBaseDTO.industrId', 'archiveExpandDTO.legalPersonName', 'archiveExpandDTO.idNumber', 'archiveExpandDTO.legalPersonValidityBegin', 'archiveBaseDTO.contactPhone', 'archiveBaseDTO.email', 'archiveExpandDTO.bankSubName', 'archiveExpandDTO.bankCity', 'archiveExpandDTO.bankAccountName', 'archiveExpandDTO.bankCard', 'archiveExpandDTO.bankCardFrontUrl', 'archiveExpandDTO.bankCardBackUrl', 'archiveExpandDTO.idFrontUrl', 'archiveExpandDTO.idBackUrl', 'archiveOtherDTO.signboardUrl', 'archiveOtherDTO.cashierDesk']
+        const formYQValids = ['archiveBaseVO.merchantShortName', 'archiveBaseVO.province', 'archiveBaseVO.address', 'archiveBaseVO.industrId', 'archiveBaseVO.contactPhone', 'archiveBaseVO.email', 'archiveOtherVO.signboardUrl', 'archiveOtherVO.cashierDesk', 'archiveExpandVO.idFrontUrl', 'archiveExpandVO.idBackUrl', 'archiveExpandVO.legalPersonName', 'archiveExpandVO.idNumber', 'archiveExpandVO.legalPersonValidityBegin', 'archiveExpandVO.bankCardFrontUrl', 'archiveExpandVO.bankCardBackUrl', 'archiveExpandVO.bankAccountName', 'archiveExpandVO.bankCard', 'archiveExpandVO.bankProvince', 'archiveExpandVO.bankSub']
         Promise.all(formYQValids.map(item => {
           return new Promise((resolve, reject) => {
             this.$refs.form.validateField(item, (error) => {
