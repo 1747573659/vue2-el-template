@@ -19,7 +19,7 @@
       </el-form>
     </div>
     <div class="data-box">
-      <el-table id="table" :max-height="tableMaxHeight" v-loading="tableLoading" :data="tableData" style="width: 100%">
+      <el-table id="table" :max-height="tabMaxHeight" v-loading="tableLoading" :data="tableData" style="width: 100%">
         <el-table-column prop="userName" label="姓名"></el-table-column>
         <el-table-column prop="loginName" label="手机号(账号)"></el-table-column>
         <el-table-column prop="roleName" label="角色"></el-table-column>
@@ -75,9 +75,11 @@
 <script>
 import { queryUserPage, queryRole, updateStatus, resetPassword, deleteUser } from '@/api/setting/account'
 import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'accountSetting',
+  mixins: [tableMaxHeight],
   data() {
     return {
       statusList: ['停用', '启用'],
@@ -182,11 +184,6 @@ export default {
         const res = await queryRole({})
         this.roleList = res
       } catch (e) {}
-    }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
   }
 }

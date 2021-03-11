@@ -1,6 +1,6 @@
 <template>
   <div :class="{'hidden':hidden, 'position':position === 'right'}"
-       class="pagination-container">
+       class="km-page-block">
     <el-pagination :background="background"
                    :current-page.sync="currentPage"
                    :page-sizes="pageSizes"
@@ -98,13 +98,3 @@ export default {
   }
 }
 </script>
-
-<style lang="scss" scoped>
-
-.pagination-container {
-  text-align: right;
-  margin-top: 20px;
-  background: #fff;
-  padding-bottom: 20px;
-}
-</style>

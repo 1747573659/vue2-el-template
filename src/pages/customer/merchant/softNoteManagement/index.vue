@@ -161,7 +161,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           background
-          :page-sizes="[10, 15, 20, 25]"
+          :page-sizes="[10, 15, 30]"
           layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
       </div>
@@ -206,7 +206,7 @@ export default {
       tableLoading: false, // 表格加载
       tableTotal: 0, // 表格总页数
       thisPage: 1, // 当前页
-      pageSize: 15, // 每页多少条
+      pageSize: 10, // 每页多少条
       form: {
         custId: '', // 软注编码
         authShopMessage: '', // 商户信息
