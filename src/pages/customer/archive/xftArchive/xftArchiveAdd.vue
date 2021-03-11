@@ -1486,7 +1486,7 @@ export default {
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus
         this.form.archiveExpandVO.openingPermitUrl = res.archiveExpandDTO.openingPermitUrl
-        this.formYQDisabled = res.archiveBaseDTO.source === 3 && res.archiveBaseDTO.auditStatus === 8
+        this.formYQDisabled = res.archiveBaseDTO.source === 3
       } catch (error) {
       } finally {
         this.addLoading = false
