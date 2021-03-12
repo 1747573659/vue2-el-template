@@ -107,7 +107,8 @@
         </el-table-column>
         <el-table-column prop="createTime" label="微信认证状态" width="130">
           <template slot-scope="scope">
-            {{ wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus] }}
+            <span>{{ wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus] }}</span>
+            <el-button v-if="scope.row.archiveBaseDTO.wxCertStatus === 1" class="e-btn-mgl" type="text" @click="handleWxCertReason(scope.row)">原因</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.fixFeeRate" label="费率" width="80">
@@ -264,7 +265,7 @@ export default {
       wxCertStatusOptions: [
         { id: '', name: '全部' },
         { id: 0, name: '未认证' },
-        { id: 1, name: '编辑中' },
+        { id: 1, name: '提交失败' },
         { id: 2, name: '审核中' },
         { id: 3, name: '待确认联系信息' },
         { id: 4, name: '待账户验证' },
@@ -289,7 +290,7 @@ export default {
       },
       wxCertStatusList: {
         0: '未认证',
-        1: '编辑中',
+        1: '提交失败',
         2: '审核中',
         3: '待确认联系信息',
         4: '待账户验证',
@@ -345,6 +346,9 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
+    handleWxCertReason(row){
+      this.$alert(row.archiveBaseDTO.wxCertResultMsg, '认证失败原因', { confirmButtonText: '知道了' })
+    },
     handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
         confirmButtonText: '确定',
@@ -674,6 +678,11 @@ export default {
     }
     &_action {
       text-align: right;
+    }
+  }
+  &-btn{
+    &-mgl{
+      margin-left: 10px;
     }
   }
 }
