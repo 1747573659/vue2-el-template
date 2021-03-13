@@ -357,7 +357,7 @@ export default {
             xftArchiveExportDel({ id: row.id })
               .then(() => {
                 this.$message({ type: 'success', message: '删除成功' })
-                if (--this.exportLists.length) this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
+                if (!--this.exportLists.length) this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
                 this.handleExportRecord()
               })
               .finally(() => {
