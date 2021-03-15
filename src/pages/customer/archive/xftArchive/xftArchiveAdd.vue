@@ -652,6 +652,7 @@
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="第三方对私结算授权函" prop="archiveOtherVO.privateAuthorization">
                 <upload-pic
+                  style="display:inline-block"
                   alt="第三方对私结算授权函"
                   :imagePath="form.archiveOtherVO.privateAuthorization"
                   :fileServer="fileServer"
@@ -660,6 +661,7 @@
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.privateAuthorization)"
                 >
                 </upload-pic>
+                <span class="xft-add-template" @click="handlePrivateLetter">下载模板</span>
               </el-form-item>
             </el-col>
           </el-row>
@@ -760,7 +762,8 @@ import areaSelectForTwo from '@/components/areaSelectForTwo'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
-import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR } from '@/api/xftArchive'
+import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR, queryPrivateAuthorization } from '@/api/xftArchive'
+import { downloadForURL } from '@/utils'
 
 export default {
   name: 'xftArchiveAdd',
@@ -1088,6 +1091,10 @@ export default {
     })
   },
   methods: {
+    handlePrivateLetter: async function(){
+      const res = await queryPrivateAuthorization()
+      downloadForURL(res[0])
+    },
     handleClosePreview() {
       this.showViewer = false
     },
@@ -1115,7 +1122,7 @@ export default {
         this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/,'')
         const validPeriod = res.valid_period.replace(/[年月./-]/g,'-').replace(/日/g,'')
         this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
-        this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1] : ''
+        this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1].replace(/长期/,'') : ''
       }).catch(err => {})
       this.form[type][url] = res.data.path
     },
@@ -1412,7 +1419,7 @@ export default {
         } catch (error) {}
       }
       if(this.formYQDisabled){
-        const formYQValids = ['archiveBaseDTO.merchantShortName', 'archiveBaseDTO.province', 'archiveBaseDTO.address', 'archiveBaseDTO.industrId', 'archiveExpandDTO.legalPersonName', 'archiveExpandDTO.idNumber', 'archiveExpandDTO.legalPersonValidityBegin', 'archiveBaseDTO.contactPhone', 'archiveBaseDTO.email', 'archiveExpandDTO.bankSubName', 'archiveExpandDTO.bankCity', 'archiveExpandDTO.bankAccountName', 'archiveExpandDTO.bankCard', 'archiveExpandDTO.bankCardFrontUrl', 'archiveExpandDTO.bankCardBackUrl', 'archiveExpandDTO.idFrontUrl', 'archiveExpandDTO.idBackUrl', 'archiveOtherDTO.signboardUrl', 'archiveOtherDTO.cashierDesk']
+        const formYQValids = ['archiveBaseVO.merchantShortName', 'archiveBaseVO.province', 'archiveBaseVO.address', 'archiveBaseVO.industrId', 'archiveBaseVO.contactPhone', 'archiveBaseVO.email', 'archiveOtherVO.signboardUrl', 'archiveOtherVO.cashierDesk', 'archiveExpandVO.idFrontUrl', 'archiveExpandVO.idBackUrl', 'archiveExpandVO.legalPersonName', 'archiveExpandVO.idNumber', 'archiveExpandVO.legalPersonValidityBegin', 'archiveExpandVO.bankCardFrontUrl', 'archiveExpandVO.bankCardBackUrl', 'archiveExpandVO.bankAccountName', 'archiveExpandVO.bankCard', 'archiveExpandVO.bankProvince', 'archiveExpandVO.bankSub']
         Promise.all(formYQValids.map(item => {
           return new Promise((resolve, reject) => {
             this.$refs.form.validateField(item, (error) => {
@@ -1479,8 +1486,7 @@ export default {
         }
         this.auditStatus = this.form.archiveBaseVO.auditStatus
         this.form.archiveExpandVO.openingPermitUrl = res.archiveExpandDTO.openingPermitUrl
-        // this.formYQDisabled = res.archiveBaseDTO.source === 3 && res.archiveBaseDTO.auditStatus === 8
-        this.formYQDisabled = res.archiveBaseDTO.auditStatus === 8
+        this.formYQDisabled = res.archiveBaseDTO.source === 3
       } catch (error) {
       } finally {
         this.addLoading = false
@@ -1533,7 +1539,6 @@ export default {
   .form-info {
     padding-top: 24px;
     .archive-form-item {
-      // padding-left: 10%;
       .el-switch {
         line-height: 32px;
       }
@@ -1544,6 +1549,11 @@ export default {
     /deep/.el-form-item {
       margin-bottom: 24px;
     }
+  }
+  &-template{
+    padding-left: 12px;
+    color: #3377ff;
+    cursor: pointer;
   }
 }
 .bottom {

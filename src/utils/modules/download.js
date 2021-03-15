@@ -1,5 +1,5 @@
 // 文件下载
-export default function downloadForURL(url) {
+export default function downloadForURL(url, name = '') {
   let a = document.createElement('a')
   document.body.appendChild(a)
   a.href = url
