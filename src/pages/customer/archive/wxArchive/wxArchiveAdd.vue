@@ -23,7 +23,7 @@
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
                   style="width:240px"
-                  v-if="pageAction === 'add'"
+                  v-if="pageAction === 'add' || $route.query.status === 'copy'"
                   :isMaxPage="isMaxPage"
                   :options="selectOptions"
                   @remoteMethod="remoteSelect"
@@ -1025,7 +1025,7 @@ export default {
         .el-input__count {
           line-height: 1.3;
         }
-        .el-textarea__inner{
+        .el-textarea__inner {
           padding-bottom: 20px;
         }
       }

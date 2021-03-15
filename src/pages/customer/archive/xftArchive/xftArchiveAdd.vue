@@ -18,6 +18,7 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
+              <!-- @focus="shopFocus" -->
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
                   :disabled="formYQDisabled"
@@ -29,7 +30,6 @@
                   name="companyName"
                   :options="shopList"
                   :isMaxPage="isMaxPageShop"
-                  @focus="shopFocus"
                   @change="shopChange"
                   @clear="shopClear"
                 >
