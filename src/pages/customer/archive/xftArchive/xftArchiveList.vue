@@ -107,7 +107,8 @@
         </el-table-column>
         <el-table-column prop="createTime" label="微信认证状态" width="130">
           <template slot-scope="scope">
-            {{ wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus] }}
+            <span>{{ wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus] }}</span>
+            <el-button v-if="scope.row.archiveBaseDTO.wxCertStatus === 1" class="e-btn-mgl" type="text" @click="handleWxCertReason(scope.row)">原因</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.fixFeeRate" label="费率" width="80">
@@ -122,9 +123,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="right" width="180px">
           <template slot-scope="scope">
-            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small"
-              >编辑</el-button
-            >
+            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
             <el-button v-if="[3, 5, 6, 7, 9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
             <el-button v-if="scope.row.archiveBaseDTO.source !== 3" v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
@@ -134,13 +133,12 @@
             <el-popconfirm class="e-popover_con" @confirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
-            <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveBaseDTO.auditStatus === 6 || scope.row.archiveBaseDTO.auditStatus === 7">
+            <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveChannelList">
               <el-button type="text" size="small">更多</el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
+                <el-dropdown-item v-if="[6, 7].includes(scope.row.archiveBaseDTO.auditStatus)" style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
                 <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item
-                  v-permission="'XFT_LIST_SHOP_QRCODE'"
+                <el-dropdown-item v-permission="'XFT_LIST_SHOP_QRCODE'"
                   style="color: #3377FF"
                   v-if="[3, 4, 5].includes(scope.row.archiveBaseDTO.wxCertStatus)"
                   @click.native="shopQRCode(scope.row)"
@@ -264,7 +262,7 @@ export default {
       wxCertStatusOptions: [
         { id: '', name: '全部' },
         { id: 0, name: '未认证' },
-        { id: 1, name: '编辑中' },
+        { id: 1, name: '提交失败' },
         { id: 2, name: '审核中' },
         { id: 3, name: '待确认联系信息' },
         { id: 4, name: '待账户验证' },
@@ -289,7 +287,7 @@ export default {
       },
       wxCertStatusList: {
         0: '未认证',
-        1: '编辑中',
+        1: '提交失败',
         2: '审核中',
         3: '待确认联系信息',
         4: '待账户验证',
@@ -345,6 +343,9 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
+    handleWxCertReason(row){
+      this.$alert(row.archiveBaseDTO.wxCertResultMsg, '认证失败原因', { confirmButtonText: '知道了' })
+    },
     handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
         confirmButtonText: '确定',
@@ -356,7 +357,7 @@ export default {
             xftArchiveExportDel({ id: row.id })
               .then(() => {
                 this.$message({ type: 'success', message: '删除成功' })
-                if (--this.exportLists.length) this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
+                if (!--this.exportLists.length) this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
                 this.handleExportRecord()
               })
               .finally(() => {
@@ -674,6 +675,11 @@ export default {
     }
     &_action {
       text-align: right;
+    }
+  }
+  &-btn{
+    &-mgl{
+      margin-left: 10px;
     }
   }
 }
