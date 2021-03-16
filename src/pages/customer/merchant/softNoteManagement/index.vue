@@ -65,13 +65,13 @@
               </select-page>
             </el-form-item>
           </el-col> -->
-          <el-col :span="8">
+          <!-- <el-col :span="8">
             <el-form-item label="享钱开通状态:">
               <el-select style="width:100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
                 <el-option v-for="item in openingState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="8">
             <el-form-item label="注册日期:">
               <el-date-picker
@@ -90,7 +90,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item style="padding-left: 30px;">
+            <el-form-item style="padding-left: 100px;">
               <el-button @click="authShopPage()" size="small" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
