@@ -2,7 +2,7 @@
   <div>
     <div class="search-box">
       <div class="p-count-con">
-        <section class="p-count-main" v-if="countData.length>0">
+        <section class="p-count-main" v-if="countData.length > 0">
           <img src="../../../../assets/images/icon/mark.png" alt="提示" />
           <template v-for="item in countData">
             <div class="p-count_item" :key="item.label">{{ item.label }}：{{ item.total }}</div>
@@ -108,7 +108,7 @@
         <el-table-column prop="createTime" label="微信认证状态" width="130">
           <template slot-scope="scope">
             <span>{{ wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus] }}</span>
-            <el-button v-if="scope.row.archiveBaseDTO.wxCertStatus === 1" class="e-btn-mgl" type="text" @click="handleWxCertReason(scope.row)">原因</el-button>
+            <el-button v-if="[1, 6].includes(scope.row.archiveBaseDTO.wxCertStatus)" class="e-btn-mgl" type="text" @click="handleWxCertReason(scope.row)">原因</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="archiveBaseDTO.fixFeeRate" label="费率" width="80">
@@ -123,9 +123,17 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="right" width="180px">
           <template slot-scope="scope">
-            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small"
+              >编辑</el-button
+            >
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
-            <el-button v-if="[3, 5, 6, 7, 9].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
+            <el-button
+              v-if="[3, 5, 6, 7, 9].includes(scope.row.archiveBaseDTO.auditStatus) || [3, 5, 6, 7, 9].includes(scope.row.archiveBaseDTO.auditStatus)"
+              @click="detail(scope.row)"
+              type="text"
+              size="small"
+              >详情</el-button
+            >
             <el-button v-if="scope.row.archiveBaseDTO.source !== 3" v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
             <el-button v-permission="'XFT_LIST_STATUS'" @click="changeStatus(scope.row)" type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus !== 0">{{
               scope.row.archiveBaseDTO.stopUse ? '启用' : '停用'
@@ -136,9 +144,12 @@
             <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveChannelList">
               <el-button type="text" size="small">更多</el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="[6, 7].includes(scope.row.archiveBaseDTO.auditStatus)" style="color: #3377FF" @click.native="archiveDetail(scope.row)">进件详情</el-dropdown-item>
+                <el-dropdown-item v-if="[6, 7].includes(scope.row.archiveBaseDTO.auditStatus)" style="color: #3377FF" @click.native="archiveDetail(scope.row)"
+                  >进件详情</el-dropdown-item
+                >
                 <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
-                <el-dropdown-item v-permission="'XFT_LIST_SHOP_QRCODE'"
+                <el-dropdown-item
+                  v-permission="'XFT_LIST_SHOP_QRCODE'"
                   style="color: #3377FF"
                   v-if="[3, 4, 5].includes(scope.row.archiveBaseDTO.wxCertStatus)"
                   @click.native="shopQRCode(scope.row)"
@@ -343,8 +354,10 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
-    handleWxCertReason(row){
-      this.$alert(row.archiveBaseDTO.wxCertResultMsg, '认证失败原因', { confirmButtonText: '知道了' })
+    handleWxCertReason(row) {
+      if (row.archiveBaseDTO.wxCertStatus === 1) {
+        this.$alert(row.archiveBaseDTO.wxCertResultMsg, '', { confirmButtonText: '确定' })
+      } else this.queryStatus(row)
     },
     handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
@@ -418,7 +431,8 @@ export default {
       try {
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
         await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
-      } catch (error) {} finally {
+      } catch (error) {
+      } finally {
         this.exportLoad = false
       }
     },
@@ -432,7 +446,7 @@ export default {
               if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
             }
           }
-          if(res.wxCertStatuses?.length) this.countData.push({ label: '微信认证审核驳回', total: res.wxCertStatuses.filter(item => item.wxCertStatus === 6)[0].wxCertTotal || 0 })
+          if (res.wxCertStatuses?.length) this.countData.push({ label: '微信认证审核驳回', total: res.wxCertStatuses.filter(item => item.wxCertStatus === 6)[0].wxCertTotal || 0 })
         } else this.countData = this.countOptions
       } catch (error) {}
     },
@@ -677,8 +691,8 @@ export default {
       text-align: right;
     }
   }
-  &-btn{
-    &-mgl{
+  &-btn {
+    &-mgl {
       margin-left: 10px;
     }
   }
