@@ -39,7 +39,7 @@
         <el-form-item label="注册时间">
           <span>{{ form.createTime }}</span>
         </el-form-item>
-        <el-form-item label="社区编码">
+        <el-form-item v-if='form.organNo' label="社区编码">
           <span>{{ form.organNo }}</span>
         </el-form-item>
         <el-form-item label="">
