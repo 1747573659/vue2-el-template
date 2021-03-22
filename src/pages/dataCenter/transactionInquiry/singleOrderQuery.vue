@@ -84,7 +84,7 @@
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
         <el-table-column label="收银员" prop="workerName">
           <template slot-scope="scope">
-            {{ scope.row.workerName ? scope.row.workerName : '没有' }}
+            {{ scope.row.workerName ? scope.row.workerName : '' }}
           </template>
         </el-table-column>
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
