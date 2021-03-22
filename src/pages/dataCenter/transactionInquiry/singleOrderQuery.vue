@@ -157,32 +157,32 @@ export default {
       pickerOptions: {
         onPick: ({ maxDate, minDate }) => {
           if (minDate) {
-            const day30 = 30 * 24 * 3600 * 1000
-            maxTime = minDate.getTime() + day30
-            minTime = minDate.getTime() - day30
+            const day31 = 31 * 24 * 3600 * 1000
+            maxTime = minDate.getTime() + day31
+            minTime = minDate.getTime() - day31
           }
         },
         disabledDate: time => {
           if (maxTime) {
             return (
-              time.getTime() >
+              time.getTime() >=
                 moment()
                   .endOf('day')
                   .valueOf() ||
-              time.getTime() <
+              time.getTime() <=
                 moment()
                   .subtract(12, 'months')
                   .valueOf() ||
-              time.getTime() > maxTime ||
-              time.getTime() < minTime
+              time.getTime() >= maxTime ||
+              time.getTime() <= minTime
             )
           }
           return (
-            time.getTime() >
+            time.getTime() >=
               moment()
                 .endOf('day')
                 .valueOf() ||
-            time.getTime() <
+            time.getTime() <=
               moment()
                 .subtract(12, 'months')
                 .valueOf()
