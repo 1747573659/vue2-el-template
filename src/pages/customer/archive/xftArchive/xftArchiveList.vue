@@ -350,9 +350,7 @@ export default {
   methods: {
     ...mapActions(['delCachedView']),
     handleWxCertReason(row) {
-      if (row.archiveBaseDTO.wxCertStatus === 1) {
-        this.$alert(row.archiveBaseDTO.wxCertResultMsg, '', { confirmButtonText: '确定' })
-      } else this.queryStatus(row)
+      this.$alert(row.archiveBaseDTO.wxCertResultMsg, '原因', { confirmButtonText: '确定' })
     },
     handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
