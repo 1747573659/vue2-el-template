@@ -10,12 +10,11 @@
         </section>
       </div>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
-        <el-row class="p-form-general_row">
+        <el-row class="p-general_row">
           <el-col :span="21">
             <el-col>
               <el-form-item label="申请时间">
                 <el-date-picker
-                  class="p-form-input_width"
                   v-model="form.createTime"
                   type="daterange"
                   range-separator="至"
@@ -26,39 +25,38 @@
                   clearable
                 ></el-date-picker>
               </el-form-item>
-              <el-form-item label="商户类型">
-                <el-select v-model="form.merchantType" class="p-form-input_width" clearable placeholder="全部">
-                  <el-option v-for="item in merchantTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              <el-form-item label="资料状态">
+                <el-select v-model="form.auditStatus" class="p-general_formWidth" clearable placeholder="全部">
+                  <el-option v-for="item in statusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="审核状态">
-                <el-select v-model="form.auditStatus" class="p-form-input_width" filterable clearable placeholder="全部">
-                  <el-option v-for="item in auditStatusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
+              <el-form-item label="商户信息">
+                <el-input v-model.trim="form.msg" class="p-general_formWidth" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号"></el-input>
               </el-form-item>
             </el-col>
             <el-col>
-              <el-form-item label="是否停用">
-                <el-select v-model="form.stopUse" class="p-form-input_width" clearable placeholder="全部">
+              <el-form-item label="停用">
+                <el-select v-model="form.stopUse" class="p-general_formWidth" clearable placeholder="全部">
                   <el-option v-for="item in deactivateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
-              <el-form-item label="商户号">
-                <el-input v-model.trim="form.businesNumber" class="p-form-input_width" maxlength="50" clearable placeholder="商户号"></el-input>
-              </el-form-item>
-              <el-form-item label="商户信息">
-                <el-input v-model.trim="form.msg" class="p-form-input_width" maxlength="50" clearable placeholder="商户/公司名称/商户简称/银行卡号/资料ID"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col>
-              <el-form-item class="p-form-general_label">
-                <el-button type="primary" @click="handleSearch" :loading="isSearchLock">查询</el-button>
+              <el-form-item class="p-general_btnLabel">
+                <el-button type="primary" class="e-general-btn" @click="handleSearch" :loading="isSearchLock">查询</el-button>
               </el-form-item>
             </el-col>
           </el-col>
           <el-col :span="3">
-            <el-form-item>
-              <el-button type="primary" size="small" plain icon="el-icon-plus" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ action: 'add' })">新增</el-button>
+            <el-form-item class="p-general_fr">
+              <el-button
+                v-permission="'WXARCHIVE_LIST_ADD'"
+                type="primary"
+                class="e-general-add"
+                size="small"
+                plain
+                icon="el-icon-plus"
+                @click="handlePushDetail({ action: 'add' })"
+                >新增</el-button
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -67,80 +65,77 @@
     <div class="data-box" v-loading="isTabLock">
       <el-table :data="tableData" :max-height="tabMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
-        <el-table-column prop="archiveBaseDTO.id" label="资料ID" min-width="100"></el-table-column>
-        <el-table-column prop="merchantName" label="商户/公司名称" min-width="190">
+        <el-table-column prop="merchantName" label="商户/公司名称" width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.merchantName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" min-width="190">
+        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantId" label="商户号" min-width="80"></el-table-column>
-        <el-table-column label="商户类型">
+        <el-table-column label="进件类型">
           <template slot-scope="scope">
-            <span>{{ scope.row.archiveBaseDTO.merchantType | filterStatus(merchantTypeOptions) }}</span>
+            <span>{{ scope.row.archiveBaseDTO.archiveType === 1 ? '微信直连' : '小微商户' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="审核状态">
+        <el-table-column label="资料状态">
           <template slot-scope="scope">
             <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.auditStatus === 4 }" @click="handleReason(scope.row)">
-              {{ scope.row.archiveBaseDTO.auditStatus | filterStatus(auditStatusOptions) }}
+              {{ scope.row.archiveBaseDTO.auditStatus | filterReview }}
             </span>
           </template>
         </el-table-column>
-        <el-table-column label="费率" min-width="75">
+        <el-table-column label="小微进件">
+          <template slot-scope="scope">
+            <span>{{ scope.row.xiaoWeiArchiveStatus | filterArchiveStatus(xiaoWeiArchiveData) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="升级状态">
+          <template slot-scope="scope">
+            <span>{{ scope.row.xiaoWeiUpgradeStatus | filterArchiveStatus(xiaoWeiUpgradeData) }}</span>
+          </template>
+        </el-table-column>
+        <el-table-column label="费率" width="75">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.fixFeeRate / 100 }}%</span>
           </template>
         </el-table-column>
-        <el-table-column label="停用" min-width="55">
+        <el-table-column label="停用" width="55">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" align="right" width="190">
+        <el-table-column label="操作" fixed="right" align="right" width="210">
           <template slot-scope="scope">
             <el-button
               type="text"
               size="small"
-              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               v-permission="'WXARCHIVE_LIST_EDIT'"
               @click="handlePushDetail({ status: 'edit' }, scope.row)"
+              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
               >审核</el-button
             >
             <el-button
               type="text"
               size="small"
-              v-else-if="[0, 1, 4, 6, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
               v-permission="'WXARCHIVE_LIST_EDIT'"
               @click="handlePushDetail({ status: 'edit' }, scope.row)"
+              v-else-if="[0, 1, 4].includes(scope.row.archiveBaseDTO.auditStatus)"
               >编辑</el-button
             >
-            <el-button type="text" size="small" v-else @click="handlePushDetail({ status: 'detail' }, scope.row)">详情</el-button>
+            <el-button type="text" size="small" @click="handlePushDetail({ status: 'detail' }, scope.row)" v-else>详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
-            <el-popconfirm
-              class="e-popover_con"
-              @confirm="handleDraftList(scope)"
-              placement="top-start"
-              title="确定删除所选数据吗？"
-              v-if="scope.row.archiveBaseDTO.auditStatus === 0"
-            >
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-if="scope.row.archiveBaseDTO.auditStatus !== 0" @click="handleStopUse(scope.row)">{{
+              scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用'
+            }}</el-button>
+            <el-popconfirm class="e-popover_con" @confirm="handleDraftList(scope)" placement="top-start" title="确定删除所选数据吗？" v-else>
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-else @click="handleStopUse(scope.row)">
-              <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</span>
-            </el-button>
-            <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 3">撤销</el-button>
-            <template v-if="[10, 11].includes(scope.row.archiveBaseDTO.auditStatus)">
-              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 10 && scope.row.archiveBaseDTO.merchantType === 0">验证账号</el-button>
-              <el-button type="text" size="small" v-else-if="scope.row.archiveBaseDTO.auditStatus === 11 && scope.row.archiveBaseDTO.merchantType === 0">立即验证</el-button>
-              <el-button type="text" size="small" v-else>申请进度</el-button>
-            </template>
+            <el-button type="text" size="small" v-if="scope.row.hasArchive" @click="handlePushLinComDetail">进件详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -151,42 +146,50 @@
           :current-page="currentPage"
           :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
-          :total="totalPage"
           layout="total, sizes, prev, pager, next, jumper"
+          :total="totalPage"
         >
         </el-pagination>
       </div>
     </div>
+    <!-- dialog -->
+    <el-dialog append-to-body :visible.sync="isReason" title="原因" width="507px">
+      <p>{{ reasonMsg }}</p>
+      <div slot="footer">
+        <el-button @click="isReason = false" type="primary" size="small">确定</el-button>
+      </div>
+    </el-dialog>
   </section>
 </template>
 
 <script>
 import { mapActions } from 'vuex'
-import { filterStatus } from './filters'
+import { filterReview, filterArchiveStatus } from './filters'
+import { statusOptions, deactivateOptions, countOptions } from './index'
+import { queryPage, xiaoWeiArchiveStatus, xiaoWeiUpgradeStatus, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
-import { merchantTypeOptions, auditStatusOptions, deactivateOptions, countOptions } from './index'
-import { queryPage, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
 
 export default {
   name: 'wxArchive',
   mixins: [tableMaxHeight],
   data() {
     return {
-      merchantTypeOptions,
-      auditStatusOptions,
+      statusOptions,
       deactivateOptions,
       countOptions,
       countData: [],
       form: {
         createTime: '',
-        merchantType: '',
         auditStatus: '',
-        businesNumber: '',
         msg: '',
-        stopUse: 0,
-        sortStatus: 'desc'
+        stopUse: 0
       },
       isSearchLock: false, // 锁状态
+      isReason: false, // 异常状态原因
+      reasonMsg: '',
+      sortStatus: 'desc', // 时间排序状态
+      xiaoWeiArchiveData: [],
+      xiaoWeiUpgradeData: [],
       isTabLock: false,
       tableData: [],
       currentPage: 1,
@@ -195,7 +198,8 @@ export default {
     }
   },
   filters: {
-    filterStatus
+    filterReview,
+    filterArchiveStatus
   },
   activated() {
     this.countData = countOptions
@@ -204,35 +208,18 @@ export default {
   },
   mounted() {
     this.countData = countOptions
+    this.getXiaoWeiArchiveStatus()
+    this.getXiaoWeiUpgradeStatus()
     this.handleQueryPage()
     this.handleQueryTotalByStatus()
   },
   methods: {
     ...mapActions(['delCachedView']),
-    handleDraftList: async function(scope) {
-      try {
-        await delList({ id: scope.row.archiveBaseDTO.id })
-        this.handleQueryPage()
-        this.handleQueryTotalByStatus()
-      } catch (error) {}
-    },
-    handlePushDetail(query, row = {}) {
-      const queryParams = query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query)
-      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => this.$router.push({ name: 'wxArchiveAdd', query: queryParams }))
-    },
-    handleReason(row) {
-      if (row.archiveBaseDTO.auditStatus === 4) {
-        this.$alert(row.archiveBaseDTO.auditRemark, '原因', {
-          confirmButtonText: '知道了',
-          customClass: 'e-message-con'
-        }).catch(() => {})
-      }
-    },
     handleQueryTabParams() {
       return {
-        orders: { createTime: this.form.sortStatus },
-        startTime: this.form.createTime[0] || '',
-        endTime: this.form.createTime[1] || '',
+        orders: { createTime: this.sortStatus },
+        startTime: this.form.createTime?.[0] ?? '',
+        endTime: this.form.createTime?.[1] ?? '',
         auditStatus: this.form.auditStatus,
         companyName: this.form.msg,
         bankCard: this.form.msg,
@@ -242,18 +229,6 @@ export default {
         page: this.currentPage,
         rows: this.pageSize
       }
-    },
-    handleSearch() {
-      this.currentPage = 1
-      this.isSearchLock = true
-      this.handleQueryTotalByStatus()
-      this.handleQueryPage().finally(() => {
-        this.isSearchLock = false
-      })
-    },
-    handleTabSort({ column, prop, order }) {
-      this.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
-      this.handleQueryPage()
     },
     handleQueryTotalByStatus: async function() {
       try {
@@ -267,6 +242,42 @@ export default {
           }
         } else this.countData = countOptions
       } catch (error) {}
+    },
+    handleDraftList: async function(scope) {
+      try {
+        await delList({ id: scope.row.archiveBaseDTO.id })
+        this.handleQueryPage()
+        this.handleQueryTotalByStatus()
+      } catch (error) {}
+    },
+    handlePushLinComDetail(row) {
+      this.$router.push({
+        name: 'wxArchiveDetail',
+        query: { id: row.id, legalPersonName: row.legalPersonName, merchantShortName: row.merchantShortName, companyName: row.companyName, bankCard: row.bankCard }
+      })
+    },
+    handlePushDetail(query, row = {}) {
+      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'wxArchiveAdd', query: query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query) })
+      })
+    },
+    handleReason(row) {
+      if (row.archiveBaseDTO.auditStatus === 4) {
+        this.reasonMsg = row.archiveBaseDTO.auditRemark
+        this.isReason = true
+      }
+    },
+    handleSearch() {
+      this.currentPage = 1
+      this.isSearchLock = true
+      this.handleQueryTotalByStatus()
+      this.handleQueryPage().finally(() => {
+        this.isSearchLock = false
+      })
+    },
+    handleTabSort({ column, prop, order }) {
+      this.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
+      this.handleQueryPage()
     },
     handleCurrentChange(val) {
       this.currentPage = val
@@ -283,15 +294,22 @@ export default {
         const res = await queryPage(this.handleQueryTabParams())
         this.tableData = res.results
         this.totalPage = res.totalCount
-      } catch (error) {
       } finally {
         this.isTabLock = false
       }
     },
     handleStopUse: async function(row) {
-      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Number(!row.archiveBaseDTO.stopUse) })
+      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: !row.archiveBaseDTO.stopUse ? 1 : 0 })
       await this.handleQueryPage()
       this.$message.success('修改成功')
+    },
+    getXiaoWeiArchiveStatus: async function() {
+      const res = await xiaoWeiArchiveStatus()
+      this.xiaoWeiArchiveData = res
+    },
+    getXiaoWeiUpgradeStatus: async function() {
+      const res = await xiaoWeiUpgradeStatus()
+      this.xiaoWeiUpgradeData = res
     }
   }
 }
@@ -302,38 +320,23 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
-  .p-form-general_row {
-    display: flex;
-    align-items: flex-end;
-  }
-  .p-form-input_width {
-    width: 240px;
-    @media screen and (min-width: 1440px) {
-      width: 290px;
-    }
-  }
-  .p-form-general_label {
-    margin-left: 80px;
-  }
-  .el-col-3 .el-form-item {
-    float: right;
-  }
-}
-.data-box {
-  .e-general_tabOrange {
-    color: #ff6010;
-    cursor: pointer;
-  }
-  .e-popover_con {
-    margin-left: 12px;
-  }
-  .archive-table-oneline {
-    overflow: hidden;
-    white-space: nowrap;
-    text-overflow: ellipsis;
-  }
 }
 .p {
+  &-general {
+    &_row {
+      display: flex;
+      align-items: flex-end;
+    }
+    &_formWidth {
+      width: 240px;
+    }
+    &_fr {
+      float: right;
+    }
+    &_btnLabel {
+      text-align: right;
+    }
+  }
   &-count {
     &-con {
       min-height: 34px;
@@ -360,5 +363,36 @@ export default {
       }
     }
   }
+}
+
+.e {
+  &-general {
+    &-btn {
+      padding: 8px 13px;
+    }
+    &-add {
+      padding: 8px 15.5px;
+    }
+    &_tabOrange {
+      color: #ff6010;
+      cursor: pointer;
+    }
+  }
+  &-popover {
+    &_con {
+      margin-left: 12px;
+    }
+    &_prompt {
+      margin-bottom: 15px;
+    }
+    &_action {
+      text-align: right;
+    }
+  }
+}
+.archive-table-oneline {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
 }
 </style>

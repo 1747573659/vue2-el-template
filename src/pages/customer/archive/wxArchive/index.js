@@ -1,26 +1,42 @@
-export const statusOptions = [
+export  const  merchantTypeOptions = [
+  { value: '', label: '全部' },
+  { value: 0, label: '小微' },
+  { value: 1, label: '个体商户' },
+  { value: 2, label: '企业' }
+]
+
+export const auditStatusOptions = [
   { value: '', label: '全部' },
   { value: 0, label: '草稿' },
-  { value: 1, label: '未通过审核编辑中' },
-  { value: 2, label: '待审核' },
-  { value: 3, label: '平台审核中' },
-  { value: 4, label: '未通过审核' },
-  { value: 5, label: '账号申请中' },
-  { value: 6, label: '账号部分申请通过' },
-  { value: 7, label: '账号全部申请通过' }
-]
-export const countOptions = [
-  { value: 0, label: '草稿', total: 0 },
-  { value: 2, label: '待审核', total: 0 },
-  { value: 3, label: '平台审核中', total: 0 },
-  { value: 1, label: '未通过审核编辑中', total: 0 },
-  { value: 4, label: '未通过审核', total: 0 }
+  { value: 1, label: '渠道审核未通过' },
+  { value: 2, label: '待渠道审核' },
+  { value: 3, label: '待平台审核' },
+  { value: 4, label: '平台审核未通过' },
+  { value: 5, label: '申请中' },
+  { value: 6, label: '编辑中' },
+  { value: 7, label: '审核中' },
+  { value: 8, label: '已驳回' },
+  { value: 9, label: '资料校验中' },
+  { value: 10, label: '待验证' },
+  { value: 11, label: '待签约' },
+  { value: 12, label: '开通权限中' },
+  { value: 13, label: '已完成' },
+  { value: 14, label: '已作废' },
+  { value: 15, label: '已冻结' },
 ]
 
 export const deactivateOptions = [
   { value: '', label: '全部' },
   { value: 1, label: '是' },
   { value: 0, label: '否' }
+]
+
+export const countOptions = [
+  { value: 0, label: '草稿', total: 0 },
+  { value: 2, label: '待审核', total: 0 },
+  { value: 3, label: '平台审核中', total: 0 },
+  { value: 1, label: '未通过审核编辑中', total: 0 },
+  { value: 4, label: '未通过审核', total: 0 }
 ]
 
 export const detailOptions = [
