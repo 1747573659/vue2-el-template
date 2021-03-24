@@ -64,7 +64,7 @@
               >
               </select-page>
             </el-form-item>
-          </el-col> 享钱开通状态-->
+          </el-col> 享钱开通状态 要看代码是否合并过去了-->
           <el-col :span="8">
             <el-form-item label="享钱开通状态:">
               <el-select style="width:100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
