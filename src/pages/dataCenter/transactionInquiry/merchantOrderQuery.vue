@@ -20,6 +20,7 @@
             <el-form-item label="交易时间">
               <el-date-picker
                 :clearable="false"
+                @blur="datePickerBlur"
                 :default-time="['00:00:00', '23:59:59']"
                 :picker-options="pickerOptions"
                 end-placeholder="结束日期"
@@ -217,7 +218,8 @@ import {
 } from '@/api/transtionManagement'
 import { downloadBufferFile } from '@/utils/index'
 import selectCopy from '@/components/selectCopy'
-
+let minTime = ''
+let maxTime = ''
 export default {
   name: 'merchantOrderQuery',
   components: {
@@ -273,19 +275,59 @@ export default {
       // 选择弹窗
 
       pickerOptions: {
-        disabledDate(time) {
+        onPick: ({ maxDate, minDate }) => {
+          if (minDate) {
+            const day31 = 31 * 24 * 3600 * 1000
+            maxTime = minDate.getTime() + day31
+            minTime = minDate.getTime() - day31
+          }
+        },
+        disabledDate: time => {
+          if (maxTime) {
+            return (
+              time.getTime() >=
+                moment()
+                  .endOf('day')
+                  .valueOf() ||
+              time.getTime() <=
+                moment()
+                  .subtract(12, 'months')
+                  .valueOf() ||
+              time.getTime() >= maxTime ||
+              time.getTime() <= minTime
+            )
+          }
           return (
-            time.getTime() >
+            time.getTime() >=
               moment()
                 .endOf('day')
                 .valueOf() ||
-            time.getTime() <
+            time.getTime() <=
               moment()
                 .subtract(12, 'months')
                 .valueOf()
           )
         }
       }
+    }
+  },
+  watch: {
+    'formData.transactionTime': {
+      handler(newVal, oldVal) {
+        console.log('obj.a changed')
+        if (newVal === null) {
+          this.formData.transactionTime = [
+            moment()
+              .startOf('day')
+              .valueOf(),
+            moment()
+              .endOf('day')
+              .valueOf()
+          ]
+        }
+      },
+      immediate: true,
+      deep: true
     }
   },
   computed: {
@@ -341,6 +383,10 @@ export default {
     this.$refs.endAmount.$el.childNodes[2].childNodes[1].value = ''
   },
   methods: {
+    datePickerBlur() {
+      maxTime = ''
+      minTime = ''
+    },
     remoteMethod(value) {
       // 当没有输入任何值或者输入新的值的时候，就把相关数据进行情况
       if (!value || (this.searchString !== '' && value !== this.searchString)) {
@@ -617,7 +663,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;

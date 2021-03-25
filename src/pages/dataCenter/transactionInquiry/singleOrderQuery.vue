@@ -28,6 +28,7 @@
             </el-form-item>
             <el-form-item label="交易时间" class="xdd_form_item">
               <el-date-picker
+                @blur="datePickerBlur"
                 size="small"
                 :clearable="false"
                 :default-time="['00:00:00', '23:59:59']"
@@ -200,6 +201,10 @@ export default {
     }
   },
   methods: {
+    datePickerBlur() {
+      maxTime = ''
+      minTime = ''
+    },
     async handleDelRow(row) {
       this.dialogForm = {}
       const data = {
