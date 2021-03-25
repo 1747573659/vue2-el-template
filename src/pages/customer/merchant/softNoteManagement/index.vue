@@ -91,7 +91,7 @@
           </el-col>
           <el-col :span="8">
             <el-form-item style="padding-left: 30px;">
-              <el-button @click="authShopPage()" size="small" type="primary">查询</el-button>
+              <el-button @click="handleCurrentChange(1)" size="small" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
