@@ -724,10 +724,8 @@
     </div>
     <div class="bottom">
       <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
-      <el-button v-if="([undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy) && !isDetail" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn"
-        >保存</el-button
-      >
-      <el-button v-if="([2].includes(auditStatus) || isCopy) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
+      <el-button v-if="([undefined, 0, 1, 2, 4, 8, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && !isDetail" @click="toSave" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      <el-button v-if="([2, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && isDetail" @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
       <el-button v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div>
@@ -1072,7 +1070,7 @@ export default {
       this.isCopy = true
     }
     this.auditStatus = this.$route.query.auditStatus && Number(this.$route.query.auditStatus)
-    if ([2, 3, 5, 6, 7, 9].includes(this.auditStatus)) {
+    if ([2, 3, 5, 6, 7, 9, 10, 11].includes(this.auditStatus)) {
       this.isDetail = true
     }
     if (this.$route.query.id) {
@@ -1433,7 +1431,7 @@ export default {
         this.$refs.form.validate(async valid => {
           if (valid) handleSubReview()
         })
-      } 
+      }
     },
     toRefuse() {
       this.refuseForm.remark = ''
