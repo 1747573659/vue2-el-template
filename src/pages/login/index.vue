@@ -21,7 +21,7 @@
           <el-button type="primary" :loading="isLoading" @click.native="handleSubmitCode" class="e-form_btn">登录</el-button>
           <div class="p-login_regist">
             登录即代表你同意
-            <a href="http://ceshi-file-oss.oss-cn-hangzhou.aliyuncs.com/legalNotices/privacyPolicy.html" target="_blank">《用户使用协议》</a>
+            <a href="https://file-sso.oss-cn-hangzhou.aliyuncs.com/front/legalNotices/privacyPolicy.html" target="_blank">《用户使用协议》</a>
           </div>
         </div>
       </section>
