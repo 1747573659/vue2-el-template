@@ -105,41 +105,29 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="right" width="190">
           <template slot-scope="scope">
-            <el-button
-              type="text"
-              size="small"
-              v-if="scope.row.archiveBaseDTO.auditStatus === 2"
-              v-permission="'WXARCHIVE_LIST_EDIT'"
-              @click="handlePushDetail({ status: 'edit' }, scope.row)"
-              >审核</el-button
-            >
-            <el-button
-              type="text"
-              size="small"
-              v-else-if="[0, 1, 4, 6, 8].includes(scope.row.archiveBaseDTO.auditStatus)"
-              v-permission="'WXARCHIVE_LIST_EDIT'"
-              @click="handlePushDetail({ status: 'edit' }, scope.row)"
-              >编辑</el-button
-            >
+            <template v-if="scope.row.archiveBaseDTO.auditStatus === 2">
+              <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)">审核</el-button>
+            </template>
+            <template v-else-if="[0, 1, 4, 6, 8].includes(scope.row.archiveBaseDTO.auditStatus)">
+              <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+            </template>
             <el-button type="text" size="small" v-else @click="handlePushDetail({ status: 'detail' }, scope.row)">详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
-            <el-popconfirm
-              class="e-popover_con"
-              @confirm="handleDraftList(scope)"
-              placement="top-start"
-              title="确定删除所选数据吗？"
-              v-if="scope.row.archiveBaseDTO.auditStatus === 0"
-            >
-              <el-button type="text" size="small" slot="reference">删除</el-button>
-            </el-popconfirm>
+            <template v-if="scope.row.archiveBaseDTO.auditStatus === 0">
+              <el-popconfirm class="e-popover_con" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
+                <el-button type="text" size="small" slot="reference">删除</el-button>
+              </el-popconfirm>
+            </template>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-else @click="handleStopUse(scope.row)">
               <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</span>
             </el-button>
             <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 3">撤销</el-button>
-            <template v-if="[10, 11].includes(scope.row.archiveBaseDTO.auditStatus)">
-              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 10 && scope.row.archiveBaseDTO.merchantType === 0">验证账号</el-button>
-              <el-button type="text" size="small" v-else-if="scope.row.archiveBaseDTO.auditStatus === 11 && scope.row.archiveBaseDTO.merchantType === 0">立即验证</el-button>
-              <el-button type="text" size="small" v-else>申请进度</el-button>
+            <template v-if="scope.row.archiveBaseDTO.merchantType === 0">
+              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 10" @click="handleCheckAccount(scope.row)">验证账号</el-button>
+              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 11" @click="handleSignUp(scope.row)">立即签约</el-button>
+            </template>
+            <template v-else-if="[10, 11].includes(scope.row.archiveBaseDTO.auditStatus) && scope.row.archiveBaseDTO.merchantType !== 0">
+              <el-button type="text" size="small">申请进度</el-button>
             </template>
           </template>
         </el-table-column>
@@ -157,6 +145,39 @@
         </el-pagination>
       </div>
     </div>
+
+    <!-- 升级签约/立即签约 -->
+    <el-dialog append-to-body :visible.sync="signUpVisible" width="30%" custom-class="e-sign-dialog">
+      <section class="e-sign-body">
+        <header>
+          <p>当前入驻申请已通过</p>
+          <p>请{{ signUpData.legalPersonName }}（本人）微信扫码完成签约</p>
+        </header>
+        <div>
+          <img :src="signUpData.QRcode" alt="签约二维码" style="width:200px;height:200px" />
+        </div>
+        <section>
+          <p>商户名称：{{ signUpData.merchantShortName }}</p>
+          <p>门店名称：{{ signUpData.companyName }}</p>
+          <p>结算银行卡：{{ signUpData.bankCard }}</p>
+        </section>
+      </section>
+    </el-dialog>
+
+    <!-- 验证账户 -->
+    <el-dialog append-to-body title="验证账户" :visible.sync="checkAccountVisible" width="40%">
+      <section>
+        <div class="p-account-item" v-for="(item, index) in checkAccountData" :key="index">
+          <p>{{item.label}}：{{item.value}}</p>
+        </div>
+        <el-alert :title="`温馨提醒：请在${checkAccountData[6].deadlineTime}前，使用用上方的付款账号，向指定的收款账号汇入${checkAccountData[1].payAmount}元，以完成账户验证，过期未验证账户则入驻失败！`"
+          type="warning"
+          show-icon
+          :closable="false"
+          style="margin: 20px 0"
+        ></el-alert>
+      </section>
+    </el-dialog>
   </section>
 </template>
 
@@ -165,7 +186,8 @@ import { mapActions } from 'vuex'
 import { filterStatus } from './filters'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 import { merchantTypeOptions, auditStatusOptions, deactivateOptions, countOptions } from './index'
-import { queryPage, generalStopUse, queryTotalByStatus, delList } from '@/api/wxArchive'
+import { queryPage, generalStopUse, queryTotalByStatus, delList, generalView } from '@/api/wxArchive'
+import { queryBySubMchId } from '../../../../api/wxArchive'
 
 export default {
   name: 'wxArchive',
@@ -191,7 +213,20 @@ export default {
       tableData: [],
       currentPage: 1,
       totalPage: 0,
-      pageSize: 10
+      pageSize: 10,
+      signUpVisible: false,
+      signUpData: {},
+      checkAccountVisible: false,
+      checkAccountData: [
+        { label: '付款户名', field: 'accountName', value: '' },
+        { label: '汇款金额', field: 'payAmount', value: '' },
+        { label: '收款卡号', field: 'destinationAccountNumber', value: '' },
+        { label: '收款户名', field: 'destinationAccountName', value: '' },
+        { label: '收款账户开户行', field: 'destinationAccountBank', value: '' },
+        { label: '开户行省市', field: 'city', value: '' },
+        { label: '汇款截止时间', field: 'deadlineTime', value: '' },
+        { label: '汇款备注信息（必填）', field: 'remark', value: '' }
+      ]
     }
   },
   filters: {
@@ -209,9 +244,22 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
-    handleDraftList: async function(scope) {
+    handleCheckAccount: async function(row) {
       try {
-        await delList({ id: scope.row.archiveBaseDTO.id })
+        const res = await queryBySubMchId({ subMchId: row.subMchId })
+        if (res) {
+          this.checkAccountVisible = true
+          this.checkAccountData.forEach(item => {
+            item.value = res[item.field]
+            return item
+          })
+        } else this.$message({ type: 'error', message: '验证账户暂无结果，请稍后重试' })
+      } catch (error) {}
+    },
+    handleDelRow: async function(row) {
+      try {
+        await delList({ id: row.archiveBaseDTO.id })
+        if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
         this.handleQueryPage()
         this.handleQueryTotalByStatus()
       } catch (error) {}
@@ -227,6 +275,14 @@ export default {
           customClass: 'e-message-con'
         }).catch(() => {})
       }
+    },
+    handleSignUp: async function(row) {
+      try {
+        const res = await generalView({ id: row.id, flag: 1 })
+        this.signUpStatus = true
+        this.signUpData = row
+        this.signUpData.QRcode = 'data:image/png;base64,' + btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+      } catch (error) {}
     },
     handleQueryTabParams() {
       return {
