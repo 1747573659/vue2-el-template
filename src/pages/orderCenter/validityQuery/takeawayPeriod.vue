@@ -40,7 +40,6 @@
     </div>
     <div class="data-box">
       <base-table
-        :tableMaxHeight="tableMaxHeight"
         :columns="headers"
         :list="list"
         :loading="loading"

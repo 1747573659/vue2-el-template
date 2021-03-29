@@ -39,6 +39,9 @@
         <el-form-item label="注册时间">
           <span>{{ form.createTime }}</span>
         </el-form-item>
+        <el-form-item v-if='form.organNo' label="社区编码">
+          <span>{{ form.organNo }}</span>
+        </el-form-item>
         <el-form-item label="">
           <el-button class="channel-baseinfo-save" type="primary" v-permission="'BASEINFO_INDEX_EDIT'" @click="onSubmit">保存</el-button>
         </el-form-item>
@@ -220,7 +223,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.data-box{
+.data-box {
   border-top: 16px solid#f7f8fa;
 }
 .km-setting-baseInfo {

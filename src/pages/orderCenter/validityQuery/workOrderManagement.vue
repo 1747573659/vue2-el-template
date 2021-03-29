@@ -6,13 +6,11 @@
           <el-button v-if="showAdd" v-permission="'WORKORDERMANAGEMENT_ADD'" @click="handlePlus" icon="el-icon-plus" type="primary" size="small" plain class="float_right"
             >新增</el-button
           >
-          <router-link to=""></router-link>
         </template>
       </query-group>
     </div>
     <div class="data-box">
       <base-table
-        :tableMaxHeight="tabMaxHeight"
         :columns="headers"
         :list="list"
         @getList="queryWorkOrderList"
@@ -31,7 +29,7 @@ import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
 import moment from 'moment'
-import { addWorkOrder, queryProductList, queryAgent, queryWorkOrderList, queryOrderDetail } from '@/api/dataCenter/dataCenter.js'
+import { queryProductList,queryWorkOrderList } from '@/api/dataCenter/dataCenter.js'
 import { mapActions } from 'vuex'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
@@ -173,7 +171,7 @@ export default {
   methods: {
     ...mapActions(['delCachedView']),
     handlePlus() {
-      this.delCachedView({ name: 'workOrderManagementdetail' }).then(()=> {
+      this.delCachedView({ name: 'workOrderManagementdetail' }).then(() => {
         this.$router.push({ path: '/customer/workorder/workOrderManagementdetail' })
       })
     },
@@ -227,7 +225,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;

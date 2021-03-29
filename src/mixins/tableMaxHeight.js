@@ -21,9 +21,9 @@ const tableMaxHeight = {
         const mainHeight = document.documentElement.clientHeight
         const headHeight = document.querySelector('.p-head').offsetHeight
         const tagHeight = document.querySelector('.p-tags_con').offsetHeight
-        const searchBoxHeight = document.querySelector('.search-box')?.offsetHeight ?? 0
-        const pageHeight = document.querySelector('.km-page-block')?.offsetHeight ?? 0
-        this.tabMaxHeight = mainHeight - headHeight - tagHeight - searchBoxHeight - pageHeight - 32 - 16
+        const searchBoxHeight = document.querySelector('.search-box').offsetHeight || 0
+        const pageHeight = document.querySelector('.km-page-block').offsetHeight || 0
+        this.tabMaxHeight = mainHeight - headHeight - tagHeight - searchBoxHeight - pageHeight - 33
       }, 100)
     }
   }

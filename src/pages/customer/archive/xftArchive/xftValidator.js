@@ -9,7 +9,6 @@ export default function xftValidator() {
   return {
     'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户', trigger: 'change' }],
     'archiveBaseVO.merchantType': [{ required: true, message: '请选择商户类型', trigger: 'change' }],
-    'archiveBaseVO.superCode': [{ required: true, message: '请选择是否开通超级码', trigger: 'change' }],
     'archiveBaseVO.companyName': [{ required: true, message: '请输入公司名称', trigger: 'blur' }],
     'archiveBaseVO.merchantShortName': [{ required: true, message: '请输入商户简称', trigger: 'blur' }],
     'archiveBaseVO.province': [{ required: true, message: '请选择地区', trigger: 'change' }],

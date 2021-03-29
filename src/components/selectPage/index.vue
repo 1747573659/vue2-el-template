@@ -147,6 +147,7 @@ export default {
       this.$emit('change', value)
     },
     clear() {
+      document.getElementById(this.domID).value = ''
       this.$emit('clear')
     },
     focus() {

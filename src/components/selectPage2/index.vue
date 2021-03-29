@@ -168,6 +168,7 @@ export default {
       }
     },
     clear() {
+      document.getElementById(this.domID).value = ''
       this.page = 1
       this.options = []
       this.remoteMethod()

@@ -1,5 +1,5 @@
 <template>
-  <div class="app-container">
+  <div>
     <div class="search-box">
       <div class="xdd_tip"><i class="el-icon-info"></i>单次查询月份的最长跨度为6个月</div>
       <query-group className="xdd-btn-block__w240" :isClearable="false" :queryFormList.sync="queryFormList" :queryParams="queryParams" @search="handleFilter" :timeinterval="6">
@@ -61,8 +61,6 @@
         </el-col>
       </el-row>
       <base-table
-        :hasMaxHeight="false"
-        :tableMaxHeight="tableMaxHeight"
         :columns="headers"
         :list="list"
         :total="total"
@@ -78,14 +76,10 @@ import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
 import { queryAgentPageNew } from '@/api/customer/agent'
-import {
-  queryNewAgentPage,
-} from "@/api/dataCenter/historiyTrade";
+import { queryNewAgentPage } from "@/api/dataCenter/historiyTrade";
 import { userdataCount } from '@/api/dataCenter/userData.js'
 import selectPage from '@/components/selectPage2/index.vue'
-import { downloadBufferFile } from '@/utils'
 import moment from 'moment'
-const DOWNLOAD_URL = process.env.VUE_APP_BASE_API
 
 export default {
   name: 'newStatistics',
@@ -159,11 +153,6 @@ export default {
         }
       ]
     }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 120.5 - 32 - 16 - 108 - 20 - 36 - 40
-    },
   },
   methods: {
     handleFilter(e) {

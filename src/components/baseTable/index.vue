@@ -1,60 +1,55 @@
 <template>
   <div class="base-table-container">
-    <el-row>
-      <el-col :span="24">
-        <el-table :max-height="hasMaxHeight ? tableMaxHeight : 'auto'" v-loading="loading" :data="list" @selection-change="handleSelectionChange" v-bind="$attrs">
-          <!--   -->
-          <template v-for="(column, index) in columns">
-            <!-- 复选框 -->
-            <el-table-column :key="index" v-if="column.type === 'selection'" type="selection" width="55"></el-table-column>
-            <!-- 序号 -->
-            <el-table-column :key="index" v-else-if="column.type === 'index'" type="index" :index="continuousIndex" width="60" label="序号"></el-table-column>
-            <!-- 具体内容 -->
-            <el-table-column :key="index" v-else :align="column.position" :label="column.title" :width="column.width" :show-overflow-tooltip="column.showOverflowTooltip">
-              <template slot-scope="scope">
-                <!-- 仅仅显示文字 -->
-                <label v-if="!column.hidden">
-                  <!-- 如果hidden为true的时候 那么当前格可以不显示，可以选择显示自定义的slot-->
-                  <!-- 操作按钮 -->
-                  <label v-if="column.type === 'operate'">
-                    <template v-for="(operate, index) in column.operates">
-                      <el-button
-                        :key="index"
-                        v-if="operate.escape && operate.escape(scope.row).isShow !== undefined ? operate.escape(scope.row).isShow : true"
-                        :disabled="(operate.escape && operate.escape(scope.row).disabled) || false"
-                        @click="handleClick(operate, scope.row)"
-                        type="text"
-                        size="small"
-                        >{{ (operate.escape && operate.escape(scope.row).text) || operate.name }}</el-button
-                      >
-                    </template>
-                  </label>
-                  <!-- 文字内容 可转码 -->
-                  <span v-else>{{ (column.escape && column.escape(scope.row)) || scope.row[column.key] }}</span>
-                </label>
-                <!-- 使用slot的情况下 -->
-                <label v-if="column.slot">
-                  <!-- 具名slot -->
-                  <slot v-if="column.slot" :name="column.slot" :scope="scope"></slot>
-                </label>
-              </template>
-            </el-table-column>
+    <el-table :max-height="tabMaxHeight" v-loading="loading" :data="list" @selection-change="handleSelectionChange" v-bind="$attrs">
+      <template v-for="(column, index) in columns">
+        <!-- 复选框 -->
+        <el-table-column :key="index" v-if="column.type === 'selection'" type="selection" width="55"></el-table-column>
+        <!-- 序号 -->
+        <el-table-column :key="index" v-else-if="column.type === 'index'" type="index" :index="continuousIndex" width="60" label="序号"></el-table-column>
+        <!-- 具体内容 -->
+        <el-table-column :key="index" v-else :align="column.position" :label="column.title" :width="column.width" :show-overflow-tooltip="column.showOverflowTooltip">
+          <template slot-scope="scope">
+            <!-- 仅仅显示文字 -->
+            <label v-if="!column.hidden">
+              <!-- 如果hidden为true的时候 那么当前格可以不显示，可以选择显示自定义的slot-->
+              <!-- 操作按钮 -->
+              <label v-if="column.type === 'operate'">
+                <template v-for="(operate, index) in column.operates">
+                  <el-button
+                    :key="index"
+                    v-if="operate.escape && operate.escape(scope.row).isShow !== undefined ? operate.escape(scope.row).isShow : true"
+                    :disabled="(operate.escape && operate.escape(scope.row).disabled) || false"
+                    @click="handleClick(operate, scope.row)"
+                    type="text"
+                    size="small"
+                    >{{ (operate.escape && operate.escape(scope.row).text) || operate.name }}</el-button
+                  >
+                </template>
+              </label>
+              <!-- 文字内容 可转码 -->
+              <span v-else>{{ (column.escape && column.escape(scope.row)) || scope.row[column.key] }}</span>
+            </label>
+            <!-- 使用slot的情况下 -->
+            <label v-if="column.slot">
+              <!-- 具名slot -->
+              <slot v-if="column.slot" :name="column.slot" :scope="scope"></slot>
+            </label>
           </template>
-          <!--默认的slot -->
-          <slot></slot>
-        </el-table>
-        <pagination
-          v-if="paginationShow"
-          v-show="total > 0"
-          :total="total"
-          :page.sync="currentPage"
-          :limit.sync="pageSizes"
-          :auto-scroll="false"
-          position="right"
-          @pagination="getList"
-        ></pagination>
-      </el-col>
-    </el-row>
+        </el-table-column>
+      </template>
+      <!--默认的slot -->
+      <slot></slot>
+    </el-table>
+    <pagination
+      v-if="paginationShow"
+      v-show="total > 0"
+      :total="total"
+      :page.sync="currentPage"
+      :limit.sync="pageSizes"
+      :auto-scroll="false"
+      position="right"
+      @pagination="getList"
+    ></pagination>
   </div>
 </template>
 
@@ -91,18 +86,12 @@
  */
 
 import Pagination from '@/components/Pagination'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
+  mixins: [tableMaxHeight],
   components: { Pagination },
   props: {
-    hasMaxHeight:{
-      type: Boolean,
-      default: true
-    },
-    tableMaxHeight:{
-      type: Number,
-      default: 300
-    },
     // 核心数据
     list: {
       type: Array,
@@ -154,6 +143,19 @@ export default {
     }
   },
   methods: {
+    tableMaxHeight() {
+      let timer
+      if (timer) clearTimeout(timer)
+      timer = setTimeout(() => {
+        const mainHeight = document.documentElement.clientHeight
+        const headHeight = document.querySelector('.p-head').offsetHeight
+        const tagHeight = document.querySelector('.p-tags_con').offsetHeight
+        const searchBoxHeight = document.querySelector('.search-box').offsetHeight || 0
+        const pageHeight = document.querySelector('.km-page-block').offsetHeight || 0
+        const basePageHeight = this.$route.name === 'newStatistics' ? 190 : 60
+        this.tabMaxHeight = mainHeight - headHeight - tagHeight - searchBoxHeight - pageHeight - 33 - basePageHeight
+      }, 100)
+    },
     // 让index序号连续
     continuousIndex(index) {
       return index + (this.currentPage - 1) * this.pageSizes + 1

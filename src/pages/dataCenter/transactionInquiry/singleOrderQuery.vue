@@ -1,7 +1,9 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <div class="xdd_tip"><i class="el-icon-info"></i> 至少输入一个订单号，支付订单号无需选择交易时间，其他订单号必须选择交易时间； 只支持查询近一年内的交易流水</div>
+      <div class="xdd_tip">
+        <i class="el-icon-info"></i> 至少输入一个订单号，支付订单号无需选择交易时间，其他订单号必须选择交易时间； 只支持查询近半年内的交易流水，单次查询日期的最长跨度为31天
+      </div>
       <el-form :inline="true" @submit.native.prevent label-width="100px" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col :span="24">
@@ -26,6 +28,7 @@
             </el-form-item>
             <el-form-item label="交易时间" class="xdd_form_item">
               <el-date-picker
+                @blur="datePickerBlur"
                 size="small"
                 :clearable="false"
                 :default-time="['00:00:00', '23:59:59']"
@@ -82,7 +85,7 @@
         <el-table-column label="门店名称" prop="storeName"></el-table-column>
         <el-table-column label="收银员" prop="workerName">
           <template slot-scope="scope">
-            {{ scope.row.workerName ? scope.row.workerName : '没有' }}
+            {{ scope.row.workerName ? scope.row.workerName : '' }}
           </template>
         </el-table-column>
         <el-table-column label="支付方式" prop="methodPluginName"></el-table-column>
@@ -155,32 +158,32 @@ export default {
       pickerOptions: {
         onPick: ({ maxDate, minDate }) => {
           if (minDate) {
-            const day30 = 30 * 24 * 3600 * 1000
-            maxTime = minDate.getTime() + day30
-            minTime = minDate.getTime() - day30
+            const day31 = 31 * 24 * 3600 * 1000
+            maxTime = minDate.getTime() + day31
+            minTime = minDate.getTime() - day31
           }
         },
         disabledDate: time => {
           if (maxTime) {
             return (
-              time.getTime() >
+              time.getTime() >=
                 moment()
                   .endOf('day')
                   .valueOf() ||
-              time.getTime() <
+              time.getTime() <=
                 moment()
                   .subtract(6, 'months')
                   .valueOf() ||
-              time.getTime() > maxTime ||
-              time.getTime() < minTime
+              time.getTime() >= maxTime ||
+              time.getTime() <= minTime
             )
           }
           return (
-            time.getTime() >
+            time.getTime() >=
               moment()
                 .endOf('day')
                 .valueOf() ||
-            time.getTime() <
+            time.getTime() <=
               moment()
                 .subtract(6, 'months')
                 .valueOf()
@@ -198,6 +201,10 @@ export default {
     }
   },
   methods: {
+    datePickerBlur() {
+      maxTime = ''
+      minTime = ''
+    },
     async handleDelRow(row) {
       this.dialogForm = {}
       const data = {
@@ -311,7 +318,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;

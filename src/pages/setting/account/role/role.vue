@@ -14,7 +14,7 @@
       </el-form>
     </div>
     <div class="data-box">
-      <el-table v-loading="tableLoading" :max-height="tableMaxHeight" :data="tableData" style="width: 100%">
+      <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableData" style="width: 100%">
         <el-table-column prop="name" label="角色名称"> </el-table-column>
         <el-table-column prop="remark" label="描述"> </el-table-column>
         <el-table-column prop="num" label="关联账号数量" header-align="left" align="right">
@@ -59,9 +59,11 @@
 <script>
 import { queryPage, deleteSysRole } from '@/api/setting/account'
 import { mapActions } from 'vuex'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'roleManagement',
+  mixins: [tableMaxHeight],
   data() {
     return {
       form: {
@@ -135,11 +137,6 @@ export default {
         this.cxLoading = false
         this.tableLoading = false
       }
-    }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 116
     }
   }
 }
