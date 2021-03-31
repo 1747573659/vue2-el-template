@@ -1,6 +1,6 @@
 export  const  merchantTypeOptions = [
   { value: '', label: '全部' },
-  { value: 0, label: '小微' },
+  { value: 5, label: '小微' },
   { value: 1, label: '个体商户' },
   { value: 2, label: '企业' }
 ]
@@ -33,10 +33,10 @@ export const deactivateOptions = [
 
 export const countOptions = [
   { value: 0, label: '草稿', total: 0 },
-  { value: 2, label: '待审核', total: 0 },
-  { value: 3, label: '平台审核中', total: 0 },
-  { value: 1, label: '未通过审核编辑中', total: 0 },
-  { value: 4, label: '未通过审核', total: 0 }
+  { value: 2, label: '待渠道审核', total: 0 },
+  { value: 3, label: '待平台审核', total: 0 },
+  { value: 1, label: '渠道审核未通过', total: 0 },
+  { value: 4, label: '平台审核未通过', total: 0 }
 ]
 
 export const detailOptions = [
@@ -106,10 +106,9 @@ export const formObj = {
   archiveBaseVO: {
     userId: '',
     merchantId: '', // 商户
-    archiveType: 1, // 进件类型
     publicId: '', // 公众号APPID
     appletId: '', // 小程序APPID
-    merchantType: 1, // 商户类型
+    merchantType: 5, // 商户类型
     companyName: '', // 公司名称
     merchantShortName: '', // 商户简称
     province: '', // 省
@@ -155,7 +154,9 @@ export const formObj = {
     bankAccountName: '', //账户名
     bankProvince: '', //银行所在省
     bankCity: '', //银行所在市
-    bankArea: '' //银行所在地区
+    bankArea: '', //银行所在地区
+    acctType: 1, // 账户类型
+    administratorIdCard: '' // 超管证件号码
   },
   archiveOtherVO: {
     signboardUrl: '', // 门店门头照

@@ -2,11 +2,11 @@
   <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
     <header v-if="pageAction && pageAction !== 'add' && $route.query.status !== 'copy'">
       <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
-        <el-col :span="12" v-if="form.archiveBaseVO.auditStatus !== ''">
+        <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus !== ''">
           <label>进件状态：</label>
-          <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.auditStatus | filterReview }}</span>
+          <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
         </el-col>
-        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [1, 4].includes(form.archiveBaseVO.auditStatus)">
+        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [1, 4].includes(form.archiveBaseVO.directAuditStatus)">
           <label>审核结果：</label>
           <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
             <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
@@ -40,9 +40,9 @@
         </el-row>
         <el-row>
           <el-col :span="12">
-            <el-form-item label="商户类型" prop="archiveBaseVO.archiveType">
-              <el-radio-group v-model="form.archiveBaseVO.archiveType" @change="handleArchiveType">
-                <el-radio :label="9">
+            <el-form-item label="商户类型" prop="archiveBaseVO.merchantType">
+              <el-radio-group v-model="form.archiveBaseVO.merchantType" @change="handleMerchantType">
+                <el-radio :label="5">
                   <span>小微</span>
                   <el-tooltip effect="dark" content="无营业执照、免办理工商注册登记的实体商户" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -177,7 +177,9 @@
           </el-col>
           <el-col
             :span="24"
-            v-if="form.archiveBaseVO.archiveType === 9 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)"
+            v-if="
+              form.archiveBaseVO.merchantType === 5 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)
+            "
           >
             <el-form-item label="售卖商品描述" prop="archiveExpandVO.sellShopDescribe">
               <el-input v-model="form.archiveExpandVO.sellShopDescribe" type="textarea" :autosize="{ minRows: 3 }" maxlength="140" show-word-limit style="width: 240px"></el-input>
@@ -333,7 +335,7 @@
               ></upload-pic>
             </el-form-item>
           </el-col>
-          <template v-if="form.archiveBaseVO.archiveType === 9">
+          <template v-if="form.archiveBaseVO.merchantType === 5">
             <el-col :span="12">
               <el-form-item label="经营场地证明">
                 <upload-pic
@@ -465,15 +467,15 @@
         <div class="p-wxArchive-itemTitle">结算账号</div>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="24">
-            <el-form-item label="账户类型" prop="archiveExpandVO.openingPermitUrl">
-              <el-radio-group v-model="form.archiveBaseVO.merchantType">
-                <el-radio :label="1" :disabled="form.archiveBaseVO.archiveType">
+            <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
+              <el-radio-group v-model="form.archiveBaseVO.acctType">
+                <el-radio :label="1" :disabled="form.archiveBaseVO.merchantType === 5">
                   <span>对公银行账号</span>
                   <el-tooltip effect="dark" content="你为经营者对公银行账户，请务必填写开户名为的银行账号" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
                   </el-tooltip>
                 </el-radio>
-                <el-radio :label="9" :disabled="form.archiveBaseVO.archiveType===9">
+                <el-radio :label="2" :disabled="form.archiveBaseVO.merchantType === 2">
                   <span>经营者个人银行卡</span>
                   <el-tooltip effect="dark" content="你为经营者个人银行卡，请务必填写开户名为的银行账号" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -495,7 +497,7 @@
               ></upload-pic>
             </el-form-item>
           </el-col>
-          <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 1">
+          <el-col :span="24" v-if="form.archiveBaseVO.merchantType !== 2">
             <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
               <upload-pic
                 alt="银行卡正面照"
@@ -574,8 +576,8 @@
         <div class="p-wxArchive-itemTitle">超管信息</div>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="12">
-            <el-form-item label="证件号码" prop="archiveBaseVO.fixFeeRate">
-              <el-input v-model="form.archiveBaseVO.publicId" placeholder="证件号码" style="width:240px"></el-input>
+            <el-form-item label="证件号码" prop="archiveExpandVO.administratorIdCard">
+              <el-input v-model="form.archiveExpandVO.administratorIdCard" placeholder="证件号码" style="width:240px"></el-input>
               <el-tooltip effect="dark" placement="top-start">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 <template #content>
@@ -600,18 +602,33 @@
         </el-row>
       </div>
     </el-form>
-    <div class="p-wxArchive-action" v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.auditStatus)">
-      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">通过</el-button>
-      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">撤销</el-button>
-      <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
-      <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">
-        {{ [2].includes(form.archiveBaseVO.auditStatus) && formDisabled ? '编辑' : '保存' }}
-      </el-button>
-      <template v-if="[2].includes(form.archiveBaseVO.auditStatus) && $route.query.status !== 'copy'">
-        <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
+    <div class="p-wxArchive-action">
+      <template v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
+        <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify" v-if="form.archiveBaseVO.directAuditStatus === 3">撤销</el-button>
+        <template v-else>
+          <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
+          <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
+            <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
+          </template>
+          <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">
+            {{ [1].includes(form.archiveBaseVO.directAuditStatus) && formDisabled ? '编辑' : '保存' }}
+          </el-button>
+        </template>
       </template>
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
+    <!-- dialog -->
+    <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
+      <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
+        <el-form-item label="原因" prop="remark" class="e-dialog-remark">
+          <el-input type="textarea" v-model="refundForm.remark" :rows="4" placeholder="请输入审核不能过的原因"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="isReason = false" size="small" class="e-wxArchive-action_pd">取消</el-button>
+        <el-button @click="handleRefund" type="primary" size="small" class="e-wxArchive-action_pd">确定</el-button>
+      </div>
+    </el-dialog>
     <!-- image-preview -->
     <el-image-preview
       ref="imageViewer"
@@ -631,7 +648,7 @@ import areaSelect from '@/components/areaSelect'
 import fileServer from '@/mixins/fileServe'
 import selectCopy from '@/components/selectCopy'
 import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
-import { filterReview } from './filters'
+import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, searchCompanyInfo } from '@/api/wxArchive'
@@ -645,6 +662,9 @@ export default {
     areaSelect,
     ElImagePreview,
     selectCopy
+  },
+  filters: {
+    filterStatus
   },
   data() {
     return {
@@ -675,7 +695,7 @@ export default {
         bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png')
       },
       isReason: false,
-      detailStatusArr: [0, 1, 2, 4],
+      detailStatusArr: [0, 1, 2, 3, 4, 6, 8],
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
@@ -686,11 +706,9 @@ export default {
       previewList: [],
       showViewer: false,
       imageIndex: 0,
-      isMicro: true
+      isMicro: false,
+      direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions)
     }
-  },
-  filters: {
-    filterReview
   },
   created() {
     this.form = deepClone(formObj)
@@ -708,8 +726,8 @@ export default {
     if (this.pageAction === 'detail') this.handleDetail()
   },
   methods: {
-    handleArchiveType(val) {
-      if (val !== 9) {
+    handleMerchantType(val) {
+      if (val !== 5) {
         this.isMicro = true
         this.form.archiveBaseVO.fixFeeRate = 60
       } else this.isMicro = false
@@ -827,7 +845,7 @@ export default {
             this.form.archiveBaseVO.auditTime = ''
             this.form.archiveBaseVO.bossAuditTime = ''
             this.form.archiveBaseVO.createTime = ''
-            this.form.archiveBaseVO.auditStatus = ''
+            this.form.archiveBaseVO.directAuditStatus = ''
             this.form.archiveBaseVO.useChannelCode = ''
           }
           try {
@@ -851,7 +869,7 @@ export default {
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-        if (![0, 1, 4].includes(res.archiveBaseDTO.auditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
+        if (![0, 1, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
       } catch (error) {
       } finally {
         this.isDetailLoad = false
@@ -861,14 +879,14 @@ export default {
         this.form.archiveBaseVO.id = null
         this.form.archiveExpandVO.id = null
         this.form.archiveOtherVO.id = null
-        this.form.archiveBaseVO.auditStatus = null
+        this.form.archiveBaseVO.directAuditStatus = null
         this.$nextTick(() => {
           this.$refs.form.clearValidate()
         })
       }
     },
     handleArchive() {
-      if (this.form.archiveBaseVO.auditStatus === 2 && this.formDisabled) {
+      if (this.form.archiveBaseVO.directAuditStatus === 2 && this.formDisabled) {
         this.formDisabled = false
       } else {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
@@ -878,7 +896,7 @@ export default {
                 this.form.archiveBaseVO.auditTime = ''
                 this.form.archiveBaseVO.bossAuditTime = ''
                 this.form.archiveBaseVO.createTime = ''
-                this.form.archiveBaseVO.auditStatus = ''
+                this.form.archiveBaseVO.directAuditStatus = ''
                 this.form.archiveBaseVO.useChannelCode = ''
               }
               const res = await submit(this.form)

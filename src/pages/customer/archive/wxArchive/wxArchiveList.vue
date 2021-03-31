@@ -5,10 +5,16 @@
         <section class="p-count-main" v-if="countData.length > 0">
           <img src="../../../../assets/images/icon/mark.png" alt="提示" />
           <template v-for="item in countData">
-            <div class="p-count_item" :key="item.auditStatus">{{ item.label }}：{{ item.total }}</div>
+            <div class="p-count_item" :key="item.directAuditStatus">{{ item.label }}：{{ item.value }}</div>
           </template>
         </section>
       </div>
+      <!-- <pre>{{countData}}</pre> -->
+      <!-- <count-tips-header :data="countData" color="rgba(255, 96, 16, 0.08)" bdColor="rgba(255, 96, 16, 0.4)">
+        <template #icon>
+          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
+        </template>
+      </count-tips-header> -->
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-form-general_row">
           <el-col :span="21">
@@ -32,8 +38,8 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="审核状态">
-                <el-select v-model="form.auditStatus" class="p-form-input_width" filterable clearable placeholder="全部">
-                  <el-option v-for="item in auditStatusOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-select v-model="form.directAuditStatus" class="p-form-input_width" filterable clearable placeholder="全部">
+                  <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...direAuditStatusOptions]" :key="index" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
             </el-col>
@@ -44,7 +50,7 @@
                 </el-select>
               </el-form-item>
               <el-form-item label="商户号">
-                <el-input v-model.trim="form.businesNumber" class="p-form-input_width" maxlength="50" clearable placeholder="商户号"></el-input>
+                <el-input v-model.trim="form.channelMchId" class="p-form-input_width" maxlength="50" clearable placeholder="商户号"></el-input>
               </el-form-item>
               <el-form-item label="商户信息">
                 <el-input v-model.trim="form.msg" class="p-form-input_width" maxlength="50" clearable placeholder="商户/公司名称/商户简称/银行卡号/资料ID"></el-input>
@@ -88,8 +94,8 @@
         </el-table-column>
         <el-table-column label="审核状态">
           <template slot-scope="scope">
-            <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.auditStatus === 4 }" @click="handleReason(scope.row)">
-              {{ scope.row.archiveBaseDTO.auditStatus | filterStatus(auditStatusOptions) }}
+            <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.directAuditStatus === 4 }" @click="handleReason(scope.row)">
+              {{ scope.row.archiveBaseDTO.directAuditStatus | filterStatus(direAuditStatusOptions) }}
             </span>
           </template>
         </el-table-column>
@@ -103,17 +109,17 @@
             <span>{{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="操作" fixed="right" align="right" width="190">
+        <el-table-column label="操作" fixed="right" align="right" width="210">
           <template slot-scope="scope">
-            <template v-if="scope.row.archiveBaseDTO.auditStatus === 2">
+            <template v-if="scope.row.archiveBaseDTO.directAuditStatus === 1">
               <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)">审核</el-button>
             </template>
-            <template v-else-if="[0, 1, 4, 6, 8].includes(scope.row.archiveBaseDTO.auditStatus)">
+            <template v-else-if="[0, 2, 4, 6, 8].includes(scope.row.archiveBaseDTO.directAuditStatus)">
               <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_EDIT'" @click="handlePushDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button type="text" size="small" v-else @click="handlePushDetail({ status: 'detail' }, scope.row)">详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
-            <template v-if="scope.row.archiveBaseDTO.auditStatus === 0">
+            <template v-if="scope.row.archiveBaseDTO.directAuditStatus === 0">
               <el-popconfirm class="e-popover_con" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
                 <el-button type="text" size="small" slot="reference">删除</el-button>
               </el-popconfirm>
@@ -121,12 +127,12 @@
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-else @click="handleStopUse(scope.row)">
               <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</span>
             </el-button>
-            <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 3">撤销</el-button>
-            <template v-if="scope.row.archiveBaseDTO.merchantType === 0">
-              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 10" @click="handleCheckAccount(scope.row)">验证账号</el-button>
-              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.auditStatus === 11" @click="handleSignUp(scope.row)">立即签约</el-button>
+            <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 3" @click="handleDirectAuditStatus(scope.row)">撤销</el-button>
+            <template v-if="scope.row.archiveBaseDTO.merchantType === 5">
+              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 10" @click="handleCheckAccount(scope.row)">验证账号</el-button>
+              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 11" @click="handleSignUp(scope.row)">立即签约</el-button>
             </template>
-            <template v-else-if="[10, 11].includes(scope.row.archiveBaseDTO.auditStatus) && scope.row.archiveBaseDTO.merchantType !== 0">
+            <template v-else-if="[7, 10, 11].includes(scope.row.archiveBaseDTO.directAuditStatus)">
               <el-button type="text" size="small">申请进度</el-button>
             </template>
           </template>
@@ -168,9 +174,12 @@
     <el-dialog append-to-body title="验证账户" :visible.sync="checkAccountVisible" width="40%">
       <section>
         <div class="p-account-item" v-for="(item, index) in checkAccountData" :key="index">
-          <p>{{item.label}}：{{item.value}}</p>
+          <p>{{ item.label }}：{{ item.value }}</p>
         </div>
-        <el-alert :title="`温馨提醒：请在${checkAccountData[6].deadlineTime}前，使用用上方的付款账号，向指定的收款账号汇入${checkAccountData[1].payAmount}元，以完成账户验证，过期未验证账户则入驻失败！`"
+        <el-alert
+          :title="
+            `温馨提醒：请在${checkAccountData[6].deadlineTime}前，使用用上方的付款账号，向指定的收款账号汇入${checkAccountData[1].payAmount}元，以完成账户验证，过期未验证账户则入驻失败！`
+          "
           type="warning"
           show-icon
           :closable="false"
@@ -185,27 +194,40 @@
 import { mapActions } from 'vuex'
 import { filterStatus } from './filters'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
-import { merchantTypeOptions, auditStatusOptions, deactivateOptions, countOptions } from './index'
-import { queryPage, generalStopUse, queryTotalByStatus, delList, generalView } from '@/api/wxArchive'
-import { queryBySubMchId } from '../../../../api/wxArchive'
+import { merchantTypeOptions, deactivateOptions, countOptions } from './index'
+import {
+  queryPage,
+  generalStopUse,
+  queryTotalByStatus,
+  delList,
+  generalView,
+  queryArchiveDirectAuditStatus,
+  queryBySubMchId,
+  generalDetail,
+  updateArchiveBaseDirectAuditStatus
+} from '@/api/wxArchive'
+import countTipsHeader from '../components/tipsHeader'
 
 export default {
   name: 'wxArchive',
   mixins: [tableMaxHeight],
+  // components: {
+  //   countTipsHeader
+  // },
   data() {
     return {
       merchantTypeOptions,
-      auditStatusOptions,
       deactivateOptions,
       countOptions,
+      direAuditStatusOptions: [],
       countData: [],
       form: {
         createTime: '',
         merchantType: '',
-        auditStatus: '',
-        businesNumber: '',
-        msg: '',
+        directAuditStatus: '',
         stopUse: 0,
+        channelMchId: '',
+        msg: '',
         sortStatus: 'desc'
       },
       isSearchLock: false, // 锁状态
@@ -241,12 +263,74 @@ export default {
     this.countData = countOptions
     this.handleQueryPage()
     this.handleQueryTotalByStatus()
+    this.handleAuditStatus()
   },
   methods: {
     ...mapActions(['delCachedView']),
+    handleDirectAuditStatus: async function(row) {
+      try {
+        await updateArchiveBaseDirectAuditStatus({ id: row.archiveBaseDTO.id })
+        this.handleQueryPage()
+        this.$message({ type: 'success', message: '资料撤销成功' })
+      } catch (error) {}
+    },
+    handleAuditStatus: async function() {
+      try {
+        const res = await queryArchiveDirectAuditStatus()
+        const direAuditStatusOptions = res.map(item => {
+          return { label: item.directArchiveAuditStatusDesc, value: item.directArchiveAuditStatus }
+        })
+        this.direAuditStatusOptions = direAuditStatusOptions
+        sessionStorage.direAuditStatusOptions = JSON.stringify(direAuditStatusOptions)
+      } catch (error) {}
+    },
+    handlePushDetail(query, row = {}) {
+      const queryParams = query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query)
+      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => this.$router.push({ name: 'wxArchiveAdd', query: queryParams }))
+    },
+    handleReason(row) {
+      if (row.archiveBaseDTO.directAuditStatus === 4) {
+        this.$alert(row.archiveBaseDTO.auditRemark, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
+      }
+    },
+    handleTabSort({ column, prop, order }) {
+      this.form.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
+      this.handleQueryPage()
+    },
+
+    handleQueryTotalByStatus: async function() {
+      try {
+        const res = await queryTotalByStatus(this.handleQueryTabParams())
+        this.countData = []
+        if (res.auditStatuses?.length > 0) {
+          for (const ele of this.countOptions) {
+            for (const item of res.auditStatuses) {
+              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, value: item.total })
+            }
+          }
+        } else this.countData = countOptions
+      } catch (error) {}
+    },
+
+    handleQueryTabParams() {
+      const { createTime, msg, sortStatus, ...params } = this.form
+      return Object.assign(params, {
+        orders: { createTime: sortStatus },
+        startTime: createTime?.[0] ?? '',
+        endTime: createTime?.[1] ?? '',
+        archiveIdStr: msg,
+        companyName: msg,
+        bankCard: msg,
+        merchantName: msg,
+        merchantShortName: msg,
+        page: this.currentPage,
+        rows: this.pageSize
+      })
+    },
     handleCheckAccount: async function(row) {
       try {
-        const res = await queryBySubMchId({ subMchId: row.subMchId })
+        const generalRes = await generalDetail({ id: row.archiveBaseDTO.id })
+        const res = await queryBySubMchId({ subMchId: generalRes?.[0]?.subMchId ?? '' })
         if (res) {
           this.checkAccountVisible = true
           this.checkAccountData.forEach(item => {
@@ -254,6 +338,17 @@ export default {
             return item
           })
         } else this.$message({ type: 'error', message: '验证账户暂无结果，请稍后重试' })
+      } catch (error) {}
+    },
+    handleSignUp: async function(row) {
+      try {
+        const generalRes = await generalDetail({ id: row.archiveBaseDTO.id })
+        if (generalRes.length > 0 && generalRes.length === 1) {
+          const res = await generalView({ id: generalRes[0].id, flag: 1 })
+          this.signUpStatus = true
+          this.signUpData = row
+          this.signUpData.QRcode = 'data:image/png;base64,' + btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
+        } else this.$message({ type: 'error', message: '签约账户暂无结果，请稍后重试' })
       } catch (error) {}
     },
     handleDelRow: async function(row) {
@@ -264,40 +359,10 @@ export default {
         this.handleQueryTotalByStatus()
       } catch (error) {}
     },
-    handlePushDetail(query, row = {}) {
-      const queryParams = query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query)
-      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => this.$router.push({ name: 'wxArchiveAdd', query: queryParams }))
-    },
-    handleReason(row) {
-      if (row.archiveBaseDTO.auditStatus === 4) {
-        this.$alert(row.archiveBaseDTO.auditRemark, '原因', {
-          confirmButtonText: '知道了',
-          customClass: 'e-message-con'
-        }).catch(() => {})
-      }
-    },
-    handleSignUp: async function(row) {
-      try {
-        const res = await generalView({ id: row.id, flag: 1 })
-        this.signUpStatus = true
-        this.signUpData = row
-        this.signUpData.QRcode = 'data:image/png;base64,' + btoa(new Uint8Array(res.data).reduce((data, byte) => data + String.fromCharCode(byte), ''))
-      } catch (error) {}
-    },
-    handleQueryTabParams() {
-      return {
-        orders: { createTime: this.form.sortStatus },
-        startTime: this.form.createTime[0] || '',
-        endTime: this.form.createTime[1] || '',
-        auditStatus: this.form.auditStatus,
-        companyName: this.form.msg,
-        bankCard: this.form.msg,
-        merchantName: this.form.msg,
-        merchantShortName: this.form.msg,
-        stopUse: this.form.stopUse,
-        page: this.currentPage,
-        rows: this.pageSize
-      }
+    handleStopUse: async function(row) {
+      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Number(!row.archiveBaseDTO.stopUse) })
+      await this.handleQueryPage()
+      this.$message.success('修改成功')
     },
     handleSearch() {
       this.currentPage = 1
@@ -306,23 +371,6 @@ export default {
       this.handleQueryPage().finally(() => {
         this.isSearchLock = false
       })
-    },
-    handleTabSort({ column, prop, order }) {
-      this.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
-      this.handleQueryPage()
-    },
-    handleQueryTotalByStatus: async function() {
-      try {
-        const res = await queryTotalByStatus(this.handleQueryTabParams())
-        this.countData = []
-        if (res.auditStatuses?.length > 0) {
-          for (const ele of this.countOptions) {
-            for (const item of res.auditStatuses) {
-              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
-            }
-          }
-        } else this.countData = countOptions
-      } catch (error) {}
     },
     handleCurrentChange(val) {
       this.currentPage = val
@@ -343,11 +391,6 @@ export default {
       } finally {
         this.isTabLock = false
       }
-    },
-    handleStopUse: async function(row) {
-      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Number(!row.archiveBaseDTO.stopUse) })
-      await this.handleQueryPage()
-      this.$message.success('修改成功')
     }
   }
 }

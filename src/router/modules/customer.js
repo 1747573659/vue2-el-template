@@ -193,6 +193,17 @@ const customer = {
             title: '进件详情',
             name: 'xftArchiveDetail'
           }
+        },
+        {
+          path: 'archiveWiki',
+          name: 'archiveWiki',
+          code: 'KM_CUSTOMER_WIKI',
+          hidden: true,
+          component: _import('customer/archive/wiki/index'),
+          meta: {
+            title: '申请进度指引',
+            name: 'archiveWiki'
+          }
         }
       ]
     },
