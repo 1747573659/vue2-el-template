@@ -64,14 +64,14 @@
               >
               </select-page>
             </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="8">
+          </el-col> 享钱开通状态 要看代码是否合并过去了-->
+          <el-col :span="8">
             <el-form-item label="享钱开通状态:">
               <el-select style="width:100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
                 <el-option v-for="item in openingState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
               </el-select>
             </el-form-item>
-          </el-col> -->
+          </el-col>
           <el-col :span="8">
             <el-form-item label="注册日期:">
               <el-date-picker
@@ -90,8 +90,8 @@
             </el-form-item>
           </el-col>
           <el-col :span="8">
-            <el-form-item style="padding-left: 100px;">
-              <el-button @click="authShopPage()" size="small" type="primary">查询</el-button>
+            <el-form-item style="padding-left: 30px;">
+              <el-button @click="handleCurrentChange(1)" size="small" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -161,7 +161,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           background
-          :page-sizes="[10, 15, 20, 25]"
+          :page-sizes="[10, 15, 30]"
           layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
       </div>
@@ -206,7 +206,7 @@ export default {
       tableLoading: false, // 表格加载
       tableTotal: 0, // 表格总页数
       thisPage: 1, // 当前页
-      pageSize: 15, // 每页多少条
+      pageSize: 10, // 每页多少条
       form: {
         custId: '', // 软注编码
         authShopMessage: '', // 商户信息

@@ -18,6 +18,7 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
+              <!-- @focus="shopFocus" -->
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
                   :disabled="formYQDisabled"
@@ -29,7 +30,6 @@
                   name="companyName"
                   :options="shopList"
                   :isMaxPage="isMaxPageShop"
-                  @focus="shopFocus"
                   @change="shopChange"
                   @clear="shopClear"
                 >
@@ -46,18 +46,6 @@
                 </el-radio-group>
                 <el-tooltip effect="dark" placement="top">
                   <div slot="content">若商户无营业执照，可按非持证商户进件。<br />非持证商户日限额2W，月限额5W。<br />持证商户日限额50W，月限额500W。</div>
-                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                </el-tooltip>
-              </el-form-item>
-            </el-col>
-            <el-col :span="12" class="archive-form-item">
-              <el-form-item label="开通超级码" prop="archiveBaseVO.superCode">
-                <el-radio-group v-model="form.archiveBaseVO.superCode" :disabled="formYQDisabled">
-                  <el-radio :label="1">是</el-radio>
-                  <el-radio :label="2">否</el-radio>
-                </el-radio-group>
-                <el-tooltip effect="dark" content="消费者扫码支付，50元以下享受优惠费率，具体请联系行业经理" placement="top">
-                  <div slot="content">消费者扫码支付，50元以下享受优惠费率，<br />具体请联系行业经理</div>
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
@@ -858,7 +846,6 @@ export default {
           source: 2,
           status: null,
           submitLevel: null,
-          superCode: 1,
           unionpaycodeFeeRate: null,
           useChannelCode: '',
           userId: null,

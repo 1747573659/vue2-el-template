@@ -23,7 +23,7 @@
     <div class="data-box">
       <el-table
         :loading="tableLoading"
-        :max-height="tableMaxHeight"
+        :max-height="tabMaxHeight"
         :data="tableData"
         style="width: 100%">
         <el-table-column
@@ -69,9 +69,11 @@
 <script>
 import { queryDocumentByPage } from '@/api/setting/material'
 import { downloadForURL } from '@/utils'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   name: 'materialDownload',
+  mixins: [tableMaxHeight],
   data() {
     return {
       form: {
@@ -122,11 +124,6 @@ export default {
         this.cxLoading = false
         this.tableLoading = false
       }
-    }
-  },
-  computed: {
-    tableMaxHeight() {
-      return document.documentElement.clientHeight - 56 - 48 - 64.5 - 32 - 116
     }
   },
   mounted() {

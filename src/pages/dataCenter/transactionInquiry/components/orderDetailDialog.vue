@@ -39,7 +39,7 @@
           </div>
           <div class="table-item-content left-content">
             <span class="table-item-title">收银员: </span>
-            <span class="table-item-text">{{ form.workerName ? form.workerName : '没有' }}</span>
+            <span class="table-item-text">{{ form.workerName ? form.workerName : '' }}</span>
           </div>
         </div>
         <div class="table-item">
@@ -184,7 +184,7 @@
           </div>
           <div class="table-item-content">
             <span class="table-item-title">收银员: </span>
-            <span class="table-item-text">{{ form.workerName ? form.workerName : '没有' }}</span>
+            <span class="table-item-text">{{ form.workerName ? form.workerName : '' }}</span>
           </div>
         </div>
         <div class="table-item">

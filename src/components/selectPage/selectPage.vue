@@ -106,6 +106,7 @@ export default {
       this.$emit('selectPageMore')
     },
     clearSelectPage() {
+      document.getElementById(this.domID).value = ''
       this.$emit('resetSelectPage')
     },
     changeSelectPage() {

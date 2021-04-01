@@ -21,14 +21,9 @@
     :remote="remote"
     :reserve-keyword="reserveKeyword"
     :remote-method="remoteMethod"
+    @clear="clear()"
   >
-    <el-option
-      v-for="item in options"
-      :key="item[optionsItem.key]"
-      :label="item[optionsItem.label]"
-      :value="item[optionsItem.value]"
-    >
-    </el-option>
+    <el-option v-for="item in options" :key="item[optionsItem.key]" :label="item[optionsItem.label]" :value="item[optionsItem.value]"> </el-option>
   </el-select>
 </template>
 <script>
@@ -36,123 +31,127 @@ export default {
   props: {
     isCopy: {
       type: Boolean,
-      default: false,
+      default: false
     }, //是否可以复制
     placeholder: {
       type: String,
-      default: "",
+      default: ''
     }, //提示
     options: {
       type: Array,
-      default: () => [],
+      default: () => []
     }, //选项
     optionsItem: {
       type: Object,
       default() {
         return {
-          key: "value",
-          label: "label",
-          value: "value",
-        };
-      },
+          key: 'value',
+          label: 'label',
+          value: 'value'
+        }
+      }
     }, //绑定带每一项要取的字段
     value: {
       type: [String, Number],
-      default: "",
+      default: ''
     }, //传进来绑定的值
     multiple: {
       type: Boolean,
-      default: false,
+      default: false
     }, //是否多选
     disabled: {
       type: Boolean,
-      default: false,
+      default: false
     }, //是否禁用
     valueKey: {
       type: String,
-      default: "", //作为 value 唯一标识的键名，绑定值为对象类型时必填
+      default: '' //作为 value 唯一标识的键名，绑定值为对象类型时必填
     },
     size: {
       type: String,
-      default: "", //输入框尺寸
+      default: '' //输入框尺寸
     },
     clearable: {
       type: Boolean,
-      default: false,
+      default: false
     }, //是否可以清空选项
     collapseTags: {
       type: Boolean,
-      default: false,
+      default: false
     }, //多选时是否将选中值按文字的形式展示
     multipleLimit: {
       type: Number,
-      default: 0,
+      default: 0
     }, //多选时用户最多可以选择的项目数，为 0 则不限制
     name: {
       type: String,
-      default: "",
+      default: ''
     }, //select input 的 name 属性
     autocomplete: {
       type: String,
-      default: "off",
+      default: 'off'
     }, //select input 的 autocomplete 属性
     filterable: {
       type: Boolean,
-      default: false, //是否可搜索
+      default: false //是否可搜索
     },
     remote: {
       type: Boolean,
-      default: false, //是否为远程搜索
+      default: false //是否为远程搜索
     },
     reserveKeyword: {
       type: Boolean,
-      default: false, //多选且可搜索时，是否在选中一个选项后保留当前的搜索关键词
+      default: false //多选且可搜索时，是否在选中一个选项后保留当前的搜索关键词
     },
     remoteMethod: {
-      type: Function, //远程搜索方法
-    },
+      type: Function //远程搜索方法
+    }
   },
   watch: {
     value: {
       handler(newVal) {
-        this.bindValue = newVal;
+        this.bindValue = newVal
       },
       deep: true,
-      immediate: true, //深度监听且改变赋值
-    },
+      immediate: true //深度监听且改变赋值
+    }
   },
   data() {
     return {
       domID: `domID${Math.floor(Math.random() * 100000000 + 1)}`, //随机生成一个唯一ID
-      bindValue: "", //绑定的值
-    };
+      bindValue: '' //绑定的值
+    }
   },
   methods: {
+    clear() {
+      document.getElementById(this.domID).value = ''
+      this.$emit('clear')
+    },
     focus(event) {
-      this.$emit("focus", event);
+      this.$emit('focus', event)
     },
     // 选项展开关闭回掉
     visibleChange(event) {
       if (this.isCopy && event) {
         // 如果展开
-        let label = "";
+        let label = ''
         for (let i = 0; i < this.options.length; i++) {
-          const valueField = this.optionsItem.value;
-          const labelField = this.optionsItem.label;
+          const valueField = this.optionsItem.value
+          const labelField = this.optionsItem.label
           if (this.bindValue === this.options[i][valueField]) {
-            label = this.options[i][labelField];
+            label = this.options[i][labelField]
           }
         }
         setTimeout(() => {
-          document.getElementById(this.domID).value = label || ""; //通过ID原生绑定
-        }, 200);
+          document.getElementById(this.domID).value = label || '' //通过ID原生绑定
+        }, 200)
       }
     },
     change(...value) {
       // 更新数据
-      this.$emit("update:value", this.bindValue);
-      this.$emit("change", value);
-    },
-  },
-};
+      this.$emit('update:value', this.bindValue)
+      this.$emit('change', value)
+    }
+  }
+}
 </script>
