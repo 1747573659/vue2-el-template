@@ -22,7 +22,17 @@ const urlLinks = {
   imageOCR: 'common/imageOcr',
   searchCompanyInfo: 'common/searchCompanyInfo',
   queryArchiveDirectAuditStatus: 'archive/general/queryArchiveDirectAuditStatus',
-  updateArchiveBaseDirectAuditStatus: 'archive/general/updateArchiveBaseDirectAuditStatus'
+  updateArchiveBaseDirectAuditStatus: 'archive/general/updateArchiveBaseDirectAuditStatus',
+  queryDirectArchiveApplySchedule: 'archive/general/queryDirectArchiveApplySchedule'
+}
+
+// 获取申请进度列表
+export function queryDirectArchiveApplySchedule(data) {
+  return request({
+    url: urlLinks.queryDirectArchiveApplySchedule,
+    method: 'POST',
+    data: qs.stringify(data)
+  })
 }
 
 // 获取状态列表

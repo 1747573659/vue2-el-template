@@ -161,6 +161,17 @@ const customer = {
           }
         },
         {
+          path: 'wxProgress',
+          name: 'wxProgress',
+          code: 'KM_CUSTOMER_ARCHIVE_WXPROGRESS',
+          hidden: true,
+          component: _import('customer/archive/wxArchive/wxProgress'),
+          meta: {
+            title: '申请进度',
+            name: 'wxProgress'
+          }
+        },
+        {
           path: 'xftArchive',
           name: 'xftArchive',
           code: 'KM_CUSTOMER_ARCHIVE_XFT',

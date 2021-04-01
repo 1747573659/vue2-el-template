@@ -604,7 +604,7 @@
     </el-form>
     <div class="p-wxArchive-action">
       <template v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
-        <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify" v-if="form.archiveBaseVO.directAuditStatus === 3">撤销</el-button>
+        <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)" v-if="form.archiveBaseVO.directAuditStatus === 3">撤销</el-button>
         <template v-else>
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
           <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
@@ -651,7 +651,7 @@ import { detailValidate, formObj, rateOptions, refundForm, refundRules } from '.
 import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
-import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, searchCompanyInfo } from '@/api/wxArchive'
+import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, updateArchiveBaseDirectAuditStatus } from '@/api/wxArchive'
 
 export default {
   name: 'wxArchiveAdd',
@@ -726,6 +726,13 @@ export default {
     if (this.pageAction === 'detail') this.handleDetail()
   },
   methods: {
+    handleDirectAuditStatus: async function(id) {
+      try {
+        await updateArchiveBaseDirectAuditStatus({ id })
+        this.handleCancel()
+        this.$message({ type: 'success', message: '资料撤销成功' })
+      } catch (error) {}
+    },
     handleMerchantType(val) {
       if (val !== 5) {
         this.isMicro = true

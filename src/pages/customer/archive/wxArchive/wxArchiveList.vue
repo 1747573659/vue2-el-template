@@ -133,7 +133,7 @@
               <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 11" @click="handleSignUp(scope.row)">立即签约</el-button>
             </template>
             <template v-else-if="[7, 10, 11].includes(scope.row.archiveBaseDTO.directAuditStatus)">
-              <el-button type="text" size="small">申请进度</el-button>
+              <el-button type="text" size="small" @click="$router.push({ name: 'wxProgress', query: { id: scope.row.archiveBaseDTO.id } })">申请进度</el-button>
             </template>
           </template>
         </el-table-column>
