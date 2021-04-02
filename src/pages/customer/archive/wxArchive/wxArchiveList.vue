@@ -86,7 +86,7 @@
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantId" label="商户号" min-width="80"></el-table-column>
+        <el-table-column prop="archiveExpandDTO.channelMchId" label="商户号" min-width="80"></el-table-column>
         <el-table-column label="商户类型">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.merchantType | filterStatus(merchantTypeOptions) }}</span>
