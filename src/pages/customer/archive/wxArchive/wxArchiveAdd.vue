@@ -142,7 +142,7 @@
               </el-form-item>
             </el-col>
           </template>
-          <el-col :span="24">
+          <!-- <el-col :span="24">
             <el-form-item label="经营范围" prop="archiveExpandVO.businessScope">
               <el-input
                 v-model="form.archiveExpandVO.businessScope"
@@ -155,10 +155,10 @@
                 style="width: 240px"
               ></el-input>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="24">
             <el-form-item label="经营类目">
-              <el-cascader ref="cascader" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
+              <el-cascader ref="cascader" v-model="form.archiveBaseVO.businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
@@ -262,11 +262,23 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
+            <el-form-item label="证件号码" prop="archiveExpandVO.administratorIdCard">
+              <el-input v-model="form.archiveExpandVO.administratorIdCard" placeholder="证件号码" style="width:240px"></el-input>
+              <el-tooltip effect="dark" placement="top-start">
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                <template #content>
+                  <p>请填写超级管理员的证件号码，可传身份证、来往内地通行证、来往大陆通行证、护照等证件号码，超级管理员签约时，</p>
+                  <p>校验微信号绑定的银行卡实名信息，是否与该证件号码一致。</p>
+                </template>
+              </el-tooltip>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
               <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width:240px"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="24">
+          <el-col :span="12">
             <el-form-item label="邮箱" prop="archiveBaseVO.email">
               <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
             </el-form-item>
@@ -549,23 +561,6 @@
         </el-row>
       </div>
       <div class="p-wxArchive-item">
-        <div class="p-wxArchive-itemTitle">超管信息</div>
-        <el-row class="p-wxArchive-baseInfo">
-          <el-col :span="12">
-            <el-form-item label="证件号码" prop="archiveExpandVO.administratorIdCard">
-              <el-input v-model="form.archiveExpandVO.administratorIdCard" placeholder="证件号码" style="width:240px"></el-input>
-              <el-tooltip effect="dark" placement="top-start">
-                <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                <template #content>
-                  <p>请填写超级管理员的证件号码，可传身份证、来往内地通行证、来往大陆通行证、护照等证件号码，超级管理员签约时，</p>
-                  <p>校验微信号绑定的银行卡实名信息，是否与该证件号码一致。</p>
-                </template>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
-        </el-row>
-      </div>
-      <div class="p-wxArchive-item">
         <div class="p-wxArchive-itemTitle">费率设置</div>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="12">
@@ -700,7 +695,7 @@ export default {
       previewList: [],
       showViewer: false,
       imageIndex: 0,
-      isMicro: false,
+      isMicro: true,
       direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions)
     }
   },
@@ -768,7 +763,7 @@ export default {
           }
         })
       this.form.archiveBaseVO.businessCategoryRemark = one.label + '/' + two.label
-      this.form.archiveBaseVO.businessCategory = this.$refs.cascader.getCheckedNodes()[0].value
+      this.form.archiveBaseVO.businessCategory = val[1]
     },
     getBusinessCategory: async function() {
       const res = await businessCategory()
