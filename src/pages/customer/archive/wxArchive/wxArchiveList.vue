@@ -9,12 +9,7 @@
           </template>
         </section>
       </div>
-      <!-- <pre>{{countData}}</pre> -->
-      <!-- <count-tips-header :data="countData" color="rgba(255, 96, 16, 0.08)" bdColor="rgba(255, 96, 16, 0.4)">
-        <template #icon>
-          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-        </template>
-      </count-tips-header> -->
+      <!-- <count-tips type="success" show-icon></count-tips> -->
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-form-general_row">
           <el-col :span="21">
@@ -74,13 +69,13 @@
       <el-table :data="tableData" :max-height="tabMaxHeight" :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }" @sort-change="handleTabSort">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
         <el-table-column prop="archiveBaseDTO.id" label="资料ID" min-width="100"></el-table-column>
-        <el-table-column prop="merchantName" label="商户/公司名称" min-width="190">
+        <el-table-column label="商户/公司名称" min-width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.merchantName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.companyName || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.merchantShortName" label="商户简称/银行卡号" min-width="190">
+        <el-table-column label="商户简称/银行卡号" min-width="190">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantShortName || '--' }}</div>
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
@@ -153,7 +148,7 @@
     </div>
 
     <!-- 升级签约/立即签约 -->
-    <el-dialog append-to-body :visible.sync="signUpVisible" width="30%" custom-class="e-sign-dialog">
+    <el-dialog append-to-body :visible.sync="signUpVisible" width="40%" custom-class="e-sign-dialog">
       <section class="e-sign-body">
         <header>
           <p>当前入驻申请已通过</p>
@@ -171,20 +166,19 @@
     </el-dialog>
 
     <!-- 验证账户 -->
-    <el-dialog append-to-body title="验证账户" :visible.sync="checkAccountVisible" width="40%">
+    <el-dialog :visible.sync="checkAccountVisible" width="40%" append-to-body title="验证账户">
       <section>
         <div class="p-account-item" v-for="(item, index) in checkAccountData" :key="index">
           <p>{{ item.label }}：{{ item.value }}</p>
         </div>
-        <el-alert
-          :title="
-            `温馨提醒：请在${checkAccountData[6].deadlineTime}前，使用用上方的付款账号，向指定的收款账号汇入${checkAccountData[1].payAmount}元，以完成账户验证，过期未验证账户则入驻失败！`
-          "
-          type="warning"
-          show-icon
-          :closable="false"
-          style="margin: 20px 0"
-        ></el-alert>
+        <el-alert type="warning" show-icon :closable="false" style="margin: 20px 0">
+          <template #title>
+            <span>
+              温馨提醒：请在{{ checkAccountData[6].deadlineTime }}前，使用用上方的付款账号，向指定的收款账号汇入{{ checkAccountData[1].payAmount }}元，
+              以完成账户验证，过期未验证账户则入驻失败！
+            </span>
+          </template>
+        </el-alert>
       </section>
     </el-dialog>
   </section>
@@ -194,7 +188,7 @@
 import { mapActions } from 'vuex'
 import { filterStatus } from './filters'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
-import { merchantTypeOptions, deactivateOptions, countOptions } from './index'
+import { merchantTypeOptions, deactivateOptions, countOptions, checkAccountData } from './index'
 import {
   queryPage,
   generalStopUse,
@@ -206,19 +200,20 @@ import {
   generalDetail,
   updateArchiveBaseDirectAuditStatus
 } from '@/api/wxArchive'
-import countTipsHeader from '../components/tipsHeader'
+import countTips from '../components/tipsBlock'
 
 export default {
   name: 'wxArchive',
   mixins: [tableMaxHeight],
-  // components: {
-  //   countTipsHeader
-  // },
+  components: {
+    // countTips
+  },
   data() {
     return {
       merchantTypeOptions,
       deactivateOptions,
       countOptions,
+      checkAccountData: checkAccountData,
       direAuditStatusOptions: [],
       countData: [],
       form: {
@@ -238,17 +233,7 @@ export default {
       pageSize: 10,
       signUpVisible: false,
       signUpData: {},
-      checkAccountVisible: false,
-      checkAccountData: [
-        { label: '付款户名', field: 'accountName', value: '' },
-        { label: '汇款金额', field: 'payAmount', value: '' },
-        { label: '收款卡号', field: 'destinationAccountNumber', value: '' },
-        { label: '收款户名', field: 'destinationAccountName', value: '' },
-        { label: '收款账户开户行', field: 'destinationAccountBank', value: '' },
-        { label: '开户行省市', field: 'city', value: '' },
-        { label: '汇款截止时间', field: 'deadlineTime', value: '' },
-        { label: '汇款备注信息（必填）', field: 'remark', value: '' }
-      ]
+      checkAccountVisible: false
     }
   },
   filters: {

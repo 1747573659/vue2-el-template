@@ -1,36 +1,19 @@
-export  const  merchantTypeOptions = [
+// 商户类型
+export const merchantTypeOptions = [
   { value: '', label: '全部' },
   { value: 5, label: '小微' },
   { value: 1, label: '个体商户' },
   { value: 2, label: '企业' }
 ]
 
-export const auditStatusOptions = [
-  { value: '', label: '全部' },
-  { value: 0, label: '草稿' },
-  { value: 1, label: '渠道审核未通过' },
-  { value: 2, label: '待渠道审核' },
-  { value: 3, label: '待平台审核' },
-  { value: 4, label: '平台审核未通过' },
-  { value: 5, label: '申请中' },
-  { value: 6, label: '编辑中' },
-  { value: 7, label: '审核中' },
-  { value: 8, label: '已驳回' },
-  { value: 9, label: '资料校验中' },
-  { value: 10, label: '待验证' },
-  { value: 11, label: '待签约' },
-  { value: 12, label: '开通权限中' },
-  { value: 13, label: '已完成' },
-  { value: 14, label: '已作废' },
-  { value: 15, label: '已冻结' },
-]
-
+// 是否停用
 export const deactivateOptions = [
   { value: '', label: '全部' },
   { value: 1, label: '是' },
   { value: 0, label: '否' }
 ]
 
+// 统计配置
 export const countOptions = [
   { value: 0, label: '草稿', total: 0 },
   { value: 2, label: '待渠道审核', total: 0 },
@@ -39,22 +22,7 @@ export const countOptions = [
   { value: 4, label: '平台审核未通过', total: 0 }
 ]
 
-export const detailOptions = [
-  { value: -1, label: '已驳回' },
-  { value: 1, label: '待审核' },
-  { value: 2, label: '审核中' },
-  { value: 3, label: '待签约' },
-  { value: 4, label: '已签约' }
-]
-export const updateStatusOptions = [
-  { value: -2, label: '已冻结' },
-  { value: -1, label: '已驳回' },
-  { value: 1, label: '资料校验中' },
-  { value: 2, label: '待账户验证' },
-  { value: 3, label: '审核中' },
-  { value: 4, label: '待签约' }
-]
-
+// 小微费率
 export const rateOptions = [
   {
     value: 38,
@@ -102,13 +70,14 @@ export const rateOptions = [
   }
 ]
 
+// 进件资料表单对象
 export const formObj = {
   archiveBaseVO: {
     userId: '',
     merchantId: '', // 商户
     publicId: '', // 公众号APPID
     appletId: '', // 小程序APPID
-    merchantType: 5, // 商户类型
+    merchantType: 1, // 商户类型
     companyName: '', // 公司名称
     merchantShortName: '', // 商户简称
     province: '', // 省
@@ -171,6 +140,7 @@ export const formObj = {
   }
 }
 
+// 进件资料校验对象
 const validatorRules = {
   serviceTel: /(^(\d{11})$|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/,
   idNumber: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
@@ -190,7 +160,11 @@ export const detailValidate = {
   'archiveBaseVO.contact': [{ required: true, message: '请输入联系人', trigger: 'change' }],
   'archiveBaseVO.contactPhone': [
     { required: true, message: '请输入联系人电话', trigger: 'blur' },
-    { pattern: validatorRules.mobildPhone, message: '请输入正确的电话号码', trigger: 'change' }
+    {
+      pattern: validatorRules.mobildPhone,
+      message: '请输入正确的电话号码',
+      trigger: 'change'
+    }
   ],
   'archiveBaseVO.email': [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -204,7 +178,11 @@ export const detailValidate = {
   'archiveExpandVO.businessLicenseUrl': [{ required: true, message: '请输入营业执照', trigger: 'change' }],
   'archiveExpandVO.licId': [
     { required: true, message: '请输入营业执照注册号', trigger: 'blur' },
-    { pattern: validatorRules.licId, message: '请输入正确营业执照注册号', trigger: 'change' }
+    {
+      pattern: validatorRules.licId,
+      message: '请输入正确营业执照注册号',
+      trigger: 'change'
+    }
   ],
   'archiveExpandVO.licValidityBigen': [{ required: true, message: '请输入营业执照有效期', trigger: 'change' }],
   'archiveExpandVO.businessScope': [{ required: true, message: '请输入经营范围', trigger: 'change' }],
@@ -218,7 +196,11 @@ export const detailValidate = {
   'archiveExpandVO.idType': [{ required: true, message: '请输入证件类型', trigger: 'change' }],
   'archiveExpandVO.idNumber': [
     { required: true, message: '请输入证件号码', trigger: 'blur' },
-    { pattern: validatorRules.idNumber, message: '请输入正确证件号码', trigger: 'change' }
+    {
+      pattern: validatorRules.idNumber,
+      message: '请输入正确证件号码',
+      trigger: 'change'
+    }
   ],
   'archiveExpandVO.idBegin': [{ required: true, message: '请输入证件有效期', trigger: 'change' }],
   'archiveExpandVO.idFrontUrl': [{ required: true, message: '请输入身份证正面照', trigger: 'change' }],
@@ -231,13 +213,17 @@ export const detailValidate = {
   'archiveExpandVO.bankSub': [{ required: true, message: '请输入所属支行', trigger: 'change' }],
   'archiveExpandVO.bankCard': [
     { required: true, message: '请输入银行账号', trigger: 'blur' },
-    { pattern: validatorRules.bankCard, message: '请输入正确银行账号', trigger: 'change'}
+    {
+      pattern: validatorRules.bankCard,
+      message: '请输入正确银行账号',
+      trigger: 'change'
+    }
   ],
   'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'change' }],
   'archiveExpandVO.bankArea': [{ required: true, message: '请输入银行所在地区', trigger: 'change' }],
   'archiveBaseVO.fixFeeRate': [{ required: true, message: '请选择小微交易费率', trigger: 'change' }]
 }
-
+// 审核不通过原因
 export const refundForm = {
   remark: ''
 }
@@ -245,3 +231,15 @@ export const refundForm = {
 export const refundRules = {
   remark: [{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]
 }
+
+// 验证账户元素
+export const checkAccountData = [
+  { label: '付款户名', field: 'accountName', value: '' },
+  { label: '汇款金额', field: 'payAmount', value: '' },
+  { label: '收款卡号', field: 'destinationAccountNumber', value: '' },
+  { label: '收款户名', field: 'destinationAccountName', value: '' },
+  { label: '收款账户开户行', field: 'destinationAccountBank', value: '' },
+  { label: '开户行省市', field: 'city', value: '' },
+  { label: '汇款截止时间', field: 'deadlineTime', value: '' },
+  { label: '汇款备注信息（必填）', field: 'remark', value: '' }
+]

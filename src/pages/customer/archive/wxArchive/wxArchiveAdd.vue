@@ -19,7 +19,7 @@
         <div class="p-wxArchive-itemTitle">基本信息</div>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="12">
-            <el-form-item label="商户" prop="archiveBaseVO.merchantId">
+            <el-form-item label="商户名称" prop="archiveBaseVO.merchantId">
               <select-page
                 style="width:240px"
                 v-if="pageAction === 'add'"
@@ -32,7 +32,7 @@
                 label="companyName"
                 value="id"
                 :echoValue="form.archiveBaseVO.merchantName"
-                placeholder="商户"
+                placeholder="商户名称"
               ></select-page>
               <span v-else>{{ form.archiveBaseVO.merchantName }}</span>
             </el-form-item>
@@ -42,12 +42,12 @@
           <el-col :span="12">
             <el-form-item label="商户类型" prop="archiveBaseVO.merchantType">
               <el-radio-group v-model="form.archiveBaseVO.merchantType" @change="handleMerchantType">
-                <el-radio :label="5">
+                <!-- <el-radio :label="5">
                   <span>小微</span>
                   <el-tooltip effect="dark" content="无营业执照、免办理工商注册登记的实体商户" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
                   </el-tooltip>
-                </el-radio>
+                </el-radio> -->
                 <el-radio :label="1">
                   <span>个体工商户</span>
                   <el-tooltip effect="dark" content="营业执照上的主体类型一般为个体户、个体工商户、个体经营" placement="top">
@@ -90,69 +90,58 @@
               <el-tooltip effect="dark" placement="top-start">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 <template #content
-                  ><span>若营业执照注册号为18位统一社会信用代码，请选择“已三证合一”，<br />否则请选择“未三证合一”</span></template
+                  ><span>若营业执照注册号为18位统一社会信用代码，请选择“已三证合一”，<br />否则请选择“非三证合一”</span></template
                 >
               </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
-            <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
-              <upload-pic
-                alt="营业执照"
-                :hasBase64="true"
-                :fileServer="fileServer"
-                :imagePath="form.archiveExpandVO.businessLicenseUrl"
-                :exampleImg="exampleImg.businessLicenseUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')"
-                @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
-              ></upload-pic>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="类目特殊资质">
-              <upload-pic
-                alt="类目特殊资质"
-                :showExample="false"
-                :fileServer="fileServer"
-                :imagePath="form.archiveOtherVO.typeAptitudeUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'typeAptitudeUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)"
-              ></upload-pic>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
-              <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号" style="width:240px"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
-              <el-date-picker
-                v-model="form.archiveExpandVO.licValidityBigen"
-                type="date"
-                clearable
-                placeholder="开始日期"
-                value-format="yyyy-MM-dd"
-                style="width: 140px"
-              ></el-date-picker>
-              <span style="margin: 0 10px;">至</span>
-              <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
-              <el-date-picker
-                v-else
-                v-model="form.archiveExpandVO.licValidityEnd"
-                type="date"
-                clearable
-                placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-                style="width: 140px"
-              ></el-date-picker>
-              <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
-                <img :src="questionIcon" alt="提示" class="e-icon-question" />
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
+          <template v-if="form.archiveBaseVO.merchantType !== 5">
+            <el-col :span="24">
+              <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
+                <upload-pic
+                  alt="营业执照"
+                  :hasBase64="true"
+                  :fileServer="fileServer"
+                  :imagePath="form.archiveExpandVO.businessLicenseUrl"
+                  :exampleImg="exampleImg.businessLicenseUrl"
+                  uploadUrlPath="/uploadFile"
+                  @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
+                ></upload-pic>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
+                <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号" style="width:240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
+                <el-date-picker
+                  v-model="form.archiveExpandVO.licValidityBigen"
+                  type="date"
+                  clearable
+                  placeholder="开始日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
+                <span style="margin: 0 10px;">至</span>
+                <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
+                <el-date-picker
+                  v-else
+                  v-model="form.archiveExpandVO.licValidityEnd"
+                  type="date"
+                  clearable
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"
+                ></el-date-picker>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                </el-tooltip>
+              </el-form-item>
+            </el-col>
+          </template>
           <el-col :span="24">
             <el-form-item label="经营范围" prop="archiveExpandVO.businessScope">
               <el-input
@@ -282,7 +271,7 @@
               <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
               <upload-pic
                 alt="门店门头照"
@@ -295,8 +284,8 @@
               >
               </upload-pic>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          </el-col> -->
+          <!-- <el-col :span="12">
             <el-form-item label="经营场所照1" prop="archiveOtherVO.businessSiteOneUrl">
               <upload-pic
                 alt="经营场所照1"
@@ -308,8 +297,8 @@
                 @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
               ></upload-pic>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          </el-col> -->
+          <!-- <el-col :span="12">
             <el-form-item label="经营场所照2" prop="archiveOtherVO.businessSiteTwoUrl">
               <upload-pic
                 alt="经营场所照2"
@@ -321,8 +310,8 @@
                 @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteTwoUrl)"
               ></upload-pic>
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          </el-col> -->
+          <!-- <el-col :span="12">
             <el-form-item label="经营场所照3" prop="archiveOtherVO.businessSiteThreeUrl">
               <upload-pic
                 alt="经营场所照3"
@@ -334,7 +323,7 @@
                 @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteThreeUrl)"
               ></upload-pic>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <template v-if="form.archiveBaseVO.merchantType === 5">
             <el-col :span="12">
               <el-form-item label="经营场地证明">
@@ -446,19 +435,6 @@
                 value-format="yyyy-MM-dd"
                 style="width: 140px"
               ></el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="手持身份证正面照" prop="archiveExpandVO.hardIdUrl">
-              <upload-pic
-                alt="手持身份证正面照"
-                :fileServer="fileServer"
-                :imagePath="form.archiveExpandVO.hardIdUrl"
-                :exampleImg="exampleImg.hardIdUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'hardIdUrl')"
-                @click="handleImgPreview(fileServe + form.archiveExpandVO.hardIdUrl)"
-              ></upload-pic>
             </el-form-item>
           </el-col>
         </el-row>
@@ -604,7 +580,14 @@
     </el-form>
     <div class="p-wxArchive-action">
       <template v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
-        <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)" v-if="form.archiveBaseVO.directAuditStatus === 3">撤销</el-button>
+        <el-button
+          size="small"
+          type="primary"
+          class="e-wxArchive-action_pd"
+          @click="handleDirectAuditStatus(form.archiveBaseVO.id)"
+          v-if="form.archiveBaseVO.directAuditStatus === 3"
+          >撤销</el-button
+        >
         <template v-else>
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
           <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
@@ -651,7 +634,18 @@ import { detailValidate, formObj, rateOptions, refundForm, refundRules } from '.
 import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
-import { queryShopListByPage, queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, updateArchiveBaseDirectAuditStatus } from '@/api/wxArchive'
+import {
+  queryShopListByPage,
+  queryBankPage,
+  submit,
+  detail,
+  submitToVerify,
+  refund,
+  queryBranchPage,
+  businessCategory,
+  imageOCR,
+  updateArchiveBaseDirectAuditStatus
+} from '@/api/wxArchive'
 
 export default {
   name: 'wxArchiveAdd',
@@ -975,6 +969,7 @@ export default {
           if (side === 'face') {
             this.form.archiveExpandVO.legalPersonName = res.name
             this.form.archiveExpandVO.idNumber = res.num
+            this.form.archiveExpandVO.administratorIdCard = res.num
           } else {
             const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
             const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
