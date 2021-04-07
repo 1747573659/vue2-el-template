@@ -9,7 +9,6 @@
           </template>
         </section>
       </div>
-      <!-- <count-tips type="success" show-icon></count-tips> -->
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-form-general_row">
           <el-col :span="21">

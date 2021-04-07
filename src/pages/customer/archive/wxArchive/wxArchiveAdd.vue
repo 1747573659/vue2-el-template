@@ -158,10 +158,17 @@
           </el-col> -->
           <el-col :span="24">
             <el-form-item label="经营类目">
-              <el-cascader ref="cascader" v-model="form.archiveBaseVO.businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
-              <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
+              <el-cascader
+                ref="cascader"
+                v-model="form.archiveBaseVO.businessCategory"
+                :options="businessOptions"
+                @change="handleBusinessCategory"
+                style="width: 240px"
+              ></el-cascader>
+              <!-- <el-cascader :options="tagSelOption" v-model="ruleForm.businessCategory" @change="handleChange"></el-cascader> -->
+              <!-- <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
-              </el-tooltip>
+              </el-tooltip> -->
             </el-form-item>
           </el-col>
           <el-col
@@ -247,7 +254,7 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="地区" prop="archiveBaseVO.area">
+            <el-form-item label="公司地址" prop="archiveBaseVO.area">
               <area-select :key="areaKey" @change="value => handleArea('area', value)" :areaList="areaList"></area-select>
             </el-form-item>
           </el-col>
@@ -456,14 +463,14 @@
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="24">
             <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
-              <el-radio-group v-model="form.archiveBaseVO.acctType">
+              <el-radio-group v-model="form.archiveExpandVO.acctType">
                 <el-radio :label="1" :disabled="form.archiveBaseVO.merchantType === 5">
                   <span>对公银行账号</span>
                   <el-tooltip effect="dark" content="你为经营者对公银行账户，请务必填写开户名为的银行账号" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
                   </el-tooltip>
                 </el-radio>
-                <el-radio :label="2" :disabled="form.archiveBaseVO.merchantType === 2">
+                <el-radio :label="2" :disabled="form.archiveBaseVO.merchantType === 2" v-if="form.archiveBaseVO.merchantType === 1">
                   <span>经营者个人银行卡</span>
                   <el-tooltip effect="dark" content="你为经营者个人银行卡，请务必填写开户名为的银行账号" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -472,20 +479,20 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 2">
+          <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 2 || form.archiveExpandVO.acctType === 1">
             <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
               <upload-pic
                 alt="开户许可证"
-                :showExample="false"
                 :fileServer="fileServer"
                 :imagePath="form.archiveExpandVO.openingPermitUrl"
                 uploadUrlPath="/uploadFile"
+                :exampleImg="exampleImg.openingPermitUrl"
                 @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'openingPermitUrl')"
                 @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)"
               ></upload-pic>
             </el-form-item>
           </el-col>
-          <el-col :span="24" v-if="form.archiveBaseVO.merchantType !== 2">
+          <el-col :span="24" v-else>
             <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
               <upload-pic
                 alt="银行卡正面照"
@@ -537,11 +544,13 @@
           <el-col :span="12">
             <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
               <selectCopy
+                ref="bankSub"
                 isCopy
                 style="width: 240px"
                 :remoteMethod="handleBranchRemote"
                 :value.sync="form.archiveExpandVO.bankSub"
                 @focus="handleBranchPage"
+                @change="handleBankChange"
                 filterable
                 clearable
                 reserveKeyword
@@ -575,21 +584,16 @@
     </el-form>
     <div class="p-wxArchive-action">
       <template v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
-        <el-button
-          size="small"
-          type="primary"
-          class="e-wxArchive-action_pd"
-          @click="handleDirectAuditStatus(form.archiveBaseVO.id)"
-          v-if="form.archiveBaseVO.directAuditStatus === 3"
-          >撤销</el-button
-        >
+        <template v-if="form.archiveBaseVO.directAuditStatus === 3">
+          <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)">撤销</el-button>
+        </template>
         <template v-else>
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
           <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
             <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
           </template>
           <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">
-            {{ [1].includes(form.archiveBaseVO.directAuditStatus) && formDisabled ? '编辑' : '保存' }}
+            {{ [1, 10].includes(form.archiveBaseVO.directAuditStatus) && formDisabled ? '编辑' : '保存' }}
           </el-button>
         </template>
       </template>
@@ -681,10 +685,11 @@ export default {
         idFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
         idBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
         hardIdUrl: require('@/assets/images/xftArchive/people_id.png'),
-        bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png')
+        bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png'),
+        openingPermitUrl: require('@/assets/images/xftArchive/licence_for_opening_accounts.png')
       },
       isReason: false,
-      detailStatusArr: [0, 1, 2, 3, 4, 6, 8],
+      detailStatusArr: [0, 1, 2, 3, 4, 6, 8, 10],
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
@@ -765,6 +770,11 @@ export default {
       this.form.archiveBaseVO.businessCategoryRemark = one.label + '/' + two.label
       this.form.archiveBaseVO.businessCategory = val[1]
     },
+    setBusinessCategory(val) {
+      this.businessOptions.forEach(item => {
+        if (item.children.some(ele => ele.value === val)) this.form.archiveBaseVO.businessCategory = [item.value, val]
+      })
+    },
     getBusinessCategory: async function() {
       const res = await businessCategory()
       let data = []
@@ -809,6 +819,11 @@ export default {
     },
     handleBranchPage() {
       if (!this.branchOptions) this.getBranchPage()
+    },
+    handleBankChange() {
+      this.$nextTick(() => {
+        this.form.archiveExpandVO.bankSubName = this.$refs.bankSub.$el.childNodes[1].childNodes[1].value
+      })
     },
     getBranchPage: async function(bName = '') {
       const data = { page: 1, rows: 100, bCode: '', bName }
@@ -865,7 +880,8 @@ export default {
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-        if (![0, 1, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
+        this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
+        if (![0, 1, 2, 3, 4, 6, 8, 10].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
       } catch (error) {
       } finally {
         this.isDetailLoad = false

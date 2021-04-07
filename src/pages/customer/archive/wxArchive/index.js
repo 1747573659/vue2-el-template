@@ -16,9 +16,9 @@ export const deactivateOptions = [
 // 统计配置
 export const countOptions = [
   { value: 0, label: '草稿', total: 0 },
-  { value: 2, label: '待渠道审核', total: 0 },
+  { value: 1, label: '待渠道审核', total: 0 },
   { value: 3, label: '待平台审核', total: 0 },
-  { value: 1, label: '渠道审核未通过', total: 0 },
+  { value: 2, label: '渠道审核未通过', total: 0 },
   { value: 4, label: '平台审核未通过', total: 0 }
 ]
 
@@ -163,6 +163,14 @@ export const detailValidate = {
     {
       pattern: validatorRules.mobildPhone,
       message: '请输入正确的电话号码',
+      trigger: 'change'
+    }
+  ],
+  'archiveExpandVO.administratorIdCard':[
+    { required: true, message: '请输入联系人证件号码', trigger: 'blur' },
+    {
+      pattern: validatorRules.idNumber,
+      message: '请输入正确证件号码',
       trigger: 'change'
     }
   ],
