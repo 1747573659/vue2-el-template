@@ -1,14 +1,10 @@
 <template>
   <section>
     <div class="search-box">
-      <div class="p-count-con">
-        <section class="p-count-main" v-if="countData.length > 0">
-          <img src="../../../../assets/images/icon/mark.png" alt="提示" />
-          <template v-for="item in countData">
-            <div class="p-count_item" :key="item.directAuditStatus">{{ item.label }}：{{ item.value }}</div>
-          </template>
-        </section>
-      </div>
+      <count-tips show-icon>
+        <template #icon><img src="../../../../assets/images/icon/mark.png" alt="提示" class="p-count-icon"/></template>
+        <div class="p-count_item" v-for="(item, index) in countData" :key="index">{{ item.label }}：{{ item.value }}</div>
+      </count-tips>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-form-general_row">
           <el-col :span="21">
@@ -52,7 +48,7 @@
             </el-col>
             <el-col>
               <el-form-item class="p-form-general_label">
-                <el-button type="primary" @click="handleSearch" :loading="isSearchLock">查询</el-button>
+                <el-button type="primary" :loading="isSearchLock" @click="handleSearch">查询</el-button>
               </el-form-item>
             </el-col>
           </el-col>
@@ -118,7 +114,7 @@
                 <el-button type="text" size="small" slot="reference">删除</el-button>
               </el-popconfirm>
             </template>
-            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-else @click="handleStopUse(scope.row)">
+            <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-else @click="handleStopOrUse(scope.row)">
               <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</span>
             </el-button>
             <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 3" @click="handleDirectAuditStatus(scope.row)">撤销</el-button>
@@ -199,22 +195,22 @@ import {
   generalDetail,
   updateArchiveBaseDirectAuditStatus
 } from '@/api/wxArchive'
-import countTips from '../components/tipsBlock'
+import countTips from '../components/tipsPanel'
 
 export default {
   name: 'wxArchive',
   mixins: [tableMaxHeight],
   components: {
-    // countTips
+    countTips
   },
   data() {
     return {
       merchantTypeOptions,
       deactivateOptions,
       countOptions,
-      checkAccountData: checkAccountData,
-      direAuditStatusOptions: [],
       countData: [],
+      checkAccountData,
+      direAuditStatusOptions: [],
       form: {
         createTime: '',
         merchantType: '',
@@ -281,7 +277,6 @@ export default {
       this.form.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
       this.handleQueryPage()
     },
-
     handleQueryTotalByStatus: async function() {
       try {
         const res = await queryTotalByStatus(this.handleQueryTabParams())
@@ -295,7 +290,6 @@ export default {
         } else this.countData = countOptions
       } catch (error) {}
     },
-
     handleQueryTabParams() {
       const { createTime, msg, sortStatus, ...params } = this.form
       return Object.assign(params, {
@@ -349,8 +343,8 @@ export default {
       this.$message.success('修改成功')
     },
     handleSearch() {
-      this.currentPage = 1
       this.isSearchLock = true
+      this.currentPage = 1
       this.handleQueryTotalByStatus()
       this.handleQueryPage().finally(() => {
         this.isSearchLock = false
@@ -401,6 +395,18 @@ export default {
   .el-col-3 .el-form-item {
     float: right;
   }
+  .p-count-icon {
+    width: 16px;
+    height: 16px;
+    margin-right: 8px;
+  }
+  .p-count_item {
+    font-size: 14px;
+    color: #3d4966;
+    &:not(:last-child) {
+      margin-right: 30px;
+    }
+  }
 }
 .data-box {
   .e-general_tabOrange {
@@ -414,34 +420,6 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
-  }
-}
-.p {
-  &-count {
-    &-con {
-      min-height: 34px;
-      margin: 0 8px 16px 8px;
-    }
-    &-main {
-      background: rgba(255, 96, 16, 0.08);
-      border: 1px solid rgba(255, 96, 16, 0.4);
-      border-radius: 2px;
-      display: flex;
-      align-items: center;
-      padding: 7px 16px;
-      font-size: 14px;
-      color: #3d4966;
-      img {
-        width: 16px;
-        height: 16px;
-        margin-right: 8px;
-      }
-    }
-    &_item {
-      &:not(:last-child) {
-        margin-right: 30px;
-      }
-    }
   }
 }
 </style>
