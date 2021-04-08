@@ -43,21 +43,9 @@
           <el-col :span="12">
             <el-form-item label="商户类型" prop="archiveBaseVO.merchantType">
               <el-radio-group v-model="form.archiveBaseVO.merchantType" @change="handleMerchantType">
-                <!-- <el-radio :label="5">
-                  <span>小微</span>
-                  <el-tooltip effect="dark" content="无营业执照、免办理工商注册登记的实体商户" placement="top">
-                    <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                  </el-tooltip>
-                </el-radio> -->
-                <el-radio :label="1">
-                  <span>个体工商户</span>
-                  <el-tooltip effect="dark" content="营业执照上的主体类型一般为个体户、个体工商户、个体经营" placement="top">
-                    <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                  </el-tooltip>
-                </el-radio>
-                <el-radio :label="2">
-                  <span>企业</span>
-                  <el-tooltip effect="dark" content="营业执照上的主体类型一般为有限公司、有限责任公司" placement="top">
+                <el-radio v-for="(item, index) in merchantTypeOptions.slice(-2)" :key="index" :label="item.value">
+                  <span>{{ item.label }}</span>
+                  <el-tooltip effect="dark" :content="item.content" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
                   </el-tooltip>
                 </el-radio>
@@ -90,9 +78,9 @@
               </el-radio-group>
               <el-tooltip effect="dark" placement="top-start">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                <template #content
-                  ><span>若营业执照注册号为18位统一社会信用代码，请选择“已三证合一”，<br />否则请选择“非三证合一”</span></template
-                >
+                <template #content>
+                  <span>若营业执照注册号为18位统一社会信用代码，请选择“已三证合一”，<br />否则请选择“非三证合一”</span>
+                </template>
               </el-tooltip>
             </el-form-item>
           </el-col>
@@ -143,35 +131,15 @@
               </el-form-item>
             </el-col>
           </template>
-          <!-- <el-col :span="24">
-            <el-form-item label="经营范围" prop="archiveExpandVO.businessScope">
-              <el-input
-                v-model="form.archiveExpandVO.businessScope"
-                type="textarea"
-                :autosize="{ minRows: 3 }"
-                maxlength="140"
-                show-word-limit
-                placeholder="会写入商户合同条款或用于后续公众号展示，请谨慎填写"
-                class="e-wxArchive-textarea"
-                style="width: 240px"
-              ></el-input>
-            </el-form-item>
-          </el-col> -->
           <el-col :span="24">
             <el-form-item label="经营类目">
-              <el-cascader ref="cascader" v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
-              <!-- <el-cascader :options="tagSelOption" v-model="ruleForm.businessCategory" @change="handleChange"></el-cascader> -->
-              <!-- <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
+              <el-cascader v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
+              <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
-              </el-tooltip> -->
+              </el-tooltip>
             </el-form-item>
           </el-col>
-          <el-col
-            :span="24"
-            v-if="
-              form.archiveBaseVO.merchantType === 5 && ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业'].includes(form.archiveBaseVO.businessCategoryRemark)
-            "
-          >
+          <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 5 && sellShopDescribeArr.includes(form.archiveBaseVO.businessCategoryRemark)">
             <el-form-item label="售卖商品描述" prop="archiveExpandVO.sellShopDescribe">
               <el-input v-model="form.archiveExpandVO.sellShopDescribe" type="textarea" :autosize="{ minRows: 3 }" maxlength="140" show-word-limit style="width: 240px"></el-input>
             </el-form-item>
@@ -184,25 +152,10 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
-                <el-date-picker
-                  v-model="form.archiveExpandVO.orgInstitutionBigen"
-                  type="date"
-                  clearable
-                  placeholder="开始日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.orgInstitutionEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker
-                  v-else
-                  v-model="form.archiveExpandVO.orgInstitutionEnd"
-                  type="date"
-                  clearable
-                  placeholder="结束日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -285,59 +238,6 @@
               <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="12">
-            <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
-              <upload-pic
-                alt="门店门头照"
-                :fileServer="fileServer"
-                :imagePath="form.archiveOtherVO.signboardUrl"
-                :exampleImg="exampleImg.signboardUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'signboardUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"
-              >
-              </upload-pic>
-            </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="12">
-            <el-form-item label="经营场所照1" prop="archiveOtherVO.businessSiteOneUrl">
-              <upload-pic
-                alt="经营场所照1"
-                :fileServer="fileServer"
-                :imagePath="form.archiveOtherVO.businessSiteOneUrl"
-                :exampleImg="exampleImg.businessSiteOneUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteOneUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
-              ></upload-pic>
-            </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="12">
-            <el-form-item label="经营场所照2" prop="archiveOtherVO.businessSiteTwoUrl">
-              <upload-pic
-                alt="经营场所照2"
-                :fileServer="fileServer"
-                :imagePath="form.archiveOtherVO.businessSiteTwoUrl"
-                :exampleImg="exampleImg.businessSiteTwoUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteTwoUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteTwoUrl)"
-              ></upload-pic>
-            </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="12">
-            <el-form-item label="经营场所照3" prop="archiveOtherVO.businessSiteThreeUrl">
-              <upload-pic
-                alt="经营场所照3"
-                :fileServer="fileServer"
-                :imagePath="form.archiveOtherVO.businessSiteThreeUrl"
-                :exampleImg="exampleImg.businessSiteThreeUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteThreeUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteThreeUrl)"
-              ></upload-pic>
-            </el-form-item>
-          </el-col> -->
           <template v-if="form.archiveBaseVO.merchantType === 5">
             <el-col :span="12">
               <el-form-item label="经营场地证明">
@@ -437,18 +337,10 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
-              <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+              <el-date-picker v-model="form.archiveExpandVO.idBegin" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               <span style="margin: 0 10px;">至</span>
               <span v-if="!form.archiveExpandVO.idEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
-              <el-date-picker
-                v-else
-                v-model="form.archiveExpandVO.idEnd"
-                type="date"
-                clearable
-                placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-                style="width: 140px"
-              ></el-date-picker>
+              <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
@@ -577,6 +469,7 @@
         </el-row>
       </div>
     </el-form>
+
     <div class="p-wxArchive-action">
       <template v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
         <template v-if="form.archiveBaseVO.directAuditStatus === 3">
@@ -594,6 +487,7 @@
       </template>
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
+
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
@@ -606,28 +500,22 @@
         <el-button @click="handleRefund" type="primary" size="small" class="e-wxArchive-action_pd">确定</el-button>
       </div>
     </el-dialog>
+
     <!-- image-preview -->
-    <el-image-preview
-      ref="imageViewer"
-      v-if="showViewer"
-      :initial-index="imageIndex"
-      :url-list="previewList"
-      :on-close="handleClosePreview"
-      class="e-preview-con"
-    ></el-image-preview>
+    <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="handleClosePreview" class="e-preview-con"></el-image-preview>
   </section>
 </template>
 
 <script>
+import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
 import fileServer from '@/mixins/fileServe'
 import selectCopy from '@/components/selectCopy'
-import { detailValidate, formObj, rateOptions, refundForm, refundRules } from './index'
+import { detailValidate, formObj, rateOptions, refundForm, refundRules, merchantTypeOptions, sellShopDescribeArr } from './index'
 import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
-import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import {
   queryShopListByPage,
   queryBankPage,
@@ -656,20 +544,21 @@ export default {
   },
   data() {
     return {
-      questionIcon: require('@/assets/images/icon/questioin.png'),
+      merchantTypeOptions,
+      sellShopDescribeArr,
       rateOptions,
       refundForm,
       refundRules,
+      questionIcon: require('@/assets/images/icon/questioin.png'),
       pageAction: this.$route.query.action,
       selectOptions: [],
       searchString: '',
       isMaxPage: false,
       isDetailLoad: false,
       form: {},
-      businessCategory: [],
       rules: detailValidate,
+      businessCategory: [],
       businessSceneList: [],
-      statusList: [],
       selectPageNo: 1,
       checkFormDisabled: false,
       exampleImg: {
@@ -693,9 +582,9 @@ export default {
       bankOptions: [],
       branchOptions: [],
       businessOptions: [],
-      previewList: [],
-      showViewer: false,
+      checkViewer: false,
       imageIndex: 0,
+      previewList: [],
       isMicro: true,
       direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions)
     }
@@ -735,7 +624,7 @@ export default {
       })
     },
     handleClosePreview() {
-      this.showViewer = false
+      this.checkViewer = false
     },
     handleImgPreview(url) {
       if (this.checkFormDisabled && url) {
@@ -744,7 +633,7 @@ export default {
         for (let i = 0; i < imgList.length; i++) {
           this.previewList.push(imgList[i].src)
         }
-        this.showViewer = true
+        this.checkViewer = true
         this.imageIndex = this.previewList.findIndex(item => item === url)
       }
     },
@@ -1034,7 +923,7 @@ export default {
   border-bottom: 72px solid #f7f8fa;
   background-color: #fff;
   .p-wxArchive-item {
-    header {
+    > header {
       height: 48px;
       line-height: 48px;
       padding-left: 16px;
@@ -1043,6 +932,16 @@ export default {
       border-bottom: 1px solid #e6e9f0;
       font-weight: 500;
     }
+  }
+  .p-wxArchive-action {
+    width: calc(100% - 200px - 42px);
+    height: 56px;
+    position: fixed;
+    bottom: 0;
+    background-color: #fff;
+    line-height: 56px;
+    text-align: center;
+    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
   }
 }
 
@@ -1064,27 +963,8 @@ export default {
       //   }
       // }
     }
-    &-itemTitle {
-      height: 48px;
-      line-height: 48px;
-      padding-left: 16px;
-      font-size: 16px;
-      color: #1f2e4d;
-      border-bottom: 1px solid #e6e9f0;
-      font-weight: 500;
-    }
     &-baseInfo {
       padding-top: 24px;
-    }
-    &-action {
-      width: calc(100% - 200px - 42px);
-      height: 56px;
-      position: fixed;
-      bottom: 0;
-      background-color: #fff;
-      line-height: 56px;
-      text-align: center;
-      box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
     }
   }
 }
