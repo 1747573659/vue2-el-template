@@ -158,13 +158,7 @@
           </el-col> -->
           <el-col :span="24">
             <el-form-item label="经营类目">
-              <el-cascader
-                ref="cascader"
-                v-model="form.archiveBaseVO.businessCategory"
-                :options="businessOptions"
-                @change="handleBusinessCategory"
-                style="width: 240px"
-              ></el-cascader>
+              <el-cascader ref="cascader" v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               <!-- <el-cascader :options="tagSelOption" v-model="ruleForm.businessCategory" @change="handleChange"></el-cascader> -->
               <!-- <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -588,7 +582,7 @@
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)">撤销</el-button>
         </template>
         <template v-else>
-          <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
+          <el-button v-if="form.archiveBaseVO.directAuditStatus !== 6" size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
           <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
             <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
           </template>
@@ -671,6 +665,7 @@ export default {
       isMaxPage: false,
       isDetailLoad: false,
       form: {},
+      businessCategory: [],
       rules: detailValidate,
       businessSceneList: [],
       statusList: [],
@@ -772,7 +767,7 @@ export default {
     },
     setBusinessCategory(val) {
       this.businessOptions.forEach(item => {
-        if (item.children.some(ele => ele.value === val)) this.form.archiveBaseVO.businessCategory = [item.value, val]
+        if (item.children.some(ele => ele.value === val)) this.businessCategory = [item.value, val]
       })
     },
     getBusinessCategory: async function() {
@@ -859,7 +854,6 @@ export default {
             this.form.archiveBaseVO.directAuditStatus = ''
             this.form.archiveBaseVO.useChannelCode = ''
           }
-          this.form.archiveBaseVO.businessCategory = this.form.archiveBaseVO.businessCategory.length > 1 ? this.form.archiveBaseVO.businessCategory[1] : this.form.archiveBaseVO.businessCategory[0]
           try {
             await submitToVerify(this.form)
             this.$store.dispatch('delTagView', this.$route).then(() => {
@@ -882,7 +876,7 @@ export default {
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
-        if (![0, 1, 2, 3, 4, 6, 8, 10].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
+        if (![0, 1, 2, 4, 6, 8, 10].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
       } catch (error) {
       } finally {
         this.isDetailLoad = false
@@ -912,7 +906,6 @@ export default {
                 this.form.archiveBaseVO.directAuditStatus = ''
                 this.form.archiveBaseVO.useChannelCode = ''
               }
-              this.form.archiveBaseVO.businessCategory = this.form.archiveBaseVO.businessCategory.length > 1 ? this.form.archiveBaseVO.businessCategory[1] : this.form.archiveBaseVO.businessCategory[0]
               const res = await submit(this.form)
               if (!this.form.archiveBaseVO.id) {
                 this.$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: res, status: 'edit' } })

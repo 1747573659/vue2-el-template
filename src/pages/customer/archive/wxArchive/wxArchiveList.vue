@@ -76,7 +76,11 @@
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveExpandDTO.channelMchId" label="商户号" min-width="80"></el-table-column>
+        <el-table-column prop="archiveExpandDTO.channelMchId" label="商户号" min-width="80">
+          <template slot-scope="scope">
+            <span>{{ scope.row.archiveExpandDTO.channelMchId ? scope.row.archiveExpandDTO.channelMchId : '未生成' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column label="商户类型">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.merchantType | filterStatus(merchantTypeOptions) }}</span>
@@ -337,8 +341,8 @@ export default {
         this.handleQueryTotalByStatus()
       } catch (error) {}
     },
-    handleStopUse: async function(row) {
-      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Number(!row.archiveBaseDTO.stopUse) })
+    handleStopOrUse: async function(row) {
+      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Math.pow(0, row.archiveBaseDTO.stopUse) })
       await this.handleQueryPage()
       this.$message.success('修改成功')
     },

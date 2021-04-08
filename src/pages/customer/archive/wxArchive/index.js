@@ -2,7 +2,7 @@
 export const merchantTypeOptions = [
   { value: '', label: '全部' },
   { value: 5, label: '小微' },
-  { value: 1, label: '个体商户' },
+  { value: 1, label: '个体工商户' },
   { value: 2, label: '企业' }
 ]
 
@@ -166,7 +166,7 @@ export const detailValidate = {
       trigger: 'change'
     }
   ],
-  'archiveExpandVO.administratorIdCard':[
+  'archiveExpandVO.administratorIdCard': [
     { required: true, message: '请输入联系人证件号码', trigger: 'blur' },
     {
       pattern: validatorRules.idNumber,
