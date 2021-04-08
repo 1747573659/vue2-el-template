@@ -88,7 +88,7 @@
         </el-table-column>
         <el-table-column label="审核状态">
           <template slot-scope="scope">
-            <span :class="{ 'e-general_tabOrange': scope.row.archiveBaseDTO.directAuditStatus === 4 }" @click="handleReason(scope.row)">
+            <span :class="{ 'e-general_tabOrange': triggerReasons.includes(scope.row.archiveBaseDTO.directAuditStatus) }" @click="handleReason(scope.row)">
               {{ scope.row.archiveBaseDTO.directAuditStatus | filterStatus(direAuditStatusOptions) }}
             </span>
           </template>
@@ -114,7 +114,7 @@
             <el-button type="text" size="small" v-else @click="handlePushDetail({ status: 'detail' }, scope.row)">详情</el-button>
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'copy' }, scope.row)">复制</el-button>
             <template v-if="scope.row.archiveBaseDTO.directAuditStatus === 0">
-              <el-popconfirm class="e-popover_con" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
+              <el-popconfirm class="el-button el-button--text" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
                 <el-button type="text" size="small" slot="reference">删除</el-button>
               </el-popconfirm>
             </template>
@@ -187,7 +187,7 @@
 import { mapActions } from 'vuex'
 import { filterStatus } from './filters'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
-import { merchantTypeOptions, deactivateOptions, countOptions, checkAccountData } from './index'
+import { merchantTypeOptions, deactivateOptions, countOptions, checkAccountData, triggerReasons } from './index'
 import {
   queryPage,
   generalStopUse,
@@ -209,6 +209,7 @@ export default {
   },
   data() {
     return {
+      triggerReasons,
       merchantTypeOptions,
       deactivateOptions,
       countOptions,
@@ -240,32 +241,22 @@ export default {
   },
   activated() {
     this.countData = countOptions
-    this.handleQueryPage()
-    this.handleQueryTotalByStatus()
+    this.getQueryPage()
+    this.getQueryTotalByStatus()
   },
   mounted() {
     this.countData = countOptions
-    this.handleQueryPage()
-    this.handleQueryTotalByStatus()
-    this.handleAuditStatus()
+    this.getQueryPage()
+    this.getQueryTotalByStatus()
+    this.getAuditStatus()
   },
   methods: {
     ...mapActions(['delCachedView']),
     handleDirectAuditStatus: async function(row) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id: row.archiveBaseDTO.id })
-        this.handleQueryPage()
         this.$message({ type: 'success', message: '资料撤销成功' })
-      } catch (error) {}
-    },
-    handleAuditStatus: async function() {
-      try {
-        const res = await queryArchiveDirectAuditStatus()
-        const direAuditStatusOptions = res.map(item => {
-          return { label: item.directArchiveAuditStatusDesc, value: item.directArchiveAuditStatus }
-        })
-        this.direAuditStatusOptions = direAuditStatusOptions
-        sessionStorage.direAuditStatusOptions = JSON.stringify(direAuditStatusOptions)
+        this.getQueryPage()
       } catch (error) {}
     },
     handlePushDetail(query, row = {}) {
@@ -273,41 +264,13 @@ export default {
       this.delCachedView({ name: 'wxArchiveAdd' }).then(() => this.$router.push({ name: 'wxArchiveAdd', query: queryParams }))
     },
     handleReason(row) {
-      if (row.archiveBaseDTO.directAuditStatus === 4) {
+      if (this.triggerReasons.includes(row.archiveBaseDTO.directAuditStatus)) {
         this.$alert(row.archiveBaseDTO.auditRemark, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
       }
     },
     handleTabSort({ column, prop, order }) {
       this.form.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
-      this.handleQueryPage()
-    },
-    handleQueryTotalByStatus: async function() {
-      try {
-        const res = await queryTotalByStatus(this.handleQueryTabParams())
-        this.countData = []
-        if (res.auditStatuses?.length > 0) {
-          for (const ele of this.countOptions) {
-            for (const item of res.auditStatuses) {
-              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
-            }
-          }
-        } else this.countData = countOptions
-      } catch (error) {}
-    },
-    handleQueryTabParams() {
-      const { createTime, msg, sortStatus, ...params } = this.form
-      return Object.assign(params, {
-        orders: { createTime: sortStatus },
-        startTime: createTime?.[0] ?? '',
-        endTime: createTime?.[1] ?? '',
-        archiveIdStr: msg,
-        companyName: msg,
-        bankCard: msg,
-        merchantName: msg,
-        merchantShortName: msg,
-        page: this.currentPage,
-        rows: this.pageSize
-      })
+      this.getQueryPage()
     },
     handleCheckAccount: async function(row) {
       try {
@@ -337,33 +300,73 @@ export default {
       try {
         await delList({ id: row.archiveBaseDTO.id })
         if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
-        this.handleQueryPage()
+        this.getQueryPage()
         this.handleQueryTotalByStatus()
       } catch (error) {}
     },
     handleStopOrUse: async function(row) {
-      await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Math.pow(0, row.archiveBaseDTO.stopUse) })
-      await this.handleQueryPage()
-      this.$message.success('修改成功')
+      try {
+        await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Math.pow(0, row.archiveBaseDTO.stopUse) })
+        await this.getQueryPage()
+        this.$message.success('修改成功')
+      } catch (error) {}
+    },
+    getQueryTotalByStatus: async function() {
+      try {
+        const res = await queryTotalByStatus(this.handleQueryTabParams())
+        this.countData = []
+        if (res.auditStatuses?.length > 0) {
+          for (const ele of this.countOptions) {
+            for (const item of res.auditStatuses) {
+              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+            }
+          }
+        } else this.countData = countOptions
+      } catch (error) {}
+    },
+    getAuditStatus: async function() {
+      try {
+        const res = await queryArchiveDirectAuditStatus()
+        const direAuditStatusOptions = res.map(item => {
+          return { label: item.directArchiveAuditStatusDesc, value: item.directArchiveAuditStatus }
+        })
+        this.direAuditStatusOptions = direAuditStatusOptions
+        sessionStorage.direAuditStatusOptions = JSON.stringify(direAuditStatusOptions)
+      } catch (error) {}
+    },
+    handleQueryTabParams() {
+      const { createTime, msg, sortStatus, ...params } = this.form
+      return Object.assign(params, {
+        orders: { createTime: sortStatus },
+        startTime: createTime?.[0] ?? '',
+        endTime: createTime?.[1] ?? '',
+        archiveIdStr: msg,
+        companyName: msg,
+        bankCard: msg,
+        merchantName: msg,
+        merchantShortName: msg,
+        page: this.currentPage,
+        rows: this.pageSize
+      })
     },
     handleSearch() {
       this.isSearchLock = true
       this.currentPage = 1
-      this.handleQueryTotalByStatus()
-      this.handleQueryPage().finally(() => {
+      this.getQueryTotalByStatus()
+      this.getQueryPage().finally(() => {
         this.isSearchLock = false
       })
     },
     handleCurrentChange(val) {
       this.currentPage = val
-      this.handleQueryPage()
+      this.getQueryPage()
     },
     handleSizeChange(val) {
       this.currentPage = 1
       this.pageSize = val
-      this.handleQueryPage()
+      this.getQueryPage()
     },
-    handleQueryPage: async function() {
+    getQueryPage: async function() {
       try {
         this.isTabLock = true
         const res = await queryPage(this.handleQueryTabParams())
@@ -416,9 +419,6 @@ export default {
   .e-general_tabOrange {
     color: #ff6010;
     cursor: pointer;
-  }
-  .e-popover_con {
-    margin-left: 12px;
   }
   .archive-table-oneline {
     overflow: hidden;

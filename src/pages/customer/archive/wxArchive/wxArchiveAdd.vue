@@ -1,6 +1,6 @@
 <template>
   <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
-    <header v-if="pageAction && pageAction !== 'add' && $route.query.status !== 'copy'">
+    <!-- <header v-if="pageAction && pageAction !== 'add' && $route.query.status !== 'copy'">
       <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
         <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus !== ''">
           <label>进件状态：</label>
@@ -13,10 +13,11 @@
           </el-tooltip>
         </el-col>
       </el-row>
-    </header>
-    <el-form ref="form" :model="form" :rules="rules" :disabled="formDisabled" size="small" label-suffix=":" :inline="true" label-width="210px">
+    </header> -->
+
+    <el-form ref="form" :model="form" :rules="rules" :disabled="checkFormDisabled" size="small" label-suffix=":" :inline="true" label-width="210px">
       <div class="p-wxArchive-item">
-        <div class="p-wxArchive-itemTitle">基本信息</div>
+        <header>基本信息</header>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="12">
             <el-form-item label="商户名称" prop="archiveBaseVO.merchantId">
@@ -126,7 +127,7 @@
                   style="width: 140px"
                 ></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.licValidityEnd && formDisabled && pageAction === 'detail'">长期有效</span>
+                <span v-if="!form.archiveExpandVO.licValidityEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
                 <el-date-picker
                   v-else
                   v-model="form.archiveExpandVO.licValidityEnd"
@@ -192,7 +193,7 @@
                   style="width: 140px"
                 ></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && formDisabled && pageAction === 'detail'">长期有效</span>
+                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
                 <el-date-picker
                   v-else
                   v-model="form.archiveExpandVO.orgInstitutionEnd"
@@ -386,7 +387,7 @@
         </el-row>
       </div>
       <div class="p-wxArchive-item">
-        <div class="p-wxArchive-itemTitle">法人信息</div>
+        <header>法人信息</header>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="12">
             <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
@@ -438,7 +439,7 @@
             <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
               <el-date-picker v-model="form.archiveExpandVO.idBegin" type="date" clearable placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               <span style="margin: 0 10px;">至</span>
-              <span v-if="!form.archiveExpandVO.idEnd && formDisabled && pageAction === 'detail'">长期有效</span>
+              <span v-if="!form.archiveExpandVO.idEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
               <el-date-picker
                 v-else
                 v-model="form.archiveExpandVO.idEnd"
@@ -453,7 +454,7 @@
         </el-row>
       </div>
       <div class="p-wxArchive-item">
-        <div class="p-wxArchive-itemTitle">结算账号</div>
+        <header>结算账号</header>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="24">
             <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
@@ -564,7 +565,7 @@
         </el-row>
       </div>
       <div class="p-wxArchive-item">
-        <div class="p-wxArchive-itemTitle">费率设置</div>
+        <header>费率设置</header>
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="12">
             <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
@@ -587,7 +588,7 @@
             <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
           </template>
           <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">
-            {{ [1, 10].includes(form.archiveBaseVO.directAuditStatus) && formDisabled ? '编辑' : '保存' }}
+            {{ [1, 10].includes(form.archiveBaseVO.directAuditStatus) && checkFormDisabled ? '编辑' : '保存' }}
           </el-button>
         </template>
       </template>
@@ -670,7 +671,7 @@ export default {
       businessSceneList: [],
       statusList: [],
       selectPageNo: 1,
-      formDisabled: false,
+      checkFormDisabled: false,
       exampleImg: {
         signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
         businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
@@ -737,7 +738,7 @@ export default {
       this.showViewer = false
     },
     handleImgPreview(url) {
-      if (this.formDisabled && url) {
+      if (this.checkFormDisabled && url) {
         this.previewList = []
         let imgList = document.querySelectorAll('.avatar')
         for (let i = 0; i < imgList.length; i++) {
@@ -876,7 +877,7 @@ export default {
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
-        if (![0, 1, 2, 4, 6, 8, 10].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.formDisabled = true
+        if (![0, 1, 2, 4, 6, 8, 10].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.checkFormDisabled = true
       } catch (error) {
       } finally {
         this.isDetailLoad = false
@@ -893,8 +894,8 @@ export default {
       }
     },
     handleArchive() {
-      if (this.form.archiveBaseVO.directAuditStatus === 2 && this.formDisabled) {
-        this.formDisabled = false
+      if (this.form.archiveBaseVO.directAuditStatus === 2 && this.checkFormDisabled) {
+        this.checkFormDisabled = false
       } else {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
@@ -1028,23 +1029,40 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.p-wxArchive-con {
+  border-top: 16px solid #f7f8fa;
+  border-bottom: 72px solid #f7f8fa;
+  background-color: #fff;
+  .p-wxArchive-item {
+    header {
+      height: 48px;
+      line-height: 48px;
+      padding-left: 16px;
+      font-size: 16px;
+      color: #1f2e4d;
+      border-bottom: 1px solid #e6e9f0;
+      font-weight: 500;
+    }
+  }
+}
+
 .p {
   &-wxArchive {
     &-con {
       border-top: 16px solid #f7f8fa;
       border-bottom: 72px solid #f7f8fa;
       background-color: #fff;
-      header {
-        min-height: 72px;
-        /deep/ .el-col {
-          height: 72px;
-          display: flex;
-          align-items: center;
-          padding-left: 10%;
-          color: #3d4966;
-          font-size: 14px;
-        }
-      }
+      // header {
+      //   min-height: 72px;
+      //   /deep/ .el-col {
+      //     height: 72px;
+      //     display: flex;
+      //     align-items: center;
+      //     padding-left: 10%;
+      //     color: #3d4966;
+      //     font-size: 14px;
+      //   }
+      // }
     }
     &-itemTitle {
       height: 48px;
