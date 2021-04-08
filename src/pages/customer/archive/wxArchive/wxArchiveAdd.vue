@@ -548,7 +548,7 @@
                 isCopy
                 style="width: 240px"
                 :remoteMethod="handleBranchRemote"
-                :value.sync="form.archiveExpandVO.bankSub"
+                :value.sync="form.archiveExpandVO.bankSubName"
                 @focus="handleBranchPage"
                 @change="handleBankChange"
                 filterable
@@ -859,6 +859,7 @@ export default {
             this.form.archiveBaseVO.directAuditStatus = ''
             this.form.archiveBaseVO.useChannelCode = ''
           }
+          this.form.archiveBaseVO.businessCategory = this.form.archiveBaseVO.businessCategory.length > 1 ? this.form.archiveBaseVO.businessCategory[1] : this.form.archiveBaseVO.businessCategory[0]
           try {
             await submitToVerify(this.form)
             this.$store.dispatch('delTagView', this.$route).then(() => {
@@ -911,6 +912,7 @@ export default {
                 this.form.archiveBaseVO.directAuditStatus = ''
                 this.form.archiveBaseVO.useChannelCode = ''
               }
+              this.form.archiveBaseVO.businessCategory = this.form.archiveBaseVO.businessCategory.length > 1 ? this.form.archiveBaseVO.businessCategory[1] : this.form.archiveBaseVO.businessCategory[0]
               const res = await submit(this.form)
               if (!this.form.archiveBaseVO.id) {
                 this.$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: res, status: 'edit' } })

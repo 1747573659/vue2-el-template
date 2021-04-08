@@ -3,7 +3,7 @@
     <div class="search-box">
       <count-tips show-icon>
         <template #icon><img src="../../../../assets/images/icon/mark.png" alt="提示" class="p-count-icon"/></template>
-        <div class="p-count_item" v-for="(item, index) in countData" :key="index">{{ item.label }}：{{ item.value }}</div>
+        <div class="p-count_item" v-for="(item, index) in countData" :key="index">{{ item.label }}：{{ item.total }}</div>
       </count-tips>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
         <el-row class="p-form-general_row">
@@ -284,7 +284,7 @@ export default {
         if (res.auditStatuses?.length > 0) {
           for (const ele of this.countOptions) {
             for (const item of res.auditStatuses) {
-              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, value: item.total })
+              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
             }
           }
         } else this.countData = countOptions
