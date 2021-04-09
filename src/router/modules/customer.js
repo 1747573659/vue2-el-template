@@ -150,17 +150,6 @@ const customer = {
           }
         },
         {
-          path: 'wxArchiveDetail',
-          name: 'wxArchiveDetail',
-          code: 'KM_DEFAULT_CODE',
-          hidden: true,
-          component: _import('customer/archive/wxArchive/wxArchiveDetail'),
-          meta: {
-            title: '进件详情',
-            name: 'wxArchiveDetail'
-          }
-        },
-        {
           path: 'wxProgress',
           name: 'wxProgress',
           code: 'KM_CUSTOMER_ARCHIVE_WXPROGRESS',

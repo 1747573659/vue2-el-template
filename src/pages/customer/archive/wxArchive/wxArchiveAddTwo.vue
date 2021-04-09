@@ -84,6 +84,14 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
+                <upload-panel
+                  alt="营业执照"
+                  action="/uploadFile"
+                  :fileServer="fileServer"
+                  :image-url="form.archiveExpandVO.businessLicenseUrl"
+                  :example-img="exampleImg.businessLicenseUrl"
+                  @success="handleUpload"
+                />
                 <upload-pic
                   alt="营业执照"
                   :hasBase64="true"
@@ -583,6 +591,7 @@
 </template>
 
 <script>
+import uploadPanel from '../components/uploadPanel'
 import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
@@ -602,7 +611,8 @@ export default {
     uploadPic,
     areaSelect,
     ElImagePreview,
-    selectCopy
+    selectCopy,
+    uploadPanel
   },
   data() {
     return {
@@ -665,6 +675,10 @@ export default {
     if (this.pageAction === 'detail') this.handleDetail()
   },
   methods: {
+    handleUpload(res){
+      console.info(123456)
+      console.info(res)
+    },
     handleCancel() {
       this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ name: 'wxArchive' })
@@ -926,7 +940,7 @@ export default {
           this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
           const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
           this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
-          this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1].replace(/长期/,'') : ''
+          this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1].replace(/长期/, '') : ''
         })
         .catch(err => {})
       this.form[type][url] = res.data.path
@@ -1025,7 +1039,7 @@ export default {
         .el-input__count {
           line-height: 1.3;
         }
-        .el-textarea__inner{
+        .el-textarea__inner {
           padding-bottom: 20px;
         }
       }
