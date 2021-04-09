@@ -1,6 +1,6 @@
 <template>
   <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
-    <!-- <header v-if="pageAction && pageAction !== 'add' && $route.query.status !== 'copy'">
+    <header v-if="pageAction && pageAction !== 'add' && $route.query.status !== 'copy'">
       <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
         <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus !== ''">
           <label>进件状态：</label>
@@ -13,7 +13,7 @@
           </el-tooltip>
         </el-col>
       </el-row>
-    </header> -->
+    </header>
 
     <el-form ref="form" :model="form" :rules="rules" :disabled="checkFormDisabled" size="small" label-suffix=":" :inline="true" label-width="210px">
       <div class="p-wxArchive-item">
@@ -476,7 +476,7 @@
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)">撤销</el-button>
         </template>
         <template v-else>
-          <el-button v-if="form.archiveBaseVO.directAuditStatus !== 6" size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
+          <el-button v-if="[6, 8].includes(form.archiveBaseVO.directAuditStatus)" size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
           <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
             <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
           </template>
@@ -711,9 +711,11 @@ export default {
       })
     },
     getBranchPage: async function(bName = '') {
-      const data = { page: 1, rows: 100, bCode: '', bName }
-      const res = await queryBranchPage(data)
-      this.branchOptions = res.results
+      try {
+        const data = { page: 1, rows: 100, bCode: '', bName }
+        const res = await queryBranchPage(data)
+        this.branchOptions = res.results
+      } catch (error) {}
     },
     handleRefund() {
       this.$refs.refundForm.validate(async valid => {
