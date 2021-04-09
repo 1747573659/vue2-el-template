@@ -87,6 +87,14 @@
           <template v-if="form.archiveBaseVO.merchantType !== 5">
             <el-col :span="24">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
+                <upload-panel
+                  alt="营业执照"
+                  action="/uploadFile"
+                  :fileServer="fileServer"
+                  :image-url="form.archiveExpandVO.businessLicenseUrl"
+                  :example-img="exampleImg.businessLicenseUrl"
+                  @success="handleUpload"
+                />
                 <upload-pic
                   alt="营业执照"
                   :hasBase64="true"
@@ -507,6 +515,7 @@
 </template>
 
 <script>
+import uploadPanel from '../components/uploadPanel'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import selectPage from '@/components/selectPage/selectPage'
 import uploadPic from '../components/uploadPic'
@@ -537,7 +546,8 @@ export default {
     uploadPic,
     areaSelect,
     ElImagePreview,
-    selectCopy
+    selectCopy,
+    uploadPanel
   },
   filters: {
     filterStatus
@@ -953,17 +963,17 @@ export default {
       border-top: 16px solid #f7f8fa;
       border-bottom: 72px solid #f7f8fa;
       background-color: #fff;
-      // header {
-      //   min-height: 72px;
-      //   /deep/ .el-col {
-      //     height: 72px;
-      //     display: flex;
-      //     align-items: center;
-      //     padding-left: 10%;
-      //     color: #3d4966;
-      //     font-size: 14px;
-      //   }
-      // }
+      header {
+        min-height: 72px;
+        /deep/ .el-col {
+          height: 72px;
+          display: flex;
+          align-items: center;
+          padding-left: 10%;
+          color: #3d4966;
+          font-size: 14px;
+        }
+      }
     }
     &-baseInfo {
       padding-top: 24px;

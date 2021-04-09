@@ -1,31 +1,28 @@
 <template>
   <div>
-    <div>
-      <el-upload
-        class="avatar-uploader"
-        :action="actionUrl"
-        :accept="accept"
-        :headers="{ token }"
-        :before-upload="beforeUpload"
-        :on-error="onError"
-        :show-file-list="false"
-        v-bind="$attrs"
-        v-on="$listeners"
-        @on-success="$listeners.success"
-      >
-        <img v-if="imageUrl" class="avatar" :src="`${fileServer}/${imageUrl}`" @click="handleImgPreview" :alt="alt" />
-        <div class="avatar-uploader-card" v-else>
-          <i class="el-icon-plus avatar-uploader-icon"></i>
-          <span class="avatar-uploader-text">上传照片</span>
-        </div>
-      </el-upload>
-      <div class="avatar-upload-explain">
-        <span>要求图片清晰可见，{{ fileSize }}MB以内</span>
-        <el-popover v-if="showExample" placement="bottom" :title="`${alt}示例`" trigger="hover">
-          <img class="avatar-explain-img" :src="exampleImg" :alt="`${alt}示例`" />
-          <el-button type="text" slot="reference">图片示例</el-button>
-        </el-popover>
+    <el-upload
+      class="avatar-uploader"
+      :action="actionUrl"
+      :accept="accept"
+      :headers="{ token }"
+      :before-upload="beforeUpload"
+      :on-error="onError"
+      :show-file-list="false"
+      v-bind="$attrs"
+      v-on="$listeners"
+    >
+      <img v-if="imageUrl" class="avatar" :src="`${fileServer}/${imageUrl}`" @click="$listeners.click" :alt="alt" />
+      <div class="avatar-uploader-card" v-else>
+        <i class="el-icon-plus avatar-uploader-icon"></i>
+        <span class="avatar-uploader-text">上传照片</span>
       </div>
+    </el-upload>
+    <div class="avatar-upload-explain">
+      <span>要求图片清晰可见，{{ fileSize }}MB以内</span>
+      <el-popover v-if="showExample" placement="bottom" :title="`${alt}示例`" trigger="hover">
+        <img class="avatar-explain-img" :src="exampleImg" :alt="`${alt}示例`" />
+        <span class="el-button el-button--text" slot="reference">图片示例</span>
+      </el-popover>
     </div>
   </div>
 </template>
@@ -34,6 +31,7 @@
 import { getLocal } from '@/utils/storage'
 
 export default {
+  inheritAttrs: false,
   props: {
     action: {
       type: String,
@@ -76,12 +74,6 @@ export default {
       token: getLocal('token')
     }
   },
-  computed: {
-    getAction() {
-      console.info(`${process.env.VUE_APP_BASE_API}/${this.action}`)
-      return `${process.env.VUE_APP_BASE_API}/${this.action}`
-    }
-  },
   methods: {
     beforeUpload(file) {
       const fileSize = file.size / 1024 / 1024 < this.fileSize
@@ -91,14 +83,14 @@ export default {
     },
     onError() {
       this.$message({ type: 'error', message: '上传失败' })
-    },
-    handleImgPreview() {}
+    }
   }
 }
 </script>
 
 <style lang="scss" scoped>
 .avatar-uploader {
+  line-height: 1;
   /deep/ {
     .el-upload {
       border: 1px dashed #d3dbeb;
@@ -135,7 +127,8 @@ export default {
 
     .avatar-uploader-text {
       font-size: 14px;
-      margin-top: 10px;
+      line-height: 14px;
+      margin-top: 12px;
     }
   }
 }
@@ -144,6 +137,7 @@ export default {
   color: #cad1e0;
   font-size: 14px;
   margin-top: 5px;
+  line-height: 1.5;
 
   /deep/ {
     .el-button {

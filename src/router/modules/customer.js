@@ -142,7 +142,7 @@ const customer = {
           name: 'wxArchiveAdd',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          component: _import('customer/archive/wxArchive/wxArchiveAdd'),
+          component: _import('customer/archive/wxArchive/wxArchiveAddTwo'),
           meta: {
             title: '普通资质进件/新增',
             name: 'wxArchiveAdd',

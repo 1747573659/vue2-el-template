@@ -88,9 +88,10 @@
                   alt="营业执照"
                   action="/uploadFile"
                   :fileServer="fileServer"
-                  :image-url="form.archiveExpandVO.businessLicenseUrl"
                   :example-img="exampleImg.businessLicenseUrl"
-                  @success="handleUpload"
+                  :image-url="form.archiveExpandVO.businessLicenseUrl"
+                  :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.businessLicenseUrl')"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
                 />
                 <upload-pic
                   alt="营业执照"
@@ -675,9 +676,18 @@ export default {
     if (this.pageAction === 'detail') this.handleDetail()
   },
   methods: {
-    handleUpload(res){
-      console.info(123456)
-      console.info(res)
+    handleUpload(res, type) {
+      const typeList = type.split('.')
+      this.form[typeList[0]][typeList[1]] = res.data.path
+      console.info(this.form.archiveExpandVO.businessLicenseUrl)
+    },
+    handleUploadToOCR(file, type){
+      const typeList = type.split('.')
+      const reader =new FileReader()
+      reader.readAsDataURL(file.raw)
+      reader.onload = () =>  function() {
+          self.imgBase64 = reader.result
+      }
     },
     handleCancel() {
       this.$store.dispatch('delTagView', this.$route).then(() => {
@@ -762,9 +772,11 @@ export default {
       if (!this.branchOptions) this.getBranchPage()
     },
     getBranchPage: async function(bName = '') {
-      const data = { page: 1, rows: 100, bCode: '', bName }
-      const res = await queryBranchPage(data)
-      this.branchOptions = res.results
+      try {
+        const data = { page: 1, rows: 100, bCode: '', bName }
+        const res = await queryBranchPage(data)
+        this.branchOptions = res.results
+      } catch (error) {}
     },
     handleRefund() {
       this.$refs.refundForm.validate(async valid => {
