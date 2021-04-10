@@ -54,7 +54,7 @@
           </el-col>
           <el-col :span="3">
             <el-form-item>
-              <el-button type="primary" size="small" plain icon="el-icon-plus" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ action: 'add' })">新增</el-button>
+              <el-button type="primary" size="small" plain icon="el-icon-plus" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -260,8 +260,11 @@ export default {
       } catch (error) {}
     },
     handlePushDetail(query, row = {}) {
-      const queryParams = query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query)
-      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => this.$router.push({ name: 'wxArchiveAdd', query: queryParams }))
+      this.delCachedView({ name: 'wxArchiveAdd' }).then(() => {
+        this.$router.push({ name: 'wxArchiveAdd', query: Object.assign(query.status === 'add' ? {} : { id: row.archiveBaseDTO.id }, query) })
+      })
+      // const queryParams = query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query)
+      // this.delCachedView({ name: 'wxArchiveAdd' }).then(() => this.$router.push({ name: 'wxArchiveAdd', query: queryParams }))
     },
     handleReason(row) {
       if (this.triggerReasons.includes(row.archiveBaseDTO.directAuditStatus)) {

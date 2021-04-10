@@ -18,8 +18,8 @@
     <el-form ref="form" :model="form" :rules="rules" :disabled="checkFormDisabled" size="small" label-suffix=":" :inline="true" label-width="210px">
       <div class="p-wxArchive-item">
         <header>基本信息</header>
-        <el-row class="p-wxArchive-baseInfo">
-          <el-col :span="12">
+        <el-row class="p-wxArchive-fill">
+          <el-col :span="24">
             <el-form-item label="商户名称" prop="archiveBaseVO.merchantId">
               <select-page
                 style="width:240px"
@@ -38,8 +38,6 @@
               <span v-else>{{ form.archiveBaseVO.merchantName }}</span>
             </el-form-item>
           </el-col>
-        </el-row>
-        <el-row>
           <el-col :span="12">
             <el-form-item label="商户类型" prop="archiveBaseVO.merchantType">
               <el-radio-group v-model="form.archiveBaseVO.merchantType" @change="handleMerchantType">
@@ -52,7 +50,8 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+
+          <!-- <el-col :span="12">
             <el-form-item label="经营场景">
               <el-checkbox-group v-model="businessSceneList">
                 <el-checkbox :label="1">公众号</el-checkbox>
@@ -69,8 +68,9 @@
             <el-form-item label="小程序APPID" prop="archiveBaseVO.appletId">
               <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
             </el-form-item>
-          </el-col>
-          <el-col :span="24">
+          </el-col> -->
+
+          <!-- <el-col :span="24">
             <el-form-item label="证件类型" prop="archiveExpandVO.licType">
               <el-radio-group v-model="form.archiveExpandVO.licType">
                 <el-radio :label="1">已三证合一</el-radio>
@@ -83,8 +83,9 @@
                 </template>
               </el-tooltip>
             </el-form-item>
-          </el-col>
-          <template v-if="form.archiveBaseVO.merchantType !== 5">
+          </el-col> -->
+
+          <!-- <template v-if="form.archiveBaseVO.merchantType !== 5">
             <el-col :span="24">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
                 <upload-panel
@@ -114,9 +115,10 @@
                 </el-tooltip>
               </el-form-item>
             </el-col>
-          </template>
+          </template> -->
+
           <el-col :span="24">
-            <el-form-item label="经营类目">
+            <el-form-item label="经营类目" prop="archiveBaseVO.businessCategory">
               <el-cascader v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -128,7 +130,8 @@
               <el-input v-model="form.archiveExpandVO.sellShopDescribe" type="textarea" :autosize="{ minRows: 3 }" maxlength="140" show-word-limit style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
-          <template v-if="form.archiveExpandVO.licType === 2">
+
+          <!-- <template v-if="form.archiveExpandVO.licType === 2">
             <el-col :span="12">
               <el-form-item label="组织机构代码号" prop="archiveExpandVO.orgInstitutionCode">
                 <el-input v-model="form.archiveExpandVO.orgInstitutionCode" placeholder="组织机构代码号" style="width: 240px"></el-input>
@@ -166,8 +169,9 @@
                 />
               </el-form-item>
             </el-col>
-          </template>
-          <el-col :span="12">
+          </template> -->
+
+          <!-- <el-col :span="12">
             <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
               <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
               <el-tooltip effect="dark" content="公司名称必须与营业执照一致" placement="top">
@@ -219,8 +223,9 @@
             <el-form-item label="邮箱" prop="archiveBaseVO.email">
               <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
             </el-form-item>
-          </el-col>
-          <template v-if="form.archiveBaseVO.merchantType === 5">
+          </el-col> -->
+
+          <!-- <template v-if="form.archiveBaseVO.merchantType === 5">
             <el-col :span="12">
               <el-form-item label="经营场地证明">
                 <upload-panel
@@ -262,12 +267,12 @@
                 <el-input v-model="form.archiveOtherVO.additionalRemark" type="textarea" :autosize="{ minRows: 3 }" resize="none" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
-          </template>
+          </template> -->
         </el-row>
       </div>
       <div class="p-wxArchive-item">
         <header>法人信息</header>
-        <el-row class="p-wxArchive-baseInfo">
+        <!-- <el-row class="p-wxArchive-fill">
           <el-col :span="12">
             <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
               <upload-panel
@@ -320,12 +325,12 @@
               <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </div>
       <div class="p-wxArchive-item">
         <header>结算账号</header>
-        <el-row class="p-wxArchive-baseInfo">
-          <el-col :span="24">
+        <el-row class="p-wxArchive-fill">
+          <!-- <el-col :span="24">
             <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
               <el-radio-group v-model="form.archiveExpandVO.acctType">
                 <el-radio :label="1" :disabled="form.archiveBaseVO.merchantType === 5">
@@ -342,8 +347,8 @@
                 </el-radio>
               </el-radio-group>
             </el-form-item>
-          </el-col>
-          <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 2 || form.archiveExpandVO.acctType === 1">
+          </el-col> -->
+          <!-- <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 2 || form.archiveExpandVO.acctType === 1">
             <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
               <upload-panel
                 alt="开户许可证"
@@ -368,12 +373,12 @@
                 @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
               />
             </el-form-item>
-          </el-col>
-          <el-col :span="12">
+          </el-col> -->
+          <!-- <el-col :span="12">
             <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
               <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="12">
             <el-form-item label="开户行" prop="archiveExpandVO.bank">
               <selectCopy
@@ -392,7 +397,7 @@
               </selectCopy>
             </el-form-item>
           </el-col>
-          <el-col :span="12">
+          <!-- <el-col :span="12">
             <el-form-item label="开户名称" prop="archiveExpandVO.bankAccountName">
               <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
               <el-tooltip effect="dark" content="营业执照上的主体类型一般为有限公司、有限责任公司" placement="top">
@@ -403,7 +408,7 @@
                 </template>
               </el-tooltip>
             </el-form-item>
-          </el-col>
+          </el-col> -->
           <el-col :span="12">
             <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
               <selectCopy
@@ -434,15 +439,15 @@
       </div>
       <div class="p-wxArchive-item">
         <header>费率设置</header>
-        <el-row class="p-wxArchive-baseInfo">
+        <!-- <el-row class="p-wxArchive-fill">
           <el-col :span="12">
             <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
-              <el-select v-model="form.archiveBaseVO.fixFeeRate" :disabled="isMicro" placeholder="费率" style="width:240px">
+              <el-select v-model="form.archiveBaseVO.fixFeeRate" :disabled="form.archiveBaseVO.merchantType !== 5" placeholder="费率" style="width:240px">
                 <el-option v-for="item in rateOptions" :key="item.value" :label="item.lable" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row>
+        </el-row> -->
       </div>
     </el-form>
 
@@ -478,18 +483,18 @@
     </el-dialog>
 
     <!-- image-preview -->
-    <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="handleClosePreview" class="e-preview-con"></el-image-preview>
+    <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="(checkViewer = false)" class="e-preview-con"></el-image-preview>
   </section>
 </template>
 
 <script>
-import uploadPanel from '../components/uploadPanel'
+// import UploadPanel from '../components/uploadPanel'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import selectPage from '@/components/selectPage/selectPage'
 import areaSelect from '@/components/areaSelect'
 import fileServer from '@/mixins/fileServe'
 import selectCopy from '@/components/selectCopy'
-import { detailValidate, formObj, rateOptions, refundForm, refundRules, merchantTypeOptions, sellShopDescribeArr } from './index'
+import { detailValidate, formObj, rateOptions, refundForm, refundRules, merchantTypeOptions, sellShopDescribeArr, exampleImg } from './index'
 import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
 import {
@@ -512,8 +517,8 @@ export default {
     selectPage,
     areaSelect,
     ElImagePreview,
-    selectCopy,
-    uploadPanel
+    selectCopy
+    // UploadPanel
   },
   filters: {
     filterStatus
@@ -525,43 +530,39 @@ export default {
       rateOptions,
       refundForm,
       refundRules,
+      exampleImg,
       questionIcon: require('@/assets/images/icon/questioin.png'),
       pageAction: this.$route.query.action,
+
       selectOptions: [],
       searchString: '',
       isMaxPage: false,
+      selectPageNo: 1,
+
       isDetailLoad: false,
       form: {},
       rules: detailValidate,
+
       businessCategory: [],
       businessSceneList: [],
-      selectPageNo: 1,
       checkFormDisabled: false,
-      exampleImg: {
-        signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
-        businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
-        businessSiteTwoUrl: require('@/assets/images/xftArchive/shop_in.png'),
-        businessSiteThreeUrl: require('@/assets/images/xftArchive/goods.png'),
-        businessLicenseUrl: require('@/assets/images/xftArchive/business_license.jpg'),
-        idFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
-        idBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
-        hardIdUrl: require('@/assets/images/xftArchive/people_id.png'),
-        bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png'),
-        openingPermitUrl: require('@/assets/images/xftArchive/licence_for_opening_accounts.png')
-      },
+
       isReason: false,
       detailStatusArr: [0, 1, 2, 3, 4, 6, 8, 10],
+
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
       bankAreaList: [],
+
       bankOptions: [],
       branchOptions: [],
       businessOptions: [],
+
       checkViewer: false,
       imageIndex: 0,
       previewList: [],
-      isMicro: true,
+
       direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions)
     }
   },
@@ -570,9 +571,8 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      const tags = { edit: '编辑', detail: '详情', copy: '新增' }
-      let pageStatus = this.$route.query.status ? tags[this.$route.query.status] : '新增'
-      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${pageStatus}`
+      const tags = { edit: '编辑', detail: '详情', add: '新增', copy: '编辑' }
+      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.$route.query.status ? tags[this.$route.query.status] : '新增'}`
     })
     this.remoteSelect()
     this.getBankPage()
@@ -630,27 +630,6 @@ export default {
     getBankCardOCR(res) {
       this.form.archiveExpandVO.bankCard = res.card_num
     },
-    handleDirectAuditStatus: async function(id) {
-      try {
-        await updateArchiveBaseDirectAuditStatus({ id })
-        this.handleCancel()
-        this.$message({ type: 'success', message: '资料撤销成功' })
-      } catch (error) {}
-    },
-    handleMerchantType(val) {
-      if (val !== 5) {
-        this.isMicro = true
-        this.form.archiveBaseVO.fixFeeRate = 60
-      } else this.isMicro = false
-    },
-    handleCancel() {
-      this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ name: 'wxArchive' })
-      })
-    },
-    handleClosePreview() {
-      this.checkViewer = false
-    },
     handleImgPreview(url) {
       if (this.checkFormDisabled && url) {
         this.previewList = []
@@ -662,6 +641,25 @@ export default {
         this.imageIndex = this.previewList.findIndex(item => item === url)
       }
     },
+
+    handleMerchantType(val) {
+      if (val !== 5) this.form.archiveBaseVO.fixFeeRate = 60
+    },
+
+    handleDirectAuditStatus: async function(id) {
+      try {
+        await updateArchiveBaseDirectAuditStatus({ id })
+        this.handleCancel()
+        this.$message({ type: 'success', message: '资料撤销成功' })
+      } catch (error) {}
+    },
+
+    handleCancel() {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ name: 'wxArchive' })
+      })
+    },
+
     handleBusinessCategory(val) {
       let one
       let two
@@ -709,6 +707,7 @@ export default {
       })
       this.businessOptions = data
     },
+
     handleBankRemote(query) {
       if (query !== '') {
         this.getBankPage(query)
@@ -722,6 +721,7 @@ export default {
       const res = await queryBankPage(data)
       this.bankOptions = res.results
     },
+
     handleBranchRemote(query) {
       if (query !== '') {
         this.getBranchPage(query)
@@ -742,6 +742,7 @@ export default {
         this.branchOptions = res.results
       } catch (error) {}
     },
+
     handleRefund() {
       this.$refs.refundForm.validate(async valid => {
         if (valid) {
@@ -761,26 +762,30 @@ export default {
         }
       })
     },
+
+
+    resetFormAttr() {
+      if (this.$route.query.status === 'copy') {
+        this.form.archiveBaseVO.auditTime = ''
+        this.form.archiveBaseVO.bossAuditTime = ''
+        this.form.archiveBaseVO.createTime = ''
+        this.form.archiveBaseVO.directAuditStatus = ''
+        this.form.archiveBaseVO.useChannelCode = ''
+      }
+    },
     handleVerify: async function() {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          if (this.$route.query.status === 'copy') {
-            this.form.archiveBaseVO.auditTime = ''
-            this.form.archiveBaseVO.bossAuditTime = ''
-            this.form.archiveBaseVO.createTime = ''
-            this.form.archiveBaseVO.directAuditStatus = ''
-            this.form.archiveBaseVO.useChannelCode = ''
-          }
+          this.resetFormAttr()
           try {
             await submitToVerify(this.form)
-            this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ name: 'wxArchive' })
-            })
-            this.$message.success('提交成功')
+            this.handleCancel()
+            this.$message({ type: 'success', message: '提交成功' })
           } catch (error) {}
         }
       })
     },
+
     handleDetail: async function() {
       try {
         this.isDetailLoad = true
@@ -809,6 +814,7 @@ export default {
         })
       }
     },
+
     handleArchive() {
       if (this.form.archiveBaseVO.directAuditStatus === 2 && this.checkFormDisabled) {
         this.checkFormDisabled = false
@@ -816,26 +822,22 @@ export default {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
-              if (this.$route.query.status === 'copy') {
-                this.form.archiveBaseVO.auditTime = ''
-                this.form.archiveBaseVO.bossAuditTime = ''
-                this.form.archiveBaseVO.createTime = ''
-                this.form.archiveBaseVO.directAuditStatus = ''
-                this.form.archiveBaseVO.useChannelCode = ''
-              }
+              this.resetFormAttr()
               const res = await submit(this.form)
-              if (!this.form.archiveBaseVO.id) {
-                this.$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: res, status: 'edit' } })
-                this.handleDetail()
-                this.pageAction = this.$route.query.action
-                document.querySelector('.e-tag_active span').innerText = `普通资质进件/编辑`
-              }
+
+              // if (!this.form.archiveBaseVO.id) {
+              //   this.$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: res, status: 'edit' } })
+              //   this.pageAction = this.$route.query.action
+              //   document.querySelector('.e-tag_active span').innerText = `普通资质进件/编辑`
+              // }
+              this.handleDetail()
               this.$message.success('保存成功')
             } catch (error) {}
           }
         })
       }
     },
+
     handleArea(type, value) {
       if (type === 'area') {
         this.form.archiveBaseVO.province = value[0]
@@ -878,67 +880,6 @@ export default {
         this.selectOptions = this.selectOptions.concat(res.results)
         if (res.results.length !== 10) this.isMaxPage = true
       }
-    },
-    setIdCardAndBase64(res, base64Code, type, url, side) {
-      const OCRData = {
-        image: base64Code.split(',')[1],
-        imageCode: 'idcard',
-        side
-      }
-      this.$message.success('正在进行图片解析')
-      imageOCR(OCRData)
-        .then(res => {
-          this.$message.success('图片解析成功')
-          if (side === 'face') {
-            this.form.archiveExpandVO.legalPersonName = res.name
-            this.form.archiveExpandVO.idNumber = res.num
-            this.form.archiveExpandVO.administratorIdCard = res.num
-          } else {
-            const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
-            const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
-            this.form.archiveExpandVO.idBegin = res.start_date && new Date(startDate) ? startDate : ''
-            this.form.archiveExpandVO.idEnd = res.end_date && new Date(endDate) ? endDate : ''
-          }
-        })
-        .catch(err => {})
-      this.form[type][url] = res.data.path
-    },
-    setBusinessLicenseAndBase64(res, base64Code, type, url) {
-      const OCRData = {
-        image: base64Code.split(',')[1],
-        imageCode: 'business_license'
-      }
-      this.$message.success('正在进行图片解析')
-      imageOCR(OCRData)
-        .then(async res => {
-          this.$message.success('图片解析成功')
-          this.form.archiveExpandVO.licId = res.reg_num
-          this.form.archiveExpandVO.businessScope = res.business
-          this.form.archiveBaseVO.companyName = res.name
-          this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
-          const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
-          this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
-          this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1].replace(/长期/, '') : ''
-        })
-        .catch(err => {})
-      this.form[type][url] = res.data.path
-    },
-    setBankCardAndBase64(res, base64Code, type, url) {
-      const OCRData = {
-        image: base64Code.split(',')[1],
-        imageCode: 'bank_card'
-      }
-      this.$message.success('正在进行图片解析')
-      imageOCR(OCRData)
-        .then(async res => {
-          this.$message.success('图片解析成功')
-          this.form.archiveExpandVO.bankCard = res.card_num
-        })
-        .catch(err => {})
-      this.form[type][url] = res.data.path
-    },
-    setUploadSrc(res, type, url) {
-      this.form[type][url] = res.data.path
     }
   }
 }
@@ -959,6 +900,9 @@ export default {
       border-bottom: 1px solid #e6e9f0;
       font-weight: 500;
     }
+    .p-wxArchive-fill {
+      padding-top: 24px;
+    }
   }
   .p-wxArchive-action {
     width: calc(100% - 200px - 42px);
@@ -978,7 +922,7 @@ export default {
       border-top: 16px solid #f7f8fa;
       border-bottom: 72px solid #f7f8fa;
       background-color: #fff;
-      header {
+      > header {
         min-height: 72px;
         /deep/ .el-col {
           height: 72px;
@@ -991,7 +935,6 @@ export default {
       }
     }
     &-baseInfo {
-      padding-top: 24px;
     }
   }
 }
