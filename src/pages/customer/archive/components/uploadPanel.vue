@@ -19,7 +19,7 @@
     </el-upload>
     <div class="avatar-upload-explain">
       <span>要求图片清晰可见，{{ fileSize }}MB以内</span>
-      <el-popover v-if="showExample" placement="bottom" :title="`${alt}示例`" trigger="hover">
+      <el-popover v-if="exampleImg" placement="bottom" :title="`${alt}示例`" trigger="hover">
         <img class="avatar-explain-img" :src="exampleImg" :alt="`${alt}示例`" />
         <span class="el-button el-button--text" slot="reference">图片示例</span>
       </el-popover>
@@ -59,13 +59,9 @@ export default {
       required: true,
       default: ''
     },
-    showExample: {
-      type: Boolean,
-      default: true
-    },
     exampleImg: {
       type: String,
-      default: require('@/assets/images/xftArchive/business_license.jpg')
+      default: ''
     }
   },
   data() {

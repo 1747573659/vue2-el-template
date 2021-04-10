@@ -91,20 +91,11 @@
                   alt="营业执照"
                   action="/uploadFile"
                   :fileServer="fileServer"
-                  :image-url="form.archiveExpandVO.businessLicenseUrl"
                   :example-img="exampleImg.businessLicenseUrl"
-                  @success="handleUpload"
-                />
-                <upload-pic
-                  alt="营业执照"
-                  :hasBase64="true"
-                  :fileServer="fileServer"
-                  :imagePath="form.archiveExpandVO.businessLicenseUrl"
-                  :exampleImg="exampleImg.businessLicenseUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')"
+                  :image-url="form.archiveExpandVO.businessLicenseUrl"
+                  :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.businessLicenseUrl', 'business_license')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
-                ></upload-pic>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -114,25 +105,10 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
-                <el-date-picker
-                  v-model="form.archiveExpandVO.licValidityBigen"
-                  type="date"
-                  clearable
-                  placeholder="开始日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
+                <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
                 <span v-if="!form.archiveExpandVO.licValidityEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
-                <el-date-picker
-                  v-else
-                  v-model="form.archiveExpandVO.licValidityEnd"
-                  type="date"
-                  clearable
-                  placeholder="结束日期"
-                  value-format="yyyy-MM-dd"
-                  style="width: 140px"
-                ></el-date-picker>
+                <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
@@ -168,28 +144,26 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="组织机构代码证" prop="archiveExpandVO.orgInstitutionUrl">
-                <upload-pic
+                <upload-panel
                   alt="组织机构代码证"
-                  :showExample="false"
+                  action="/uploadFile"
                   :fileServer="fileServer"
-                  :imagePath="form.archiveExpandVO.orgInstitutionUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'orgInstitutionUrl')"
+                  :image-url="form.archiveExpandVO.orgInstitutionUrl"
+                  :on-success="res => handleUpload(res, 'archiveExpandVO.orgInstitutionUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.orgInstitutionUrl)"
-                ></upload-pic>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="税务登记证" prop="archiveExpandVO.taxRegistrationUrl">
-                <upload-pic
+                <upload-panel
                   alt="税务登记证"
-                  :showExample="false"
+                  action="/uploadFile"
                   :fileServer="fileServer"
-                  :imagePath="form.archiveExpandVO.taxRegistrationUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'taxRegistrationUrl')"
+                  :image-url="form.archiveExpandVO.taxRegistrationUrl"
+                  :on-success="res => handleUpload(res, 'archiveExpandVO.taxRegistrationUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)"
-                ></upload-pic>
+                />
               </el-form-item>
             </el-col>
           </template>
@@ -249,41 +223,38 @@
           <template v-if="form.archiveBaseVO.merchantType === 5">
             <el-col :span="12">
               <el-form-item label="经营场地证明">
-                <upload-pic
+                <upload-panel
                   alt="经营场地证明"
-                  :showExample="false"
+                  action="/uploadFile"
                   :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.businessSiteUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'businessSiteUrl')"
+                  :image-url="form.archiveOtherVO.businessSiteUrl"
+                  :on-success="res => handleUpload(res, 'archiveOtherVO.businessSiteUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteUrl)"
-                ></upload-pic>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="补充资料1">
-                <upload-pic
+                <upload-panel
                   alt="补充资料1"
-                  :showExample="false"
+                  action="/uploadFile"
                   :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.additionalOneUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalOneUrl')"
+                  :image-url="form.archiveOtherVO.additionalOneUrl"
+                  :on-success="res => handleUpload(res, 'archiveOtherVO.additionalOneUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalOneUrl)"
-                ></upload-pic>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="补充资料2">
-                <upload-pic
+                <upload-panel
                   alt="补充资料2"
-                  :showExample="false"
+                  action="/uploadFile"
                   :fileServer="fileServer"
-                  :imagePath="form.archiveOtherVO.additionalTwoUrl"
-                  uploadUrlPath="/uploadFile"
-                  @on-success="value => setUploadSrc(value, 'archiveOtherVO', 'additionalTwoUrl')"
+                  :image-url="form.archiveOtherVO.additionalTwoUrl"
+                  :on-success="res => handleUpload(res, 'archiveOtherVO.additionalTwoUrl')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalTwoUrl)"
-                ></upload-pic>
+                />
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -299,30 +270,28 @@
         <el-row class="p-wxArchive-baseInfo">
           <el-col :span="12">
             <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
-              <upload-pic
+              <upload-panel
                 alt="身份证正面照"
-                :hasBase64="true"
+                action="/uploadFile"
                 :fileServer="fileServer"
-                :imagePath="form.archiveExpandVO.idFrontUrl"
                 :exampleImg="exampleImg.idFrontUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idFrontUrl', 'face')"
+                :image-url="form.archiveExpandVO.idFrontUrl"
+                :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.idFrontUrl', 'idcard')"
                 @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"
-              ></upload-pic>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
-              <upload-pic
+              <upload-panel
                 alt="身份证背面照"
-                :hasBase64="true"
+                action="/uploadFile"
                 :fileServer="fileServer"
-                :imagePath="form.archiveExpandVO.idBackUrl"
                 :exampleImg="exampleImg.idBackUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idBackUrl', 'back')"
+                :image-url="form.archiveExpandVO.idBackUrl"
+                :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.idBackUrl', 'idcard')"
                 @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"
-              ></upload-pic>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -376,29 +345,28 @@
           </el-col>
           <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 2 || form.archiveExpandVO.acctType === 1">
             <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
-              <upload-pic
+              <upload-panel
                 alt="开户许可证"
+                action="/uploadFile"
                 :fileServer="fileServer"
-                :imagePath="form.archiveExpandVO.openingPermitUrl"
-                uploadUrlPath="/uploadFile"
                 :exampleImg="exampleImg.openingPermitUrl"
-                @on-success="value => setUploadSrc(value, 'archiveExpandVO', 'openingPermitUrl')"
+                :image-url="form.archiveExpandVO.openingPermitUrl"
+                :on-success="res => handleUpload(res, 'archiveExpandVO.openingPermitUrl')"
                 @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)"
-              ></upload-pic>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="24" v-else>
             <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
-              <upload-pic
+              <upload-panel
                 alt="银行卡正面照"
-                :hasBase64="true"
+                action="/uploadFile"
                 :fileServer="fileServer"
-                :imagePath="form.archiveExpandVO.bankCardFrontUrl"
                 :exampleImg="exampleImg.bankCardFrontUrl"
-                uploadUrlPath="/uploadFile"
-                @on-success="(value, base64Code) => setBankCardAndBase64(value, base64Code, 'archiveExpandVO', 'bankCardFrontUrl')"
+                :image-url="form.archiveExpandVO.bankCardFrontUrl"
+                :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.bankCardFrontUrl', 'bank_card')"
                 @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
-              ></upload-pic>
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -518,7 +486,6 @@
 import uploadPanel from '../components/uploadPanel'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import selectPage from '@/components/selectPage/selectPage'
-import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
 import fileServer from '@/mixins/fileServe'
 import selectCopy from '@/components/selectCopy'
@@ -543,7 +510,6 @@ export default {
   mixins: [fileServer],
   components: {
     selectPage,
-    uploadPic,
     areaSelect,
     ElImagePreview,
     selectCopy,
@@ -615,6 +581,55 @@ export default {
     if (this.pageAction === 'detail') this.handleDetail()
   },
   methods: {
+    // 图片上传模块
+    handleUpload(res, type) {
+      const typeList = type.split('.')
+      this.form[typeList[0]][typeList[1]] = res.data.path
+    },
+    handleUploadToOCR(file, type, code) {
+      const OCRMap = new Map([
+        ['archiveExpandVO.businessLicenseUrl', 'getBusinessLicenseOCR'],
+        ['archiveExpandVO.idFrontUrl', 'getFaceIdOCR'],
+        ['archiveExpandVO.idBackUrl', 'getBackIdOCR'],
+        ['archiveExpandVO.bankCardFrontUrl', 'getBankCardOCR']
+      ])
+      this.handleUpload(file.response, type)
+      const reader = new FileReader()
+      reader.readAsDataURL(file.raw)
+      reader.onload = () => {
+        let OCRData = { image: reader.result.split(',')[1], imageCode: code }
+        if (code === 'idcard') OCRData = Object.assign(OCRData, { side: type === 'archiveExpandVO.idFrontUrl' ? 'face' : 'back' })
+        this.$message({ type: 'success', message: '正在进行图片解析' })
+        imageOCR(OCRData)
+          .then(res => {
+            this.$message({ type: 'success', message: '图片解析成功' })
+            this[OCRMap.get(type)](res)
+          })
+          .catch(() => {})
+      }
+    },
+    getBusinessLicenseOCR(res) {
+      this.form.archiveExpandVO.licId = res.reg_num
+      this.form.archiveExpandVO.businessScope = res.business
+      this.form.archiveBaseVO.companyName = res.name
+      this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
+      const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
+      this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
+      this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1].replace(/长期/, '') : ''
+    },
+    getFaceIdOCR(res) {
+      this.form.archiveExpandVO.legalPersonName = res.name
+      this.form.archiveExpandVO.idNumber = res.num
+    },
+    getBackIdOCR(res) {
+      const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+      const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+      this.form.archiveExpandVO.idBegin = res.start_date && new Date(startDate) ? startDate : ''
+      this.form.archiveExpandVO.idEnd = res.end_date && new Date(endDate) ? endDate : ''
+    },
+    getBankCardOCR(res) {
+      this.form.archiveExpandVO.bankCard = res.card_num
+    },
     handleDirectAuditStatus: async function(id) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id })
