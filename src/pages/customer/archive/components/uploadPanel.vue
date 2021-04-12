@@ -86,7 +86,7 @@ export default {
 
 <style lang="scss" scoped>
 .avatar-uploader {
-  line-height: 1;
+  max-height: 82px;
   /deep/ {
     .el-upload {
       border: 1px dashed #d3dbeb;
