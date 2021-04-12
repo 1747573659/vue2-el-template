@@ -452,7 +452,7 @@
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)">撤销</el-button>
         </template>
         <template v-else>
-          <el-button v-if="[6, 8].includes(form.archiveBaseVO.directAuditStatus)" size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
+          <el-button v-if="![6, 8].includes(form.archiveBaseVO.directAuditStatus)" size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
           <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
             <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
           </template>
