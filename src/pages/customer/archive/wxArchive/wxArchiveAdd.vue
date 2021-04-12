@@ -116,7 +116,7 @@
             </el-col>
           </template>
           <el-col :span="24">
-            <el-form-item label="经营类目">
+            <el-form-item label="经营类目" prop="archiveBaseVO.businessCategory">
               <el-cascader v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />

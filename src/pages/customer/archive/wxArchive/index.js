@@ -193,8 +193,8 @@ export const detailValidate = {
     }
   ],
   'archiveExpandVO.licValidityBigen': [{ required: true, message: '请输入营业执照有效期', trigger: 'change' }],
+  "archiveBaseVO.businessCategory": [{ required: true, message: "请输入经营类目", trigger: "change" }],
   'archiveExpandVO.businessScope': [{ required: true, message: '请输入经营范围', trigger: 'change' }],
-  'archiveExpandVO.businessCategoryRemark': [{ required: true, message: '请输入经营类目', trigger: 'change' }],
   'archiveExpandVO.sellShopDescribe': [{ required: true, message: '请输入售卖商品描述', trigger: 'change' }],
   'archiveExpandVO.orgInstitutionCode': [{ required: true, message: '请输入组织机构代码号', trigger: 'change' }],
   'archiveExpandVO.orgInstitutionBigen': [{ required: true, message: '请输入组织机构代码有效期', trigger: 'change' }],
