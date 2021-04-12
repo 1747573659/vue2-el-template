@@ -1,9 +1,21 @@
 // 商户类型
 export const merchantTypeOptions = [
   { value: '', label: '全部', content: '' },
-  { value: 5, label: '小微', content: '无营业执照、免办理工商注册登记的实体商户' },
-  { value: 1, label: '个体工商户', content: '营业执照上的主体类型一般为个体户、个体工商户、个体经营' },
-  { value: 2, label: '企业', content: '营业执照上的主体类型一般为有限公司、有限责任公司' }
+  {
+    value: 5,
+    label: '小微',
+    content: '无营业执照、免办理工商注册登记的实体商户'
+  },
+  {
+    value: 1,
+    label: '个体工商户',
+    content: '营业执照上的主体类型一般为个体户、个体工商户、个体经营'
+  },
+  {
+    value: 2,
+    label: '企业',
+    content: '营业执照上的主体类型一般为有限公司、有限责任公司'
+  }
 ]
 
 // 是否停用
@@ -193,7 +205,7 @@ export const detailValidate = {
     }
   ],
   'archiveExpandVO.licValidityBigen': [{ required: true, message: '请输入营业执照有效期', trigger: 'change' }],
-  "archiveBaseVO.businessCategory": [{ required: true, message: "请输入经营类目", trigger: "change" }],
+  'archiveBaseVO.businessCategory': [{ required: true, message: '请输入经营类目', trigger: 'change' }],
   'archiveExpandVO.businessScope': [{ required: true, message: '请输入经营范围', trigger: 'change' }],
   'archiveExpandVO.sellShopDescribe': [{ required: true, message: '请输入售卖商品描述', trigger: 'change' }],
   'archiveExpandVO.orgInstitutionCode': [{ required: true, message: '请输入组织机构代码号', trigger: 'change' }],
@@ -231,14 +243,6 @@ export const detailValidate = {
   'archiveExpandVO.bankArea': [{ required: true, message: '请输入银行所在地区', trigger: 'change' }],
   'archiveBaseVO.fixFeeRate': [{ required: true, message: '请选择小微交易费率', trigger: 'change' }]
 }
-// 审核不通过原因
-export const refundForm = {
-  remark: ''
-}
-
-export const refundRules = {
-  remark: [{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]
-}
 
 // 验证账户元素
 export const checkAccountData = [
@@ -255,4 +259,19 @@ export const checkAccountData = [
 // 审核状态驳回显示弹窗状态
 export const triggerReasons = [8]
 
+// 小微商户展示商品描述情况
 export const sellShopDescribeArr = ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业']
+
+// 图片示例
+export const exampleImg = {
+  signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
+  businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
+  businessSiteTwoUrl: require('@/assets/images/xftArchive/shop_in.png'),
+  businessSiteThreeUrl: require('@/assets/images/xftArchive/goods.png'),
+  businessLicenseUrl: require('@/assets/images/xftArchive/business_license.jpg'),
+  idFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+  idBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+  hardIdUrl: require('@/assets/images/xftArchive/people_id.png'),
+  bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png'),
+  openingPermitUrl: require('@/assets/images/xftArchive/licence_for_opening_accounts.png')
+}
