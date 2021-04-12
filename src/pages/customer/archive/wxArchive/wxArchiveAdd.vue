@@ -1,12 +1,12 @@
 <template>
-  <section class="p-wxArchive-con" v-loading="isDetailLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
-    <header v-if="pageAction && pageAction !== 'add' && $route.query.status !== 'copy'">
-      <el-row v-if="pageAction === 'detail' && $route.query.status !== 'copy'">
+  <section class="p-wxArchive-con" v-loading="checkFormLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
+    <header v-if="!['add','copy'].includes(pageStatus)">
+      <el-row>
         <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus !== ''">
           <label>进件状态：</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
         </el-col>
-        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [1, 4].includes(form.archiveBaseVO.directAuditStatus)">
+        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [2, 4].includes(form.archiveBaseVO.directAuditStatus)">
           <label>审核结果：</label>
           <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
             <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
@@ -14,7 +14,6 @@
         </el-col>
       </el-row>
     </header>
-
     <el-form ref="form" :model="form" :rules="rules" :disabled="checkFormDisabled" size="small" label-suffix=":" :inline="true" label-width="210px">
       <div class="p-wxArchive-item">
         <header>基本信息</header>
@@ -23,7 +22,7 @@
             <el-form-item label="商户名称" prop="archiveBaseVO.merchantId">
               <select-page
                 style="width:240px"
-                v-if="pageAction === 'add'"
+                v-if="pageStatus === 'add'"
                 :isMaxPage="isMaxPage"
                 :options="selectOptions"
                 @remoteMethod="remoteSelect"
@@ -51,7 +50,7 @@
             </el-form-item>
           </el-col>
 
-          <!-- <el-col :span="12">
+          <el-col :span="12">
             <el-form-item label="经营场景">
               <el-checkbox-group v-model="businessSceneList">
                 <el-checkbox :label="1">公众号</el-checkbox>
@@ -68,9 +67,9 @@
             <el-form-item label="小程序APPID" prop="archiveBaseVO.appletId">
               <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
             </el-form-item>
-          </el-col> -->
+          </el-col>
 
-          <!-- <el-col :span="24">
+          <el-col :span="24">
             <el-form-item label="证件类型" prop="archiveExpandVO.licType">
               <el-radio-group v-model="form.archiveExpandVO.licType">
                 <el-radio :label="1">已三证合一</el-radio>
@@ -83,9 +82,9 @@
                 </template>
               </el-tooltip>
             </el-form-item>
-          </el-col> -->
+          </el-col>
 
-          <!-- <template v-if="form.archiveBaseVO.merchantType !== 5">
+          <template v-if="form.archiveBaseVO.merchantType !== 5">
             <el-col :span="24">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
                 <upload-panel
@@ -108,18 +107,18 @@
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
                 <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.licValidityEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
+                <span v-if="!form.archiveExpandVO.licValidityEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
             </el-col>
-          </template> -->
+          </template>
 
           <el-col :span="24">
             <el-form-item label="经营类目" prop="archiveBaseVO.businessCategory">
-              <el-cascader v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
+              <el-cascader ref="cascader" v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
@@ -131,7 +130,7 @@
             </el-form-item>
           </el-col>
 
-          <!-- <template v-if="form.archiveExpandVO.licType === 2">
+          <template v-if="form.archiveExpandVO.licType === 2">
             <el-col :span="12">
               <el-form-item label="组织机构代码号" prop="archiveExpandVO.orgInstitutionCode">
                 <el-input v-model="form.archiveExpandVO.orgInstitutionCode" placeholder="组织机构代码号" style="width: 240px"></el-input>
@@ -141,7 +140,7 @@
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
                 <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <span style="margin: 0 10px;">至</span>
-                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
+                <span v-if="!form.archiveExpandVO.orgInstitutionEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
@@ -169,9 +168,9 @@
                 />
               </el-form-item>
             </el-col>
-          </template> -->
+          </template>
 
-          <!-- <el-col :span="12">
+          <el-col :span="12">
             <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
               <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
               <el-tooltip effect="dark" content="公司名称必须与营业执照一致" placement="top">
@@ -223,9 +222,9 @@
             <el-form-item label="邮箱" prop="archiveBaseVO.email">
               <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
             </el-form-item>
-          </el-col> -->
+          </el-col>
 
-          <!-- <template v-if="form.archiveBaseVO.merchantType === 5">
+          <template v-if="form.archiveBaseVO.merchantType === 5">
             <el-col :span="12">
               <el-form-item label="经营场地证明">
                 <upload-panel
@@ -267,12 +266,12 @@
                 <el-input v-model="form.archiveOtherVO.additionalRemark" type="textarea" :autosize="{ minRows: 3 }" resize="none" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
-          </template> -->
+          </template>
         </el-row>
       </div>
       <div class="p-wxArchive-item">
         <header>法人信息</header>
-        <!-- <el-row class="p-wxArchive-fill">
+        <el-row class="p-wxArchive-fill">
           <el-col :span="12">
             <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
               <upload-panel
@@ -321,16 +320,16 @@
             <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
               <el-date-picker v-model="form.archiveExpandVO.idBegin" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               <span style="margin: 0 10px;">至</span>
-              <span v-if="!form.archiveExpandVO.idEnd && checkFormDisabled && pageAction === 'detail'">长期有效</span>
+              <span v-if="!form.archiveExpandVO.idEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
               <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
             </el-form-item>
           </el-col>
-        </el-row> -->
+        </el-row>
       </div>
       <div class="p-wxArchive-item">
         <header>结算账号</header>
         <el-row class="p-wxArchive-fill">
-          <!-- <el-col :span="24">
+          <el-col :span="24">
             <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
               <el-radio-group v-model="form.archiveExpandVO.acctType">
                 <el-radio :label="1" :disabled="form.archiveBaseVO.merchantType === 5">
@@ -347,8 +346,8 @@
                 </el-radio>
               </el-radio-group>
             </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 2 || form.archiveExpandVO.acctType === 1">
+          </el-col>
+          <el-col :span="24" v-if="form.archiveBaseVO.merchantType === 2 || form.archiveExpandVO.acctType === 1">
             <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
               <upload-panel
                 alt="开户许可证"
@@ -373,12 +372,12 @@
                 @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
               />
             </el-form-item>
-          </el-col> -->
-          <!-- <el-col :span="12">
+          </el-col>
+          <el-col :span="12">
             <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
               <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
             </el-form-item>
-          </el-col> -->
+          </el-col>
           <el-col :span="12">
             <el-form-item label="开户行" prop="archiveExpandVO.bank">
               <selectCopy
@@ -397,7 +396,7 @@
               </selectCopy>
             </el-form-item>
           </el-col>
-          <!-- <el-col :span="12">
+          <el-col :span="12">
             <el-form-item label="开户名称" prop="archiveExpandVO.bankAccountName">
               <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
               <el-tooltip effect="dark" content="营业执照上的主体类型一般为有限公司、有限责任公司" placement="top">
@@ -408,7 +407,7 @@
                 </template>
               </el-tooltip>
             </el-form-item>
-          </el-col> -->
+          </el-col>
           <el-col :span="12">
             <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
               <selectCopy
@@ -439,7 +438,7 @@
       </div>
       <div class="p-wxArchive-item">
         <header>费率设置</header>
-        <!-- <el-row class="p-wxArchive-fill">
+        <el-row class="p-wxArchive-fill">
           <el-col :span="12">
             <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
               <el-select v-model="form.archiveBaseVO.fixFeeRate" :disabled="form.archiveBaseVO.merchantType !== 5" placeholder="费率" style="width:240px">
@@ -447,19 +446,19 @@
               </el-select>
             </el-form-item>
           </el-col>
-        </el-row> -->
+        </el-row>
       </div>
     </el-form>
 
     <div class="p-wxArchive-action">
-      <template v-if="pageAction === 'add' || $route.query.status === 'copy' || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
+      <template v-if="['add', 'copy'].includes(pageStatus) || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
         <template v-if="form.archiveBaseVO.directAuditStatus === 3">
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)">撤销</el-button>
         </template>
         <template v-else>
-          <el-button v-if="[6, 8].includes(form.archiveBaseVO.directAuditStatus)" size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
-          <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && $route.query.status !== 'copy'">
-            <el-button size="small" class="e-wxArchive-action_pd" @click="isReason = true">拒绝</el-button>
+          <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
+          <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && pageStatus !== 'copy'">
+            <el-button size="small" class="e-wxArchive-action_pd" @click="checkReason = true">拒绝</el-button>
           </template>
           <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">
             {{ [1, 10].includes(form.archiveBaseVO.directAuditStatus) && checkFormDisabled ? '编辑' : '保存' }}
@@ -470,25 +469,25 @@
     </div>
 
     <!-- dialog -->
-    <el-dialog append-to-body :visible.sync="isReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
+    <el-dialog append-to-body :visible.sync="checkReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
         <el-form-item label="原因" prop="remark" class="e-dialog-remark">
           <el-input type="textarea" v-model="refundForm.remark" :rows="4" placeholder="请输入审核不能过的原因"></el-input>
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button @click="isReason = false" size="small" class="e-wxArchive-action_pd">取消</el-button>
+        <el-button @click="checkReason = false" size="small" class="e-wxArchive-action_pd">取消</el-button>
         <el-button @click="handleRefund" type="primary" size="small" class="e-wxArchive-action_pd">确定</el-button>
       </div>
     </el-dialog>
 
     <!-- image-preview -->
-    <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="(checkViewer = false)" class="e-preview-con"></el-image-preview>
+    <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="() => (checkViewer = false)" class="e-preview-con"></el-image-preview>
   </section>
 </template>
 
 <script>
-// import UploadPanel from '../components/uploadPanel'
+import UploadPanel from '../components/uploadPanel'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import selectPage from '@/components/selectPage/selectPage'
 import areaSelect from '@/components/areaSelect'
@@ -517,8 +516,8 @@ export default {
     selectPage,
     areaSelect,
     ElImagePreview,
-    selectCopy
-    // UploadPanel
+    selectCopy,
+    UploadPanel
   },
   filters: {
     filterStatus
@@ -528,27 +527,24 @@ export default {
       merchantTypeOptions,
       sellShopDescribeArr,
       rateOptions,
-      refundForm,
-      refundRules,
       exampleImg,
+      detailStatusArr: [0, 1, 2, 3, 4, 6, 8, 10],
+      direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions),
       questionIcon: require('@/assets/images/icon/questioin.png'),
-      pageAction: this.$route.query.action,
+      pageStatus: this.$route.query.status,
+
+      checkFormLoad: false,
+      checkFormDisabled: false,
+      form: {},
+      rules: detailValidate,
+      businessCategory: [],
+      businessOptions: [],
+      businessSceneList: [],
 
       selectOptions: [],
       searchString: '',
       isMaxPage: false,
       selectPageNo: 1,
-
-      isDetailLoad: false,
-      form: {},
-      rules: detailValidate,
-
-      businessCategory: [],
-      businessSceneList: [],
-      checkFormDisabled: false,
-
-      isReason: false,
-      detailStatusArr: [0, 1, 2, 3, 4, 6, 8, 10],
 
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
@@ -557,13 +553,15 @@ export default {
 
       bankOptions: [],
       branchOptions: [],
-      businessOptions: [],
 
       checkViewer: false,
       imageIndex: 0,
       previewList: [],
-
-      direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions)
+      checkReason: false,
+      refundForm: { remark: '' },
+      refundRules: {
+        remark: [{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]
+      }
     }
   },
   created() {
@@ -572,13 +570,15 @@ export default {
   mounted() {
     this.$nextTick(() => {
       const tags = { edit: '编辑', detail: '详情', add: '新增', copy: '编辑' }
-      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.$route.query.status ? tags[this.$route.query.status] : '新增'}`
+      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
     })
+
     this.remoteSelect()
     this.getBankPage()
     this.getBranchPage()
+
     this.getBusinessCategory()
-    if (this.pageAction === 'detail') this.handleDetail()
+    if (this.pageStatus !== 'add') this.handleDetail()
   },
   methods: {
     // 图片上传模块
@@ -641,11 +641,14 @@ export default {
         this.imageIndex = this.previewList.findIndex(item => item === url)
       }
     },
-
+    handleCancel() {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ name: 'wxArchive' })
+      })
+    },
     handleMerchantType(val) {
       if (val !== 5) this.form.archiveBaseVO.fixFeeRate = 60
     },
-
     handleDirectAuditStatus: async function(id) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id })
@@ -653,29 +656,11 @@ export default {
         this.$message({ type: 'success', message: '资料撤销成功' })
       } catch (error) {}
     },
-
-    handleCancel() {
-      this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ name: 'wxArchive' })
-      })
-    },
+    
 
     handleBusinessCategory(val) {
-      let one
-      let two
-      this.businessOptions.forEach(item => {
-        if (val[0] === item.value) {
-          one = item
-          two = item.children
-        }
-      })
-      two &&
-        two.forEach(item => {
-          if (val[1] === item.value) {
-            two = item
-          }
-        })
-      this.form.archiveBaseVO.businessCategoryRemark = one.label + '/' + two.label
+      const pathLabels = this.$refs.cascader.getCheckedNodes()[0].pathLabels
+      this.form.archiveBaseVO.businessCategoryRemark = `${pathLabels[0] / pathLabels[1]}`
       this.form.archiveBaseVO.businessCategory = val[1]
     },
     setBusinessCategory(val) {
@@ -687,25 +672,97 @@ export default {
       const res = await businessCategory()
       let data = []
       res.forEach(item => {
-        if (item.parentId === 0) {
-          data.push({
-            value: item.id,
-            label: item.tradeName,
-            children: []
-          })
-        }
+        if (item.parentId === 0) data.push({ value: item.id, label: item.tradeName, children: [] })
       })
       data.forEach(item => {
         res.forEach(children => {
-          if (item.value === children.parentId) {
-            item.children.push({
-              value: children.tradeCode,
-              label: children.tradeName
-            })
-          }
+          if (item.value === children.parentId) item.children.push({ value: children.tradeCode, label: children.tradeName })
         })
       })
       this.businessOptions = data
+    },
+    handleRefund() {
+      this.$refs.refundForm.validate(async valid => {
+        if (valid) {
+          const data = { archiveId: this.$route.query.id, auditRemark: this.refundForm.remark }
+          try {
+            await refund(data)
+            this.checkReason = false
+            this.$message({ type: 'success', message: '操作成功' })
+            this.handleCancel()
+          } catch (error) {}
+        }
+      })
+    },
+    handleVerify: async function() {
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          try {
+            await submitToVerify(this.form)
+            this.handleCancel()
+            this.$message({ type: 'success', message: '提交成功' })
+          } catch (error) {}
+        }
+      })
+    },
+    handleDetail: async function() {
+      try {
+        this.checkFormLoad = true
+        const res = await detail({ archiveId: Number(this.$route.query.id) })
+        const {
+          archiveBaseDTO = deepClone(formObj.archiveBaseDTO),
+          archiveExpandDTO = deepClone(formObj.archiveExpandDTO),
+          archiveOtherDTO = deepClone(formObj.archiveOtherDTO)
+        } = res
+        this.form.archiveBaseVO = archiveBaseDTO
+        this.form.archiveExpandVO = archiveExpandDTO
+        this.form.archiveOtherVO = archiveOtherDTO
+
+        // 待处理
+        this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
+        this.areaKey = Symbol('areaKey')
+        this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
+        this.bankAreaKey = Symbol('bankAreaKey')
+
+        this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
+        if (![0, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.pageStatus !== 'copy') this.checkFormDisabled = true
+      } catch (error) {
+      } finally {
+        this.checkFormLoad = false
+      }
+
+      if (this.pageStatus === 'copy') {
+        this.form.archiveBaseVO.auditTime = ''
+        this.form.archiveBaseVO.bossAuditTime = ''
+        this.form.archiveBaseVO.createTime = ''
+        this.form.archiveBaseVO.directAuditStatus = ''
+        this.form.archiveBaseVO.useChannelCode = ''
+        this.form.archiveBaseVO.id = ''
+        this.form.archiveExpandVO.id = ''
+        this.form.archiveOtherVO.id = ''
+        this.$nextTick(() => {
+          this.$refs.form.clearValidate()
+        })
+      }
+    },
+    handleArchive() {
+      if ([1, 10].includes(this.form.archiveBaseVO.directAuditStatus) && this.checkFormDisabled) {
+        this.checkFormDisabled = false
+      } else {
+        this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
+          if (!errorMessage) {
+            try {
+              const res = await submit(this.form)
+              if (!this.form.archiveBaseVO.id) {
+                this.$router.replace({ name: 'wxArchiveAdd', query: { id: res, status: 'edit' } })
+                document.querySelector('.e-tag_active span').innerText = '普通资质进件/编辑'
+              }
+              this.handleDetail()
+              this.$message({ type: 'success', message: '保存成功' })
+            } catch (error) {}
+          }
+        })
+      }
     },
 
     handleBankRemote(query) {
@@ -741,101 +798,6 @@ export default {
         const res = await queryBranchPage(data)
         this.branchOptions = res.results
       } catch (error) {}
-    },
-
-    handleRefund() {
-      this.$refs.refundForm.validate(async valid => {
-        if (valid) {
-          const data = {
-            archiveId: this.$route.query.id,
-            auditRemark: this.refundForm.remark
-          }
-          try {
-            await refund(data)
-            this.$store.dispatch('delTagView', this.$route).then(() => {
-              this.$router.push({ name: 'wxArchive' })
-            })
-            this.handleDetail()
-            this.isReason = false
-            this.$message.success('操作成功')
-          } catch (error) {}
-        }
-      })
-    },
-
-
-    resetFormAttr() {
-      if (this.$route.query.status === 'copy') {
-        this.form.archiveBaseVO.auditTime = ''
-        this.form.archiveBaseVO.bossAuditTime = ''
-        this.form.archiveBaseVO.createTime = ''
-        this.form.archiveBaseVO.directAuditStatus = ''
-        this.form.archiveBaseVO.useChannelCode = ''
-      }
-    },
-    handleVerify: async function() {
-      this.$refs.form.validate(async valid => {
-        if (valid) {
-          this.resetFormAttr()
-          try {
-            await submitToVerify(this.form)
-            this.handleCancel()
-            this.$message({ type: 'success', message: '提交成功' })
-          } catch (error) {}
-        }
-      })
-    },
-
-    handleDetail: async function() {
-      try {
-        this.isDetailLoad = true
-        const res = await detail({ archiveId: Number(this.$route.query.id) })
-        this.form.archiveBaseVO = res?.archiveBaseDTO ?? deepClone(formObj.archiveBaseDTO)
-        this.form.archiveExpandVO = res?.archiveExpandDTO ?? deepClone(formObj.archiveExpandDTO)
-        this.form.archiveOtherVO = res?.archiveOtherDTO ?? deepClone(formObj.archiveOtherDTO)
-        this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
-        this.areaKey = Symbol('areaKey')
-        this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
-        this.bankAreaKey = Symbol('bankAreaKey')
-        this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
-        if (![0, 1, 2, 4, 6, 8, 10].includes(res.archiveBaseDTO.directAuditStatus) && this.$route.query.status !== 'copy') this.checkFormDisabled = true
-      } catch (error) {
-      } finally {
-        this.isDetailLoad = false
-      }
-      // 复制
-      if (this.$route.query.status === 'copy') {
-        this.form.archiveBaseVO.id = null
-        this.form.archiveExpandVO.id = null
-        this.form.archiveOtherVO.id = null
-        this.form.archiveBaseVO.directAuditStatus = null
-        this.$nextTick(() => {
-          this.$refs.form.clearValidate()
-        })
-      }
-    },
-
-    handleArchive() {
-      if (this.form.archiveBaseVO.directAuditStatus === 2 && this.checkFormDisabled) {
-        this.checkFormDisabled = false
-      } else {
-        this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
-          if (!errorMessage) {
-            try {
-              this.resetFormAttr()
-              const res = await submit(this.form)
-
-              // if (!this.form.archiveBaseVO.id) {
-              //   this.$router.push({ name: 'wxArchiveAdd', query: { action: 'detail', id: res, status: 'edit' } })
-              //   this.pageAction = this.$route.query.action
-              //   document.querySelector('.e-tag_active span').innerText = `普通资质进件/编辑`
-              // }
-              this.handleDetail()
-              this.$message.success('保存成功')
-            } catch (error) {}
-          }
-        })
-      }
     },
 
     handleArea(type, value) {

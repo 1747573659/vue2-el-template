@@ -11,7 +11,7 @@
       v-bind="$attrs"
       v-on="$listeners"
     >
-      <img v-if="imageUrl" class="avatar" :src="`${fileServer}/${imageUrl}`" @click="$listeners.click" :alt="alt" />
+      <img v-if="imageUrl" class="avatar" :src="`${fileServer}${imageUrl}`" @click="$listeners.click" :alt="alt" />
       <div class="avatar-uploader-card" v-else>
         <i class="el-icon-plus avatar-uploader-icon"></i>
         <span class="avatar-uploader-text">上传照片</span>
