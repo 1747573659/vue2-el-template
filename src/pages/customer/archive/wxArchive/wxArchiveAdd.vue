@@ -787,8 +787,9 @@ export default {
     handleBranchPage() {
       if (!this.branchOptions) this.getBranchPage()
     },
-    handleBankChange() {
+    handleBankChange(val) {
       this.$nextTick(() => {
+        this.form.archiveExpandVO.bankSub = val[0]
         this.form.archiveExpandVO.bankSubName = this.$refs.bankSub.$el.childNodes[1].childNodes[1].value
       })
     },
