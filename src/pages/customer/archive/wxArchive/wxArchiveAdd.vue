@@ -386,7 +386,7 @@
                 @focus="handleBankPage"
                 @change="val => handleBankChange(val, 'bank', 'bank', 'bankName')"
                 style="width: 240px"
-                :value.sync="form.archiveExpandVO.bank"
+                :value.sync="form.archiveExpandVO.bankName"
                 filterable
                 clearable
                 remote
