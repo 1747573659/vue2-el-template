@@ -381,8 +381,10 @@
           <el-col :span="12">
             <el-form-item label="开户行" prop="archiveExpandVO.bank">
               <selectCopy
+                ref="bank"
                 :remoteMethod="handleBankRemote"
                 @focus="handleBankPage"
+                @change="val => handleBankChange(val, 'bank', 'bank', 'bankName')"
                 style="width: 240px"
                 :value.sync="form.archiveExpandVO.bank"
                 filterable
@@ -417,7 +419,7 @@
                 :remoteMethod="handleBranchRemote"
                 :value.sync="form.archiveExpandVO.bankSubName"
                 @focus="handleBranchPage"
-                @change="handleBankChange"
+                @change="val => handleBankChange(val, 'bankSub', 'bankSub', 'bankSubName')"
                 filterable
                 clearable
                 reserveKeyword
@@ -717,6 +719,8 @@ export default {
         this.form.archiveBaseVO = archiveBaseDTO
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
+        if(this.form.archiveBaseVO.publicId) this.businessSceneList.push(1)
+        if(this.form.archiveBaseVO.appletId) this.businessSceneList.push(2)
 
         // 待处理
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
@@ -787,10 +791,10 @@ export default {
     handleBranchPage() {
       if (!this.branchOptions) this.getBranchPage()
     },
-    handleBankChange(val) {
+    handleBankChange(val, refs, code, name) {
       this.$nextTick(() => {
-        this.form.archiveExpandVO.bankSub = val[0]
-        this.form.archiveExpandVO.bankSubName = this.$refs.bankSub.$el.childNodes[1].childNodes[1].value
+        this.form.archiveExpandVO[code] = val[0]
+        this.form.archiveExpandVO[name] = this.$refs[refs].$el.childNodes[1].childNodes[1].value
       })
     },
     getBranchPage: async function(bName = '') {
