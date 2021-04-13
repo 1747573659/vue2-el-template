@@ -149,7 +149,8 @@ export const formObj = {
     additionalTwoUrl: '', // 补充材料2
     additionalRemark: '', //补充说明
     typeAptitudeUrl: '' // 类目特殊资质
-  }
+  },
+  businessSceneShow:[]
 }
 
 // 进件资料校验对象

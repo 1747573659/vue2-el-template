@@ -51,18 +51,18 @@
 
           <el-col :span="12">
             <el-form-item label="经营场景">
-              <el-checkbox-group v-model="businessSceneList">
-                <el-checkbox :label="1">公众号</el-checkbox>
-                <el-checkbox :label="2">小程序</el-checkbox>
+              <el-checkbox-group v-model="form.businessSceneShow">
+                <el-checkbox :label="2">公众号</el-checkbox>
+                <el-checkbox :label="3">小程序</el-checkbox>
               </el-checkbox-group>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="businessSceneList.includes(1)">
+          <el-col :span="12" v-if="form.businessSceneShow.includes(2)">
             <el-form-item label="公众号APPID" prop="archiveBaseVO.publicId">
               <el-input v-model="form.archiveBaseVO.publicId" placeholder="公众号APPID" style="width:240px"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="12" v-if="businessSceneList.includes(2)">
+          <el-col :span="12" v-if="form.businessSceneShow.includes(3)">
             <el-form-item label="小程序APPID" prop="archiveBaseVO.appletId">
               <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
             </el-form-item>
@@ -712,11 +712,13 @@ export default {
         const {
           archiveBaseDTO = deepClone(formObj.archiveBaseDTO),
           archiveExpandDTO = deepClone(formObj.archiveExpandDTO),
-          archiveOtherDTO = deepClone(formObj.archiveOtherDTO)
+          archiveOtherDTO = deepClone(formObj.archiveOtherDTO),
+          businessSceneShow
         } = res
         this.form.archiveBaseVO = archiveBaseDTO
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
+        this.form.businessSceneShow = businessSceneShow
 
         // 待处理
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
