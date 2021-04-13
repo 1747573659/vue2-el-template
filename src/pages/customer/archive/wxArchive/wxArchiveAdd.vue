@@ -1,13 +1,13 @@
 <template>
   <section class="p-wxArchive-con" v-loading="checkFormLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
-    <header v-if="!['add','copy'].includes(pageStatus)">
+    <header v-if="!['add', 'copy'].includes(pageStatus)">
       <el-row>
         <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus !== ''">
-          <label>进件状态：</label>
+          <label class="el-form-item__label" style="width:210px">进件状态:</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
         </el-col>
         <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [2, 4].includes(form.archiveBaseVO.directAuditStatus)">
-          <label>审核结果：</label>
+          <label class="el-form-item__label" style="width:210px">审核结果:</label>
           <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
             <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
           </el-tooltip>
@@ -21,20 +21,19 @@
           <el-col :span="24">
             <el-form-item label="商户名称" prop="archiveBaseVO.merchantId">
               <select-page
-                style="width:240px"
-                v-if="pageStatus === 'add'"
-                :isMaxPage="isMaxPage"
-                :options="selectOptions"
-                @remoteMethod="remoteSelect"
-                @selectPageMore="selectPageMore('merchant')"
-                @resetSelectPage="resetSelectPage"
-                @changeSelectPage="changeSelectPage"
-                label="companyName"
-                value="id"
-                :echoValue="form.archiveBaseVO.merchantName"
+                ref="selectPage"
+                v-model="form.archiveBaseVO.merchantName"
+                :data="selectPageData"
+                :is-max-page="isMaxPage"
+                :remote-method="val => handleSelectPageRemote(val, 'selectPageData', 'selectPage')"
+                @clear="handleSelectPageClear('selectPageData', 'selectPage')"
+                @change="val => handleSelectPageChange(val, 'selectPage')"
+                @loadmore="handleSelectOptionsMore('selectPageData', 'selectPage')"
+                option-label="companyName"
+                option-value="id"
                 placeholder="商户名称"
-              ></select-page>
-              <span v-else>{{ form.archiveBaseVO.merchantName }}</span>
+                style="width:240px"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -42,7 +41,7 @@
               <el-radio-group v-model="form.archiveBaseVO.merchantType" @change="handleMerchantType">
                 <el-radio v-for="(item, index) in merchantTypeOptions.slice(-2)" :key="index" :label="item.value">
                   <span>{{ item.label }}</span>
-                  <el-tooltip effect="dark" :content="item.content" placement="top">
+                  <el-tooltip effect="dark" :content="item.content" placement="bottom">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
                   </el-tooltip>
                 </el-radio>
@@ -380,20 +379,20 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="开户行" prop="archiveExpandVO.bank">
-              <selectCopy
-                :remoteMethod="handleBankRemote"
-                @focus="handleBankPage"
-                style="width: 240px"
-                :value.sync="form.archiveExpandVO.bank"
-                filterable
-                clearable
-                remote
-                reserveKeyword
+              <select-page
+                ref="bank"
+                v-model="form.archiveExpandVO.bankName"
+                :data="bankSelectPageData"
+                :is-max-page="isMaxPage"
+                :remote-method="val => handleSelectPageRemote(val, 'bankSelectPageData', 'bank')"
+                @clear="handleSelectPageClear('bankSelectPageData', 'bank')"
+                @change="val => handleSelectPageChange(val, 'bank')"
+                @loadmore="handleSelectOptionsMore('bankSelectPageData', 'bank')"
+                option-label="bankName"
+                option-value="bankCode"
                 placeholder="开户行"
-                :options="bankOptions"
-                :optionsItem="{ key: 'bankCode', label: 'bankName', value: 'bankCode' }"
-              >
-              </selectCopy>
+                style="width:240px"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -410,23 +409,20 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
-              <selectCopy
+              <select-page
                 ref="bankSub"
-                isCopy
-                style="width: 240px"
-                :remoteMethod="handleBranchRemote"
-                :value.sync="form.archiveExpandVO.bankSubName"
-                @focus="handleBranchPage"
-                @change="handleBankChange"
-                filterable
-                clearable
-                reserveKeyword
-                remote
+                v-model="form.archiveExpandVO.bankSubName"
+                :data="bankSubSelectPageData"
+                :is-max-page="isMaxPage"
+                :remote-method="val => handleSelectPageRemote(val, 'bankSubSelectPageData', 'bankSub')"
+                @clear="handleSelectPageClear('bankSubSelectPageData', 'bankSub')"
+                @change="val => handleSelectPageChange(val, 'bankSub')"
+                @loadmore="handleSelectOptionsMore('bankSubSelectPageData', 'bankSub')"
+                option-label="bName"
+                option-value="bCode"
                 placeholder="开户支行"
-                :options="branchOptions"
-                :optionsItem="{ key: 'bCode', label: 'bName', value: 'bCode' }"
-              >
-              </selectCopy>
+                style="width:240px"
+              />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -487,13 +483,13 @@
 </template>
 
 <script>
-import UploadPanel from '../components/uploadPanel'
-import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
-import selectPage from '@/components/selectPage/selectPage'
-import areaSelect from '@/components/areaSelect'
 import fileServer from '@/mixins/fileServe'
-import selectCopy from '@/components/selectCopy'
-import { detailValidate, formObj, rateOptions, refundForm, refundRules, merchantTypeOptions, sellShopDescribeArr, exampleImg } from './index'
+import UploadPanel from '../components/uploadPanel'
+import selectPage from '../components/selectPage'
+import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
+import areaSelect from '@/components/areaSelect'
+
+import { detailValidate, formObj, rateOptions, merchantTypeOptions, sellShopDescribeArr, exampleImg } from './index'
 import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
 import {
@@ -514,10 +510,9 @@ export default {
   mixins: [fileServer],
   components: {
     selectPage,
-    areaSelect,
+    UploadPanel,
     ElImagePreview,
-    selectCopy,
-    UploadPanel
+    areaSelect
   },
   filters: {
     filterStatus
@@ -532,7 +527,6 @@ export default {
       direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions),
       questionIcon: require('@/assets/images/icon/questioin.png'),
       pageStatus: this.$route.query.status,
-
       checkFormLoad: false,
       checkFormDisabled: false,
       form: {},
@@ -542,9 +536,13 @@ export default {
       businessSceneList: [],
 
       selectOptions: [],
+
       searchString: '',
       isMaxPage: false,
       selectPageNo: 1,
+      selectPageData: [],
+      bankSelectPageData: [],
+      bankSubSelectPageData: [],
 
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
@@ -573,9 +571,12 @@ export default {
       document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
     })
 
-    this.remoteSelect()
-    this.getBankPage()
-    this.getBranchPage()
+    // this.remoteSelect()
+    // this.getBankPage()
+    // this.getBranchPage()
+    this.handleSelectPageRemote('', 'selectPageData', 'selectPage')
+    this.handleSelectPageRemote('', 'bankSelectPageData', 'bank')
+    this.handleSelectPageRemote('', 'bankSubSelectPageData', 'bankSub')
 
     this.getBusinessCategory()
     if (this.pageStatus !== 'add') this.handleDetail()
@@ -656,7 +657,6 @@ export default {
         this.$message({ type: 'success', message: '资料撤销成功' })
       } catch (error) {}
     },
-    
 
     handleBusinessCategory(val) {
       const pathLabels = this.$refs.cascader.getCheckedNodes()[0].pathLabels
@@ -765,42 +765,6 @@ export default {
       }
     },
 
-    handleBankRemote(query) {
-      if (query !== '') {
-        this.getBankPage(query)
-      }
-    },
-    handleBankPage() {
-      if (!this.bankOptions) this.getBankPage()
-    },
-    getBankPage: async function(bankName = '') {
-      const data = { page: 1, rows: 100, bankName }
-      const res = await queryBankPage(data)
-      this.bankOptions = res.results
-    },
-
-    handleBranchRemote(query) {
-      if (query !== '') {
-        this.getBranchPage(query)
-      }
-    },
-    handleBranchPage() {
-      if (!this.branchOptions) this.getBranchPage()
-    },
-    handleBankChange(val) {
-      this.$nextTick(() => {
-        this.form.archiveExpandVO.bankSub = val[0]
-        this.form.archiveExpandVO.bankSubName = this.$refs.bankSub.$el.childNodes[1].childNodes[1].value
-      })
-    },
-    getBranchPage: async function(bName = '') {
-      try {
-        const data = { page: 1, rows: 100, bCode: '', bName }
-        const res = await queryBranchPage(data)
-        this.branchOptions = res.results
-      } catch (error) {}
-    },
-
     handleArea(type, value) {
       if (type === 'area') {
         this.form.archiveBaseVO.province = value[0]
@@ -812,36 +776,56 @@ export default {
         this.form.archiveExpandVO.bankArea = value[2]
       }
     },
-    selectPageMore(type) {
-      if (!this.isMaxPage) {
-        this.selectPageNo++
-        this.remoteSelect(this.searchString)
-      }
+
+    handleSelectPageRemote: async function(query, selectData, refs) {
+      try {
+        const data = { page: query !== this.searchString ? 1 : this.selectPageNo, rows: 10 }
+        const selectQueryMap = new Map([
+          ['selectPageData', { method: queryShopListByPage, params: { id: query || '' } }],
+          ['bankSelectPageData', { method: queryBankPage, params: { bankName: query || '' } }],
+          ['bankSubSelectPageData', { method: queryBranchPage, params: { bName: query || '' } }]
+        ])
+        const res = await selectQueryMap.get(selectData).method(Object.assign(data, selectQueryMap.get(selectData).params))
+        this.$nextTick(() => {
+          if (query !== this.searchString || this.isMaxPage) {
+            this.$refs[refs].$children[0].$children[1].$children[0].wrap.scrollTop = 0
+            this[selectData] = []
+            this.selectPageNo = 1
+            this.isMaxPage = false
+          }
+          this.searchString = query
+          this.isMaxPage = !res.results || (res.results && res.results.length < 10)
+          this[selectData] = this[selectData].concat(res.results || [])
+        })
+      } catch (error) {}
     },
-    resetSelectPage() {
-      this.selectOptions = []
+    handleSelectPageClear(selectData, refs) {
+      this.$refs[refs].$children[0].$children[1].$children[0].wrap.scrollTop = 0
       this.selectPageNo = 1
       this.isMaxPage = false
-      this.searchString = ''
+      this[selectData] = []
+      this.handleSelectPageRemote('', selectData, refs)
     },
-    changeSelectPage(value) {
-      this.form.archiveBaseVO.userId = value
-      this.form.archiveBaseVO.merchantId = value
+    handleSelectOptionsMore(selectData, refs) {
+      if (!this.isMaxPage) {
+        this.selectPageNo++
+        this.handleSelectPageRemote(this.searchString, selectData, refs)
+      }
     },
-    remoteSelect: async function(query) {
-      if (!!this.searchString && query !== this.searchString) {
-        this.resetSelectPage()
-      }
-      const data = {
-        page: this.selectPageNo,
-        rows: 10,
-        id: query
-      }
-      const res = await queryShopListByPage(data)
-      if (res?.results && res.results.length !== 0) {
-        this.searchString = query
-        this.selectOptions = this.selectOptions.concat(res.results)
-        if (res.results.length !== 10) this.isMaxPage = true
+    handleSelectPageChange(value, refs) {
+      if (refs === 'selectPage') {
+        this.form.archiveBaseVO.userId = value
+        this.form.archiveBaseVO.merchantId = value
+      } else if (refs === 'bank') {
+        this.form.archiveExpandVO.bank = value
+        this.$nextTick(() => {
+          this.form.archiveExpandVO.bankName = this.$refs[refs].$el.childNodes[1].childNodes[1].value
+        })
+      } else if (refs === 'bankSub') {
+        this.form.archiveExpandVO.bankSub = value
+        this.$nextTick(() => {
+          this.form.archiveExpandVO.bankSubName = this.$refs[refs].$el.childNodes[1].childNodes[1].value
+        })
       }
     }
   }
@@ -853,6 +837,16 @@ export default {
   border-top: 16px solid #f7f8fa;
   border-bottom: 72px solid #f7f8fa;
   background-color: #fff;
+  > header {
+    min-height: 72px;
+    /deep/ .el-col {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      color: #3d4966;
+      font-size: 14px;
+    }
+  }
   .p-wxArchive-item {
     > header {
       height: 48px;
@@ -879,28 +873,6 @@ export default {
   }
 }
 
-.p {
-  &-wxArchive {
-    &-con {
-      border-top: 16px solid #f7f8fa;
-      border-bottom: 72px solid #f7f8fa;
-      background-color: #fff;
-      > header {
-        min-height: 72px;
-        /deep/ .el-col {
-          height: 72px;
-          display: flex;
-          align-items: center;
-          padding-left: 10%;
-          color: #3d4966;
-          font-size: 14px;
-        }
-      }
-    }
-    &-baseInfo {
-    }
-  }
-}
 .e {
   &-wxArchive {
     &-warning {

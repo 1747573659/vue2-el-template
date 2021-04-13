@@ -318,10 +318,15 @@ export default {
       try {
         const res = await queryTotalByStatus(this.handleQueryTabParams())
         this.countData = []
-        if (res.auditStatuses?.length > 0) {
+        const intersectionBy = (a, b, fn) => {
+          const s = new Set(b.map(fn))
+          return [...new Set(a)].filter(x => s.has(fn(x)))
+        }
+        const auditStatuses = intersectionBy(res.auditStatuses, this.countOptions, x => x.auditStatus)
+        if (auditStatuses.length > 0) {
           for (const ele of this.countOptions) {
             for (const item of res.auditStatuses) {
-              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+              if (ele.auditStatus === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
             }
           }
         } else this.countData = countOptions

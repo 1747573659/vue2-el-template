@@ -27,11 +27,11 @@ export const deactivateOptions = [
 
 // 统计配置
 export const countOptions = [
-  { value: 0, label: '草稿', total: 0 },
-  { value: 1, label: '待渠道审核', total: 0 },
-  { value: 3, label: '待平台审核', total: 0 },
-  { value: 2, label: '渠道审核未通过', total: 0 },
-  { value: 4, label: '平台审核未通过', total: 0 }
+  { auditStatus: 0, label: '草稿', total: 0 },
+  { auditStatus: 1, label: '待渠道审核', total: 0 },
+  { auditStatus: 3, label: '待平台审核', total: 0 },
+  { auditStatus: 2, label: '渠道审核未通过', total: 0 },
+  { auditStatus: 4, label: '平台审核未通过', total: 0 }
 ]
 
 // 小微费率
