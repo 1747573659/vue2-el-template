@@ -242,7 +242,7 @@
             <el-col :span="12">
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
                 <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
-                <el-tooltip effect="dark" content="必须与营业执照一致" placement="top">
+                <el-tooltip effect="dark" content="公司名称必须与营业执照/登记证书一致" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
               </el-form-item>
