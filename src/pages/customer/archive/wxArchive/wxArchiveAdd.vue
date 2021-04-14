@@ -52,7 +52,8 @@
 
           <el-col :span="12">
             <el-form-item label="经营场景">
-              <el-checkbox-group v-model="form.businessSceneShow">
+              <el-checkbox-group v-model="form.businessSceneShow" @change="handleBusinessSceneShow">
+                <el-checkbox :label="1">线下门店</el-checkbox>
                 <el-checkbox :label="2">公众号</el-checkbox>
                 <el-checkbox :label="3">小程序</el-checkbox>
               </el-checkbox-group>
@@ -221,6 +222,32 @@
           <el-col :span="12">
             <el-form-item label="邮箱" prop="archiveBaseVO.email">
               <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
+              <upload-panel
+                alt="门店门头照"
+                action="/uploadFile"
+                :fileServer="fileServer"
+                :exampleImg="exampleImg.signboardUrl"
+                :image-url="form.archiveOtherVO.signboardUrl"
+                :on-success="res => handleUpload(res, 'archiveOtherVO.signboardUrl')"
+                @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="店内环境照片" prop="archiveOtherVO.businessSiteOneUrl">
+              <upload-panel
+                alt="店内环境照片"
+                action="/uploadFile"
+                :fileServer="fileServer"
+                :exampleImg="exampleImg.businessSiteOneUrl"
+                :image-url="form.archiveOtherVO.businessSiteOneUrl"
+                :on-success="res => handleUpload(res, 'archiveOtherVO.businessSiteOneUrl')"
+                @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
+              />
             </el-form-item>
           </el-col>
 
@@ -568,9 +595,6 @@ export default {
       document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
     })
 
-    // this.remoteSelect()
-    // this.getBankPage()
-    // this.getBranchPage()
     this.handleSelectPageRemote('', 'selectPageData', 'selectPage')
     this.handleSelectPageRemote('', 'bankSelectPageData', 'bank')
     this.handleSelectPageRemote('', 'bankSubSelectPageData', 'bankSub')
@@ -579,6 +603,9 @@ export default {
     if (this.pageStatus !== 'add') this.handleDetail()
   },
   methods: {
+    handleBusinessSceneShow(val) {
+      if (!val.includes(1)) this.form.businessSceneShow = [1, ...val]
+    },
     // 图片上传模块
     handleUpload(res, type) {
       const typeList = type.split('.')
