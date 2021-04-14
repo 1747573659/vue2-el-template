@@ -26,6 +26,7 @@
                 :data="selectPageData"
                 :is-max-page="isMaxPage"
                 :remote-method="val => handleSelectPageRemote(val, 'selectPageData', 'selectPage')"
+                @visible-change="val => handleSelectVisibleChange(val, 'selectPage')"
                 @clear="handleSelectPageClear('selectPageData', 'selectPage')"
                 @change="val => handleSelectPageChange(val, 'selectPage')"
                 @loadmore="handleSelectOptionsMore('selectPageData', 'selectPage')"
@@ -535,22 +536,18 @@ export default {
       businessOptions: [],
       businessSceneList: [],
 
-      selectOptions: [],
-
       searchString: '',
       isMaxPage: false,
       selectPageNo: 1,
       selectPageData: [],
       bankSelectPageData: [],
       bankSubSelectPageData: [],
+      selectCopyVal: '',
 
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
       bankAreaList: [],
-
-      bankOptions: [],
-      branchOptions: [],
 
       checkViewer: false,
       imageIndex: 0,
@@ -660,7 +657,7 @@ export default {
 
     handleBusinessCategory(val) {
       const pathLabels = this.$refs.cascader.getCheckedNodes()[0].pathLabels
-      this.form.archiveBaseVO.businessCategoryRemark = `${pathLabels[0] / pathLabels[1]}`
+      this.form.archiveBaseVO.businessCategoryRemark = pathLabels[0] + '/' + pathLabels[1]
       this.form.archiveBaseVO.businessCategory = val[1]
     },
     setBusinessCategory(val) {
@@ -801,8 +798,14 @@ export default {
         })
       } catch (error) {}
     },
+    handleSelectVisibleChange(value, refs) {
+      this.$nextTick(() => {
+        if (value) this.$refs[refs].$el.children[0].children[0].value = this.selectCopyVal
+      })
+    },
     handleSelectPageClear(selectData, refs) {
       this.$refs[refs].$children[0].$children[1].$children[0].wrap.scrollTop = 0
+      this.$refs[refs].$el.children[0].children[0].value = ''
       this.selectPageNo = 1
       this.isMaxPage = false
       this[selectData] = []
@@ -818,14 +821,19 @@ export default {
       if (refs === 'selectPage') {
         this.form.archiveBaseVO.userId = value
         this.form.archiveBaseVO.merchantId = value
+        this.$nextTick(() => {
+          this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
+        })
       } else if (refs === 'bank') {
         this.form.archiveExpandVO.bank = value
         this.$nextTick(() => {
+          this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
           this.form.archiveExpandVO.bankName = this.$refs[refs].$el.childNodes[1].childNodes[1].value
         })
       } else if (refs === 'bankSub') {
         this.form.archiveExpandVO.bankSub = value
         this.$nextTick(() => {
+          this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
           this.form.archiveExpandVO.bankSubName = this.$refs[refs].$el.childNodes[1].childNodes[1].value
         })
       }
