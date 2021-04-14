@@ -646,6 +646,7 @@ export default {
     },
     handleMerchantType(val) {
       if (val !== 5) this.form.archiveBaseVO.fixFeeRate = 60
+      if (val === 2) this.form.archiveExpandVO.acctType = 1
     },
     handleDirectAuditStatus: async function(id) {
       try {

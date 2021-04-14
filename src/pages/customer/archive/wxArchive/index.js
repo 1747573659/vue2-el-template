@@ -229,8 +229,8 @@ export const detailValidate = {
   'archiveExpandVO.hardIdUrl': [{ required: true, message: '请输入手持身份证正面照', trigger: 'change' }],
   'archiveExpandVO.openingPermitUrl': [{ required: true, message: '请输入开户许可证', trigger: 'change' }],
   'archiveExpandVO.bankCardFrontUrl': [{ required: true, message: '请输入银行卡正面照', trigger: 'change' }],
+  'archiveExpandVO.acctType': [{ required: true, message: '请选择账户类型', trigger: 'change' }],
   'archiveExpandVO.bank': [{ required: true, message: '请输入银行', trigger: 'change' }],
-  'archiveExpandVO.bankName': [{ required: true, message: '请输入银行', trigger: 'change' }],
   'archiveExpandVO.bankSub': [{ required: true, message: '请输入所属支行', trigger: 'change' }],
   'archiveExpandVO.bankCard': [
     { required: true, message: '请输入银行账号', trigger: 'blur' },
