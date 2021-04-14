@@ -50,15 +50,6 @@ const urlLinks = {
   export: '/archive/xdd/export',
   // 导出记录
   exportLog: '/export/log',
-  queryPrivateAuthorization: '/archive/xdd/queryPrivateAuthorization'
-}
-
-// 查询第三方对私结算函模板
-export function queryPrivateAuthorization(data) {
-  return request({
-    url: urlLinks.queryPrivateAuthorization,
-    method: 'post'
-  })
 }
 
 export function xftArchiveExportDel(data) {

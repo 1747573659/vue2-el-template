@@ -661,7 +661,10 @@
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.privateAuthorization)"
                 >
                 </upload-pic>
-                <span class="xft-add-template" @click="handlePrivateLetter">下载模板</span>
+                <div style="display:inline">
+                  <img ref="template" src="../../../../assets/images/xftArchive/privateTemplate.jpg" alt="" style="display:none">
+                  <span class="xft-add-template" @click="handlePrivateLetter">下载模板</span>
+                </div>
               </el-form-item>
             </el-col>
           </el-row>
@@ -762,8 +765,7 @@ import areaSelectForTwo from '@/components/areaSelectForTwo'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
-import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR, queryPrivateAuthorization } from '@/api/xftArchive'
-import { downloadForURL } from '@/utils'
+import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR} from '@/api/xftArchive'
 
 export default {
   name: 'xftArchiveAdd',
@@ -1091,9 +1093,8 @@ export default {
     })
   },
   methods: {
-    handlePrivateLetter: async function(){
-      const res = await queryPrivateAuthorization()
-      downloadForURL(res[0])
+    handlePrivateLetter(){
+      window.open(this.$refs.template.src)
     },
     handleClosePreview() {
       this.showViewer = false
