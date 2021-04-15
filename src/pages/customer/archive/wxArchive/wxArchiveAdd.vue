@@ -605,6 +605,8 @@ export default {
   methods: {
     handleBusinessSceneShow(val) {
       if (!val.includes(1)) this.form.businessSceneShow = [1, ...val]
+      if (!val.includes(2)) this.form.archiveBaseVO.publicId = ''
+      if (!val.includes(3)) this.form.archiveBaseVO.appletId = ''
     },
     // 图片上传模块
     handleUpload(res, type) {
@@ -723,16 +725,6 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           try {
-            // 经营场景数据处理
-            if (!this.form.businessSceneShow.length) {
-              this.form.businessSceneShow = [1]
-            }
-            if (this.form.businessSceneShow.indexOf(2) === -1) {
-              this.form.archiveBaseVO.publicId = ''
-            }
-            if (this.form.businessSceneShow.indexOf(3) === -1) {
-              this.form.archiveBaseVO.appletId = ''
-            }
             await submitToVerify(this.form)
             this.handleCancel()
             this.$message({ type: 'success', message: '提交成功' })
@@ -789,16 +781,6 @@ export default {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
-                // 经营场景数据处理
-                if (!this.form.businessSceneShow.length) {
-                  this.form.businessSceneShow = [1]
-                }
-                if (this.form.businessSceneShow.indexOf(2) === -1) {
-                  this.form.archiveBaseVO.publicId = ''
-                }
-                if (this.form.businessSceneShow.indexOf(3) === -1) {
-                  this.form.archiveBaseVO.appletId = ''
-                }
               const res = await submit(this.form)
               if (!this.form.archiveBaseVO.id) {
                 this.$router.replace({ name: 'wxArchiveAdd', query: { id: res, status: 'edit' } })
