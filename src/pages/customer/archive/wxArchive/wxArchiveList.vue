@@ -263,12 +263,10 @@ export default {
       this.delCachedView({ name: 'wxArchiveAdd' }).then(() => {
         this.$router.push({ name: 'wxArchiveAdd', query: Object.assign(query.status === 'add' ? {} : { id: row.archiveBaseDTO.id }, query) })
       })
-      // const queryParams = query.action === 'add' ? query : Object.assign({ action: 'detail', id: row.archiveBaseDTO.id }, query)
-      // this.delCachedView({ name: 'wxArchiveAdd' }).then(() => this.$router.push({ name: 'wxArchiveAdd', query: queryParams }))
     },
     handleReason(row) {
       if (this.triggerReasons.includes(row.archiveBaseDTO.directAuditStatus)) {
-        this.$alert(row.archiveBaseDTO.auditRemark, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
+        this.$alert(row.archiveBaseDTO.directAuditResultMsg, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
       }
     },
     handleTabSort({ column, prop, order }) {
