@@ -84,7 +84,6 @@
               </el-tooltip>
             </el-form-item>
           </el-col>
-
           <template v-if="form.archiveBaseVO.merchantType !== 5">
             <el-col :span="24">
               <el-form-item label="营业执照" prop="archiveExpandVO.businessLicenseUrl">
@@ -116,7 +115,6 @@
               </el-form-item>
             </el-col>
           </template>
-
           <el-col :span="24">
             <el-form-item label="经营类目" prop="archiveBaseVO.businessCategory">
               <el-cascader ref="cascader" v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
@@ -130,7 +128,6 @@
               <el-input v-model="form.archiveExpandVO.sellShopDescribe" type="textarea" :autosize="{ minRows: 3 }" maxlength="140" show-word-limit style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
-
           <template v-if="form.archiveExpandVO.licType === 2">
             <el-col :span="12">
               <el-form-item label="组织机构代码号" prop="archiveExpandVO.orgInstitutionCode">
@@ -170,7 +167,6 @@
               </el-form-item>
             </el-col>
           </template>
-
           <el-col :span="12">
             <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
               <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
@@ -250,7 +246,6 @@
               />
             </el-form-item>
           </el-col>
-
           <template v-if="form.archiveBaseVO.merchantType === 5">
             <el-col :span="12">
               <el-form-item label="经营场地证明">
@@ -562,7 +557,6 @@ export default {
       businessCategory: [],
       businessOptions: [],
       businessSceneList: [],
-
       searchString: '',
       isMaxPage: false,
       selectPageNo: 1,
@@ -570,12 +564,10 @@ export default {
       bankSelectPageData: [],
       bankSubSelectPageData: [],
       selectCopyVal: '',
-
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
       bankAreaList: [],
-
       checkViewer: false,
       imageIndex: 0,
       previewList: [],
@@ -594,11 +586,9 @@ export default {
       const tags = { edit: '编辑', detail: '详情', add: '新增', copy: '编辑' }
       document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
     })
-
     this.handleSelectPageRemote('', 'selectPageData', 'selectPage')
     this.handleSelectPageRemote('', 'bankSelectPageData', 'bank')
     this.handleSelectPageRemote('', 'bankSubSelectPageData', 'bankSub')
-
     this.getBusinessCategory()
     if (this.pageStatus !== 'add') this.handleDetail()
   },
@@ -684,7 +674,6 @@ export default {
         this.$message({ type: 'success', message: '资料撤销成功' })
       } catch (error) {}
     },
-
     handleBusinessCategory(val) {
       const pathLabels = this.$refs.cascader.getCheckedNodes()[0].pathLabels
       this.form.archiveBaseVO.businessCategoryRemark = pathLabels[0] + '/' + pathLabels[1]
@@ -746,13 +735,11 @@ export default {
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
-
         // 待处理
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
         if (![0, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.pageStatus !== 'copy') this.checkFormDisabled = true
       } catch (error) {
@@ -793,7 +780,6 @@ export default {
         })
       }
     },
-
     handleArea(type, value) {
       if (type === 'area') {
         this.form.archiveBaseVO.province = value[0]
@@ -805,7 +791,6 @@ export default {
         this.form.archiveExpandVO.bankArea = value[2]
       }
     },
-
     handleSelectPageRemote: async function(query, selectData, refs) {
       try {
         const data = { page: query !== this.searchString ? 1 : this.selectPageNo, rows: 10 }
