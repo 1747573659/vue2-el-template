@@ -312,14 +312,14 @@ export default {
       tableLoading: false,
       imgSrc: '',
       countOptions: [
-        { value: 0, label: '草稿', total: 0 },
-        { value: 2, label: '待审核', total: 0 },
-        { value: 9, label: '资料补充待审核', total: 0 },
-        { value: 3, label: '平台审核中', total: 0 },
-        { value: 8, label: '资料待补充', total: 0 },
-        { value: 1, label: '未通过审核编辑中', total: 0 },
-        { value: 4, label: '未通过审核', total: 0 },
-        { value: '', label: '微信认证审核驳回', total: 0 }
+        { auditStatus: 0, label: '草稿', total: 0 },
+        { auditStatus: 2, label: '待审核', total: 0 },
+        { auditStatus: 9, label: '资料补充待审核', total: 0 },
+        { auditStatus: 3, label: '平台审核中', total: 0 },
+        { auditStatus: 8, label: '资料待补充', total: 0 },
+        { auditStatus: 1, label: '未通过审核编辑中', total: 0 },
+        { auditStatus: 4, label: '未通过审核', total: 0 },
+        { auditStatus: '', label: '微信认证审核驳回', total: 0 }
       ],
       // dialog
       exportVisible: false,
@@ -428,10 +428,15 @@ export default {
       try {
         const res = await queryTotalByStatus(this.handleQueryParams())
         this.countData = []
-        if (res.auditStatuses?.length > 0) {
+        const intersectionBy = (a, b, fn) => {
+          const s = new Set(b.map(fn))
+          return [...new Set(a)].filter(x => s.has(fn(x)))
+        }
+        const auditStatuses = intersectionBy(res.auditStatuses, this.countOptions, x => x.auditStatus)
+        if (auditStatuses.length > 0) {
           for (const ele of this.countOptions) {
             for (const item of res.auditStatuses) {
-              if (ele.value === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
+              if (ele.auditStatus === item.auditStatus) this.countData.push({ label: ele.label, total: item.total })
             }
           }
           if (res.wxCertStatuses?.length) this.countData.push({ label: '微信认证审核驳回', total: res.wxCertStatuses.filter(item => item.wxCertStatus === 6)[0].wxCertTotal || 0 })

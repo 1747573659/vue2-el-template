@@ -150,14 +150,14 @@ const customer = {
           }
         },
         {
-          path: 'wxArchiveDetail',
-          name: 'wxArchiveDetail',
-          code: 'KM_DEFAULT_CODE',
+          path: 'wxProgress',
+          name: 'wxProgress',
+          code: 'KM_CUSTOMER_ARCHIVE_WXPROGRESS',
           hidden: true,
-          component: _import('customer/archive/wxArchive/wxArchiveDetail'),
+          component: _import('customer/archive/wxArchive/wxProgress'),
           meta: {
-            title: '进件详情',
-            name: 'wxArchiveDetail'
+            title: '申请进度',
+            name: 'wxProgress'
           }
         },
         {
@@ -192,6 +192,17 @@ const customer = {
           meta: {
             title: '进件详情',
             name: 'xftArchiveDetail'
+          }
+        },
+        {
+          path: 'archiveWiki',
+          name: 'archiveWiki',
+          code: 'KM_CUSTOMER_WIKI',
+          hidden: true,
+          component: _import('customer/archive/wiki/index'),
+          meta: {
+            title: '申请进度指引',
+            name: 'archiveWiki'
           }
         }
       ]

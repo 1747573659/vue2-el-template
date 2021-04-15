@@ -1,4 +1,5 @@
 import { mapGetters, mapActions } from 'vuex'
+
 export default {
   computed: {
     ...mapGetters(['fileServe']),
@@ -7,9 +8,9 @@ export default {
     }
   },
   methods: {
-    ...mapActions(['setFileServe']),
+    ...mapActions(['setFileServe'])
   },
-  created () {
+  created() {
     this.setFileServe()
   }
 }
