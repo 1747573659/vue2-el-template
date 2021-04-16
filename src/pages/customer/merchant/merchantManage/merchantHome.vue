@@ -64,20 +64,26 @@
     <div class="data-box">
       <el-table v-loading="loading" :max-height="tabMaxHeight" ref="multipleTable" :data="tableData" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="id" label="商户编号" width="80"></el-table-column>
-        <el-table-column prop="companyName" label="商户名称" min-width="150"></el-table-column>
+        <el-table-column prop="companyName" label="商户名称" min-width="150" fixed>
+          <template slot-scope="scope">
+            {{ '[' + scope.row.id + ']' + scope.row.companyName }}
+          </template>
+        </el-table-column>
         <el-table-column prop="loginName" label="账号" width="115"></el-table-column>
-        <el-table-column prop="contactor" label="联系人"></el-table-column>
+        <el-table-column prop="contactor" label="联系人" min-width="150"></el-table-column>
         <el-table-column prop="mobile" label="联系人手机" width="115"></el-table-column>
         <el-table-column prop="merchantNumber" label="品牌数" align="right" width="70"></el-table-column>
         <el-table-column prop="storeNum" label="门店数" align="right" width="70">
           <template slot-scope="scope"> {{ scope.row.storeNum || 0 }}</template>
         </el-table-column>
-        <el-table-column prop="agentName" label="所属代理商"></el-table-column>
+        <el-table-column prop="agentName" label="所属代理商" min-width="150"></el-table-column>
+        <el-table-column prop="createTime" label="创建日期" width="110">
+          <template slot-scope="scope">{{ scope.row.createTime.split(' ')[0] }}</template>
+        </el-table-column>
         <el-table-column prop="status" label="状态" width="70">
           <template slot-scope="scope">{{ scope.row.status | fiterStatus }}</template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="170">
+        <el-table-column label="操作" align="right" width="170" fixed="right">
           <template slot-scope="scope">
             <el-button v-permission="'MERCHANT_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-button v-if="scope.row.status !== 2" v-permission="'MERCHANT_SET_STOPORSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{
