@@ -88,9 +88,10 @@
         </el-table-column>
         <el-table-column label="审核状态">
           <template slot-scope="scope">
-            <span :class="{ 'e-general_tabOrange': triggerReasons.includes(scope.row.archiveBaseDTO.directAuditStatus) }" @click="handleReason(scope.row)">
-              {{ scope.row.archiveBaseDTO.directAuditStatus | filterStatus(direAuditStatusOptions) }}
-            </span>
+            <span>{{ scope.row.archiveBaseDTO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
+            <template v-if="triggerReasons.includes(scope.row.archiveBaseDTO.directAuditStatus) && scope.row.archiveBaseDTO.directAuditResultMsg">
+              <el-button type="text" size="small" @click="handleReason(scope.row)" class="e-btn-reason">原因</el-button>
+            </template>
           </template>
         </el-table-column>
         <el-table-column label="费率" min-width="75">
@@ -422,9 +423,8 @@ export default {
   }
 }
 .data-box {
-  .e-general_tabOrange {
-    color: #ff6010;
-    cursor: pointer;
+  .e-btn-reason {
+    margin-left: 12px;
   }
   .archive-table-oneline {
     overflow: hidden;
