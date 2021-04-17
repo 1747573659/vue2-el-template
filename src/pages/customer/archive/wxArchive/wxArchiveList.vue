@@ -86,7 +86,7 @@
             <span>{{ scope.row.archiveBaseDTO.merchantType | filterStatus(merchantTypeOptions) }}</span>
           </template>
         </el-table-column>
-        <el-table-column label="审核状态">
+        <el-table-column label="审核状态" min-width="120">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveBaseDTO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
             <template v-if="triggerReasons.includes(scope.row.archiveBaseDTO.directAuditStatus) && scope.row.archiveBaseDTO.directAuditResultMsg">
