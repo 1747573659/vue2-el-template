@@ -425,7 +425,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 <template #content>
                   <p>1、选择“经营者个人银行卡”时，开户名称必须与“法人姓名”一致。</p>
-                  <p>2、选择“对公银行账户”时，开户名称必须与营业执照/登记证书的“商户名称”一致。</p>
+                  <p>2、选择“对公银行账户”时，开户名称必须与营业执照/登记证书的“公司名称”一致。</p>
                 </template>
               </el-tooltip>
             </el-form-item>
