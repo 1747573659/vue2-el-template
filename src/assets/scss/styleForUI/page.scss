@@ -1,8 +1,7 @@
 .km-page-block {
   padding: 12px 0 15px;
-  position: absolute;
-  right: 32px;
-  bottom: 16px;
+  display: flex;
+  justify-content: flex-end;
 }
 .el-pager li {
   padding: 0px;
