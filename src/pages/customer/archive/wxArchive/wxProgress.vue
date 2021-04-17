@@ -106,7 +106,9 @@ export default {
     font-size: 14px;
     line-height: 40px;
     p {
-      width: 300px;
+      & + p {
+        margin-left: 30px;
+      }
     }
   }
   /deep/ {
