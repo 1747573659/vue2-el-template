@@ -20,7 +20,36 @@ const urlLinks = {
   queryTotalByStatus: 'archive/general/queryTotalByStatus',
   delList: 'archive/general/del',
   imageOCR: 'common/imageOcr',
-  searchCompanyInfo: '/common/searchCompanyInfo'
+  searchCompanyInfo: 'common/searchCompanyInfo',
+  queryArchiveDirectAuditStatus: 'archive/general/queryArchiveDirectAuditStatus',
+  updateArchiveBaseDirectAuditStatus: 'archive/general/updateArchiveBaseDirectAuditStatus',
+  queryDirectArchiveApplySchedule: 'archive/general/queryDirectArchiveApplySchedule'
+}
+
+// 获取申请进度列表
+export function queryDirectArchiveApplySchedule(data) {
+  return request({
+    url: urlLinks.queryDirectArchiveApplySchedule,
+    method: 'POST',
+    data: qs.stringify(data)
+  })
+}
+
+// 获取状态列表
+export function updateArchiveBaseDirectAuditStatus(data) {
+  return request({
+    url: urlLinks.updateArchiveBaseDirectAuditStatus,
+    method: 'POST',
+    data: qs.stringify(data)
+  })
+}
+
+// 获取状态列表
+export function queryArchiveDirectAuditStatus() {
+  return request({
+    url: urlLinks.queryArchiveDirectAuditStatus,
+    method: 'POST'
+  })
 }
 
 // 企查查

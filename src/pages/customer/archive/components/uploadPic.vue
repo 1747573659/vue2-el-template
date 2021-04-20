@@ -38,6 +38,7 @@
 
 <script>
 import { getLocal } from '@/utils/storage'
+
 export default {
   data() {
     return {
@@ -137,7 +138,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.avatar-uploader /deep/.el-upload {
+.avatar-uploader /deep/ .el-upload {
   cursor: pointer;
   position: relative;
   overflow: hidden;
@@ -145,9 +146,11 @@ export default {
   border: 1px dashed #d3dbeb;
   background: #f7f8fa;
 }
+
 .avatar-uploader .el-upload:hover {
   border-color: #409eff;
 }
+
 .avatar-uploader-icon {
   font-size: 18px;
   color: #8c939d;
@@ -156,11 +159,13 @@ export default {
   line-height: 18px;
   text-align: center;
 }
+
 .avatar {
   width: 80px;
   height: 80px;
   display: block;
 }
+
 .upload-text {
   margin-top: 12px;
   font-size: 14px;
@@ -169,6 +174,7 @@ export default {
   color: #8f9bb3;
   line-height: 14px;
 }
+
 .before-upload {
   width: 80px;
   height: 80px;
@@ -177,22 +183,26 @@ export default {
   justify-content: center;
   flex-direction: column;
 }
+
 .upload-require {
   font-size: 14px;
   font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #cad1e0;
   line-height: 20px;
+
   .upload-example-text {
     padding-left: 12px;
     color: #3377ff;
     cursor: pointer;
   }
 }
+
 .upload-example-img {
   width: 289px;
   height: 183px;
 }
+
 .card {
   width: 180px;
   height: 120px;

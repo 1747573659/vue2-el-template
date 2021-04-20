@@ -54,11 +54,8 @@
 <script>
 import dropOutView from './component/dropOut'
 import dropInformationView from './component/dropInformation'
-import { logout } from '@/api/login'
 import { getLocal } from '@/utils/storage'
 import { mapGetters, mapActions } from 'vuex'
-
-import home from '@/router/modules/home'
 
 export default {
   components: {
