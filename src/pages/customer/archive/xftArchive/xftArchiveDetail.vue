@@ -29,6 +29,13 @@
             <span v-else>--</span>
           </template>
         </el-table-column>
+        <el-table-column prop="unionPayBindType" label="银联二维码">
+          <template slot-scope="scope">
+            <span v-if="scope.row.unionPayBindType === 1">默认使用</span>
+            <span v-else-if="scope.row.unionPayBindType === 2">正在使用</span>
+            <span v-else>--</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="wxSubMchId" label="微信子商户号"> </el-table-column>
         <el-table-column prop="wxAuthStatus" label="授权状态">
           <template slot-scope="scope">
@@ -42,9 +49,9 @@
         </el-table-column>
         <el-table-column label="操作" align="right" width="380px">
           <template slot-scope="scope">
-            <el-button @click="querySubShop(scope.row)" v-if="['7', '30'].includes(scope.row.channelCode)" type="text" size="small">查询子商户号</el-button>
-            <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">子商户号授权</el-button>
-            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">查询授权状态</el-button>
+            <el-button @click="querySubShop(scope.row)" v-if="['7', '30','35'].includes(scope.row.channelCode)" type="text" size="small">查询子商户号</el-button>
+            <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30','35'].includes(scope.row.channelCode)">子商户号授权</el-button>
+            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30','35'].includes(scope.row.channelCode)">查询授权状态</el-button>
             <el-button @click="signUpOL(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">电子签约</el-button>
             <!-- <el-button @click="signUpOL(scope.row)" type="text" size="small">电子签约</el-button> -->
             <el-button @click="shopInfo(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">查询商户信息</el-button>
@@ -237,6 +244,9 @@ export default {
             break
           case '30':
             this.imgSrc = require('@/assets/images/xftArchive/channel/30.png')
+            break
+          case '35':
+            this.imgSrc = require('@/assets/images/xftArchive/channel/35.png')
             break
         }
         this.authorVisible = true

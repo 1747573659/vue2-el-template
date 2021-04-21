@@ -34,7 +34,7 @@ export default function xftValidator() {
     'archiveBaseVO.industrId': [{ required: true, message: '请选择经营类目', trigger: 'change' }],
     'archiveExpandVO.certType': [{ required: true, message: '请选择登记证书类型', trigger: 'change' }],
     'archiveOtherVO.signboardUrl': [{ required: true, message: '请上传门店门头照', trigger: 'change' }],
-    'archiveOtherVO.cashierDesk': [{ required: true, message: '请上传收银台照片', trigger: 'change' }],
+    'archiveOtherVO.cashierDesk': [{ required: true, message: '请上传室内场景照', trigger: 'change' }],
     'archiveOtherVO.businessSiteOneUrl': [{ required: true, message: '请上传经营场所照', trigger: 'change' }],
     'archiveOtherVO.contractOfTenancy1': [{ required: true, message: '请上传租赁合同照一', trigger: 'change' }],
     'archiveOtherVO.contractOfTenancy2': [{ required: true, message: '请上传租赁合同照二', trigger: 'change' }],
