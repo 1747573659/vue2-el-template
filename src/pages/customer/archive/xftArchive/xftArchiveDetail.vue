@@ -43,17 +43,8 @@
         <el-table-column label="操作" align="right" width="380px">
           <template slot-scope="scope">
             <el-button @click="querySubShop(scope.row)" v-if="['7', '30'].includes(scope.row.channelCode)" type="text" size="small">查询子商户号</el-button>
-            <el-button
-              v-permission="'XFT_DETAIL_AUTHOR'"
-              @click="toAuthor(scope.row)"
-              type="text"
-              size="small"
-              v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)"
-              >子商户号授权</el-button
-            >
-            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)"
-              >查询授权状态</el-button
-            >
+            <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">子商户号授权</el-button>
+            <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30'].includes(scope.row.channelCode)">查询授权状态</el-button>
             <el-button @click="signUpOL(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">电子签约</el-button>
             <!-- <el-button @click="signUpOL(scope.row)" type="text" size="small">电子签约</el-button> -->
             <el-button @click="shopInfo(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">查询商户信息</el-button>
@@ -62,15 +53,7 @@
         </el-table-column>
       </el-table>
       <div class="km-page-block">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 30, 50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage"
-        >
+        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page="currentPage" :page-sizes="[10, 30, 50]" :page-size="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="totalPage">
         </el-pagination>
       </div>
     </div>
@@ -78,24 +61,16 @@
       <div class="author-dialog-text">
         1. 确认商户联系人：<span style="color: #FF6010">{{ authorForm.contactName }}(手机尾号{{ authorForm.contactPhone }})</span>已在微信客户端内为<span style="color: #FF6010">{{
           authorForm.shopName
-        }}</span
-        >完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”
+        }}</span>完成了实名认证，且商户法人已完成认证，且进件资料为“审核通过”
       </div>
       <div class="author-dialog-text">
-        2. 商户联系人：<span style="color: #FF6010">{{ authorForm.contactName }}(手机尾号{{ authorForm.contactPhone }})</span>扫描下方小程序二维码，按照流程指引为特约商户号<span
-          v-if="authorForm.wxSubMchId"
-          >“<span style="color: #FF6010">{{ authorForm.wxSubMchId }}</span
-          >”</span
-        >完成授权
+        2. 商户联系人：<span style="color: #FF6010">{{ authorForm.contactName }}(手机尾号{{ authorForm.contactPhone }})</span>扫描下方小程序二维码，按照流程指引为特约商户号<span v-if="authorForm.wxSubMchId">“<span style="color: #FF6010">{{ authorForm.wxSubMchId }}</span>”</span>完成授权
       </div>
       <img :src="imgSrc" class="author-dialog-img" alt="qrcode" />
     </el-dialog>
     <el-dialog title="电子签约" :visible.sync="signUpVisible" width="507px" class="author-dialog">
       <div class="author-dialog-text">
-        请商户<span style="color: #FF6010">{{ signUpForm.shopName }}</span
-        >负责人<span style="color: #FF6010">{{ signUpForm.contact }}</span
-        >,使用手机号码<span style="color: #FF6010">{{ signUpForm.contactPhone }}</span
-        >扫描下方二维码，完成交行签约
+        请商户<span style="color: #FF6010">{{ signUpForm.shopName }}</span>负责人<span style="color: #FF6010">{{ signUpForm.contact }}</span>,使用手机号码<span style="color: #FF6010">{{ signUpForm.contactPhone }}</span>扫描下方二维码，完成交行签约
       </div>
       <img :src="codeSrc" class="author-dialog-img signup-img" alt="qrcode" />
     </el-dialog>
@@ -174,7 +149,7 @@ import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
   mixins: [tableMaxHeight],
-  data() {
+  data () {
     return {
       signUpVisible: false,
       shopInfoVisible: false,
@@ -208,7 +183,7 @@ export default {
     }
   },
   methods: {
-    copy(list) {
+    copy (list) {
       let value = ''
       list.forEach((item, index) => {
         if (index === list.length - 1) {
@@ -229,7 +204,7 @@ export default {
       this.$message.success('复制成功')
       document.body.removeChild(transfer)
     },
-    async toAuthor(row) {
+    async toAuthor (row) {
       let data = {
         archiveId: row.baseinfoId
       }
@@ -265,9 +240,9 @@ export default {
             break
         }
         this.authorVisible = true
-      } catch (error) {}
+      } catch (error) { }
     },
-    async queryStatus(row) {
+    async queryStatus (row) {
       let data = {
         bankChannelCode: row.channelCode,
         baseInfoId: row.baseinfoId,
@@ -282,9 +257,9 @@ export default {
             this.getList()
           }
         })
-      } catch (error) {}
+      } catch (error) { }
     },
-    async querySubShop(row) {
+    async querySubShop (row) {
       let data = {
         masterId: row.mchMasterId,
         mchId: row.mchId
@@ -294,14 +269,14 @@ export default {
         this.subShopForm = res
         this.subShopForm.channelCode = row.channelCode
         this.subShopInfoVisible = true
-      } catch (error) {}
+      } catch (error) { }
     },
-    handleSizeChange(value) {
+    handleSizeChange (value) {
       this.pageSize = value
       this.currentPage = 1
       this.getList()
     },
-    async signUpOL(row) {
+    async signUpOL (row) {
       this.signUpForm = {
         shopName: row.shopName,
         contactPhone: this.$route.query.contactPhone,
@@ -319,7 +294,7 @@ export default {
         this.signUpVisible = true
       }
     },
-    async shopInfo(row) {
+    async shopInfo (row) {
       let data = {
         baseInfoId: row.baseinfoId,
         channelCode: '27'
@@ -338,11 +313,11 @@ export default {
         this.shopInfoVisible = true
       }
     },
-    handleCurrentChange(value) {
+    handleCurrentChange (value) {
       this.currentPage = value
       this.getList()
     },
-    async getList() {
+    async getList () {
       this.tableLoading = true
       let data = {
         archiveId: this.$route.query.id,
@@ -359,7 +334,7 @@ export default {
       }
     }
   },
-  mounted() {
+  mounted () {
     this.getList()
   }
 }
