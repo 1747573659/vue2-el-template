@@ -151,7 +151,7 @@
 </template>
 
 <script>
-import { queryXftPage, queryContactInfo, queryAuthorizationStatus, querySubMerchantNo, querySubMchIdForSxf, mchICBSign, queryCommunicationMerchantInfo } from '@/api/xftArchive'
+import { queryXftPage, queryContactInfo, queryAuthorizationStatus, querySubMerchantNo, querySubMchIdForSxf, querySubMchIdHk, mchICBSign, queryCommunicationMerchantInfo } from '@/api/xftArchive'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
@@ -275,7 +275,14 @@ export default {
         mchId: row.mchId
       }
       try {
-        const res = row.channelCode === '7' ? await querySubMerchantNo(data) : await querySubMchIdForSxf(data)
+        let res = {}
+        if (row.channelCode === '35') {
+          res = await querySubMchIdHk(data)
+        } else if (row.channelCode === '7') {
+          res = await querySubMerchantNo(data)
+        } else {
+          res = await querySubMchIdForSxf(data)
+        }
         this.subShopForm = res
         this.subShopForm.channelCode = row.channelCode
         this.subShopInfoVisible = true
