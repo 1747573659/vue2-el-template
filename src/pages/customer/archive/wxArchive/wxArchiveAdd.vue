@@ -475,11 +475,11 @@
           <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleDirectAuditStatus(form.archiveBaseVO.id)">撤销</el-button>
         </template>
         <template v-else>
-          <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify">提交</el-button>
+          <el-button size="small" type="primary" class="e-wxArchive-action_pd" @click="handleVerify" :loading="checkVerify">提交</el-button>
           <template v-if="[1].includes(form.archiveBaseVO.directAuditStatus) && pageStatus !== 'copy'">
             <el-button size="small" class="e-wxArchive-action_pd" @click="checkReason = true">拒绝</el-button>
           </template>
-          <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive">
+          <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive" :loading="!checkFormDisabled && checkArchive">
             {{ [1, 10].includes(form.archiveBaseVO.directAuditStatus) && checkFormDisabled ? '编辑' : '保存' }}
           </el-button>
         </template>
@@ -575,7 +575,9 @@ export default {
       refundForm: { remark: '' },
       refundRules: {
         remark: [{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]
-      }
+      },
+      checkVerify: false,
+      checkArchive: false
     }
   },
   created() {
@@ -714,10 +716,13 @@ export default {
       this.$refs.form.validate(async valid => {
         if (valid) {
           try {
+            this.checkVerify = true
             await submitToVerify(this.form)
             this.handleCancel()
             this.$message({ type: 'success', message: '提交成功' })
-          } catch (error) {}
+          } catch (error) {} finally {
+            this.checkVerify = false
+          }
         }
       })
     },
@@ -768,6 +773,7 @@ export default {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
           if (!errorMessage) {
             try {
+              this.checkArchive = true
               const res = await submit(this.form)
               if (!this.form.archiveBaseVO.id) {
                 this.$router.replace({ name: 'wxArchiveAdd', query: { id: res, status: 'edit' } })
@@ -775,7 +781,9 @@ export default {
               }
               this.handleDetail()
               this.$message({ type: 'success', message: '保存成功' })
-            } catch (error) {}
+            } catch (error) {} finally {
+              this.checkArchive = false
+            }
           }
         })
       }
