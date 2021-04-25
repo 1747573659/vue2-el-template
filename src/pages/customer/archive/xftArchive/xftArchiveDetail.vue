@@ -121,7 +121,7 @@
             </el-col>
           </el-row>
         </el-form-item>
-        <el-form-item label="银总联商户号" v-if="subShopForm.channelCode !== '30'">
+        <el-form-item label="银总联商户号" v-if="!['30','35'].includes(subShopForm.channelCode)">
           <el-row class="shop-dialog-row">
             <el-col :span="18">
               <span v-for="(item, index) in subShopForm.unionPayMchIds" :key="index">{{ item + (index === subShopForm.unionPayMchIds.length - 1 ? '' : ',') }}</span>
