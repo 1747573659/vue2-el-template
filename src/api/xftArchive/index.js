@@ -38,6 +38,7 @@ const urlLinks = {
   // 查询子商户号
   querySubMerchantNo: '/archive/xdd/querySubMerchantNo',
   querySubMchIdForSxf: '/archive/xdd/querySubMchIdForSxf',
+  querySubMchIdHk: '/archive/xdd/querySubMchIdHk',
   queryTotalByStatus: '/archive/xdd/queryTotalByStatus',
   // 通道下拉列表查询
   queryBankChannelType: '/archive/xdd/queryBankChannelType',
@@ -272,6 +273,14 @@ export function querySubMerchantNo(data) {
 export function querySubMchIdForSxf(data) {
   return request({
     url: urlLinks.querySubMchIdForSxf,
+    method: 'POST',
+    data
+  })
+}
+// 查询子商户号
+export function querySubMchIdHk(data) {
+  return request({
+    url: urlLinks.querySubMchIdHk,
     method: 'POST',
     data
   })
