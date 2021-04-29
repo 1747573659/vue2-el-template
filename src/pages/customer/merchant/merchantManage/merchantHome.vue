@@ -34,6 +34,20 @@
                 :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               />
             </el-form-item>
+            <el-form-item label="创建日期:">
+              <el-date-picker
+                style="width:240px"
+                v-model="form.time"
+                type="daterange"
+                range-separator="至"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :clearable="true"
+              >
+              </el-date-picker>
+            </el-form-item>
             <el-form-item label="状态：">
               <el-select v-model="form.status" placeholder="请输入状态" clearable>
                 <el-option v-for="item in statusOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -186,7 +200,8 @@ export default {
         page: 1,
         rows: 10,
         status: '',
-        topAgentId: ''
+        topAgentId: '',
+        time: []
       },
       clerkForm: {
         clerkId: ''
@@ -304,7 +319,18 @@ export default {
     },
     queryShopListByPage() {
       this.loading = true
-      queryShopListByPage(this.form)
+      let data = {
+        clerkId: this.form.clerkId,
+        id: this.form.id,
+        mobile: this.form.mobile,
+        page: this.form.page,
+        rows: this.form.rows,
+        status: this.form.status,
+        topAgentId: this.form.topAgentId,
+        startTime: this.form.time && this.form.time[0] && this.form.time[0] + ' 00:00:00',
+        endTime: this.form.time && this.form.time[1] && this.form.time[1] + ' 23:59:59'
+      }
+      queryShopListByPage(data)
         .then(res => {
           this.tableData = res.results
           this.total = res.totalCount
