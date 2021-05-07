@@ -70,7 +70,7 @@
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveExpandDTO.channelMchId" label="商户号" min-width="80">
+        <el-table-column label="商户号" min-width="80">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveExpandDTO.channelMchId ? scope.row.archiveExpandDTO.channelMchId : '未生成' }}</span>
           </template>
@@ -276,9 +276,7 @@ export default {
       })
     },
     handleReason(row) {
-      if (this.triggerReasons.includes(row.archiveBaseDTO.directAuditStatus)) {
-        this.$alert(row.archiveBaseDTO.directAuditResultMsg, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
-      }
+      this.$alert(row.archiveBaseDTO.directAuditResultMsg, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
     },
     handleTabSort({ column, prop, order }) {
       this.form.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
