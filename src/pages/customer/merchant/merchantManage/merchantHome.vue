@@ -2,8 +2,8 @@
   <div>
     <div class="search-box">
       <el-form :inline="true" size="small" :model="form" label-width="100px" class="xdd-btn-block__w240">
-        <el-row>
-          <el-col :span="24">
+        <el-row type="flex" align="bottom">
+          <el-col :xl="21" :lg="20">
             <el-form-item label="商户信息：">
               <el-input v-model="form.id" maxlength="50" placeholder="请输入商户编号/名称/联系人" clearable></el-input>
             </el-form-item>
@@ -20,10 +20,6 @@
                 :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               ></selectCopy>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="20">
             <el-form-item label="代理商：">
               <selectCopy
                 :value.sync="form.topAgentId"
@@ -43,7 +39,7 @@
               <el-button type="primary" @click="getPageList">查询</el-button>
             </el-form-item>
           </el-col>
-          <el-col :span="4" style="text-align: right;">
+          <el-col :xl="3" :lg="4" style="text-align:right">
             <el-form-item>
               <el-button v-permission="'MERCHANT_SET_ADD'" type="primary" plain icon="el-icon-plus" size="small" @click="addShop">新增</el-button>
               <el-dropdown style="margin-left: 12px;">

@@ -4,7 +4,7 @@
       <div class="xdd_tip"><i class="el-icon-info"></i>单次查询日期的最长跨度为31天；查询对象为“全部” 或 代理商过滤时，结果会包括下级代理商的交易数据</div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="21">
+          <el-col>
             <el-form-item label="日期">
               <el-date-picker
                 v-model="form.time"
@@ -28,10 +28,6 @@
                 <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="21">
             <el-form-item label="支付场景">
               <el-select style="width: 240px" clearable filterable v-model="form.payPlugin" placeholder="全部">
                 <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -66,8 +62,6 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-              <!-- <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出</el-button>
-              <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出记录</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>

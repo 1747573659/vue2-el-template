@@ -3,7 +3,7 @@
     <div class="search-box">
       <div class="xdd_tip"><i class="el-icon-info"></i> 支付订单号 与 退款订单号 至少输入一个，支付订单号无需选择商户，退款订单号必须选择商户； 只支持查询近半年内的退款订单；</div>
       <el-form :inline="true" label-width="100px" @submit.native.prevent class="xdd-btn-block__w240" size="small">
-        <el-row :span="24">
+        <el-row>
           <el-form-item label="商户">
             <select-page
               :request="queryMerchantAdminPage"
@@ -24,14 +24,12 @@
               <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in statusList"></el-option>
             </el-select>
           </el-form-item>
-          <el-col :span="24">
-            <el-form-item label="支付订单号">
-              <el-input clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
-            </el-form-item>
-            <el-form-item>
-              <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-            </el-form-item>
-          </el-col>
+          <el-form-item label="支付订单号">
+            <el-input clearable placeholder="请输入支付订单号" oninput="value=value.replace(/[^\d]/g, '')" size="small" v-model.trim="formData.order"></el-input>
+          </el-form-item>
+          <el-form-item>
+            <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+          </el-form-item>
         </el-row>
       </el-form>
     </div>
