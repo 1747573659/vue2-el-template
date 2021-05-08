@@ -496,9 +496,10 @@
               <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdFrontUrl">
                 <upload-pic
                   alt="持卡人身份证正面照"
+                  :hasBase64="true"
                   :imagePath="form.archiveOtherVO.cardholderIdFrontUrl"
                   :fileServer="fileServer"
-                  @on-success="res => uploadSuccess(res, 'archiveOtherVO.cardholderIdFrontUrl')"
+                  @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveOtherVO', 'cardholderIdFrontUrl', 'face')"
                   :exampleImg="exampleImg.cardholderIdFrontUrl"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdFrontUrl)"
                 >
@@ -509,9 +510,10 @@
               <el-form-item label="持卡人身份证反面照" prop="archiveOtherVO.cardholderIdBackUrl">
                 <upload-pic
                   alt="持卡人身份证反面照"
+                  :hasBase64="true"
                   :imagePath="form.archiveOtherVO.cardholderIdBackUrl"
                   :fileServer="fileServer"
-                  @on-success="res => uploadSuccess(res, 'archiveOtherVO.cardholderIdBackUrl')"
+                  @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveOtherVO', 'cardholderIdBackUrl', 'back')"
                   :exampleImg="exampleImg.cardholderIdBackUrl"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdBackUrl)"
                 >
@@ -928,7 +930,9 @@ export default {
           orgInstitutionEnd: '',
           orgInstitutionUrl: '',
           sellShopDescribe: '',
-          taxRegistrationUrl: ''
+          taxRegistrationUrl: '',
+          cardholderIdBegin: '',
+          cardholderIdEnd: ''
         },
         archiveOtherVO: {
           additionalFiveUrl: '',
@@ -1150,13 +1154,21 @@ export default {
         .then(res => {
           this.$message.success('图片解析成功')
           if (side === 'face') {
-            this.form.archiveExpandVO.legalPersonName = res.name
-            this.form.archiveExpandVO.idNumber = res.num
+            if(url === 'cardholderIdFrontUrl') this.form.archiveExpandVO.cardholderIdNumber = res.num
+            else {
+              this.form.archiveExpandVO.legalPersonName = res.name
+              this.form.archiveExpandVO.idNumber = res.num
+            }
           } else {
             const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
             const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
-            this.form.archiveExpandVO.legalPersonValidityBegin = res.start_date && new Date(startDate) ? startDate : ''
-            this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date && new Date(endDate) ? endDate : ''
+            if(url === 'cardholderIdBackUrl') {
+              this.form.archiveExpandVO.cardholderIdBegin = res.start_date && new Date(startDate) ? startDate : ''
+              this.form.archiveExpandVO.cardholderIdEnd = res.end_date && new Date(endDate) ? endDate : ''
+            } else {
+              this.form.archiveExpandVO.legalPersonValidityBegin = res.start_date && new Date(startDate) ? startDate : ''
+              this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date && new Date(endDate) ? endDate : ''
+            }
           }
         })
         .catch(err => {})
