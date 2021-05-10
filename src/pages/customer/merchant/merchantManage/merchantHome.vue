@@ -30,6 +30,20 @@
                 :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               />
             </el-form-item>
+            <el-form-item label="创建日期:">
+              <el-date-picker
+                style="width:240px"
+                v-model="form.time"
+                type="daterange"
+                range-separator="至"
+                format="yyyy-MM-dd"
+                value-format="yyyy-MM-dd"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                :clearable="true"
+              >
+              </el-date-picker>
+            </el-form-item>
             <el-form-item label="状态：">
               <el-select v-model="form.status" placeholder="请输入状态" clearable>
                 <el-option v-for="item in statusOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -60,20 +74,26 @@
     <div class="data-box">
       <el-table v-loading="loading" :max-height="tabMaxHeight" ref="multipleTable" :data="tableData" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="id" label="商户编号" width="80"></el-table-column>
-        <el-table-column prop="companyName" label="商户名称" min-width="150"></el-table-column>
+        <el-table-column prop="companyName" label="商户名称" min-width="150" fixed>
+          <template slot-scope="scope">
+            {{ '[' + scope.row.id + ']' + scope.row.companyName }}
+          </template>
+        </el-table-column>
         <el-table-column prop="loginName" label="账号" width="115"></el-table-column>
-        <el-table-column prop="contactor" label="联系人"></el-table-column>
+        <el-table-column prop="contactor" label="联系人" min-width="150"></el-table-column>
         <el-table-column prop="mobile" label="联系人手机" width="115"></el-table-column>
         <el-table-column prop="merchantNumber" label="品牌数" align="right" width="70"></el-table-column>
         <el-table-column prop="storeNum" label="门店数" align="right" width="70">
           <template slot-scope="scope"> {{ scope.row.storeNum || 0 }}</template>
         </el-table-column>
-        <el-table-column prop="agentName" label="所属代理商"></el-table-column>
+        <el-table-column prop="agentName" label="所属代理商" min-width="150"></el-table-column>
+        <el-table-column prop="createTime" label="创建日期" width="110">
+          <template slot-scope="scope">{{ scope.row.createTime.split(' ')[0] }}</template>
+        </el-table-column>
         <el-table-column prop="status" label="状态" width="70">
           <template slot-scope="scope">{{ scope.row.status | fiterStatus }}</template>
         </el-table-column>
-        <el-table-column label="操作" align="right" width="170">
+        <el-table-column label="操作" align="right" width="170" fixed="right">
           <template slot-scope="scope">
             <el-button v-permission="'MERCHANT_SET_EDIT'" size="small" type="text" @click="handleEdit(scope.row.id)">编辑</el-button>
             <el-button v-if="scope.row.status !== 2" v-permission="'MERCHANT_SET_STOPORSTART'" size="small" type="text" @click="handleOperate(scope.row.id, scope.row.status)">{{
@@ -176,7 +196,8 @@ export default {
         page: 1,
         rows: 10,
         status: '',
-        topAgentId: ''
+        topAgentId: '',
+        time: []
       },
       clerkForm: {
         clerkId: ''
@@ -294,7 +315,18 @@ export default {
     },
     queryShopListByPage() {
       this.loading = true
-      queryShopListByPage(this.form)
+      let data = {
+        clerkId: this.form.clerkId,
+        id: this.form.id,
+        mobile: this.form.mobile,
+        page: this.form.page,
+        rows: this.form.rows,
+        status: this.form.status,
+        topAgentId: this.form.topAgentId,
+        startTime: this.form.time && this.form.time[0] && this.form.time[0] + ' 00:00:00',
+        endTime: this.form.time && this.form.time[1] && this.form.time[1] + ' 23:59:59'
+      }
+      queryShopListByPage(data)
         .then(res => {
           this.tableData = res.results
           this.total = res.totalCount
