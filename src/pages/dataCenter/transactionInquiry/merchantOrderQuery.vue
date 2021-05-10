@@ -4,7 +4,7 @@
       <div class="xdd_tip"><i class="el-icon-info"></i>只支持查询近一年内的交易流水，单次查询日期的最长跨度为31天</div>
       <el-form :inline="true" :model="formData" @submit.native.prevent label-width="100px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="24">
+          <el-col>
             <el-form-item label="商户名称" prop="shopId">
               <select-page
                 :request="queryMerchantAdminPage"
@@ -33,10 +33,6 @@
               <el-button :disabled="isSubtract" @click="setSearchTime('subtract')" class="pure-btn_space" size="small" type="default">前一天</el-button>
               <el-button :disabled="isAdd" @click="setSearchTime('add')" size="small" type="default">后一天</el-button>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
             <el-form-item label="门店名称" prop="storeName">
               <select-page
                 :request="getStorePage"
@@ -51,7 +47,6 @@
               >
               </select-page>
             </el-form-item>
-
             <el-form-item label="收银员" prop="cashier">
               <select-page
                 :request="queryClerkPageByStore"
@@ -76,10 +71,6 @@
                 :optionsItem="{ key: 'code', label: 'name', value: 'code' }"
               />
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
             <el-form-item label="支付场景" prop="paymentScenarioCode">
               <selectCopy
                 class="order_sel"

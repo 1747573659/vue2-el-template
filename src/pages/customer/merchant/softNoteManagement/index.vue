@@ -3,97 +3,61 @@
     <div class="search-box">
       <el-form :inline="true" ref="form" size="small" :model="form" label-width="100px" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="8">
-            <el-form-item label="软注编码:">
-              <el-input v-model.trim="form.custId" size="small" placeholder="请输入软注产品编码" clearable :maxlength="36"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="商户信息:">
-              <el-input v-model.trim="form.authShopMessage" size="small" placeholder="软注商户名称/联系人/手机号" clearable :maxlength="50"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="软注产品:">
-              <select-page
-                placeholder="请输入名称"
-                @focus="selectPageFocusErp"
-                id="code"
-                @change="selectPageChangeErp"
-                @clear="selectPageClearErp"
-                :name="selectPageNameErp"
-                @remoteMethod="remoteMethodErp"
-                :isMaxPage="isMaxPageErp"
-                :options="ObjContentListErp"
-                @loadMore="loadMoreErp"
-                style="width: 100%"
-              >
-              </select-page>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="授权状态:">
-              <el-select style="width:100%" filterable v-model="form.status" placeholder="请选择">
-                <el-option v-for="item in authorizationState" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="在线状态:">
-              <el-select style="width:100%" filterable v-model="form.isOnline" placeholder="请选择">
-                <el-option v-for="item in isOnlineState" :key="item.value" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <!-- <el-col :span="8">
-            <el-form-item label="享钱商户:">
-              <select-page
-                placeholder="请输入名称"
-                @focus="selectPageFocus"
-                id="id"
-                :showValue="true"
-                @change="selectPageChange"
-                @clear="selectPageClear"
-                :name="selectPageName"
-                @remoteMethod="remoteMethod"
-                :isMaxPage="isMaxPage"
-                :options="ObjContentList"
-                :value="form.shopId"
-                @loadMore="loadMore"
-                style="width: 100%"
-              >
-              </select-page>
-            </el-form-item>
-          </el-col> 享钱开通状态 要看代码是否合并过去了-->
-          <el-col :span="8">
-            <el-form-item label="享钱开通状态:">
-              <el-select style="width:100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
-                <el-option v-for="item in openingState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item label="注册日期:">
-              <el-date-picker
-                style="width:240px"
-                v-model="form.registrationDate"
-                type="daterange"
-                range-separator="至"
-                format="yyyy-MM-dd"
-                value-format="yyyy-MM-dd"
-                start-placeholder="开始日期"
-                end-placeholder="结束日期"
-                :clearable="true"
-                :picker-options="pickerOptions"
-              >
-              </el-date-picker>
-            </el-form-item>
-          </el-col>
-          <el-col :span="8">
-            <el-form-item style="padding-left: 30px;">
-              <el-button @click="handleCurrentChange(1)" size="small" type="primary">查询</el-button>
-            </el-form-item>
-          </el-col>
+          <el-form-item label="软注编码:">
+            <el-input v-model.trim="form.custId" size="small" placeholder="请输入软注产品编码" clearable :maxlength="36"></el-input>
+          </el-form-item>
+          <el-form-item label="商户信息:">
+            <el-input v-model.trim="form.authShopMessage" size="small" placeholder="软注商户名称/联系人/手机号" clearable :maxlength="50"></el-input>
+          </el-form-item>
+          <el-form-item label="软注产品:">
+            <select-page
+              placeholder="请输入名称"
+              @focus="selectPageFocusErp"
+              id="code"
+              @change="selectPageChangeErp"
+              @clear="selectPageClearErp"
+              :name="selectPageNameErp"
+              @remoteMethod="remoteMethodErp"
+              :isMaxPage="isMaxPageErp"
+              :options="ObjContentListErp"
+              @loadMore="loadMoreErp"
+              style="width: 100%"
+            >
+            </select-page>
+          </el-form-item>
+          <el-form-item label="授权状态:">
+            <el-select style="width:100%" filterable v-model="form.status" placeholder="请选择">
+              <el-option v-for="item in authorizationState" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="在线状态:">
+            <el-select style="width:100%" filterable v-model="form.isOnline" placeholder="请选择">
+              <el-option v-for="item in isOnlineState" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="享钱开通状态:">
+            <el-select style="width:100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
+              <el-option v-for="item in openingState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="注册日期:">
+            <el-date-picker
+              style="width:240px"
+              v-model="form.registrationDate"
+              type="daterange"
+              range-separator="至"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :clearable="true"
+              :picker-options="pickerOptions"
+            >
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item style="padding-left: 30px;">
+            <el-button @click="handleCurrentChange(1)" size="small" type="primary">查询</el-button>
+          </el-form-item>
         </el-row>
       </el-form>
     </div>

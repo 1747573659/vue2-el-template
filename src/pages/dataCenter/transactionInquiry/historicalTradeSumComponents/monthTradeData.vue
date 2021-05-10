@@ -7,7 +7,7 @@
       </div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="21">
+          <el-col>
             <el-form-item label="日期">
               <el-date-picker
                 style="width: 240px"
@@ -52,10 +52,6 @@
               >
               </select-page>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="21">
             <el-form-item label="支付方式" prop="paymentCode">
               <el-select style="width: 240px" @change="payMethodChange" filterable clearable v-model="form.payMethod" placeholder="全部">
                 <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"></el-option>
