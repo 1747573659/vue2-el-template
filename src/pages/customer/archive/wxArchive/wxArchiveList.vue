@@ -320,22 +320,11 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
-}
-.p {
-  &-general {
-    &_row {
-      display: flex;
-      align-items: flex-end;
-    }
-    &_formWidth {
-      width: 240px;
-    }
-    &_fr {
-      float: right;
-    }
-    &_btnLabel {
-      text-align: right;
-    }
+  .p-form-input_width {
+    width: 240px;
+    // @media screen and (min-width: 1441px) {
+    //   width: 290px;
+    // }
   }
   &-count {
     &-con {
