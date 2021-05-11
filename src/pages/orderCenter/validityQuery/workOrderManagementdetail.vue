@@ -33,28 +33,8 @@
         >
           <i class="el-icon-upload"></i>
           <div class="km_upload_file_text">上传素材</div>
-
-          <!-- <el-button size="small" type="primary">点击上传</el-button> -->
           <div slot="tip" class="el-upload__tip">请上传图片、视频(推荐mp4格式)或文件</div>
         </km-upload>
-        <!-- <km-upload
-          class="upload-demo"
-          name="files"
-          :on-exceed="handleexceed"
-          :limit="8"
-          :action="uploadurl"
-          :before-upload="handleBeforeupload"
-          :on-preview="handlePreview"
-          :on-remove="handleRemove"
-          :on-success="handleSuccess"
-          ref="uploadfile"
-          :file-list="fileList"
-          list-type="picture-card"
-        >
-          <i class="el-icon-upload"></i>
-          <div class="el-upload__text">添加素材</div> -->
-          <!-- <div slot="tip" class="el-upload__tip">请上传图片、视频(推荐mp4格式)或文件</div> -->
-        <!-- </km-upload> -->
         <el-dialog :before-close="onClose" width="40%" title="预览" :visible.sync="dialogImgVisible">
           <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="" />
         </el-dialog>
@@ -80,8 +60,7 @@
 </template>
 
 <script>
-import { addWorkOrder, queryProductList, queryAgent, queryWorkOrderList, queryOrderDetail, queryAgentPage } from '@/api/dataCenter/dataCenter.js'
-import { uploadimage } from '@/api/dataCenter/common.js'
+import { addWorkOrder, queryProductList, queryOrderDetail, queryAgentPage } from '@/api/dataCenter/dataCenter.js'
 import baseurl from '@/utils/baseUrl.js'
 import KmUpload from '@/components/upload'
 const { VUE_APP_WORK_ORDER_URL, VUE_APP_WORK_ORDER_URLPATH } = baseurl
@@ -222,7 +201,7 @@ export default {
         this.ruleForm = res
         this.ruleForm.productNoA = [requestData.productNo, requestData.branch]
         const files1 = requestData.fileName
-          ? requestData.fileName.split(',').map(res1 => {
+          ? requestData.fileName.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(res1 => {
               return {
                 name: res1,
                 url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + res1,
@@ -231,7 +210,7 @@ export default {
             })
           : []
         const files2 = requestData.fileName2
-          ? requestData.fileName2.split(',').map(res1 => {
+          ? requestData.fileName2.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(res1 => {
               return {
                 name: res1,
                 url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + res1,
@@ -276,8 +255,7 @@ export default {
         this.$router.push({ path: '/customer/workorder/workOrderManagement' })
       })
     }
-  },
-  created() {}
+  }
 }
 </script>
 
@@ -286,33 +264,6 @@ export default {
   padding-top: 32px;
   background-color: #fff;
   border-top: 16px solid #f7f8fa;
-}
-.upload-demo {
-  // display: flex;
-  /deep/ {
-    // .el-upload--picture-card {
-    //   width: 80px;
-    //   height: 80px;
-    //   display: flex;
-    //   align-items: center;
-    //   justify-content: center;
-    //   flex-direction: column;
-    //   line-height: normal;
-    // }
-    // .el-upload__text {
-    //   line-height: normal;
-    //   color: #8f9bb3;
-    // }
-    // .el-upload__tip {
-    //   font-size: 14px;
-    //   color: #cad1e0;
-    // }
-    // .el-upload-list__item{
-    //   width: 80px;
-    //   height: 80px;
-    //   line-height: 80px;
-    // }
-  }
 }
 .e-workorder-action_pd {
   padding: 8px 22px;
