@@ -2,11 +2,11 @@
   <section class="p-wxArchive-con" v-loading="checkFormLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
     <header v-if="!['add', 'copy'].includes(pageStatus)">
       <el-row>
-        <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus !== ''">
+        <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus">
           <label class="el-form-item__label" style="width:210px">进件状态:</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
         </el-col>
-        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [2, 4].includes(form.archiveBaseVO.directAuditStatus)">
+        <el-col :span="12" v-if="form.archiveBaseVO.directAuditResultMsg && [2, 4, 6, 8].includes(form.archiveBaseVO.directAuditStatus)">
           <label class="el-form-item__label" style="width:210px">审核结果:</label>
           <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
             <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
