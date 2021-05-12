@@ -30,7 +30,7 @@
                 :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               />
             </el-form-item>
-            <el-form-item label="创建日期:">
+            <el-form-item label="创建日期">
               <el-date-picker
                 style="width:240px"
                 v-model="form.time"
@@ -44,7 +44,7 @@
               >
               </el-date-picker>
             </el-form-item>
-            <el-form-item label="状态：">
+            <el-form-item label="状态">
               <el-select v-model="form.status" placeholder="请输入状态" clearable>
                 <el-option v-for="item in statusOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
