@@ -844,9 +844,16 @@ export default {
       if (refs === 'selectPage') {
         this.form.archiveBaseVO.userId = value
         this.form.archiveBaseVO.merchantId = value
-        this.$nextTick(() => {
-          this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
-        })
+        const merchantObj = this.selectMerchantData.filter(item => item.id === value)[0]
+        const { contactor, mobile, email, shortName, companyName, address, provinceCode, cityCode, districtCode } = merchantObj
+        this.form.archiveBaseVO.contact = contactor
+        this.form.archiveBaseVO.contactPhone = mobile
+        this.form.archiveBaseVO.email = email
+        this.form.archiveBaseVO.merchantShortName = shortName
+        this.form.archiveBaseVO.companyName = companyName
+        this.form.archiveBaseVO.address = address
+        this.areaList = [provinceCode, cityCode, districtCode]
+        this.areaKey = Symbol('areaKey')
       } else if (refs === 'bank') {
         this.form.archiveExpandVO.bank = value
         this.$nextTick(() => {
