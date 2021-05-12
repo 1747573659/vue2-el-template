@@ -86,6 +86,7 @@ export const rateOptions = [
 export const formObj = {
   archiveBaseVO: {
     userId: '',
+    source: 2, // 进件来源
     merchantId: '', // 商户
     publicId: '', // 公众号APPID
     appletId: '', // 小程序APPID
