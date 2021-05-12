@@ -403,15 +403,11 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
-  // .p-form-general_row {
-  //   display: flex;
-  //   align-items: flex-end;
-  // }
   .p-form-input_width {
     width: 240px;
-    @media screen and (min-width: 1440px) {
-      width: 290px;
-    }
+    // @media screen and (min-width: 1441px) {
+    //   width: 290px;
+    // }
   }
   .p-form-general_label {
     margin-left: 80px;
