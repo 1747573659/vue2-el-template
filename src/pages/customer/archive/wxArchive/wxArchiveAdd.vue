@@ -118,8 +118,13 @@
           <el-col :span="24">
             <el-form-item label="经营类目" prop="archiveBaseVO.businessCategory">
               <el-cascader ref="cascader" v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
-              <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
+              <el-tooltip effect="dark" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                <template #content>
+                  <p>选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述。</p>
+                  <p>1.选择休闲娱乐/俱乐部/休闲会所，请在特殊资质处上传《娱乐场所许可证》和《网络文化经营许可证》</p>
+                  <p>2.选择休闲娱乐/酒吧，请在特殊资质处上传《娱乐场所许可证》</p>
+                </template>
               </el-tooltip>
             </el-form-item>
           </el-col>
@@ -737,6 +742,7 @@ export default {
           businessSceneShow
         } = res
         this.form.archiveBaseVO = archiveBaseDTO
+        this.form.archiveBaseVO.source = 2
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
