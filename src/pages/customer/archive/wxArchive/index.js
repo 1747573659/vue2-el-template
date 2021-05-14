@@ -259,7 +259,7 @@ export const checkAccountData = [
 ]
 
 // 审核状态驳回显示弹窗状态
-export const triggerReasons = [8]
+export const triggerReasons = [2, 4, 6, 8]
 
 // 小微商户展示商品描述情况
 export const sellShopDescribeArr = ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业']
