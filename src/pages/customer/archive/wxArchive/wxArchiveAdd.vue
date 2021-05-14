@@ -8,8 +8,11 @@
         </el-col>
         <el-col :span="12" v-if="form.archiveBaseVO.directAuditResultMsg && [2, 4, 6, 8].includes(form.archiveBaseVO.directAuditStatus)">
           <label class="el-form-item__label" style="width:210px">审核结果:</label>
-          <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
-            <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
+          <el-tooltip effect="dark" placement="top">
+            <span class="e-wxArchive-review">{{ form.archiveBaseVO.directAuditResultMsg }}</span>
+            <template #content>
+              <div style="max-width:500px">{{ form.archiveBaseVO.directAuditResultMsg }}</div>
+            </template>
           </el-tooltip>
         </el-col>
       </el-row>
