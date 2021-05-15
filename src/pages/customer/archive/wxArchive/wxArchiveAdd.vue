@@ -852,7 +852,7 @@ export default {
     handleSelectPageChange(value, refs) {
       if (refs === 'selectPage') {
         this.form.archiveBaseVO.userId = value
-        this.form.archiveBaseVO.merchantId = value
+        this.form.archiveBaseVO.merchantId = this.selectMerchantData.filter(item => item.id === value)[0].userId
         const merchantObj = this.selectMerchantData.filter(item => item.id === value)[0]
         const { contactor, mobile, email, shortName, companyName, address, provinceCode, cityCode, districtCode } = merchantObj
         this.form.archiveBaseVO.contact = contactor
