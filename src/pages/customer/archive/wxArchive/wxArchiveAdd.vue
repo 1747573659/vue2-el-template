@@ -850,9 +850,9 @@ export default {
       }
     },
     handleSelectPageChange(value, refs) {
-      if (refs === 'selectPage') {
-        this.form.archiveBaseVO.userId = value
-        this.form.archiveBaseVO.merchantId = this.selectMerchantData.filter(item => item.id === value)[0].userId
+      if (refs === 'selectMerchant') {
+        this.form.archiveBaseVO.userId = this.selectMerchantData.filter(item => item.id === value)[0].userId
+        this.form.archiveBaseVO.merchantId = value
         const merchantObj = this.selectMerchantData.filter(item => item.id === value)[0]
         const { contactor, mobile, email, shortName, companyName, address, provinceCode, cityCode, districtCode } = merchantObj
         this.form.archiveBaseVO.contact = contactor
@@ -861,6 +861,9 @@ export default {
         this.form.archiveBaseVO.merchantShortName = shortName
         this.form.archiveBaseVO.companyName = companyName
         this.form.archiveBaseVO.address = address
+        this.form.archiveBaseVO.province = provinceCode
+        this.form.archiveBaseVO.city = cityCode
+        this.form.archiveBaseVO.area = districtCode
         this.areaList = [provinceCode, cityCode, districtCode]
         this.areaKey = Symbol('areaKey')
       } else if (refs === 'bank') {
