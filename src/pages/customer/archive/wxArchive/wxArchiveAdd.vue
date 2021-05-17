@@ -745,7 +745,7 @@ export default {
           businessSceneShow
         } = res
         this.form.archiveBaseVO = archiveBaseDTO
-        this.form.archiveBaseVO.source = 2
+        if(!this.form.archiveBaseVO.source) this.form.archiveBaseVO.source = 2
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
