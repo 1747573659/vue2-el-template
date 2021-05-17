@@ -11,9 +11,17 @@ const urlLinks = {
   modifyUserName: 'user/modifyUserName',
   popUpsByAuditStatus: 'archive/xdd/popUpsByAuditStatus',
   initImg: '/initImg',
-  checkSliderImg: '/checkSliderImg'
+  checkSliderImg: '/checkSliderImg',
+  queryBackgroundById: '/loginBackground/queryBackgroundById',
 }
-
+// 根据应用系统ID查询图片调用地址
+export function queryBackgroundById(data) {
+  return request({
+    url: urlLinks.queryBackgroundById,
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
 // 滑动验证码-获取图形验证码
 export function initImg(data) {
   return request({
