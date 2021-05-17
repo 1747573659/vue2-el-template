@@ -399,9 +399,9 @@ export default {
   }
   .p-form-input_width {
     width: 240px;
-    @media screen and (min-width: 1440px) {
-      width: 290px;
-    }
+    // @media screen and (min-width: 1441px) {
+    //   width: 290px;
+    // }
   }
   .p-form-general_label {
     margin-left: 80px;
