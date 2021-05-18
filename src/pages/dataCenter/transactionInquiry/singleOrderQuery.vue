@@ -6,7 +6,7 @@
       </div>
       <el-form :inline="true" @submit.native.prevent label-width="100px" size="small" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="24">
+          <el-col>
             <el-form-item label="商户" class="xdd_form_item" style="margin-right:44px">
               <select-page
                 :request="queryMerchantAdminPage"
@@ -41,10 +41,6 @@
                 value-format="timestamp"
               ></el-date-picker>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="24">
             <el-form-item label="交易流水号" class="xdd_form_item">
               <el-input clearable placeholder="请输入交易流水号" size="small" oninput="value=value.replace(/[\W]/g,'')" v-model.trim="formData.serialSn"></el-input>
               <el-tooltip effect="light">
@@ -66,12 +62,10 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-form-item style="margin-left: 100px;">
+            <el-form-item style="margin-left: 100px;">
             <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
           </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
     </div>

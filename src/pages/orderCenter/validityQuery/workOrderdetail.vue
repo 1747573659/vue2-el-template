@@ -232,8 +232,8 @@ export default {
         let requestData = Object.assign({}, res)
         this.ruleForm = res
         this.ruleForm.productNoA = [requestData.productNo, requestData.branch]
-        const files1 = requestData.fileName ? requestData.fileName.split(',').map(getTypeFile) : []
-        const files2 = requestData.fileName2 ? requestData.fileName2.split(',').map(getTypeFile) : []
+        const files1 = requestData.fileName ? requestData.fileName.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(getTypeFile) : []
+        const files2 = requestData.fileName2 ? requestData.fileName2.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(getTypeFile) : []
         this.fileList = [...files1, ...files2]
       })
     },
@@ -257,21 +257,12 @@ export default {
     },
     handlePreview(file) {
       if (/^video\/.+$/.test(file.type)) {
-        // this.vedioUrl=file.url
-        // this.$nextTick(()=>{
-        //   if(this.$refs['vediomedia'].error){
-        //     this.$message.warning('由于兼容问题不支持预览该视频')
-        //     window.open(file.url);
-        //   }
-        // })
-        // this.dialogImgVisible = true;
         window.open(file.url)
       } else if (/^image\/.+$/.test(file.type)) {
         this.dialogImgUrl = file.url
         this.dialogImgVisible = true
       } else {
         window.open(file.url)
-        //this.$message.warning('只有图片和视频文件支持预览')
       }
     }
   },
@@ -283,7 +274,6 @@ export default {
 .app-form {
   background: #fff;
   padding: 30px 6%;
-  // margin: 24px;
 }
 
 .el-icon-upload {

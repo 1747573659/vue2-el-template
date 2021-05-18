@@ -6,53 +6,47 @@
         <div class="p-count_item" v-for="(item, index) in countData" :key="index">{{ item.label }}：{{ item.total }}</div>
       </count-tips>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
-        <el-row class="p-form-general_row">
-          <el-col :span="21">
-            <el-col>
-              <el-form-item label="申请时间">
-                <el-date-picker
-                  class="p-form-input_width"
-                  v-model="form.createTime"
-                  type="daterange"
-                  range-separator="至"
-                  start-placeholder="开始日期"
-                  end-placeholder="结束日期"
-                  value-format="yyyy-MM-dd HH:mm:ss"
-                  :default-time="['00:00:00', '23:59:59']"
-                  clearable
-                ></el-date-picker>
-              </el-form-item>
-              <el-form-item label="商户类型">
-                <el-select v-model="form.merchantType" class="p-form-input_width" clearable placeholder="全部">
-                  <el-option v-for="item in merchantTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="审核状态">
-                <el-select v-model="form.directAuditStatus" class="p-form-input_width" filterable clearable placeholder="全部">
-                  <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...direAuditStatusOptions]" :key="index" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <el-col>
-              <el-form-item label="是否停用">
-                <el-select v-model="form.stopUse" class="p-form-input_width" clearable placeholder="全部">
-                  <el-option v-for="item in deactivateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
-                </el-select>
-              </el-form-item>
-              <el-form-item label="商户号">
-                <el-input v-model.trim="form.channelMchId" class="p-form-input_width" maxlength="50" clearable placeholder="商户号"></el-input>
-              </el-form-item>
-              <el-form-item label="商户信息">
-                <el-input v-model.trim="form.msg" class="p-form-input_width" maxlength="50" clearable placeholder="商户/公司名称/商户简称/银行卡号/资料ID"></el-input>
-              </el-form-item>
-            </el-col>
-            <el-col>
-              <el-form-item class="p-form-general_label">
-                <el-button type="primary" :loading="isSearchLock" @click="handleSearch">查询</el-button>
-              </el-form-item>
-            </el-col>
+        <el-row type="flex" align="bottom">
+          <el-col :xl="22" :lg="21">
+            <el-form-item label="申请时间">
+              <el-date-picker
+                class="p-form-input_width"
+                v-model="form.createTime"
+                type="daterange"
+                range-separator="至"
+                start-placeholder="开始日期"
+                end-placeholder="结束日期"
+                value-format="yyyy-MM-dd HH:mm:ss"
+                :default-time="['00:00:00', '23:59:59']"
+                clearable
+              ></el-date-picker>
+            </el-form-item>
+            <el-form-item label="商户类型">
+              <el-select v-model="form.merchantType" class="p-form-input_width" clearable placeholder="全部">
+                <el-option v-for="item in merchantTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="审核状态">
+              <el-select v-model="form.directAuditStatus" class="p-form-input_width" filterable clearable placeholder="全部">
+                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...direAuditStatusOptions]" :key="index" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="是否停用">
+              <el-select v-model="form.stopUse" class="p-form-input_width" clearable placeholder="全部">
+                <el-option v-for="item in deactivateOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="商户号">
+              <el-input v-model.trim="form.channelMchId" class="p-form-input_width" maxlength="50" clearable placeholder="商户号"></el-input>
+            </el-form-item>
+            <el-form-item label="商户信息">
+              <el-input v-model.trim="form.msg" class="p-form-input_width" maxlength="50" clearable placeholder="商户/公司名称/商户简称/银行卡号/资料ID"></el-input>
+            </el-form-item>
+            <el-form-item class="p-form-general_label">
+              <el-button type="primary" :loading="isSearchLock" @click="handleSearch">查询</el-button>
+            </el-form-item>
           </el-col>
-          <el-col :span="3">
+          <el-col :xl="2" :lg="3" style="text-align:right">
             <el-form-item>
               <el-button type="primary" size="small" plain icon="el-icon-plus" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
@@ -76,7 +70,7 @@
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveExpandDTO.channelMchId" label="商户号" min-width="80">
+        <el-table-column label="商户号" min-width="80">
           <template slot-scope="scope">
             <span>{{ scope.row.archiveExpandDTO.channelMchId ? scope.row.archiveExpandDTO.channelMchId : '未生成' }}</span>
           </template>
@@ -122,10 +116,26 @@
             <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_STOPUSE'" v-else @click="handleStopOrUse(scope.row)">
               <span>{{ scope.row.archiveBaseDTO.stopUse === 1 ? '启用' : '停用' }}</span>
             </el-button>
-            <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 3" v-permission="'WXARCHIVE_LIST_REVOKE'" @click="handleDirectAuditStatus(scope.row)">撤销</el-button>
+            <el-button
+              type="text"
+              size="small"
+              v-if="scope.row.archiveBaseDTO.directAuditStatus === 3"
+              v-permission="'WXARCHIVE_LIST_REVOKE'"
+              @click="handleDirectAuditStatus(scope.row)"
+              >撤销</el-button
+            >
             <template v-if="scope.row.archiveBaseDTO.merchantType === 5">
-              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 10" v-permission="'WXARCHIVE_LIST_VERIFY'" @click="handleCheckAccount(scope.row)">验证账号</el-button>
-              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 11" v-permission="'WXARCHIVE_LIST_SIGNNOW'" @click="handleSignUp(scope.row)">立即签约</el-button>
+              <el-button
+                type="text"
+                size="small"
+                v-if="scope.row.archiveBaseDTO.directAuditStatus === 10"
+                v-permission="'WXARCHIVE_LIST_VERIFY'"
+                @click="handleCheckAccount(scope.row)"
+                >验证账号</el-button
+              >
+              <el-button type="text" size="small" v-if="scope.row.archiveBaseDTO.directAuditStatus === 11" v-permission="'WXARCHIVE_LIST_SIGNNOW'" @click="handleSignUp(scope.row)"
+                >立即签约</el-button
+              >
             </template>
             <template v-else-if="[7, 10, 11].includes(scope.row.archiveBaseDTO.directAuditStatus)" v-permission="'WXARCHIVE_LIST_PROGRESS'">
               <el-button type="text" size="small" @click="$router.push({ name: 'wxProgress', query: { id: scope.row.archiveBaseDTO.id } })">申请进度</el-button>
@@ -266,9 +276,7 @@ export default {
       })
     },
     handleReason(row) {
-      if (this.triggerReasons.includes(row.archiveBaseDTO.directAuditStatus)) {
-        this.$alert(row.archiveBaseDTO.directAuditResultMsg, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
-      }
+      this.$alert(row.archiveBaseDTO.directAuditResultMsg, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
     },
     handleTabSort({ column, prop, order }) {
       this.form.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
@@ -393,10 +401,6 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
-  .p-form-general_row {
-    display: flex;
-    align-items: flex-end;
-  }
   .p-form-input_width {
     width: 240px;
     // @media screen and (min-width: 1441px) {

@@ -4,7 +4,7 @@
       <div class="xdd_tip"><i class="el-icon-info"></i>查询对象为“全部”或代理商过滤时，结果会包括下级代理商的交易数据</div>
       <el-form :inline="true" :model="form" label-suffix=":" @submit.native.prevent label-width="80px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="21">
+          <el-col>
             <el-form-item label="查询对象" prop="paymentCode">
               <selectCopy
                 class="order_sel"
@@ -37,10 +37,6 @@
                 <el-option v-for="item in paymentList" :key="item.id" :label="item.name" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-        </el-row>
-        <el-row>
-          <el-col :span="21">
             <el-form-item label="支付场景">
               <el-select style="width: 240px" clearable v-model="form.payPlugin" filterable placeholder="全部">
                 <el-option v-for="item in payPluginList" :key="item.id" :label="item.name" :value="item.id"></el-option>
@@ -48,8 +44,6 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-              <!-- <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出</el-button>
-              <el-button class="km-archive-search" :loading="cxLoading" @click="getList">导出记录</el-button> -->
             </el-form-item>
           </el-col>
         </el-row>

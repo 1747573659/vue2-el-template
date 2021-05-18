@@ -23,7 +23,7 @@ export default {
       type: String,
       default: ''
     },
-    showIcon: {type: Boolean}
+    showIcon: { type: Boolean }
   }
 }
 </script>

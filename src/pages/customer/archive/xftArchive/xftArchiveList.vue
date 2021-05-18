@@ -10,8 +10,8 @@
         </section>
       </div>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="75px">
-        <el-row>
-          <el-col>
+        <el-row type="flex" align="bottom">
+          <el-col :xl="22" :lg="21">
             <el-form-item label="申请时间">
               <el-date-picker
                 v-model="form.time"
@@ -32,8 +32,6 @@
                 <el-option v-for="item in wxCertStatusOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col>
             <el-form-item label="商户信息">
               <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
             </el-form-item>
@@ -47,16 +45,26 @@
                 <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
-          </el-col>
-          <el-col style="padding-left:75px">
             <el-form-item>
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
               <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
               <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" @click="handleExportLists">导出记录</el-button>
             </el-form-item>
+          </el-col>
+          <el-col :xl="2" :lg="3">
             <el-form-item style="float:right">
               <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
             </el-form-item>
+          </el-col>
+        </el-row>
+
+        <el-row>
+          <el-col> </el-col>
+          <el-col>
+            
+          </el-col>
+          <el-col style="padding-left:75px">
+            
           </el-col>
         </el-row>
       </el-form>
@@ -123,7 +131,9 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" align="right" width="180px">
           <template slot-scope="scope">
-            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small">编辑</el-button>
+            <el-button v-permission="'XFT_LIST_EDIT'" v-if="[0, 1, 4, 8].includes(scope.row.archiveBaseDTO.auditStatus)" @click="edit(scope.row)" type="text" size="small"
+              >编辑</el-button
+            >
             <el-button v-permission="'XFT_LIST_EDIT'" v-if="[2].includes(scope.row.archiveBaseDTO.auditStatus)" @click="check(scope.row)" type="text" size="small">审核</el-button>
             <el-button v-if="[3, 5, 6, 7, 9, 10, 11].includes(scope.row.archiveBaseDTO.auditStatus)" @click="detail(scope.row)" type="text" size="small">详情</el-button>
             <el-button v-if="scope.row.archiveBaseDTO.source !== 3" v-permission="'XFT_LIST_ADD'" @click="copy(scope.row)" type="text" size="small">复制</el-button>
@@ -137,14 +147,16 @@
               <el-button type="text" size="small">更多</el-button>
               <el-dropdown-menu slot="dropdown">
                 <el-dropdown-item v-if="[6, 7].includes(scope.row.archiveBaseDTO.auditStatus)" style="color: #3377FF" @click.native="archiveDetail(scope.row)"
-                  >进件详情</el-dropdown-item>
+                  >进件详情</el-dropdown-item
+                >
                 <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
                 <el-dropdown-item
                   v-permission="'XFT_LIST_SHOP_QRCODE'"
                   style="color: #3377FF"
                   v-if="[3, 4, 5].includes(scope.row.archiveBaseDTO.wxCertStatus)"
                   @click.native="shopQRCode(scope.row)"
-                  >商户扫码认证</el-dropdown-item>
+                  >商户扫码认证</el-dropdown-item
+                >
               </el-dropdown-menu>
             </el-dropdown>
           </template>

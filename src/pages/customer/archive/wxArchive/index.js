@@ -31,7 +31,8 @@ export const countOptions = [
   { auditStatus: 1, label: '待渠道审核', total: 0 },
   { auditStatus: 3, label: '待平台审核', total: 0 },
   { auditStatus: 2, label: '渠道审核未通过', total: 0 },
-  { auditStatus: 4, label: '平台审核未通过', total: 0 }
+  { auditStatus: 4, label: '平台审核未通过', total: 0 },
+  { auditStatus: 8, label: '已驳回', total: 0 }
 ]
 
 // 小微费率
@@ -86,6 +87,7 @@ export const rateOptions = [
 export const formObj = {
   archiveBaseVO: {
     userId: '',
+    source: 2, // 进件来源
     merchantId: '', // 商户
     publicId: '', // 公众号APPID
     appletId: '', // 小程序APPID
@@ -150,7 +152,7 @@ export const formObj = {
     additionalRemark: '', //补充说明
     typeAptitudeUrl: '' // 类目特殊资质
   },
-  businessSceneShow:[1]
+  businessSceneShow: [1]
 }
 
 // 进件资料校验对象
@@ -193,6 +195,7 @@ export const detailValidate = {
   ],
   'archiveOtherVO.signboardUrl': [{ required: true, message: '请输入门店门头照', trigger: 'change' }],
   'archiveOtherVO.businessSiteOneUrl': [{ required: true, message: '请输入经营场所照1', trigger: 'change' }],
+  'archiveOtherVO.typeAptitudeUrl': [{ required: true, message: '请输入特殊资质照', trigger: 'change' }],
   'archiveOtherVO.businessSiteTwoUrl': [{ required: true, message: '请输入经营场所照2', trigger: 'change' }],
   'archiveOtherVO.businessSiteThreeUrl': [{ required: true, message: '请输入经营场所照3', trigger: 'change' }],
   'archiveExpandVO.licType': [{ required: true, message: '请输入证件类型', trigger: 'change' }],
@@ -258,7 +261,7 @@ export const checkAccountData = [
 ]
 
 // 审核状态驳回显示弹窗状态
-export const triggerReasons = [8]
+export const triggerReasons = [2, 4, 6, 8]
 
 // 小微商户展示商品描述情况
 export const sellShopDescribeArr = ['线下零售/食品生鲜', '休闲娱乐/美发/美容/美甲店', '线下零售/批发业']
@@ -266,6 +269,7 @@ export const sellShopDescribeArr = ['线下零售/食品生鲜', '休闲娱乐/�
 // 图片示例
 export const exampleImg = {
   signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
+  typeAptitudeUrl: require('@/assets/images/xftArchive/type_apti_tude_url.png'),
   businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
   businessSiteTwoUrl: require('@/assets/images/xftArchive/shop_in.png'),
   businessSiteThreeUrl: require('@/assets/images/xftArchive/goods.png'),

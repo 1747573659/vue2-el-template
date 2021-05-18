@@ -2,14 +2,17 @@
   <section class="p-wxArchive-con" v-loading="checkFormLoad" v-permission.page="'WXARCHIVE_LIST_EDIT,WXARCHIVE_LIST_ADD'">
     <header v-if="!['add', 'copy'].includes(pageStatus)">
       <el-row>
-        <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus !== ''">
+        <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus">
           <label class="el-form-item__label" style="width:210px">进件状态:</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
         </el-col>
-        <el-col :span="12" v-if="form.archiveBaseVO.auditRemark !== '' && [2, 4].includes(form.archiveBaseVO.directAuditStatus)">
+        <el-col :span="12" v-if="form.archiveBaseVO.directAuditResultMsg && [2, 4, 6, 8].includes(form.archiveBaseVO.directAuditStatus)">
           <label class="el-form-item__label" style="width:210px">审核结果:</label>
-          <el-tooltip effect="dark" :content="form.archiveBaseVO.auditRemark" placement="top">
-            <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
+          <el-tooltip effect="dark" placement="top">
+            <span class="e-wxArchive-review">{{ form.archiveBaseVO.directAuditResultMsg }}</span>
+            <template #content>
+              <div style="max-width:500px">{{ form.archiveBaseVO.directAuditResultMsg }}</div>
+            </template>
           </el-tooltip>
         </el-col>
       </el-row>
@@ -21,15 +24,13 @@
           <el-col :span="24">
             <el-form-item label="商户名称" prop="archiveBaseVO.merchantId">
               <select-page
-                ref="selectPage"
+                ref="selectMerchant"
                 v-model="form.archiveBaseVO.merchantName"
-                :data="selectPageData"
-                :is-max-page="isMaxPage"
-                :remote-method="val => handleSelectPageRemote(val, 'selectPageData', 'selectPage')"
-                @visible-change="val => handleSelectVisibleChange(val, 'selectPage')"
-                @clear="handleSelectPageClear('selectPageData', 'selectPage')"
-                @change="val => handleSelectPageChange(val, 'selectPage')"
-                @loadmore="handleSelectOptionsMore('selectPageData', 'selectPage')"
+                :data.sync="selectMerchantData"
+                :request="({ query, page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, 'Merchant', page, rows)"
+                :is-max-page.sync="isMerchantMaxPage"
+                @change="val => handleSelectPageChange(val, 'selectMerchant')"
+                @visible-change="val => handleSelectVisibleChange(val, 'selectMerchant')"
                 option-label="companyName"
                 option-value="id"
                 placeholder="商户名称"
@@ -49,7 +50,6 @@
               </el-radio-group>
             </el-form-item>
           </el-col>
-
           <el-col :span="12">
             <el-form-item label="经营场景">
               <el-checkbox-group v-model="form.businessSceneShow" @change="handleBusinessSceneShow">
@@ -69,7 +69,6 @@
               <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
             </el-form-item>
           </el-col>
-
           <el-col :span="24">
             <el-form-item label="证件类型" prop="archiveExpandVO.licType">
               <el-radio-group v-model="form.archiveExpandVO.licType">
@@ -79,7 +78,7 @@
               <el-tooltip effect="dark" placement="top-start">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 <template #content>
-                  <span>若营业执照注册号为18位统一社会信用代码，请选择“已三证合一”，<br />否则请选择“非三证合一”</span>
+                  <span>若营业执照注册号为18位统一社会信用代码，请选择“已三证合一”，<br />否则请选择“非三证合一”，请上传彩色照片 or 彩色扫描件 or 加盖公章鲜章的复印件</span>
                 </template>
               </el-tooltip>
             </el-form-item>
@@ -118,8 +117,13 @@
           <el-col :span="24">
             <el-form-item label="经营类目" prop="archiveBaseVO.businessCategory">
               <el-cascader ref="cascader" v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
-              <el-tooltip effect="dark" content="选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述" placement="top">
+              <el-tooltip effect="dark" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
+                <template #content>
+                  <p>选择线下零售/食品生鲜、休闲娱乐/美发/美容/美甲店、线下零售/批发业时，请填写售卖商品描述。</p>
+                  <p>1.选择休闲娱乐/俱乐部/休闲会所，请在特殊资质处上传《娱乐场所许可证》和《网络文化经营许可证》</p>
+                  <p>2.选择休闲娱乐/酒吧，请在特殊资质处上传《娱乐场所许可证》</p>
+                </template>
               </el-tooltip>
             </el-form-item>
           </el-col>
@@ -170,7 +174,7 @@
           <el-col :span="12">
             <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
               <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
-              <el-tooltip effect="dark" content="公司名称必须与营业执照/登记证书一致" placement="top">
+              <el-tooltip effect="dark" content="公司名称必须与营业执照/登记证书一致，若营业执照上商户名称为空或为‘无’，请填写‘个体户+经营者姓名’，如‘个体户张三’" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </el-form-item>
@@ -243,6 +247,19 @@
                 :image-url="form.archiveOtherVO.businessSiteOneUrl"
                 :on-success="res => handleUpload(res, 'archiveOtherVO.businessSiteOneUrl')"
                 @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
+              />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12" v-if="['300', '577'].includes(form.archiveBaseVO.businessCategory)">
+            <el-form-item label="特殊资质" prop="archiveOtherVO.typeAptitudeUrl">
+              <upload-panel
+                alt="特殊资质"
+                action="/uploadFile"
+                :fileServer="fileServer"
+                :exampleImg="exampleImg.typeAptitudeUrl"
+                :image-url="form.archiveOtherVO.typeAptitudeUrl"
+                :on-success="res => handleUpload(res, 'archiveOtherVO.typeAptitudeUrl')"
+                @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)"
               />
             </el-form-item>
           </el-col>
@@ -360,7 +377,7 @@
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
                   </el-tooltip>
                 </el-radio>
-                <el-radio :label="2" :disabled="form.archiveBaseVO.merchantType === 2" v-if="form.archiveBaseVO.merchantType === 1">
+                <el-radio :label="2" :disabled="form.archiveBaseVO.merchantType === 2" v-if="form.archiveBaseVO.merchantType !== 2">
                   <span>经营者个人银行卡</span>
                   <el-tooltip effect="dark" content="你为经营者个人银行卡，请务必填写开户名为的银行账号" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -403,14 +420,11 @@
           <el-col :span="12">
             <el-form-item label="开户行" prop="archiveExpandVO.bank">
               <select-page
-                ref="bank"
                 v-model="form.archiveExpandVO.bankName"
-                :data="bankSelectPageData"
-                :is-max-page="isMaxPage"
-                :remote-method="val => handleSelectPageRemote(val, 'bankSelectPageData', 'bank')"
-                @clear="handleSelectPageClear('bankSelectPageData', 'bank')"
+                :data.sync="selectBankData"
+                :request="({ query, page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, 'Bank', page, rows)"
+                :is-max-page.sync="isBankMaxPage"
                 @change="val => handleSelectPageChange(val, 'bank')"
-                @loadmore="handleSelectOptionsMore('bankSelectPageData', 'bank')"
                 option-label="bankName"
                 option-value="bankCode"
                 placeholder="开户行"
@@ -433,14 +447,11 @@
           <el-col :span="12">
             <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
               <select-page
-                ref="bankSub"
                 v-model="form.archiveExpandVO.bankSubName"
-                :data="bankSubSelectPageData"
-                :is-max-page="isMaxPage"
-                :remote-method="val => handleSelectPageRemote(val, 'bankSubSelectPageData', 'bankSub')"
-                @clear="handleSelectPageClear('bankSubSelectPageData', 'bankSub')"
+                :data.sync="selectBankSubData"
+                :request="({ query, page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, 'BankSub', page, rows)"
+                :is-max-page.sync="isBankSubMaxPage"
                 @change="val => handleSelectPageChange(val, 'bankSub')"
-                @loadmore="handleSelectOptionsMore('bankSubSelectPageData', 'bankSub')"
                 option-label="bName"
                 option-value="bCode"
                 placeholder="开户支行"
@@ -480,7 +491,7 @@
             <el-button size="small" class="e-wxArchive-action_pd" @click="checkReason = true">拒绝</el-button>
           </template>
           <el-button size="small" type="primary" plain class="e-wxArchive-action_pd" @click="handleArchive" :loading="!checkFormDisabled && checkArchive">
-            {{ [1, 10].includes(form.archiveBaseVO.directAuditStatus) && checkFormDisabled ? '编辑' : '保存' }}
+            {{ [1].includes(form.archiveBaseVO.directAuditStatus) && checkFormDisabled ? '编辑' : '保存' }}
           </el-button>
         </template>
       </template>
@@ -489,8 +500,8 @@
 
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="checkReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
-      <el-form ref="refundForm" :model="refundForm" :rules="refundRules" label-width="60px">
-        <el-form-item label="原因" prop="remark" class="e-dialog-remark">
+      <el-form ref="refundForm" :model="refundForm" label-width="60px">
+        <el-form-item label="原因" prop="remark" :rules="[{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]" class="e-dialog-remark">
           <el-input type="textarea" v-model="refundForm.remark" :rows="4" placeholder="请输入审核不能过的原因"></el-input>
         </el-form-item>
       </el-form>
@@ -546,7 +557,7 @@ export default {
       sellShopDescribeArr,
       rateOptions,
       exampleImg,
-      detailStatusArr: [0, 1, 2, 3, 4, 6, 8, 10],
+      detailStatusArr: [0, 1, 2, 3, 4, 6, 8],
       direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions),
       questionIcon: require('@/assets/images/icon/questioin.png'),
       pageStatus: this.$route.query.status,
@@ -556,14 +567,13 @@ export default {
       rules: detailValidate,
       businessCategory: [],
       businessOptions: [],
-      businessSceneList: [],
-      searchString: '',
-      isMaxPage: false,
-      selectPageNo: 1,
-      selectPageData: [],
-      bankSelectPageData: [],
-      bankSubSelectPageData: [],
       selectCopyVal: '',
+      selectMerchantData: [],
+      isMerchantMaxPage: false,
+      selectBankData: [],
+      isBankMaxPage: false,
+      selectBankSubData: [],
+      isBankSubMaxPage: false,
       areaKey: Symbol('areaKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
@@ -573,9 +583,6 @@ export default {
       previewList: [],
       checkReason: false,
       refundForm: { remark: '' },
-      refundRules: {
-        remark: [{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]
-      },
       checkVerify: false,
       checkArchive: false
     }
@@ -588,9 +595,6 @@ export default {
       const tags = { edit: '编辑', detail: '详情', add: '新增', copy: '编辑' }
       document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
     })
-    this.handleSelectPageRemote('', 'selectPageData', 'selectPage')
-    this.handleSelectPageRemote('', 'bankSelectPageData', 'bank')
-    this.handleSelectPageRemote('', 'bankSubSelectPageData', 'bankSub')
     this.getBusinessCategory()
     if (this.pageStatus !== 'add') this.handleDetail()
   },
@@ -720,7 +724,8 @@ export default {
             await submitToVerify(this.form)
             this.handleCancel()
             this.$message({ type: 'success', message: '提交成功' })
-          } catch (error) {} finally {
+          } catch (error) {
+          } finally {
             this.checkVerify = false
           }
         }
@@ -737,6 +742,7 @@ export default {
           businessSceneShow
         } = res
         this.form.archiveBaseVO = archiveBaseDTO
+        if(!this.form.archiveBaseVO.source && this.form.archiveBaseVO.source !== 0) this.form.archiveBaseVO.source = 2
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
@@ -767,7 +773,7 @@ export default {
       }
     },
     handleArchive() {
-      if ([1, 10].includes(this.form.archiveBaseVO.directAuditStatus) && this.checkFormDisabled) {
+      if ([1].includes(this.form.archiveBaseVO.directAuditStatus) && this.checkFormDisabled) {
         this.checkFormDisabled = false
       } else {
         this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
@@ -781,7 +787,8 @@ export default {
               }
               this.handleDetail()
               this.$message({ type: 'success', message: '保存成功' })
-            } catch (error) {} finally {
+            } catch (error) {
+            } finally {
               this.checkArchive = false
             }
           }
@@ -799,67 +806,48 @@ export default {
         this.form.archiveExpandVO.bankArea = value[2]
       }
     },
-    handleSelectPageRemote: async function(query, selectData, refs) {
+    handleSelectPageRemoteRe: async function(query, type, page, rows) {
       try {
-        const data = { page: query !== this.searchString ? 1 : this.selectPageNo, rows: 10 }
         const selectQueryMap = new Map([
-          ['selectPageData', { method: queryShopListByPage, params: { id: query || '' } }],
-          ['bankSelectPageData', { method: queryBankPage, params: { bankName: query || '' } }],
-          ['bankSubSelectPageData', { method: queryBranchPage, params: { bName: query || '' } }]
+          ['Merchant', { method: queryShopListByPage, params: { id: query || '' } }],
+          ['Bank', { method: queryBankPage, params: { bankName: query || '' } }],
+          ['BankSub', { method: queryBranchPage, params: { bName: query || '' } }]
         ])
-        const res = await selectQueryMap.get(selectData).method(Object.assign(data, selectQueryMap.get(selectData).params))
-        this.$nextTick(() => {
-          if (query !== this.searchString || this.isMaxPage) {
-            this.$refs[refs].$children[0].$children[1].$children[0].wrap.scrollTop = 0
-            this[selectData] = []
-            this.selectPageNo = 1
-            this.isMaxPage = false
-          }
-          this.searchString = query
-          this.isMaxPage = !res.results || (res.results && res.results.length < 10)
-          this[selectData] = this[selectData].concat(res.results || [])
-        })
+        const res = await selectQueryMap.get(type).method(Object.assign({ page, rows }, selectQueryMap.get(type).params))
+        this[`select${type}Data`] = this[`select${type}Data`].concat(res.results || [])
+        this[`is${type}MaxPage`] = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
-    handleSelectVisibleChange(value, refs) {
+    handleSelectVisibleChange(val, refs) {
       this.$nextTick(() => {
-        if (value) this.$refs[refs].$el.children[0].children[0].value = this.selectCopyVal
+        if (val) this.$refs[refs].$el.children[0].children[0].value = this.selectCopyVal
       })
     },
-    handleSelectPageClear(selectData, refs) {
-      this.$refs[refs].$children[0].$children[1].$children[0].wrap.scrollTop = 0
-      this.$refs[refs].$el.children[0].children[0].value = ''
-      this.selectPageNo = 1
-      this.isMaxPage = false
-      this[selectData] = []
-      this.handleSelectPageRemote('', selectData, refs)
-    },
-    handleSelectOptionsMore(selectData, refs) {
-      if (!this.isMaxPage) {
-        this.selectPageNo++
-        this.handleSelectPageRemote(this.searchString, selectData, refs)
-      }
-    },
     handleSelectPageChange(value, refs) {
-      if (refs === 'selectPage') {
-        this.form.archiveBaseVO.userId = value
+      if (refs === 'selectMerchant') {
+        this.form.archiveBaseVO.userId = this.selectMerchantData.filter(item => item.id === value)[0].userId
         this.form.archiveBaseVO.merchantId = value
-        this.$nextTick(() => {
-          this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
-        })
+        const merchantObj = this.selectMerchantData.filter(item => item.id === value)[0]
+        const { contactor, mobile, email, shortName, companyName, address, provinceCode, cityCode, districtCode } = merchantObj
+        this.form.archiveBaseVO.contact = contactor
+        this.form.archiveBaseVO.contactPhone = mobile
+        this.form.archiveBaseVO.email = email
+        this.form.archiveBaseVO.merchantShortName = shortName
+        this.form.archiveBaseVO.companyName = companyName
+        this.form.archiveBaseVO.address = address
+        this.form.archiveBaseVO.province = provinceCode
+        this.form.archiveBaseVO.city = cityCode
+        this.form.archiveBaseVO.area = districtCode
+        this.areaList = [provinceCode, cityCode, districtCode]
+        this.areaKey = Symbol('areaKey')
       } else if (refs === 'bank') {
         this.form.archiveExpandVO.bank = value
-        this.$nextTick(() => {
-          this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
-          this.form.archiveExpandVO.bankName = this.$refs[refs].$el.childNodes[1].childNodes[1].value
-        })
       } else if (refs === 'bankSub') {
         this.form.archiveExpandVO.bankSub = value
-        this.$nextTick(() => {
-          this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
-          this.form.archiveExpandVO.bankSubName = this.$refs[refs].$el.childNodes[1].childNodes[1].value
-        })
       }
+      this.$nextTick(() => {
+        this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
+      })
     }
   }
 }
