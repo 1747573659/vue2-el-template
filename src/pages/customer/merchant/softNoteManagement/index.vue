@@ -29,7 +29,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="注册日期:">
-            <el-date-picker style="width:240px" v-model="form.registrationDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
+            <el-date-picker style="width:240px" v-model="form.installDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="转正日期:">
+            <el-date-picker style="width:240px" v-model="form.firstGrantAuthDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
             </el-date-picker>
           </el-form-item>
           <el-form-item style="padding-left: 30px;">
@@ -77,7 +81,7 @@
             <div>{{ scope.row.companyProvince }}{{ scope.row.companyCity }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="firstGrantAuthDate" label="首次授权日期" width="110px"></el-table-column>
+        <el-table-column prop="firstGrantAuthDate" label="转正日期" width="110px"></el-table-column>
         <el-table-column label="授权状态">
           <template slot-scope="scope">
             <span v-if="['0', '1'].includes(scope.row.status)">试用</span>
@@ -147,7 +151,8 @@ export default {
         isOnline: '', // 在线状态
         shopId: '', // 享钱商户
         xqOpenStatus: '', // 享钱开通状态
-        registrationDate: null // 注册日期
+        installDate: null, // 注册日期
+        firstGrantAuthDate: null // 转正日期
       }, // 搜索表单
       allErpProductList: [] // 软注产品列表
     }
@@ -291,10 +296,15 @@ export default {
         // shopId: this.form.shopId,
         xqOpenStatus: this.form.xqOpenStatus
       }
-      if (this.form.registrationDate && this.form.registrationDate.length) {
-        subData.startFirstGrantAuthDate = `${this.form.registrationDate[0]} 00:00:00`
-        subData.endFirstGrantAuthDate = `${this.form.registrationDate[1]} 23:59:59`
+      if (this.form.installDate && this.form.installDate.length) {
+        subData.installStartDate = `${this.form.installDate[0]} 00:00:00`
+        subData.installEndDate = `${this.form.installDate[1]} 23:59:59`
       }
+      if (this.form.firstGrantAuthDate && this.form.firstGrantAuthDate.length) {
+        subData.startFirstGrantAuthDate = `${this.form.firstGrantAuthDate[0]} 00:00:00`
+        subData.endFirstGrantAuthDate = `${this.form.firstGrantAuthDate[1]} 23:59:59`
+      }
+
       if (subData.isOnline === '') {
         delete subData.isOnline
       }
