@@ -1,6 +1,6 @@
 <template>
   <section class="p-login">
-    <div class="p-login_picture"></div>
+    <div :style="{backgroundImage: 'url(' + (bacImage) + ')'}" class="p-login_picture"></div>
     <div class="p-login_con">
       <header>
         <img src="../../assets/images/menu/logo.png" class="p-login_logo" alt="logo" />
@@ -32,20 +32,7 @@
     </div>
     <section class="login_nocolor">
       <el-dialog :visible.sync="loginVisible" width="318px" :close-on-click-modal="false">
-        <slide-login
-          v-if="loginVisible"
-          :loading="loading"
-          :text="text"
-          :title="title"
-          :status.sync="status"
-          :slide-block-img-bg="slideBlockImgBg"
-          :slide-block-img="slideBlockImg"
-          :slideH="170"
-          :offsetY="offsetY"
-          @close="close"
-          @getMouseUpData="mouseUp"
-          @refresh="refresh"
-        >
+        <slide-login v-if="loginVisible" :loading="loading" :text="text" :title="title" :status.sync="status" :slide-block-img-bg="slideBlockImgBg" :slide-block-img="slideBlockImg" :slideH="170" :offsetY="offsetY" @close="close" @getMouseUpData="mouseUp" @refresh="refresh">
         </slide-login>
       </el-dialog>
     </section>
@@ -55,10 +42,10 @@
 <script>
 import { checkSliderImg, initImg } from '@/api/login'
 import slideLogin from './components/slide-login'
-
+import { queryBackgroundById } from '@/api/login'
 export default {
   components: { slideLogin },
-  data() {
+  data () {
     var userNamePass = (rule, value, callback) => {
       if (/^1[3456789]\d{9}$/.test(value)) {
         callback()
@@ -67,6 +54,7 @@ export default {
       }
     }
     return {
+      bacImage: require('../../assets/images/login/login.jpg'),  // 本地的静态资源需要用require引入
       isLoading: false,
       loginVisible: false,
       loading: false,
@@ -86,7 +74,7 @@ export default {
       loginRules: {
         userName: [
           { required: true, trigger: 'blur', validator: userNamePass },
-          { required: true, trigger: 'change', message: '请输入账号'}
+          { required: true, trigger: 'change', message: '请输入账号' }
         ],
         password: [{ required: true, trigger: 'change', message: '请输入密码' }]
       },
@@ -94,12 +82,13 @@ export default {
       query: ''
     }
   },
-  mounted() {
+  mounted () {
+    this.queryBackgroundById()
     this.initImg()
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
         this.query = route.query && route.query.query
       },
@@ -107,7 +96,19 @@ export default {
     }
   },
   methods: {
-    initImg: async function() {
+    async queryBackgroundById () {
+      if (localStorage.getItem('bacImage')) {
+        this.bacImage = localStorage.getItem('bacImage')
+      }
+      const res = await queryBackgroundById({
+        systemId: 1
+      })
+      if (res) {
+        this.bacImage = res.server + '/' + res.path
+        localStorage.setItem('bacImage', this.bacImage)
+      }
+    },
+    initImg: async function () {
       try {
         this.loading = true
         const res = await initImg()
@@ -122,15 +123,15 @@ export default {
       }
     },
     // 刷新图片验证
-    refresh() {
+    refresh () {
       this.initImg()
     },
     // 关闭图片验证
-    close() {
+    close () {
       this.loginVisible = false
     },
     // 验证
-    mouseUp: async function(imgX) {
+    mouseUp: async function (imgX) {
       try {
         const data = {
           x: imgX,
@@ -147,12 +148,12 @@ export default {
         this.status = 'fail'
       }
     },
-    handleSubmitCode() {
+    handleSubmitCode () {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) this.loginVisible = true
       })
     },
-    handleLogin() {
+    handleLogin () {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
           this.isLoading = true
@@ -209,7 +210,8 @@ export default {
     &_picture {
       flex: 1 1 auto;
       height: 100%;
-      background: url('../../assets/images/login/login.jpg') center center no-repeat;
+      //  url('../../assets/images/login/login.jpg')
+      background: center center no-repeat;
     }
     &_con {
       width: 32%;
