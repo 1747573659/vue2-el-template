@@ -15,18 +15,17 @@
 
 <script>
 import { mapGetters, mapMutations } from 'vuex'
-
 export default {
   computed: {
     ...mapGetters({
-      xftAuditStatus: 'xftAuditStatus' 
+      xftAuditStatus: 'xftAuditStatus'
     })
   },
   methods: {
     ...mapMutations({
       setAuditStatus: 'SET_AUDITSTATUS'
     }),
-    handleAuditStatus(){
+    handleAuditStatus () {
       this.setAuditStatus(false)
     }
   }
