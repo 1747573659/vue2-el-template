@@ -10,19 +10,7 @@
             <el-input v-model.trim="form.authShopMessage" size="small" placeholder="软注商户名称/联系人/手机号" clearable :maxlength="50"></el-input>
           </el-form-item>
           <el-form-item label="软注产品:">
-            <select-page
-              placeholder="请输入名称"
-              @focus="selectPageFocusErp"
-              id="code"
-              @change="selectPageChangeErp"
-              @clear="selectPageClearErp"
-              :name="selectPageNameErp"
-              @remoteMethod="remoteMethodErp"
-              :isMaxPage="isMaxPageErp"
-              :options="ObjContentListErp"
-              @loadMore="loadMoreErp"
-              style="width: 100%"
-            >
+            <select-page placeholder="请输入名称" @focus="selectPageFocusErp" id="code" @change="selectPageChangeErp" @clear="selectPageClearErp" :name="selectPageNameErp" @remoteMethod="remoteMethodErp" :isMaxPage="isMaxPageErp" :options="ObjContentListErp" @loadMore="loadMoreErp" style="width: 100%">
             </select-page>
           </el-form-item>
           <el-form-item label="授权状态:">
@@ -41,18 +29,11 @@
             </el-select>
           </el-form-item>
           <el-form-item label="注册日期:">
-            <el-date-picker
-              style="width:240px"
-              v-model="form.registrationDate"
-              type="daterange"
-              range-separator="至"
-              format="yyyy-MM-dd"
-              value-format="yyyy-MM-dd"
-              start-placeholder="开始日期"
-              end-placeholder="结束日期"
-              :clearable="true"
-              :picker-options="pickerOptions"
-            >
+            <el-date-picker style="width:240px" v-model="form.installDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
+            </el-date-picker>
+          </el-form-item>
+          <el-form-item label="转正日期:">
+            <el-date-picker style="width:240px" v-model="form.firstGrantAuthDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
             </el-date-picker>
           </el-form-item>
           <el-form-item style="padding-left: 30px;">
@@ -68,8 +49,8 @@
         <el-table-column prop="custName" width="146" label="软注商户/享钱商户">
           <template slot-scope="scope">
             <div>{{ scope.row.custName }}{{ scope.row.merchantName ? `/${scope.row.merchantName}` : '' }}</div>
-          </template></el-table-column
-        >
+          </template>
+        </el-table-column>
         <el-table-column prop="productName" label="软注产品">
           <template slot-scope="scope">
             <div>
@@ -100,7 +81,7 @@
             <div>{{ scope.row.companyProvince }}{{ scope.row.companyCity }}</div>
           </template>
         </el-table-column>
-        <el-table-column prop="firstGrantAuthDate" label="首次授权日期" width="110px"></el-table-column>
+        <el-table-column prop="firstGrantAuthDate" label="转正日期" width="110px"></el-table-column>
         <el-table-column label="授权状态">
           <template slot-scope="scope">
             <span v-if="['0', '1'].includes(scope.row.status)">试用</span>
@@ -118,16 +99,7 @@
         </el-table-column>
       </el-table>
       <div class="km-page-block">
-        <el-pagination
-          :current-page="thisPage"
-          :total="tableTotal"
-          :page-size="pageSize"
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          background
-          :page-sizes="[10, 15, 30]"
-          layout="total, sizes, prev, pager, next, jumper"
-        ></el-pagination>
+        <el-pagination :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
   </section>
@@ -144,7 +116,7 @@ export default {
   name: 'softNoteManagement',
   mixins: [tableMaxHeight],
   components: { selectPage },
-  data() {
+  data () {
     return {
       // erp产品板块
       selectPageNoErp: 1, //其他地方复制过来的
@@ -179,16 +151,17 @@ export default {
         isOnline: '', // 在线状态
         shopId: '', // 享钱商户
         xqOpenStatus: '', // 享钱开通状态
-        registrationDate: null // 注册日期
+        installDate: null, // 注册日期
+        firstGrantAuthDate: null // 转正日期
       }, // 搜索表单
       allErpProductList: [] // 软注产品列表
     }
   },
-  created() {
+  created () {
     this.authShopPage()
   },
   methods: {
-    selectPageFocusErp() {
+    selectPageFocusErp () {
       this.isMaxPageErp = false
       this.ObjContentListErp = []
       this.searchStringErp = ''
@@ -197,7 +170,7 @@ export default {
         this.remoteMethodErp()
       }
     },
-    selectPageFocus() {
+    selectPageFocus () {
       this.isMaxPage = false
       this.ObjContentList = []
       this.searchString = ''
@@ -206,27 +179,27 @@ export default {
         this.remoteMethod()
       }
     },
-    selectPageChangeErp(value) {
+    selectPageChangeErp (value) {
       this.form.productId = value
     },
-    selectPageChange(value) {
+    selectPageChange (value) {
       this.form.shopId = value
     },
-    loadMoreErp() {
+    loadMoreErp () {
       // 如果不是最后一页就加载下一页
       if (!this.isMaxPageErp) {
         this.selectPageNoErp++
         this.remoteMethodErp(this.searchStringErp)
       }
     },
-    loadMore() {
+    loadMore () {
       // 如果不是最后一页就加载下一页
       if (!this.isMaxPage) {
         this.selectPageNo++
         this.remoteMethod(this.searchString)
       }
     },
-    selectPageClearErp() {
+    selectPageClearErp () {
       this.isMaxPageErp = false
       this.ObjContentListErp = []
       this.searchStringErp = ''
@@ -234,14 +207,14 @@ export default {
       this.form.productId = ''
     },
     // 如果点击了清除按钮则将相关数据清空
-    selectPageClear() {
+    selectPageClear () {
       this.isMaxPage = false
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
       this.form.shopId = ''
     },
-    async remoteMethodErp(value) {
+    async remoteMethodErp (value) {
       // 当输入新的值的时候，就把相关数据进行情况
       if (value !== this.searchStringErp) {
         this.selectPageNoErp = 1
@@ -268,9 +241,9 @@ export default {
         } else {
           this.isMaxPageErp = true
         }
-      } catch (error) {}
+      } catch (error) { }
     },
-    async remoteMethod(value) {
+    async remoteMethod (value) {
       // 当输入新的值的时候，就把相关数据进行情况
       if (value !== this.searchString) {
         this.selectPageNo = 1
@@ -297,21 +270,21 @@ export default {
         } else {
           this.isMaxPage = true
         }
-      } catch (error) {}
+      } catch (error) { }
     },
     // 分页
-    handleSizeChange(val) {
+    handleSizeChange (val) {
       this.thisPage = 1
       this.pageSize = val
       this.authShopPage()
     },
     // 分页
-    handleCurrentChange(val) {
+    handleCurrentChange (val) {
       this.thisPage = val
       this.authShopPage()
     },
     // 分页查询
-    async authShopPage() {
+    async authShopPage () {
       let subData = {
         rows: this.pageSize,
         page: this.thisPage,
@@ -323,10 +296,15 @@ export default {
         // shopId: this.form.shopId,
         xqOpenStatus: this.form.xqOpenStatus
       }
-      if (this.form.registrationDate && this.form.registrationDate.length) {
-        subData.startFirstGrantAuthDate = `${this.form.registrationDate[0]} 00:00:00`
-        subData.endFirstGrantAuthDate = `${this.form.registrationDate[1]} 23:59:59`
+      if (this.form.installDate && this.form.installDate.length) {
+        subData.installStartDate = `${this.form.installDate[0]} 00:00:00`
+        subData.installEndDate = `${this.form.installDate[1]} 23:59:59`
       }
+      if (this.form.firstGrantAuthDate && this.form.firstGrantAuthDate.length) {
+        subData.startFirstGrantAuthDate = `${this.form.firstGrantAuthDate[0]} 00:00:00`
+        subData.endFirstGrantAuthDate = `${this.form.firstGrantAuthDate[1]} 23:59:59`
+      }
+
       if (subData.isOnline === '') {
         delete subData.isOnline
       }
