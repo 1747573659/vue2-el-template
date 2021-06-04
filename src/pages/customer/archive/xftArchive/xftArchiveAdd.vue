@@ -522,14 +522,14 @@
             </el-col>
           </el-row>
           <el-row>
-            <el-col :span="12" class="archive-form-item">
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1">
               <el-form-item label="持卡人证件类型" prop="archiveExpandVO.cardholderIdType">
                 <el-select style="width: 240px" :disabled="formYQDisabled" clearable v-model="form.archiveExpandVO.cardholderIdType" placeholder="全部">
                   <el-option v-for="item in cardholderIdTypeList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
             </el-col>
-            <el-col :span="12" class="archive-form-item">
+            <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1">
               <el-form-item label="持卡人证件号码" prop="archiveExpandVO.cardholderIdNumber">
                 <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveExpandVO.cardholderIdNumber" placeholder=""></el-input>
               </el-form-item>
