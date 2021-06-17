@@ -477,7 +477,7 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-row v-if="form.archiveExpandVO.acctType === 1">
+          <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="开户支行所在省市" prop="archiveExpandVO.bankProvince">
                 <area-select-for-two :key="bankAreaKey" @change="bankAreaChange" :areaList="bankAreaList"></area-select-for-two>
