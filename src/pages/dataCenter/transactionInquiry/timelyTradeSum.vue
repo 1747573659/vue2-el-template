@@ -147,7 +147,7 @@
         <el-table-column label="商家实收(元)" align="right" prop="receiptAmount"></el-table-column>
       </el-table>
     </div>
-    <exportEecord  :exportType='1' ref="exportEecord"></exportEecord>
+    <exportEecord  :exportType='4' ref="exportEecord"></exportEecord>
   </div>
 </template>
 
