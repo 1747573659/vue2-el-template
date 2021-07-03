@@ -235,7 +235,7 @@ export default {
    async  downLoadTradeDataExcel () {
       this.exportLoad = true
       try {
-        await downLoadTradeDataExcel({type:1} )
+        await downLoadTradeDataExcel({...this.initSubData()} )
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
       } catch (error) {
       } finally {
@@ -385,18 +385,21 @@ export default {
           break
       }
     },
+    initSubData () {
+      let data = {
+          type: 1,
+          adminId: this.form.searchObject === 2 ? this.form.id : '',
+          agentId: this.form.searchObject === 1 ? this.form.id : '',
+          storeId: this.form.searchObject === 3 ? this.form.id : '',
+          payMethod: this.form.payMethod,
+          payPlugin: this.form.payPlugin
+        }
+      return data
+    },
     async getList() {
       this.tableLoading = true
-      let data = {
-        type: 1,
-        adminId: this.form.searchObject === 2 ? this.form.id : '',
-        agentId: this.form.searchObject === 1 ? this.form.id : '',
-        storeId: this.form.searchObject === 3 ? this.form.id : '',
-        payMethod: this.form.payMethod,
-        payPlugin: this.form.payPlugin
-      }
       try {
-        const res = await cashierData(data)
+        const res = await cashierData({...this.initSubData()})
         this.tableData = res
         this.eChartsDateList = []
         this.eChartsDataList = []
