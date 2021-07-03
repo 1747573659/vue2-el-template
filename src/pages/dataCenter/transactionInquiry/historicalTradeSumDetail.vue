@@ -38,6 +38,8 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
+               <el-button  @click="downLoadTradeDetailExcel"     :loading="exportLoad" v-permission="'KM_DEFAULT_CODE_EXPORT'" >导出</el-button>
+               <el-button  @click="handleExportLists" v-permission="'KM_DEFAULT_CODE_EXPORT'" >导出记录</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -128,6 +130,7 @@
       <!-- TABLE -->
       <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table">
         <el-table-column label="商户名称" prop="shopName"></el-table-column>
+        <el-table-column label="联系人手机" prop="mobile"></el-table-column>
         <el-table-column label="所属代理商" prop="agentName"></el-table-column>
         <el-table-column align="right" label="交易总额(元)" prop="payAmount"> </el-table-column>
         <el-table-column align="right" label="交易笔数" prop="payCount"></el-table-column>
@@ -149,21 +152,24 @@
         </el-pagination>
       </div>
     </div>
+      <exportEecord  :exportType='$route.query.type==2?5:6' ref="exportEecord"></exportEecord>
   </div>
 </template>
 
 <script>
 import selectPage from '@/components/selectPage'
 import moment from 'moment'
-import { detail, queryNewAgentPage, queryShopListByPage } from '@/api/dataCenter/historiyTrade'
-
+import { detail, queryNewAgentPage, queryShopListByPage ,downLoadTradeDetailExcel} from '@/api/dataCenter/historiyTrade'
+import exportEecord from '@/components/exportEecord'
 export default {
   name: 'historicalTradeSumDetail',
   components: {
-    selectPage
+    selectPage,
+    exportEecord
   },
   data() {
     return {
+      exportLoad: false, // 导出
       searchType: null, // 1:代理商, 2:商户
       activeIndex: '1',
       form: {
@@ -197,6 +203,19 @@ export default {
   },
   created() {},
   methods: {
+     handleExportLists () {
+       this.$refs.exportEecord.exportVisible=true
+     },
+    async  downLoadTradeDetailExcel () {
+      this.exportLoad = true
+      try {
+        await downLoadTradeDetailExcel({...this.initSubData(),export:true})
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+      } catch (error) {
+      } finally {
+        this.exportLoad = false
+      }
+    },
     search() {
       this.currentPage = 1
       this.getList()
@@ -292,8 +311,7 @@ export default {
       this.activeIndex = String(key)
     },
     setSearchTime(type) {},
-    async getList() {
-      this.tableLoading = true
+    initSubData () {
       let data = {
         adminId: String(this.$route.query.searchObject) === '2' ? this.$route.query.id : this.form.adminId,
         agentId: String(this.$route.query.searchObject) === '1' ? this.$route.query.id : this.form.agentId,
@@ -303,8 +321,13 @@ export default {
         page: this.currentPage,
         rows: this.pageSize
       }
+      return data
+    },
+    async getList() {
+      this.tableLoading = true
+     
       try {
-        const res = await detail(data)
+        const res = await detail({...this.initSubData(),export:false})
         this.tableData = res
         this.totalPage = res.totalCount
       } catch (error) {

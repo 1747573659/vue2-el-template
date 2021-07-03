@@ -9,7 +9,15 @@ const urlLinks = {
   queryStorePage: '/store/queryStorePage',
   detail: '/cashier/detail',
   paymentPluginVoList: '/cashier/paymentPluginVoList',
-  downLoadTradeDataExcel: '/cashier/downLoadTradeDataExcel'
+  downLoadTradeDataExcel: '/cashier/downLoadTradeDataExcel',
+  downLoadTradeDetailExcel: '/cashier/downLoadTradeDetailExcel'
+}
+export function downLoadTradeDetailExcel(data) {
+  return request({
+    url: urlLinks.downLoadTradeDetailExcel,
+    method: 'post',
+    data
+  })
 }
 export function downLoadTradeDataExcel(data) {
   return request({
