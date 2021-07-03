@@ -44,6 +44,8 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
+              <el-button :loading="exportLoad"   @click="downLoadTradeDataExcel" v-permission="'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM_EXPORT'">导出</el-button>
+              <el-button  @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM_EXPORT'" >导出记录</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -145,6 +147,7 @@
         <el-table-column label="商家实收(元)" align="right" prop="receiptAmount"></el-table-column>
       </el-table>
     </div>
+    <exportEecord  :exportType='1' ref="exportEecord"></exportEecord>
   </div>
 </template>
 
@@ -152,19 +155,21 @@
 import selectPage from '@/components/selectPage'
 import { getLocal } from '@/utils/storage'
 import moment from 'moment'
-import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList } from '@/api/dataCenter/historiyTrade'
+import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList ,downLoadTradeDataExcel } from '@/api/dataCenter/historiyTrade'
 import selectCopy from '@/components/selectCopy'
-
+import exportEecord from '@/components/exportEecord'
 export default {
   name: 'dayTradeData',
   components: {
     selectPage,
-    selectCopy
+    selectCopy,
+    exportEecord
   },
   data() {
     let maxTime = ''
     let minTime = ''
     return {
+      exportLoad: false, // 导出
       selectPageNo: 1,
       activeIndex: '1',
       isMaxPage: false,
@@ -224,6 +229,19 @@ export default {
     ]
   },
   methods: {
+    handleExportLists () {
+      this.$refs.exportEecord.exportVisible=true
+    },
+   async  downLoadTradeDataExcel () {
+      this.exportLoad = true
+      try {
+        await downLoadTradeDataExcel({type:1} )
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+      } catch (error) {
+      } finally {
+        this.exportLoad = false
+      }
+    },
     async payMethodChange(value) {
       this.payPluginList = []
       this.form.payPlugin = ''
