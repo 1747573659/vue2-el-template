@@ -64,6 +64,8 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
+               <el-button  @click="downLoadTradeDataExcel"    :loading="exportLoad" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'" >导出</el-button>
+               <el-button  @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'" >导出记录</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -170,6 +172,7 @@
         </el-table-column>
       </el-table>
     </div>
+    <exportEecord  :exportType='3' ref="exportEecord"></exportEecord>
   </div>
 </template>
 
@@ -178,17 +181,20 @@ import selectPage from '@/components/selectPage'
 import { getLocal } from '@/utils/storage'
 import moment from 'moment'
 import selectCopy from '@/components/selectCopy'
-import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList } from '@/api/dataCenter/historiyTrade'
+import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList ,downLoadTradeDataExcel} from '@/api/dataCenter/historiyTrade'
+import exportEecord from '@/components/exportEecord'
 let maxTime = ''
 let minTime = ''
 export default {
   name: 'weekTradeData',
   components: {
     selectPage,
-    selectCopy
+    selectCopy,
+    exportEecord
   },
   data() {
     return {
+      exportLoad: false, // 导出
       activeIndex: '1',
       form: {
         time: [],
@@ -271,6 +277,19 @@ export default {
     ]
   },
   methods: {
+     handleExportLists () {
+       this.$refs.exportEecord.exportVisible=true
+     },
+    async  downLoadTradeDataExcel () {
+      this.exportLoad = true
+      try {
+        await downLoadTradeDataExcel({...this.initSubData()})
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+      } catch (error) {
+      } finally {
+        this.exportLoad = false
+      }
+    },
     async payMethodChange(value) {
       this.payPluginList = []
       this.form.payPlugin = ''
@@ -392,8 +411,7 @@ export default {
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
     },
-    async getList() {
-      this.tableLoading = true
+    initSubData () {
       let data = {
         type: 3,
         adminId: this.form.searchObject === 2 ? this.form.id : '',
@@ -404,8 +422,13 @@ export default {
         payMethod: this.form.payMethod,
         payPlugin: this.form.payPlugin
       }
+      return data
+    },
+    async getList() {
+      this.tableLoading = true
+    
       try {
-        const res = await cashierData(data)
+        const res = await cashierData({...this.initSubData()})
         this.tableData = res
         this.eChartsDateList = []
         this.eChartsDataList = []

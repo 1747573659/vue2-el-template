@@ -8,9 +8,24 @@ const urlLinks = {
   queryShopListByPage: '/shop/queryShopListByNameAndId',
   queryStorePage: '/store/queryStorePage',
   detail: '/cashier/detail',
-  paymentPluginVoList: '/cashier/paymentPluginVoList'
+  paymentPluginVoList: '/cashier/paymentPluginVoList',
+  downLoadTradeDataExcel: '/cashier/downLoadTradeDataExcel',
+  downLoadTradeDetailExcel: '/cashier/downLoadTradeDetailExcel'
 }
-
+export function downLoadTradeDetailExcel(data) {
+  return request({
+    url: urlLinks.downLoadTradeDetailExcel,
+    method: 'post',
+    data
+  })
+}
+export function downLoadTradeDataExcel(data) {
+  return request({
+    url: urlLinks.downLoadTradeDataExcel,
+    method: 'post',
+    data
+  })
+}
 export function paymentPluginVoList(data) {
   return request({
     url: urlLinks.paymentPluginVoList,
