@@ -29,7 +29,7 @@
             </el-select>
           </el-form-item>
           <el-form-item label="注册日期:">
-            <el-date-picker style="width:240px" v-model="form.installDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
+            <el-date-picker style="width:240px" v-model="form.firstLoginDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="转正日期:">
@@ -151,7 +151,7 @@ export default {
         isOnline: '', // 在线状态
         shopId: '', // 享钱商户
         xqOpenStatus: '', // 享钱开通状态
-        installDate: null, // 注册日期
+        firstLoginDate: null, // 注册日期
         firstGrantAuthDate: null // 转正日期
       }, // 搜索表单
       allErpProductList: [] // 软注产品列表
@@ -296,9 +296,9 @@ export default {
         // shopId: this.form.shopId,
         xqOpenStatus: this.form.xqOpenStatus
       }
-      if (this.form.installDate && this.form.installDate.length) {
-        subData.installStartDate = `${this.form.installDate[0]} 00:00:00`
-        subData.installEndDate = `${this.form.installDate[1]} 23:59:59`
+      if (this.form.firstLoginDate && this.form.firstLoginDate.length) {
+        subData.startFirstLoginDate = `${this.form.firstLoginDate[0]} 00:00:00`
+        subData.endFirstLoginDate = `${this.form.firstLoginDate[1]} 23:59:59`
       }
       if (this.form.firstGrantAuthDate && this.form.firstGrantAuthDate.length) {
         subData.startFirstGrantAuthDate = `${this.form.firstGrantAuthDate[0]} 00:00:00`
