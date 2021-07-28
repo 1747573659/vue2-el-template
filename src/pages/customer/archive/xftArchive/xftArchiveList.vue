@@ -46,7 +46,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="资料ID">
-              <el-input style="width: 240px" v-model.trim="form.ziliaoId" maxlength="20" clearable placeholder="资料ID"></el-input>
+              <el-input style="width: 240px" v-model.trim="form.archiveIds" maxlength="20" clearable placeholder="资料ID"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
@@ -261,7 +261,7 @@ export default {
         wxCertStatus: '',
         status: 0,
         channelTypeCode: '',
-        ziliaoId:'' // 资料ID
+        archiveIds:'' // 资料ID
       },
       auditStatusOptions: [
         { id: '', name: '全部' },
@@ -422,7 +422,7 @@ export default {
         bankCard: this.form.name,
         wxCertStatus: this.form.wxCertStatus,
         stopUse: this.form.status,
-        ziliaoId: this.form.ziliaoId,
+        archiveIds: this.form.archiveIds?[this.form.archiveIds]:[],
         page: this.currentPage,
         rows: this.pageSize
       }

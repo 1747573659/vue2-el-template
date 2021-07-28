@@ -43,7 +43,7 @@
               <el-input v-model.trim="form.msg" class="p-form-input_width" maxlength="50" clearable placeholder="商户/公司名称/商户简称/银行卡号/资料ID"></el-input>
             </el-form-item>
             <el-form-item label="资料ID">
-              <el-input v-model.trim="form.ziliaoId" class="p-form-input_width" maxlength="20" clearable placeholder="资料ID"></el-input>
+              <el-input v-model.trim="form.archiveIds" class="p-form-input_width" maxlength="20" clearable placeholder="资料ID"></el-input>
             </el-form-item>
             <el-form-item class="p-form-general_label">
               <el-button type="primary" :loading="isSearchLock" @click="handleSearch">查询</el-button>
@@ -238,7 +238,7 @@ export default {
         channelMchId: '',
         msg: '',
         sortStatus: 'desc',
-        ziliaoId:'' // 资料ID
+        archiveIds:'' // 资料ID
       },
       isSearchLock: false, // 锁状态
       isTabLock: false,
@@ -354,7 +354,7 @@ export default {
       } catch (error) {}
     },
     handleQueryTabParams() {
-      const { createTime, msg, sortStatus, ziliaoId, ...params } = this.form
+      const { createTime, msg, sortStatus, archiveIds, ...params } = this.form
       return Object.assign(params, {
         orders: { createTime: sortStatus },
         startTime: createTime?.[0] ?? '',
@@ -366,7 +366,7 @@ export default {
         merchantShortName: msg,
         page: this.currentPage,
         rows: this.pageSize,
-        ziliaoId
+        archiveIds:archiveIds?[archiveIds]:[]
       })
     },
     handleSearch() {
