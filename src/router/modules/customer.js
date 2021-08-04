@@ -76,7 +76,7 @@ const customer = {
           component: _import('customer/merchant/softNoteManagement/index'),
           name: 'softNoteManagement',
           code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENT',
-          meta: { title: '软注商户管理', cache: true, name: 'softNoteManagement' }
+          meta: { title: '软注册查询', cache: true, name: 'softNoteManagement' }
         },
         // {
         //   path: 'softNoteManagementDetile',
