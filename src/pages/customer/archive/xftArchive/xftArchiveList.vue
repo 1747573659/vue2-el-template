@@ -45,6 +45,9 @@
                 <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="资料ID">
+              <el-input style="width: 240px" v-model.trim="form.archiveIds" maxlength="20" clearable placeholder="资料ID"></el-input>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
               <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
@@ -257,7 +260,8 @@ export default {
         auditStatus: '',
         wxCertStatus: '',
         status: 0,
-        channelTypeCode: ''
+        channelTypeCode: '',
+        archiveIds:'' // 资料ID
       },
       auditStatusOptions: [
         { id: '', name: '全部' },
@@ -418,6 +422,7 @@ export default {
         bankCard: this.form.name,
         wxCertStatus: this.form.wxCertStatus,
         stopUse: this.form.status,
+        archiveIds: this.form.archiveIds?[this.form.archiveIds]:[],
         page: this.currentPage,
         rows: this.pageSize
       }
