@@ -1,5 +1,5 @@
 <template>
-  <div class="guide-con data-box">
+  <div class="guide-con data-box" v-permission.page="'WXARCHIVE_LIST_WIKI'">
     <template v-if="type === 1">
       <section class="guide-item">
         <p>1、核对联系信息获取指导</p>
