@@ -2,9 +2,8 @@
   <div>
     <div class="data-box">
       <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableData" style="width: 100%">
-        <el-table-column prop="channelName" label="支付通道"> </el-table-column>
-        <el-table-column prop="mchId" label="通道商户号"> </el-table-column>
-        <el-table-column prop="shopName" label="公司名称"> </el-table-column>
+        <el-table-column prop="mchId" label="通道商户号"></el-table-column>
+        <el-table-column prop="shopName" label="公司名称"></el-table-column>
         <el-table-column prop="bankCardNo" label="银行卡号">
           <template slot-scope="scope">
             {{ scope.row.bankCardNo || '--' }}
@@ -36,7 +35,7 @@
             <span v-else>--</span>
           </template>
         </el-table-column>
-        <el-table-column prop="wxSubMchId" label="微信子商户号"> </el-table-column>
+        <el-table-column prop="wxSubMchId" label="微信子商户号"></el-table-column>
         <el-table-column prop="wxAuthStatus" label="授权状态">
           <template slot-scope="scope">
             {{ scope.row.wxAuthStatus === 1 ? '已授权' : '未授权' }}
@@ -53,9 +52,7 @@
             <el-button v-permission="'XFT_DETAIL_AUTHOR'" @click="toAuthor(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30','35'].includes(scope.row.channelCode)">子商户号授权</el-button>
             <el-button @click="queryStatus(scope.row)" type="text" size="small" v-if="['7', '20', '22', '25', '27', '29', '30','35'].includes(scope.row.channelCode)">查询授权状态</el-button>
             <el-button @click="signUpOL(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">电子签约</el-button>
-            <!-- <el-button @click="signUpOL(scope.row)" type="text" size="small">电子签约</el-button> -->
             <el-button @click="shopInfo(scope.row)" type="text" size="small" v-if="['27'].includes(scope.row.channelCode)">查询商户信息</el-button>
-            <!-- <el-button @click="shopInfo(scope.row)" type="text" size="small">查询商户信息</el-button> -->
           </template>
         </el-table-column>
       </el-table>

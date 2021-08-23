@@ -152,7 +152,7 @@ const customer = {
         {
           path: 'wxProgress',
           name: 'wxProgress',
-          code: 'KM_CUSTOMER_ARCHIVE_WXPROGRESS',
+          code: 'KM_DEFAULT_CODE',
           hidden: true,
           component: _import('customer/archive/wxArchive/wxProgress'),
           meta: {
@@ -197,7 +197,7 @@ const customer = {
         {
           path: 'archiveWiki',
           name: 'archiveWiki',
-          code: 'KM_CUSTOMER_WIKI',
+          code: 'KM_DEFAULT_CODE',
           hidden: true,
           component: _import('customer/archive/wiki/index'),
           meta: {

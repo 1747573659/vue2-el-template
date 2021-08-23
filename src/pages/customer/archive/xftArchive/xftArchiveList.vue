@@ -35,11 +35,6 @@
             <el-form-item label="商户信息">
               <el-input style="width: 240px" maxlength="50" clearable placeholder="商户名称/简称/公司名称/卡号" v-model="form.name"></el-input>
             </el-form-item>
-            <el-form-item label="当前通道">
-              <el-select style="width: 240px" clearable v-model="form.channelTypeCode" placeholder="全部">
-                <el-option v-for="item in channelList" :key="item.channelCode" :label="item.channelName" :value="item.channelCode"> </el-option>
-              </el-select>
-            </el-form-item>
             <el-form-item label="停用">
               <el-select style="width: 240px" clearable v-model="form.status" placeholder="全部">
                 <el-option v-for="item in statusList" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -81,8 +76,8 @@
         :data="tableData"
         style="width: 100%"
       >
-        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"> </el-table-column>
-        <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"> </el-table-column>
+        <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
+        <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantName" label="商户/公司名称" width="200">
           <template slot-scope="scope">
             <div class="archive-table-oneline">{{ scope.row.archiveBaseDTO.merchantName || '--' }}</div>
@@ -95,20 +90,7 @@
             <div class="archive-table-oneline">{{ scope.row.archiveExpandDTO.bankCard || '--' }}</div>
           </template></el-table-column
         >
-        <el-table-column prop="archiveChannelList" label="已进件通道" width="140" class-name="archived-channel">
-          <template slot-scope="scope">
-            <div v-if="scope.row.archiveChannelList">
-              <div v-for="(item, index) in scope.row.archiveChannelList" :key="index">{{ item.channelName }}</div>
-            </div>
-            <div v-else>--</div>
-          </template>
-        </el-table-column>
-        <el-table-column prop="useBankChannelCodeName" label="当前通道" width="140">
-          <template slot-scope="scope">
-            {{ scope.row.useBankChannelCodeName || '--' }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态" width="140">
+        <el-table-column prop="archiveBaseDTO.auditStatus" label="资料状态">
           <template slot-scope="scope">
             <span v-if="scope.row.archiveBaseDTO.auditStatus === 4 || scope.row.archiveBaseDTO.auditStatus === 8" class="table-text-color" @click="statusClick(scope.row)">
               {{ auditStatusList[scope.row.archiveBaseDTO.auditStatus] }}
@@ -116,18 +98,18 @@
             <span v-else>{{ auditStatusList[scope.row.archiveBaseDTO.auditStatus] }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="createTime" label="微信认证状态" width="130">
+        <el-table-column prop="createTime" label="微信认证状态" min-width="130">
           <template slot-scope="scope">
             <span>{{ wxCertStatusList[scope.row.archiveBaseDTO.wxCertStatus] }}</span>
             <el-button v-if="[1, 6].includes(scope.row.archiveBaseDTO.wxCertStatus)" class="e-btn-mgl" type="text" @click="handleWxCertReason(scope.row)">原因</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.fixFeeRate" label="费率" width="80">
+        <el-table-column prop="archiveBaseDTO.fixFeeRate" label="费率">
           <template slot-scope="scope">
             {{ scope.row.archiveBaseDTO.fixFeeRate ? scope.row.archiveBaseDTO.fixFeeRate / 100 + '%' : '--' }}
           </template>
         </el-table-column>
-        <el-table-column prop="archiveBaseDTO.stopUse" label="停用" width="80">
+        <el-table-column prop="archiveBaseDTO.stopUse" label="停用">
           <template slot-scope="scope">
             {{ scope.row.archiveBaseDTO.stopUse ? '是' : '否' }}
           </template>

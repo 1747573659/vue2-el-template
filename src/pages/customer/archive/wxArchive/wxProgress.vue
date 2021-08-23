@@ -1,5 +1,5 @@
 <template>
-  <div class="p-progress-con data-box" v-loading="progressLoad">
+  <div class="p-progress-con data-box" v-loading="progressLoad" v-permission.page="'WXARCHIVE_LIST_PROGRESS'">
     <header class="p-progress-header">
       <p>商户名称：{{ merchantDetail.merchantAdminName }}</p>
       <p>申请单号：{{ merchantDetail.applymentId }}</p>
@@ -13,19 +13,19 @@
             <p>
               请指引超级管理员
               <span class="e-progress-concat">{{ item.contact }}</span> 使用微信扫以下二维码（30天有效，过期后将生成新二维码），完成核对联系信息后，可接收申请单进展通知
-              <router-link :to="{ name: 'archiveWiki', query: { type: 1 } }">核对联系信息指引</router-link>
+              <router-link v-permission="'WXARCHIVE_LIST_WIKI'" :to="{ name: 'archiveWiki', query: { type: 1 } }">核对联系信息指引</router-link>
             </p>
           </template>
           <template v-if="item.directAuditStatus === 10">
             <p>
               请指引申请单超级管理员 <span class="e-progress-concat">{{ item.contact }}</span> ，使用微信扫以下二维码（30天有效，过期后将生成新二维码），完成账户验证及签约
-              <router-link :to="{ name: 'archiveWiki', query: { type: 2 } }">账号验证引导</router-link>
+              <router-link v-permission="'WXARCHIVE_LIST_WIKI'" :to="{ name: 'archiveWiki', query: { type: 2 } }">账号验证引导</router-link>
             </p>
           </template>
           <template v-if="item.directAuditStatus === 11">
             <p>
               请指引申请单超级管理员 <span class="e-progress-concat">{{ item.contact }}</span> ，使用微信扫以下二维码（30天有效，过期后将生成新二维码），完成签约
-              <router-link :to="{ name: 'archiveWiki', query: { type: 3 } }">签约引导</router-link>
+              <router-link v-permission="'WXARCHIVE_LIST_WIKI'" :to="{ name: 'archiveWiki', query: { type: 3 } }">签约引导</router-link>
             </p>
           </template>
           <img :src="item.signUrl" alt="" v-if="item.signUrl" />
