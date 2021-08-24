@@ -778,6 +778,7 @@ import areaSelectForTwo from '@/components/areaSelectForTwo'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
+import moment from 'moment'
 import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR } from '@/api/xftArchive'
 
 export default {
@@ -1136,9 +1137,22 @@ export default {
           this.form.archiveExpandVO.licId = res.reg_num
           this.form.archiveBaseVO.companyName = res.name
           this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
-          const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
-          this.form.archiveExpandVO.licValidityBigen = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[0] : ''
-          this.form.archiveExpandVO.licValidityEnd = res.valid_period && new Date(validPeriod) ? validPeriod.split('至')[1].replace(/长期/, '') : ''
+          if (res.valid_period) {
+            const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
+            this.form.archiveExpandVO.licValidityBigen =
+              validPeriod.split('至')[0] && validPeriod.split('至')[0].split('-')[0].length === 4 ? moment(validPeriod.split('至')[0]).format('YYYY-MM-DD') : ''
+            this.form.archiveExpandVO.licValidityEnd =
+              validPeriod.split('至')[1].replace(/长期/, '') &&
+              validPeriod
+                .split('至')[1]
+                .replace(/长期/, '')
+                .split('-')[0].length === 4
+                ? moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
+                : ''
+          } else {
+            this.form.archiveExpandVO.licValidityBigen = ''
+            this.form.archiveExpandVO.licValidityEnd = ''
+          }
         })
         .catch(err => {})
       this.form[type][url] = res.data.path
@@ -1154,7 +1168,7 @@ export default {
         .then(res => {
           this.$message.success('图片解析成功')
           if (side === 'face') {
-            if(url === 'cardholderIdFrontUrl') this.form.archiveExpandVO.cardholderIdNumber = res.num
+            if (url === 'cardholderIdFrontUrl') this.form.archiveExpandVO.cardholderIdNumber = res.num
             else {
               this.form.archiveExpandVO.legalPersonName = res.name
               this.form.archiveExpandVO.idNumber = res.num
@@ -1162,7 +1176,7 @@ export default {
           } else {
             const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
             const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
-            if(url === 'cardholderIdBackUrl') {
+            if (url === 'cardholderIdBackUrl') {
               this.form.archiveExpandVO.cardholderIdBegin = res.start_date && new Date(startDate) ? startDate : ''
               this.form.archiveExpandVO.cardholderIdEnd = res.end_date && new Date(endDate) ? endDate : ''
             } else {
