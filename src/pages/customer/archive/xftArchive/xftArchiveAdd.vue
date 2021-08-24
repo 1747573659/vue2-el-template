@@ -1149,6 +1149,9 @@ export default {
                 .split('-')[0].length === 4
                 ? moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
                 : ''
+            if (!this.form.archiveExpandVO.licValidityBigen || !this.form.archiveExpandVO.licValidityEnd) {
+              this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityEnd = ''
+            }
           } else {
             this.form.archiveExpandVO.licValidityBigen = ''
             this.form.archiveExpandVO.licValidityEnd = ''
