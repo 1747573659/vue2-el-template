@@ -110,7 +110,7 @@ export default {
       else if (command === 2) this.dropOutStatus = true
       else this.handleLoginOut()
     },
-    userInfoChange () {
+    userInfoChange() {
       this.userName = JSON.parse(getLocal('userInfo')).userName
     },
     handleLoginOut() {
@@ -130,11 +130,14 @@ export default {
     },
     getChildRoutes(route) {
       // 设置左侧导航栏
-      let index = this.routes.findIndex(item => {
-        return JSON.stringify(item).includes(route.name)
-      })
-      if (this.routes[index].children && this.routes[index].children.length) {
-        this.setAsideRoutes(this.routes[index].children)
+      let index = this.routes.findIndex(item => this.includeRouter(route, item))
+      if (this.routes[index].children?.length) this.setAsideRoutes(this.routes[index].children)
+    },
+    includeRouter(route, routes) {
+      if (routes.name === route.name) {
+        return true
+      } else if (routes?.children) {
+        return routes.children.some(childItem => this.includeRouter(route, childItem))
       }
     }
   }
