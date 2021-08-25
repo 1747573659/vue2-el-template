@@ -1139,18 +1139,12 @@ export default {
           this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
           if (res.valid_period) {
             const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
-            this.form.archiveExpandVO.licValidityBigen =
-              validPeriod.split('至')[0] && validPeriod.split('至')[0].split('-')[0].length === 4 ? moment(validPeriod.split('至')[0]).format('YYYY-MM-DD') : ''
-            this.form.archiveExpandVO.licValidityEnd =
-              validPeriod.split('至')[1].replace(/长期/, '') &&
-              validPeriod
-                .split('至')[1]
-                .replace(/长期/, '')
-                .split('-')[0].length === 4
-                ? moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
-                : ''
-            if (!this.form.archiveExpandVO.licValidityBigen || !this.form.archiveExpandVO.licValidityEnd) {
-              this.form.archiveExpandVO.licValidityBigen = this.form.archiveExpandVO.licValidityEnd = ''
+            if(validPeriod.split('至')[0].split('-')[0].length !== 4 || !Date.parse(validPeriod.split('至')[0]) || (validPeriod.split('至')[1] !== '长期' && !Date.parse(validPeriod.split('至')[1].replace(/长期/, '')))) {
+              this.form.archiveExpandVO.licValidityBigen = ''
+              this.form.archiveExpandVO.licValidityEnd = ''
+            } else {
+              this.form.archiveExpandVO.licValidityBigen = moment(validPeriod.split('至')[0]).format('YYYY-MM-DD')
+              this.form.archiveExpandVO.licValidityEnd = moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
             }
           } else {
             this.form.archiveExpandVO.licValidityBigen = ''
