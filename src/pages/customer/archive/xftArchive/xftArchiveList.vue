@@ -55,16 +55,6 @@
             </el-form-item>
           </el-col>
         </el-row>
-
-        <el-row>
-          <el-col> </el-col>
-          <el-col>
-            
-          </el-col>
-          <el-col style="padding-left:75px">
-            
-          </el-col>
-        </el-row>
       </el-form>
     </div>
     <div class="data-box">
