@@ -48,10 +48,11 @@ export default {
             width += tagsItem[i].offsetWidth
             if (tagsWidth - width <= 100) {
               this.baseArr = this.tagViews.slice(0, i)
-              this.dropArr = this.tagViews.slice(i)
+              this.dropArr = this.tagViews.slice(i).concat({ title: '关闭全部' })
               break
             } else {
-              this.dropArr = []
+              if (val.length >= 2) this.dropArr = [{ title: '关闭全部' }]
+              else this.dropArr = []
             }
           }
         })
@@ -66,14 +67,22 @@ export default {
     this.handleTagViews()
   },
   methods: {
-    ...mapActions(['setTagViews', 'setCachedViews', 'delTagView', 'delCachedView']),
+    ...mapActions(['setTagViews', 'setCachedViews', 'delTagView', 'delCachedView', 'delAllTagView']),
     handleCommand({ item, query }) {
-      this.$router.push({ path: item.path, query: Object.keys(query).length === 0 ? {} : query })
+      if (item.title === '关闭全部') {
+        new Promise(resolve => {
+          this.delAllTagView()
+          resolve()
+        }).then(() => {
+          this.$router.replace({ name: 'home' })
+        })
+      } else this.$router.push({ path: item.path, query: Object.keys(query).length === 0 ? {} : query })
     },
     handleTagViews() {
       if (this.$route.name) {
-        if (this.tagViews.length === 15 && !this.tagViews.some(item => item.name === this.$route.name)) this.$message({ type: 'warning', message: '最大支持15个页签，请关闭其他页签后重试' })
-        else this.setTagViews(this.$route)
+        if (this.tagViews.length === 15 && !this.tagViews.some(item => item.name === this.$route.name)) {
+          this.$message({ type: 'warning', message: '最大支持15个页签，请关闭其他页签后重试' })
+        } else this.setTagViews(this.$route)
         this.setCachedViews(this.$route)
       }
     },
