@@ -1140,7 +1140,7 @@ export default {
               this.form.archiveExpandVO.licValidityEnd = ''
             } else {
               this.form.archiveExpandVO.licValidityBigen = moment(validPeriod.split('至')[0]).format('YYYY-MM-DD')
-              this.form.archiveExpandVO.licValidityEnd = moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
+              this.form.archiveExpandVO.licValidityEnd = validPeriod.split('至')[1].replace(/长期/, '') ? moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD') : ''
             }
           } else {
             this.form.archiveExpandVO.licValidityBigen = ''
