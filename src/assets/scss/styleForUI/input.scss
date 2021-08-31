@@ -1,16 +1,17 @@
-.el-input.is-active .el-input__inner, .el-input__inner:focus {
-  border-color: #3377FF;
+.el-input.is-active .el-input__inner,
+.el-input__inner:focus {
+  border-color: #3377ff;
 }
 .el-input__inner {
   border-radius: 2px;
 }
 .el-input--mini .el-input__inner {
   height: 32px;
-  line-height: 32px
+  line-height: 32px;
 }
 .el-input .el-input__clear {
   font-size: 16px;
-  color: #CAD1E0;
+  color: #cad1e0;
 }
 .el-input__suffix-inner {
   .el-icon-circle-close:before {
@@ -18,5 +19,8 @@
   }
 }
 .el-textarea__inner:focus {
-  border-color: #3377FF;
+  border-color: #3377ff;
+}
+.el-input {
+  width: 240px;
 }

@@ -238,6 +238,9 @@ export default {
       border-radius: 4px;
       padding: 37px 24px 24px 24px;
       box-sizing: border-box;
+      /deep/ .el-input{
+        width: 100%;
+      }
     }
     &_regist {
       margin-top: 20px;
