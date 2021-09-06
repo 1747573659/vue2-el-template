@@ -26,3 +26,11 @@ export const inventoryType = [
   { value: 0, label: '通用' },
   { value: 1, label: '项目' }
 ]
+
+export const addressData = [
+  { check: true, receiver: '张三', consigneePhone: '18566239697', address: '广东省深圳市前海深港合作区南山街道兴海大道3044号信利康大厦19-20层' },
+  { check: false, receiver: '张三', consigneePhone: '0755-87854521', address: '广东省深圳市前海深港合作区信利康大厦19层' },
+  { check: false, receiver: '张三', consigneePhone: '0755-87854521', address: '广东省深圳市前海深港合作区信利康大厦19层' },
+  { check: false, receiver: '李四', consigneePhone: '18566239697', address: '广东省深圳市前海深港合作区信利康大厦19层' },
+  { check: false, receiver: '小明', consigneePhone: '18566239697', address: '广东省深圳市前海深港合作区信利康大厦19层' }
+]

@@ -25,17 +25,33 @@ const orderCenter = {
       children: [
         {
           path: 'softwarePurchaseOrder',
-          component: () => import('@/pages/orderCenter/OrderManagement/SoftwarePurchaseOrder'),
+          component: _import('orderCenter/OrderManagement/SoftwarePurchaseOrder'),
           name: 'softwarePurchaseOrder',
           code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER',
           meta: { title: '软件采购订单', name: 'softwarePurchaseOrder', cache: true }
         },
         {
+          path: 'softwarePurchaseDetails',
+          component: _import('orderCenter/OrderManagement/SoftwarePurchaseOrder/softwarePurchaseDetails'),
+          name: 'softwarePurchaseDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '软件采购详情', name: 'softwarePurchaseDetails', cache: true }
+        },
+        {
           path: 'hardwarePurchaseOrder',
-          component: () => import('@/pages/orderCenter/OrderManagement/HardwarePurchaseOrder'),
+          component: _import('orderCenter/OrderManagement/HardwarePurchaseOrder'),
           name: 'hardwarePurchaseOrder',
           code: 'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER',
           meta: { title: '硬件采购订单', name: 'hardwarePurchaseOrder', cache: true }
+        },
+        {
+          path: 'hardwarePurchaseDetails',
+          component: _import('orderCenter/OrderManagement/HardwarePurchaseOrder/hardwarePurchaseDetails'),
+          name: 'hardwarePurchaseDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '硬件采购详情', name: 'hardwarePurchaseDetails', cache: true }
         }
       ]
     },

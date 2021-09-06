@@ -11,6 +11,7 @@
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
                 clearable
@@ -48,7 +49,7 @@
           <el-col :xl="2" :lg="3" style="text-align:right">
             <el-form-item>
               <template v-permission="'HARDWARE_PURCHASE_ORDER_PLUS'">
-                <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ status: 'add' })">新增</el-button>
+                <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleHardWareDetail({ status: 'add' })">新增</el-button>
               </template>
             </el-form-item>
           </el-col>
@@ -80,9 +81,9 @@
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="scope.row.status === 0">
-              <el-button v-permission="'HARDWARE_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handlePushDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+              <el-button v-permission="'HARDWARE_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleHardWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
-            <el-button v-else type="text" size="small" @click="handlePushDetail({ status: 'edit' }, scope.row)">详情</el-button>
+            <el-button v-else type="text" size="small" @click="handleHardWareDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -92,12 +93,14 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { orderStatus, paymentStatus, deliveryStatus } from '../index'
 import { softwarePurchaseOrder } from '../data'
 import { xftArchiveExport, xftArchiveExportLog, xftArchiveExportDel } from '@/api/xftArchive'
 import { queryPage } from '@/api/wxArchive'
 
 export default {
+  name: 'hardwarePurchaseOrder',
   data() {
     return {
       orderStatus,
@@ -117,13 +120,22 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
-      exportLoad: false
+      exportLoad: false,
+      pickerOptions: {
+        disabledDate (time) {
+          return time.getTime() > Date.now()
+        }
+      }
     }
   },
   mounted() {
+    this.form.createTime = [dayjs().subtract(7, 'days').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
   },
   methods: {
+    handleHardWareDetail(status) {
+      this.$router.push({ name: 'hardwarePurchaseDetails', query: status })
+    },
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {

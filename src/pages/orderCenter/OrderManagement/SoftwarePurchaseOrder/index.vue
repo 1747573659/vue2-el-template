@@ -43,7 +43,7 @@
           <el-col :xl="2" :lg="3" style="text-align:right">
             <el-form-item>
               <template v-permission="'SOFT_PURCHASE_ORDER_PLUS'">
-                <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handlePushDetail({ status: 'add' })">新增</el-button>
+                <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleSoftWareDetail({ status: 'add' })">新增</el-button>
               </template>
             </el-form-item>
           </el-col>
@@ -72,9 +72,9 @@
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="scope.row.status === 0">
-              <el-button v-permission="'SOFT_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handlePushDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+              <el-button v-permission="'SOFT_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleSoftWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
-            <el-button v-else type="text" size="small" @click="handlePushDetail({ status: 'edit' }, scope.row)">详情</el-button>
+            <el-button v-else type="text" size="small" @click="handleSoftWareDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -90,6 +90,7 @@ import { xftArchiveExport, xftArchiveExportLog, xftArchiveExportDel } from '@/ap
 import { queryPage } from '@/api/wxArchive'
 
 export default {
+  name:'softwarePurchaseOrder',
   data() {
     return {
       orderStatus,
@@ -116,6 +117,9 @@ export default {
     this.getQueryPage()
   },
   methods: {
+    handleSoftWareDetail(status) {
+      this.$router.push({ name: 'softwarePurchaseDetails', query: status })
+    },
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
