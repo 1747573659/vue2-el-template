@@ -22,17 +22,17 @@
               </el-select>
             </el-form-item>
             <el-form-item label="付款状态">
-              <el-select v-model="form.paymentStatus" clearable>
+              <el-select v-model="form.payStatus" clearable>
                 <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...paymentStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
-              <el-select v-model="form.orderer" clearable>
+              <el-select v-model="form.createUser" clearable>
                 <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...deliveryStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="订单编码">
-              <el-input v-model.trim="form.orderCode" clearable></el-input>
+              <el-input v-model.trim="form.billNo" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
@@ -52,22 +52,22 @@
     </div>
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
-        <el-table-column prop="createTime" label="订单时间" width="110"></el-table-column>
-        <el-table-column prop="code" label="单据编码" width="150"></el-table-column>
+        <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
+        <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="80">
-          <template slot-scope="scope">{{ orderStatus[scope.row.status] ? orderStatus[scope.row.status].label : '--' }}</template>
+          <template slot-scope="scope">{{ orderStatus[scope.row.orderStatus] ? orderStatus[scope.row.orderStatus].label : '--' }}</template>
         </el-table-column>
-        <el-table-column prop="amount" label="订单金额" header-align="center" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="orderAmount" label="订单金额" align="right" min-width="100"></el-table-column>
         <el-table-column label="付款状态">
-          <template slot-scope="scope">{{ paymentStatus[scope.row.paymentStatus] ? paymentStatus[scope.row.paymentStatus].label : '--' }}</template>
+          <template slot-scope="scope">{{ paymentStatus[scope.row.payStatus] ? paymentStatus[scope.row.payStatus].label : '--' }}</template>
         </el-table-column>
-        <el-table-column prop="assignee" label="受理人"></el-table-column>
-        <el-table-column prop="orderer" label="下单人"></el-table-column>
-        <el-table-column prop="principal" label="使用本金" header-align="center" align="right" min-width="100"></el-table-column>
-        <el-table-column prop="bonus" label="使用赠金" header-align="center" align="right" min-width="100"></el-table-column>
-        <el-table-column prop="guaranteedAmount" label="担保金额" header-align="center" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="handUserName" label="受理人"></el-table-column>
+        <el-table-column prop="createUser" label="下单人"></el-table-column>
+        <el-table-column prop="useAmount" label="使用本金" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="useAmountGift" label="使用赠金" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="useGuarantee" label="担保金额" align="right" min-width="100"></el-table-column>
         <el-table-column label="担保人">
-          <template slot-scope="scope">{{ scope.row.guarantor || '--' }}</template>
+          <template slot-scope="scope">{{ scope.row.guaranteePeopleName || '--' }}</template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
@@ -84,10 +84,9 @@
 </template>
 
 <script>
+import dayjs from 'dayjs'
 import { orderStatus, paymentStatus, deliveryStatus } from '../index'
-import { softwarePurchaseOrder } from '../data'
-import { xftArchiveExport, xftArchiveExportLog, xftArchiveExportDel } from '@/api/xftArchive'
-import { queryPage } from '@/api/wxArchive'
+import { queryByPage, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
 
 export default {
   name:'softwarePurchaseOrder',
@@ -99,21 +98,27 @@ export default {
       form: {
         createTime: '',
         orderStatus: '',
-        paymentStatus: '',
-        deliveryStatus: '',
-        orderer: '',
-        orderCode: ''
+        payStatus: '',
+        goodsStatus: '',
+        createUser: '',
+        billNo: ''
       },
-      direAuditStatusOptions: [],
       tableData: [],
       checkTabLock: false,
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
-      exportLoad: false
+      exportLoad: false,
+      pickerOptions: {
+        disabledDate(time) {
+          return time.getTime() > dayjs().endOf('day')
+        }
+      }
     }
   },
   mounted() {
+    const StartTime = dayjs().subtract(7, 'days')
+    this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
   },
   methods: {
@@ -123,6 +128,7 @@ export default {
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
+        orderType: 1,
         startTime: createTime?.[0] ?? '',
         endTime: createTime?.[1] ?? '',
         page: this.currentPage,
@@ -130,21 +136,20 @@ export default {
       })
     },
     handleExport: async function() {
-      this.exportLoad = true
       try {
+        this.exportLoad = true
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        await exportOrder(this.handleQueryParams())
       } catch (error) {
       } finally {
         this.exportLoad = false
       }
     },
     handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const data = { exportType: 1, page: currentPage, rows: pageSize }
-      return await xftArchiveExportLog(data)
+      return await exportRecordList(Object.assign(this.handleQueryParams(), { page: currentPage, rows: pageSize }))
     },
     handleExportDel: async function(row) {
-      return await xftArchiveExportDel({ id: row.id })
+      return await deleteExport({ id: row.id })
     },
     handleSearch() {
       this.currentPage = 1
@@ -153,9 +158,8 @@ export default {
     getQueryPage: async function() {
       try {
         this.checkTabLock = true
-        const res = await queryPage(this.handleQueryParams())
-        // this.tableData = res?.results ?? []
-        this.tableData = softwarePurchaseOrder
+        const res = await queryByPage(this.handleQueryParams())
+        this.tableData = res?.results ?? []
         this.totalPage = res?.totalCount ?? 0
       } catch (error) {
       } finally {

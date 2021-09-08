@@ -187,11 +187,6 @@ export default {
 <style lang="scss" scoped>
 .login_nocolor {
   /deep/ .el-dialog {
-    position: absolute;
-    top: 50%;
-    left: 50%;
-    margin-left: -159px;
-    margin-top: -184px !important;
     border-radius: 4px;
     .el-dialog__header {
       display: none;
@@ -210,7 +205,6 @@ export default {
     &_picture {
       flex: 1 1 auto;
       height: 100%;
-      //  url('../../assets/images/login/login.jpg')
       background: center center no-repeat;
     }
     &_con {

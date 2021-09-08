@@ -1,7 +1,5 @@
 <template>
-  <div>
-    <el-cascader style="width: 240px" v-model="value" :props="props" clearable @change="change"></el-cascader>
-  </div>
+  <el-cascader v-bind="$attrs" style="width: 240px" v-model="value" :props="props" clearable @change="change"></el-cascader>
 </template>
 
 <script>
@@ -13,7 +11,8 @@ import { queryProvinceList, queryCityList } from '@/api/area'
 
 export default {
   props: {
-    areaList: { // 用于回显传入数据
+    areaList: {
+      // 用于回显传入数据
       type: Array,
       default: () => []
     }
@@ -22,10 +21,11 @@ export default {
     return {
       props: {
         lazy: true,
-        lazyLoad: async function (node, resolve) {
+        lazyLoad: async function(node, resolve) {
           const { level } = node
           let code = node?.data?.value
-          if (code === '820000' || code === '810000') { // 由于澳门和香港只有两级联动，故做特殊处理
+          if (code === '820000' || code === '810000') {
+            // 由于澳门和香港只有两级联动，故做特殊处理
             areaLevel = 1
           }
           let nodes = []
@@ -34,7 +34,7 @@ export default {
           if (level === 0) {
             res = await queryProvinceList()
           } else {
-            res = await queryCityList({code: node.value})
+            res = await queryCityList({ code: node.value })
           }
           res.forEach(item => {
             nodes.push({

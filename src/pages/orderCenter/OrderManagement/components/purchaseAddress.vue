@@ -4,15 +4,17 @@
     <el-table :data="addressData" class="p-address-tab" v-loading="checkAddressTabLock">
       <el-table-column label="选择" header-align="center" align="center" width="80">
         <template slot-scope="scope">
-          <el-radio v-model="checkSelectedAddress" :label="scope.$index"></el-radio>
+          <el-radio v-model="scope.row.check"></el-radio>
         </template>
       </el-table-column>
-      <el-table-column prop="receiver" label="收货人" width="120"></el-table-column>
-      <el-table-column prop="consigneePhone" label="收货人电话" width="150"></el-table-column>
-      <el-table-column prop="address" label="详细地址"></el-table-column>
+      <el-table-column prop="receiveUser" label="收货人" width="120"></el-table-column>
+      <el-table-column prop="receiveUserPhone" label="收货人电话" width="150"></el-table-column>
+      <el-table-column label="详细地址">
+        <template slot-scope="scope">{{scope.row.address}}</template>
+      </el-table-column>
       <el-table-column label="操作" align="right" width="130">
         <template slot-scope="scope">
-          <el-button type="text" v-if="!scope.row.check" @click="handleAddressStatus">设为默认</el-button>
+          <el-button type="text" v-if="!scope.row.usageStatus" @click="handleAddressDefault(scope.row)">设为默认</el-button>
           <el-popconfirm class="el-button el-button--text" @confirm="handleDelAddress(scope.row)" placement="top-start" title="确定删除所选数据吗？">
             <el-button type="text" size="small" slot="reference">删除</el-button>
           </el-popconfirm>
@@ -27,16 +29,18 @@
 </template>
 
 <script>
-import { queryPage } from '@/api/wxArchive'
-import { addressData } from '../index'
+import { queryById, updateUsage, deleteAddress } from '@/api/orderCenter/orderManagement'
+import { getLocal } from '@/utils/storage'
 
 export default {
   data() {
     return {
-      checkSelectedAddress: 0,
       addressData: [],
       checkAddressTabLock: false
     }
+  },
+  mounted() {
+    this.getReceiverAddress()
   },
   methods: {
     handleAddress(row) {
@@ -44,21 +48,23 @@ export default {
     },
     handleDelAddress: async function(row) {
       try {
-        await this.getReceiverAddress()
+        await deleteAddress({ id: row.id })
         this.getReceiverAddress()
       } catch (error) {}
     },
-    handleAddressStatus() {
-      this.getReceiverAddress().then(() => {
-        this.checkSelectedAddress = this.checkSelectedAddress + 1
-      })
+    handleAddressDefault: async function(row) {
+      try {
+        await updateUsage({ id: row.id })
+        this.getReceiverAddress()
+      } catch (e) {
+      } finally {
+      }
     },
     getReceiverAddress: async function() {
       try {
         this.checkAddressTabLock = true
-        // 伪代码
-        await queryPage({})
-        this.addressData = addressData
+        const res = await queryById({ agentId: JSON.parse(getLocal('userBaseInfo')).agentId })
+        this.addressData = res.map(item => item.check = false)
       } catch (error) {
       } finally {
         this.checkAddressTabLock = false

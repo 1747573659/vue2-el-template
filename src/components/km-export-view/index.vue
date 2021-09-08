@@ -39,7 +39,7 @@ export default {
       default: () => {}
     }
   },
-  data () {
+  data() {
     return {
       exportData: [],
       exportVisible: false,
@@ -50,7 +50,7 @@ export default {
     }
   },
   methods: {
-    handleExportDel (row) {
+    handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
@@ -64,6 +64,7 @@ export default {
                 if (!--this.exportData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
                 this.handleExportRecord()
               })
+              .catch(() => {})
               .finally(() => {
                 instance.confirmButtonLoading = false
                 done()
@@ -72,17 +73,18 @@ export default {
         }
       }).catch(() => {})
     },
-    handleExportRecord: async function () {
+    handleExportRecord: async function() {
       try {
         this.checkExportTabLock = true
         const res = await this.requestExportLog({ currentPage: this.currentPage, pageSize: this.pageSize })
         this.exportData = res.results
         this.totalPage = res.totalCount
+      } catch (e) {
       } finally {
         this.checkExportTabLock = false
       }
     },
-    handleExportLists () {
+    handleExportLists() {
       this.handleExportRecord()
       this.exportVisible = true
     }

@@ -19,26 +19,32 @@
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
-                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...orderStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in orderStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="付款状态">
-              <el-select v-model="form.paymentStatus" clearable>
-                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...paymentStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
+              <el-select v-model="form.payStatus" clearable>
+                <el-option v-for="item in paymentStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="发货状态">
-              <el-select v-model="form.deliveryStatus" clearable>
-                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...deliveryStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
+              <el-select v-model="form.goodsStatus" clearable>
+                <el-option v-for="item in deliveryStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
-              <el-select v-model="form.orderer" clearable>
-                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...deliveryStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+              <km-select-page
+                v-model="form.createUser"
+                :data.sync="ordererData"
+                dict-label="contactor"
+                dict-value="id"
+                :request="handleOrdererPage"
+                :is-max-page.sync="isOrdererMaxPage"
+                placeholder="下单人"
+              ></km-select-page>
             </el-form-item>
             <el-form-item label="订单编码">
-              <el-input v-model.trim="form.orderCode" clearable></el-input>
+              <el-input v-model.trim="form.billNo" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
@@ -58,29 +64,29 @@
     </div>
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
-        <el-table-column prop="createTime" label="订单时间" width="110"></el-table-column>
-        <el-table-column prop="code" label="单据编码" width="150"></el-table-column>
+        <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
+        <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="80">
-          <template slot-scope="scope">{{ orderStatus[scope.row.status] ? orderStatus[scope.row.status].label : '--' }}</template>
+          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
-        <el-table-column prop="amount" label="订单金额" header-align="center" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="orderAmount" label="订单金额" align="right" min-width="100"></el-table-column>
         <el-table-column label="付款状态">
-          <template slot-scope="scope">{{ paymentStatus[scope.row.paymentStatus] ? paymentStatus[scope.row.paymentStatus].label : '--' }}</template>
+          <template slot-scope="scope">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '--' }}</template>
         </el-table-column>
         <el-table-column label="发货状态">
-          <template slot-scope="scope">{{ deliveryStatus[scope.row.deliveryStatus] ? deliveryStatus[scope.row.deliveryStatus].label : '--' }}</template>
+          <template slot-scope="scope">{{ deliveryStatus.has(scope.row.goodsStatus) ? deliveryStatus.get(scope.row.goodsStatus).label : '--' }}</template>
         </el-table-column>
-        <el-table-column prop="assignee" label="受理人"></el-table-column>
-        <el-table-column prop="orderer" label="下单人"></el-table-column>
-        <el-table-column prop="principal" label="使用本金" header-align="center" align="right" min-width="100"></el-table-column>
-        <el-table-column prop="bonus" label="使用赠金" header-align="center" align="right" min-width="100"></el-table-column>
-        <el-table-column prop="guaranteedAmount" label="担保金额" header-align="center" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="handUserName" label="受理人"></el-table-column>
+        <el-table-column prop="createUser" label="下单人"></el-table-column>
+        <el-table-column prop="useAmount" label="使用本金" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="useAmountGift" label="使用赠金" align="right" min-width="100"></el-table-column>
+        <el-table-column prop="useGuarantee" label="担保金额" align="right" min-width="100"></el-table-column>
         <el-table-column label="担保人">
-          <template slot-scope="scope">{{ scope.row.guarantor || '--' }}</template>
+          <template slot-scope="scope">{{ scope.row.guaranteePeopleName || '--' }}</template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <template v-if="scope.row.status === 0">
+            <template v-if="scope.row.orderStatus === 0">
               <el-button v-permission="'HARDWARE_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleHardWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleHardWareDetail({ status: 'detail' }, scope.row)">详情</el-button>
@@ -95,9 +101,8 @@
 <script>
 import dayjs from 'dayjs'
 import { orderStatus, paymentStatus, deliveryStatus } from '../index'
-import { softwarePurchaseOrder } from '../data'
-import { xftArchiveExport, xftArchiveExportLog, xftArchiveExportDel } from '@/api/xftArchive'
-import { queryPage } from '@/api/wxArchive'
+import { queryBaseInfo, queryByPage, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { getLocal, setLocal } from '@/utils/storage'
 
 export default {
   name: 'hardwarePurchaseOrder',
@@ -108,13 +113,14 @@ export default {
       deliveryStatus,
       form: {
         createTime: '',
-        orderStatus: '',
-        paymentStatus: '',
-        deliveryStatus: '',
-        orderer: '',
-        orderCode: ''
+        orderStatus: -1,
+        payStatus: -1,
+        goodsStatus: -1,
+        createUser: '',
+        billNo: ''
       },
-      direAuditStatusOptions: [],
+      ordererData: [],
+      isOrdererMaxPage: false,
       tableData: [],
       checkTabLock: false,
       currentPage: 1,
@@ -122,23 +128,27 @@ export default {
       pageSize: 10,
       exportLoad: false,
       pickerOptions: {
-        disabledDate (time) {
-          return time.getTime() > Date.now()
+        disabledDate(time) {
+          return time.getTime() > dayjs().endOf('day')
         }
       }
     }
   },
   mounted() {
-    this.form.createTime = [dayjs().subtract(7, 'days').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
+    const StartTime = dayjs().subtract(7, 'days')
+    this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
+    this.handleOrdererPage()
+    if (!getLocal('userBaseInfo')) this.getBaseInfo()
   },
   methods: {
-    handleHardWareDetail(status) {
-      this.$router.push({ name: 'hardwarePurchaseDetails', query: status })
+    handleHardWareDetail(status, row = {}) {
+      this.$router.push({ name: 'hardwarePurchaseDetails', query: { ...status, orderStatus: row.orderStatus } })
     },
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
+        orderType: 0,
         startTime: createTime?.[0] ?? '',
         endTime: createTime?.[1] ?? '',
         page: this.currentPage,
@@ -146,21 +156,27 @@ export default {
       })
     },
     handleExport: async function() {
-      this.exportLoad = true
       try {
+        this.exportLoad = true
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        await exportOrder(this.handleQueryParams())
       } catch (error) {
       } finally {
         this.exportLoad = false
       }
     },
     handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const data = { exportType: 1, page: currentPage, rows: pageSize }
-      return await xftArchiveExportLog(data)
+      return await exportRecordList(Object.assign(this.handleQueryParams(), { page: currentPage, rows: pageSize }))
     },
     handleExportDel: async function(row) {
-      return await xftArchiveExportDel({ id: row.id })
+      return await deleteExport({ id: row.id })
+    },
+    handleOrdererPage: async function({ query = '', page = 1, row = 10 } = {}) {
+      try {
+        const res = await queryOrderMan({ params: { agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
+        this.ordererData = this.ordererData.concat(res.results || [])
+        this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
     },
     handleSearch() {
       this.currentPage = 1
@@ -169,14 +185,19 @@ export default {
     getQueryPage: async function() {
       try {
         this.checkTabLock = true
-        const res = await queryPage(this.handleQueryParams())
-        // this.tableData = res?.results ?? []
-        this.tableData = softwarePurchaseOrder
+        const res = await queryByPage(this.handleQueryParams())
+        this.tableData = res?.results ?? []
         this.totalPage = res?.totalCount ?? 0
       } catch (error) {
       } finally {
         this.checkTabLock = false
       }
+    },
+    getBaseInfo: async function() {
+      try {
+        const res = await queryBaseInfo()
+        setLocal('userBaseInfo', JSON.stringify(res))
+      } catch (error) {}
     }
   }
 }
