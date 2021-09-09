@@ -27,16 +27,22 @@
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
-              <el-select v-model="form.createUser" clearable>
-                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...deliveryStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
+              <km-select-page
+                v-model="form.createUser"
+                :data.sync="ordererData"
+                dict-label="contactor"
+                dict-value="id"
+                :request="handleOrderPage"
+                :is-max-page.sync="isOrdererMaxPage"
+                placeholder="下单人"
+              ></km-select-page>
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
-              <el-button size="small" v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
+              <el-button size="small" v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
@@ -55,11 +61,11 @@
         <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
         <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="80">
-          <template slot-scope="scope">{{ orderStatus[scope.row.orderStatus] ? orderStatus[scope.row.orderStatus].label : '--' }}</template>
+          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
         <el-table-column prop="orderAmount" label="订单金额" align="right" min-width="100"></el-table-column>
         <el-table-column label="付款状态">
-          <template slot-scope="scope">{{ paymentStatus[scope.row.payStatus] ? paymentStatus[scope.row.payStatus].label : '--' }}</template>
+          <template slot-scope="scope">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '--' }}</template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUser" label="下单人"></el-table-column>
@@ -86,10 +92,12 @@
 <script>
 import dayjs from 'dayjs'
 import { orderStatus, paymentStatus, deliveryStatus } from '../index'
-import { queryByPage, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { queryByPage, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { getLocal } from '@/utils/storage'
+import { mapActions } from 'vuex'
 
 export default {
-  name:'softwarePurchaseOrder',
+  name: 'softwarePurchaseOrder',
   data() {
     return {
       orderStatus,
@@ -103,12 +111,14 @@ export default {
         createUser: '',
         billNo: ''
       },
+      ordererData: [],
+      isOrdererMaxPage: false,
       tableData: [],
       checkTabLock: false,
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
-      exportLoad: false,
+      checkExportLoad: false,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -116,14 +126,20 @@ export default {
       }
     }
   },
+  activated() {
+    this.getQueryPage()
+  },
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
   },
   methods: {
-    handleSoftWareDetail(status) {
-      this.$router.push({ name: 'softwarePurchaseDetails', query: status })
+    ...mapActions(['delCachedView']),
+    handleSoftWareDetail(status, row = {}) {
+      this.delCachedView({ name: 'softwarePurchaseDetails' }).then(() => {
+        this.$router.push({ name: 'softwarePurchaseDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })
+      })
     },
     handleQueryParams() {
       const { createTime, ...params } = this.form
@@ -137,19 +153,27 @@ export default {
     },
     handleExport: async function() {
       try {
-        this.exportLoad = true
+        this.checkExportLoad = true
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
         await exportOrder(this.handleQueryParams())
       } catch (error) {
       } finally {
-        this.exportLoad = false
+        this.checkExportLoad = false
       }
     },
     handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      return await exportRecordList(Object.assign(this.handleQueryParams(), { page: currentPage, rows: pageSize }))
+      const { page, rows, ...params } = this.handleQueryParams()
+      return await exportRecordList(Object.assign(params, { page: currentPage, rows: pageSize }))
     },
     handleExportDel: async function(row) {
       return await deleteExport({ id: row.id })
+    },
+    handleOrderPage: async function({ query = '', page = 1, row = 10 } = {}) {
+      try {
+        const res = await queryOrderMan({ params: { agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
+        this.ordererData = this.ordererData.concat(res.results || [])
+        this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
     },
     handleSearch() {
       this.currentPage = 1

@@ -38,7 +38,7 @@
                 :data.sync="ordererData"
                 dict-label="contactor"
                 dict-value="id"
-                :request="handleOrdererPage"
+                :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
                 placeholder="下单人"
               ></km-select-page>
@@ -48,7 +48,7 @@
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
-              <el-button size="small" v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
+              <el-button size="small" v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
@@ -103,6 +103,7 @@ import dayjs from 'dayjs'
 import { orderStatus, paymentStatus, deliveryStatus } from '../index'
 import { queryBaseInfo, queryByPage, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
 import { getLocal, setLocal } from '@/utils/storage'
+import { mapActions } from 'vuex'
 
 export default {
   name: 'hardwarePurchaseOrder',
@@ -126,7 +127,7 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
-      exportLoad: false,
+      checkExportLoad: false,
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -134,16 +135,22 @@ export default {
       }
     }
   },
+  activated() {
+    this.getQueryPage()
+  },
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
-    this.handleOrdererPage()
+    this.handleOrderPage()
     if (!getLocal('userBaseInfo')) this.getBaseInfo()
   },
   methods: {
+    ...mapActions(['delCachedView']),
     handleHardWareDetail(status, row = {}) {
-      this.$router.push({ name: 'hardwarePurchaseDetails', query: { ...status, orderStatus: row.orderStatus } })
+      this.delCachedView({ name: 'hardwarePurchaseDetails' }).then(() => {
+        this.$router.push({ name: 'hardwarePurchaseDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })
+      })
     },
     handleQueryParams() {
       const { createTime, ...params } = this.form
@@ -157,21 +164,22 @@ export default {
     },
     handleExport: async function() {
       try {
-        this.exportLoad = true
+        this.checkExportLoad = true
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
         await exportOrder(this.handleQueryParams())
       } catch (error) {
       } finally {
-        this.exportLoad = false
+        this.checkExportLoad = false
       }
     },
     handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      return await exportRecordList(Object.assign(this.handleQueryParams(), { page: currentPage, rows: pageSize }))
+      const { page, rows, ...params } = this.handleQueryParams()
+      return await exportRecordList(Object.assign(params, { page: currentPage, rows: pageSize }))
     },
     handleExportDel: async function(row) {
       return await deleteExport({ id: row.id })
     },
-    handleOrdererPage: async function({ query = '', page = 1, row = 10 } = {}) {
+    handleOrderPage: async function({ query = '', page = 1, row = 10 } = {}) {
       try {
         const res = await queryOrderMan({ params: { agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
         this.ordererData = this.ordererData.concat(res.results || [])
@@ -194,6 +202,7 @@ export default {
       }
     },
     getBaseInfo: async function() {
+      // 调用方式待修改
       try {
         const res = await queryBaseInfo()
         setLocal('userBaseInfo', JSON.stringify(res))

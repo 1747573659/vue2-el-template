@@ -4,13 +4,13 @@
     <el-table :data="addressData" class="p-address-tab" v-loading="checkAddressTabLock">
       <el-table-column label="选择" header-align="center" align="center" width="80">
         <template slot-scope="scope">
-          <el-radio v-model="scope.row.check"></el-radio>
+          <el-radio v-model="checkAddressVal" :label="scope.$index"></el-radio>
         </template>
       </el-table-column>
-      <el-table-column prop="receiveUser" label="收货人" width="120"></el-table-column>
-      <el-table-column prop="receiveUserPhone" label="收货人电话" width="150"></el-table-column>
+      <el-table-column prop="receivePeople" label="收货人" width="120"></el-table-column>
+      <el-table-column prop="receivePeoplePhone" label="收货人电话" width="150"></el-table-column>
       <el-table-column label="详细地址">
-        <template slot-scope="scope">{{scope.row.address}}</template>
+        <template slot-scope="scope">{{ scope.row.address }}</template>
       </el-table-column>
       <el-table-column label="操作" align="right" width="130">
         <template slot-scope="scope">
@@ -33,8 +33,10 @@ import { queryById, updateUsage, deleteAddress } from '@/api/orderCenter/orderMa
 import { getLocal } from '@/utils/storage'
 
 export default {
+  inject: ['status'],
   data() {
     return {
+      checkAddressVal: '',
       addressData: [],
       checkAddressTabLock: false
     }
@@ -43,7 +45,8 @@ export default {
     this.getReceiverAddress()
   },
   methods: {
-    handleAddress(row) {
+    handleAddress() {
+      this.$emit('addressData', this.addressData[this.checkAddressVal])
       this.$emit('update:visible', false)
     },
     handleDelAddress: async function(row) {
@@ -64,7 +67,11 @@ export default {
       try {
         this.checkAddressTabLock = true
         const res = await queryById({ agentId: JSON.parse(getLocal('userBaseInfo')).agentId })
-        this.addressData = res.map(item => item.check = false)
+        this.addressData = res || []
+        if (this.addressData.length && this.status === 'add') {
+          this.checkAddressVal = res.findIndex(item => item.usageStatus)
+          this.$emit('addressData', this.addressData[this.checkAddressVal])
+        }
       } catch (error) {
       } finally {
         this.checkAddressTabLock = false

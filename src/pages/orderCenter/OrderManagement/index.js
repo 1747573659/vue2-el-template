@@ -39,7 +39,7 @@ export const formObj = {
     orderAmount: 0, // 订单金额
     handUser: "", // 受理人
     // 收货信息
-    receivePeopleName: "", // 收货人
+    receivePeople: "", // 收货人
     receivePeoplePhone: "", // 收货人电话
     area: "", // 所在地区
     city: "",
@@ -49,19 +49,18 @@ export const formObj = {
     agentPaperMoney: "", // 账面余额
     agentGuaranteeMoney: "", // 未核销担保金
     payStatus: "", // 付款状态
+    payTime: "", // 付款时间
+    payMethod: "", // 付款方式
+    receiveMoneyPeople: "", // 收款人
     useGuarantee: "", // 使用担保金
-    agentId: JSON.parse(getLocal("userBaseInfo")).agentId, // 经销商id
+    agentId: "", // 经销商id
     agentName: "", // 经销商名称
-    useAmountGift: "", // 使用赠金
     // 快递信息
     deliverStatus: "", // 发货状态
     deliverTime: "", // 发货时间
     expressNo: "", // 快递单号
     receiveGoodStatus: "", // 收货状态
-    couponStatus: -1,
-    orderType: 0,
-    createUser: "1",
-    createOrderTime: ""
+    couponStatus: -1
   },
   orderItemList: []
 };

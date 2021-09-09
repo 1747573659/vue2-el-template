@@ -116,3 +116,30 @@ export function purchaseAdd(data) {
     data
   })
 }
+
+// 采购订单详情
+export function purchaseQueryById(data) {
+  return request({
+    url: '/channel/purchase/queryById',
+    method: 'POST',
+    data
+  })
+}
+
+// 提交
+export function purchaseSubmit(data) {
+  return request({
+    url: '/channel/purchase/submit',
+    method: 'POST',
+    data
+  })
+}
+
+// 修改
+export function purchaseUpdate(data) {
+  return request({
+    url: '/channel/purchase/update',
+    method: 'POST',
+    data
+  })
+}

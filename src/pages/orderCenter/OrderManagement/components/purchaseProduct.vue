@@ -1,10 +1,10 @@
 <template>
-  <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" title="选择产品" width="800px" class="p-address-con">
+  <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" @close="handleProductClose" title="选择产品" width="800px" class="p-address-con">
     <el-form size="small" :inline="true" label-width="80px">
-      <el-form-item label="产品信息" placeholder="请输入产品编码和名称">
-        <el-input v-model="productVal" maxlength="50" clearable></el-input>
+      <el-form-item label="产品信息">
+        <el-input v-model="productVal" maxlength="50" placeholder="请输入产品编码/名称" clearable></el-input>
       </el-form-item>
-      <el-button type="primary" size="small" @click="handleProductSearch">查询</el-button>
+      <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
     </el-form>
     <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
       <el-table-column type="selection" width="55"></el-table-column>
@@ -20,6 +20,7 @@
 </template>
 
 <script>
+import NP from 'number-precision'
 import { productInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
@@ -33,40 +34,36 @@ export default {
       totalPage: 0
     }
   },
-  mounted() {
-    this.getProductPage()
-  },
   methods: {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
           productCode: item.code,
           productName: item.name,
-          productCount: 0,
+          productCount: 1,
           productPrice: item.saleAmount,
-          productAmount: 0,
+          productAmount: NP.times(1, item.saleAmount),
+          sourcePrice: NP.times(1, item.saleAmount),
           remark: ''
         }
       })
       this.$emit('productData', Selections)
       this.$emit('update:visible', false)
     },
-    handleQueryParams() {
-      return {
-        params: { info: this.productVal.trim() },
-        page: this.currentPage,
-        rows: this.pageSize
-      }
-    },
-    handleProductSearch() {
-      this.getProductPage()
+    handleProductClose(){
+      this.currentPage = 1
+      this.productVal = ''
     },
     getProductPage: async function() {
       try {
         this.checkProductTabLock = true
-        const { results, totalRecord } = await productInfo(this.handleQueryParams())
-        this.basicProductData = results || []
-        this.totalPage = totalRecord || 0
+        const { results = [], totalRecord = 0 } = await productInfo({
+          info: this.productVal.trim(),
+          page: this.currentPage,
+          rows: this.pageSize
+        })
+        this.basicProductData = results
+        this.totalPage = totalRecord
       } catch (error) {
       } finally {
         this.checkProductTabLock = false

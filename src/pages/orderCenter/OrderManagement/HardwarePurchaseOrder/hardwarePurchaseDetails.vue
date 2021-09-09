@@ -20,14 +20,22 @@ export default {
     basicInformation,
     operationLog
   },
+  provide(){
+    return {
+      status: this.pageStatus,
+    }
+  },
   data() {
     return {
       pageStatus: this.$route.query.status,
       activeName: 'basicInformation'
     }
   },
-  activated() {
-    this.pageStatus = this.$route.query.status
+  mounted() {
+    this.$nextTick(() => {
+      const tags = { edit: '编辑', detail: '详情', add: '新增', copy: '编辑' }
+      document.querySelector('.e-tag_active span').innerText = `硬件采购订单/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
+    })
   }
 }
 </script>
