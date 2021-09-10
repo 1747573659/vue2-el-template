@@ -143,3 +143,30 @@ export function purchaseUpdate(data) {
     data
   })
 }
+
+// 修改
+export function operateLog(data) {
+  return request({
+    url: '/channel/purchase/operateLog',
+    method: 'POST',
+    data
+  })
+}
+
+// 删除
+export function deleteById(data) {
+  return request({
+    url: '/channel/purchase/deleteById',
+    method: 'POST',
+    data: qs.stringify(data)
+  })
+}
+
+// 确认收货
+export function confirmGoods(data) {
+  return request({
+    url: '/channel/purchase/confirmGoods',
+    method: 'POST',
+    data: qs.stringify(data)
+  })
+}

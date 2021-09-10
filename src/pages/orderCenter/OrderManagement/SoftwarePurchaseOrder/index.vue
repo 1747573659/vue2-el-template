@@ -77,7 +77,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <template v-if="scope.row.status === 0">
+            <template v-if="scope.row.orderStatus === 0">
               <el-button v-permission="'SOFT_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleSoftWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleSoftWareDetail({ status: 'detail' }, scope.row)">详情</el-button>

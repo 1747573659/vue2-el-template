@@ -5,7 +5,7 @@
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes(pageStatus)"></el-tab-pane>
     </el-tabs>
     <keep-alive>
-      <component :is="activeName" :status="pageStatus"></component>
+      <component :is="activeName"></component>
     </keep-alive>
   </section>
 </template>
@@ -20,21 +20,15 @@ export default {
     basicInformation,
     operationLog
   },
-  provide(){
-    return {
-      status: this.pageStatus,
-    }
-  },
   data() {
     return {
-      pageStatus: this.$route.query.status,
       activeName: 'basicInformation'
     }
   },
   mounted() {
     this.$nextTick(() => {
-      const tags = { edit: '编辑', detail: '详情', add: '新增', copy: '编辑' }
-      document.querySelector('.e-tag_active span').innerText = `硬件采购订单/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
+      const tags = { edit: '编辑', detail: '详情', add: '新增' }
+      document.querySelector('.e-tag_active span').innerText = `硬件采购订单/${this.$route.query.status ? tags[this.$route.query.status] : '新增'}`
     })
   }
 }

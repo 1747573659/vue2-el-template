@@ -33,7 +33,6 @@ import { queryById, updateUsage, deleteAddress } from '@/api/orderCenter/orderMa
 import { getLocal } from '@/utils/storage'
 
 export default {
-  inject: ['status'],
   data() {
     return {
       checkAddressVal: '',
@@ -68,8 +67,8 @@ export default {
         this.checkAddressTabLock = true
         const res = await queryById({ agentId: JSON.parse(getLocal('userBaseInfo')).agentId })
         this.addressData = res || []
-        if (this.addressData.length && this.status === 'add') {
-          this.checkAddressVal = res.findIndex(item => item.usageStatus)
+        this.checkAddressVal = res.findIndex(item => item.usageStatus)
+        if (this.addressData.length && this.$route.query.status === 'add') {
           this.$emit('addressData', this.addressData[this.checkAddressVal])
         }
       } catch (error) {

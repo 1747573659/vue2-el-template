@@ -1,28 +1,28 @@
 <template>
-  <section class="p-hardware-con">
+  <section class="p-hardware-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div>
           <span class="p-card-title">订单信息</span>
-          <span class="p-card-back" v-if="status !== 'add'">（订单被退回，原因：详细原因内容）</span>
+          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.purchaseOrderDTO.remark">（订单被退回，原因：详细原因内容）</span>
         </div>
         <div class="p-card-state">
           <span>订单状态：</span>
-          <span class="p-card-state_text">未保存</span>
+          <span class="p-card-state_text">{{ currentOrderStatus }}</span>
         </div>
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="单据编码">
-          <el-input placeholder="保存后自动生成"></el-input>
+          <el-input :value="form.purchaseOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单日期">
-          <el-input :value="form.orderVo.orderdate"></el-input>
+          <el-input :value="form.purchaseOrderDTO.createOrderTime"></el-input>
         </el-form-item>
         <el-form-item label="订单金额">
-          <el-input v-model="form.orderVo.orderAmount"></el-input>
+          <el-input :value="form.purchaseOrderDTO.orderAmount"></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input v-model="form.orderVo.assignee"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.handUser}${form.purchaseOrderDTO.phone ? '（' + form.purchaseOrderDTO.phone + '）' : ''}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -32,72 +32,82 @@
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="账面余额">
-          <el-input v-model="form.accountVo.bookBalance"></el-input>
+          <el-input
+            :value="`${form.purchaseOrderDTO.agentPaperMoney}${form.purchaseOrderDTO.agentPaperGiftMoney ? '（另有赠金' + form.purchaseOrderDTO.agentPaperGiftMoney + '）' : ''}`"
+          ></el-input>
         </el-form-item>
         <el-form-item label="未核销担保金">
-          <el-input v-model="form.accountVo.unwrittenGuaranteeFunds"></el-input>
+          <el-input :value="form.purchaseOrderDTO.agentGuaranteeMoney"></el-input>
         </el-form-item>
         <el-form-item label="付款状态">
-          <el-input v-model="form.accountVo.paymentStatus"></el-input>
+          <el-input :value="form.purchaseOrderDTO.payStatus"></el-input>
         </el-form-item>
         <el-form-item label="付款时间">
-          <el-input v-model="form.accountVo.paymentTime"></el-input>
+          <el-input :value="form.purchaseOrderDTO.payTime"></el-input>
         </el-form-item>
         <el-form-item label="付款方式">
-          <el-input v-model="form.accountVo.paymentMethod"></el-input>
+          <el-input :value="form.purchaseOrderDTO.payMethod"></el-input>
         </el-form-item>
         <el-form-item label="收款人">
-          <el-input v-model="form.accountVo.payee"></el-input>
+          <el-input :value="form.purchaseOrderDTO.receiveMoneyPeople"></el-input>
         </el-form-item>
         <el-form-item label="使用余额">
-          <el-input v-model="form.accountVo.useBalance"></el-input>
+          <el-input :value="form.purchaseOrderDTO.useBalance"></el-input>
         </el-form-item>
         <el-form-item label="使用担保金">
-          <el-input v-model="form.accountVo.securityDeposit"></el-input>
+          <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
         </el-form-item>
         <el-form-item label="经销商">
-          <el-input v-model="form.accountVo.dealer"></el-input>
+          <el-input :value="`${'[' + form.purchaseOrderDTO.agentId + ']'}${form.purchaseOrderDTO.agentName}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <el-button type="text" size="small" v-if="['add', 'edit'].includes(status)" @click="checkProductVisible = true">选择产品</el-button>
+        <el-button type="text" size="small" v-if="['add', 'edit'].includes($route.query.status)" @click="handleProductVisible">选择产品</el-button>
         <span v-else class="p-card-title">订单明细</span>
       </div>
-      <el-table :data="productData" show-summary :summary-method="getSummaries" class="p-hardware-product">
+      <el-table :data="form.orderItemList" show-summary :summary-method="getSummaries" class="p-hardware-product">
         <el-table-column label="序号">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
-        <el-table-column prop="code" label="产品编码"></el-table-column>
-        <el-table-column prop="name" label="产品名称"></el-table-column>
-        <el-table-column prop="purchaseNumber" label="采购数量" align="right">
+        <el-table-column prop="productCode" label="产品编码"></el-table-column>
+        <el-table-column prop="productName" label="产品名称"></el-table-column>
+        <el-table-column prop="productCount" label="采购数量" align="right">
           <template slot-scope="scope">
-            <span v-if="status === 'detail'">{{ scope.row.purchaseNumber }}</span>
-            <el-input v-else size="small" v-model.trim="scope.row.purchaseNumber" @blur="handleCountAmount(scope.row)" style="width: 100%;"></el-input>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.productCount }}</span>
+            <el-input v-else size="small" v-model.number.trim="scope.row.productCount" @blur="handleCountAmount(scope.row)" style="width: 100%;"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="price" label="单价" align="right">
+        <el-table-column prop="productPrice" label="单价" align="right">
           <template slot-scope="scope">
-            <span v-if="status === 'detail'">{{ scope.row.price }}</span>
-            <el-input v-else size="small" v-model.trim="scope.row.price" @blur="handleCountAmount(scope.row)" style="width: 100%;"></el-input>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.productPrice }}</span>
+            <el-input v-else size="small" v-model.number.trim="scope.row.productPrice" @blur="handleCountAmount(scope.row)" style="width: 100%;"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="amount" label="金额" align="right">
+        <el-table-column prop="productAmount" label="金额" align="right">
           <template slot-scope="scope">
-            <span v-if="status === 'detail'">{{ scope.row.amount }}</span>
-            <el-input v-else size="small" v-model.trim="scope.row.amount" @blur="handleAmount(scope.row)" style="width: 100%;"></el-input>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.productAmount }}</span>
+            <el-input v-else size="small" v-model.number.trim="scope.row.productAmount" @blur="handleAmount(scope.row)" style="width: 100%;"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <span v-if="status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" placeholder="备注内容，可以叉清空" style="width: 100%;" class="p-hardware-product_remark"></el-input>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
+            <el-input
+              v-else
+              size="small"
+              v-model="scope.row.remark"
+              maxlength="100"
+              placeholder="备注内容，可以叉清空"
+              style="width: 100%;"
+              class="p-hardware-product_remark"
+            ></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="操作" v-if="status !== 'detail'">
+        <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="handleDelAddress(scope.row)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="form.orderItemList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -105,83 +115,176 @@
       </el-table>
     </el-card>
     <div class="p-hardware-action">
-      <el-button size="small" plain>{{ status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <el-button size="small" plain v-if="status === 'edit'">删除</el-button>
-      <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes(status)">保存</el-button>
-      <el-button size="small" type="primary" v-if="status === 'edit'">提交</el-button>
+      <el-button size="small" plain @click="handleCancel">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel">删除</el-button>
+      <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
+      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      <template v-if="$route.query.status === 'detail' && form.purchaseOrderDTO.payStatus === 2 && form.purchaseOrderDTO.goodsStatus === 20">
+        <el-button size="small" type="primary" @click="handleReceipt">确认收货</el-button>
+      </template>
     </div>
-    <purchase-address ref="address" :visible.sync="checkAddressVisible" />
-    <purchase-product :visible.sync="checkProductVisible" />
+    <purchase-product v-if="['add', 'edit'].includes($route.query.status)" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
   </section>
 </template>
 
 <script>
-import dayjs from 'dayjs'
 import NP from 'number-precision'
-import purchaseAddress from '../../components/purchaseAddress'
+import { orderStatus, formObj } from '../../index'
 import purchaseProduct from '../../components/purchaseProduct'
+import { deepClone } from '@/utils'
+import { getLocal } from '@/utils/storage'
+import { queryAgentMoneyStream, queryHandlerMan, purchaseAdd, purchaseQueryById, purchaseSubmit, purchaseUpdate, deleteById, confirmGoods } from '@/api/orderCenter/orderManagement'
 
 export default {
-  props: {
-    status: {
-      type: String,
-      default: 'add'
-    }
-  },
   components: {
-    purchaseAddress,
     purchaseProduct
   },
   data() {
     return {
+      checkBasicInformLoad: false,
       areaList: [],
-      form: {
-        orderVo: {
-          orderdate: dayjs().format('YYYY-MM-DD'),
-          orderAmount: 0,
-          assignee: ''
-        },
-        accountVo: {
-          bookBalance: '',
-          unwrittenGuaranteeFunds: '',
-          paymentStatus: '',
-          paymentTime: '',
-          paymentMethod: '',
-          payee: '',
-          useBalance: '',
-          securityDeposit: '',
-          dealer: ''
-        }
-      },
+      form: deepClone(formObj),
       rules: {
-        'deliveryVo.receiver': [{ required: true, message: '请输入收货人', trigger: 'blur' }],
-        'deliveryVo.consigneePhone': [
+        'purchaseOrderDTO.receivePeople': [{ required: true, message: '请输入收货人', trigger: 'blur' }],
+        'purchaseOrderDTO.receivePeoplePhone': [
           { required: true, message: '请输入收货人电话', trigger: 'blur' },
           { pattern: /^1\d{10}$/, message: '请输入正确的电话号码', trigger: 'change' }
         ],
-        'deliveryVo.area': [{ required: true, message: '请输入收货人所在地区', trigger: 'change' }],
-        'deliveryVo.address': [{ required: true, message: '请输入收货详细地址', trigger: 'blur' }]
+        'purchaseOrderDTO.area': [{ required: true, message: '请输入收货人所在地区', trigger: 'change' }],
+        'purchaseOrderDTO.address': [{ required: true, message: '请输入收货详细地址', trigger: 'blur' }]
       },
-      productData: [
-        { code: 'KMD02', name: '店务通手持终端KMD02', purchaseNumber: 2, price: 3600.01, amount: 7200.01, remark: '' },
-        { code: 'KMD02', name: '店务通手持终端KMD02', purchaseNumber: 3, price: 3600.02, amount: 10800.02, remark: '' }
-      ],
-      checkAddressVisible: false,
+      checkSaveBtnLoad: false,
+      checkVerifyBtnLoad: false,
       checkProductVisible: false
     }
   },
+  computed: {
+    currentOrderStatus() {
+      if (this.$route.query.status) {
+        if (this.$route.query.status === 'add') return '未保存'
+        else if (orderStatus.has(parseFloat(this.$route.query.orderStatus))) return orderStatus.get(parseFloat(this.$route.query.orderStatus)).label
+        else return ''
+      } else return ''
+    }
+  },
+  mounted() {
+    this.form.purchaseOrderDTO.agentId = JSON.parse(getLocal('userBaseInfo')).agentId
+    this.form.purchaseOrderDTO.agentName = JSON.parse(getLocal('userBaseInfo')).name
+    this.getHandlerMan()
+    if (this.$route.query.status === 'add') this.getAgentMoneyStream()
+    else this.handleDetail()
+  },
   methods: {
+    handleSave: async function() {
+      try {
+        this.form.purchaseOrderDTO.orderType = 1
+        this.checkSaveBtnLoad = true
+        const {
+          purchaseOrderDTO: { id, orderStatus }
+        } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
+        if (id) {
+          this.$router.replace({ name: 'softwarePurchaseDetails', query: { id, orderStatus, status: 'edit' } })
+          document.querySelector('.e-tag_active span').innerText = '硬件采购订单/编辑'
+          this.handleDetail()
+        }
+        this.$message({ type: 'success', message: '保存成功' })
+      } catch (error) {
+      } finally {
+        this.checkSaveBtnLoad = false
+      }
+    },
+    handleCancel() {
+      this.$store.dispatch('delTagView', this.$route).then(() => {
+        this.$router.push({ name: 'softwarePurchaseOrder' })
+      })
+    },
+    handleDel() {
+      this.$confirm('确定删除单据吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await deleteById({ id: parseFloat(this.$route.query.id) })
+          this.$message({ type: 'success', message: '删除成功' })
+          this.$store.dispatch('delTagView', this.$route).then(() => {
+            this.$router.push({ name: 'softwarePurchaseOrder' })
+          })
+        })
+        .catch(() => {})
+    },
+    handleVerify: async function() {
+      try {
+        this.form.purchaseOrderDTO.orderType = 1
+        this.checkVerifyBtnLoad = true
+        await purchaseSubmit(this.form)
+        this.handleCancel()
+        this.$message({ type: 'success', message: '提交成功' })
+      } catch (error) {
+      } finally {
+        this.checkVerifyBtnLoad = false
+      }
+    },
+    handleReceipt: async function() {
+      this.$confirm('确认已收到货了吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      })
+        .then(async () => {
+          await confirmGoods({ id: parseFloat(this.$route.query.id) })
+          this.handleDetail()
+        })
+        .catch(() => {})
+    },
+    handleDetail: async function() {
+      try {
+        this.checkBasicInformLoad = true
+        const res = await purchaseQueryById({ from: false, id: parseFloat(this.$route.query.id) })
+        const { orderItemList, purchaseOrderDTO } = res
+        this.form.id = purchaseOrderDTO.id
+        this.form.purchaseOrderDTO = purchaseOrderDTO
+        this.form.orderItemList = orderItemList
+        this.areaList = [res.purchaseOrderDTO.province, res.purchaseOrderDTO.city, res.purchaseOrderDTO.area]
+        this.areaKey = Symbol('areaKey')
+      } catch (error) {
+      } finally {
+        this.checkBasicInformLoad = false
+      }
+    },
+    handleProductList(data) {
+      this.form.orderItemList = this.form.orderItemList.concat(data)
+    },
+    handleProductVisible() {
+      this.checkProductVisible = true
+      this.$refs.product.basicProductData = []
+      this.$refs.product.getProductPage()
+    },
     handleCountAmount(row) {
-      return (row.amount = NP.times(row.purchaseNumber, row.price))
+      return (row.productAmount = NP.times(row.productCount, row.productPrice))
     },
     handleAmount(row) {
-      return (row.price = NP.divide(row.amount, row.purchaseNumber))
+      return (row.productPrice = NP.divide(row.productAmount, row.productCount))
+    },
+    getHandlerMan: async function() {
+      try {
+        const { userName = '', phone = '' } = await queryHandlerMan({ area: JSON.parse(getLocal('userBaseInfo')).districtCode })
+        this.form.purchaseOrderDTO.handUser = userName
+      } catch (error) {}
+    },
+    getAgentMoneyStream: async function() {
+      try {
+        const { paperMoney, paperMoneyGift, noQualityGuaranteeMoney } = await queryAgentMoneyStream({ agentId: JSON.parse(getLocal('userBaseInfo')).agentId })
+        this.form.purchaseOrderDTO.agentPaperMoney = paperMoney
+        this.form.purchaseOrderDTO.agentPaperGiftMoney = paperMoneyGift
+        this.form.purchaseOrderDTO.agentGuaranteeMoney = noQualityGuaranteeMoney
+      } catch (error) {}
     },
     getSummaries(param) {
       const { columns, data } = param
       const sums = []
       columns.forEach((column, index) => {
-        if (['purchaseNumber', 'amount'].includes(column.property)) {
+        if (['productCount', 'productAmount'].includes(column.property)) {
           const values = data.map(item => parseFloat(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
@@ -192,20 +295,11 @@ export default {
                 return prev
               }
             }, 0)
-            this.form.orderVo.orderAmount = sums[5]
+            this.form.purchaseOrderDTO.orderAmount = sums[5]
           }
         }
       })
       return sums
-    },
-    handleCommonAddress: async function() {
-      this.checkAddressVisible = true
-      this.$refs.address.getReceiverAddress()
-    },
-    handleArea(value) {
-      this.form.deliveryInformation.province = value[0]
-      this.form.deliveryInformation.city = value[1]
-      this.form.deliveryInformation.area = value[2]
     }
   }
 }

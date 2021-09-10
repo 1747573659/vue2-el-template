@@ -2,10 +2,10 @@
   <section v-permission.page="'SOFT_PURCHASE_ORDER_PLUS,SOFT_PURCHASE_ORDER_EDIT'">
     <el-tabs v-model="activeName" class="p-purchase-tab">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
-      <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes(pageStatus)"></el-tab-pane>
+      <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
     <keep-alive>
-      <component :is="activeName" :status="pageStatus"></component>
+      <component :is="activeName"></component>
     </keep-alive>
   </section>
 </template>
@@ -22,12 +22,14 @@ export default {
   },
   data() {
     return {
-      pageStatus: this.$route.query.status,
       activeName: 'basicInformation'
     }
   },
-  activated() {
-    this.pageStatus = this.$route.query.status
+  mounted() {
+    this.$nextTick(() => {
+      const tags = { edit: '编辑', detail: '详情', add: '新增' }
+      document.querySelector('.e-tag_active span').innerText = `软件采购订单/${this.$route.query.status ? tags[this.$route.query.status] : '新增'}`
+    })
   }
 }
 </script>

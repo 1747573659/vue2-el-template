@@ -50,7 +50,7 @@ export default {
       this.$emit('productData', Selections)
       this.$emit('update:visible', false)
     },
-    handleProductClose(){
+    handleProductClose() {
       this.currentPage = 1
       this.productVal = ''
     },
