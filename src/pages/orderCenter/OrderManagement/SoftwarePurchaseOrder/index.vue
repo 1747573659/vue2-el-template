@@ -107,7 +107,6 @@ export default {
         createTime: '',
         orderStatus: '',
         payStatus: '',
-        goodsStatus: '',
         createUser: '',
         billNo: ''
       },
