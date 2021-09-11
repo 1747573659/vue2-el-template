@@ -161,9 +161,8 @@ export default {
   computed: {
     currentOrderStatus() {
       if (this.$route.query.status) {
-        if (this.$route.query.status === 'add') return '未保存'
-        else if (orderStatus.has(parseFloat(this.$route.query.orderStatus))) return orderStatus.get(parseFloat(this.$route.query.orderStatus)).label
-        else return ''
+        if (orderStatus.has(parseFloat(this.$route.query.orderStatus))) return orderStatus.get(parseFloat(this.$route.query.orderStatus)).label
+        else return '未保存'
       } else return ''
     }
   },

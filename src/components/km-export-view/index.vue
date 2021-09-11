@@ -85,6 +85,8 @@ export default {
       }
     },
     handleExportLists() {
+      this.exportData = []
+      this.totalPage = 0
       this.handleExportRecord()
       this.exportVisible = true
     }

@@ -155,6 +155,7 @@ export default {
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
+        from: false,
         orderType: 0,
         startTime: createTime?.[0] ?? '',
         endTime: createTime?.[1] ?? '',
@@ -165,8 +166,8 @@ export default {
     handleExport: async function() {
       try {
         this.checkExportLoad = true
-        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
         await exportOrder(this.handleQueryParams())
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
       } catch (error) {
       } finally {
         this.checkExportLoad = false
