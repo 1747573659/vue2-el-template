@@ -18,12 +18,12 @@
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
-                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...orderStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in orderStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="付款状态">
               <el-select v-model="form.payStatus" clearable>
-                <el-option v-for="(item, index) in [{ label: '全部', value: '' }, ...paymentStatus]" :key="index" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in paymentStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
