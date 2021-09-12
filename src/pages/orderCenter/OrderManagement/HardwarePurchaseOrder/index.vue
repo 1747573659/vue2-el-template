@@ -67,7 +67,10 @@
         <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
         <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="80">
-          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
+          <template slot-scope="scope">
+            <span v-if="scope.row.orderStatus === 5 ">未提交</span>
+            <span v-else>{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="orderAmount" label="订单金额" align="right" min-width="100"></el-table-column>
         <el-table-column label="付款状态">
@@ -86,7 +89,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <template v-if="scope.row.orderStatus === 0">
+            <template v-if="[0,5].includes(scope.row.orderStatus)">
               <el-button v-permission="'HARDWARE_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleHardWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleHardWareDetail({ status: 'detail' }, scope.row)">详情</el-button>

@@ -230,7 +230,7 @@ export default {
       this.$refs.receiptForm.validate(async valid => {
         if (valid) {
           try {
-            this.form.purchaseOrderDTO.orderType = 1
+            this.form.purchaseOrderDTO.orderType = 0
             this.checkSaveBtnLoad = true
             const {
               purchaseOrderDTO: { id, orderStatus }
@@ -272,7 +272,7 @@ export default {
       this.$refs.receiptForm.validate(async valid => {
         if (valid) {
           try {
-            this.form.purchaseOrderDTO.orderType = 1
+            this.form.purchaseOrderDTO.orderType = 0
             this.checkVerifyBtnLoad = true
             await purchaseSubmit(this.form)
             this.handleCancel()
