@@ -42,7 +42,7 @@ export function deleteExport(data) {
   return request({
     url: '/channel/purchase/deleteExport',
     method: 'POST',
-    data
+    data: qs.stringify(data)
   })
 }
 

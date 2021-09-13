@@ -3,9 +3,11 @@
     <el-button size="small" @click="handleExportLists">导出记录</el-button>
     <el-dialog title="导出记录" v-bind="$attrs" v-on="$listeners" :visible.sync="exportVisible" class="p-export-con" custom-class="p-dialog-order">
       <el-table :data="exportData" v-loading="checkExportTabLock">
-        <slot>
+        <slot name="basicRow">
           <el-table-column prop="fileName" label="文件名称"></el-table-column>
           <el-table-column prop="createTime" label="导出时间" min-width="50"></el-table-column>
+        </slot>
+        <slot>
           <el-table-column label="进度" width="100">
             <template slot-scope="scope">{{ scope.row.result === 1 ? '生成中' : scope.row.result === 2 ? '已生成' : '失败' }}</template>
           </el-table-column>

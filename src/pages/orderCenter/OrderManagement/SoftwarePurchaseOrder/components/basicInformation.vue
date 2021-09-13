@@ -181,11 +181,11 @@ export default {
         const {
           purchaseOrderDTO: { id, orderStatus }
         } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
-        if (id) {
+        if (this.$route.query.status === 'add') {
           this.$router.replace({ name: 'softwarePurchaseDetails', query: { id, orderStatus, status: 'edit' } })
-          document.querySelector('.e-tag_active span').innerText = '硬件采购订单/编辑'
-          this.handleDetail()
+          document.querySelector('.e-tag_active span').innerText = '软件采购订单/编辑'
         }
+        this.handleDetail()
         this.$message({ type: 'success', message: '保存成功' })
       } catch (error) {
       } finally {
@@ -260,9 +260,21 @@ export default {
       this.$refs.product.getProductPage()
     },
     handleCountAmount(row) {
+      if(!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
+        this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
+        row.productCount = 1
+      }
+      if(!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
+        this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
+        row.productPrice = 0
+      }
       return (row.productAmount = NP.times(row.productCount, row.productPrice))
     },
     handleAmount(row) {
+      if(!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
+        this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
+        row.productAmount = 0
+      }
       return (row.productPrice = NP.divide(row.productAmount, row.productCount))
     },
     getHandlerMan: async function() {

@@ -146,7 +146,7 @@
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="发货状态">
-          <el-input :value="form.purchaseOrderDTO.deliverStatus"></el-input>
+          <el-input :value="['不需发货', '需要发货'][form.purchaseOrderDTO.deliverStatus]"></el-input>
         </el-form-item>
         <el-form-item label="发货时间">
           <el-input :value="form.purchaseOrderDTO.deliverTime"></el-input>
@@ -155,7 +155,7 @@
           <el-input :value="form.purchaseOrderDTO.expressNo"></el-input>
         </el-form-item>
         <el-form-item label="收货状态">
-          <el-input :value="form.purchaseOrderDTO.receiveGoodStatus"></el-input>
+          <el-input :value="['未收货', '已收货'][form.purchaseOrderDTO.receiveGoodStatus]"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -235,11 +235,11 @@ export default {
             const {
               purchaseOrderDTO: { id, orderStatus }
             } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
-            if (id) {
+            if (this.$route.query.status === 'add') {
               this.$router.replace({ name: 'hardwarePurchaseDetails', query: { id, orderStatus, status: 'edit' } })
               document.querySelector('.e-tag_active span').innerText = '硬件采购订单/编辑'
-              this.handleDetail()
             }
+            this.handleDetail()
             this.$message({ type: 'success', message: '保存成功' })
           } catch (error) {
           } finally {
@@ -312,15 +312,17 @@ export default {
       }
     },
     handleAddressList(data) {
-      const { receivePeople, receivePeoplePhone, province, city, area, address } = data
-      this.form.purchaseOrderDTO.receivePeople = receivePeople
-      this.form.purchaseOrderDTO.receivePeoplePhone = receivePeoplePhone
-      this.form.purchaseOrderDTO.province = province
-      this.form.purchaseOrderDTO.city = city
-      this.form.purchaseOrderDTO.area = area
-      this.form.purchaseOrderDTO.address = address
-      this.areaList = [province, city, area]
-      this.areaKey = Symbol('areaKey')
+      if(data){
+        const { receivePeople, receivePeoplePhone, province, city, area, address } = data
+        this.form.purchaseOrderDTO.receivePeople = receivePeople
+        this.form.purchaseOrderDTO.receivePeoplePhone = receivePeoplePhone
+        this.form.purchaseOrderDTO.province = province
+        this.form.purchaseOrderDTO.city = city
+        this.form.purchaseOrderDTO.area = area
+        this.form.purchaseOrderDTO.address = address
+        this.areaList = [province, city, area]
+        this.areaKey = Symbol('areaKey')
+      }
     },
     handleProductList(data) {
       this.form.orderItemList = this.form.orderItemList.concat(data)
@@ -331,9 +333,21 @@ export default {
       this.$refs.product.getProductPage()
     },
     handleCountAmount(row) {
+      if(!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
+        this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
+        row.productCount = 1
+      }
+      if(!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
+        this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
+        row.productPrice = 0
+      }
       return (row.productAmount = NP.times(row.productCount, row.productPrice))
     },
     handleAmount(row) {
+      if(!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
+        this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
+        row.productAmount = 0
+      }
       return (row.productPrice = NP.divide(row.productAmount, row.productCount))
     },
     getHandlerMan: async function() {

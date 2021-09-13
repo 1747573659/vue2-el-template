@@ -49,7 +49,22 @@
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
-              <km-export-view v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+              <km-export-view ref="export" v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel">
+                <el-table-column label="进度" width="100">
+                  <template slot-scope="scope">{{['生成中', '已生成'][scope.row.status - 1]}}</template>
+                </el-table-column>
+                <el-table-column label="操作" width="100">
+                  <template slot-scope="scope">
+                    <template v-if="scope.row.status === 2">
+                      <el-link :href="scope.row.fileUrl" :underline="false">
+                        <el-button size="small" type="text">下载</el-button>
+                      </el-link>
+                      <el-button size="small" @click="$refs.export.handleExportDel(scope.row)" type="text" style="margin-left: 8px;">删除</el-button>
+                    </template>
+                    <span v-else>--</span>
+                  </template>
+                </el-table-column>
+              </km-export-view>
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
@@ -68,7 +83,7 @@
         <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="80">
           <template slot-scope="scope">
-            <span v-if="scope.row.orderStatus === 5 ">未提交</span>
+            <span v-if="[5, 10].includes(scope.row.orderStatus)">未提交</span>
             <span v-else>{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
         </el-table-column>
@@ -89,7 +104,7 @@
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <template v-if="[0,5].includes(scope.row.orderStatus)">
+            <template v-if="[0, 5].includes(scope.row.orderStatus)">
               <el-button v-permission="'HARDWARE_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleHardWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleHardWareDetail({ status: 'detail' }, scope.row)">详情</el-button>
@@ -120,7 +135,7 @@ export default {
         orderStatus: -1,
         payStatus: -1,
         goodsStatus: -1,
-        createUser: '',
+        createUser: -1,
         billNo: ''
       },
       ordererData: [],
@@ -145,7 +160,6 @@ export default {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
-    this.handleOrderPage()
     if (!getLocal('userBaseInfo')) this.getBaseInfo()
   },
   methods: {
@@ -185,8 +199,11 @@ export default {
     },
     handleOrderPage: async function({ query = '', page = 1, row = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ params: { agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
+        const res = await queryOrderMan({ params: { id: query, agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
         this.ordererData = this.ordererData.concat(res.results || [])
+        if (this.ordererData.every(item => item.name !== '全部')) {
+          this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
+        }
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },

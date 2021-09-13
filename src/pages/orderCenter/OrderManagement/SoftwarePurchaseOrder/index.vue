@@ -43,7 +43,22 @@
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
-              <km-export-view v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+              <km-export-view ref="export" v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel">
+                <el-table-column label="进度" width="100">
+                  <template slot-scope="scope">{{['生成中', '已生成'][scope.row.status - 1]}}</template>
+                </el-table-column>
+                <el-table-column label="操作" width="100">
+                  <template slot-scope="scope">
+                    <template v-if="scope.row.status === 2">
+                      <el-link :href="scope.row.fileUrl" :underline="false">
+                        <el-button size="small" type="text">下载</el-button>
+                      </el-link>
+                      <el-button size="small" @click="$refs.export.handleExportDel(scope.row)" type="text" style="margin-left: 8px;">删除</el-button>
+                    </template>
+                    <span v-else>--</span>
+                  </template>
+                </el-table-column>
+              </km-export-view>
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
@@ -107,7 +122,7 @@ export default {
         createTime: '',
         orderStatus: '',
         payStatus: '',
-        createUser: '',
+        createUser: -1,
         billNo: ''
       },
       ordererData: [],
@@ -170,8 +185,11 @@ export default {
     },
     handleOrderPage: async function({ query = '', page = 1, row = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ params: { agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
+        const res = await queryOrderMan({ params: { id: query, agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
         this.ordererData = this.ordererData.concat(res.results || [])
+        if (this.ordererData.every(item => item.name !== '全部')) {
+          this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
+        }
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },

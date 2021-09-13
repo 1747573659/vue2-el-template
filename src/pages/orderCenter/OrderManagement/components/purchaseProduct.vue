@@ -60,7 +60,8 @@ export default {
         const { results = [], totalRecord = 0 } = await productInfo({
           info: this.productVal.trim(),
           page: this.currentPage,
-          rows: this.pageSize
+          rows: this.pageSize,
+          orderType: this.$route.query.name === 'hardwarePurchaseDetails' ? 0 : 1
         })
         this.basicProductData = results
         this.totalPage = totalRecord

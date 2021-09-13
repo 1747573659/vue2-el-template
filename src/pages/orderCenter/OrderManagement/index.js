@@ -4,9 +4,9 @@ import { getLocal } from "@/utils/storage";
 export const orderStatus = new Map([
   [-1, { value: -1, label: "全部" }],
   [0, { value: 0, label: "未提交" }],
-  [10, { value: 10, label: "待受理" }],
-  [20, { value: 20, label: "待审核" }],
-  [30, { value: 30, label: "已审核" }]
+  [20, { value: 20, label: "待受理" }],
+  [30, { value: 30, label: "待审核" }],
+  [40, { value: 40, label: "已审核" }]
 ]);
 
 // 付款状态
@@ -36,6 +36,7 @@ export const formObj = {
   from: false,
   purchaseOrderDTO: {
     billNo: "", // 单据编码
+    createOrderTime: '',
     orderAmount: 0, // 订单金额
     handUser: "", // 受理人
     // 收货信息
