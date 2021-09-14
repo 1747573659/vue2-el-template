@@ -51,7 +51,7 @@
               <el-button size="small" v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view ref="export" v-permission="'HARDWARE_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel">
                 <el-table-column label="进度" width="100">
-                  <template slot-scope="scope">{{['生成中', '已生成'][scope.row.status - 1]}}</template>
+                  <template slot-scope="scope">{{ ['生成中', '已生成'][scope.row.status - 1] }}</template>
                 </el-table-column>
                 <el-table-column label="操作" width="100">
                   <template slot-scope="scope">
@@ -117,18 +117,14 @@
 </template>
 
 <script>
-import dayjs from 'dayjs'
-import { orderStatus, paymentStatus, deliveryStatus } from '../index'
-import { queryBaseInfo, queryByPage, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
-import { getLocal, setLocal } from '@/utils/storage'
-import { mapActions } from 'vuex'
+import { deliveryStatus } from '../index'
+import { purchaseOrder } from '../mixins/purchaseOrder'
 
 export default {
   name: 'hardwarePurchaseOrder',
+  mixins: [purchaseOrder],
   data() {
     return {
-      orderStatus,
-      paymentStatus,
       deliveryStatus,
       form: {
         createTime: '',
@@ -137,97 +133,14 @@ export default {
         goodsStatus: -1,
         createUser: -1,
         billNo: ''
-      },
-      ordererData: [],
-      isOrdererMaxPage: false,
-      tableData: [],
-      checkTabLock: false,
-      currentPage: 1,
-      totalPage: 0,
-      pageSize: 10,
-      checkExportLoad: false,
-      pickerOptions: {
-        disabledDate(time) {
-          return time.getTime() > dayjs().endOf('day')
-        }
       }
     }
   },
-  activated() {
-    this.getQueryPage()
-  },
-  mounted() {
-    const StartTime = dayjs().subtract(7, 'days')
-    this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
-    this.getQueryPage()
-    if (!getLocal('userBaseInfo')) this.getBaseInfo()
-  },
   methods: {
-    ...mapActions(['delCachedView']),
     handleHardWareDetail(status, row = {}) {
       this.delCachedView({ name: 'hardwarePurchaseDetails' }).then(() => {
         this.$router.push({ name: 'hardwarePurchaseDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })
       })
-    },
-    handleQueryParams() {
-      const { createTime, ...params } = this.form
-      return Object.assign(params, {
-        from: false,
-        orderType: 0,
-        startTime: createTime?.[0] ?? '',
-        endTime: createTime?.[1] ?? '',
-        page: this.currentPage,
-        rows: this.pageSize
-      })
-    },
-    handleExport: async function() {
-      try {
-        this.checkExportLoad = true
-        await exportOrder(this.handleQueryParams())
-        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-      } catch (error) {
-      } finally {
-        this.checkExportLoad = false
-      }
-    },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const { page, rows, ...params } = this.handleQueryParams()
-      return await exportRecordList(Object.assign(params, { page: currentPage, rows: pageSize }))
-    },
-    handleExportDel: async function(row) {
-      return await deleteExport({ id: row.id })
-    },
-    handleOrderPage: async function({ query = '', page = 1, row = 10 } = {}) {
-      try {
-        const res = await queryOrderMan({ params: { id: query, agentId: JSON.parse(getLocal('userBaseInfo')).agentId }, page, rows: row })
-        this.ordererData = this.ordererData.concat(res.results || [])
-        if (this.ordererData.every(item => item.name !== '全部')) {
-          this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
-        }
-        this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
-      } catch (error) {}
-    },
-    handleSearch() {
-      this.currentPage = 1
-      this.getQueryPage()
-    },
-    getQueryPage: async function() {
-      try {
-        this.checkTabLock = true
-        const res = await queryByPage(this.handleQueryParams())
-        this.tableData = res?.results ?? []
-        this.totalPage = res?.totalCount ?? 0
-      } catch (error) {
-      } finally {
-        this.checkTabLock = false
-      }
-    },
-    getBaseInfo: async function() {
-      // 调用方式待修改
-      try {
-        const res = await queryBaseInfo()
-        setLocal('userBaseInfo', JSON.stringify(res))
-      } catch (error) {}
     }
   }
 }

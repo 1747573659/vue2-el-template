@@ -11,8 +11,9 @@
 </template>
 
 <script>
+import { orderStatus } from '../index'
+import operationLog from '../components/operationLog'
 import basicInformation from './components/basicInformation'
-import operationLog from './components/operationLog'
 
 export default {
   name: 'hardwarePurchaseDetails',
@@ -27,8 +28,8 @@ export default {
   },
   mounted() {
     this.$nextTick(() => {
-      const tags = { edit: '编辑', detail: '详情', add: '新增' }
-      document.querySelector('.e-tag_active span').innerText = `硬件采购订单/${this.$route.query.status ? tags[this.$route.query.status] : '新增'}`
+      const { orderStatus: orderStatusVal } = this.$route.query
+      document.querySelector('.e-tag_active span').innerText = `硬件采购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
   }
 }

@@ -61,7 +61,7 @@ export default {
           info: this.productVal.trim(),
           page: this.currentPage,
           rows: this.pageSize,
-          orderType: this.$route.query.name === 'hardwarePurchaseDetails' ? 0 : 1
+          orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
         })
         this.basicProductData = results
         this.totalPage = totalRecord

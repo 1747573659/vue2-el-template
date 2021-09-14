@@ -30,9 +30,14 @@
 
 <script>
 import { queryById, updateUsage, deleteAddress } from '@/api/orderCenter/orderManagement'
-import { getLocal } from '@/utils/storage'
 
 export default {
+  props: {
+    agentId: {
+      type: [String, Number],
+      default: ''
+    }
+  },
   data() {
     return {
       checkAddressVal: '',
@@ -65,10 +70,10 @@ export default {
     getReceiverAddress: async function() {
       try {
         this.checkAddressTabLock = true
-        const res = await queryById({ agentId: JSON.parse(getLocal('userBaseInfo')).agentId })
+        const res = await queryById({ agentId: this.agentId })
         this.addressData = res || []
         this.checkAddressVal = res.findIndex(item => item.usageStatus)
-        if (this.addressData.length && this.$route.query.status === 'add') {
+        if (this.addressData.length > 0 && this.$route.query.status === 'add') {
           this.$emit('addressData', this.addressData[this.checkAddressVal])
         }
       } catch (error) {

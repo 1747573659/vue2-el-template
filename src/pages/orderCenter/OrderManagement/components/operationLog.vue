@@ -30,7 +30,7 @@ export default {
   methods: {
     getOperateLog: async function() {
       try {
-        const data = { orderType: 0, purchaseId: this.$route.query.id }
+        const data = { orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1, purchaseId: this.$route.query.id }
         this.tableData = await operateLog(data)
       } catch (error) {}
     }

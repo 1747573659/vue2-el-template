@@ -4,7 +4,7 @@
       <div slot="header" class="p-card-head">
         <div>
           <span class="p-card-title">订单信息</span>
-          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.purchaseOrderDTO.remark">（订单被退回，原因：详细原因内容）</span>
+          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.purchaseOrderDTO.remark">（订单被退回，原因：{{ form.purchaseOrderDTO.remark }}）</span>
         </div>
         <div class="p-card-state">
           <span>订单状态：</span>
@@ -16,13 +16,13 @@
           <el-input :value="form.purchaseOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单日期">
-          <el-input :value="form.purchaseOrderDTO.createOrderTime"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.createOrderTime ? form.purchaseOrderDTO.createOrderTime : baseOrderTime}`"></el-input>
         </el-form-item>
         <el-form-item label="订单金额">
           <el-input :value="form.purchaseOrderDTO.orderAmount"></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input :value="`${form.purchaseOrderDTO.handUser}${form.purchaseOrderDTO.phone ? '（' + form.purchaseOrderDTO.phone + '）' : ''}`"></el-input>
+          <el-input :value="form.purchaseOrderDTO.handUserName"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -68,7 +68,7 @@
         <span v-else class="p-card-title">订单明细</span>
       </div>
       <el-table :data="form.orderItemList" show-summary :summary-method="getSummaries" class="p-hardware-product">
-        <el-table-column label="序号">
+        <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
         <el-table-column prop="productCode" label="产品编码"></el-table-column>
@@ -94,15 +94,9 @@
         <el-table-column label="备注">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input
-              v-else
-              size="small"
-              v-model="scope.row.remark"
-              maxlength="100"
-              placeholder="备注内容，可以叉清空"
-              style="width: 100%;"
-              class="p-hardware-product_remark"
-            ></el-input>
+            <template v-else>
+              <el-input size="small" v-model="scope.row.remark" maxlength="100" placeholder="备注内容，可以叉清空" class="p-hardware-product_remark"></el-input>
+            </template>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
@@ -115,8 +109,8 @@
       </el-table>
     </el-card>
     <div class="p-hardware-action">
-      <el-button size="small" plain @click="handleCancel">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel">删除</el-button>
+      <el-button size="small" plain @click="handleCancel('softwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('softwarePurchaseOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
       <template v-if="$route.query.status === 'detail' && form.purchaseOrderDTO.payStatus === 2 && form.purchaseOrderDTO.goodsStatus === 20">
@@ -128,191 +122,10 @@
 </template>
 
 <script>
-import NP from 'number-precision'
-import { orderStatus, formObj } from '../../index'
-import purchaseProduct from '../../components/purchaseProduct'
-import { deepClone } from '@/utils'
-import { getLocal } from '@/utils/storage'
-import { queryAgentMoneyStream, queryHandlerMan, purchaseAdd, purchaseQueryById, purchaseSubmit, purchaseUpdate, deleteById, confirmGoods } from '@/api/orderCenter/orderManagement'
+import { basicInfoMixin } from '../../mixins/basicInfoMixin'
 
 export default {
-  components: {
-    purchaseProduct
-  },
-  data() {
-    return {
-      checkBasicInformLoad: false,
-      areaList: [],
-      form: deepClone(formObj),
-      rules: {
-        'purchaseOrderDTO.receivePeople': [{ required: true, message: '请输入收货人', trigger: 'blur' }],
-        'purchaseOrderDTO.receivePeoplePhone': [
-          { required: true, message: '请输入收货人电话', trigger: 'blur' },
-          { pattern: /^1\d{10}$/, message: '请输入正确的电话号码', trigger: 'change' }
-        ],
-        'purchaseOrderDTO.area': [{ required: true, message: '请输入收货人所在地区', trigger: 'change' }],
-        'purchaseOrderDTO.address': [{ required: true, message: '请输入收货详细地址', trigger: 'blur' }]
-      },
-      checkSaveBtnLoad: false,
-      checkVerifyBtnLoad: false,
-      checkProductVisible: false
-    }
-  },
-  computed: {
-    currentOrderStatus() {
-      if (this.$route.query.status) {
-        if (orderStatus.has(parseFloat(this.$route.query.orderStatus))) return orderStatus.get(parseFloat(this.$route.query.orderStatus)).label
-        else return '未保存'
-      } else return ''
-    }
-  },
-  mounted() {
-    this.form.purchaseOrderDTO.agentId = JSON.parse(getLocal('userBaseInfo')).agentId
-    this.form.purchaseOrderDTO.agentName = JSON.parse(getLocal('userBaseInfo')).name
-    this.getHandlerMan()
-    if (this.$route.query.status === 'add') this.getAgentMoneyStream()
-    else this.handleDetail()
-  },
-  methods: {
-    handleSave: async function() {
-      try {
-        this.form.purchaseOrderDTO.orderType = 1
-        this.checkSaveBtnLoad = true
-        const {
-          purchaseOrderDTO: { id, orderStatus }
-        } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
-        if (this.$route.query.status === 'add') {
-          this.$router.replace({ name: 'softwarePurchaseDetails', query: { id, orderStatus, status: 'edit' } })
-          document.querySelector('.e-tag_active span').innerText = '软件采购订单/编辑'
-        }
-        this.handleDetail()
-        this.$message({ type: 'success', message: '保存成功' })
-      } catch (error) {
-      } finally {
-        this.checkSaveBtnLoad = false
-      }
-    },
-    handleCancel() {
-      this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ name: 'softwarePurchaseOrder' })
-      })
-    },
-    handleDel() {
-      this.$confirm('确定删除单据吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(async () => {
-          await deleteById({ id: parseFloat(this.$route.query.id) })
-          this.$message({ type: 'success', message: '删除成功' })
-          this.$store.dispatch('delTagView', this.$route).then(() => {
-            this.$router.push({ name: 'softwarePurchaseOrder' })
-          })
-        })
-        .catch(() => {})
-    },
-    handleVerify: async function() {
-      try {
-        this.form.purchaseOrderDTO.orderType = 1
-        this.checkVerifyBtnLoad = true
-        await purchaseSubmit(this.form)
-        this.handleCancel()
-        this.$message({ type: 'success', message: '提交成功' })
-      } catch (error) {
-      } finally {
-        this.checkVerifyBtnLoad = false
-      }
-    },
-    handleReceipt: async function() {
-      this.$confirm('确认已收到货了吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      })
-        .then(async () => {
-          await confirmGoods({ id: parseFloat(this.$route.query.id) })
-          this.handleDetail()
-        })
-        .catch(() => {})
-    },
-    handleDetail: async function() {
-      try {
-        this.checkBasicInformLoad = true
-        const res = await purchaseQueryById({ from: false, id: parseFloat(this.$route.query.id) })
-        const { orderItemList, purchaseOrderDTO } = res
-        this.form.id = purchaseOrderDTO.id
-        this.form.purchaseOrderDTO = purchaseOrderDTO
-        this.form.orderItemList = orderItemList
-        this.areaList = [res.purchaseOrderDTO.province, res.purchaseOrderDTO.city, res.purchaseOrderDTO.area]
-        this.areaKey = Symbol('areaKey')
-      } catch (error) {
-      } finally {
-        this.checkBasicInformLoad = false
-      }
-    },
-    handleProductList(data) {
-      this.form.orderItemList = this.form.orderItemList.concat(data)
-    },
-    handleProductVisible() {
-      this.checkProductVisible = true
-      this.$refs.product.basicProductData = []
-      this.$refs.product.getProductPage()
-    },
-    handleCountAmount(row) {
-      if(!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
-        this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
-        row.productCount = 1
-      }
-      if(!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
-        this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
-        row.productPrice = 0
-      }
-      return (row.productAmount = NP.times(row.productCount, row.productPrice))
-    },
-    handleAmount(row) {
-      if(!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
-        this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
-        row.productAmount = 0
-      }
-      return (row.productPrice = NP.divide(row.productAmount, row.productCount))
-    },
-    getHandlerMan: async function() {
-      try {
-        const { userName = '', phone = '' } = await queryHandlerMan({ area: JSON.parse(getLocal('userBaseInfo')).districtCode })
-        this.form.purchaseOrderDTO.handUser = userName
-      } catch (error) {}
-    },
-    getAgentMoneyStream: async function() {
-      try {
-        const { paperMoney, paperMoneyGift, noQualityGuaranteeMoney } = await queryAgentMoneyStream({ agentId: JSON.parse(getLocal('userBaseInfo')).agentId })
-        this.form.purchaseOrderDTO.agentPaperMoney = paperMoney
-        this.form.purchaseOrderDTO.agentPaperGiftMoney = paperMoneyGift
-        this.form.purchaseOrderDTO.agentGuaranteeMoney = noQualityGuaranteeMoney
-      } catch (error) {}
-    },
-    getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (['productCount', 'productAmount'].includes(column.property)) {
-          const values = data.map(item => parseFloat(item[column.property]))
-          if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return NP.plus(prev, curr)
-              } else {
-                return prev
-              }
-            }, 0)
-            this.form.purchaseOrderDTO.orderAmount = sums[5]
-          }
-        }
-      })
-      return sums
-    }
-  }
+  mixins:[basicInfoMixin],
 }
 </script>
 
@@ -377,6 +190,7 @@ export default {
   }
   &-product {
     &_remark {
+      width: 100%;
       /deep/ .el-input__inner {
         text-align: left !important;
       }
