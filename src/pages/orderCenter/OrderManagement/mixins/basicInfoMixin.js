@@ -48,23 +48,31 @@ export const basicInfoMixin = {
     } else this.handleDetail()
   },
   methods: {
-    handleSave: async function() {
-      try {
-        this.form.purchaseOrderDTO.orderType = this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
-        this.checkSaveBtnLoad = true
-        const {
-          purchaseOrderDTO: { id, orderStatus }
-        } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
-        if (this.$route.query.status === 'add') {
-          this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
-          document.querySelector('.e-tag_active span').innerText = '软件采购订单/编辑'
+    handleSave() {
+      this.$refs.receiptForm.validate(async valid => {
+        if (valid) {
+          if (this.form.orderItemList?.length === 0) {
+            this.$message({ type: 'warning', message: '请选择采购的产品' })
+            return
+          }
+          try {
+            this.form.purchaseOrderDTO.orderType = this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
+            this.checkSaveBtnLoad = true
+            const {
+              purchaseOrderDTO: { id, orderStatus }
+            } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
+            if (this.$route.query.status === 'add') {
+              this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
+              document.querySelector('.e-tag_active span').innerText = `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑`
+            }
+            this.handleDetail()
+            this.$message({ type: 'success', message: '保存成功' })
+          } catch (error) {
+          } finally {
+            this.checkSaveBtnLoad = false
+          }
         }
-        this.handleDetail()
-        this.$message({ type: 'success', message: '保存成功' })
-      } catch (error) {
-      } finally {
-        this.checkSaveBtnLoad = false
-      }
+      })
     },
     handleVerify: async function() {
       try {

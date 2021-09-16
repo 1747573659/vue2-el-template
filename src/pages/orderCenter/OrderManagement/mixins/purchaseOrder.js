@@ -66,7 +66,7 @@ export const purchaseOrder = {
     },
     handleOrderPage: async function({ query = '', page = 1, row = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ params: { id: query, agentId: this.cueerntAgentId }, page, rows: row })
+        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows: row })
         this.ordererData = this.ordererData.concat(res.results || [])
         if (this.ordererData.every(item => item.contactor !== '全部')) {
           this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
