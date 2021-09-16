@@ -81,9 +81,9 @@
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
         <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
-        <el-table-column label="订单状态" width="80">
+        <el-table-column label="订单状态" width="140">
           <template slot-scope="scope">
-            <span v-if="[5, 10].includes(scope.row.orderStatus)">未提交</span>
+            <span v-if="[10].includes(scope.row.orderStatus)">未提交</span>
             <span v-else>{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
         </el-table-column>

@@ -93,7 +93,7 @@ export default {
   },
   mounted() {
     // 临时伪代码
-    if(process.env.VUE_APP_FLAG === 'dev') this.routeMenus = this.routes
+    if(['dev', 'test'].includes(process.env.VUE_APP_FLAG)) this.routeMenus = this.routes
     else this.routeMenus = JSON.parse(getLocal('userInfo').loginName === '18888888888') ? this.routes : this.routes.filter(item => item.name !== 'orderCenter')
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
