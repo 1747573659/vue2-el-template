@@ -37,7 +37,7 @@
                 placeholder="下单人"
               ></km-select-page>
             </el-form-item>
-            <el-form-item label="订单编码">
+            <el-form-item label="单据编码">
               <el-input v-model.trim="form.billNo" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:80px">

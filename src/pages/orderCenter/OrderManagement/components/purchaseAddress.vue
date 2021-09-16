@@ -72,10 +72,9 @@ export default {
         this.checkAddressTabLock = true
         const res = await queryById({ agentId: this.agentId })
         this.addressData = res || []
-        this.checkAddressVal = res.findIndex(item => item.usageStatus)
-        if (this.addressData.length > 0 && this.$route.query.status === 'add') {
-          this.$emit('addressData', this.addressData[this.checkAddressVal])
-        }
+        const adressValIndex = res.findIndex(item => item.usageStatus)
+        this.checkAddressVal = adressValIndex !== -1 ? adressValIndex : 0
+        this.$emit('addressData', this.addressData[this.checkAddressVal])
       } catch (error) {
       } finally {
         this.checkAddressTabLock = false
