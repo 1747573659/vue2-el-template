@@ -52,7 +52,7 @@
           <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName"></el-input>
         </el-form-item>
         <el-form-item label="使用余额">
-          <el-input :value="`${form.purchaseOrderDTO.useAmount}${form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''}`"></el-input>
+          <el-input :value="form.purchaseOrderDTO.useAmount + form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''"></el-input>
         </el-form-item>
         <el-form-item label="使用担保金">
           <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
