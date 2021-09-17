@@ -153,9 +153,9 @@ export const basicInfoMixin = {
     },
     getHandlerMan: async function() {
       try {
-        const { userName = '', phone = '', userId = '' } = await queryHandlerMan({ area: this.handUserInfo.districtCode })
-        this.form.purchaseOrderDTO.handUser = userId
-        this.form.purchaseOrderDTO.handUserName = `${userName}${phone ? '（' + phone + '）' : ''}`
+        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.handUserInfo.districtCode })
+        this.form.purchaseOrderDTO.handUser = id
+        this.form.purchaseOrderDTO.handUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}
     },
     getAgentMoneyStream: async function() {

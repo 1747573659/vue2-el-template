@@ -62,7 +62,7 @@
           <el-input :value="form.purchaseOrderDTO.agentGuaranteeMoney"></el-input>
         </el-form-item>
         <el-form-item label="付款状态">
-          <el-input :value="form.purchaseOrderDTO.payStatus"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.payStatus ? paymentStatus.get(form.purchaseOrderDTO.payStatus).label : ''}`"></el-input>
         </el-form-item>
         <el-form-item label="付款时间">
           <el-input :value="form.purchaseOrderDTO.payTime"></el-input>
