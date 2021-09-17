@@ -96,7 +96,7 @@
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">
-              <el-button v-permission="'SOFT_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleHardWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+              <el-button v-permission="'SOFT_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleSoftWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleSoftWareDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
