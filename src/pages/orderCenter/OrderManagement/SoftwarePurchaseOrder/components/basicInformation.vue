@@ -58,7 +58,7 @@
           <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
         </el-form-item>
         <el-form-item label="经销商">
-          <el-input :value="`${'[' + form.purchaseOrderDTO.agentId + ']'}${form.purchaseOrderDTO.agentName}`"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -125,7 +125,7 @@
 import { basicInfoMixin } from '../../mixins/basicInfoMixin'
 
 export default {
-  mixins:[basicInfoMixin],
+  mixins: [basicInfoMixin]
 }
 </script>
 
@@ -172,9 +172,6 @@ export default {
   }
 }
 .p-hardware {
-  &-con {
-    border-bottom: 72px solid #f7f8fa;
-  }
   &-action {
     width: calc(100% - 200px - 42px);
     height: 56px;

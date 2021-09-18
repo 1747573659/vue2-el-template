@@ -95,7 +95,7 @@
           <template slot-scope="scope">{{ deliveryStatus.has(scope.row.goodsStatus) ? deliveryStatus.get(scope.row.goodsStatus).label : '--' }}</template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
-        <el-table-column prop="createUser" label="下单人"></el-table-column>
+        <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column prop="useAmount" label="使用本金" align="right" min-width="100"></el-table-column>
         <el-table-column prop="useAmountGift" label="使用赠金" align="right" min-width="100"></el-table-column>
         <el-table-column prop="useGuarantee" label="担保金额" align="right" min-width="100"></el-table-column>

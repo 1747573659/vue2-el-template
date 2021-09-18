@@ -74,13 +74,13 @@
           <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName"></el-input>
         </el-form-item>
         <el-form-item label="使用余额">
-          <el-input :value="form.purchaseOrderDTO.useAmount + form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.useAmount}${form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''}`"></el-input>
         </el-form-item>
         <el-form-item label="使用担保金">
           <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
         </el-form-item>
         <el-form-item label="经销商">
-          <el-input :value="`${'[' + form.purchaseOrderDTO.agentId + ']'}${form.purchaseOrderDTO.agentName}`"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -160,8 +160,8 @@
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
       <purchase-address ref="address" :visible.sync="checkAddressVisible" :agentId="handUserInfo.agentId" @addressData="handleAddressList" />
+      <purchase-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
     </template>
-    <purchase-product v-if="['add', 'edit'].includes($route.query.status)" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
   </section>
 </template>
 

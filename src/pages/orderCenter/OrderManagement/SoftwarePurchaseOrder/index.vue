@@ -11,6 +11,7 @@
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
+                :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
                 clearable
@@ -86,7 +87,7 @@
           <template slot-scope="scope">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '--' }}</template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
-        <el-table-column prop="createUser" label="下单人"></el-table-column>
+        <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column prop="useAmount" label="使用本金" align="right" min-width="100"></el-table-column>
         <el-table-column prop="useAmountGift" label="使用赠金" align="right" min-width="100"></el-table-column>
         <el-table-column prop="useGuarantee" label="担保金额" align="right" min-width="100"></el-table-column>
@@ -109,6 +110,7 @@
 
 <script>
 import { purchaseOrder } from '../mixins/purchaseOrder'
+
 export default {
   name: 'softwarePurchaseOrder',
   mixins: [purchaseOrder],
