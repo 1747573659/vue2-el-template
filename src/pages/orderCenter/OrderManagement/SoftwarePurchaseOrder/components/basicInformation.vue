@@ -33,7 +33,9 @@
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="账面余额">
           <el-input
-            :value="`${form.purchaseOrderDTO.agentPaperMoney}${form.purchaseOrderDTO.agentPaperGiftMoney ? '（另有赠金' + form.purchaseOrderDTO.agentPaperGiftMoney + '）' : ''}`"
+            :value="
+              `${form.purchaseOrderDTO.agentPaperMoney || 0}${form.purchaseOrderDTO.agentPaperGiftMoney ? '（另有赠金' + form.purchaseOrderDTO.agentPaperGiftMoney + '）' : ''}`
+            "
           ></el-input>
         </el-form-item>
         <el-form-item label="未核销担保金">
@@ -52,7 +54,7 @@
           <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName"></el-input>
         </el-form-item>
         <el-form-item label="使用余额">
-          <el-input :value="form.purchaseOrderDTO.useAmount + form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.useAmount || ''}${form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''}`"></el-input>
         </el-form-item>
         <el-form-item label="使用担保金">
           <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
@@ -181,6 +183,7 @@ export default {
     line-height: 56px;
     text-align: center;
     box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+    z-index: 1000;
     /deep/ .el-button {
       padding: 8px 22px;
     }

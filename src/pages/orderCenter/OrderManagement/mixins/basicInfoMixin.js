@@ -53,23 +53,23 @@ export const basicInfoMixin = {
       const saveAction = async () => {
         if (this.form.orderItemList?.length === 0) {
           this.$message({ type: 'warning', message: '请选择采购的产品' })
-          return
-        }
-        try {
-          this.form.purchaseOrderDTO.orderType = this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
-          this.checkSaveBtnLoad = true
-          const {
-            purchaseOrderDTO: { id, orderStatus }
-          } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
-          if (this.$route.query.status === 'add') {
-            this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑`
+        } else {
+          try {
+            this.form.purchaseOrderDTO.orderType = this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
+            this.checkSaveBtnLoad = true
+            const {
+              purchaseOrderDTO: { id, orderStatus }
+            } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
+            if (this.$route.query.status === 'add') {
+              this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
+              document.querySelector('.e-tag_active span').innerText = `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑`
+            }
+            this.handleDetail()
+            this.$message({ type: 'success', message: '保存成功' })
+          } catch (error) {
+          } finally {
+            this.checkSaveBtnLoad = false
           }
-          this.handleDetail()
-          this.$message({ type: 'success', message: '保存成功' })
-        } catch (error) {
-        } finally {
-          this.checkSaveBtnLoad = false
         }
       }
       if (this.$route.name === 'hardwarePurchaseDetails') {
@@ -113,7 +113,7 @@ export const basicInfoMixin = {
     handleDetail: async function() {
       try {
         this.checkBasicInformLoad = true
-        const { orderItemList, purchaseOrderDTO } = await purchaseQueryById({ from: false, id: parseFloat(this.$route.query.id) })
+        const { orderItemList = [], purchaseOrderDTO } = await purchaseQueryById({ from: false, id: parseFloat(this.$route.query.id) })
         this.form.id = purchaseOrderDTO.id
         this.form.purchaseOrderDTO = purchaseOrderDTO
         this.form.orderItemList = orderItemList

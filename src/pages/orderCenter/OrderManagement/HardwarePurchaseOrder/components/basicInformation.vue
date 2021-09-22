@@ -16,7 +16,7 @@
           <el-input :value="form.purchaseOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单日期">
-          <el-input :value="`${form.purchaseOrderDTO.createOrderTime ? form.purchaseOrderDTO.createOrderTime : baseOrderTime}`"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
         </el-form-item>
         <el-form-item label="订单金额">
           <el-input :value="form.purchaseOrderDTO.orderAmount"></el-input>
@@ -55,7 +55,9 @@
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="账面余额">
           <el-input
-            :value="`${form.purchaseOrderDTO.agentPaperMoney}${form.purchaseOrderDTO.agentPaperGiftMoney ? '（另有赠金' + form.purchaseOrderDTO.agentPaperGiftMoney + '）' : ''}`"
+            :value="
+              `${form.purchaseOrderDTO.agentPaperMoney || 0}${form.purchaseOrderDTO.agentPaperGiftMoney ? '（另有赠金' + form.purchaseOrderDTO.agentPaperGiftMoney + '）' : ''}`
+            "
           ></el-input>
         </el-form-item>
         <el-form-item label="未核销担保金">
@@ -74,7 +76,9 @@
           <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName"></el-input>
         </el-form-item>
         <el-form-item label="使用余额">
-          <el-input :value="`${form.purchaseOrderDTO.useAmount}${form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''}`"></el-input>
+          <el-input
+            :value="`${form.purchaseOrderDTO.useAmount || ''}${form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''}`"
+          ></el-input>
         </el-form-item>
         <el-form-item label="使用担保金">
           <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
