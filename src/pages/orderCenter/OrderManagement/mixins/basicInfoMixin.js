@@ -1,7 +1,7 @@
 import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { deepClone } from '@/utils'
-import { orderStatus, formObj } from '../index'
+import { orderStatus, formObj, paymentStatus } from '../index'
 import purchaseProduct from '../components/purchaseProduct'
 
 import {
@@ -21,6 +21,7 @@ export const basicInfoMixin = {
   },
   data() {
     return {
+      paymentStatus,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
       checkBasicInformLoad: false,
       handUserInfo: {},
