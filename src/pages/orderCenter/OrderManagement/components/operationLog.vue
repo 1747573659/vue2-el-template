@@ -28,7 +28,7 @@ export default {
     this.getOperateLog()
   },
   methods: {
-    getOperateLog: async function() {
+    async getOperateLog() {
       try {
         const data = { orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1, purchaseId: this.$route.query.id }
         this.tableData = await operateLog(data)

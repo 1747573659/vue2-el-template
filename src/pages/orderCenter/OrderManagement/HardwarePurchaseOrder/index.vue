@@ -19,7 +19,7 @@
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
-                <el-option v-for="item in orderStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
+                <el-option v-for="item in Array.from(orderStatus).filter(item => ![5, 10].includes(item[0]))" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="付款状态">
@@ -82,12 +82,11 @@
         <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
         <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="140">
-          <template slot-scope="scope">
-            <span v-if="[10].includes(scope.row.orderStatus)">未提交</span>
-            <span v-else>{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
-          </template>
+          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
-        <el-table-column prop="orderAmount" label="订单金额" align="right" min-width="100"></el-table-column>
+        <el-table-column label="订单金额" align="right" min-width="100">
+          <template slot-scope="scope">{{ scope.row.orderAmount | formatAmount }}</template>
+        </el-table-column>
         <el-table-column label="付款状态">
           <template slot-scope="scope">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '--' }}</template>
         </el-table-column>
@@ -96,15 +95,21 @@
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
-        <el-table-column prop="useAmount" label="使用本金" align="right" min-width="100"></el-table-column>
-        <el-table-column prop="useAmountGift" label="使用赠金" align="right" min-width="100"></el-table-column>
-        <el-table-column prop="useGuarantee" label="担保金额" align="right" min-width="100"></el-table-column>
+        <el-table-column label="使用本金" align="right" min-width="100">
+          <template slot-scope="scope">{{ scope.row.useAmount | formatAmount }}</template>
+        </el-table-column>
+        <el-table-column label="使用赠金" align="right" min-width="100">
+          <template slot-scope="scope">{{ scope.row.useAmountGift | formatAmount }}</template>
+        </el-table-column>
+        <el-table-column label="担保金额" align="right" min-width="100">
+          <template slot-scope="scope">{{ scope.row.useGuarantee | formatAmount }}</template>
+        </el-table-column>
         <el-table-column label="担保人">
           <template slot-scope="scope">{{ scope.row.guaranteePeopleName || '--' }}</template>
         </el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <template v-if="[0, 5].includes(scope.row.orderStatus)">
+            <template v-if="[0, 5, 10].includes(scope.row.orderStatus)">
               <el-button v-permission="'HARDWARE_PURCHASE_ORDER_EDIT'" type="text" size="small" @click="handleHardWareDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleHardWareDetail({ status: 'detail' }, scope.row)">详情</el-button>

@@ -1,6 +1,7 @@
-import { mapActions } from 'vuex'
 import dayjs from 'dayjs'
+import NP from 'number-precision'
 import { orderStatus, paymentStatus } from '../index'
+import { mapActions } from 'vuex'
 
 import { queryByPage, queryBaseInfo, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
 
@@ -25,6 +26,11 @@ export const purchaseOrder = {
       }
     }
   },
+  filters: {
+    formatAmount(val) {
+      return val ? NP.divide(val, 100) : 0
+    }
+  },
   activated() {
     this.getQueryPage()
   },
@@ -47,7 +53,7 @@ export const purchaseOrder = {
         rows: this.pageSize
       })
     },
-    handleExport: async function() {
+    async handleExport() {
       try {
         this.checkExportLoad = true
         await exportOrder(this.handleQueryParams())
@@ -68,7 +74,7 @@ export const purchaseOrder = {
       this.currentPage = 1
       this.getQueryPage()
     },
-    getQueryPage: async function() {
+    async getQueryPage() {
       try {
         this.checkTabLock = true
         const res = await queryByPage(this.handleQueryParams())
@@ -79,7 +85,7 @@ export const purchaseOrder = {
         this.checkTabLock = false
       }
     },
-    handleOrderPage: async function({ query = '', page = 1, row = 10 } = {}) {
+    async handleOrderPage({ query = '', page = 1, row = 10 } = {}) {
       try {
         const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows: row })
         this.ordererData = this.ordererData.concat(res.results || [])
@@ -89,7 +95,7 @@ export const purchaseOrder = {
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
-    getBaseInfo: async function() {
+    async getBaseInfo() {
       try {
         const { agentId = '' } = await queryBaseInfo()
         this.cueerntAgentId = agentId

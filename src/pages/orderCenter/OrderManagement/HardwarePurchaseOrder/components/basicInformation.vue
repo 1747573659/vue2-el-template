@@ -19,7 +19,7 @@
           <el-input :value="`${form.purchaseOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
         </el-form-item>
         <el-form-item label="订单金额">
-          <el-input :value="form.purchaseOrderDTO.orderAmount"></el-input>
+          <el-input :value="form.purchaseOrderDTO.orderAmount | formatAmount"></el-input>
         </el-form-item>
         <el-form-item label="受理人">
           <el-input :value="form.purchaseOrderDTO.handUserName"></el-input>
@@ -54,17 +54,13 @@
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="账面余额">
-          <el-input
-            :value="
-              `${form.purchaseOrderDTO.agentPaperMoney || 0}${form.purchaseOrderDTO.agentPaperGiftMoney ? '（另有赠金' + form.purchaseOrderDTO.agentPaperGiftMoney + '）' : ''}`
-            "
-          ></el-input>
+          <el-input :value="agentPaperMoney"></el-input>
         </el-form-item>
         <el-form-item label="未核销担保金">
-          <el-input :value="form.purchaseOrderDTO.agentGuaranteeMoney"></el-input>
+          <el-input :value="form.purchaseOrderDTO.agentGuaranteeMoney | formatAmount"></el-input>
         </el-form-item>
         <el-form-item label="付款状态">
-          <el-input :value="`${form.purchaseOrderDTO.payStatus ? paymentStatus.get(form.purchaseOrderDTO.payStatus).label : ''}`"></el-input>
+          <el-input :value="`${paymentStatus.has(form.purchaseOrderDTO.payStatus) ? paymentStatus.get(form.purchaseOrderDTO.payStatus).label : ''}`"></el-input>
         </el-form-item>
         <el-form-item label="付款时间">
           <el-input :value="form.purchaseOrderDTO.payTime"></el-input>
@@ -76,12 +72,10 @@
           <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName"></el-input>
         </el-form-item>
         <el-form-item label="使用余额">
-          <el-input
-            :value="`${form.purchaseOrderDTO.useAmount || ''}${form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + form.purchaseOrderDTO.useAmountGift + '）' : ''}`"
-          ></el-input>
+          <el-input :value="useAmount"></el-input>
         </el-form-item>
         <el-form-item label="使用担保金">
-          <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
+          <el-input :value="form.purchaseOrderDTO.useGuarantee | formatAmount"></el-input>
         </el-form-item>
         <el-form-item label="经销商">
           <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
@@ -89,9 +83,9 @@
       </el-form>
     </el-card>
     <el-card shadow="never" class="p-card">
-      <div slot="header" class="p-card-head">
-        <el-button type="text" size="small" v-if="['add', 'edit'].includes($route.query.status)" @click="handleProductVisible">选择产品</el-button>
-        <span v-else class="p-card-title">订单明细</span>
+      <div slot="header" class="p-card-head">订单明细</div>
+      <div class="e-card-product">
+        <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="['add', 'edit'].includes($route.query.status)">选择产品</el-button>
       </div>
       <el-table :data="form.orderItemList" show-summary :summary-method="getSummaries" class="p-hardware-product">
         <el-table-column label="序号" width="100">
@@ -234,80 +228,10 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-card {
-  border-radius: 0;
-  border-top: 16px solid #f7f8fa;
-  &-head {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    /deep/ {
-      .el-button {
-        font-size: 16px;
-      }
-    }
-  }
-  &-state {
-    font-size: 14px;
-    &_text {
-      background-color: #eff5ff;
-      color: #3377ff;
-      border-radius: 3px;
-      padding: 5px 12px;
-    }
-  }
-  &-title {
-    color: #1f2e4d;
-    font-weight: 500;
-  }
-  &-address {
-    .el-button {
-      margin-left: 20px;
-      font-size: 14px;
-    }
-  }
-  &-back {
-    color: red;
-  }
-  /deep/ {
-    .el-card__header {
-      padding: 15px 67px 15px 16px;
-    }
-  }
-}
+@import '../../scss/basicInfo.scss';
 .p-hardware {
   &-con {
     border-bottom: 72px solid #f7f8fa;
-  }
-  &-action {
-    width: calc(100% - 200px - 42px);
-    height: 56px;
-    position: fixed;
-    bottom: 0;
-    background-color: #fff;
-    line-height: 56px;
-    text-align: center;
-    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
-    z-index: 1000;
-    /deep/ .el-button {
-      padding: 8px 22px;
-    }
-  }
-  &-product {
-    &_remark {
-      width: 100%;
-      /deep/ .el-input__inner {
-        text-align: left !important;
-      }
-    }
-    /deep/ {
-      .el-input__inner {
-        text-align: right;
-      }
-      .el-table__footer-wrapper tbody td {
-        background-color: #fff;
-      }
-    }
   }
 }
 </style>

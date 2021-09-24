@@ -45,9 +45,6 @@ export default {
       checkAddressTabLock: false
     }
   },
-  mounted() {
-    this.getReceiverAddress()
-  },
   methods: {
     handleAddress() {
       this.$emit('addressData', this.addressData[this.checkAddressVal])

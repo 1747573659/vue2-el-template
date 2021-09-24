@@ -31,6 +31,11 @@ export const basicInfoMixin = {
       checkProductVisible: false
     }
   },
+  filters: {
+    formatAmount(val) {
+      return val ? NP.divide(val, 100) : 0
+    }
+  },
   computed: {
     currentOrderStatus() {
       const { status, orderStatus: orderStatusVal } = this.$route.query
@@ -38,6 +43,16 @@ export const basicInfoMixin = {
         if (orderStatus.has(parseFloat(orderStatusVal))) return orderStatus.get(parseFloat(orderStatusVal)).label
         else return '未保存'
       } else return ''
+    },
+    agentPaperMoney() {
+      const agentPaperGiftMoney = this.form.purchaseOrderDTO.agentPaperGiftMoney
+        ? '（另有赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperGiftMoney) + '）'
+        : ''
+      return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperMoney) + agentPaperGiftMoney
+    },
+    useAmount() {
+      const useAmountGift = this.form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmountGift) + '）' : ''
+      return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmount) + useAmountGift
     }
   },
   mounted() {
@@ -45,6 +60,7 @@ export const basicInfoMixin = {
       this.getBaseInfo().then(() => {
         this.getHandlerMan()
         this.getAgentMoneyStream()
+        if (this.$route.name === 'hardwarePurchaseDetails') this.$refs.address.getReceiverAddress()
       })
     } else this.handleDetail()
   },
@@ -57,9 +73,18 @@ export const basicInfoMixin = {
           try {
             this.form.purchaseOrderDTO.orderType = this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
             this.checkSaveBtnLoad = true
+            const { orderItemList, ...params } = this.form
+            const deepOrderItemList = deepClone(orderItemList)
+            deepOrderItemList.forEach(item => {
+              item.productPrice = NP.times(item.productPrice, 100)
+              item.productAmount = NP.times(item.productAmount, 100)
+            })
             const {
               purchaseOrderDTO: { id, orderStatus }
-            } = this.$route.query.status === 'add' ? await purchaseAdd(this.form) : await purchaseUpdate(this.form)
+            } =
+              this.$route.query.status === 'add'
+                ? await purchaseAdd(Object.assign(params, { orderItemList: deepOrderItemList }))
+                : await purchaseUpdate(Object.assign(params, { orderItemList: deepOrderItemList }))
             if (this.$route.query.status === 'add') {
               this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
               document.querySelector('.e-tag_active span').innerText = `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑`
@@ -78,12 +103,20 @@ export const basicInfoMixin = {
         })
       } else saveAction()
     },
-    handleVerify: async function() {
+    async handleVerify() {
       try {
         this.form.purchaseOrderDTO.orderType = this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
         this.checkVerifyBtnLoad = true
-        await purchaseSubmit(this.form)
-        this.handleCancel()
+        const { orderItemList, ...params } = this.form
+        const deepOrderItemList = deepClone(orderItemList)
+        deepOrderItemList.forEach(item => {
+          item.productPrice = NP.times(item.productPrice, 100)
+          item.productAmount = NP.times(item.productAmount, 100)
+        })
+        await purchaseSubmit(Object.assign(params, { orderItemList: deepOrderItemList }))
+        this.handleDetail().then(() => {
+          this.$router.replace({ name: this.$route.name, query: { id: this.form.purchaseOrderDTO.id, orderStatus: this.form.purchaseOrderDTO.orderStatus, status: 'detail' } })
+        })
         this.$message({ type: 'success', message: '提交成功' })
       } catch (error) {
       } finally {
@@ -91,9 +124,7 @@ export const basicInfoMixin = {
       }
     },
     handleCancel(name) {
-      this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ name })
-      })
+      this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     handleDel(name) {
       this.$confirm('确定删除单据吗？', '提示', {
@@ -104,19 +135,21 @@ export const basicInfoMixin = {
         .then(async () => {
           await deleteById({ id: parseFloat(this.$route.query.id) })
           this.$message({ type: 'success', message: '删除成功' })
-          this.$store.dispatch('delTagView', this.$route).then(() => {
-            this.$router.push({ name })
-          })
+          this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
         })
         .catch(() => {})
     },
-    handleDetail: async function() {
+    async handleDetail() {
       try {
         this.checkBasicInformLoad = true
         const { orderItemList = [], purchaseOrderDTO } = await purchaseQueryById({ from: false, id: parseFloat(this.$route.query.id) })
         this.form.id = purchaseOrderDTO.id
         this.form.purchaseOrderDTO = purchaseOrderDTO
-        this.form.orderItemList = orderItemList
+        this.form.orderItemList = orderItemList.map(item => {
+          item.productPrice = NP.divide(item.productPrice, 100)
+          item.productAmount = NP.divide(item.productAmount, 100)
+          return item
+        })
         if (this.$route.name === 'hardwarePurchaseDetails') {
           this.areaList = [purchaseOrderDTO.province, purchaseOrderDTO.city, purchaseOrderDTO.area]
           this.areaKey = Symbol('areaKey')
@@ -127,7 +160,13 @@ export const basicInfoMixin = {
       }
     },
     handleProductList(data) {
-      this.form.orderItemList = this.form.orderItemList.concat(data)
+      if (data.length > 0) {
+        data.forEach(item => {
+          item.productPrice = NP.divide(item.productPrice, 100)
+          item.productAmount = NP.divide(item.productAmount, 100)
+        })
+        this.form.orderItemList = this.form.orderItemList.concat(data)
+      }
     },
     handleProductVisible() {
       this.checkProductVisible = true
@@ -176,16 +215,21 @@ export const basicInfoMixin = {
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr)
-              if (!isNaN(value)) return NP.plus(prev, curr)
-              else return prev
+              if (!isNaN(value)) {
+                return column.property === 'productCount' || this.$route.query.status !== 'details'
+                  ? NP.plus(prev, curr)
+                  : this.$options.filters['formatAmount'](NP.plus(prev, curr))
+              } else {
+                return column.property === 'productCount' || this.$route.query.status !== 'details' ? prev : this.$options.filters['formatAmount'](prev)
+              }
             }, 0)
-            this.form.purchaseOrderDTO.orderAmount = sums[5]
+            this.form.purchaseOrderDTO.orderAmount = sums[5] ? NP.times(sums[5], 100) : 0
           }
         }
       })
       return sums
     },
-    getBaseInfo: async function() {
+    async getBaseInfo() {
       try {
         const res = await queryBaseInfo()
         this.handUserInfo = res
