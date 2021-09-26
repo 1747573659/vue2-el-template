@@ -47,7 +47,7 @@ export default {
   },
   methods: {
     handleAddress() {
-      this.$emit('addressData', this.addressData[this.checkAddressVal])
+      this.setInitAddress()
       this.$emit('update:visible', false)
     },
     async handleDelAddress(row) {
@@ -64,14 +64,18 @@ export default {
       } finally {
       }
     },
+    setInitAddress() {
+      this.$emit('addressData', this.addressData[this.checkAddressVal])
+    },
     async getReceiverAddress() {
       try {
         this.checkAddressTabLock = true
         const res = await queryById({ agentId: this.agentId })
         this.addressData = res || []
-        const adressValIndex = res.findIndex(item => item.usageStatus)
-        this.checkAddressVal = adressValIndex !== -1 ? adressValIndex : 0
-        this.$emit('addressData', this.addressData[this.checkAddressVal])
+        if (this.addressData.length > 0) {
+          const adressValIndex = this.addressData.findIndex(item => item.usageStatus)
+          this.checkAddressVal = adressValIndex !== -1 ? adressValIndex : 0
+        }
       } catch (error) {
       } finally {
         this.checkAddressTabLock = false

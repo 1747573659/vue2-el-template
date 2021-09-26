@@ -60,7 +60,11 @@ export const basicInfoMixin = {
       this.getBaseInfo().then(() => {
         this.getHandlerMan()
         this.getAgentMoneyStream()
-        if (this.$route.name === 'hardwarePurchaseDetails') this.$refs.address.getReceiverAddress()
+        if (this.$route.name === 'hardwarePurchaseDetails') {
+          this.$refs.address.getReceiverAddress().then(() => {
+            this.$refs.add.setInitAddress()
+          })
+        }
       })
     } else this.handleDetail()
   },
@@ -174,6 +178,7 @@ export const basicInfoMixin = {
       this.$refs.product.getProductPage()
     },
     handleCountAmount(row) {
+      row.productPrice = NP.round(row.productPrice, 2)
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
         this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
         row.productCount = 1
@@ -182,9 +187,10 @@ export const basicInfoMixin = {
         this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
         row.productPrice = 0
       }
-      return (row.productAmount = NP.times(parseFloat(row.productCount), parseFloat(row.productPrice)))
+      return (row.productAmount = NP.times(row.productCount, parseFloat(row.productPrice)))
     },
     handleAmount(row) {
+      row.productAmount = NP.round(row.productAmount, 2)
       if (!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
         this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
         row.productAmount = 0

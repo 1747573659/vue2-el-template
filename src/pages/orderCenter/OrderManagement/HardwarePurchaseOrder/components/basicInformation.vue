@@ -30,7 +30,7 @@
       <div slot="header" class="p-card-head">
         <div class="p-card-address">
           <span class="p-card-title">收货信息</span>
-          <el-button v-if="['add', 'edit'].includes($route.query.status)" type="text" @click="checkAddressVisible = true">常用地址</el-button>
+          <el-button v-if="['add', 'edit'].includes($route.query.status)" type="text" @click="handCommonAddress">常用地址</el-button>
         </div>
       </div>
       <el-form ref="receiptForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
@@ -115,7 +115,7 @@
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
             <template v-else>
-              <el-input size="small" v-model="scope.row.remark" maxlength="100" placeholder="备注内容，可以叉清空" class="p-hardware-product_remark"></el-input>
+              <el-input size="small" v-model="scope.row.remark" maxlength="100" clearable class="p-hardware-product_remark"></el-input>
             </template>
           </template>
         </el-table-column>
@@ -204,6 +204,10 @@ export default {
           this.handleDetail()
         })
         .catch(() => {})
+    },
+    handCommonAddress(){
+      this.checkAddressVisible = true
+      this.$refs.address.getReceiverAddress()
     },
     handleAddressList(data) {
       if (data) {

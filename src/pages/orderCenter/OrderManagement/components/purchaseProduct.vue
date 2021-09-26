@@ -77,8 +77,13 @@ export default {
 <style lang="scss" scoped>
 .p-address {
   &-con {
-    /deep/ .el-dialog__body {
-      padding: 16px 20px;
+    /deep/ {
+      .el-dialog__body {
+        padding: 16px 20px;
+      }
+      .km-page-block {
+        padding-bottom: 0px;
+      }
     }
   }
 }
