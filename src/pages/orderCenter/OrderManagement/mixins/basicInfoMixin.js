@@ -62,7 +62,7 @@ export const basicInfoMixin = {
         this.getAgentMoneyStream()
         if (this.$route.name === 'hardwarePurchaseDetails') {
           this.$refs.address.getReceiverAddress().then(() => {
-            this.$refs.add.setInitAddress()
+            this.$refs.address.setInitAddress()
           })
         }
       })
