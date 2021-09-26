@@ -76,8 +76,8 @@ export const basicInfoMixin = {
             const { orderItemList, ...params } = this.form
             const deepOrderItemList = deepClone(orderItemList)
             deepOrderItemList.forEach(item => {
-              item.productPrice = NP.times(item.productPrice, 100)
-              item.productAmount = NP.times(item.productAmount, 100)
+              item.productPrice = NP.times(parseFloat(item.productPrice), 100)
+              item.productAmount = NP.times(parseFloat(item.productAmount), 100)
             })
             const {
               purchaseOrderDTO: { id, orderStatus }
@@ -110,8 +110,8 @@ export const basicInfoMixin = {
         const { orderItemList, ...params } = this.form
         const deepOrderItemList = deepClone(orderItemList)
         deepOrderItemList.forEach(item => {
-          item.productPrice = NP.times(item.productPrice, 100)
-          item.productAmount = NP.times(item.productAmount, 100)
+          item.productPrice = NP.times(parseFloat(item.productPrice), 100)
+          item.productAmount = NP.times(parseFloat(item.productAmount), 100)
         })
         await purchaseSubmit(Object.assign(params, { orderItemList: deepOrderItemList }))
         this.handleDetail().then(() => {
@@ -182,14 +182,14 @@ export const basicInfoMixin = {
         this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
         row.productPrice = 0
       }
-      return (row.productAmount = NP.times(row.productCount, row.productPrice))
+      return (row.productAmount = NP.times(parseFloat(row.productCount), parseFloat(row.productPrice)))
     },
     handleAmount(row) {
       if (!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
         this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
         row.productAmount = 0
       }
-      return (row.productPrice = NP.divide(row.productAmount, row.productCount))
+      return (row.productPrice = NP.divide(parseFloat(row.productAmount), parseFloat(row.productCount)))
     },
     getHandlerMan: async function() {
       try {

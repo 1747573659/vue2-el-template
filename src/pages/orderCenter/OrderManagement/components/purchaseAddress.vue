@@ -50,13 +50,13 @@ export default {
       this.$emit('addressData', this.addressData[this.checkAddressVal])
       this.$emit('update:visible', false)
     },
-    handleDelAddress: async function(row) {
+    async handleDelAddress(row) {
       try {
         await deleteAddress({ id: row.id })
         this.getReceiverAddress()
       } catch (error) {}
     },
-    handleAddressDefault: async function(row) {
+    async handleAddressDefault(row) {
       try {
         await updateUsage({ id: row.id })
         this.getReceiverAddress()
@@ -64,7 +64,7 @@ export default {
       } finally {
       }
     },
-    getReceiverAddress: async function() {
+    async getReceiverAddress() {
       try {
         this.checkAddressTabLock = true
         const res = await queryById({ agentId: this.agentId })
