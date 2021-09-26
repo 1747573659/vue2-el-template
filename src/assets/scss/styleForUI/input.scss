@@ -24,3 +24,6 @@
 .el-input {
   width: 240px;
 }
+.el-input.is-disabled .el-input__inner {
+  color: #8c919c;
+}

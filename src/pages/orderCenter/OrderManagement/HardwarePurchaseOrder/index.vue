@@ -79,7 +79,7 @@
     </div>
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
-        <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
+        <el-table-column prop="createOrderTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="140">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
