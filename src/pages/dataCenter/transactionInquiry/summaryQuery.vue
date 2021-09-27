@@ -199,7 +199,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 import chooseDialog from './components/chooseDialog'
 import {
@@ -239,9 +239,9 @@ export default {
       paymentData: [],
       paymentScenarioData: [],
       formData: {
-        startDate: moment().format('YYYY-MM-DD'),
+        startDate: dayjs().format('YYYY-MM-DD'),
         startTime: '00:00',
-        endDate: moment().format('YYYY-MM-DD'),
+        endDate: dayjs().format('YYYY-MM-DD'),
         endTime: '23:59',
         businessName: '',
         storeName: '',
@@ -264,7 +264,7 @@ export default {
       },
       pickerOptions: {
         disabledDate (time) {
-          return time.getTime() > Date.now() || time.getTime() < moment().subtract(6, 'months').valueOf()
+          return time.getTime() > Date.now() || time.getTime() < dayjs().subtract(6, 'months').valueOf()
         }
       }
     }
@@ -274,14 +274,14 @@ export default {
   },
   computed: {
     isSubtract () {
-      const chooseDate = moment(this.formData.startDate).subtract(1, 'days').valueOf()
-      const emberDate = moment().startOf('day').subtract(6, 'months').valueOf()
+      const chooseDate = dayjs(this.formData.startDate).subtract(1, 'days').valueOf()
+      const emberDate = dayjs().startOf('day').subtract(6, 'months').valueOf()
 
       if (chooseDate === emberDate) return true
       else return false
     },
     isAdd () {
-      if (moment(this.formData.endDate).valueOf() === moment().startOf('day').valueOf()) {
+      if (dayjs(this.formData.endDate).valueOf() === dayjs().startOf('day').valueOf()) {
         return true
       } else {
         return false
@@ -312,7 +312,7 @@ export default {
         this.$message.error('请先选择商户')
         return false
       }
-      if (moment(`${this.formData.endDate} ${this.formData.endTime}:59`).valueOf() > moment(`${this.formData.startDate} ${this.formData.startTime}:00`).add(60, 'days').valueOf()) {
+      if (dayjs(`${this.formData.endDate} ${this.formData.endTime}:59`).valueOf() > dayjs(`${this.formData.startDate} ${this.formData.startTime}:00`).add(60, 'days').valueOf()) {
         this.$message.error('统计时间间隔不超过60天')
         return false
       }
@@ -336,9 +336,9 @@ export default {
     },
     handleReset () {
       this.formData = {
-        startDate: moment().format('YYYY-MM-DD'),
+        startDate: dayjs().format('YYYY-MM-DD'),
         startTime: '00:00',
-        endDate: moment().format('YYYY-MM-DD'),
+        endDate: dayjs().format('YYYY-MM-DD'),
         endTime: '23:59',
         businessName: '',
         storeName: '',
@@ -433,8 +433,8 @@ export default {
       return res || []
     },
     setSearchTime (status) {
-      let varyStartDate = moment(this.formData.startDate)
-      let varyEndDate = moment(this.formData.endDate)
+      let varyStartDate = dayjs(this.formData.startDate)
+      let varyEndDate = dayjs(this.formData.endDate)
       if (status === 'add') {
         varyStartDate = varyStartDate.add(1, 'days')
         varyEndDate = varyEndDate.add(1, 'days')

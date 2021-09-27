@@ -49,10 +49,10 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
 export default {
   props: {
-    isClearable:{
+    isClearable: {
       type: Boolean,
       default: true
     },
@@ -87,8 +87,8 @@ export default {
       pickerBeginDateBefore: {
         onPick: ({ maxDate, minDate }) => {
           if (minDate) {
-            maxTime = moment(minDate.getTime()).add(_this.timeinterval, 'months')
-            minTime = moment(minDate.getTime()).subtract(_this.timeinterval, 'months')
+            maxTime = dayjs(minDate.getTime()).add(_this.timeinterval, 'months')
+            minTime = dayjs(minDate.getTime()).subtract(_this.timeinterval, 'months')
           }
         },
         disabledDate(time) {
@@ -96,7 +96,7 @@ export default {
             if (maxTime) {
               return (
                 time.getTime() >
-                  moment()
+                  dayjs()
                     .endOf('day')
                     .valueOf() ||
                 time.getTime() > maxTime ||
@@ -106,7 +106,7 @@ export default {
           } else {
             return (
               time.getTime() >
-              moment()
+              dayjs()
                 .endOf('day')
                 .valueOf()
             )

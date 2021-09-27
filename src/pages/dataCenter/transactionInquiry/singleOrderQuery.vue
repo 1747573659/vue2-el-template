@@ -63,8 +63,8 @@
               </el-tooltip>
             </el-form-item>
             <el-form-item style="margin-left: 100px;">
-            <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
-          </el-form-item>
+              <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
+            </el-form-item>
           </el-col>
         </el-row>
       </el-form>
@@ -116,7 +116,7 @@
 
 <script>
 import selectPage from '@/components/selectPage2/index.vue'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import orderDetailDialog from './components/orderDetailDialog'
 import { querySingleOrder, detail, refundOrderdetail, queryMerchantAdminPage } from '@/api/transtionManagement'
 let minTime = ''
@@ -161,11 +161,11 @@ export default {
           if (maxTime) {
             return (
               time.getTime() >=
-                moment()
+                dayjs()
                   .endOf('day')
                   .valueOf() ||
               time.getTime() <=
-                moment()
+                dayjs()
                   .subtract(6, 'months')
                   .valueOf() ||
               time.getTime() >= maxTime ||
@@ -174,20 +174,17 @@ export default {
           }
           return (
             time.getTime() >=
-              moment()
+              dayjs()
                 .endOf('day')
                 .valueOf() ||
             time.getTime() <=
-              moment()
+              dayjs()
                 .subtract(6, 'months')
                 .valueOf()
           )
         }
       }
     }
-  },
-  mounted() {
-    // this.handleQueryPage()
   },
   computed: {
     tableMaxHeight() {
@@ -205,7 +202,6 @@ export default {
         dataSource: 2,
         paySn: row.id,
         sn: ''
-        //shopId: row.shopId
       }
       try {
         const res = await refundOrderdetail(data)
@@ -229,7 +225,6 @@ export default {
       this.dialogForm = {}
       const data = {
         orderId: row.id,
-        // 'orderId': '9115882679906900459209030',
         shopId: row.shopId
       }
       try {
@@ -285,11 +280,11 @@ export default {
     },
     async handleQueryPage() {
       let params = {
-        endTime: this.formData.transactionTime ? moment(this.formData.transactionTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
+        endTime: this.formData.transactionTime ? dayjs(this.formData.transactionTime[1]).format('YYYY-MM-DD HH:mm:ss') : '',
         orderId: this.formData.orderId,
         serialSn: this.formData.serialSn,
         shopAdminId: this.formData.shopAdminId,
-        startTime: this.formData.transactionTime ? moment(this.formData.transactionTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
+        startTime: this.formData.transactionTime ? dayjs(this.formData.transactionTime[0]).format('YYYY-MM-DD HH:mm:ss') : '',
         tenantSn: this.formData.tenantSn,
         thirdSn: this.formData.thirdSn
       }

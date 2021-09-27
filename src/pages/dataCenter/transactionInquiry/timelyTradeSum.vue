@@ -44,8 +44,8 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-              <el-button :loading="exportLoad"   @click="downLoadTradeDataExcel" v-permission="'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM_EXPORT'">导出</el-button>
-              <el-button  @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM_EXPORT'" >导出记录</el-button>
+              <el-button :loading="exportLoad" @click="downLoadTradeDataExcel" v-permission="'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM_EXPORT'">导出</el-button>
+              <el-button @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_TIMELYTRADESUM_EXPORT'">导出记录</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -147,15 +147,23 @@
         <el-table-column label="商家实收(元)" align="right" prop="receiptAmount"></el-table-column>
       </el-table>
     </div>
-    <exportEecord  :exportType='4' ref="exportEecord"></exportEecord>
+    <exportEecord :exportType="4" ref="exportEecord"></exportEecord>
   </div>
 </template>
 
 <script>
 import selectPage from '@/components/selectPage'
 import { getLocal } from '@/utils/storage'
-import moment from 'moment'
-import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList ,downLoadTradeDataExcel } from '@/api/dataCenter/historiyTrade'
+import dayjs from 'dayjs'
+import {
+  paymentMethodVoList,
+  cashierData,
+  queryNewAgentPage,
+  queryShopListByPage,
+  queryStorePage,
+  paymentPluginVoList,
+  downLoadTradeDataExcel
+} from '@/api/dataCenter/historiyTrade'
 import selectCopy from '@/components/selectCopy'
 import exportEecord from '@/components/exportEecord'
 export default {
@@ -220,22 +228,22 @@ export default {
       ]
     }
     this.form.time = [
-      moment(new Date().getTime())
+      dayjs()
         .subtract(7, 'days')
         .format('YYYY-MM-DD'),
-      moment(new Date().getTime())
+      dayjs()
         .subtract(1, 'days')
         .format('YYYY-MM-DD')
     ]
   },
   methods: {
-    handleExportLists () {
-      this.$refs.exportEecord.exportVisible=true
+    handleExportLists() {
+      this.$refs.exportEecord.exportVisible = true
     },
-   async  downLoadTradeDataExcel () {
+    async downLoadTradeDataExcel() {
       this.exportLoad = true
       try {
-        await downLoadTradeDataExcel({...this.initSubData()} )
+        await downLoadTradeDataExcel({ ...this.initSubData() })
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
       } catch (error) {
       } finally {
@@ -355,51 +363,51 @@ export default {
       switch (type) {
         case 'yesterday':
           this.form.time = [
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD'),
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD')
           ]
           break
         case 'week':
           this.form.time = [
-            moment(new Date().getTime())
+            dayjs()
               .subtract(7, 'days')
               .format('YYYY-MM-DD'),
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD')
           ]
           break
         case 'month':
           this.form.time = [
-            moment(new Date().getTime())
+            dayjs()
               .subtract(30, 'days')
               .format('YYYY-MM-DD'),
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD')
           ]
           break
       }
     },
-    initSubData () {
+    initSubData() {
       let data = {
-          type: 1,
-          adminId: this.form.searchObject === 2 ? this.form.id : '',
-          agentId: this.form.searchObject === 1 ? this.form.id : '',
-          storeId: this.form.searchObject === 3 ? this.form.id : '',
-          payMethod: this.form.payMethod,
-          payPlugin: this.form.payPlugin
-        }
+        type: 1,
+        adminId: this.form.searchObject === 2 ? this.form.id : '',
+        agentId: this.form.searchObject === 1 ? this.form.id : '',
+        storeId: this.form.searchObject === 3 ? this.form.id : '',
+        payMethod: this.form.payMethod,
+        payPlugin: this.form.payPlugin
+      }
       return data
     },
     async getList() {
       this.tableLoading = true
       try {
-        const res = await cashierData({...this.initSubData()})
+        const res = await cashierData({ ...this.initSubData() })
         this.tableData = res
         this.eChartsDateList = []
         this.eChartsDataList = []
@@ -522,7 +530,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
