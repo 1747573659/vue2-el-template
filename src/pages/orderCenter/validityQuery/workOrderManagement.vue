@@ -28,7 +28,7 @@
 import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { queryProductList,queryWorkOrderList } from '@/api/dataCenter/dataCenter.js'
 import { mapActions } from 'vuex'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
@@ -47,10 +47,10 @@ export default {
           type: 'daterange',
           label: '提交日期',
           value: [
-            moment()
+            dayjs()
               .subtract(30, 'days')
               .format('YYYY-MM-DD'),
-            moment().format('YYYY-MM-DD')
+            dayjs().format('YYYY-MM-DD')
           ]
         },
         {

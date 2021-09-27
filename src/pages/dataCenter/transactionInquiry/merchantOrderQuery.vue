@@ -189,7 +189,7 @@
 </template>
 
 <script>
-import moment from 'moment'
+import dayjs from 'dayjs'
 import selectPage from '@/components/selectPage2'
 import orderDetailDialog from './components/orderDetailDialog'
 import {
@@ -207,7 +207,6 @@ import {
   detail,
   refundOrderdetail
 } from '@/api/transtionManagement'
-import { downloadBufferFile } from '@/utils/index'
 import selectCopy from '@/components/selectCopy'
 let minTime = ''
 let maxTime = ''
@@ -245,10 +244,10 @@ export default {
       tradingStatusData: [],
       formData: {
         transactionTime: [
-          moment()
+          dayjs()
             .startOf('day')
             .valueOf(),
-          moment()
+          dayjs()
             .endOf('day')
             .valueOf()
         ],
@@ -277,11 +276,11 @@ export default {
           if (maxTime) {
             return (
               time.getTime() >=
-                moment()
+                dayjs()
                   .endOf('day')
                   .valueOf() ||
               time.getTime() <=
-                moment()
+                dayjs()
                   .subtract(12, 'months')
                   .valueOf() ||
               time.getTime() >= maxTime ||
@@ -290,11 +289,11 @@ export default {
           }
           return (
             time.getTime() >=
-              moment()
+              dayjs()
                 .endOf('day')
                 .valueOf() ||
             time.getTime() <=
-              moment()
+              dayjs()
                 .subtract(12, 'months')
                 .valueOf()
           )
@@ -308,10 +307,10 @@ export default {
         console.log('obj.a changed')
         if (newVal === null) {
           this.formData.transactionTime = [
-            moment()
+            dayjs()
               .startOf('day')
               .valueOf(),
-            moment()
+            dayjs()
               .endOf('day')
               .valueOf()
           ]
@@ -324,11 +323,11 @@ export default {
   computed: {
     isSubtract() {
       if (
-        moment(this.formData.transactionTime[0])
+        dayjs(this.formData.transactionTime[0])
           .startOf('day')
           .subtract(1, 'days')
           .valueOf() ===
-        moment()
+        dayjs()
           .startOf('day')
           .subtract(6, 'months')
           .valueOf()
@@ -343,10 +342,10 @@ export default {
     },
     isAdd() {
       if (
-        moment(this.formData.transactionTime[1])
+        dayjs(this.formData.transactionTime[1])
           .startOf('day')
           .valueOf() ===
-        moment()
+        dayjs()
           .startOf('day')
           .valueOf()
       ) {
@@ -524,10 +523,10 @@ export default {
       this.tabData = []
       this.$refs.form.resetFields()
       this.$set(this.formData, 'transactionTime', [
-        moment()
+        dayjs()
           .startOf('day')
           .valueOf(),
-        moment()
+        dayjs()
           .endOf('day')
           .valueOf()
       ])
@@ -575,8 +574,8 @@ export default {
       const data = {
         page: this.pageNo,
         rows: this.pageSize,
-        startDate: moment(this.formData.transactionTime[0]).format('YYYY-MM-DD HH:mm:ss'),
-        endDate: moment(this.formData.transactionTime[1]).format('YYYY-MM-DD HH:mm:ss'),
+        startDate: dayjs(this.formData.transactionTime[0]).format('YYYY-MM-DD HH:mm:ss'),
+        endDate: dayjs(this.formData.transactionTime[1]).format('YYYY-MM-DD HH:mm:ss'),
         payChannelType: this.formData.tradingChanneCode ? this.formData.tradingChanneCode : '', // 交易渠道
         orderTypes: this.formData.tradingTypeCode !== '' ? [this.formData.tradingTypeCode] : [], // 交易类型集合
         paymentMethods: this.formData.paymentCode !== '' ? [this.formData.paymentCode] : [], // 支付方式集合
@@ -636,10 +635,9 @@ export default {
       const res = queryAllCondition({ conditionType: type })
       return res || []
     },
-
     setSearchTime(status) {
-      let varyStartDate = moment(this.formData.transactionTime[0])
-      let varyEndDate = moment(this.formData.transactionTime[1])
+      let varyStartDate = dayjs(this.formData.transactionTime[0])
+      let varyEndDate = dayjs(this.formData.transactionTime[1])
       if (status === 'add') {
         varyStartDate = varyStartDate.add(1, 'days')
         varyEndDate = varyEndDate.add(1, 'days')

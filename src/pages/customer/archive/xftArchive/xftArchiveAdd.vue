@@ -778,7 +778,7 @@ import areaSelectForTwo from '@/components/areaSelectForTwo'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import fileServer from '@/mixins/fileServe'
 import xftValidator from './xftValidator'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { getWftAllTrade, queryCertType, queryShopListByPage, getBankCnapByName, isShowRate, audit, submit, refuse, detail, imageOCR } from '@/api/xftArchive'
 
 export default {
@@ -1143,8 +1143,8 @@ export default {
               this.form.archiveExpandVO.licValidityBigen = ''
               this.form.archiveExpandVO.licValidityEnd = ''
             } else {
-              this.form.archiveExpandVO.licValidityBigen = moment(validPeriod.split('至')[0]).format('YYYY-MM-DD')
-              this.form.archiveExpandVO.licValidityEnd = moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
+              this.form.archiveExpandVO.licValidityBigen = dayjs(validPeriod.split('至')[0]).format('YYYY-MM-DD')
+              this.form.archiveExpandVO.licValidityEnd = dayjs(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
             }
           } else {
             this.form.archiveExpandVO.licValidityBigen = ''

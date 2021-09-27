@@ -64,8 +64,8 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-               <el-button  @click="downLoadTradeDataExcel"    :loading="exportLoad" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'" >导出</el-button>
-               <el-button  @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'" >导出记录</el-button>
+              <el-button @click="downLoadTradeDataExcel" :loading="exportLoad" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'">导出</el-button>
+              <el-button @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'">导出记录</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -172,16 +172,24 @@
         </el-table-column>
       </el-table>
     </div>
-    <exportEecord  :exportType='3' ref="exportEecord"></exportEecord>
+    <exportEecord :exportType="3" ref="exportEecord"></exportEecord>
   </div>
 </template>
 
 <script>
 import selectPage from '@/components/selectPage'
 import { getLocal } from '@/utils/storage'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import selectCopy from '@/components/selectCopy'
-import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList ,downLoadTradeDataExcel} from '@/api/dataCenter/historiyTrade'
+import {
+  paymentMethodVoList,
+  cashierData,
+  queryNewAgentPage,
+  queryShopListByPage,
+  queryStorePage,
+  paymentPluginVoList,
+  downLoadTradeDataExcel
+} from '@/api/dataCenter/historiyTrade'
 import exportEecord from '@/components/exportEecord'
 let maxTime = ''
 let minTime = ''
@@ -224,15 +232,15 @@ export default {
         onPick: ({ maxDate, minDate }) => {
           if (minDate) {
             const day31 = 31 * 24 * 3600 * 1000
-            maxTime = moment(minDate.getTime()).add(11, 'months')
-            minTime = moment(minDate.getTime()).subtract(11, 'months')
+            maxTime = dayjs(minDate.getTime()).add(11, 'months')
+            minTime = dayjs(minDate.getTime()).subtract(11, 'months')
           }
         },
         disabledDate: time => {
           if (maxTime) {
             return (
               time.getTime() >
-                moment()
+                dayjs()
                   .endOf('day')
                   .valueOf() ||
               time.getTime() > maxTime ||
@@ -241,7 +249,7 @@ export default {
           }
           return (
             time.getTime() >
-            moment()
+            dayjs()
               .endOf('day')
               .valueOf()
           )
@@ -270,20 +278,20 @@ export default {
       ]
     }
     this.form.time = [
-      moment(new Date().getTime())
+      dayjs()
         .subtract(11, 'months')
         .format('YYYY-MM'),
-      moment(new Date().getTime()).format('YYYY-MM')
+      dayjs().format('YYYY-MM')
     ]
   },
   methods: {
-     handleExportLists () {
-       this.$refs.exportEecord.exportVisible=true
-     },
-    async  downLoadTradeDataExcel () {
+    handleExportLists() {
+      this.$refs.exportEecord.exportVisible = true
+    },
+    async downLoadTradeDataExcel() {
       this.exportLoad = true
       try {
-        await downLoadTradeDataExcel({...this.initSubData()})
+        await downLoadTradeDataExcel({ ...this.initSubData() })
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
       } catch (error) {
       } finally {
@@ -411,7 +419,7 @@ export default {
     handleSelect(key, keyPath) {
       this.activeIndex = String(key)
     },
-    initSubData () {
+    initSubData() {
       let data = {
         type: 3,
         adminId: this.form.searchObject === 2 ? this.form.id : '',
@@ -426,9 +434,9 @@ export default {
     },
     async getList() {
       this.tableLoading = true
-    
+
       try {
-        const res = await cashierData({...this.initSubData()})
+        const res = await cashierData({ ...this.initSubData() })
         this.tableData = res
         this.eChartsDateList = []
         this.eChartsDataList = []
@@ -545,7 +553,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;

@@ -168,7 +168,7 @@ import {
   xftArchiveExportDel
 } from '@/api/xftArchive'
 import { mapActions } from 'vuex'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
@@ -302,7 +302,7 @@ export default {
       }
     },
     handleExport: async function() {
-      if (!this.form.time?.length || moment(this.form.time[1]).diff(moment(this.form.time[0]), 'days') > 62) {
+      if (!this.form.time?.length || dayjs(this.form.time[1]).diff(dayjs(this.form.time[0]), 'days') > 62) {
         this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
         return false
       }

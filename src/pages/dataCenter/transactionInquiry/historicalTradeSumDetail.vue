@@ -158,7 +158,6 @@
 
 <script>
 import selectPage from '@/components/selectPage'
-import moment from 'moment'
 import { detail, queryNewAgentPage, queryShopListByPage ,downLoadTradeDetailExcel} from '@/api/dataCenter/historiyTrade'
 import exportEecord from '@/components/exportEecord'
 export default {

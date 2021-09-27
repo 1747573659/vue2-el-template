@@ -60,14 +60,7 @@
           </div>
         </el-col>
       </el-row>
-      <base-table
-        :columns="headers"
-        :list="list"
-        :total="total"
-        @getList="handleFilter(queryParams)"
-        :page.sync="tableParam.page"
-        :rows.sync="tableParam.rows"
-      ></base-table>
+      <base-table :columns="headers" :list="list" :total="total" @getList="handleFilter(queryParams)" :page.sync="tableParam.page" :rows.sync="tableParam.rows"></base-table>
     </div>
   </div>
 </template>
@@ -76,10 +69,10 @@ import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
 import { queryAgentPageNew } from '@/api/customer/agent'
-import { queryNewAgentPage } from "@/api/dataCenter/historiyTrade";
+import { queryNewAgentPage } from '@/api/dataCenter/historiyTrade'
 import { userdataCount } from '@/api/dataCenter/userData.js'
 import selectPage from '@/components/selectPage2/index.vue'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 export default {
   name: 'newStatistics',
@@ -98,10 +91,10 @@ export default {
           label: '日期：',
           placeholder: '请选择日期',
           value: [
-            moment()
+            dayjs()
               .subtract(7, 'days')
               .format('YYYY-MM-DD'),
-            moment()
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD')
           ]
@@ -174,7 +167,7 @@ export default {
     queryAgentPage(e) {
       return queryAgentPageNew(e)
     },
-    queryNewAgentPageFun (e) {
+    queryNewAgentPageFun(e) {
       return queryNewAgentPage(e)
     }
   },
@@ -184,7 +177,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
