@@ -129,4 +129,9 @@ export default {
 
 <style lang="scss" scoped>
 @import '../../scss/basicInfo.scss';
+.p-hardware {
+  &-con {
+    padding-bottom: 72px;
+  }
+}
 </style>
