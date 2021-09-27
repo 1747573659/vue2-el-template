@@ -32,7 +32,7 @@
                 v-model="form.createUser"
                 :data.sync="ordererData"
                 dict-label="contactor"
-                dict-value="id"
+                dict-value="userId"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
                 placeholder="下单人"
