@@ -5,6 +5,8 @@ import { authShopPage } from '@/api/customer/merchant'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import router from '@/router'
 
+import moment from 'moment'
+
 const state = {
   routes: [], // 路由权限
   btns: [],
@@ -50,13 +52,17 @@ const mutations = {
 let page = 0, maxPage = false
 
 // 获取该经销商下商户未开通享钱的列表
-const authShopPageMethod = (commit) => {
+const authShopPageMethod = (commit, { userRoleType = 0 }) => {
   authShopPage({
     page: ++page,
     rows: 10,
-    xqUsedStatusList: [1, 2, 3]
+    xqUsedStatusList: [1, 2, 3],
+    status: 0,
+    startFirstLoginDate: moment(new Date()).subtract(14, 'days').format('YYYY-MM-DD HH:mm:ss'),
+    endFirstLoginDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
   }).then(res => {
-    commit('SET_NONACTIVATEDXQ', true)
+    // 有一条不符合享钱开通条件的数据就弹出，只对类型是“经销商”的管理员弹出
+    commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userRoleType === 1)
     commit('SET_NONACTIVATEDXQLIST', res.results)
     maxPage = res && res.results.length !== 10
   })
@@ -72,7 +78,7 @@ const actions = {
       login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
         .then(response => {
           popUpsByAuditStatus().then(res => commit('SET_AUDITSTATUS', Boolean(res)))
-          authShopPageMethod(commit)
+          authShopPageMethod(commit, response.userInfo)
           // 重新设置异步路由里面的重定向地址
           const treeRoute = routeTree(response.menus)
           const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
@@ -136,7 +142,8 @@ const actions = {
     commit('SET_BTNS', list)
   },
   authShopPageMethodAction({commit}) {
-    !maxPage && authShopPageMethod(commit)
+    // 当能下拉加载的时候userRoleType必定为1，所以直接写死传进去就好
+    !maxPage && authShopPageMethod(commit, { userRoleType: 1 })
   }
 }
 
