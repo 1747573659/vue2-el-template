@@ -139,7 +139,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import { getLocal } from '@/utils/storage'
 import selectPage from '@/components/selectPage'
 import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList } from '@/api/dataCenter/historiyTrade'

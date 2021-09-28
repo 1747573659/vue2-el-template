@@ -146,18 +146,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="km-page-block">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 30, 50]"
-          :page-size="pageSize"
-          :total="totalPage"
-          layout="total, sizes, prev, pager, next, jumper"
-        >
-        </el-pagination>
-      </div>
+      <km-pagination :request="getQueryPage" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     </div>
 
     <!-- 升级签约/立即签约 -->
@@ -376,15 +365,6 @@ export default {
       this.getQueryPage().finally(() => {
         this.isSearchLock = false
       })
-    },
-    handleCurrentChange(val) {
-      this.currentPage = val
-      this.getQueryPage()
-    },
-    handleSizeChange(val) {
-      this.currentPage = 1
-      this.pageSize = val
-      this.getQueryPage()
     },
     getQueryPage: async function() {
       try {

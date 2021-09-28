@@ -62,8 +62,8 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="getList">查询</el-button>
-              <el-button :loading="exportLoad"   @click="downLoadTradeDataExcel"  v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'">导出</el-button>
-              <el-button  @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'" >导出记录</el-button>
+              <el-button :loading="exportLoad" @click="downLoadTradeDataExcel" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'">导出</el-button>
+              <el-button @click="handleExportLists" v-permission="'DATACENTER_TRANSACTIONINQUIRY_HISTORICALTRADESUM_EXPORT'">导出记录</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -170,15 +170,23 @@
         </el-table-column>
       </el-table>
     </div>
-    <exportEecord  :exportType='2' ref="exportEecord"></exportEecord>
+    <exportEecord :exportType="2" ref="exportEecord"></exportEecord>
   </div>
 </template>
 
 <script>
 import selectPage from '@/components/selectPage'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { getLocal } from '@/utils/storage'
-import { paymentMethodVoList, cashierData, queryNewAgentPage, queryShopListByPage, queryStorePage, paymentPluginVoList,downLoadTradeDataExcel } from '@/api/dataCenter/historiyTrade'
+import {
+  paymentMethodVoList,
+  cashierData,
+  queryNewAgentPage,
+  queryShopListByPage,
+  queryStorePage,
+  paymentPluginVoList,
+  downLoadTradeDataExcel
+} from '@/api/dataCenter/historiyTrade'
 import selectCopy from '@/components/selectCopy'
 import exportEecord from '@/components/exportEecord'
 let maxTime = ''
@@ -240,7 +248,7 @@ export default {
           if (maxTime) {
             return (
               time.getTime() >
-                moment()
+                dayjs()
                   .endOf('day')
                   .valueOf() -
                   24 * 3600 * 1000 ||
@@ -250,7 +258,7 @@ export default {
           }
           return (
             time.getTime() >
-            moment()
+            dayjs()
               .endOf('day')
               .valueOf() -
               24 * 3600 * 1000
@@ -280,22 +288,22 @@ export default {
       ]
     }
     this.form.time = [
-      moment(new Date().getTime())
+      dayjs()
         .subtract(7, 'days')
         .format('YYYY-MM-DD'),
-      moment(new Date().getTime())
+      dayjs()
         .subtract(1, 'days')
         .format('YYYY-MM-DD')
     ]
   },
   methods: {
-      handleExportLists () {
-        this.$refs.exportEecord.exportVisible=true
-      },
-     async  downLoadTradeDataExcel () {
+    handleExportLists() {
+      this.$refs.exportEecord.exportVisible = true
+    },
+    async downLoadTradeDataExcel() {
       this.exportLoad = true
       try {
-        await downLoadTradeDataExcel({...this.initSubData()})
+        await downLoadTradeDataExcel({ ...this.initSubData() })
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
       } catch (error) {
       } finally {
@@ -414,38 +422,38 @@ export default {
       switch (type) {
         case 'yesterday':
           this.form.time = [
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD'),
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD')
           ]
           break
         case 'week':
           this.form.time = [
-            moment(new Date().getTime())
+            dayjs()
               .subtract(7, 'days')
               .format('YYYY-MM-DD'),
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD')
           ]
           break
         case 'month':
           this.form.time = [
-            moment(new Date().getTime())
+            dayjs()
               .subtract(30, 'days')
               .format('YYYY-MM-DD'),
-            moment(new Date().getTime())
+            dayjs()
               .subtract(1, 'days')
               .format('YYYY-MM-DD')
           ]
           break
       }
     },
-    initSubData () {
-     let data = {
+    initSubData() {
+      let data = {
         type: 2,
         adminId: this.form.searchObject === 2 ? this.form.id : '',
         agentId: this.form.searchObject === 1 ? this.form.id : '',
@@ -460,7 +468,7 @@ export default {
     async getList() {
       this.tableLoading = true
       try {
-        const res = await cashierData({...this.initSubData()})
+        const res = await cashierData({ ...this.initSubData() })
         this.tableData = res
         this.eChartsDateList = []
         this.eChartsDataList = []

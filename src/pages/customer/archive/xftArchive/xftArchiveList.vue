@@ -46,7 +46,7 @@
             <el-form-item>
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
               <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" :loading="exportLoad" @click="handleExport">导出</el-button>
-              <el-button v-permission="'XFTARCHIVE_LIST_EXPORT'" @click="handleExportLists">导出记录</el-button>
+              <km-export-view v-permission="'XFTARCHIVE_LIST_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3">
@@ -137,18 +137,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div class="km-page-block">
-        <el-pagination
-          @size-change="handleSizeChange"
-          @current-change="handleCurrentChange"
-          :current-page="currentPage"
-          :page-sizes="[10, 30, 50]"
-          :page-size="pageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage"
-        >
-        </el-pagination>
-      </div>
+      <km-pagination :request="getList" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     </div>
     <el-dialog title="商户微信实名认证指引流程" :visible.sync="certificationVisible" width="507px" class="certification-dialog">
       <div class="certification-dialog-text">
@@ -161,41 +150,6 @@
       <span slot="footer" class="dialog-footer">
         <el-button size="small" style="padding: 8px 22px" @click="certificationVisible = false">关闭</el-button>
       </span>
-    </el-dialog>
-    <el-dialog class="p-export-con" title="导出记录" :visible.sync="exportVisible" custom-class="p-dialog-order">
-      <el-table :data="exportLists" v-loading="exportLock">
-        <el-table-column prop="fileName" label="文件名称"></el-table-column>
-        <el-table-column prop="createTime" label="导出时间" width="180"></el-table-column>
-        <el-table-column label="进度" width="100">
-          <template slot-scope="scope">
-            <span>{{ scope.row.result === 1 ? '生成中' : scope.row.result === 2 ? '已生成' : '失败' }}</span>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" width="100">
-          <template slot-scope="scope">
-            <template v-if="scope.row.result === 2">
-              <el-link :href="scope.row.fileCompleteUrl" :underline="false">
-                <el-button size="small" type="text">下载</el-button>
-              </el-link>
-              <el-button size="small" @click="handleExportDel(scope.row)" type="text" class="p-export_del">删除</el-button>
-            </template>
-            <span v-else>--</span>
-          </template>
-        </el-table-column>
-      </el-table>
-      <div class="p-export-pagination">
-        <el-pagination
-          background
-          @size-change="handleExportSizeChange"
-          @current-change="handleExportCurrentChange"
-          :page-sizes="[10, 15, 20, 25]"
-          :current-page="exportCurrentPage"
-          :page-size="exportPageSize"
-          layout="total, sizes, prev, pager, next, jumper"
-          :total="exportPageTotal"
-        >
-        </el-pagination>
-      </div>
     </el-dialog>
   </div>
 </template>
@@ -214,7 +168,7 @@ import {
   xftArchiveExportDel
 } from '@/api/xftArchive'
 import { mapActions } from 'vuex'
-import moment from 'moment'
+import dayjs from 'dayjs'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 export default {
@@ -233,7 +187,7 @@ export default {
         wxCertStatus: '',
         status: 0,
         channelTypeCode: '',
-        archiveIds:'' // 资料ID
+        archiveIds: '' // 资料ID
       },
       auditStatusOptions: [
         { id: '', name: '全部' },
@@ -310,13 +264,7 @@ export default {
         { auditStatus: '', label: '微信认证审核驳回', total: 0 }
       ],
       // dialog
-      exportVisible: false,
-      exportLoad: false,
-      exportLock: false,
-      exportLists: [],
-      exportCurrentPage: 1,
-      exportPageSize: 10,
-      exportPageTotal: 0
+      exportLoad: false
     }
   },
   activated() {
@@ -335,52 +283,6 @@ export default {
     handleWxCertReason(row) {
       this.$alert(row.archiveBaseDTO.wxCertResultMsg, '原因', { confirmButtonText: '确定' })
     },
-    handleExportDel(row) {
-      this.$confirm('确定要删除这条导出记录吗？', '删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            xftArchiveExportDel({ id: row.id })
-              .then(() => {
-                this.$message({ type: 'success', message: '删除成功' })
-                if (!--this.exportLists.length) this.exportCurrentPage = Math.ceil((this.exportPageTotal - 1) / this.exportPageSize) || 1
-                this.handleExportRecord()
-              })
-              .finally(() => {
-                instance.confirmButtonLoading = false
-                done()
-              })
-          } else done()
-        }
-      }).catch(err => {})
-    },
-    handleExportCurrentChange(val) {
-      this.exportCurrentPage = val
-      this.handleExportRecord()
-    },
-    handleExportSizeChange(val) {
-      this.exportCurrentPage = 1
-      this.exportPageSize = val
-      this.handleExportRecord()
-    },
-    handleExportRecord: async function() {
-      const data = { exportType: 1, page: this.exportCurrentPage, rows: this.exportPageSize }
-      try {
-        this.exportLock = true
-        const res = await xftArchiveExportLog(data)
-        this.exportLists = res.results
-        this.exportPageTotal = res.totalCount
-      } finally {
-        this.exportLock = false
-      }
-    },
-    handleExportLists() {
-      this.handleExportRecord()
-      this.exportVisible = true
-    },
     handleQueryParams() {
       return {
         orders: { createTime: this.form.createTime },
@@ -394,13 +296,13 @@ export default {
         bankCard: this.form.name,
         wxCertStatus: this.form.wxCertStatus,
         stopUse: this.form.status,
-        archiveIds: this.form.archiveIds?[this.form.archiveIds]:[],
+        archiveIds: this.form.archiveIds ? [this.form.archiveIds] : [],
         page: this.currentPage,
         rows: this.pageSize
       }
     },
     handleExport: async function() {
-      if (!this.form.time?.length || moment(this.form.time[1]).diff(moment(this.form.time[0]), 'days') > 62) {
+      if (!this.form.time?.length || dayjs(this.form.time[1]).diff(dayjs(this.form.time[0]), 'days') > 62) {
         this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
         return false
       }
@@ -412,6 +314,13 @@ export default {
       } finally {
         this.exportLoad = false
       }
+    },
+    handleExportDel: async function(row) {
+      return await xftArchiveExportDel({ id: row.id })
+    },
+    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      const data = { exportType: 1, page: currentPage, rows: pageSize }
+      return await xftArchiveExportLog(data)
     },
     handleQueryTotalByStatus: async function() {
       try {

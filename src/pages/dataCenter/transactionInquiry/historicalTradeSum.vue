@@ -18,7 +18,6 @@
 </template>
 
 <script>
-import moment from 'moment'
 import dayTradeData from './historicalTradeSumComponents/dayTradeData.vue'
 import totalTradeData from './historicalTradeSumComponents/totalTradeData.vue'
 import monthTradeData from './historicalTradeSumComponents/monthTradeData.vue'

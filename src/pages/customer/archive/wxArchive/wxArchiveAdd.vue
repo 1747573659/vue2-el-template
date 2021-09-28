@@ -538,7 +538,7 @@ import {
   imageOCR,
   updateArchiveBaseDirectAuditStatus
 } from '@/api/wxArchive'
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 export default {
   name: 'wxArchiveAdd',
@@ -647,9 +647,9 @@ export default {
           this.form.archiveExpandVO.licValidityBigen = ''
           this.form.archiveExpandVO.licValidityEnd = ''
         } else {
-          this.form.archiveExpandVO.licValidityBigen = moment(validPeriod.split('至')[0]).format('YYYY-MM-DD')
+          this.form.archiveExpandVO.licValidityBigen = dayjs(validPeriod.split('至')[0]).format('YYYY-MM-DD')
           this.form.archiveExpandVO.licValidityEnd = validPeriod.split('至')[1].replace(/长期/, '')
-            ? moment(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
+            ? dayjs(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
             : ''
         }
       } else {
