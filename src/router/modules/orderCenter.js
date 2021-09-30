@@ -23,13 +23,13 @@ const orderCenter = {
         name: 'orderManagement'
       },
       children: [
-        {
-          path: 'softwareAuthorization',
-          component: _import('orderCenter/OrderManagement/SoftwareAuthorization'),
-          name: 'softwareAuthorization',
-          code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREAUTHORIZATION',
-          meta: { title: '软件授权订单', name: 'softwareAuthorization', cache: true }
-        },
+        // {
+        //   path: 'softwareAuthorization',
+        //   component: _import('orderCenter/OrderManagement/SoftwareAuthorization'),
+        //   name: 'softwareAuthorization',
+        //   code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREAUTHORIZATION',
+        //   meta: { title: '软件授权订单', name: 'softwareAuthorization', cache: true }
+        // },
         {
           path: 'softwarePurchaseOrder',
           component: _import('orderCenter/OrderManagement/SoftwarePurchaseOrder'),
@@ -51,6 +51,14 @@ const orderCenter = {
           name: 'softwareInventoryReplace',
           code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYREPLACE',
           meta: { title: '软件库存置换单', name: 'softwareInventoryReplace', cache: true }
+        },
+        {
+          path: 'softwareInventoryReplaceDetails',
+          component: _import('orderCenter/OrderManagement/SoftwareInventoryReplace/softwareInventoryReplaceDetails'),
+          name: 'softwareInventoryReplaceDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '软件库存置换详情', name: 'softwareInventoryReplaceDetails', cache: true }
         },
         {
           path: 'hardwarePurchaseOrder',

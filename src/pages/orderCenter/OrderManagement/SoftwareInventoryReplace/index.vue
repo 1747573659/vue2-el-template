@@ -69,22 +69,22 @@
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="单据编码"></el-table-column>
-        <el-table-column prop="billNo" label="升级费用"></el-table-column>
+        <el-table-column prop="consumeInventory" label="消耗库存" align="right" width="150"></el-table-column>
+        <el-table-column prop="upgradeFee" label="升级费用" align="right" width="150"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
-        <el-table-column label="操作" fixed="right" width="110">
+        <el-table-column label="操作" fixed="right" width="150">
           <template slot-scope="scope">
-            <!-- 待判断订单状态，缺少属性名与状态值 -->
-            <template v-if="scope.row.orderStatus === 0">
+            <template v-if="scope.row.orderStatus === 10">
               <el-button v-permission="'SOFTWARE_INVENTORY_REPLACE_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
               <el-popconfirm class="el-button el-button--text" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
                 <el-button type="text" size="small" slot="reference">删除</el-button>
               </el-popconfirm>
             </template>
-            <el-button type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
+            <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -95,10 +95,11 @@
 
 <script>
 import dayjs from 'dayjs'
-import { orderStatus } from '../index'
+import { orderStatus } from './data'
 import { mapActions } from 'vuex'
 
-import { queryByPage, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { queryByPage } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
   name: 'softwareInventoryReplace',
@@ -134,15 +135,14 @@ export default {
   methods: {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
-      this.delCachedView({ name: 'hardwarePurchaseDetails' }).then(() => {
-        this.$router.push({ name: 'hardwarePurchaseDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })
+      this.delCachedView({ name: 'softwareInventoryReplaceDetails' }).then(() => {
+        this.$router.push({ name: 'softwareInventoryReplaceDetails', query: { ...status, id: row.id } })
       })
     },
     async handleDelRow(row) {},
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
-        orderType: 1,
         startTime: createTime?.[0] ?? '',
         endTime: createTime?.[1] ?? '',
         page: this.currentPage,

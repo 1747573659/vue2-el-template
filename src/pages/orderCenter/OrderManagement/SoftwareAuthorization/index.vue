@@ -113,7 +113,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { productType, orderStatus } from './index'
+import { productType, orderStatus } from './data'
 import { mapActions } from 'vuex'
 
 import { queryByPage, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'

@@ -1,6 +1,4 @@
 import request from '@/utils/request'
-import ipConfig from '@/utils/baseUrl'
-import qs from 'qs'
 
 const urlLinks = {
   wmdownloadExcel: `/wm/downloadExcel`,
