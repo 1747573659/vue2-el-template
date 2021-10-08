@@ -51,8 +51,10 @@ const mutations = {
 
 let page = 0, maxPage = false
 
+const adminUserType = 11
+
 // 获取该经销商下商户未开通享钱的列表
-const authShopPageMethod = (commit, { userRoleType = 0 }) => {
+const authShopPageMethod = (commit, { userType = 0 }) => {
   authShopPage({
     page: ++page,
     rows: 10,
@@ -62,7 +64,7 @@ const authShopPageMethod = (commit, { userRoleType = 0 }) => {
     endFirstLoginDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
   }).then(res => {
     // 有一条不符合享钱开通条件的数据就弹出，只对类型是“经销商”的管理员弹出
-    commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userRoleType === 1)
+    commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userType === adminUserType)
     commit('SET_NONACTIVATEDXQLIST', res.results)
     maxPage = res && res.results.length !== 10
   })
@@ -142,8 +144,8 @@ const actions = {
     commit('SET_BTNS', list)
   },
   authShopPageMethodAction({commit}) {
-    // 当能下拉加载的时候userRoleType必定为1，所以直接写死传进去就好
-    !maxPage && authShopPageMethod(commit, { userRoleType: 1 })
+    // 当能下拉加载的时候userType必定为1，所以直接写死传进去就好
+    !maxPage && authShopPageMethod(commit, { userType: adminUserType })
   }
 }
 
