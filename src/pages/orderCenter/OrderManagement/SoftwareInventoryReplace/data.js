@@ -13,7 +13,6 @@ export const formObj = {
     consumeInventory: '', // 订单金额
     handUser: '', // 受理人id
     handUserName: '', // 受理人名称
-    upgradeFee: '', // 升级费用
     agentId: '', // 经销商id
     agentName: '' // 经销商名称
   },

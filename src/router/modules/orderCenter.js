@@ -23,13 +23,21 @@ const orderCenter = {
         name: 'orderManagement'
       },
       children: [
-        // {
-        //   path: 'softwareAuthorization',
-        //   component: _import('orderCenter/OrderManagement/SoftwareAuthorization'),
-        //   name: 'softwareAuthorization',
-        //   code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREAUTHORIZATION',
-        //   meta: { title: '软件授权订单', name: 'softwareAuthorization', cache: true }
-        // },
+        {
+          path: 'softwareAuthorization',
+          component: _import('orderCenter/OrderManagement/SoftwareAuthorization'),
+          name: 'softwareAuthorization',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREAUTHORIZATION',
+          meta: { title: '软件授权订单', name: 'softwareAuthorization', cache: true }
+        },
+        {
+          path: 'softwareAuthorizationDetails',
+          component: _import('orderCenter/OrderManagement/SoftwareAuthorization/softwareAuthorizationDetails'),
+          name: 'softwareAuthorizationDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '软件授权订单详情', name: 'softwareAuthorizationDetails', cache: true }
+        },
         {
           path: 'softwarePurchaseOrder',
           component: _import('orderCenter/OrderManagement/SoftwarePurchaseOrder'),

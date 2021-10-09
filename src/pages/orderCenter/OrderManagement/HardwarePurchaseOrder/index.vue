@@ -41,8 +41,8 @@
               <km-select-page
                 v-model="form.createUser"
                 :data.sync="ordererData"
-                dict-label="contactor"
-                dict-value="id"
+                option-label="contactor"
+                option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
                 placeholder="下单人"

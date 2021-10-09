@@ -1,17 +1,13 @@
 <template>
-  <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" @close="handleProductClose" title="选择产品" width="800px" class="p-product-con">
+  <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" @close="handleProductClose" title="选择产品" width="800px" class="p-address-con">
     <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
       <el-form-item label="产品信息">
         <el-input v-model="productVal" maxlength="50" placeholder="请输入产品编码/名称" clearable></el-input>
       </el-form-item>
       <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
     </el-form>
-    <el-table ref="product" :data="tableData" class="e-inventory-tab" @row-click="handleRowIndex" v-loading="checkProductTabLock">
-      <el-table-column width="55">
-        <template slot-scope="scope">
-          <el-radio v-model="checkProductVal" :label="scope.$index"></el-radio>
-        </template>
-      </el-table-column>
+    <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="code" label="产品编码"></el-table-column>
       <el-table-column prop="name" label="产品名称"></el-table-column>
     </el-table>
@@ -25,27 +21,33 @@
 
 <script>
 import NP from 'number-precision'
-
 import { productInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
   data() {
     return {
       productVal: '',
-      checkProductVal: '',
       checkProductTabLock: false,
-      tableData: [],
+      basicProductData: [],
       currentPage: 1,
-      totalPage: 0,
-      pageSize: 10
+      pageSize: 10,
+      totalPage: 0
     }
   },
   methods: {
-    handleRowIndex(row) {
-      this.checkProductVal = this.tableData.findIndex(item => item.id === row.id)
-    },
     handleConfirm() {
-      this.$emit('productData', Array.of(this.tableData[this.checkProductVal]))
+      const Selections = this.$refs.product.selection.map(item => {
+        return {
+          productCode: item.code,
+          productName: item.name,
+          productCount: 1,
+          productPrice: item.saleAmount,
+          productAmount: NP.times(1, item.saleAmount),
+          sourcePrice: NP.times(1, item.saleAmount),
+          remark: ''
+        }
+      })
+      this.$emit('productData', Selections)
       this.$emit('update:visible', false)
     },
     handleProductClose() {
@@ -59,9 +61,9 @@ export default {
           info: this.productVal.trim(),
           page: this.currentPage,
           rows: this.pageSize,
-          orderType: 0
+          orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
         })
-        this.tableData = results
+        this.basicProductData = results
         this.totalPage = totalRecord
       } catch (error) {
       } finally {
@@ -73,7 +75,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-product {
+.p-address {
   &-con {
     /deep/ {
       .el-dialog__body {
@@ -81,23 +83,6 @@ export default {
       }
       .km-page-block {
         padding-bottom: 0px;
-      }
-    }
-  }
-}
-.e-inventory {
-  &-tab {
-    /deep/ {
-      .el-radio__label {
-        display: none;
-      }
-      .el-radio__inner {
-        width: 16px;
-        height: 16px;
-      }
-      .el-radio__inner::after {
-        width: 8px;
-        height: 8px;
       }
     }
   }

@@ -37,10 +37,11 @@
             </el-form-item>
             <el-form-item label="下单人">
               <km-select-page
+                ref="selectPage"
                 v-model="form.createUser"
                 :data.sync="ordererData"
-                dict-label="contactor"
-                dict-value="id"
+                option-label="contactor"
+                option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
                 placeholder="下单人"
@@ -73,10 +74,10 @@
             </km-export-view>
           </el-form-item>
           <el-form-item v-permission="'SOFTWARE_AUTHORIZATION_PLUS'">
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' })">ERP产品</el-button>
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' })">微零售</el-button>
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' })">微餐饮</el-button>
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' })">云商</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'erp' })">ERP产品</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'retail' })">微零售</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'repast' })">微餐饮</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'clound' })">云商</el-button>
           </el-form-item>
         </el-row>
       </el-form>
@@ -85,9 +86,11 @@
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
-        <el-table-column prop="billNo" label="产品类型"></el-table-column>
-        <el-table-column prop="billNo" label="授权产品"></el-table-column>
-        <el-table-column prop="billNo" label="消耗库存"></el-table-column>
+        <el-table-column prop="productType" label="产品类型">
+          <template slot-scope="scope">{{ productType.has(scope.row.productType) ? productType.get(scope.row.productType).label : '' }}</template>
+        </el-table-column>
+        <el-table-column prop="licensedProducts" label="授权产品"></el-table-column>
+        <el-table-column prop="consumeInventory" label="消耗库存"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
@@ -95,14 +98,13 @@
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <!-- 待判断订单状态，缺少属性名与状态值 -->
-            <template v-if="scope.row.orderStatus === 0">
+            <template v-if="scope.row.orderStatus === 10">
               <el-button v-permission="'SOFTWARE_AUTHORIZATION_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
               <el-popconfirm class="el-button el-button--text" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
                 <el-button type="text" size="small" slot="reference">删除</el-button>
               </el-popconfirm>
             </template>
-            <el-button type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
+            <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -116,7 +118,8 @@ import dayjs from 'dayjs'
 import { productType, orderStatus } from './data'
 import { mapActions } from 'vuex'
 
-import { queryByPage, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { queryByPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   name: 'softwareAuthorization',
@@ -151,15 +154,18 @@ export default {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
+    this.handleOrderPage().then(() => {
+      this.$refs.selectPage.selectVal = -1
+    })
   },
   methods: {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
-      this.delCachedView({ name: 'hardwarePurchaseDetails' }).then(() => {
-        this.$router.push({ name: 'hardwarePurchaseDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })
+      this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
+        this.$router.push({ name: 'softwareAuthorizationDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })
       })
     },
-    async handleDelRow(row){},
+    async handleDelRow(row) {},
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {

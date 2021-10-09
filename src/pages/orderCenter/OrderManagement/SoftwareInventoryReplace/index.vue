@@ -24,10 +24,11 @@
             </el-form-item>
             <el-form-item label="下单人">
               <km-select-page
+                ref="selectPage"
                 v-model="form.createUser"
                 :data.sync="ordererData"
-                dict-label="contactor"
-                dict-value="id"
+                option-label="contactor"
+                option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
                 placeholder="下单人"
@@ -131,6 +132,9 @@ export default {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
+    this.handleOrderPage().then(()=> {
+      this.$refs.selectPage.selectVal = -1
+    })
   },
   methods: {
     ...mapActions(['delCachedView']),

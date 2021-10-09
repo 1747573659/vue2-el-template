@@ -76,7 +76,7 @@
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
-      <purchase-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
+      <inventory-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
     </template>
   </section>
 </template>
@@ -86,11 +86,11 @@ import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
 import NP from 'number-precision'
 import { orderStatus, formObj } from '../data'
-import purchaseProduct from '../../components/purchaseProduct'
+import inventoryProduct from './inventoryProduct'
 
 export default {
   components: {
-    purchaseProduct
+    inventoryProduct
   },
   data() {
     return {
@@ -132,7 +132,7 @@ export default {
           item.replaceableQuantity = 5
           item.consumeInventory = 5
         })
-        this.form.orderItemList = this.form.orderItemList.concat(data)
+        this.form.orderItemList = this.form.orderItemList.concat(deepClone(data))
       }
     },
     getSummaries(param) {
