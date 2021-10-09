@@ -5,7 +5,7 @@ import { authShopPage } from '@/api/customer/merchant'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import router from '@/router'
 
-import moment from 'moment'
+import dayjs from 'dayjs'
 
 const state = {
   routes: [], // 路由权限
@@ -60,8 +60,8 @@ const authShopPageMethod = (commit, { userType = 0 }) => {
     rows: 10,
     xqUsedStatusList: [1, 2, 3],
     status: 0,
-    startFirstLoginDate: moment(new Date()).subtract(14, 'days').format('YYYY-MM-DD HH:mm:ss'),
-    endFirstLoginDate: moment(new Date()).format('YYYY-MM-DD HH:mm:ss')
+    startFirstLoginDate: dayjs().subtract(14, 'days').format('YYYY-MM-DD HH:mm:ss'),
+    endFirstLoginDate: dayjs().format('YYYY-MM-DD HH:mm:ss')
   }).then(res => {
     // 有一条不符合享钱开通条件的数据就弹出，只对类型是“经销商”的管理员弹出
     commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userType === adminUserType)
