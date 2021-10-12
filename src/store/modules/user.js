@@ -56,6 +56,7 @@ const adminUserType = 11
 // 获取该经销商下商户未开通享钱的列表
 const authShopPageMethod = (commit, { userType = 0 }) => {
   authShopPage({
+    queryType: 2,
     page: ++page,
     rows: 10,
     xqUsedStatusList: [1, 2, 3],
