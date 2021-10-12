@@ -10,3 +10,12 @@ export function queryByPage(data) {
     data
   })
 }
+
+export function queryReplaceProducts(data) {
+  return request({
+    baseURL: 'http://127.0.0.1:4523/mock/432806',
+    url: '/channel/replace/queryProduct',
+    method: 'POST',
+    data
+  })
+}

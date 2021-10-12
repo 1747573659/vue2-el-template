@@ -2,7 +2,7 @@
 export const orderStatus = new Map([
   [-1, { value: -1, label: '全部' }],
   [10, { value: 10, label: '未提交' }],
-  [20, { value: 20, label: '已提交' }],
+  [20, { value: 20, label: '待审核' }],
   [40, { value: 40, label: '已审核' }]
 ])
 

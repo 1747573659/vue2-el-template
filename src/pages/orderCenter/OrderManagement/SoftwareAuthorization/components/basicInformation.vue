@@ -69,13 +69,13 @@
         </template>
         <template v-if="['retail', 'repast'].includes($route.query.type)">
           <el-form-item label="商户版本">
-            <el-input :value="form.purchaseOrderDTO.useGuarantee"></el-input>
+            <el-input :value="form.purchaseOrderDTO.useGuarantee" disabled></el-input>
           </el-form-item>
           <el-form-item label="关联产品">
-            <el-input :value="form.purchaseOrderDTO.agentId"></el-input>
+            <el-input :value="form.purchaseOrderDTO.agentId" disabled></el-input>
           </el-form-item>
           <el-form-item label="门店总数">
-            <el-input :value="form.purchaseOrderDTO.agentId"></el-input>
+            <el-input :value="form.purchaseOrderDTO.agentId" disabled></el-input>
           </el-form-item>
           <el-form-item label="应用模块">
             <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
@@ -90,8 +90,13 @@
     </el-card>
     <el-card shadow="never" class="p-card">
       <div slot="header">订单明细</div>
+      <el-tabs v-model="activeName">
+        <el-tab-pane label="加点" name="first"></el-tab-pane>
+        <el-tab-pane label="续费" name="second"></el-tab-pane>
+      </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品</el-button>
+        <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="$route.query.type === 'erp'">选择产品模块</el-button>
+        <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="$route.query.type === 'repast'">选择授权对象</el-button>
         <el-button type="primary" size="small" plain @click="handleProductVisible">刷新库存</el-button>
       </div>
       <el-table v-if="$route.query.type === 'erp'" :data="form.orderItemList" show-summary :summary-method="getSummaries" class="p-information-tab">
@@ -108,7 +113,14 @@
             <el-input v-else size="small" v-model.number.trim="scope.row.numberOfAuthorizations" style="width:100%"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="unionPayChannel" label="银联通道"></el-table-column>
+        <el-table-column prop="unionPayChannel" label="银联通道">
+          <template slot-scope="scope">
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.unionPayChannel }}</span>
+            <el-select v-else-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)" v-model="scope.row.unionPayChannel" clearable>
+              <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </template>
+        </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
@@ -123,6 +135,39 @@
           </template>
         </el-table-column>
       </el-table>
+      <el-table v-if="$route.query.type === 'retail'" :data="form.orderItemList" class="p-information-tab">
+        <el-table-column label="序号" width="100">
+          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+        </el-table-column>
+        <el-table-column prop="moduleCode" label="当前有效期"></el-table-column>
+        <el-table-column prop="moduleName" label="延期后有效期"></el-table-column>
+        <el-table-column prop="authorizedPoints" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="消耗库存" align="right"></el-table-column>
+        <el-table-column label="备注">
+          <template slot-scope="scope">
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
+            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table v-if="$route.query.type === 'repast'" :data="form.orderItemList" class="p-information-tab">
+        <el-table-column label="序号" width="100">
+          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+        </el-table-column>
+        <el-table-column prop="moduleCode" label="门店名称/商户/税号"></el-table-column>
+        <el-table-column prop="moduleName" label="类型"></el-table-column>
+        <el-table-column prop="authorizedPoints" label="当前有效期" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="延期后有效期" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="消耗库存" align="right"></el-table-column>
+        <el-table-column label="备注">
+          <template slot-scope="scope">
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
+            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
+          </template>
+        </el-table-column>
+      </el-table>
+      <el-table v-if="$route.query.type === 'clound'"> </el-table>
     </el-card>
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
@@ -130,7 +175,8 @@
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
-      <!-- <inventory-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" /> -->
+      <erp-product v-if="$route.query.type === 'erp'" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
+      <repast-product v-if="$route.query.type === 'repast'" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
     </template>
   </section>
 </template>
@@ -140,10 +186,16 @@ import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { orderStatus, formObj, delayTimes } from '../data'
 import { deepClone } from '@/utils'
+import erpProduct from './erpProduct'
+import repastProduct from './erpProduct'
 
 import { queryOrderMan } from '@/api/orderCenter/orderManagement'
 
 export default {
+  components: {
+    erpProduct,
+    repastProduct
+  },
   data() {
     return {
       delayTimes,
@@ -152,6 +204,8 @@ export default {
       checkSaveBtnLoad: false,
       ordererData: [],
       isOrdererMaxPage: false,
+      checkProductVisible: false,
+      activeName: 'first'
     }
   },
   computed: {
@@ -164,6 +218,11 @@ export default {
     }
   },
   methods: {
+    handleProductList(data) {
+      if (data.length > 0) {
+        this.form.orderItemList = this.form.orderItemList.concat(data)
+      }
+    },
     handleCancel() {},
     handleSave() {},
     handleVerify() {},

@@ -24,8 +24,6 @@
 </template>
 
 <script>
-import NP from 'number-precision'
-
 import { productInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
@@ -45,22 +43,18 @@ export default {
       this.checkProductVal = this.tableData.findIndex(item => item.id === row.id)
     },
     handleConfirm() {
-      this.$emit('productData', Array.of(this.tableData[this.checkProductVal]))
+      this.$emit('productData', this.tableData[this.checkProductVal])
       this.$emit('update:visible', false)
     },
     handleProductClose() {
       this.currentPage = 1
       this.productVal = ''
     },
-    getProductPage: async function() {
+    async getProductPage() {
       try {
         this.checkProductTabLock = true
-        const { results = [], totalRecord = 0 } = await productInfo({
-          info: this.productVal.trim(),
-          page: this.currentPage,
-          rows: this.pageSize,
-          orderType: 0
-        })
+        const data = { info: this.productVal.trim(), page: this.currentPage, rows: this.pageSize, orderType: 0 }
+        const { results = [], totalRecord = 0 } = await productInfo(data)
         this.tableData = results
         this.totalPage = totalRecord
       } catch (error) {

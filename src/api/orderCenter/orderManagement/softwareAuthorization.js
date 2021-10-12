@@ -10,3 +10,12 @@ export function queryByPage(data) {
     data
   })
 }
+
+export function queryProducts(data) {
+  return request({
+    baseURL: 'http://127.0.0.1:4523/mock/432806',
+    url: '/channel/author/licensed/products',
+    method: 'POST',
+    data
+  })
+}

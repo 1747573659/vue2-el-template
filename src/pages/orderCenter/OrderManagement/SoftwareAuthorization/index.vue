@@ -18,16 +18,13 @@
               ></el-date-picker>
             </el-form-item>
             <el-form-item label="产品类型">
-              <el-select v-model="form.productType" clearable>
+              <el-select v-model="form.productType" @change="handleProductType" clearable>
                 <el-option v-for="item in productType" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="授权产品">
-              <!-- <el-select v-model="form.products " clearable>
-                <el-option v-for="item in paymentStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
-              </el-select> -->
-              <el-select v-model="form.productType" clearable>
-                <el-option v-for="item in productType" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
+              <el-select v-model="form.licensedProduct" clearable filterable multiple collapse-tags>
+                <el-option v-for="(item, index) in licensedProducts" :key="index" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="订单状态">
@@ -115,11 +112,11 @@
 
 <script>
 import dayjs from 'dayjs'
-import { productType, orderStatus } from './data'
 import { mapActions } from 'vuex'
+import { productType, orderStatus } from './data'
 
 import { queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
-import { queryByPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { queryByPage, queryProducts } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   name: 'softwareAuthorization',
@@ -127,9 +124,11 @@ export default {
     return {
       productType,
       orderStatus,
+      licensedProducts: [{ name: '全部', code: '' }],
       form: {
         createTime: '',
         productType: -1,
+        licensedProduct: [],
         products: -1,
         orderStatus: -1,
         createUser: -1,
@@ -160,6 +159,17 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
+    handleProductType(val) {
+      console.info(val)
+      console.info(this.form.licensedProduct)
+      this.getLicensedProducts()
+    },
+    async getLicensedProducts() {
+      try {
+        const { results } = await queryProducts()
+        this.licensedProducts = results
+      } catch (error) {}
+    },
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
         this.$router.push({ name: 'softwareAuthorizationDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })

@@ -32,7 +32,9 @@
     <el-card shadow="never" class="p-card">
       <div slot="header">订单明细 <span class="e-product-tip">(提示：每次只能置换一种产品，如要更换请先删除已选产品)</span></div>
       <div class="e-product-choose">
-        <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="['add', 'edit'].includes($route.query.status)">选择产品</el-button>
+        <template v-if="['add', 'edit'].includes($route.query.status)">
+          <el-button type="primary" size="small" plain @click="handleProductVisible" :disabled="form.orderItemList.length > 0">选择产品</el-button>
+        </template>
       </div>
       <el-table :data="form.orderItemList" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
@@ -41,15 +43,18 @@
         <el-table-column prop="replacementProduct" label="置换产品">
           <template slot-scope="scope">{{ `${scope.row.replacementCode ? '[' + scope.row.replacementCode + ']' : ''}${scope.row.replacementProduct}` }}</template>
         </el-table-column>
-        <el-table-column prop="numberOfReplacements" label="置换数量">
+        <el-table-column prop="numberOfReplacements" label="置换数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.numberOfReplacements }}</span>
             <el-input v-else size="small" v-model.number.trim="scope.row.numberOfReplacements" style="width:100%"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="replacedProduct" label="被换产品" align="right">
+        <el-table-column prop="replacedProduct" label="被换产品">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.replacedProduct }}</span>
+            <el-select v-else v-model="scope.row.replacedProduct" clearable size="small" class="e-select-con">
+              <el-option v-for="(item, index) in replacedProducts" :key="index" :label="`${item.code ? '[' + item.code + ']' : ''} ${item.name}`" :value="item.code"></el-option>
+            </el-select>
           </template>
         </el-table-column>
         <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
@@ -72,7 +77,7 @@
     </el-card>
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <el-button size="small" type="primary" plain  v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
+      <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
@@ -88,6 +93,8 @@ import NP from 'number-precision'
 import { orderStatus, formObj } from '../data'
 import inventoryProduct from './inventoryProduct'
 
+import { queryReplaceProducts } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
+
 export default {
   components: {
     inventoryProduct
@@ -98,7 +105,9 @@ export default {
       form: deepClone(formObj),
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
-      checkProductVisible: false
+      checkProductVisible: false,
+      replacedProducts: [],
+      generalInventory: 10
     }
   },
   computed: {
@@ -114,26 +123,57 @@ export default {
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
-    handleSave() {},
-    handleVerify() {},
+    async handleSave() {
+      try {
+        if (this.form.orderItemList[0].consumeInventory > this.generalInventory) {
+          this.$message({ type: 'warning', message: `[${this.form.orderItemList[0].replacementProduct}]的库存不足，请修改后重试` })
+        } else {
+          this.checkSaveBtnLoad = true
+          // await purchaseAdd(this.form)
+          this.$message({ type: 'success', message: '保存成功' })
+        }
+      } catch (error) {
+      } finally {
+        this.checkSaveBtnLoad = false
+      }
+    },
+    handleVerify() {
+      this.$confirm('确定要提交吗？', '提示', {
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.$message({ type: 'success', message: '审核成功' })
+          } else done()
+        }
+      }).catch(() => {})
+    },
     handleProductVisible() {
       this.checkProductVisible = true
       this.$refs.product.basicProductData = []
+      this.$refs.product.checkProductVal = ''
       this.$refs.product.getProductPage()
     },
     handleProductList(data) {
-      if (data.length > 0) {
-        data.forEach(item => {
-          item.replacementCode = 'ADV10'
-          item.replacementProduct = '御商+'
-          item.numberOfReplacements = 5
-          item.replacedProduct = ''
-          item.orderInventory = 5
-          item.replaceableQuantity = 5
-          item.consumeInventory = 5
+      if (data) {
+        this.form.orderItemList.push({
+          replacementCode: 'ADV10',
+          replacementProduct: '御商+',
+          numberOfReplacements: 5,
+          replacedProduct: '',
+          orderInventory: 5,
+          replaceableQuantity: 5,
+          consumeInventory: 5,
+          remark: ''
         })
-        this.form.orderItemList = this.form.orderItemList.concat(deepClone(data))
+        this.getReplaceProducts()
       }
+    },
+    async getReplaceProducts() {
+      try {
+        const { results } = await queryReplaceProducts()
+        this.replacedProducts = results
+      } catch (error) {}
     },
     getSummaries(param) {
       const { columns, data } = param
@@ -172,6 +212,14 @@ export default {
       }
       .el-table__footer-wrapper tbody td {
         background-color: #fff;
+      }
+    }
+    .e-select-con {
+      /deep/ .el-input {
+        width: 100%;
+        &__inner {
+          text-align: left;
+        }
       }
     }
   }
