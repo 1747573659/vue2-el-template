@@ -93,8 +93,17 @@ export default {
   },
   mounted() {
     // 临时伪代码
-    if(['dev', 'test'].includes(process.env.VUE_APP_FLAG)) this.routeMenus = this.routes
-    else this.routeMenus = JSON.parse(getLocal('userInfo')).loginName === '18888888888' ? this.routes : this.routes.filter(item => item.name !== 'orderCenter')
+    if (['dev', 'test', 'pre'].includes(process.env.VUE_APP_FLAG)) this.routeMenus = this.routes
+    else
+      this.routeMenus =
+        JSON.parse(getLocal('userInfo')).loginName === '18888888888'
+          ? this.routes
+          : this.routes.map(item => {
+              if (item.name === 'orderCenter') {
+                item.children = item.children.filter(item => item.name !== 'orderManagement')
+              }
+              return item
+            })
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
       if (document.body.clientWidth < 1200) this.isDropdown = true

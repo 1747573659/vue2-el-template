@@ -10,7 +10,7 @@
       <el-table-column prop="receivePeople" label="收货人" width="120"></el-table-column>
       <el-table-column prop="receivePeoplePhone" label="收货人电话" width="150"></el-table-column>
       <el-table-column label="详细地址">
-        <template slot-scope="scope">{{ scope.row.address }}</template>
+        <template slot-scope="scope">{{ scope.row.prefixAddress + scope.row.address }}</template>
       </el-table-column>
       <el-table-column label="操作" align="right" width="130">
         <template slot-scope="scope">

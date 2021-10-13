@@ -187,7 +187,7 @@ export const basicInfoMixin = {
         this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
         row.productPrice = 0
       }
-      return (row.productAmount = NP.times(row.productCount, parseFloat(row.productPrice)))
+      return (row.productAmount = NP.round(NP.times(row.productCount, parseFloat(row.productPrice)), 2))
     },
     handleAmount(row) {
       row.productAmount = NP.round(row.productAmount, 2)
@@ -195,7 +195,7 @@ export const basicInfoMixin = {
         this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
         row.productAmount = 0
       }
-      return (row.productPrice = NP.divide(parseFloat(row.productAmount), parseFloat(row.productCount)))
+      return (row.productPrice = NP.round(NP.divide(parseFloat(row.productAmount), parseFloat(row.productCount)), 2))
     },
     getHandlerMan: async function() {
       try {

@@ -723,27 +723,17 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
-      <el-button
+      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" :loading="checkVerify" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
+      <template
         v-if="
           ([undefined, 0, 1, 2, 4, 8, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && !isDetail
         "
-        @click="toSave"
-        size="small"
-        type="primary"
-        plain
-        class="archive-bottom-btn"
-        >保存</el-button
       >
-      <el-button
-        v-if="([2, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && isDetail"
-        @click="isDetail = false"
-        size="small"
-        type="primary"
-        plain
-        class="archive-bottom-btn"
-        >编辑</el-button
-      >
+        <el-button @click="toSave" :loading="checkArchive" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
+      </template>
+      <template v-if="([2, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && isDetail">
+        <el-button @click="isDetail = false" size="small" type="primary" plain class="archive-bottom-btn">编辑</el-button>
+      </template>
       <el-button v-if="[2].includes(auditStatus)" @click="toRefuse" size="small" class="archive-bottom-btn">拒绝</el-button>
       <el-button @click="toCancle" size="small" class="archive-bottom-btn">取消</el-button>
     </div>
@@ -1050,7 +1040,9 @@ export default {
       showViewer: false,
       imageIndex: 0,
       isArchiveYQ: false,
-      formYQDisabled: false
+      formYQDisabled: false,
+      checkVerify: false,
+      checkArchive: false
     }
   },
   computed: {
@@ -1139,7 +1131,11 @@ export default {
           this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
           if (res.valid_period) {
             const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
-            if(validPeriod.split('至')[0].split('-')[0].length !== 4 || !Date.parse(validPeriod.split('至')[0]) || (validPeriod.split('至')[1] !== '长期' && !Date.parse(validPeriod.split('至')[1].replace(/长期/, '')))) {
+            if (
+              validPeriod.split('至')[0].split('-')[0].length !== 4 ||
+              !Date.parse(validPeriod.split('至')[0]) ||
+              (validPeriod.split('至')[1] !== '长期' && !Date.parse(validPeriod.split('至')[1].replace(/长期/, '')))
+            ) {
               this.form.archiveExpandVO.licValidityBigen = ''
               this.form.archiveExpandVO.licValidityEnd = ''
             } else {
@@ -1429,6 +1425,7 @@ export default {
       this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
         if (!errorMessage) {
           try {
+            this.checkArchive = true
             const res = await submit(this.form)
             if (!this.form.archiveBaseVO.id) {
               this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: 0, id: res } })
@@ -1437,7 +1434,9 @@ export default {
               document.querySelector('.e-tag_active span').innerText = `享付通资质进件/编辑`
             }
             this.$message.success('保存成功')
-          } catch (error) {}
+          } catch (error) {} finally {
+            this.checkArchive = false
+          }
         }
       })
     },
@@ -1451,12 +1450,15 @@ export default {
           this.form.archiveBaseVO.useChannelCode = ''
         }
         try {
+          this.checkVerify = true
           await audit(this.form)
           this.$store.dispatch('delTagView', this.$route).then(() => {
             this.$router.push({ path: 'xftArchive' })
           })
           this.$message.success('提交成功')
-        } catch (error) {}
+        } catch (error) {} finally {
+          this.checkVerify = false
+        }
       }
       if (this.formYQDisabled) {
         const formYQValids = [
