@@ -61,8 +61,8 @@ const authShopPageMethod = (commit, { userType = 0 }) => {
     rows: 10,
     xqUsedStatusList: [1, 2, 3],
     status: 0,
-    startFirstLoginDate: dayjs().subtract(14, 'days').format('YYYY-MM-DD HH:mm:ss'),
-    endFirstLoginDate: dayjs().format('YYYY-MM-DD HH:mm:ss')
+    startFirstLoginDate: dayjs().subtract(14, 'days').format('YYYY-MM-DD') + ' 00:00:00',
+    endFirstLoginDate: dayjs().subtract(1, 'days').format('YYYY-MM-DD') + ' 23:59:59'
   }).then(res => {
     // 有一条不符合享钱开通条件的数据就弹出，只对类型是“经销商”的管理员弹出
     commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userType === adminUserType)
