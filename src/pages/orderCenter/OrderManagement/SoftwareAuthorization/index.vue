@@ -23,19 +23,21 @@
               </el-select>
             </el-form-item>
             <el-form-item label="授权产品">
-              <el-select v-model="form.licensedProduct" clearable filterable multiple collapse-tags>
+              <el-select v-model="form.productCode" clearable filterable multiple collapse-tags>
                 <el-option v-for="(item, index) in licensedProducts" :key="index" :label="item.name" :value="item.code"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
-                <el-option v-for="item in orderStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
+                <template v-for="item in Array.from(orderStatus).filter(item => ![5, 10].includes(item[0]))">
+                  <el-option :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
+                </template>
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
               <km-select-page
                 ref="selectPage"
-                v-model="form.createUser"
+                v-model="form.handMan"
                 :data.sync="ordererData"
                 option-label="contactor"
                 option-value="id"
@@ -45,7 +47,7 @@
               ></km-select-page>
             </el-form-item>
             <el-form-item label="单据编码">
-              <el-input v-model.trim="form.billNo" clearable></el-input>
+              <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -116,7 +118,8 @@ import { mapActions } from 'vuex'
 import { productType, orderStatus } from './data'
 
 import { queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
-import { queryByPage, queryProducts } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+
+import { queryByPage, authOrderExport, authOrderExportLog, authOrderExportDel, queryProducts } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   name: 'softwareAuthorization',
@@ -153,15 +156,10 @@ export default {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getQueryPage()
-    this.handleOrderPage().then(() => {
-      this.$refs.selectPage.selectVal = -1
-    })
   },
   methods: {
     ...mapActions(['delCachedView']),
     handleProductType(val) {
-      console.info(val)
-      console.info(this.form.licensedProduct)
       this.getLicensedProducts()
     },
     async getLicensedProducts() {
@@ -180,28 +178,11 @@ export default {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
         orderType: 1,
-        startTime: createTime?.[0] ?? '',
-        endTime: createTime?.[1] ?? '',
+        minDate: createTime?.[0] ?? '',
+        maxDate: createTime?.[1] ?? '',
         page: this.currentPage,
         rows: this.pageSize
       })
-    },
-    async handleExport() {
-      try {
-        this.checkExportLoad = true
-        await exportOrder(this.handleQueryParams())
-        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-      } catch (error) {
-      } finally {
-        this.checkExportLoad = false
-      }
-    },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const { page, rows, ...params } = this.handleQueryParams()
-      return await exportRecordList({ ...params, page: currentPage, rows: pageSize })
-    },
-    handleExportDel: async function(row) {
-      return await deleteExport({ id: row.id })
     },
     handleSearch() {
       this.currentPage = 1
@@ -217,6 +198,23 @@ export default {
       } finally {
         this.checkTabLock = false
       }
+    },
+    async handleExport() {
+      try {
+        this.checkExportLoad = true
+        await authOrderExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+      } catch (error) {
+      } finally {
+        this.checkExportLoad = false
+      }
+    },
+    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      const { page, rows, ...params } = this.handleQueryParams()
+      return await authOrderExportLog({ ...params, page: currentPage, rows: pageSize })
+    },
+    handleExportDel: async function(row) {
+      return await authOrderExportDel({ id: row.id })
     },
     async handleOrderPage({ query = '', page = 1, row = 10 } = {}) {
       try {

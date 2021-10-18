@@ -10,56 +10,57 @@
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="单据编码">
-          <el-input :value="form.purchaseOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
+          <el-input :value="form.orderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
-          <el-input :value="`${form.purchaseOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
+          <el-input :value="`${form.orderDTO.createTime || baseOrderTime}`"></el-input>
         </el-form-item>
         <el-form-item label="消耗库存">
-          <el-input :value="form.purchaseOrderDTO.consumeInventory"></el-input>
+          <el-input :value="form.orderDTO.useInventory"></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input :value="form.purchaseOrderDTO.handUserName"></el-input>
+          <el-input :value="form.orderDTO.handUserName"></el-input>
         </el-form-item>
         <el-form-item label="升级费用">
-          <el-input :value="form.purchaseOrderDTO.upgradeFee"></el-input>
+          <el-input :value="form.orderDTO.upgradeFee"></el-input>
         </el-form-item>
         <el-form-item label="经销商">
-          <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
+          <el-input :value="`${form.orderDTO.agentId ? '[' + form.orderDTO.agentId + ']' : ''}${form.orderDTO.agentName}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
     <el-card shadow="never" class="p-card">
       <div slot="header">订单明细 <span class="e-product-tip">(提示：每次只能置换一种产品，如要更换请先删除已选产品)</span></div>
-      <div class="e-product-choose">
-        <template v-if="['add', 'edit'].includes($route.query.status)">
-          <el-button type="primary" size="small" plain @click="handleProductVisible" :disabled="form.orderItemList.length > 0">选择产品</el-button>
-        </template>
+      <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
+        <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品</el-button>
+        <!-- <el-button type="primary" size="small" plain :disabled="form.orderDetailDtos.length > 0" @click="handleProductVisible">选择产品</el-button> -->
       </div>
-      <el-table :data="form.orderItemList" show-summary :summary-method="getSummaries" class="p-information-tab">
+      <el-table :data="form.orderDetailDtos" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
-        <el-table-column prop="replacementProduct" label="置换产品">
-          <template slot-scope="scope">{{ `${scope.row.replacementCode ? '[' + scope.row.replacementCode + ']' : ''}${scope.row.replacementProduct}` }}</template>
+        <el-table-column label="置换产品">
+          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="numberOfReplacements" label="置换数量" align="right">
+        <el-table-column label="置换数量" align="right">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.numberOfReplacements }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.numberOfReplacements" style="width:100%"></el-input>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.replaceNum }}</span>
+            <el-input v-else size="small" v-model.number.trim="scope.row.replaceNum" @change="handleReplaceNum(scope.row)" style="width:100%"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="replacedProduct" label="被换产品">
+        <el-table-column label="被换产品">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.replacedProduct }}</span>
-            <el-select v-else v-model="scope.row.replacedProduct" clearable size="small" class="e-select-con">
-              <el-option v-for="(item, index) in replacedProducts" :key="index" :label="`${item.code ? '[' + item.code + ']' : ''} ${item.name}`" :value="item.code"></el-option>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.replaceProductName }}</span>
+            <el-select v-else v-model="scope.row.replaceProductId" @change="handleReplaceProductName" clearable size="small" class="e-select-con">
+              <template v-for="(item, index) in replacedProducts">
+                <el-option :key="index" :label="`[${item.replaceProductCode}] ${item.replaceProductName}`" :value="item.replaceProductCode"></el-option>
+              </template>
             </el-select>
           </template>
         </el-table-column>
         <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
-        <el-table-column prop="replaceableQuantity" label="可置换数量" align="right"></el-table-column>
-        <el-table-column prop="consumeInventory" label="消耗库存" align="right"></el-table-column>
+        <el-table-column prop="replaceableNum" label="可置换数量" align="right"></el-table-column>
+        <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
@@ -68,7 +69,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.orderItemList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="form.orderDetailDtos.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -76,7 +77,7 @@
       </el-table>
     </el-card>
     <div class="p-infomation-action">
-      <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain @click="handleCancel('softwareInventoryReplace')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
     </div>
@@ -88,12 +89,19 @@
 
 <script>
 import dayjs from 'dayjs'
-import { deepClone } from '@/utils'
 import NP from 'number-precision'
+import { deepClone } from '@/utils'
 import { orderStatus, formObj } from '../data'
 import inventoryProduct from './inventoryProduct'
 
-import { queryReplaceProducts } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
+import { queryHandlerMan, queryBaseInfo } from '@/api/orderCenter/orderManagement'
+import {
+  replaceOrderDetail,
+  replaceOrderOriginalProduct,
+  queryByAgentProduct,
+  replaceOrderAdd,
+  replaceOrderUpdate
+} from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
   components: {
@@ -107,7 +115,8 @@ export default {
       checkVerifyBtnLoad: false,
       checkProductVisible: false,
       replacedProducts: [],
-      generalInventory: 10
+      generalInventory: 10,
+      replaceProduct: {}
     }
   },
   computed: {
@@ -119,23 +128,51 @@ export default {
       } else return ''
     }
   },
+  mounted() {
+    if (this.$route.query.status === 'add') this.getBaseInfo()
+    else this.getDetail()
+  },
   methods: {
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     async handleSave() {
       try {
-        if (this.form.orderItemList[0].consumeInventory > this.generalInventory) {
-          this.$message({ type: 'warning', message: `[${this.form.orderItemList[0].replacementProduct}]的库存不足，请修改后重试` })
+        this.checkSaveBtnLoad = true
+        const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
+        if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
+          this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
         } else {
-          this.checkSaveBtnLoad = true
-          // await purchaseAdd(this.form)
+          const data = { orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
+          const res = this.$route.query.status === 'add' ? await replaceOrderAdd(data) : await replaceOrderUpdate(data)
+          if (this.$route.query.status === 'add') {
+            this.$router.replace({ name: this.$route.name, query: { id: res, orderStatus: '', status: 'edit' } })
+            document.querySelector('.e-tag_active span').innerText = `软件库存置换单/编辑`
+          }
+          this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })
         }
       } catch (error) {
       } finally {
         this.checkSaveBtnLoad = false
       }
+    },
+    async setOrderSave() {
+      try {
+        const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
+        if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
+          this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
+        } else {
+          if (this.$route.query.status === 'audit') {
+            const data = Object.assign({ orderVO: { orderType: 0 } }, { detailVos: this.form.orderDetailDtos })
+            return await replaceOrderAdd(data).then(() => this.$message({ type: 'success', message: '保存成功' }))
+          }
+          return await replaceOrderAdd({
+            orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id },
+            detailVos: this.form.orderDetailDtos
+          }).then(() => this.$message({ type: 'success', message: '保存成功' }))
+        }
+      } catch (error) {}
     },
     handleVerify() {
       this.$confirm('确定要提交吗？', '提示', {
@@ -148,38 +185,70 @@ export default {
         }
       }).catch(() => {})
     },
+
     handleProductVisible() {
       this.checkProductVisible = true
-      this.$refs.product.basicProductData = []
-      this.$refs.product.checkProductVal = ''
+      this.$refs.product.productVal = ''
+      this.$refs.product.tableData = []
       this.$refs.product.getProductPage()
+    },
+    handleReplaceNum(row) {
+      if (!this.replaceProduct.reduceInventory) this.$message({ type: 'warning', message: '请选择被换产品' })
+      else return (row.useInventory = NP.divide(NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory), this.replaceProduct.addInventory))
+    },
+    async handleReplaceProductName(val) {
+      const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
+      this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
+      const replaceableNum = NP.times(NP.divide(res.totalAmount, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
+      const useInventory = NP.divide(NP.times(0, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
+      this.$set(this.form.orderDetailDtos[0], 'orderInventory', res.totalAmount)
+      this.$set(this.form.orderDetailDtos[0], 'replaceableNum', replaceableNum)
+      this.$set(this.form.orderDetailDtos[0], 'useInventory', useInventory)
     },
     handleProductList(data) {
       if (data) {
-        this.form.orderItemList.push({
-          replacementCode: 'ADV10',
-          replacementProduct: '御商+',
-          numberOfReplacements: 5,
-          replacedProduct: '',
-          orderInventory: 5,
-          replaceableQuantity: 5,
-          consumeInventory: 5,
-          remark: ''
-        })
-        this.getReplaceProducts()
+        this.getOriginalProduct(data.productId)
+        this.form.orderDetailDtos = this.form.orderDetailDtos.concat({ productCode: data.productId, productCodeName: data.productName })
       }
     },
-    async getReplaceProducts() {
+    async getOriginalProduct(originalProductCode) {
       try {
-        const { results } = await queryReplaceProducts()
-        this.replacedProducts = results
+        const res = await replaceOrderOriginalProduct(originalProductCode)
+        this.replacedProducts = res
+      } catch (error) {}
+    },
+    async getDetail() {
+      try {
+        this.checkBasicInformLoad = true
+        const res = await replaceOrderDetail(this.$route.query.id)
+        this.form.orderDTO = res?.orderDTO ?? {}
+        this.form.orderDetailDtos = res?.orderDetailDtos ?? []
+        this.getOriginalProduct(res.orderDetailDtos[0].productCode)
+      } catch (error) {
+      } finally {
+        this.checkBasicInformLoad = false
+      }
+    },
+    async getBaseInfo() {
+      try {
+        const res = await queryBaseInfo()
+        this.form.orderDTO.agentId = res.agentId
+        this.form.orderDTO.agentName = res.name
+        this.getHandlerMan(res.districtCode)
+      } catch (error) {}
+    },
+    async getHandlerMan(area) {
+      try {
+        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area })
+        this.form.orderDTO.handUser = id
+        this.form.orderDTO.handUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}
     },
     getSummaries(param) {
       const { columns, data } = param
       const sums = []
       columns.forEach((column, index) => {
-        if (['consumeInventory'].includes(column.property)) {
+        if (['useInventory'].includes(column.property)) {
           const values = data.map(item => parseFloat(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
@@ -190,7 +259,7 @@ export default {
                 return prev
               }
             }, 0)
-            this.form.purchaseOrderDTO.consumeInventory = sums[6]
+            this.form.orderDTO.useInventory = sums[6]
           }
         }
       })

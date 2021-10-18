@@ -12,10 +12,10 @@
           <el-radio v-model="checkProductVal" :label="scope.$index"></el-radio>
         </template>
       </el-table-column>
-      <el-table-column prop="code" label="产品编码"></el-table-column>
-      <el-table-column prop="name" label="产品名称"></el-table-column>
+      <el-table-column prop="productId" label="产品编码"></el-table-column>
+      <el-table-column prop="productName" label="产品名称"></el-table-column>
     </el-table>
-    <km-pagination :request="getProductPage" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
+    <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     <div slot="footer">
       <el-button @click="$emit('update:visible', false)" size="small">取消</el-button>
       <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { productInfo } from '@/api/orderCenter/orderManagement'
+import { replaceOrderProduct } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
   data() {
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     handleRowIndex(row) {
-      this.checkProductVal = this.tableData.findIndex(item => item.id === row.id)
+      this.checkProductVal = this.tableData.findIndex(item => item.productId === row.productId)
     },
     handleConfirm() {
       this.$emit('productData', this.tableData[this.checkProductVal])
@@ -52,11 +52,11 @@ export default {
     },
     async getProductPage() {
       try {
+        this.checkProductVal = ''
         this.checkProductTabLock = true
-        const data = { info: this.productVal.trim(), page: this.currentPage, rows: this.pageSize, orderType: 0 }
-        const { results = [], totalRecord = 0 } = await productInfo(data)
-        this.tableData = results
-        this.totalPage = totalRecord
+        const res = await replaceOrderProduct({ productInfo: this.productVal.trim(), page: this.currentPage, rows: this.pageSize })
+        this.tableData = res?.results ?? []
+        this.totalPage = res.totalCount ?? 0
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
