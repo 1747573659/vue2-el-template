@@ -1173,11 +1173,11 @@ export default {
             const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
             const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
             if (url === 'cardholderIdBackUrl') {
-              this.form.archiveExpandVO.cardholderIdBegin = res.start_date && new Date(startDate) ? startDate : ''
-              this.form.archiveExpandVO.cardholderIdEnd = res.end_date && new Date(endDate) ? endDate : ''
+              this.form.archiveExpandVO.cardholderIdBegin = res.start_date && !!Date.parse(startDate) ? startDate : ''
+              this.form.archiveExpandVO.cardholderIdEnd = res.end_date && !!Date.parse(endDate) ? endDate : ''
             } else {
-              this.form.archiveExpandVO.legalPersonValidityBegin = res.start_date && new Date(startDate) ? startDate : ''
-              this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date && new Date(endDate) ? endDate : ''
+              this.form.archiveExpandVO.legalPersonValidityBegin = res.start_date && !!Date.parse(startDate) ? startDate : ''
+              this.form.archiveExpandVO.legalPersonValidityEnd = res.end_date && !!Date.parse(endDate) ? endDate : ''
             }
           }
         })
