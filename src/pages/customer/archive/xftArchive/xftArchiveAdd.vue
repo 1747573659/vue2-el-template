@@ -1130,17 +1130,20 @@ export default {
           this.form.archiveBaseVO.companyName = res.name
           this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
           if (res.valid_period) {
-            const validPeriod = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '')
+            const validPeriodArr = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '').split('至')
+            let endTime = validPeriodArr[1].replace(/长期/, '')
+            // 如果开始时间的年份不是四位，或者开始时间不是一个有效的时间字符串，或者结束时间既不是长期也不是有效的时间字符串
+            // 那么此次解析出现的时间是错误的时间
             if (
-              validPeriod.split('至')[0].split('-')[0].length !== 4 ||
-              !Date.parse(validPeriod.split('至')[0]) ||
-              (validPeriod.split('至')[1] !== '长期' && !Date.parse(validPeriod.split('至')[1].replace(/长期/, '')))
+              validPeriodArr[0].split('-')[0].length !== 4 ||
+              !Date.parse(validPeriodArr[0]) ||
+              (validPeriodArr[1] !== '长期' && !Date.parse(endTime))
             ) {
               this.form.archiveExpandVO.licValidityBigen = ''
               this.form.archiveExpandVO.licValidityEnd = ''
             } else {
-              this.form.archiveExpandVO.licValidityBigen = dayjs(validPeriod.split('至')[0]).format('YYYY-MM-DD')
-              this.form.archiveExpandVO.licValidityEnd = dayjs(validPeriod.split('至')[1].replace(/长期/, '')).format('YYYY-MM-DD')
+              this.form.archiveExpandVO.licValidityBigen = dayjs(validPeriodArr[0]).format('YYYY-MM-DD')
+              this.form.archiveExpandVO.licValidityEnd = endTime ? dayjs(endTime).format('YYYY-MM-DD') : ''
             }
           } else {
             this.form.archiveExpandVO.licValidityBigen = ''
