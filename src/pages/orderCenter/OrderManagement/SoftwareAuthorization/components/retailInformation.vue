@@ -1,0 +1,198 @@
+<template>
+  <section>
+    <el-card shadow="never" class="p-card">
+      <div slot="header" class="p-card-head">
+        <span class="p-card-title">商户信息</span>
+      </div>
+      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
+        <el-form-item label="经销商">
+          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+        </el-form-item>
+        <el-form-item label="商户名称">
+          <!-- <el-select v-model="form.merchantDTO.merchantId" @change="handleMerchantInfo" remote :remote-method="getCustList" placeholder="名称/商户号" filterable clearable> -->
+          <el-select v-model="form.merchantDTO.merchantId" @change="handleMerchantInfo" placeholder="名称/商户号" filterable clearable>
+            <el-option v-for="item in custListData" :key="item.CustID" :label="item.CustNameExpand" :value="item.CustID"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="商户号">
+          <el-input :value="form.merchantDTO.merchantId" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="商户版本">
+          <el-input :value="versionMap.get(form.merchantDTO.merchantVersion)" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="关联产品">
+          <el-input :value="form.merchantDTO.relationProduct" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="门店总数">
+          <el-input :value="form.merchantDTO.storeCount" disabled></el-input>
+        </el-form-item>
+        <el-form-item label="应用模块">
+          <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
+            <el-option label="微商城" :value="1"></el-option>
+            <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="延期时长" v-if="['', 1].includes(form.merchantDTO.applicationModule)">
+          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable>
+            <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
+      </el-form>
+      <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length < 0">刷新库存</el-button>
+      </div>
+      <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
+        <el-table-column label="序号" width="100">
+          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+        </el-table-column>
+        <template v-if="form.merchantDTO.applicationModule === 1">
+          <el-table-column prop="currentValidTime" label="当前有效期"></el-table-column>
+          <el-table-column prop="delayValidTime" label="延期后有效期"></el-table-column>
+        </template>
+        <template v-else>
+          <el-table-column label="当前状态">
+            <template slot-scope="scope">{{ ['未开通', '已开通'][scope.row.currentState] }}</template>
+          </el-table-column>
+        </template>
+        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
+        <el-table-column label="备注">
+          <template slot-scope="scope">
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
+            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+  </section>
+</template>
+
+<script>
+import dayjs from 'dayjs'
+import { delayTimes, versionMap } from '../data'
+
+import { authOrderWlsCustList, queryByAgentProduct, authOrderWlsCustInfo } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+
+export default {
+  props: {
+    form: {
+      type: Object,
+      default: () => {}
+    },
+    userBaseInfo: {
+      type: Object,
+      default: () => {}
+    }
+  },
+  data() {
+    return {
+      delayTimes,
+      versionMap,
+      custListData: [],
+      isCustListPage: false,
+      merchantInfo: [],
+      productStockObj: {}
+    }
+  },
+  methods: {
+    handleDelayHour(val) {
+      this.form.detailDTOList[0].delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime() : ''
+      this.form.detailDTOList[0].useInventory = val
+    },
+    handleApplicationModule(val) {
+      if (val) {
+        this.form.merchantDTO.delayHour = 1
+        this.form.detailDTOList[0] = {
+          currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
+          delayValidTime: this.merchantInfo.KMValidity ? this.setDelayValidTime() : '',
+          orderInventory: this.productStockObj?.totalAmount ?? 0,
+          useInventory: this.form.merchantDTO.delayHour,
+          productCode: this.merchantInfo.productCode,
+          remark: '',
+          currentState: this.merchantInfo.OpenCustAssistantApp
+        }
+      }
+    },
+    async handleMerchantInfo() {
+      this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
+      this.form.merchantDTO.merchantVersion = this.merchantInfo.VersionType
+      this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
+      this.form.merchantDTO.relationProduct = this.merchantInfo.productionTypeName
+      if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
+      this.getProductStock()
+    },
+    async getProductStock() {
+      try {
+        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.merchantInfo.productCode })) || {}
+      } catch (error) {}
+    },
+    async getCustList(query) {
+      const res = await authOrderWlsCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
+      this.custListData = res.filter((item, index) => index < 10)
+      this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustID}）`))
+    },
+    setDelayValidTime() {
+      return dayjs(this.merchantInfo.KMValidity)
+        .add(this.form.merchantDTO.delayHour, 'year')
+        .format('YYYY-MM-DD 00:00:00')
+    }
+  }
+}
+</script>
+
+<style lang="scss" scoped>
+.p-information {
+  &-tab {
+    /deep/ {
+      .el-input__inner {
+        text-align: right;
+      }
+    }
+    .e-select-con {
+      /deep/ .el-input {
+        width: 100%;
+        &__inner {
+          text-align: left;
+        }
+      }
+    }
+  }
+}
+.p-card {
+  border-top: 16px solid #f7f8fa;
+  &-head {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    /deep/ {
+      .el-button {
+        font-size: 16px;
+      }
+    }
+  }
+}
+.p-address {
+  &-con {
+    /deep/ {
+      .el-dialog__body {
+        padding: 16px 20px;
+      }
+      .km-page-block {
+        padding-bottom: 0px;
+      }
+    }
+  }
+}
+.e-product {
+  &-choose {
+    text-align: right;
+    padding-bottom: 10px;
+  }
+  &_remark {
+    width: 100%;
+    /deep/ .el-input__inner {
+      text-align: left !important;
+    }
+  }
+}
+</style>

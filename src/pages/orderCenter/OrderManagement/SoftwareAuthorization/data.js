@@ -17,22 +17,80 @@ export const orderStatus = new Map([
   [40, { value: 40, label: '已审核' }]
 ])
 
-
 // 订单状态
 export const delayTimes = [
-  { value: 0, label: '1年' },
-  { value: 1, label: '2年' },
-  { value: 2, label: '3年' },
+  { value: 1, label: '1年' },
+  { value: 2, label: '2年' },
+  { value: 3, label: '3年' }
 ]
 
-export const formObj = {
-  purchaseOrderDTO: {
+export const formErpObj = {
+  authOrderDTO: {
     billNo: '', // 单据编码
     createOrderTime: '',
-    handUser: '', // 受理人id
-    handUserName: '', // 受理人名称
-    agentId: '', // 经销商id
-    agentName: '' // 经销商名称
+    inventoryAmount: '', // 受理人id
+    handManName: '' // 受理人名称
   },
-  orderItemList: []
+  erpAuthMerchantDTO: {
+    agentId: '',
+    agentName: '',
+    merchantName: '',
+    merchantId: '',
+    authStatus: '',
+    productName: '',
+    authCount: ''
+  },
+  erpAuthOrderDetails: []
 }
+
+export const formWlsOrWcyObj = {
+  authOrderDTO: {
+    billNo: '', // 单据编码
+    createOrderTime: '',
+    inventoryAmount: '', // 受理人id
+    handManName: '' // 受理人名称
+  },
+  merchantDTO: {
+    agentId: '',
+    agentName: '',
+    merchantName: '',
+    merchantNo: '',
+    merchantVersion: '',
+    relationProduct: '',
+    storeCount: '',
+    applicationModule: '',
+    delayHour: 1
+  },
+  detailDTOList: []
+}
+
+export const formYsObj = {
+  authOrderDTO: {
+    billNo: '', // 单据编码
+    createOrderTime: '',
+    inventoryAmount: '', // 受理人id
+    handManName: '' // 受理人名称
+  },
+  merchantDTO: {
+    agentId: '',
+    agentName: '',
+    merchantName: '',
+    merchantNo: '',
+    applicationSystem: '',
+    delayHour: ''
+  },
+  addAuthOrderDetailDTOList: [],
+  renewAuthOrderDetailDTOList: []
+}
+
+export const versionMap = new Map([
+  ['2', '标准版'],
+  ['3', '专业版'],
+  ['5', '基础版']
+])
+
+export const cyVersionMap = new Map([
+  ['0', '易点易付'],
+  ['1', '微餐厅'],
+  ['2', '慧猿2.0专业版']
+])

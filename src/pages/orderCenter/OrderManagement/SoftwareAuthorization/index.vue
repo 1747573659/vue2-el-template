@@ -18,14 +18,20 @@
               ></el-date-picker>
             </el-form-item>
             <el-form-item label="产品类型">
-              <el-select v-model="form.productType" @change="handleProductType" clearable>
+              <el-select v-model="form.productType" placeholder="产品类型" @change="handleProductTypeChange" clearable>
                 <el-option v-for="item in productType" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="授权产品">
-              <el-select v-model="form.productCode" clearable filterable multiple collapse-tags>
-                <el-option v-for="(item, index) in licensedProducts" :key="index" :label="item.name" :value="item.code"></el-option>
-              </el-select>
+              <km-select-page
+                v-model="form.productCode"
+                option-label="name"
+                option-value="code"
+                :data.sync="licensedProducts"
+                :request="getProductByPage"
+                :is-max-page.sync="isLicensedProductMaxPage"
+                placeholder="下单人"
+              />
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
@@ -44,7 +50,7 @@
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
                 placeholder="下单人"
-              ></km-select-page>
+              />
             </el-form-item>
             <el-form-item label="单据编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
@@ -55,28 +61,13 @@
           <el-form-item style="margin-left:80px">
             <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
             <el-button size="small" v-permission="'SOFTWARE_AUTHORIZATION_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
-            <km-export-view ref="export" v-permission="'SOFTWARE_AUTHORIZATION_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel">
-              <el-table-column label="进度" width="100">
-                <template slot-scope="scope">{{ ['生成中', '已生成'][scope.row.status - 1] }}</template>
-              </el-table-column>
-              <el-table-column label="操作" width="100">
-                <template slot-scope="scope">
-                  <template v-if="scope.row.status === 2">
-                    <el-link :href="scope.row.fileUrl" :underline="false">
-                      <el-button size="small" type="text">下载</el-button>
-                    </el-link>
-                    <el-button size="small" @click="$refs.export.handleExportDel(scope.row)" type="text" style="margin-left: 8px;">删除</el-button>
-                  </template>
-                  <span v-else>--</span>
-                </template>
-              </el-table-column>
-            </km-export-view>
+            <km-export-view v-permission="'SOFTWARE_AUTHORIZATION_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
           </el-form-item>
           <el-form-item v-permission="'SOFTWARE_AUTHORIZATION_PLUS'">
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'erp' })">ERP产品</el-button>
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'retail' })">微零售</el-button>
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'repast' })">微餐饮</el-button>
-            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', type: 'clound' })">云商</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 1 })">ERP产品</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 3 })">微零售</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 4 })">微餐饮</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 5 })">云商</el-button>
           </el-form-item>
         </el-row>
       </el-form>
@@ -88,16 +79,18 @@
         <el-table-column prop="productType" label="产品类型">
           <template slot-scope="scope">{{ productType.has(scope.row.productType) ? productType.get(scope.row.productType).label : '' }}</template>
         </el-table-column>
-        <el-table-column prop="licensedProducts" label="授权产品"></el-table-column>
-        <el-table-column prop="consumeInventory" label="消耗库存"></el-table-column>
+        <el-table-column label="授权产品">
+          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</template>
+        </el-table-column>
+        <el-table-column prop="inventoryAmount" label="消耗库存"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
-        <el-table-column prop="handUserName" label="受理人"></el-table-column>
+        <el-table-column prop="handManName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <template v-if="scope.row.orderStatus === 10">
+            <template v-if="[0, 5, 10].includes(scope.row.orderStatus)">
               <el-button v-permission="'SOFTWARE_AUTHORIZATION_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
               <el-popconfirm class="el-button el-button--text" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
                 <el-button type="text" size="small" slot="reference">删除</el-button>
@@ -117,9 +110,15 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { productType, orderStatus } from './data'
 
-import { queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
-
-import { queryByPage, authOrderExport, authOrderExportLog, authOrderExportDel, queryProducts } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { queryOrderMan } from '@/api/orderCenter/orderManagement'
+import {
+  queryByPage,
+  authOrderExport,
+  authOrderExportLog,
+  authOrderExportDel,
+  authOrderProductPage,
+  authOrderDelete
+} from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   name: 'softwareAuthorization',
@@ -127,20 +126,13 @@ export default {
     return {
       productType,
       orderStatus,
-      licensedProducts: [{ name: '全部', code: '' }],
-      form: {
-        createTime: '',
-        productType: -1,
-        licensedProduct: [],
-        products: -1,
-        orderStatus: -1,
-        createUser: -1,
-        billNo: ''
-      },
+      licensedProducts: [],
+      isLicensedProductMaxPage: false,
+      form: { createTime: '', productType: '', productCode: '', orderStatus: '', handMan: '', billNo: '' },
       ordererData: [],
       isOrdererMaxPage: false,
-      tableData: [],
       checkTabLock: false,
+      tableData: [],
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
@@ -155,30 +147,29 @@ export default {
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
+    this.getProductByPage()
     this.getQueryPage()
   },
   methods: {
     ...mapActions(['delCachedView']),
-    handleProductType(val) {
-      this.getLicensedProducts()
-    },
-    async getLicensedProducts() {
-      try {
-        const { results } = await queryProducts()
-        this.licensedProducts = results
-      } catch (error) {}
-    },
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
-        this.$router.push({ name: 'softwareAuthorizationDetails', query: { ...status, orderStatus: row.orderStatus, id: row.id } })
+        this.$router.push({ name: 'softwareAuthorizationDetails', query: Object.assign({ ...status, id: row.id }, status.productType ? {} : { productType: row.productType }) })
       })
     },
-    async handleDelRow(row) {},
+    async handleDelRow(row) {
+      try {
+        await authOrderDelete(row.id)
+        if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
+        this.getQueryPage()
+      } catch (error) {}
+    },
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
-        orderType: 1,
-        minDate: createTime?.[0] ?? '',
+        sysSource: 1,
+        // minDate: createTime?.[0] ?? '',
+        minDate: '2021-10-08 00:00:00',
         maxDate: createTime?.[1] ?? '',
         page: this.currentPage,
         rows: this.pageSize
@@ -210,20 +201,31 @@ export default {
       }
     },
     handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const { page, rows, ...params } = this.handleQueryParams()
-      return await authOrderExportLog({ ...params, page: currentPage, rows: pageSize })
+      return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
     },
     handleExportDel: async function(row) {
       return await authOrderExportDel({ id: row.id })
     },
-    async handleOrderPage({ query = '', page = 1, row = 10 } = {}) {
+    async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows: row })
+        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         if (this.ordererData.every(item => item.contactor !== '全部')) {
           this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
         }
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
+    },
+    handleProductTypeChange() {
+      this.licensedProducts = [{ name: '全部', code: '' }]
+      this.getProductByPage()
+    },
+    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 1, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
+        this.licensedProducts = this.licensedProducts.concat(res.results || [])
+        if (this.licensedProducts.every(item => item.name !== '全部')) this.licensedProducts = [{ name: '全部', code: '' }].concat(this.licensedProducts)
+        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     }
   }

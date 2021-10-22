@@ -10,20 +10,22 @@
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="单据编码">
-          <el-input :value="form.purchaseOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
+          <el-input :value="form.authOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
-          <el-input :value="`${form.purchaseOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
+          <el-input :value="`${form.authOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
         </el-form-item>
         <el-form-item label="消耗库存">
-          <el-input :value="form.purchaseOrderDTO.consumeInventory"></el-input>
+          <el-input :value="form.authOrderDTO.inventoryAmount"></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input :value="form.purchaseOrderDTO.handUserName"></el-input>
+          <el-input :value="form.authOrderDTO.handManName"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card shadow="never" class="p-card">
+    <component ref="information" :is="activeName" :form="form" :userBaseInfo="userBaseInfo"></component>
+
+    <!-- <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <span class="p-card-title">商户信息</span>
       </div>
@@ -87,8 +89,8 @@
           </el-select>
         </el-form-item>
       </el-form>
-    </el-card>
-    <el-card shadow="never" class="p-card">
+    </el-card> -->
+    <!-- <el-card shadow="never" class="p-card">
       <div slot="header">订单明细</div>
       <el-tabs v-model="activeName">
         <el-tab-pane label="加点" name="first"></el-tab-pane>
@@ -168,44 +170,66 @@
         </el-table-column>
       </el-table>
       <el-table v-if="$route.query.type === 'clound'"> </el-table>
-    </el-card>
+    </el-card> -->
     <div class="p-infomation-action">
-      <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
     </div>
-    <template v-if="['add', 'edit'].includes($route.query.status)">
+    <!-- <template v-if="['add', 'edit'].includes($route.query.status)">
       <erp-product v-if="$route.query.type === 'erp'" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
       <repast-product v-if="$route.query.type === 'repast'" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
-    </template>
+    </template> -->
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import NP from 'number-precision'
-import { orderStatus, formObj, delayTimes } from '../data'
 import { deepClone } from '@/utils'
-import erpProduct from './erpProduct'
-import repastProduct from './erpProduct'
+import { orderStatus, formErpObj, formWlsOrWcyObj, formYsObj } from '../data'
+import erpInformation from './erpInformation'
+import retailInformation from './retailInformation'
+import repastInformation from './repastInformation'
+import cloundInformation from './cloundInformation'
 
-import { queryOrderMan } from '@/api/orderCenter/orderManagement'
+import { queryHandlerMan, queryBaseInfo } from '@/api/orderCenter/orderManagement'
+import {
+  authOrderErpDetail,
+  authOrderWlsDetail,
+  authOrderWcyDetail,
+  authOrderYsDetail,
+  authOrderErpUpdate,
+  authOrderWlsUpdate,
+  authOrderWcyUpdate,
+  authOrderYsUpdate,
+  authOrderErpAdd,
+  authOrderWlsAdd,
+  authOrderWcyAdd,
+  authOrderYsAdd
+} from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   components: {
-    erpProduct,
-    repastProduct
+    erpInformation,
+    retailInformation,
+    repastInformation,
+    cloundInformation
   },
   data() {
     return {
-      delayTimes,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
-      form: deepClone(formObj),
+      form: {},
+      activeName: 'erpInformation',
+      productType: parseFloat(this.$route.query.productType),
+      baseInfoMap: new Map([
+        [1, { componentName: 'erpInformation', detailRequest: authOrderErpDetail, updateRequest: authOrderErpUpdate, addRequest: authOrderErpAdd, form: formErpObj }],
+        [3, { componentName: 'retailInformation', detailRequest: authOrderWlsDetail, updateRequest: authOrderWlsUpdate, addRequest: authOrderWlsAdd, form: formWlsOrWcyObj }],
+        [4, { componentName: 'repastInformation', detailRequest: authOrderWcyDetail, updateRequest: authOrderWcyUpdate, addRequest: authOrderWcyAdd, form: formWlsOrWcyObj }],
+        [5, { componentName: 'cloundInformation', detailRequest: authOrderYsDetail, updateRequest: authOrderYsUpdate, addRequest: authOrderYsAdd, form: formYsObj }]
+      ]),
       checkSaveBtnLoad: false,
-      ordererData: [],
-      isOrdererMaxPage: false,
-      checkProductVisible: false,
-      activeName: 'first'
+      checkVerifyBtnLoad: false,
+      userBaseInfo: {}
     }
   },
   computed: {
@@ -217,49 +241,191 @@ export default {
       } else return ''
     }
   },
+  created() {
+    this.activeName = this.baseInfoMap.get(this.productType).componentName
+    this.form = deepClone(this.baseInfoMap.get(this.productType).form)
+  },
+  mounted() {
+    if (this.$route.query.status === 'add') this.getBaseInfo()
+    else this.getDetail()
+  },
   methods: {
-    handleProductList(data) {
-      if (data.length > 0) {
-        this.form.orderItemList = this.form.orderItemList.concat(data)
+    handleVerify() {
+      this.$confirm('确定要提交吗？', '提示', {
+        type: 'warning',
+        beforeClose: async (action, instance, done) => {
+          if (action === 'confirm') {
+            try {
+              instance.confirmButtonLoading = true
+              let data = {}
+              if (this.productType === 1) data = this.getErpInformationObj()
+              else if (this.productType === 3) data = this.getRetailInformationObj()
+              await this.baseInfoMap.get(this.productType).updateRequest(data)
+              this.getDetail().then(() => {
+                this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, productType: this.productType, status: 'detail' } })
+              })
+              this.$message({ type: 'success', message: '提交成功' })
+            } catch (error) {
+            } finally {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          } else done()
+        }
+      }).catch(() => {})
+    },
+    handleCancel(name) {
+      this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+    },
+    handleRetailSave() {
+      return this.getRetailInformationObj()
+    },
+    getYsInformationObj() {
+      const { handMan, inventoryAmount } = this.form.authOrderDTO
+      const { merchantNo: merchantId } = this.form.merchantDTO
+      return {
+        authOrderVO: {
+          agentId: this.userBaseInfo.agentId,
+          createUser: JSON.parse(localStorage.userInfo).id,
+          inventoryAmount: inventoryAmount || 1,
+          handMan,
+          merchantId,
+          orderStatus: 0,
+          productCode: this.$refs.information.merchantInfo.productCode,
+          productType: 5,
+          useModal: this.form.merchantDTO.applicationModule,
+          delayCount: this.form.merchantDTO.delayHour
+        },
+        orderDetailVos: this.form.detailDTOList
       }
     },
-    handleCancel() {},
-    handleSave() {},
-    handleVerify() {},
-    handleProductVisible() {
-      this.checkProductVisible = true
-      this.$refs.product.basicProductData = []
-      this.$refs.product.getProductPage()
+    getWcyInformationObj() {
+      const { handMan, inventoryAmount } = this.form.authOrderDTO
+      const { merchantNo: merchantId } = this.form.merchantDTO
+      return {
+        authOrderVO: {
+          agentId: this.userBaseInfo.agentId,
+          createUser: JSON.parse(localStorage.userInfo).id,
+          inventoryAmount: inventoryAmount || 1,
+          handMan,
+          merchantId,
+          orderStatus: 0,
+          productCode: this.$refs.information.merchantInfo.productCode,
+          productType: 4,
+          useModal: this.form.merchantDTO.applicationModule,
+          delayCount: this.form.merchantDTO.delayHour
+        },
+        orderDetailVos: this.form.detailDTOList
+      }
     },
-    getSummaries(param) {
-      const { columns, data } = param
-      const sums = []
-      columns.forEach((column, index) => {
-        if (['authorizedPoints', 'numberOfAuthorizations'].includes(column.property)) {
-          const values = data.map(item => parseFloat(item[column.property]))
-          if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) {
-                return NP.plus(prev, curr)
-              } else {
-                return prev
-              }
-            }, 0)
-            this.form.purchaseOrderDTO.consumeInventory = sums[6]
+    getWlsInformationObj() {
+      const { handMan, inventoryAmount } = this.form.authOrderDTO
+      const { merchantId } = this.form.merchantDTO
+      return {
+        authOrderVO: {
+          agentId: this.userBaseInfo.agentId,
+          createUser: JSON.parse(localStorage.userInfo).id,
+          inventoryAmount: inventoryAmount || 1,
+          handMan,
+          merchantId,
+          orderStatus: 0,
+          productCode: this.form.detailDTOList[0].productCode,
+          productType: 3,
+          useModal: this.form.merchantDTO.applicationModule,
+          delayCount: this.form.merchantDTO.delayHour
+        },
+        orderDetailVos: this.form.detailDTOList
+      }
+    },
+    getErpInformationObj() {
+      const insufficientObj = this.form.erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
+      if (insufficientObj.length > 0) {
+        this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
+          title: '系统提示',
+          type: 'warning',
+          confirmButtonText: '去采购',
+          cancelButtonText: '返回修改',
+          beforeClose: (action, instance, done) => {
+            if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add' } })
+            else this.$refs.information.getProductStock()
+            done()
           }
+        }).catch(() => {})
+      } else {
+        const { handMan, inventoryAmount } = this.form.authOrderDTO
+        const { merchantId, productCode } = this.form.erpAuthMerchantDTO
+        return {
+          authOrderVO: {
+            handMan,
+            merchantId,
+            productCode,
+            inventoryAmount,
+            agentId: this.userBaseInfo.agentId,
+            createUser: JSON.parse(localStorage.userInfo).id,
+            orderStatus: 0,
+            productType: 1,
+            useModal: -1
+          },
+          orderDetailVos: this.form.erpAuthOrderDetails
         }
-      })
-      return sums
+      }
     },
-    async handleOrderPage({ query = '', page = 1, row = 10 } = {}) {
+    async handleSave() {
       try {
-        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows: row })
-        this.ordererData = this.ordererData.concat(res.results || [])
-        if (this.ordererData.every(item => item.contactor !== '全部')) {
-          this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
+        this.checkSaveBtnLoad = true
+        let data = {}
+        if (this.productType === 1) data = this.getErpInformationObj()
+        else if (this.productType === 3) data = this.getRetailInformationObj()
+        else if (this.productType === 4) data = this.getWcyInformationObj()
+        const res =
+          this.$route.query.status === 'add' ? await this.baseInfoMap.get(this.productType).addRequest(data) : await this.baseInfoMap.get(this.productType).updateRequest(data)
+        if (this.$route.query.status === 'add') {
+          this.$router.replace({ name: this.$route.name, query: { id: res, productType: this.productType, status: 'edit' } })
+          document.querySelector('.e-tag_active span').innerText = `软件授权订单/编辑`
         }
-        this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
+        this.getDetail()
+        this.$message({ type: 'success', message: '保存成功' })
+      } catch (error) {
+      } finally {
+        this.checkSaveBtnLoad = false
+      }
+    },
+    async getDetail() {
+      try {
+        this.checkBasicInformLoad = true
+        const res = await this.baseInfoMap.get(this.productType).detailRequest(this.$route.query.id)
+        this.form = res
+        this.$nextTick(() => {
+          if (this.productType === 1) {
+            this.$refs.information.getShopPage().then(() => {
+              this.$refs.information.$refs.shopPage.selectVal = res.erpAuthMerchantDTO.merchantId
+            })
+          } else if (this.productType === 3) {
+            this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
+            this.form.merchantDTO.merchantId = res.authOrderDTO.merchantId
+            this.form.merchantDTO.productCode = res.authOrderDTO.productCode
+            this.$refs.information.getCustList()
+          }
+        })
+      } catch (error) {
+      } finally {
+        this.checkBasicInformLoad = false
+      }
+    },
+    async getBaseInfo() {
+      try {
+        const res = await queryBaseInfo()
+        this.userBaseInfo = res
+        this.getHandlerMan(res.districtCode)
+        if (this.productType === 3) this.$refs.information.getCustList()
+        else if (this.productType === 4) this.$refs.information.getCustList()
+      } catch (error) {}
+    },
+    async getHandlerMan(area) {
+      try {
+        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area })
+        this.form.authOrderDTO.handMan = id
+        this.form.authOrderDTO.handManName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}
     }
   }

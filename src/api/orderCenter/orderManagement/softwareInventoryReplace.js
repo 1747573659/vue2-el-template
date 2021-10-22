@@ -87,3 +87,11 @@ export function replaceOrderUpdate(data) {
     data
   })
 }
+
+// 删除
+export function replaceOrderDelete(data) {
+  return request({
+    url: '/replace/order/del/' + data,
+    method: 'POST'
+  })
+}

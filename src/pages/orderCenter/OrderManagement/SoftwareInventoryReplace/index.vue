@@ -78,7 +78,7 @@ import { mapActions } from 'vuex'
 import { orderStatus } from './data'
 
 import { queryBaseInfo, queryOrderMan } from '@/api/orderCenter/orderManagement'
-import { queryByPage, replaceOrderExport, replaceOrderExportLog, replaceOrderExportDel } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
+import { queryByPage, replaceOrderExport, replaceOrderExportLog, replaceOrderExportDel, replaceOrderDelete } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
   name: 'softwareInventoryReplace',
@@ -120,7 +120,13 @@ export default {
         this.$router.push({ name: 'softwareInventoryReplaceDetails', query: { ...status, id: row.id } })
       })
     },
-    async handleDelRow(row) {},
+    async handleDelRow(row) {
+      try {
+        await replaceOrderDelete(row.id)
+        if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
+        this.getQueryPage()
+      } catch (error) {}
+    },
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
@@ -142,8 +148,7 @@ export default {
       }
     },
     handleExportRecord ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const { page, rows, ...params } = this.handleQueryParams()
-      return replaceOrderExportLog({ ...params, page: currentPage, rows: pageSize })
+      return replaceOrderExportLog({ exportType: 8, page: currentPage, rows: pageSize })
     },
     handleExportDel: async function(row) {
       return await replaceOrderExportDel(row.id)
@@ -163,9 +168,9 @@ export default {
         this.checkTabLock = false
       }
     },
-    async handleOrderPage({ query = '', page = 1, row = 10 } = {}) {
+    async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows: row })
+        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         if (this.ordererData.every(item => item.contactor !== '全部')) {
           this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)

@@ -79,7 +79,9 @@
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareInventoryReplace')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      <template v-if="$route.query.status === 'edit'" v-permission="'SOFTWARE_INVENTORY_REPLACE_SUBMIT'">
+        <el-button size="small" type="primary" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      </template>
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
       <inventory-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
@@ -157,35 +159,28 @@ export default {
         this.checkSaveBtnLoad = false
       }
     },
-    async setOrderSave() {
-      try {
-        const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
-        if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
-          this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
-        } else {
-          if (this.$route.query.status === 'audit') {
-            const data = Object.assign({ orderVO: { orderType: 0 } }, { detailVos: this.form.orderDetailDtos })
-            return await replaceOrderAdd(data).then(() => this.$message({ type: 'success', message: '保存成功' }))
-          }
-          return await replaceOrderAdd({
-            orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id },
-            detailVos: this.form.orderDetailDtos
-          }).then(() => this.$message({ type: 'success', message: '保存成功' }))
-        }
-      } catch (error) {}
-    },
     handleVerify() {
       this.$confirm('确定要提交吗？', '提示', {
         type: 'warning',
-        beforeClose: (action, instance, done) => {
+        beforeClose: async (action, instance, done) => {
           if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.$message({ type: 'success', message: '审核成功' })
+            try {
+              instance.confirmButtonLoading = true
+              const data = { orderVO: { ...this.form.orderDTO, orderType: 1, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
+              await replaceOrderUpdate(data)
+              this.getDetail().then(() => {
+                this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 30, status: 'detail' } })
+              })
+              this.$message({ type: 'success', message: '审核成功' })
+            } catch (error) {
+            } finally {
+              instance.confirmButtonLoading = false
+              done()
+            }
           } else done()
         }
       }).catch(() => {})
     },
-
     handleProductVisible() {
       this.checkProductVisible = true
       this.$refs.product.productVal = ''
