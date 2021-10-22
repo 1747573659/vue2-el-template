@@ -342,6 +342,33 @@ const customer = {
           }
         }
       ]
+    },
+    {
+      path: 'marketing',
+      name: 'marketing',
+      code: 'MARKETING',
+      redirect: {
+        name: 'marketingManagement'
+      },
+      component: kmContainer,
+      meta: {
+        title: '营销管理',
+        icon: 'el-icon-menu',
+        name: 'marketing'
+      },
+      children: [
+        {
+          path: 'marketingManagement',
+          component: () => import('@/pages/customer/marketing/merchantApplets/index.vue'),
+          name: 'marketingManagement',
+          code: 'MARKETINGMANAGEMENT',
+          meta: {
+            title: '商户小程序管理',
+            name: 'marketingManagement',
+            cache: true
+          }
+        }
+      ]
     }
   ]
 }
