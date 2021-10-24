@@ -19,7 +19,7 @@
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderType" clearable>
-                <template v-for="item in Array.from(orderStatus).filter(item => ![5, 10].includes(item[0]))">
+                <template v-for="item in Array.from(orderStatus).filter(item => ![5].includes(item[0]))">
                   <el-option :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
                 </template>
               </el-select>
@@ -57,7 +57,7 @@
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="150">
           <template slot-scope="scope">
-            <template v-if="[0, 5, 10].includes(scope.row.orderType)">
+            <template v-if="[0, 5].includes(scope.row.orderType)">
               <el-button v-permission="'SOFTWARE_INVENTORY_REPLACE_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
               <el-popconfirm class="el-button el-button--text" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
                 <el-button type="text" size="small" slot="reference">删除</el-button>

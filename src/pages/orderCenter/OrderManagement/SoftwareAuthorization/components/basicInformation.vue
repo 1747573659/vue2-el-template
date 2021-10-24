@@ -24,162 +24,11 @@
       </el-form>
     </el-card>
     <component ref="information" :is="activeName" :form="form" :userBaseInfo="userBaseInfo"></component>
-
-    <!-- <el-card shadow="never" class="p-card">
-      <div slot="header" class="p-card-head">
-        <span class="p-card-title">商户信息</span>
-      </div>
-      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
-        <el-form-item label="经销商">
-          <el-input disabled :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
-        </el-form-item>
-        <el-form-item label="商户名称">
-          <km-select-page
-            v-model="form.createUser"
-            :data.sync="ordererData"
-            option-label="contactor"
-            option-value="id"
-            :request="handleOrderPage"
-            :is-max-page.sync="isOrdererMaxPage"
-            placeholder="下单人"
-          />
-        </el-form-item>
-        <el-form-item label="商户号">
-          <el-input :value="form.purchaseOrderDTO.agentId" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="应用系统" v-if="$route.query.type === 'clound'">
-          <km-select-page
-            v-model="form.createUser"
-            :data.sync="ordererData"
-            option-label="contactor"
-            option-value="id"
-            :request="handleOrderPage"
-            :is-max-page.sync="isOrdererMaxPage"
-            placeholder="下单人"
-          />
-        </el-form-item>
-        <el-form-item label="授权状态" v-if="['erp', 'clound'].includes($route.query.type)">
-          <el-input :value="form.purchaseOrderDTO.payMethod" disabled></el-input>
-        </el-form-item>
-        <template v-if="$route.query.type === 'erp'">
-          <el-form-item label="产品">
-            <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="门店授权站点">
-            <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName" disabled></el-input>
-          </el-form-item>
-        </template>
-        <template v-if="['retail', 'repast'].includes($route.query.type)">
-          <el-form-item label="商户版本">
-            <el-input :value="form.purchaseOrderDTO.useGuarantee" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="关联产品">
-            <el-input :value="form.purchaseOrderDTO.agentId" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="门店总数">
-            <el-input :value="form.purchaseOrderDTO.agentId" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="应用模块">
-            <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
-          </el-form-item>
-        </template>
-        <el-form-item label="延期时长" v-if="$route.query.type !== 'erp'">
-          <el-select v-model="form.delayTime" clearable>
-            <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
-          </el-select>
-        </el-form-item>
-      </el-form>
-    </el-card> -->
-    <!-- <el-card shadow="never" class="p-card">
-      <div slot="header">订单明细</div>
-      <el-tabs v-model="activeName">
-        <el-tab-pane label="加点" name="first"></el-tab-pane>
-        <el-tab-pane label="续费" name="second"></el-tab-pane>
-      </el-tabs>
-      <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="$route.query.type === 'erp'">选择产品模块</el-button>
-        <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="$route.query.type === 'repast'">选择授权对象</el-button>
-        <el-button type="primary" size="small" plain @click="handleProductVisible">刷新库存</el-button>
-      </div>
-      <el-table v-if="$route.query.type === 'erp'" :data="form.orderItemList" show-summary :summary-method="getSummaries" class="p-information-tab">
-        <el-table-column label="序号" width="100">
-          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
-        </el-table-column>
-        <el-table-column prop="moduleCode" label="模块编码"></el-table-column>
-        <el-table-column prop="moduleName" label="模块名称"></el-table-column>
-        <el-table-column prop="authorizedPoints" label="已授权点数" align="right"></el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
-        <el-table-column prop="numberOfAuthorizations" label="本次授权数量" align="right">
-          <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.numberOfAuthorizations }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.numberOfAuthorizations" style="width:100%"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column prop="unionPayChannel" label="银联通道">
-          <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.unionPayChannel }}</span>
-            <el-select v-else-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)" v-model="scope.row.unionPayChannel" clearable>
-              <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
-            </el-select>
-          </template>
-        </el-table-column>
-        <el-table-column label="备注">
-          <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
-          <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.orderItemList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
-              <el-button type="text" size="small" slot="reference">删除</el-button>
-            </el-popconfirm>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-table v-if="$route.query.type === 'retail'" :data="form.orderItemList" class="p-information-tab">
-        <el-table-column label="序号" width="100">
-          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
-        </el-table-column>
-        <el-table-column prop="moduleCode" label="当前有效期"></el-table-column>
-        <el-table-column prop="moduleName" label="延期后有效期"></el-table-column>
-        <el-table-column prop="authorizedPoints" label="下单时库存" align="right"></el-table-column>
-        <el-table-column prop="orderInventory" label="消耗库存" align="right"></el-table-column>
-        <el-table-column label="备注">
-          <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-table v-if="$route.query.type === 'repast'" :data="form.orderItemList" class="p-information-tab">
-        <el-table-column label="序号" width="100">
-          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
-        </el-table-column>
-        <el-table-column prop="moduleCode" label="门店名称/商户/税号"></el-table-column>
-        <el-table-column prop="moduleName" label="类型"></el-table-column>
-        <el-table-column prop="authorizedPoints" label="当前有效期" align="right"></el-table-column>
-        <el-table-column prop="orderInventory" label="延期后有效期" align="right"></el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
-        <el-table-column prop="orderInventory" label="消耗库存" align="right"></el-table-column>
-        <el-table-column label="备注">
-          <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
-          </template>
-        </el-table-column>
-      </el-table>
-      <el-table v-if="$route.query.type === 'clound'"> </el-table>
-    </el-card> -->
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
     </div>
-    <!-- <template v-if="['add', 'edit'].includes($route.query.status)">
-      <erp-product v-if="$route.query.type === 'erp'" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
-      <repast-product v-if="$route.query.type === 'repast'" ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
-    </template> -->
   </section>
 </template>
 
@@ -205,7 +54,11 @@ import {
   authOrderErpAdd,
   authOrderWlsAdd,
   authOrderWcyAdd,
-  authOrderYsAdd
+  authOrderYsAdd,
+  authOrderErpSubmit,
+  authOrderWlsSubmit,
+  authOrderWcySubmit,
+  authOrderYsSubmit
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -222,10 +75,50 @@ export default {
       activeName: 'erpInformation',
       productType: parseFloat(this.$route.query.productType),
       baseInfoMap: new Map([
-        [1, { componentName: 'erpInformation', detailRequest: authOrderErpDetail, updateRequest: authOrderErpUpdate, addRequest: authOrderErpAdd, form: formErpObj }],
-        [3, { componentName: 'retailInformation', detailRequest: authOrderWlsDetail, updateRequest: authOrderWlsUpdate, addRequest: authOrderWlsAdd, form: formWlsOrWcyObj }],
-        [4, { componentName: 'repastInformation', detailRequest: authOrderWcyDetail, updateRequest: authOrderWcyUpdate, addRequest: authOrderWcyAdd, form: formWlsOrWcyObj }],
-        [5, { componentName: 'cloundInformation', detailRequest: authOrderYsDetail, updateRequest: authOrderYsUpdate, addRequest: authOrderYsAdd, form: formYsObj }]
+        [
+          1,
+          {
+            componentName: 'erpInformation',
+            detailRequest: authOrderErpDetail,
+            updateRequest: authOrderErpUpdate,
+            verifyRequest: authOrderErpSubmit,
+            addRequest: authOrderErpAdd,
+            form: formErpObj
+          }
+        ],
+        [
+          3,
+          {
+            componentName: 'retailInformation',
+            detailRequest: authOrderWlsDetail,
+            updateRequest: authOrderWlsUpdate,
+            verifyRequest: authOrderWlsSubmit,
+            addRequest: authOrderWlsAdd,
+            form: formWlsOrWcyObj
+          }
+        ],
+        [
+          4,
+          {
+            componentName: 'repastInformation',
+            detailRequest: authOrderWcyDetail,
+            updateRequest: authOrderWcyUpdate,
+            verifyRequest: authOrderWcySubmit,
+            addRequest: authOrderWcyAdd,
+            form: formWlsOrWcyObj
+          }
+        ],
+        [
+          5,
+          {
+            componentName: 'cloundInformation',
+            detailRequest: authOrderYsDetail,
+            updateRequest: authOrderYsUpdate,
+            verifyRequest: authOrderYsSubmit,
+            addRequest: authOrderYsAdd,
+            form: formYsObj
+          }
+        ]
       ]),
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
@@ -246,8 +139,8 @@ export default {
     this.form = deepClone(this.baseInfoMap.get(this.productType).form)
   },
   mounted() {
-    if (this.$route.query.status === 'add') this.getBaseInfo()
-    else this.getDetail()
+    this.getBaseInfo()
+    if (['edit', 'detail'].includes(this.$route.query.status)) this.getDetail()
   },
   methods: {
     handleVerify() {
@@ -257,10 +150,8 @@ export default {
           if (action === 'confirm') {
             try {
               instance.confirmButtonLoading = true
-              let data = {}
-              if (this.productType === 1) data = this.getErpInformationObj()
-              else if (this.productType === 3) data = this.getRetailInformationObj()
-              await this.baseInfoMap.get(this.productType).updateRequest(data)
+              this.setOrderSave().catch(() => {})
+              await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
               this.getDetail().then(() => {
                 this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, productType: this.productType, status: 'detail' } })
               })
@@ -277,64 +168,39 @@ export default {
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
-    handleRetailSave() {
-      return this.getRetailInformationObj()
-    },
     getYsInformationObj() {
-      const { handMan, inventoryAmount } = this.form.authOrderDTO
-      const { merchantNo: merchantId } = this.form.merchantDTO
+      const { merchantNo: merchantId, delayHour: delayCount, applicationSystem } = this.form.merchantDTO
       return {
-        authOrderVO: {
-          agentId: this.userBaseInfo.agentId,
-          createUser: JSON.parse(localStorage.userInfo).id,
-          inventoryAmount: inventoryAmount || 1,
-          handMan,
-          merchantId,
-          orderStatus: 0,
-          productCode: this.$refs.information.merchantInfo.productCode,
-          productType: 5,
-          useModal: this.form.merchantDTO.applicationModule,
-          delayCount: this.form.merchantDTO.delayHour
-        },
-        orderDetailVos: this.form.detailDTOList
+        authOrderVO: Object.assign(
+          this.handleQueryParams().authOrderVO,
+          { orderStatus: 0, productType: 5, merchantId, useModal: applicationSystem.code, delayCount },
+          { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
+        ),
+        addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
+        renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
       }
     },
     getWcyInformationObj() {
-      const { handMan, inventoryAmount } = this.form.authOrderDTO
-      const { merchantNo: merchantId } = this.form.merchantDTO
+      const { productCode } = this.form.authOrderDTO
+      const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
       return {
-        authOrderVO: {
-          agentId: this.userBaseInfo.agentId,
-          createUser: JSON.parse(localStorage.userInfo).id,
-          inventoryAmount: inventoryAmount || 1,
-          handMan,
-          merchantId,
-          orderStatus: 0,
-          productCode: this.$refs.information.merchantInfo.productCode,
-          productType: 4,
-          useModal: this.form.merchantDTO.applicationModule,
-          delayCount: this.form.merchantDTO.delayHour
-        },
-        orderDetailVos: this.form.detailDTOList
+        authOrderVO: Object.assign(
+          this.handleQueryParams().authOrderVO,
+          { orderStatus: 0, productType: 4, merchantId, useModal, delayCount },
+          { productCode: this.$refs.information.merchantInfo.productCode || productCode }
+        ),
+        orderDetailVos: this.handleQueryParams().orderDetailVos
       }
     },
     getWlsInformationObj() {
-      const { handMan, inventoryAmount } = this.form.authOrderDTO
-      const { merchantId } = this.form.merchantDTO
+      const { merchantId, applicationModule: useModal, delayHour: delayCount, productCode } = this.form.merchantDTO
       return {
-        authOrderVO: {
-          agentId: this.userBaseInfo.agentId,
-          createUser: JSON.parse(localStorage.userInfo).id,
-          inventoryAmount: inventoryAmount || 1,
-          handMan,
-          merchantId,
-          orderStatus: 0,
-          productCode: this.form.detailDTOList[0].productCode,
-          productType: 3,
-          useModal: this.form.merchantDTO.applicationModule,
-          delayCount: this.form.merchantDTO.delayHour
-        },
-        orderDetailVos: this.form.detailDTOList
+        authOrderVO: Object.assign(
+          this.handleQueryParams().authOrderVO,
+          { orderStatus: 0, productType: 3, merchantId, useModal, delayCount },
+          { productCode: this.$refs.information.merchantInfo.productCode || productCode }
+        ),
+        orderDetailVos: this.handleQueryParams().orderDetailVos
       }
     },
     getErpInformationObj() {
@@ -352,43 +218,46 @@ export default {
           }
         }).catch(() => {})
       } else {
-        const { handMan, inventoryAmount } = this.form.authOrderDTO
         const { merchantId, productCode } = this.form.erpAuthMerchantDTO
         return {
-          authOrderVO: {
-            handMan,
-            merchantId,
-            productCode,
-            inventoryAmount,
-            agentId: this.userBaseInfo.agentId,
-            createUser: JSON.parse(localStorage.userInfo).id,
-            orderStatus: 0,
-            productType: 1,
-            useModal: -1
-          },
-          orderDetailVos: this.form.erpAuthOrderDetails
+          authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { merchantId, productCode, orderStatus: 0, productType: 1, useModal: -1 }),
+          orderDetailVos: this.handleQueryParams().orderDetailVos
         }
       }
     },
-    async handleSave() {
-      try {
-        this.checkSaveBtnLoad = true
-        let data = {}
-        if (this.productType === 1) data = this.getErpInformationObj()
-        else if (this.productType === 3) data = this.getRetailInformationObj()
-        else if (this.productType === 4) data = this.getWcyInformationObj()
-        const res =
-          this.$route.query.status === 'add' ? await this.baseInfoMap.get(this.productType).addRequest(data) : await this.baseInfoMap.get(this.productType).updateRequest(data)
-        if (this.$route.query.status === 'add') {
-          this.$router.replace({ name: this.$route.name, query: { id: res, productType: this.productType, status: 'edit' } })
-          document.querySelector('.e-tag_active span').innerText = `软件授权订单/编辑`
-        }
-        this.getDetail()
-        this.$message({ type: 'success', message: '保存成功' })
-      } catch (error) {
-      } finally {
-        this.checkSaveBtnLoad = false
+    handleQueryParams() {
+      const { handMan, inventoryAmount } = this.form.authOrderDTO
+      return {
+        authOrderVO: { handMan, inventoryAmount, agentId: this.userBaseInfo.agentId, createUser: JSON.parse(localStorage.userInfo).id },
+        orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
+    },
+    setOrderSave() {
+      try {
+        let data = {}
+        const status = this.$route.query.status === 'add'
+        if (this.productType === 1) data = this.getErpInformationObj()
+        else if (this.productType === 3) data = this.getWlsInformationObj()
+        else if (this.productType === 4) data = this.getWcyInformationObj()
+        else if (this.productType === 5) data = this.getYsInformationObj()
+        return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data)
+      } catch (error) {}
+    },
+    handleSave() {
+      this.checkSaveBtnLoad = true
+      this.setOrderSave()
+        .then(res => {
+          if (this.$route.query.status === 'add') {
+            this.$router.replace({ name: this.$route.name, query: { id: res, productType: this.productType, status: 'edit' } })
+            document.querySelector('.e-tag_active span').innerText = `软件授权订单/编辑`
+          }
+          this.getDetail()
+          this.$message({ type: 'success', message: '保存成功' })
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.checkSaveBtnLoad = false
+        })
     },
     async getDetail() {
       try {
@@ -396,15 +265,16 @@ export default {
         const res = await this.baseInfoMap.get(this.productType).detailRequest(this.$route.query.id)
         this.form = res
         this.$nextTick(() => {
-          if (this.productType === 1) {
-            this.$refs.information.getShopPage().then(() => {
-              this.$refs.information.$refs.shopPage.selectVal = res.erpAuthMerchantDTO.merchantId
-            })
+          if (this.productType === 1 && this.$route.query.status === 'edit') {
+            this.$refs.information.$refs.shopPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
           } else if (this.productType === 3) {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
             this.form.merchantDTO.merchantId = res.authOrderDTO.merchantId
             this.form.merchantDTO.productCode = res.authOrderDTO.productCode
-            this.$refs.information.getCustList()
+          } else if (this.productType === 4) {
+            this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
+          } else if (this.productType === 5) {
+            this.form.merchantDTO.applicationSystem = res.authOrderDTO.useModal
           }
         })
       } catch (error) {

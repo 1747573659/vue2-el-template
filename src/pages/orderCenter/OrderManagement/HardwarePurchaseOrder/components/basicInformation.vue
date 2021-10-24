@@ -192,9 +192,6 @@ export default {
       checkAddressVisible: false
     }
   },
-  watch: {
-
-  },
   methods: {
     handleReceipt: async function() {
       this.$confirm('确认已收到货了吗？', '提示', {

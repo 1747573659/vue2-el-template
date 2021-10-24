@@ -32,8 +32,7 @@
     <el-card shadow="never" class="p-card">
       <div slot="header">订单明细 <span class="e-product-tip">(提示：每次只能置换一种产品，如要更换请先删除已选产品)</span></div>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品</el-button>
-        <!-- <el-button type="primary" size="small" plain :disabled="form.orderDetailDtos.length > 0" @click="handleProductVisible">选择产品</el-button> -->
+        <el-button type="primary" size="small" plain :disabled="form.orderDetailDtos.length > 0" @click="handleProductVisible">选择产品</el-button>
       </div>
       <el-table :data="form.orderDetailDtos" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
@@ -102,7 +101,8 @@ import {
   replaceOrderOriginalProduct,
   queryByAgentProduct,
   replaceOrderAdd,
-  replaceOrderUpdate
+  replaceOrderUpdate,
+  replaceOrderSubmit
 } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
@@ -143,6 +143,7 @@ export default {
         this.checkSaveBtnLoad = true
         const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
         if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
+          this.form.orderDetailDtos[0].orderInventory = agentProductObj.totalAmount
           this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
         } else {
           const data = { orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
@@ -166,8 +167,8 @@ export default {
           if (action === 'confirm') {
             try {
               instance.confirmButtonLoading = true
-              const data = { orderVO: { ...this.form.orderDTO, orderType: 1, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
-              await replaceOrderUpdate(data)
+              // const data = { orderVO: { ...this.form.orderDTO, orderType: 10, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
+              await replaceOrderSubmit({id: parseFloat(this.$route.query.id)})
               this.getDetail().then(() => {
                 this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 30, status: 'detail' } })
               })
@@ -192,25 +193,36 @@ export default {
       else return (row.useInventory = NP.divide(NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory), this.replaceProduct.addInventory))
     },
     async handleReplaceProductName(val) {
-      const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
-      this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-      const replaceableNum = NP.times(NP.divide(res.totalAmount, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
-      const useInventory = NP.divide(NP.times(0, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
-      this.$set(this.form.orderDetailDtos[0], 'orderInventory', res.totalAmount)
-      this.$set(this.form.orderDetailDtos[0], 'replaceableNum', replaceableNum)
-      this.$set(this.form.orderDetailDtos[0], 'useInventory', useInventory)
+      try {
+        const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
+        if (res) {
+          this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
+          const replaceableNum = NP.times(NP.divide(res.totalAmount, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
+          const useInventory = NP.divide(NP.times(0, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
+          this.form.orderDetailDtos[0].orderInventory = res.totalAmount
+          this.form.orderDetailDtos[0].replaceableNum = replaceableNum
+          this.form.orderDetailDtos[0].useInventory = useInventory
+        }
+      } catch (error) {}
     },
     handleProductList(data) {
       if (data) {
-        this.getOriginalProduct(data.productId)
-        this.form.orderDetailDtos = this.form.orderDetailDtos.concat({ productCode: data.productId, productCodeName: data.productName })
+        this.getOriginalProduct(data.productId).then(() => {
+          this.form.orderDetailDtos = [
+            {
+              productCode: data.productId,
+              productCodeName: data.productName,
+              replaceNum: 0,
+              replaceProductId: '',
+              replaceProductName: '',
+              orderInventory: 0,
+              replaceableNum: 0,
+              useInventory: 0,
+              remark: ''
+            }
+          ]
+        })
       }
-    },
-    async getOriginalProduct(originalProductCode) {
-      try {
-        const res = await replaceOrderOriginalProduct(originalProductCode)
-        this.replacedProducts = res
-      } catch (error) {}
     },
     async getDetail() {
       try {
@@ -218,11 +230,17 @@ export default {
         const res = await replaceOrderDetail(this.$route.query.id)
         this.form.orderDTO = res?.orderDTO ?? {}
         this.form.orderDetailDtos = res?.orderDetailDtos ?? []
-        this.getOriginalProduct(res.orderDetailDtos[0].productCode)
+        // this.getOriginalProduct(res.orderDetailDtos[0].productCode)
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false
       }
+    },
+    async getOriginalProduct(originalProductCode) {
+      try {
+        const res = await replaceOrderOriginalProduct(originalProductCode)
+        this.replacedProducts = res || []
+      } catch (error) {}
     },
     async getBaseInfo() {
       try {

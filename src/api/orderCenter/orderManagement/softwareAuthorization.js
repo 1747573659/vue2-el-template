@@ -70,6 +70,15 @@ export function authOrderErpUpdate(data) {
   })
 }
 
+// 详情-提交erp
+export function authOrderErpSubmit(data) {
+  return request({
+    url: '/auth/order/erp/submit',
+    method: 'POST',
+    data
+  })
+}
+
 // 新增-erp授权订单
 export function authOrderErpAdd(data) {
   return request({
@@ -84,6 +93,15 @@ export function authOrderWlsDetail(data) {
   return request({
     url: '/auth/order/wls/' + data,
     method: 'POST'
+  })
+}
+
+// 详情-提交微零售
+export function authOrderWlsSubmit(data) {
+  return request({
+    url: '/auth/order/wls/submit',
+    method: 'POST',
+    data
   })
 }
 
@@ -130,10 +148,19 @@ export function authOrderWcyAdd(data) {
   })
 }
 
+// 详情-提交微餐饮
+export function authOrderWcySubmit(data) {
+  return request({
+    url: '/auth/order/wcy/submit',
+    method: 'POST',
+    data
+  })
+}
+
 // 详情-微餐饮授权订单
 export function authOrderYsDetail(data) {
   return request({
-    url: '/auth/order/ys' + data,
+    url: '/auth/order/ys/' + data,
     method: 'POST'
   })
 }
@@ -150,6 +177,15 @@ export function authOrderYsUpdate(data) {
 export function authOrderYsAdd(data) {
   return request({
     url: '/auth/order/ys/add',
+    method: 'POST',
+    data
+  })
+}
+
+// 详情-提交云商
+export function authOrderYsSubmit(data) {
+  return request({
+    url: '/auth/order/ys/submit',
     method: 'POST',
     data
   })

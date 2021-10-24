@@ -3,8 +3,7 @@ export const orderStatus = new Map([
   ['', { value: '', label: '全部'}],
   [0, { value: 0, label: '未提交' }],
   [5, { value: 5, label: '未提交（被退回）' }],
-  [10, { value: 10, label: '未提交' }],
-  [20, { value: 20, label: '待审核' }],
+  [10, { value: 10, label: '待审核' }],
   [30, { value: 30, label: '已审核' }]
 ])
 

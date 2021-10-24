@@ -9,7 +9,9 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
+          <el-input :value="form.erpAuthMerchantDTO.merchantName" v-if="$route.query.status === 'detail'" disabled></el-input>
           <km-select-page
+            v-else
             ref="shopPage"
             option-label="custNameExpand"
             option-value="custId"
@@ -21,7 +23,7 @@
           />
         </el-form-item>
         <el-form-item label="商户号">
-          <el-input :value="form.erpAuthMerchantDTO.merchantId" disabled></el-input>
+          <el-input :value="form.erpAuthMerchantDTO.merchantId" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="授权状态">
           <el-input :value="['试用', '试用', '正式', '停用'][parseFloat(form.erpAuthMerchantDTO.authStatus)]" disabled></el-input>
@@ -46,7 +48,7 @@
         </el-table-column>
         <el-table-column prop="moduleCode" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
-        <el-table-column prop="authPoint" label="已授权点数" align="right"></el-table-column>
+        <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
         <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
         <el-table-column prop="authNum" label="本次授权数量" align="right">
           <template slot-scope="scope">
@@ -139,45 +141,48 @@ export default {
     }
   },
   methods: {
+    handleShopPage(val) {
+      if (val) {
+        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.filter(item => item.custId === val)[0]
+        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
+      } else this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount: '', productCode: '', productName: '', authStatus: '', merchantId: '' })
+      this.form.erpAuthOrderDetails = []
+    },
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
-          authPoint: 1,
-          orderInventory: '',
-          authNum: '',
+          authPoint: 0,
+          orderInventory: 0,
+          authNum: 0,
           productCode: this.form.erpAuthMerchantDTO.productCode,
           unionChannel: '',
           remark: ''
         }
       })
       this.form.erpAuthOrderDetails = this.form.erpAuthOrderDetails.concat(Selections)
-      this.getProductStock().then(() => (this.checkProductVisible = false))
       if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) this.getChannelPage()
-    },
-    handleShopPage(val) {
-      if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.filter(item => item.custId === val)[0]
-        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
-      } else this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount: '', productCode: '', productName: '', authStatus: '', merchantId: '' })
+      this.getProductStock().then(() => (this.checkProductVisible = false))
     },
     async getProductStock() {
       try {
-        const res = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.form.erpAuthMerchantDTO })
-        if (this.form.erpAuthOrderDetails.length > 0) this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.totalAmount))
+        const res = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.form.erpAuthMerchantDTO.productCode })
+        if (this.form.erpAuthOrderDetails.length > 0 && res) this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.totalAmount))
       } catch (error) {}
     },
     handleProductVisible() {
-      this.checkProductVisible = true
-      this.getProductPage()
+      if (!this.form.erpAuthMerchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
+      else {
+        this.checkProductVisible = true
+        this.getProductPage()
+      }
     },
     async getProductPage() {
       try {
         this.checkProductTabLock = true
         const { merchantId: custId, productCode } = this.form.erpAuthMerchantDTO
-        const res = await authModuleList({ moduleInfo: this.productVal, custId, productCode })
-        this.basicProductData = res
+        this.basicProductData = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
@@ -214,7 +219,7 @@ export default {
                 return prev
               }
             }, 0)
-            this.form.authOrderDTO.inventoryAmount = sums[5]
+            this.form.authOrderDTO.inventoryAmount = sums[['2', '3'].includes(this.form.erpAuthMerchantDTO.authStatus) ? 5 : 4]
           }
         }
       })

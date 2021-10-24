@@ -10,12 +10,12 @@
         </el-form-item>
         <el-form-item label="商户名称">
           <!-- <el-select v-model="form.merchantDTO.merchantId" @change="handleMerchantInfo" remote :remote-method="getCustList" placeholder="名称/商户号" filterable clearable> -->
-          <el-select v-model="form.merchantDTO.merchantId" @change="handleMerchantInfo" placeholder="名称/商户号" filterable clearable>
+          <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="名称/商户号" filterable clearable>
             <el-option v-for="item in custListData" :key="item.CustID" :label="item.CustNameExpand" :value="item.CustID"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="商户号">
-          <el-input :value="form.merchantDTO.merchantId" disabled></el-input>
+          <el-input :value="form.merchantDTO.merchantId" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="商户版本">
           <el-input :value="versionMap.get(form.merchantDTO.merchantVersion)" disabled></el-input>
@@ -29,7 +29,7 @@
         <el-form-item label="应用模块">
           <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
             <el-option label="微商城" :value="1"></el-option>
-            <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
+            <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !=='3'"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="延期时长" v-if="['', 1].includes(form.merchantDTO.applicationModule)">
@@ -45,7 +45,7 @@
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
-        <template v-if="form.merchantDTO.applicationModule === 1">
+        <template v-if="['', 1].includes(form.merchantDTO.applicationModule)">
           <el-table-column prop="currentValidTime" label="当前有效期"></el-table-column>
           <el-table-column prop="delayValidTime" label="延期后有效期"></el-table-column>
         </template>
@@ -96,26 +96,33 @@ export default {
   },
   methods: {
     handleDelayHour(val) {
-      this.form.detailDTOList[0].delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime() : ''
-      this.form.detailDTOList[0].useInventory = val
+      this.form.authOrderDTO.inventoryAmount = val
+      this.form.detailDTOList.forEach(item => {
+        item.delayValidTime = item.currentValidTime ? this.setDelayValidTime(item.currentValidTime) : ''
+        item.useInventory = val
+      })
     },
     handleApplicationModule(val) {
       if (val) {
         this.form.merchantDTO.delayHour = 1
-        this.form.detailDTOList[0] = {
-          currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
-          delayValidTime: this.merchantInfo.KMValidity ? this.setDelayValidTime() : '',
-          orderInventory: this.productStockObj?.totalAmount ?? 0,
-          useInventory: this.form.merchantDTO.delayHour,
-          productCode: this.merchantInfo.productCode,
-          remark: '',
-          currentState: this.merchantInfo.OpenCustAssistantApp
-        }
+        this.form.authOrderDTO.inventoryAmount = 1
+        this.form.detailDTOList = [
+          {
+            currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
+            delayValidTime: this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : '',
+            orderInventory: this.productStockObj?.totalAmount ?? 0,
+            useInventory: this.form.merchantDTO.delayHour,
+            productCode: this.merchantInfo.productCode,
+            remark: '',
+            currentState: this.merchantInfo.OpenCustAssistantApp
+          }
+        ]
       }
     },
-    async handleMerchantInfo() {
+    async handleMerchantInfo(val) {
+      this.form.merchantDTO.merchantId = val
       this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
-      this.form.merchantDTO.merchantVersion = this.merchantInfo.VersionType
+      this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
       this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
       this.form.merchantDTO.relationProduct = this.merchantInfo.productionTypeName
       if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
@@ -124,6 +131,9 @@ export default {
     async getProductStock() {
       try {
         this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.merchantInfo.productCode })) || {}
+        this.form.detailDTOList.forEach(item => {
+          item.orderInventory = this.productStockObj?.totalAmount ?? 0
+        })
       } catch (error) {}
     },
     async getCustList(query) {
@@ -131,8 +141,9 @@ export default {
       this.custListData = res.filter((item, index) => index < 10)
       this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustID}）`))
     },
-    setDelayValidTime() {
-      return dayjs(this.merchantInfo.KMValidity)
+    setDelayValidTime(val) {
+      const countTime = dayjs(val).isAfter(dayjs().format('YYYY-MM-DD')) ? val : dayjs().format('YYYY-MM-DD')
+      return dayjs(countTime)
         .add(this.form.merchantDTO.delayHour, 'year')
         .format('YYYY-MM-DD 00:00:00')
     }

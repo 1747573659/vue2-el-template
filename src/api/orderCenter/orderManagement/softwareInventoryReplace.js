@@ -95,3 +95,13 @@ export function replaceOrderDelete(data) {
     method: 'POST'
   })
 }
+
+
+// 删除
+export function replaceOrderSubmit(data) {
+  return request({
+    url: '/replace/order/submit',
+    method: 'POST',
+    data
+  })
+}

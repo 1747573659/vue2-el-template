@@ -35,7 +35,7 @@
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
-                <template v-for="item in Array.from(orderStatus).filter(item => ![5, 10].includes(item[0]))">
+                <template v-for="item in Array.from(orderStatus).filter(item => ![5].includes(item[0]))">
                   <el-option :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
                 </template>
               </el-select>
@@ -90,7 +90,7 @@
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
-            <template v-if="[0, 5, 10].includes(scope.row.orderStatus)">
+            <template v-if="[0, 5].includes(scope.row.orderStatus)">
               <el-button v-permission="'SOFTWARE_AUTHORIZATION_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
               <el-popconfirm class="el-button el-button--text" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
                 <el-button type="text" size="small" slot="reference">删除</el-button>
@@ -144,6 +144,9 @@ export default {
       }
     }
   },
+  activated () {
+    this.getQueryPage()
+  },
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
@@ -168,8 +171,7 @@ export default {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
         sysSource: 1,
-        // minDate: createTime?.[0] ?? '',
-        minDate: '2021-10-08 00:00:00',
+        minDate: createTime?.[0] ?? '',
         maxDate: createTime?.[1] ?? '',
         page: this.currentPage,
         rows: this.pageSize

@@ -40,7 +40,8 @@
       </el-form>
       <el-tabs v-model="activeName">
         <el-tab-pane label="加点" name="1"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="form.merchantDTO.probationFlag === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem.code)"></el-tab-pane>
+        <!-- <el-tab-pane label="续费" name="2" v-if="form.merchantDTO.probationFlag === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem.code)"></el-tab-pane> -->
+        <el-tab-pane label="续费" name="2"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="getProductStock" v-if="activeName === '1'">刷新库存</el-button>
@@ -53,8 +54,8 @@
         <template v-if="activeName === '1'">
           <el-table-column prop="productCode" label="产品编码"></el-table-column>
           <el-table-column prop="productName" label="产品名称"></el-table-column>
-          <el-table-column prop="orderInventory" label="下单时库存"></el-table-column>
-          <el-table-column label="加点数">
+          <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+          <el-table-column label="加点数" align="right">
             <template slot-scope="scope">
               <el-input size="small" v-model="scope.row.addNum" style="width:100%"></el-input>
             </template>
@@ -67,7 +68,7 @@
           <el-table-column prop="currentValidTime" label="当前有效期"></el-table-column>
           <el-table-column prop="delayValidTime" label="延期后有效期"></el-table-column>
         </template>
-        <el-table-column prop="useInventory" label="消耗库存"></el-table-column>
+        <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
@@ -83,7 +84,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <!-- <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择授权对象" width="800px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择授权对象" width="800px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="50" placeholder="授权对象编码/名称" clearable></el-input>
@@ -92,23 +93,23 @@
       </el-form>
       <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="BranchName" label="授权ID"></el-table-column>
-        <el-table-column prop="shopType" label="授权对象编码"></el-table-column>
-        <el-table-column prop="KMValidity" label="授权对象名称"></el-table-column>
-        <el-table-column prop="KMValidity" label="有效期"></el-table-column>
+        <el-table-column prop="UserId" label="授权ID"></el-table-column>
+        <el-table-column prop="UserNo" label="授权对象编码"></el-table-column>
+        <el-table-column prop="UserName" label="授权对象名称"></el-table-column>
+        <el-table-column prop="EndTime" label="有效期"></el-table-column>
       </el-table>
-      <el-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
+      <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
         <el-button @click="checkProductVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
       </div>
-    </el-dialog> -->
+    </el-dialog>
   </section>
 </template>
 
 <script>
 import dayjs from 'dayjs'
-import { delayTimes, cyVersionMap } from '../data'
+import { delayTimes } from '../data'
 
 import {
   authOrderYsCustomerList,
@@ -134,21 +135,41 @@ export default {
       shopPageData: [],
       isShopMaxPage: false,
       appModulesData: [],
+      checkProductVisible: false,
+      productVal: '',
+      checkProductTabLock: false,
+      basicProductData: [],
+      currentPage: 0,
+      pageSize: 10,
+      totalPage: 0,
+      appModuleObj:{},
 
       delayTimes,
-      cyVersionMap,
       custListData: [],
       isCustListPage: false,
       merchantInfo: [],
       productStockObj: {},
       activeName: '1',
-      checkProductVisible: false,
-      productVal: '',
-      checkProductTabLock: false,
-      basicProductData: [],
-      currentPage: 1,
-      pageSize: 10,
-      totalPage: 0
+    }
+  },
+  watch: {
+    'form.addAuthOrderDetailDTOList': {
+      handler(newVal) {
+        const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue.useInventory
+        }, 0)
+        return (this.form.authOrderDTO.inventoryAmount = parseFloat(this.form.authOrderDTO.inventoryAmount) || 0 + inventoryAmount)
+      },
+      deep: true
+    },
+    'form.renewAuthOrderDetailDTOList': {
+      handler(newVal) {
+        const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
+          return accumulator + currentValue.useInventory
+        }, 0)
+        return (this.form.authOrderDTO.inventoryAmount = parseFloat(this.form.authOrderDTO.inventoryAmount) || 0 + inventoryAmount)
+      },
+      deep: true
     }
   },
   mounted() {
@@ -163,11 +184,12 @@ export default {
     async handleAppModule(val) {
       if (val) {
         const { merchantNo, CustName } = this.form.merchantDTO
+        this.appModuleObj = val
         const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: val.outCode, custName: CustName })
-        this.$set(this.form.merchantDTO, 'probationFlag', res.ProbationFlag)
+        this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
         this.getProductStock(val).then(() => {
           this.form.addAuthOrderDetailDTOList = [
-            { productCode: val.productCode, productName: val.name, orderInventory: this.productStockObj.totalAmount || 0, addNum: 1, useInventory: 1, remark: '' }
+            { productCode: val.productCode, productName: val.name, orderInventory: this.productStockObj?.totalAmount ?? 0, addNum: 1, useInventory: 1, remark: '' }
           ]
         })
       }
@@ -185,6 +207,8 @@ export default {
         const { CustId: merchantNo, CustName } = this.shopPageData.filter(item => item.CustId === val)[0]
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, CustName })
       } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', CustName: '' })
+      this.form.addAuthOrderDetailDTOList = []
+      this.form.renewAuthOrderDetailDTOList = []
     },
     async getOrderYsAppModules() {
       try {
@@ -210,7 +234,8 @@ export default {
       // this.getProductStock().then(() => (this.checkProductVisible = false))
     },
     setDelayValidTime(date) {
-      return dayjs(date)
+      const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
+      return dayjs(countTime)
         .add(this.form.merchantDTO.delayHour, 'year')
         .format('YYYY-MM-DD 00:00:00')
     },
@@ -218,19 +243,27 @@ export default {
       this.checkProductVisible = true
       this.getProductPage()
     },
-    // async getProductPage() {
-    //   try {
-    //     this.checkProductTabLock = true
-    //     const res = await authOrderWcyBranchList({ branch: '', branchname: '', cust: this.form.merchantDTO.merchantNo })
-    //     this.basicProductData = res.map(item => {
-    //       item.shopType = this.form.merchantDTO.applicationModule
-    //       return item
-    //     })
-    //   } catch (error) {
-    //   } finally {
-    //     this.checkProductTabLock = false
-    //   }
-    // },
+    async getProductPage() {
+      try {
+        this.checkProductTabLock = true
+        const data = {
+          condition: this.productVal,
+          PageSize: this.pageSize,
+          PageIndex: this.currentPage,
+          CustId: this.form.merchantDTO.merchantNo,
+          AppId: this.appModuleObj.outCode
+        }
+        const res = await authOrderYsByCusAndApplyList(data)
+        console.info(res)
+        // this.basicProductData = res.map(item => {
+        //   item.shopType = this.form.merchantDTO.applicationModule
+        //   return item
+        // })
+      } catch (error) {
+      } finally {
+        this.checkProductTabLock = false
+      }
+    },
     handleDelayHour(val) {
       // this.form.detailDTOList[0].delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime() : ''
       // this.form.detailDTOList[0].useInventory = val
