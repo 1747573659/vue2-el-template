@@ -29,7 +29,7 @@
         <el-form-item label="应用模块">
           <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
             <el-option label="微商城" :value="1"></el-option>
-            <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !=='3'"></el-option>
+            <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="延期时长" v-if="['', 1].includes(form.merchantDTO.applicationModule)">
@@ -129,6 +129,10 @@ export default {
       this.getProductStock()
     },
     async getProductStock() {
+      if (!this.merchantInfo.productCode) {
+        this.$message({ type: 'warning', message: '请先选择商户' })
+        return
+      }
       try {
         this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.merchantInfo.productCode })) || {}
         this.form.detailDTOList.forEach(item => {

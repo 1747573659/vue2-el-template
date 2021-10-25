@@ -232,6 +232,10 @@ export default {
       }
     },
     async getProductStock() {
+      if (!this.merchantInfo.productCode) {
+        this.$message({ type: 'warning', message: '请先选择商户' })
+        return
+      }
       try {
         this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.merchantInfo.productCode })) || {}
       } catch (error) {}

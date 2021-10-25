@@ -12,7 +12,7 @@
 </template>
 
 <script>
-import { orderStatus } from '../index'
+import { orderStatus } from './data'
 import operationLog from '../components/operationLog'
 import basicInformation from './components/basicInformation'
 
