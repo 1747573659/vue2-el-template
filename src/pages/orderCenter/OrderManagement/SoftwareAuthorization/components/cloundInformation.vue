@@ -109,6 +109,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import NP from 'number-precision'
 import { delayTimes } from '../data'
 
 import {
@@ -142,32 +143,36 @@ export default {
       currentPage: 0,
       pageSize: 10,
       totalPage: 0,
-      appModuleObj:{},
+      appModuleObj: {},
 
       delayTimes,
       custListData: [],
       isCustListPage: false,
       merchantInfo: [],
       productStockObj: {},
-      activeName: '1',
+      activeName: '1'
     }
   },
   watch: {
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
-        const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
-          return accumulator + currentValue.useInventory
-        }, 0)
-        return (this.form.authOrderDTO.inventoryAmount = parseFloat(this.form.authOrderDTO.inventoryAmount) || 0 + inventoryAmount)
+        if (newVal.length > 0) {
+          const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue.useInventory
+          }, 0)
+          return (this.form.authOrderDTO.inventoryAmount = NP.plus(parseFloat(this.form.authOrderDTO.inventoryAmount) || 0, inventoryAmount))
+        }
       },
       deep: true
     },
     'form.renewAuthOrderDetailDTOList': {
       handler(newVal) {
-        const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
-          return accumulator + currentValue.useInventory
-        }, 0)
-        return (this.form.authOrderDTO.inventoryAmount = parseFloat(this.form.authOrderDTO.inventoryAmount) || 0 + inventoryAmount)
+        if (newVal.length > 0) {
+          const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
+            return accumulator + currentValue.useInventory
+          }, 0)
+          return (this.form.authOrderDTO.inventoryAmount = NP.plus(parseFloat(this.form.authOrderDTO.inventoryAmount) || 0, inventoryAmount))
+        }
       },
       deep: true
     }
@@ -215,23 +220,20 @@ export default {
         this.appModulesData = (await authOrderYsAppModules()) || []
       } catch (error) {}
     },
-
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          shopName: item.BranchName,
-          shopCode: item.BranchNo,
-          shopType: item.shopType,
-          currentValidTime: `${item.KMValidity} 00:00:00`,
-          delayValidTime: this.setDelayValidTime(item.KMValidity),
-          orderInventory: this.productStockObj?.totalAmount ?? 0,
+          authId: item.UserId,
+          authCode: item.UserNo,
+          authName: item.UserName,
+          currentValidTime: item.EndTime,
+          delayValidTime: this.setDelayValidTime(item.EndTime),
           useInventory: this.form.merchantDTO.delayHour,
-          productCode: this.merchantInfo.productCode,
           remark: ''
         }
       })
-      this.form.detailDTOList = this.form.detailDTOList.concat(Selections)
-      // this.getProductStock().then(() => (this.checkProductVisible = false))
+      this.form.renewAuthOrderDetailDTOList = this.form.renewAuthOrderDetailDTOList.concat(Selections)
+      this.getProductStock().then(() => (this.checkProductVisible = false))
     },
     setDelayValidTime(date) {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
@@ -251,14 +253,11 @@ export default {
           PageSize: this.pageSize,
           PageIndex: this.currentPage,
           CustId: this.form.merchantDTO.merchantNo,
-          AppId: this.appModuleObj.outCode
+          AppId: this.appModuleObj.outCode,
+          flag: 0
         }
         const res = await authOrderYsByCusAndApplyList(data)
-        console.info(res)
-        // this.basicProductData = res.map(item => {
-        //   item.shopType = this.form.merchantDTO.applicationModule
-        //   return item
-        // })
+        this.basicProductData = res
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
