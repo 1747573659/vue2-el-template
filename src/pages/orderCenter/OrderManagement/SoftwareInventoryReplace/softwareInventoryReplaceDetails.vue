@@ -5,7 +5,7 @@
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
     <keep-alive>
-      <component :is="activeName"></component>
+      <component :is="activeName" :operateData="operateData"></component>
     </keep-alive>
   </section>
 </template>
@@ -15,6 +15,8 @@ import { orderStatus } from '../index'
 import operationLog from '../components/operationLog'
 import basicInformation from './components/basicInformation'
 
+import { authOrderLog } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
+
 export default {
   name: 'softwareInventoryReplaceDetails',
   components: {
@@ -23,14 +25,27 @@ export default {
   },
   data() {
     return {
-      activeName: 'basicInformation'
+      activeName: 'basicInformation',
+      operateData: []
     }
   },
   mounted() {
+    if(['edit', 'detail'].includes(this.$route.query.status)) this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
       document.querySelector('.e-tag_active span').innerText = `软件库存置换单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
+  },
+  methods: {
+    async getOperateLog() {
+      try {
+        const res = await authOrderLog(this.$route.query.id)
+        this.operateData = res.map(item => {
+          item.operateUserName = item.operateUser
+          return item
+        })
+      } catch (error) {}
+    }
   }
 }
 </script>

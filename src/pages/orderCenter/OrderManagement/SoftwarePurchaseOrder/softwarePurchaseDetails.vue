@@ -5,7 +5,7 @@
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
     <keep-alive>
-      <component :is="activeName"></component>
+      <component :is="activeName" :operateData="operateData"></component>
     </keep-alive>
   </section>
 </template>
@@ -15,6 +15,8 @@ import { orderStatus } from '../index'
 import operationLog from '../components/operationLog'
 import basicInformation from './components/basicInformation'
 
+import { operateLog } from '@/api/orderCenter/orderManagement'
+
 export default {
   name: 'softwarePurchaseDetails',
   components: {
@@ -23,14 +25,23 @@ export default {
   },
   data() {
     return {
-      activeName: 'basicInformation'
+      activeName: 'basicInformation',
+      operateData: []
     }
   },
   mounted() {
+    this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
       document.querySelector('.e-tag_active span').innerText = `软件采购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
+  },
+  methods: {
+    async getOperateLog() {
+      try {
+        this.tableData = await operateLog({ orderType: 1, purchaseId: this.$route.query.id })
+      } catch (error) {}
+    }
   }
 }
 </script>

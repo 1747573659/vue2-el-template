@@ -9,8 +9,7 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
-          <!-- <el-select v-model="form.merchantDTO.merchantId" @change="handleMerchantInfo" remote :remote-method="getCustList" placeholder="名称/商户号" filterable clearable> -->
-          <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="名称/商户号" filterable clearable>
+          <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" :disabled="$route.query.status === 'detail'" placeholder="名称/商户号" filterable clearable>
             <el-option v-for="item in custListData" :key="item.CustID" :label="item.CustNameExpand" :value="item.CustID"></el-option>
           </el-select>
         </el-form-item>
@@ -27,7 +26,7 @@
           <el-input :value="form.merchantDTO.storeCount" disabled></el-input>
         </el-form-item>
         <el-form-item label="应用模块">
-          <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
+          <el-select v-model="form.merchantDTO.applicationModule" :disabled="$route.query.status === 'detail'" @change="handleApplicationModule" clearable>
             <el-option label="微商城" :value="1"></el-option>
             <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
           </el-select>

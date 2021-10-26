@@ -212,9 +212,9 @@ export function authModuleList(data) {
 // 查询库存
 export function queryByAgentProduct(data) {
   return request({
-    url: '/soft/inventory/queryByAgentProduct',
+    url: '/soft/inventory/queryByAgentProductList',
     method: 'POST',
-    data: qs.stringify(data)
+    data
   })
 }
 
@@ -314,5 +314,13 @@ export function authOrderYsByCusAndApplyList(data) {
     url: '/auth/order/ys/getUserByCusAndApplyList',
     method: 'POST',
     data
+  })
+}
+
+// 操作日志
+export function authOrderLog(data) {
+  return request({
+    url: '/auth/order/log/' + data,
+    method: 'POST'
   })
 }

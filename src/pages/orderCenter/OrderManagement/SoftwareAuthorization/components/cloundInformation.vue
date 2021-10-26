@@ -9,7 +9,9 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
+          <el-input :value="form.merchantDTO.merchantName" v-if="$route.query.status === 'detail'" disabled></el-input>
           <km-select-page
+            v-else
             ref="shopPage"
             option-label="CustNameExpand"
             option-value="CustId"
@@ -24,7 +26,7 @@
           <el-input :value="form.merchantDTO.merchantNo" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="应用系统">
-          <el-select v-model="form.merchantDTO.applicationSystem" value-key="code" @change="handleAppModule" clearable>
+          <el-select v-model="form.merchantDTO.applicationSystem" value-key="code" @change="handleAppModule" :disabled="$route.query.status === 'detail'" clearable>
             <el-option v-for="item in appModulesData" :key="item.code" :label="item.name" :value="item"></el-option>
           </el-select>
         </el-form-item>
@@ -33,7 +35,7 @@
         </el-form-item>
         <el-form-item label="延期时长">
           <el-input value="永久" v-if="[201, 205].includes(form.merchantDTO.applicationSystem.code)" disabled></el-input>
-          <el-select v-else v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable>
+          <el-select v-else v-model="form.merchantDTO.delayHour" @change="handleDelayHour" :disabled="$route.query.status === 'detail'" clearable>
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -57,7 +59,7 @@
           <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
           <el-table-column label="加点数" align="right">
             <template slot-scope="scope">
-              <el-input size="small" v-model="scope.row.addNum" style="width:100%"></el-input>
+              <el-input size="small" v-model="scope.row.addNum" :disabled="$route.query.status === 'detail'" style="width:100%"></el-input>
             </template>
           </el-table-column>
         </template>
@@ -258,7 +260,7 @@ export default {
           PageIndex: this.currentPage,
           CustId: this.form.merchantDTO.merchantNo,
           AppId: this.appModuleObj.outCode,
-          flag: 0
+          flag: -1
         }
         const res = await authOrderYsByCusAndApplyList(data)
         this.basicProductData = res

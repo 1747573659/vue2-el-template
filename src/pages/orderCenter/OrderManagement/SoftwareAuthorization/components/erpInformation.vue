@@ -151,6 +151,7 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
+          productId: item.productId,
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
           authPoint: 0,
@@ -167,8 +168,10 @@ export default {
     },
     async getProductStock() {
       try {
-        const res = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.form.erpAuthMerchantDTO.productCode })
-        if (this.form.erpAuthOrderDetails.length > 0 && res) this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.totalAmount))
+        const res = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productId) })
+        if (this.form.erpAuthOrderDetails.length > 0 && res) {
+          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode === item.productId).totalAmount))
+        }
       } catch (error) {}
     },
     handleProductVisible() {

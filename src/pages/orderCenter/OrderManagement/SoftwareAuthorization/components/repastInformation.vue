@@ -9,7 +9,7 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
-          <el-select v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="名称/商户号" filterable clearable>
+          <el-select v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" :disabled="$route.query.status === 'detail'" placeholder="名称/商户号" filterable clearable>
             <el-option v-for="item in custListData" :key="item.CustId" :label="item.CustNameExpand" :value="item.CustId"></el-option>
           </el-select>
         </el-form-item>
@@ -26,14 +26,14 @@
           <el-input :value="form.merchantDTO.storeCount" disabled></el-input>
         </el-form-item>
         <el-form-item label="应用模块">
-          <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
+          <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" :disabled="$route.query.status === 'detail'" clearable>
             <el-option label="门店" :value="101"></el-option>
             <el-option label="电子发票" :value="102" v-if="form.merchantDTO.merchantVersion !== '2'"></el-option>
             <el-option label="积分商城" :value="103" v-if="form.merchantDTO.merchantVersion === '1'"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="延期时长">
-          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable>
+          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" :disabled="$route.query.status === 'detail'" clearable>
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>

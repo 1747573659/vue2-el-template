@@ -96,12 +96,19 @@ export function replaceOrderDelete(data) {
   })
 }
 
-
 // 删除
 export function replaceOrderSubmit(data) {
   return request({
     url: '/replace/order/submit',
     method: 'POST',
     data
+  })
+}
+
+// 操作日志
+export function authOrderLog(data) {
+  return request({
+    url: '/auth/order/log/' + data,
+    method: 'POST'
   })
 }

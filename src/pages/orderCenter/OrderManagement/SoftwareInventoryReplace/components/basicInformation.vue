@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con">
+  <section class="p-information-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-title">订单信息</div>
@@ -111,6 +111,7 @@ export default {
   },
   data() {
     return {
+      checkBasicInformLoad: false,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
       form: deepClone(formObj),
       checkSaveBtnLoad: false,
@@ -167,7 +168,6 @@ export default {
           if (action === 'confirm') {
             try {
               instance.confirmButtonLoading = true
-              // const data = { orderVO: { ...this.form.orderDTO, orderType: 10, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
               await replaceOrderSubmit({id: parseFloat(this.$route.query.id)})
               this.getDetail().then(() => {
                 this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 30, status: 'detail' } })
