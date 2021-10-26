@@ -116,6 +116,7 @@
 <script>
 import picUpload from './../picUpload'
 export default {
+  name: 'marketingDetile',
   components: { picUpload },
   data () {
     var checkRegAppName = (rule, value, callback) => {

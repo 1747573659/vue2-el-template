@@ -1,4 +1,6 @@
-import { _import } from '@/utils'
+import {
+  _import
+} from '@/utils'
 import Layout from '@/layout'
 import kmContainer from '@/components/km-container'
 const customer = {
@@ -10,8 +12,7 @@ const customer = {
     title: '客户管理',
     name: 'customer'
   },
-  children: [
-    {
+  children: [{
       path: 'merchant',
       name: 'merchant',
       code: 'KM_CUSTOMER_MERCHANT',
@@ -24,8 +25,7 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'merchant'
       },
-      children: [
-        {
+      children: [{
           path: 'merchantManage',
           name: 'merchantManage',
           code: 'KM_CUSTOMER_MERCHANT_MANAGE',
@@ -76,7 +76,11 @@ const customer = {
           component: _import('customer/merchant/softNoteManagement/index'),
           name: 'softNoteManagement',
           code: 'XDD_PAY_SHOP_SOFTNOTEMANGEMENT',
-          meta: { title: '软注册查询', cache: true, name: 'softNoteManagement' }
+          meta: {
+            title: '软注册查询',
+            cache: true,
+            name: 'softNoteManagement'
+          }
         },
         // {
         //   path: 'softNoteManagementDetile',
@@ -125,8 +129,7 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'archive'
       },
-      children: [
-        {
+      children: [{
           path: 'wxArchive',
           name: 'wxArchive',
           code: 'KM_CUSTOMER_ARCHIVE_WX',
@@ -220,8 +223,7 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'agent'
       },
-      children: [
-        {
+      children: [{
           path: 'agentManage',
           name: 'agentManage',
           code: 'KM_CUSTOMER_AGENT_HOME',
@@ -306,8 +308,7 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'workorder'
       },
-      children: [
-        {
+      children: [{
           path: 'workOrderManagement',
           component: () => import('@/pages/orderCenter/validityQuery/workOrderManagement.vue'),
           name: 'workOrderManagement',
@@ -356,8 +357,7 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'marketing'
       },
-      children: [
-        {
+      children: [{
           path: 'marketingManagement',
           component: () => import('@/pages/customer/marketing/merchantApplets/index.vue'),
           name: 'marketingManagement',
@@ -365,6 +365,18 @@ const customer = {
           meta: {
             title: '商户小程序管理',
             name: 'marketingManagement',
+            cache: true
+          }
+        },
+        {
+          path: 'marketingDetile',
+          component: () => import('@/pages/customer/marketing/merchantApplets/detile.vue'),
+          name: 'marketingDetile',
+          code: 'MARKETINGDETILE',
+          hidden: true,
+          meta: {
+            title: '小程序资料',
+            name: 'marketingDetile',
             cache: true
           }
         }
