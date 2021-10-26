@@ -218,6 +218,7 @@ export default {
             done()
           }
         }).catch(() => {})
+        return false
       } else {
         const { merchantId, productCode } = this.form.erpAuthMerchantDTO
         return {
@@ -237,8 +238,10 @@ export default {
       try {
         let data = {}
         const status = this.$route.query.status === 'add'
-        if (this.productType === 1) data = this.getErpInformationObj()
-        else if (this.productType === 3) data = this.getWlsInformationObj()
+        if (this.productType === 1) {
+          data = this.getErpInformationObj()
+          if (!data) return new Promise((resolve, reject) => reject(new Error()))
+        } else if (this.productType === 3) data = this.getWlsInformationObj()
         else if (this.productType === 4) data = this.getWcyInformationObj()
         else if (this.productType === 5) data = this.getYsInformationObj()
         return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data)
