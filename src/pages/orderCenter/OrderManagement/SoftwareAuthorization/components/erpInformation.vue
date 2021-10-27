@@ -158,7 +158,7 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          productId: item.productCode,
+          productId: item.productId,
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
           authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item.authNum,
@@ -178,7 +178,7 @@ export default {
         this.checkProductStockLoad = true
         const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productId) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
-          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode === item.productId).totalAmount))
+          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productId).totalAmount))
         }
       } catch (error) {} finally {
         this.checkProductStockLoad = false
