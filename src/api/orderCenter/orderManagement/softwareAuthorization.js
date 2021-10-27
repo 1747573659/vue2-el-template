@@ -223,7 +223,7 @@ export function queryByAgentProduct(data) {
   return request({
     url: '/soft/inventory/queryByAgentProduct',
     method: 'POST',
-    data
+    data: qs.stringify(data)
   })
 }
 
