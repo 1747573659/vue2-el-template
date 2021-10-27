@@ -38,16 +38,11 @@
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
-        <el-table-column label="置换产品">
+        <el-table-column label="库存产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column label="置换数量" align="right">
-          <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.replaceNum }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.replaceNum" @change="handleReplaceNum(scope.row)" style="width:100%"></el-input>
-          </template>
-        </el-table-column>
-        <el-table-column label="被换产品">
+        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column label="换购产品">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.replaceProductName }}</span>
             <el-select v-else v-model="scope.row.replaceProductId" @change="handleReplaceProductName" clearable size="small" class="e-select-con">
@@ -57,8 +52,13 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
-        <el-table-column prop="replaceableNum" label="可置换数量" align="right"></el-table-column>
+        <el-table-column prop="replaceableNum" label="可换数量" align="right"></el-table-column>
+        <el-table-column label="实换数量" align="right">
+          <template slot-scope="scope">
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.replaceNum }}</span>
+            <el-input v-else size="small" v-model.number.trim="scope.row.replaceNum" @change="handleReplaceNum(scope.row)" style="width:100%"></el-input>
+          </template>
+        </el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
@@ -190,15 +190,15 @@ export default {
     },
     handleReplaceNum(row) {
       if (!this.replaceProduct.reduceInventory) this.$message({ type: 'warning', message: '请选择被换产品' })
-      else return (row.useInventory = NP.divide(NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory), this.replaceProduct.addInventory))
+      else return row.useInventory = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory)
     },
     async handleReplaceProductName(val) {
       try {
         const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
         if (res) {
           this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-          const replaceableNum = NP.times(NP.divide(res.totalAmount, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
-          const useInventory = NP.divide(NP.times(0, this.replaceProduct.reduceInventory), this.replaceProduct.addInventory)
+          const replaceableNum = NP.divide(res.totalAmount, this.replaceProduct.reduceInventory)
+          const useInventory = NP.times(0, this.replaceProduct.reduceInventory)
           this.form.orderDetailDtos[0].orderInventory = res.totalAmount
           this.form.orderDetailDtos[0].replaceableNum = replaceableNum
           this.form.orderDetailDtos[0].useInventory = useInventory
@@ -230,7 +230,6 @@ export default {
         const res = await replaceOrderDetail(this.$route.query.id)
         this.form.orderDTO = res?.orderDTO ?? {}
         this.form.orderDetailDtos = res?.orderDetailDtos ?? []
-        // this.getOriginalProduct(res.orderDetailDtos[0].productCode)
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false

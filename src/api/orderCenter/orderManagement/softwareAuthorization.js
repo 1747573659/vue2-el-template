@@ -209,10 +209,19 @@ export function authModuleList(data) {
   })
 }
 
+// ERP查询库存
+export function queryByAgentErpProduct(data) {
+  return request({
+    url: '/soft/inventory/queryByAgentProductList',
+    method: 'POST',
+    data
+  })
+}
+
 // 查询库存
 export function queryByAgentProduct(data) {
   return request({
-    url: '/soft/inventory/queryByAgentProductList',
+    url: '/soft/inventory/queryByAgentProduct',
     method: 'POST',
     data
   })

@@ -112,7 +112,7 @@
 <script>
 import NP from 'number-precision'
 
-import { authShopPage, authModuleList, queryByAgentProduct, queryChannelPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { authShopPage, authModuleList, queryByAgentErpProduct, queryChannelPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   props: {
@@ -168,7 +168,7 @@ export default {
     },
     async getProductStock() {
       try {
-        const res = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productId) })
+        const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productId) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
           this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode === item.productId).totalAmount))
         }
