@@ -11,7 +11,7 @@
       <el-table-column prop="code" label="产品编码"></el-table-column>
       <el-table-column prop="name" label="产品名称"></el-table-column>
     </el-table>
-    <km-pagination :request="getProductPage" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
+    <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     <div slot="footer">
       <el-button @click="$emit('update:visible', false)" size="small">取消</el-button>
       <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>

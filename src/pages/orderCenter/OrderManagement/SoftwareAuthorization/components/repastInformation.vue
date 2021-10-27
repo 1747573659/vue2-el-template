@@ -39,8 +39,8 @@
         </el-form-item>
       </el-form>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain v-if="[101, 102].includes(form.merchantDTO.applicationModule)" @click="handleProductVisible">选择授权对象</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length < 0">刷新库存</el-button>
+        <el-button type="primary" size="small" plain v-if="[101, 102].includes(form.merchantDTO.applicationModule) && form.merchantDTO.merchantNo" @click="handleProductVisible">选择授权对象</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0">刷新库存</el-button>
       </div>
       <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
         <el-table-column label="序号" width="100">
@@ -232,10 +232,6 @@ export default {
       }
     },
     async getProductStock() {
-      if (!this.merchantInfo.productCode) {
-        this.$message({ type: 'warning', message: '请先选择商户' })
-        return
-      }
       try {
         this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.merchantInfo.productCode })) || {}
       } catch (error) {}

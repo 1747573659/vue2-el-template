@@ -117,7 +117,7 @@ export default {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'softwareInventoryReplaceDetails' }).then(() => {
-        this.$router.push({ name: 'softwareInventoryReplaceDetails', query: { ...status, id: row.id } })
+        this.$router.push({ name: 'softwareInventoryReplaceDetails', query: { ...status, id: row.id, orderStatus: row.orderType } })
       })
     },
     async handleDelRow(row) {

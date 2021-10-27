@@ -1,5 +1,5 @@
 <template>
-  <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" @close="handleProductClose" title="选择产品" width="800px" class="p-product-con">
+  <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" @close="handleProductClose" title="选择产品" width="700px" class="p-product-con">
     <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
       <el-form-item label="产品信息">
         <el-input v-model="productVal" maxlength="50" placeholder="请输入产品编码/名称" clearable></el-input>

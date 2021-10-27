@@ -40,7 +40,7 @@
       </el-form>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.erpAuthOrderDetails.length < 0">刷新库存</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.erpAuthOrderDetails.length === 0">刷新库存</el-button>
       </div>
       <el-table :data="form.erpAuthOrderDetails" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
@@ -53,7 +53,7 @@
         <el-table-column prop="authNum" label="本次授权数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authNum }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.authNum" style="width:100%"></el-input>
+            <el-input v-else size="small" v-model.number.trim="scope.row.authNum" @change="handleAuthNumAmount(scope.row)" style="width:100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="银联通道">
@@ -88,7 +88,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择产品模块" width="800px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择产品模块" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
           <el-input v-model="productVal" maxlength="50" placeholder="模块编码/模块名称" clearable></el-input>
@@ -141,6 +141,12 @@ export default {
     }
   },
   methods: {
+    handleAuthNumAmount(row){
+      if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.authNum)) {
+        this.$message({ type: 'warning', message: '授权数量范围为[1-999]' })
+        row.authNum = 1
+      }
+    },
     handleShopPage(val) {
       if (val) {
         const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.filter(item => item.custId === val)[0]
@@ -154,9 +160,9 @@ export default {
           productId: item.productId,
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
-          authPoint: 0,
+          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item.authNum,
           orderInventory: 0,
-          authNum: 0,
+          authNum: 1,
           productCode: this.form.erpAuthMerchantDTO.productCode,
           unionChannel: '',
           remark: ''

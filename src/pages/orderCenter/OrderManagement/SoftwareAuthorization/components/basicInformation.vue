@@ -147,21 +147,22 @@ export default {
     handleVerify() {
       this.$confirm('确定要提交吗？', '提示', {
         type: 'warning',
-        beforeClose: async (action, instance, done) => {
+        beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
-            try {
-              instance.confirmButtonLoading = true
-              this.setOrderSave().catch(() => {})
-              await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
-              this.getDetail().then(() => {
-                this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, productType: this.productType, status: 'detail' } })
+            instance.confirmButtonLoading = true
+            this.setOrderSave()
+              .then(async () => {
+                await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
+                this.getDetail().then(() => {
+                  this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, productType: this.productType, status: 'detail' } })
+                })
+                this.$message({ type: 'success', message: '提交成功' })
               })
-              this.$message({ type: 'success', message: '提交成功' })
-            } catch (error) {
-            } finally {
-              instance.confirmButtonLoading = false
-              done()
-            }
+              .catch(() => {})
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
           } else done()
         }
       }).catch(() => {})
@@ -252,7 +253,7 @@ export default {
       this.setOrderSave()
         .then(res => {
           if (this.$route.query.status === 'add') {
-            this.$router.replace({ name: this.$route.name, query: { id: res, productType: this.productType, status: 'edit' } })
+            this.$router.replace({ name: this.$route.name, query: { id: res, productType: this.productType, orderStatus: 0, status: 'edit' } })
             document.querySelector('.e-tag_active span').innerText = `软件授权订单/编辑`
           }
           this.getDetail()

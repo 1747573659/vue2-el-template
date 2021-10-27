@@ -42,11 +42,10 @@
       </el-form>
       <el-tabs v-model="activeName">
         <el-tab-pane label="加点" name="1"></el-tab-pane>
-        <!-- <el-tab-pane label="续费" name="2" v-if="form.merchantDTO.probationFlag === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem.code)"></el-tab-pane> -->
-        <el-tab-pane label="续费" name="2"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="form.merchantDTO.probationFlag === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem.code)"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain @click="getProductStock" v-if="activeName === '1'">刷新库存</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" v-if="activeName === '1'" :disabled="form.addAuthOrderDetailDTOList.length === 0">刷新库存</el-button>
         <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="activeName === '2'">选择授权对象</el-button>
       </div>
       <el-table :data="form[activeName === '1' ? 'addAuthOrderDetailDTOList' : 'renewAuthOrderDetailDTOList']" :key="activeName" class="p-information-tab">
@@ -59,7 +58,13 @@
           <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
           <el-table-column label="加点数" align="right">
             <template slot-scope="scope">
-              <el-input size="small" v-model="scope.row.addNum" :disabled="$route.query.status === 'detail'" style="width:100%"></el-input>
+              <el-input
+                size="small"
+                v-model.number.trim="scope.row.addNum"
+                @change="handleAddNumAmount(scope.row)"
+                :disabled="$route.query.status === 'detail'"
+                style="width:100%"
+              ></el-input>
             </template>
           </el-table-column>
         </template>
@@ -183,26 +188,30 @@ export default {
     this.getOrderYsAppModules()
   },
   methods: {
-    async getProductStock(data) {
-      if (!this.merchantInfo.productCode) {
-        this.$message({ type: 'warning', message: '请先选择商户' })
-        return
+    handleAddNumAmount(row) {
+      if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.addNum)) {
+        this.$message({ type: 'warning', message: '加点数范围为[1-999]' })
+        row.addNum = 1
       }
+    },
+    async getProductStock(data) {
       try {
         this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: data.productCode })) || {}
       } catch (error) {}
     },
     async handleAppModule(val) {
-      if (val) {
-        const { merchantNo, CustName } = this.form.merchantDTO
-        this.appModuleObj = val
-        const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: val.outCode, custName: CustName })
-        this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
-        this.getProductStock(val).then(() => {
-          this.form.addAuthOrderDetailDTOList = [
-            { productCode: val.productCode, productName: val.name, orderInventory: this.productStockObj?.totalAmount ?? 0, addNum: 1, useInventory: 1, remark: '' }
-          ]
-        })
+      if (val && this.form.merchantDTO.merchantNo) {
+        try {
+          const { merchantNo, CustName } = this.form.merchantDTO
+          this.appModuleObj = val
+          const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: val.outCode, custName: CustName })
+          this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
+          this.getProductStock(val).then(() => {
+            this.form.addAuthOrderDetailDTOList = [
+              { productCode: val.productCode, productName: val.name, orderInventory: this.productStockObj?.totalAmount ?? 0, addNum: 1, useInventory: 1, remark: '' }
+            ]
+          })
+        } catch (error) {}
       }
     },
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {

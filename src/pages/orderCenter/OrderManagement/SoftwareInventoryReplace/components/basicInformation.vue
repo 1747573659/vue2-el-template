@@ -140,44 +140,61 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     async handleSave() {
-      try {
-        this.checkSaveBtnLoad = true
-        const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
-        if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
-          this.form.orderDetailDtos[0].orderInventory = agentProductObj.totalAmount
-          this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
-        } else {
-          const data = { orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
-          const res = this.$route.query.status === 'add' ? await replaceOrderAdd(data) : await replaceOrderUpdate(data)
+      this.checkSaveBtnLoad = true
+      this.setOrderSave()
+        .then(res => {
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res, orderStatus: '', status: 'edit' } })
             document.querySelector('.e-tag_active span').innerText = `软件库存置换单/编辑`
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })
-        }
-      } catch (error) {
-      } finally {
-        this.checkSaveBtnLoad = false
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.checkSaveBtnLoad = false
+        })
+    },
+    async setOrderSave() {
+      if (this.form.orderDetailDtos.length === 0) {
+        this.$message({ type: 'warning', message: '请选择置换产品' })
+        return new Promise((resolve, reject) => reject(new Error()))
       }
+      if (!this.form.orderDetailDtos[0].replaceProductId) {
+        this.$message({ type: 'warning', message: '换购产品不能为空' })
+        return new Promise((resolve, reject) => reject(new Error()))
+      }
+      try {
+        const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
+        if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
+          this.form.orderDetailDtos[0].orderInventory = agentProductObj.totalAmount
+          this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
+          return new Promise((resolve, reject) => reject(new Error()))
+        } else {
+          const data = { orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
+          return this.$route.query.status === 'add' ? replaceOrderAdd(data) : replaceOrderUpdate(data)
+        }
+      } catch (error) {}
     },
     handleVerify() {
       this.$confirm('确定要提交吗？', '提示', {
         type: 'warning',
-        beforeClose: async (action, instance, done) => {
+        beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
-            try {
-              instance.confirmButtonLoading = true
-              await replaceOrderSubmit({id: parseFloat(this.$route.query.id)})
-              this.getDetail().then(() => {
-                this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 30, status: 'detail' } })
+            instance.confirmButtonLoading = true
+            this.setOrderSave()
+              .then(async () => {
+                await replaceOrderSubmit({ id: parseFloat(this.$route.query.id) })
+                this.getDetail().then(() => {
+                  this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 30, status: 'detail' } })
+                })
+                this.$message({ type: 'success', message: '审核成功' })
               })
-              this.$message({ type: 'success', message: '审核成功' })
-            } catch (error) {
-            } finally {
-              instance.confirmButtonLoading = false
-              done()
-            }
+              .catch(() => {})
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
           } else done()
         }
       }).catch(() => {})
@@ -189,21 +206,31 @@ export default {
       this.$refs.product.getProductPage()
     },
     handleReplaceNum(row) {
-      if (!this.replaceProduct.reduceInventory) this.$message({ type: 'warning', message: '请选择被换产品' })
-      else return row.useInventory = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory)
+      if (!this.replaceProduct.reduceInventory) this.$message({ type: 'warning', message: '请选择换购产品' })
+      else {
+        if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.replaceNum)) {
+          this.$message({ type: 'warning', message: '实换数量范围为[1-999]' })
+          row.replaceNum = 1
+        }
+        return (row.useInventory = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory))
+      }
     },
     async handleReplaceProductName(val) {
-      try {
-        const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
-        if (res) {
-          this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-          const replaceableNum = NP.divide(res.totalAmount, this.replaceProduct.reduceInventory)
-          const useInventory = NP.times(0, this.replaceProduct.reduceInventory)
-          this.form.orderDetailDtos[0].orderInventory = res.totalAmount
-          this.form.orderDetailDtos[0].replaceableNum = replaceableNum
-          this.form.orderDetailDtos[0].useInventory = useInventory
-        }
-      } catch (error) {}
+      let [replaceableNum, useInventory] = ['', '']
+      if (val) {
+        try {
+          const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
+          if (res) {
+            this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
+            replaceableNum = NP.divide(res.totalAmount, this.replaceProduct.reduceInventory)
+            useInventory = NP.times(1, this.replaceProduct.reduceInventory)
+            this.form.orderDetailDtos[0].orderInventory = res.totalAmount
+          }
+        } catch (error) {}
+      } else this.form.orderDetailDtos[0].orderInventory = 0
+      this.form.orderDetailDtos[0].replaceNum = 1
+      this.form.orderDetailDtos[0].replaceableNum = replaceableNum || 0
+      this.form.orderDetailDtos[0].useInventory = useInventory || 0
     },
     handleProductList(data) {
       if (data) {
@@ -212,7 +239,7 @@ export default {
             {
               productCode: data.productId,
               productCodeName: data.productName,
-              replaceNum: 0,
+              replaceNum: 1,
               replaceProductId: '',
               replaceProductName: '',
               orderInventory: 0,
@@ -230,6 +257,7 @@ export default {
         const res = await replaceOrderDetail(this.$route.query.id)
         this.form.orderDTO = res?.orderDTO ?? {}
         this.form.orderDetailDtos = res?.orderDetailDtos ?? []
+        this.getOriginalProduct(res.orderDetailDtos[0].productCode)
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false
