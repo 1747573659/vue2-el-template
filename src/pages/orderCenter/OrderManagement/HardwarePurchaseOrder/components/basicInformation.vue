@@ -217,7 +217,6 @@ export default {
         this.form.purchaseOrderDTO.province = province
         this.form.purchaseOrderDTO.city = city
         this.form.purchaseOrderDTO.area = area
-        console.info(address)
         this.form.purchaseOrderDTO.address = address
         this.areaList = [province, city, area]
         this.areaKey = Symbol('areaKey')

@@ -40,7 +40,7 @@
       </el-form>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.erpAuthOrderDetails.length === 0">刷新库存</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.erpAuthOrderDetails.length === 0">刷新库存</el-button>
       </div>
       <el-table :data="form.erpAuthOrderDetails" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
@@ -137,7 +137,8 @@ export default {
       basicProductData: [],
       currentPage: 1,
       pageSize: 10,
-      totalPage: 0
+      totalPage: 0,
+      checkProductStockLoad: false
     }
   },
   methods: {
@@ -157,7 +158,7 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          productId: item.productId,
+          productId: item.productCode,
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
           authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item.authNum,
@@ -174,11 +175,14 @@ export default {
     },
     async getProductStock() {
       try {
+        this.checkProductStockLoad = true
         const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productId) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
           this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode === item.productId).totalAmount))
         }
-      } catch (error) {}
+      } catch (error) {} finally {
+        this.checkProductStockLoad = false
+      }
     },
     handleProductVisible() {
       if (!this.form.erpAuthMerchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })

@@ -140,9 +140,9 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     async handleSave() {
-      this.checkSaveBtnLoad = true
       this.setOrderSave()
         .then(res => {
+          this.checkSaveBtnLoad = true
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res, orderStatus: '', status: 'edit' } })
             document.querySelector('.e-tag_active span').innerText = `软件库存置换单/编辑`
@@ -166,13 +166,18 @@ export default {
       }
       try {
         const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
-        if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
-          this.form.orderDetailDtos[0].orderInventory = agentProductObj.totalAmount
-          this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
-          return new Promise((resolve, reject) => reject(new Error()))
+        if (agentProductObj) {
+          if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
+            this.form.orderDetailDtos[0].orderInventory = agentProductObj.totalAmount
+            this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
+            return new Promise((resolve, reject) => reject(new Error()))
+          } else {
+            const data = { orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
+            return this.$route.query.status === 'add' ? replaceOrderAdd(data) : replaceOrderUpdate(data)
+          }
         } else {
-          const data = { orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
-          return this.$route.query.status === 'add' ? replaceOrderAdd(data) : replaceOrderUpdate(data)
+          this.$message({ type: 'warning', message: '换购产品库存不足，请先下单' })
+          return new Promise((resolve, reject) => reject(new Error()))
         }
       } catch (error) {}
     },
@@ -221,6 +226,7 @@ export default {
         try {
           const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
           if (res) {
+            console.info(this.replacedProducts.filter(item => item.replaceProductCode === val)[0])
             this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
             replaceableNum = NP.divide(res.totalAmount, this.replaceProduct.reduceInventory)
             useInventory = NP.times(1, this.replaceProduct.reduceInventory)
