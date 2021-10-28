@@ -9,7 +9,15 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
-          <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" :disabled="$route.query.status === 'detail'" placeholder="名称/商户号" filterable clearable>
+          <el-select
+            ref="shopPage"
+            v-model="form.merchantDTO.merchantName"
+            @change="handleMerchantInfo"
+            :disabled="$route.query.status === 'detail'"
+            placeholder="名称/商户号"
+            filterable
+            clearable
+          >
             <el-option v-for="item in custListData" :key="item.CustID" :label="item.CustNameExpand" :value="item.CustID"></el-option>
           </el-select>
         </el-form-item>
@@ -32,13 +40,13 @@
           </el-select>
         </el-form-item>
         <el-form-item label="延期时长" v-if="['', 1].includes(form.merchantDTO.applicationModule)">
-          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable>
+          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable :disabled="$route.query.status === 'detail'">
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0">刷新库存</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0" :loading="checkProductStockLoad">刷新库存</el-button>
       </div>
       <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
         <el-table-column label="序号" width="100">
@@ -90,7 +98,8 @@ export default {
       custListData: [],
       isCustListPage: false,
       merchantInfo: [],
-      productStockObj: {}
+      productStockObj: {},
+      checkProductStockLoad: false
     }
   },
   methods: {
@@ -101,22 +110,20 @@ export default {
         item.useInventory = val
       })
     },
-    handleApplicationModule(val) {
-      if (val) {
-        this.form.merchantDTO.delayHour = 1
-        this.form.authOrderDTO.inventoryAmount = 1
-        this.form.detailDTOList = [
-          {
-            currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
-            delayValidTime: this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : '',
-            orderInventory: this.productStockObj?.totalAmount ?? 0,
-            useInventory: this.form.merchantDTO.delayHour,
-            productCode: this.merchantInfo.productCode,
-            remark: '',
-            currentState: this.merchantInfo.OpenCustAssistantApp
-          }
-        ]
-      }
+    handleApplicationModule() {
+      this.form.merchantDTO.delayHour = 1
+      this.form.authOrderDTO.inventoryAmount = 1
+      this.form.detailDTOList = [
+        {
+          currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
+          delayValidTime: this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : '',
+          orderInventory: this.productStockObj?.totalAmount ?? 0,
+          useInventory: this.form.merchantDTO.delayHour,
+          productCode: this.merchantInfo.productCode,
+          remark: '',
+          currentState: this.merchantInfo.OpenCustAssistantApp
+        }
+      ]
     },
     async handleMerchantInfo(val) {
       this.form.merchantDTO.merchantId = val
@@ -124,20 +131,35 @@ export default {
       this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
       this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
       this.form.merchantDTO.relationProduct = this.merchantInfo.productionTypeName
+      // 切换商户后，如是基础版/标准版，清空应用模块与表格内容；如是专业版，根据应用模块默认加载列表的有效期内容
       if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
+      if (this.form.detailDTOList.length > 0) {
+        if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) this.form.detailDTOList = []
+        else if (this.form.merchantDTO.merchantVersion === '3') {
+          this.form.detailDTOList.forEach(item => {
+            item.currentValidTime = `${this.merchantInfo?.KMValidity} 00:00:00` ?? ''
+            item.delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : ''
+          })
+        }
+      }
       this.getProductStock()
     },
     async getProductStock() {
       try {
-        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.merchantInfo.productCode })) || {}
+        this.checkProductStockLoad = true
+        const productCode = this.$route.query.status === 'add' ? this.merchantInfo?.productCode : this.form.authOrderDTO.productCode
+        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
         this.form.detailDTOList.forEach(item => {
           item.orderInventory = this.productStockObj?.totalAmount ?? 0
         })
-      } catch (error) {}
+      } catch (error) {
+      } finally {
+        this.checkProductStockLoad = false
+      }
     },
     async getCustList(query) {
       const res = await authOrderWlsCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
-      this.custListData = res.filter((item, index) => index < 10)
+      this.custListData = res
       this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustID}）`))
     },
     setDelayValidTime(val) {

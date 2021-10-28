@@ -49,7 +49,6 @@
         <el-table-column prop="createTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="单据编码"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
-        <el-table-column prop="upgradeFee" label="升级费用" align="right"></el-table-column>
         <el-table-column prop="orderTypeDesc" label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderType) ? orderStatus.get(scope.row.orderType).label : '--' }}</template>
         </el-table-column>

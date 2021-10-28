@@ -9,7 +9,14 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
-          <el-select v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" :disabled="$route.query.status === 'detail'" placeholder="名称/商户号" filterable clearable>
+          <el-select
+            v-model="form.merchantDTO.merchantName"
+            @change="handleMerchantInfo"
+            :disabled="$route.query.status === 'detail'"
+            placeholder="名称/商户号"
+            filterable
+            clearable
+          >
             <el-option v-for="item in custListData" :key="item.CustId" :label="item.CustNameExpand" :value="item.CustId"></el-option>
           </el-select>
         </el-form-item>
@@ -39,7 +46,9 @@
         </el-form-item>
       </el-form>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain v-if="[101, 102].includes(form.merchantDTO.applicationModule) && form.merchantDTO.merchantNo" @click="handleProductVisible">选择授权对象</el-button>
+        <template v-if="[101, 102].includes(form.merchantDTO.applicationModule) && form.merchantDTO.merchantNo">
+          <el-button type="primary" size="small" plain @click="handleProductVisible">选择授权对象</el-button>
+        </template>
         <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0">刷新库存</el-button>
       </div>
       <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
@@ -221,12 +230,12 @@ export default {
         try {
           this.form.merchantDTO.merchantNo = val
           this.merchantInfo = await authOrderWcyCustInfo({ cust: val })
-          this.merchantInfo.productCode = this.custListData.filter(item => item.CustId === this.merchantInfo.CustId)[0].productCode
+          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
           this.form.merchantDTO.merchantVersion = this.merchantInfo.IsHadWxGzhForOss
           this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
           this.form.merchantDTO.relationProduct = this.merchantInfo.productionTypeName
+          if (this.form.merchantDTO.merchantVersion === '2') this.form.merchantDTO.applicationModule = 101
           this.form.detailDTOList = []
-          this.form.merchantDTO.applicationModule = 101
           this.getProductStock()
         } catch (error) {}
       }
@@ -238,7 +247,7 @@ export default {
     },
     async getCustList(query) {
       const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
-      this.custListData = res.filter((item, index) => index < 10 && item.CustName)
+      this.custListData = res
       this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
     }
   }

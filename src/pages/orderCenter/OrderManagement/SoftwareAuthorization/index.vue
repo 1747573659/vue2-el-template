@@ -110,7 +110,7 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { productType, orderStatus } from './data'
 
-import { queryOrderMan } from '@/api/orderCenter/orderManagement'
+import { queryOrderMan, queryBaseInfo } from '@/api/orderCenter/orderManagement'
 import {
   queryByPage,
   authOrderExport,
@@ -137,6 +137,7 @@ export default {
       totalPage: 0,
       pageSize: 10,
       checkExportLoad: false,
+      userBaseInfo: {},
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -144,20 +145,25 @@ export default {
       }
     }
   },
-  activated () {
+  activated() {
     this.getQueryPage()
   },
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getProductByPage()
-    this.getQueryPage()
+    this.getBaseInfo().then(() => {
+      this.getQueryPage()
+    })
   },
   methods: {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
-        this.$router.push({ name: 'softwareAuthorizationDetails', query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }, status.productType ? {} : { productType: row.productType }) })
+        this.$router.push({
+          name: 'softwareAuthorizationDetails',
+          query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }, status.productType ? {} : { productType: row.productType })
+        })
       })
     },
     async handleDelRow(row) {
@@ -171,6 +177,7 @@ export default {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
         sysSource: 1,
+        agentId: this.userBaseInfo.agentId,
         minDate: createTime?.[0] ?? '',
         maxDate: createTime?.[1] ?? '',
         page: this.currentPage,
@@ -228,6 +235,12 @@ export default {
         this.licensedProducts = this.licensedProducts.concat(res.results || [])
         if (this.licensedProducts.every(item => item.name !== '全部')) this.licensedProducts = [{ name: '全部', code: '' }].concat(this.licensedProducts)
         this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
+    },
+    async getBaseInfo() {
+      try {
+        const res = await queryBaseInfo()
+        this.userBaseInfo = res
       } catch (error) {}
     }
   }

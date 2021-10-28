@@ -9,14 +9,14 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
-          <el-input :value="form.erpAuthMerchantDTO.merchantName" v-if="$route.query.status === 'detail'" disabled></el-input>
           <km-select-page
-            v-else
-            ref="shopPage"
+            ref="selectPage"
+            v-model="form.erpAuthMerchantDTO.merchantName"
             option-label="custNameExpand"
             option-value="custId"
             :data.sync="shopPageData"
             :request="getShopPage"
+            :disabled="$route.query.status === 'detail'"
             :is-max-page.sync="isShopMaxPage"
             @change="handleShopPage"
             placeholder="名称/商户号"
@@ -40,7 +40,9 @@
       </el-form>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.erpAuthOrderDetails.length === 0">刷新库存</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.erpAuthOrderDetails.length === 0">
+          刷新库存
+        </el-button>
       </div>
       <el-table :data="form.erpAuthOrderDetails" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
@@ -142,7 +144,7 @@ export default {
     }
   },
   methods: {
-    handleAuthNumAmount(row){
+    handleAuthNumAmount(row) {
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.authNum)) {
         this.$message({ type: 'warning', message: '授权数量范围为[1-999]' })
         row.authNum = 1
@@ -158,13 +160,12 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          productId: item.productId,
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
           authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item.authNum,
           orderInventory: 0,
           authNum: 1,
-          productCode: this.form.erpAuthMerchantDTO.productCode,
+          productCode: item.productId,
           unionChannel: '',
           remark: ''
         }
@@ -176,11 +177,12 @@ export default {
     async getProductStock() {
       try {
         this.checkProductStockLoad = true
-        const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productId) })
+        const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
-          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productId).totalAmount))
+          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode).totalAmount))
         }
-      } catch (error) {} finally {
+      } catch (error) {
+      } finally {
         this.checkProductStockLoad = false
       }
     },

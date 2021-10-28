@@ -21,9 +21,6 @@
         <el-form-item label="受理人">
           <el-input :value="form.orderDTO.handUserName"></el-input>
         </el-form-item>
-        <el-form-item label="升级费用">
-          <el-input :value="form.orderDTO.upgradeFee"></el-input>
-        </el-form-item>
         <el-form-item label="经销商">
           <el-input :value="`${form.orderDTO.agentId ? '[' + form.orderDTO.agentId + ']' : ''}${form.orderDTO.agentName}`"></el-input>
         </el-form-item>
