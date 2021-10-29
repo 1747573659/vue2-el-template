@@ -10,7 +10,7 @@
         </el-form-item>
         <el-form-item label="商户名称">
           <km-select-page
-            ref="shopPage"
+            ref="selectPage"
             v-model="form.merchantDTO.merchantName"
             option-label="CustNameExpand"
             option-value="CustId"
@@ -26,15 +26,15 @@
           <el-input :value="form.merchantDTO.merchantNo" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="应用系统">
-          <el-select v-model="form.merchantDTO.applicationSystem" value-key="code" @change="handleAppModule" :disabled="$route.query.status === 'detail'" clearable>
-            <el-option v-for="item in appModulesData" :key="item.code" :label="item.name" :value="item"></el-option>
+          <el-select v-model="form.merchantDTO.applicationSystem" @change="handleAppModule" :disabled="$route.query.status === 'detail'" clearable>
+            <el-option v-for="item in appModulesData" :key="item.code" :label="item.name" :value="item.code"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="授权状态">
           <el-input :value="['正式', '试用'][form.merchantDTO.probationFlag]" disabled></el-input>
         </el-form-item>
         <el-form-item label="延期时长">
-          <el-input value="永久" v-if="[201, 205].includes(form.merchantDTO.applicationSystem.code)" disabled></el-input>
+          <el-input value="永久" v-if="[201, 205].includes(form.merchantDTO.applicationSystem)" disabled></el-input>
           <el-select v-else v-model="form.merchantDTO.delayHour" @change="handleDelayHour" :disabled="$route.query.status === 'detail'" clearable>
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
@@ -42,10 +42,19 @@
       </el-form>
       <el-tabs v-model="activeName">
         <el-tab-pane label="加点" name="1"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="form.merchantDTO.probationFlag === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem.code)"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="form.merchantDTO.probationFlag === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem)"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain @click="getProductStock" v-if="activeName === '1'" :disabled="form.addAuthOrderDetailDTOList.length === 0">刷新库存</el-button>
+        <el-button
+          type="primary"
+          size="small"
+          plain
+          @click="getProductStock"
+          v-if="activeName === '1'"
+          :loading="checkProductStockLoad"
+          :disabled="form.addAuthOrderDetailDTOList.length === 0"
+          >刷新库存</el-button
+        >
         <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="activeName === '2'">选择授权对象</el-button>
       </div>
       <el-table :data="form[activeName === '1' ? 'addAuthOrderDetailDTOList' : 'renewAuthOrderDetailDTOList']" :key="activeName" class="p-information-tab">
@@ -151,11 +160,8 @@ export default {
       pageSize: 10,
       totalPage: 0,
       appModuleObj: {},
-
+      checkProductStockLoad: false,
       delayTimes,
-      custListData: [],
-      isCustListPage: false,
-      merchantInfo: [],
       productStockObj: {},
       activeName: '1'
     }
@@ -194,21 +200,34 @@ export default {
         row.addNum = 1
       }
     },
-    async getProductStock(data) {
+    async getProductStock() {
       try {
-        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: data.productCode })) || {}
-      } catch (error) {}
+        this.checkProductStockLoad = true
+        const productCode = this.$route.query.status === 'add' ? this.appModuleObj?.productCode : this.form.authOrderDTO.productCode
+        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: productCode })) || {}
+      } catch (error) {
+      } finally {
+        this.checkProductStockLoad = false
+      }
     },
     async handleAppModule(val) {
       if (val && this.form.merchantDTO.merchantNo) {
         try {
           const { merchantNo: custId, CustName: custName } = this.form.merchantDTO
-          this.appModuleObj = val
-          const res = await authOrderYsTrialPointDetail({ custId, appId: val.outCode, custName })
+          this.appModuleObj = this.appModulesData.find(item => item.code === val)
+          this.form.merchantDTO.delayHour = 1
+          const res = await authOrderYsTrialPointDetail({ custId, appId: this.appModuleObj.outCode, custName })
           this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
-          this.getProductStock(val).then(() => {
+          this.getProductStock().then(() => {
             this.form.addAuthOrderDetailDTOList = [
-              { productCode: val.productCode, productName: val.name, orderInventory: this.productStockObj?.totalAmount ?? 0, addNum: 1, useInventory: 1, remark: '' }
+              {
+                productCode: this.appModuleObj.productCode,
+                productName: this.appModuleObj.name,
+                orderInventory: this.productStockObj?.totalAmount ?? 0,
+                addNum: 1,
+                useInventory: 1,
+                remark: ''
+              }
             ]
           })
         } catch (error) {}
@@ -224,9 +243,13 @@ export default {
     },
     async handleShopPage(val) {
       if (val) {
-        const { CustId: merchantNo } = this.shopPageData.filter(item => item.CustId === val)[0]
-        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo })
-      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '' })
+        const { CustId: merchantNo, CustName } = this.shopPageData.filter(item => item.CustId === val)[0]
+        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, CustName })
+        if (this.form.merchantDTO.applicationSystem) {
+          const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: this.appModuleObj.outCode, custName: CustName }).catch(() => {})
+          this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
+        }
+      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', CustName: '' })
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
     },

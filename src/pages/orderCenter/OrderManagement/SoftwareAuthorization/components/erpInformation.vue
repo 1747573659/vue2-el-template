@@ -60,15 +60,15 @@
         </el-table-column>
         <el-table-column label="银联通道">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.unionChannel }}</span>
             <km-select-page
-              v-else-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)"
+              v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)"
               size="small"
               v-model="scope.row.unionChannel"
               option-label="channelName"
               option-value="channelCode"
               :data.sync="channelData"
               :request="getChannelPage"
+              :disabled="$route.query.status === 'detail'"
               :is-max-page.sync="isChannelPage"
               placeholder="银联通道"
               class="e-select-con"

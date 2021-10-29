@@ -1,6 +1,6 @@
 // 产品类型
 export const productType = new Map([
-  [-1, { value: -1, label: '全部' }],
+  ['', { value: '', label: '全部' }],
   [1, { value: 1, label: 'ERP产品' }],
   [3, { value: 3, label: '微零售' }],
   [4, { value: 4, label: '微餐饮' }],

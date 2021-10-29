@@ -26,7 +26,18 @@
     <component ref="information" :is="activeName" :form="form" :userBaseInfo="userBaseInfo"></component>
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
+      <template v-if="['add', 'edit'].includes($route.query.status)">
+        <el-button
+          size="small"
+          type="primary"
+          plain
+          :disabled="productType === 3 && form.merchantDTO.applicationModule === 2 && form.detailDTOList[0].currentState === 1"
+          :loading="checkSaveBtnLoad"
+          @click="handleSave"
+        >
+          保存
+        </el-button>
+      </template>
       <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
     </div>
   </section>
@@ -169,15 +180,19 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     getYsInformationObj() {
-      const { merchantNo: merchantId, delayHour: delayCount, applicationSystem } = this.form.merchantDTO
-      return {
-        authOrderVO: Object.assign(
-          this.handleQueryParams().authOrderVO,
-          { orderStatus: 0, productType: 5, merchantId, useModal: applicationSystem.code, delayCount },
-          { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
-        ),
-        addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
-        renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
+      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
+        this.$message({ type: 'warning', message: '请先选择商户或应用系统模块' })
+      } else {
+        const { merchantNo: merchantId, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
+        return {
+          authOrderVO: Object.assign(
+            this.handleQueryParams().authOrderVO,
+            { orderStatus: 0, productType: 5, merchantId, useModal, delayCount },
+            { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
+          ),
+          addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
+          renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
+        }
       }
     },
     getWcyInformationObj() {
@@ -279,6 +294,7 @@ export default {
         this.form = res
         setTimeout(() => {
           if (this.productType === 1) this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
+          if (this.productType === 5) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
         })
         this.$nextTick(() => {
           if (this.productType === 3) {

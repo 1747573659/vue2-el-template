@@ -24,6 +24,7 @@
             </el-form-item>
             <el-form-item label="授权产品">
               <km-select-page
+                ref="productCode"
                 v-model="form.productCode"
                 option-label="name"
                 option-value="code"
@@ -31,6 +32,8 @@
                 :request="getProductByPage"
                 :is-max-page.sync="isLicensedProductMaxPage"
                 placeholder="下单人"
+                multiple
+                collapse-tags
               />
             </el-form-item>
             <el-form-item label="订单状态">
@@ -227,6 +230,7 @@ export default {
     },
     handleProductTypeChange() {
       this.licensedProducts = [{ name: '全部', code: '' }]
+      this.$refs.productCode.selectVal = ''
       this.getProductByPage()
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
