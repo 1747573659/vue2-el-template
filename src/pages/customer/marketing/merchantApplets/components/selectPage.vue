@@ -17,7 +17,7 @@
       <el-table-column v-for="(item,index) of columnS" :key="index" :prop="item.prop" :label="item.label"></el-table-column>
     </el-table>
     <div v-if="tableTotal" class="km-page-block">
-      <el-pagination :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+      <el-pagination small :current-page="thisPage"  :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="prev, pager, next"></el-pagination>
     </div>
     <div slot="footer" style=" text-align: center;" class="dialog-footer">
       <el-button @click="handleClose" size="small">取 消</el-button>
@@ -48,10 +48,14 @@ export default {
         },
         {
           label: '享钱商户名称',
-          prop: 'name'
+          prop: 'companyName'
         }]
       }
     }, //表格渲染的字段和标题
+    listApi:{
+      require: true,
+      type:Function,
+    },
     title: {
       type: String,
       default: '提示',
@@ -92,20 +96,14 @@ export default {
     },
     async getTable () {
       this.tableLoading = true
-      // const res = await getTable({
-      //   val:this.seachVal
-      // })
+      const res = await this.listApi({
+        id:this.seachVal,
+        page:this.thisPage,
+        rows:this.pageSize
+      })
       this.tableLoading = false
-      // this.tableList = res.results
-      // this.tableTotal = res.totalCount
-      this.tableData = [{
-        name: '王小虎',
-        id: '1111111111111'
-      }, {
-        name: '李四',
-        id: '2222222222222'
-      }]
-      this.tableTotal = 2
+      this.tableData = res.results
+      this.tableTotal = res.totalCount
     },
     // 分页
     handleSizeChange (val) {

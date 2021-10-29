@@ -79,7 +79,7 @@
         <el-pagination :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
-    <selectPage @sureVal='sureVal' v-bind:dialogVisible.sync='dialogVisible' :placeholder='selectPageAttribute.placeholder' :title="selectPageAttribute.title"></selectPage>
+    <selectPage @sureVal='sureVal' :listApi='queryShopListByPage' v-bind:dialogVisible.sync='dialogVisible' :placeholder='selectPageAttribute.placeholder' :title="selectPageAttribute.title"></selectPage>
     <el-dialog title="商户小程序订购" :visible.sync="zfbDialogVisible" width="820px">
       <iframe src="https://opendocs.alipay.com/mini/introduce/qrcode" align='middle' frameborder='0' height='600' width='800'></iframe>
     </el-dialog>
@@ -98,11 +98,13 @@
 <script>
 import selectPage from './components/selectPage.vue'
 import { codeImgDown } from '@/utils/codeImgDown'
+import { queryShopListByPage } from '@/api/customer/merchant'
 export default {
   name: 'marketingManagement',
   components: { selectPage },
   data () {
     return {
+      queryShopListByPage,
       xcxDialogVisible: false,
       zfbDialogVisible: false,
       appVersionOption: [],
@@ -134,7 +136,7 @@ export default {
   },
   methods: {
     async codeImgDown () {
-      codeImgDown(this.$refs.code,'文件名称')
+      codeImgDown(this.$refs.code, '文件名称')
     },
     marketingDetile (row) {
       this.$router.push({ name: 'marketingDetile' })

@@ -24,9 +24,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序归属地区" prop="miniCategoryIds">
-              <el-select v-model="form.miniCategoryIds" placeholder="小程序归属地区">
-                <el-option v-for="item in miniCategoryIdsOption" :key="item.value" :label="item.label" :value="item.value" clearable filterable></el-option>
-              </el-select>
+              <el-cascader v-model="form.miniCategoryIds" :options="miniCategoryIdsOption"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -72,6 +70,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="营业执照到期日期" prop="licenseValidDate">
+              <!-- 长期有效那种 -->
               <el-date-picker v-model="form.licenseValidDate" type="daterange" style="width:90%" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
           </el-col>
