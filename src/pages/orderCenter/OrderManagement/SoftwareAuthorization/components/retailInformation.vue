@@ -28,7 +28,7 @@
           <el-input :value="versionMap.get(form.merchantDTO.merchantVersion)" disabled></el-input>
         </el-form-item>
         <el-form-item label="关联产品">
-          <el-input :value="form.merchantDTO.relationProduct" disabled></el-input>
+          <el-input :value="form.merchantDTO.relationProductName" disabled></el-input>
         </el-form-item>
         <el-form-item label="门店总数">
           <el-input :value="form.merchantDTO.storeCount" disabled></el-input>
@@ -130,9 +130,10 @@ export default {
       this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
       this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
       this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
-      this.form.merchantDTO.relationProduct = this.merchantInfo.productionTypeName
-      // 切换商户后，如是基础版/标准版，清空应用模块与表格内容；如是专业版，根据应用模块默认加载列表的有效期内容
+      this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
       if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
+      this.form.merchantDTO.delayHour = 1
+      this.form.merchantDTO.applicationModule = ''
       if (this.form.detailDTOList.length > 0) {
         if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) this.form.detailDTOList = []
         else if (this.form.merchantDTO.merchantVersion === '3') {

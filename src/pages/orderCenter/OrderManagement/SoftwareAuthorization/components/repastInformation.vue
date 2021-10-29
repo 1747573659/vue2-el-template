@@ -27,7 +27,7 @@
           <el-input :value="cyVersionMap.get(form.merchantDTO.merchantVersion)" disabled></el-input>
         </el-form-item>
         <el-form-item label="关联产品">
-          <el-input :value="form.merchantDTO.relationProduct" disabled></el-input>
+          <el-input :value="form.merchantDTO.relationProductName" disabled></el-input>
         </el-form-item>
         <el-form-item label="门店总数">
           <el-input :value="form.merchantDTO.storeCount" disabled></el-input>
@@ -49,7 +49,7 @@
         <template v-if="[101, 102].includes(form.merchantDTO.applicationModule) && form.merchantDTO.merchantNo">
           <el-button type="primary" size="small" plain @click="handleProductVisible">选择授权对象</el-button>
         </template>
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0">刷新库存</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0" :loading="checkProductStockLoad">刷新库存</el-button>
       </div>
       <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
         <el-table-column label="序号" width="100">
@@ -78,7 +78,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择授权对象" width="800px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择授权对象" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="50" :placeholder="`请输入${form.merchantDTO.applicationModule === 101 ? '门店名称' : '税号'}`" clearable></el-input>
@@ -139,7 +139,8 @@ export default {
       basicProductData: [],
       currentPage: 1,
       pageSize: 10,
-      totalPage: 0
+      totalPage: 0,
+      checkProductStockLoad: false
     }
   },
   watch: {
@@ -170,11 +171,44 @@ export default {
       this.form.detailDTOList = this.form.detailDTOList.concat(Selections)
       this.getProductStock().then(() => (this.checkProductVisible = false))
     },
-    setDelayValidTime(date) {
-      const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
-      return dayjs(countTime)
-        .add(this.form.merchantDTO.delayHour, 'year')
-        .format('YYYY-MM-DD 00:00:00')
+    handleDelayHour(val) {
+      this.form.detailDTOList.forEach(item => {
+        item.delayValidTime = item.currentValidTime ? this.setDelayValidTime(item.currentValidTime) : ''
+        item.useInventory = val
+      })
+    },
+    handleApplicationModule(val) {
+      if (val) {
+        this.form.merchantDTO.delayHour = 1
+        if (val === 103) {
+          this.form.detailDTOList = [
+            {
+              shopName: this.merchantInfo.CustName,
+              shopCode: this.merchantInfo.CustId,
+              shopType: 103,
+              currentValidTime: `${this.merchantInfo.KMValidity} 00:00:00`,
+              delayValidTime: this.setDelayValidTime(this.merchantInfo.KMValidity),
+              orderInventory: this.productStockObj?.totalAmount ?? 0,
+              useInventory: this.form.merchantDTO.delayHour,
+              productCode: this.merchantInfo.productCode,
+              remark: ''
+            }
+          ]
+        } else this.form.detailDTOList = []
+      }
+    },
+    async handleMerchantInfo(val) {
+      if (val) {
+        try {
+          this.form.merchantDTO.merchantNo = val
+          this.merchantInfo = await authOrderWcyCustInfo({ cust: val })
+          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
+          const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
+          this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
+          this.form.detailDTOList = []
+          this.getProductStock()
+        } catch (error) {}
+      }
     },
     handleProductVisible() {
       this.checkProductVisible = true
@@ -201,54 +235,29 @@ export default {
         this.checkProductTabLock = false
       }
     },
-    handleDelayHour(val) {
-      this.form.detailDTOList.forEach(item => {
-        item.delayValidTime = item.currentValidTime ? this.setDelayValidTime(item.currentValidTime) : ''
-        item.useInventory = val
-      })
-    },
-    handleApplicationModule(val) {
-      if (val) {
-        this.form.merchantDTO.delayHour = 1
-        if (val === 103) {
-          this.form.detailDTOList.push({
-            shopName: this.merchantInfo.CustName,
-            shopCode: this.merchantInfo.CustId,
-            shopType: 103,
-            currentValidTime: `${this.merchantInfo.KMValidity} 00:00:00`,
-            delayValidTime: this.setDelayValidTime(this.merchantInfo.KMValidity),
-            orderInventory: this.productStockObj?.totalAmount ?? 0,
-            useInventory: this.form.merchantDTO.delayHour,
-            productCode: this.merchantInfo.productCode,
-            remark: ''
-          })
-        } else this.form.detailDTOList = []
-      }
-    },
-    async handleMerchantInfo(val) {
-      if (val) {
-        try {
-          this.form.merchantDTO.merchantNo = val
-          this.merchantInfo = await authOrderWcyCustInfo({ cust: val })
-          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
-          this.form.merchantDTO.merchantVersion = this.merchantInfo.IsHadWxGzhForOss
-          this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
-          this.form.merchantDTO.relationProduct = this.merchantInfo.productionTypeName
-          if (this.form.merchantDTO.merchantVersion === '2') this.form.merchantDTO.applicationModule = 101
-          this.form.detailDTOList = []
-          this.getProductStock()
-        } catch (error) {}
-      }
-    },
     async getProductStock() {
       try {
-        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: this.merchantInfo.productCode })) || {}
-      } catch (error) {}
+        this.checkProductStockLoad = true
+        const productCode = this.$route.query.status === 'add' ? this.merchantInfo?.productCode : this.form.authOrderDTO.productCode
+        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
+        this.form.detailDTOList.forEach(item => {
+          item.orderInventory = this.productStockObj?.totalAmount ?? 0
+        })
+      } catch (error) {
+      } finally {
+        this.checkProductStockLoad = false
+      }
     },
     async getCustList(query) {
       const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
       this.custListData = res
       this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
+    },
+    setDelayValidTime(date) {
+      const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
+      return dayjs(countTime)
+        .add(this.form.merchantDTO.delayHour, 'year')
+        .format('YYYY-MM-DD 00:00:00')
     }
   }
 }

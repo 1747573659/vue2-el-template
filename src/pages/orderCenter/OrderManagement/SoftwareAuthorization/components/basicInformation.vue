@@ -181,15 +181,19 @@ export default {
       }
     },
     getWcyInformationObj() {
-      const { productCode } = this.form.authOrderDTO
-      const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
-      return {
-        authOrderVO: Object.assign(
-          this.handleQueryParams().authOrderVO,
-          { orderStatus: 0, productType: 4, merchantId, useModal, delayCount },
-          { productCode: this.$refs.information.merchantInfo.productCode || productCode }
-        ),
-        orderDetailVos: this.handleQueryParams().orderDetailVos
+      if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantNo) {
+        this.$message({ type: 'warning', message: '请先选择商户或产品模块信息' })
+      } else {
+        const { productCode } = this.form.authOrderDTO
+        const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
+        return {
+          authOrderVO: Object.assign(
+            this.handleQueryParams().authOrderVO,
+            { orderStatus: 0, productType: 4, merchantId, useModal, delayCount },
+            { productCode: this.$refs.information.merchantInfo.productCode || productCode }
+          ),
+          orderDetailVos: this.handleQueryParams().orderDetailVos
+        }
       }
     },
     getWlsInformationObj() {
@@ -297,8 +301,7 @@ export default {
         const res = await queryBaseInfo()
         this.userBaseInfo = res
         this.getHandlerMan(res.districtCode)
-        if (this.productType === 3) this.$refs.information.getCustList()
-        else if (this.productType === 4) this.$refs.information.getCustList()
+        if ([3, 4].includes(this.productType)) this.$refs.information.getCustList()
       } catch (error) {}
     },
     async getHandlerMan(area) {

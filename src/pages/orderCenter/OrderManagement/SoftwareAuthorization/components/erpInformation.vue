@@ -162,7 +162,7 @@ export default {
         return {
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
-          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item.authNum,
+          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum??0,
           orderInventory: 0,
           authNum: 1,
           productCode: item.productId,

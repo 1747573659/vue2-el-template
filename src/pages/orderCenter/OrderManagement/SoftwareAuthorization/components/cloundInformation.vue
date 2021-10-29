@@ -9,14 +9,14 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
-          <el-input :value="form.merchantDTO.merchantName" v-if="$route.query.status === 'detail'" disabled></el-input>
           <km-select-page
-            v-else
             ref="shopPage"
+            v-model="form.merchantDTO.merchantName"
             option-label="CustNameExpand"
             option-value="CustId"
             :data.sync="shopPageData"
             :request="getShopPage"
+            :disabled="$route.query.status === 'detail'"
             :is-max-page.sync="isShopMaxPage"
             @change="handleShopPage"
             placeholder="名称/商户号"
@@ -202,9 +202,9 @@ export default {
     async handleAppModule(val) {
       if (val && this.form.merchantDTO.merchantNo) {
         try {
-          const { merchantNo, CustName } = this.form.merchantDTO
+          const { merchantNo: custId, CustName: custName } = this.form.merchantDTO
           this.appModuleObj = val
-          const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: val.outCode, custName: CustName })
+          const res = await authOrderYsTrialPointDetail({ custId, appId: val.outCode, custName })
           this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
           this.getProductStock(val).then(() => {
             this.form.addAuthOrderDetailDTOList = [
@@ -224,9 +224,9 @@ export default {
     },
     async handleShopPage(val) {
       if (val) {
-        const { CustId: merchantNo, CustName } = this.shopPageData.filter(item => item.CustId === val)[0]
-        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, CustName })
-      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', CustName: '' })
+        const { CustId: merchantNo } = this.shopPageData.filter(item => item.CustId === val)[0]
+        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo })
+      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '' })
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
     },
@@ -296,23 +296,6 @@ export default {
         // }
       }
     }
-    // async handleMerchantInfo() {
-    //   this.merchantInfo = await authOrderWcyCustInfo({ cust: this.form.merchantDTO.merchantNo })
-    //   this.merchantInfo.productCode = this.custListData.filter(item => item.CustId === this.merchantInfo.CustId)[0].productCode
-    //   this.form.merchantDTO.merchantVersion = this.merchantInfo.IsHadWxGzhForOss
-    //   this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
-    //   this.form.merchantDTO.relationProduct = this.merchantInfo.productionTypeName
-    //   this.form.detailDTOList = []
-    //   this.form.merchantDTO.applicationModule = 101
-    //   // if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
-    //   this.getProductStock()
-    // },
-
-    // async getCustList(query) {
-    //   const res = await authOrderYsCustomerList({ Condition:'',OrganNo:'',PageIndex:'',PageSize:'' cust: '', custname: '', organ: this.userBaseInfo.organNo })
-    //   this.custListData = res.filter((item, index) => index < 10 && item.CustName)
-    //   this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
-    // },
   }
 }
 </script>
