@@ -84,18 +84,20 @@
       <iframe src="https://opendocs.alipay.com/mini/introduce/qrcode" align='middle' frameborder='0' height='600' width='800'></iframe>
     </el-dialog>
     <el-dialog title="扫码进入小程序" :visible.sync="xcxDialogVisible" width="820px">
-      <div style="text-align: center;">
-        <img style="width:300px;" src="https://img0.baidu.com/it/u=812185057,1528141080&fm=26&fmt=auto">
+      <div ref="code" style="text-align: center;width:300px;margin:auto;padding:10px;">
+        <img style="width:100%;" src="https://img0.baidu.com/it/u=812185057,1528141080&fm=26&fmt=auto">
+        <div style="margin:16px auto;font-weight: bold;">小程序名称</div>
       </div>
       <div slot="footer" style=" text-align: center;" class="dialog-footer">
         <el-button @click="xcxDialogVisible=false" size="small">关 闭</el-button>
-        <el-button type="primary" size="small">下 载</el-button>
+        <el-button @click="codeImgDown()" type="primary" size="small">下 载</el-button>
       </div>
     </el-dialog>
   </div>
 </template>
 <script>
 import selectPage from './components/selectPage.vue'
+import { codeImgDown } from '@/utils/codeImgDown'
 export default {
   name: 'marketingManagement',
   components: { selectPage },
@@ -131,6 +133,9 @@ export default {
     this.getTable()
   },
   methods: {
+    async codeImgDown () {
+      codeImgDown(this.$refs.code,'文件名称')
+    },
     marketingDetile (row) {
       this.$router.push({ name: 'marketingDetile' })
     },
