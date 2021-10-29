@@ -238,9 +238,9 @@ export default {
       }
     },
     handleQueryParams() {
-      const { handMan, inventoryAmount, id } = this.form.authOrderDTO
+      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
       return {
-        authOrderVO: { handMan, inventoryAmount, agentId: this.userBaseInfo.agentId, createUser: JSON.parse(localStorage.userInfo).id, id },
+        authOrderVO: { handMan, inventoryAmount, agentId: this.userBaseInfo.agentId, createUser: JSON.parse(localStorage.userInfo).id, id, billNo },
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
