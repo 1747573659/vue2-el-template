@@ -112,3 +112,11 @@ export function modifyPwd(data) {
     data
   })
 }
+
+// 获取代理商基本信息
+export function queryBaseInfo() {
+  return request({
+    url: '/agent/queryBaseInfo',
+    method: 'POST'
+  })
+}

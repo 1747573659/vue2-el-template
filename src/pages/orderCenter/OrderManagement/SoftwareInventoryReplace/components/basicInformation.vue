@@ -223,9 +223,8 @@ export default {
         try {
           const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
           if (res) {
-            console.info(this.replacedProducts.filter(item => item.replaceProductCode === val)[0])
             this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-            replaceableNum = NP.divide(res.totalAmount, this.replaceProduct.reduceInventory)
+            replaceableNum = Math.floor(NP.divide(res.totalAmount, this.replaceProduct.reduceInventory))
             useInventory = NP.times(1, this.replaceProduct.reduceInventory)
             this.form.orderDetailDtos[0].orderInventory = res.totalAmount
           }

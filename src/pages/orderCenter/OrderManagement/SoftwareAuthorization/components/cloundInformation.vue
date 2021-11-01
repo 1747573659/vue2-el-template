@@ -8,7 +8,7 @@
         <el-form-item label="经销商">
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
-        <el-form-item label="商户名称">
+        <el-form-item label="商户名称" class="is-required">
           <km-select-page
             ref="selectPage"
             v-model="form.merchantDTO.merchantName"
@@ -19,7 +19,7 @@
             :disabled="$route.query.status === 'detail'"
             :is-max-page.sync="isShopMaxPage"
             @change="handleShopPage"
-            placeholder="名称/商户号"
+            placeholder="请输入名称/商户号"
           />
         </el-form-item>
         <el-form-item label="商户号">
@@ -170,10 +170,9 @@ export default {
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
         if (newVal.length > 0) {
-          const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
+          return (this.form.authOrderDTO.inventoryAmount = newVal.reduce((accumulator, currentValue) => {
             return accumulator + currentValue.useInventory
-          }, 0)
-          return (this.form.authOrderDTO.inventoryAmount = NP.plus(parseFloat(this.form.authOrderDTO.inventoryAmount) || 0, inventoryAmount))
+          }, 0))
         }
       },
       deep: true
@@ -181,10 +180,9 @@ export default {
     'form.renewAuthOrderDetailDTOList': {
       handler(newVal) {
         if (newVal.length > 0) {
-          const inventoryAmount = newVal.reduce((accumulator, currentValue) => {
+          return (this.form.authOrderDTO.inventoryAmount = newVal.reduce((accumulator, currentValue) => {
             return accumulator + currentValue.useInventory
-          }, 0)
-          return (this.form.authOrderDTO.inventoryAmount = NP.plus(parseFloat(this.form.authOrderDTO.inventoryAmount) || 0, inventoryAmount))
+          }, 0))
         }
       },
       deep: true
@@ -205,6 +203,9 @@ export default {
         this.checkProductStockLoad = true
         const productCode = this.$route.query.status === 'add' ? this.appModuleObj?.productCode : this.form.authOrderDTO.productCode
         this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode: productCode })) || {}
+        this.form.addAuthOrderDetailDTOList.forEach(item => {
+          item.orderInventory = this.productStockObj?.totalAmount ?? 0
+        })
       } catch (error) {
       } finally {
         this.checkProductStockLoad = false
@@ -236,6 +237,7 @@ export default {
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await authOrderYsCustomerList({ Condition: query, OrganNo: this.userBaseInfo.organNo, PageIndex: --page, PageSize: rows })
+        // const res = await authOrderYsCustomerList({ Condition: query, OrganNo: '658', PageIndex: --page, PageSize: rows })
         res.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
         this.shopPageData = this.shopPageData.concat(res || [])
         this.isShopMaxPage = !res || (res && res.length < 10)
@@ -244,12 +246,12 @@ export default {
     async handleShopPage(val) {
       if (val) {
         const { CustId: merchantNo, CustName } = this.shopPageData.filter(item => item.CustId === val)[0]
-        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, CustName })
+        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, merchantName: CustName, CustName })
         if (this.form.merchantDTO.applicationSystem) {
           const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: this.appModuleObj.outCode, custName: CustName }).catch(() => {})
           this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
         }
-      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', CustName: '' })
+      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantName: '', CustName: '' })
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
     },
@@ -302,21 +304,17 @@ export default {
       }
     },
     handleDelayHour(val) {
-      // this.form.detailDTOList[0].delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime() : ''
-      // this.form.detailDTOList[0].useInventory = val
-    },
-    handleApplicationModule(val) {
-      if (val) {
-        this.form.merchantDTO.delayHour = 1
-        // this.form.detailDTOList[0] = {
-        //   currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
-        //   delayValidTime: this.merchantInfo.KMValidity ? this.setDelayValidTime() : '',
-        //   orderInventory: this.productStockObj?.totalAmount ?? 0,
-        //   useInventory: this.form.merchantDTO.delayHour,
-        //   productCode: this.merchantInfo.productCode,
-        //   remark: '',
-        //   currentState: this.merchantInfo.OpenCustAssistantApp
-        // }
+      if (this.form.addAuthOrderDetailDTOList.length > 0) {
+        this.form.addAuthOrderDetailDTOList.forEach(item => {
+          return (item.useInventory = val)
+        })
+      }
+      if (this.form.renewAuthOrderDetailDTOList.length > 0) {
+        this.form.addAuthOrderDetailDTOList.forEach(item => {
+          item.useInventory = val
+          item.delayValidTime = this.setDelayValidTime(item.currentValidTime)
+          return item
+        })
       }
     }
   }
@@ -339,6 +337,9 @@ export default {
         }
       }
     }
+  }
+  &-con {
+    padding-bottom: 70px;
   }
 }
 .p-card {

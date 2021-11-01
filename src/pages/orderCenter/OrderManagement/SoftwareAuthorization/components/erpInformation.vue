@@ -8,7 +8,7 @@
         <el-form-item label="经销商">
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
-        <el-form-item label="商户名称">
+        <el-form-item label="商户名称" class="is-required">
           <km-select-page
             ref="selectPage"
             v-model="form.erpAuthMerchantDTO.merchantName"
@@ -19,7 +19,7 @@
             :disabled="$route.query.status === 'detail'"
             :is-max-page.sync="isShopMaxPage"
             @change="handleShopPage"
-            placeholder="名称/商户号"
+            placeholder="请输入名称/商户号"
           />
         </el-form-item>
         <el-form-item label="商户号">
@@ -179,7 +179,7 @@ export default {
         this.checkProductStockLoad = true
         const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
-          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode).totalAmount))
+          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase()).totalAmount))
         }
       } catch (error) {
       } finally {
@@ -212,8 +212,8 @@ export default {
     },
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const isNum = new RegExp(/^\d{1,}$/).test(query)
-        const res = await authShopPage({ custId: isNum ? query : '', authShopMessage: !isNum && query ? query : '', page, rows })
+        const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
+        const res = await authShopPage({ custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', page, rows })
         res.results.forEach(item => (item.custNameExpand = `${item.custName}（${item.custId}）`))
         this.shopPageData = this.shopPageData.concat(res.results || [])
         this.isShopMaxPage = !res.results || (res.results && res.results.length < 10)
@@ -260,6 +260,9 @@ export default {
         }
       }
     }
+  }
+  &-con{
+    padding-bottom: 70px;
   }
 }
 .p-card {

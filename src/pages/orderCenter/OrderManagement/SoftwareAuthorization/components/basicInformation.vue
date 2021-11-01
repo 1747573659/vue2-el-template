@@ -183,11 +183,11 @@ export default {
       if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
         this.$message({ type: 'warning', message: '请先选择商户或应用系统模块' })
       } else {
-        const { merchantNo: merchantId, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
+        const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
         return {
           authOrderVO: Object.assign(
             this.handleQueryParams().authOrderVO,
-            { orderStatus: 0, productType: 5, merchantId, useModal, delayCount },
+            { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount },
             { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
           ),
           addOrderDetailVos: this.form.addAuthOrderDetailDTOList,

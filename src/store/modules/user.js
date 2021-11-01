@@ -1,6 +1,6 @@
 import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
 import { setLocal, removeLocal } from '@/utils/storage'
-import { login, getMenuInfo, logout, popUpsByAuditStatus } from '@/api/login'
+import { login, getMenuInfo, logout, popUpsByAuditStatus, queryBaseInfo } from '@/api/login'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import router from '@/router'
 
@@ -46,15 +46,23 @@ const actions = {
       login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
         .then(response => {
           popUpsByAuditStatus().then(res => commit('SET_AUDITSTATUS', Boolean(res)))
+          setLocal('token', response.token)
           // 重新设置异步路由里面的重定向地址
           const treeRoute = routeTree(response.menus)
           const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
           let redirectList = resetRedirect(convertTreeRouter)
           commit('SET_ROUTES', [...redirectList])
           router.addRoutes(state.routes)
-          setLocal('token', response.token)
-          setLocal('userInfo', JSON.stringify(response.userInfo))
-          resolve()
+          queryBaseInfo()
+            .then(info => {
+              setLocal('userInfo', JSON.stringify(Object.assign(response.userInfo, info)))
+            })
+            .catch(() => {
+              setLocal('userInfo', JSON.stringify(response.userInfo))
+            })
+            .finally(() => {
+              resolve()
+            })
         })
         .catch(error => {
           reject(error)

@@ -8,13 +8,13 @@
         <el-form-item label="经销商">
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
-        <el-form-item label="商户名称">
+        <el-form-item label="商户名称" class="is-required">
           <el-select
             ref="shopPage"
             v-model="form.merchantDTO.merchantName"
             @change="handleMerchantInfo"
             :disabled="$route.query.status === 'detail'"
-            placeholder="名称/商户号"
+            placeholder="请输入名称/商户号"
             filterable
             clearable
           >
@@ -189,6 +189,9 @@ export default {
         }
       }
     }
+  }
+  &-con{
+    padding-bottom: 70px;
   }
 }
 .p-card {

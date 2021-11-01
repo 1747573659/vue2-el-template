@@ -25,13 +25,13 @@
             <el-form-item label="授权产品">
               <km-select-page
                 ref="productCode"
-                v-model="form.productCode"
+                v-model="form.productCodes"
                 option-label="name"
                 option-value="code"
                 :data.sync="licensedProducts"
                 :request="getProductByPage"
                 :is-max-page.sync="isLicensedProductMaxPage"
-                placeholder="下单人"
+                placeholder="授权产品"
                 multiple
                 collapse-tags
               />
@@ -131,7 +131,7 @@ export default {
       orderStatus,
       licensedProducts: [],
       isLicensedProductMaxPage: false,
-      form: { createTime: '', productType: '', productCode: '', orderStatus: '', handMan: '', billNo: '' },
+      form: { createTime: '', productType: '', productCodes: [], orderStatus: '', handMan: '', billNo: '' },
       ordererData: [],
       isOrdererMaxPage: false,
       checkTabLock: false,
@@ -220,7 +220,7 @@ export default {
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows })
+        const res = await queryOrderMan({ id: query, agentId: this.userBaseInfo.agentId, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         if (this.ordererData.every(item => item.contactor !== '全部')) {
           this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)

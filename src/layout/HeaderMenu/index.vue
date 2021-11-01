@@ -104,6 +104,17 @@ export default {
               }
               return item
             })
+
+    this.routeMenus.forEach(item => {
+      if (item.name === 'orderCenter') {
+        let firstLevel = item.children.find(ele => ele.name === 'orderManagement')
+        if (JSON.parse(getLocal('userInfo')).propertyType === 2) {
+          firstLevel.children = firstLevel.children.filter(
+            child => !['softwareAuthorization', 'softwareInventoryReplace', 'softwareAuthorizationDetails', 'softwareInventoryReplaceDetails'].includes(child.name)
+          )
+        }
+      }
+    })
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
       if (document.body.clientWidth < 1200) this.isDropdown = true
