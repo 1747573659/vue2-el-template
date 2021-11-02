@@ -227,7 +227,9 @@ export default {
         this.$message({ type: 'warning', message: '实换数量范围为[1-999]' })
         row.replaceNum = 1
       } else {
-        return (row.useInventory = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory))
+        const replaceNum = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory)
+        this.form.orderDTO.useInventory = replaceNum
+        return row.useInventory = replaceNum
       }
     },
     handleReplaceProductName(val) {
@@ -242,6 +244,7 @@ export default {
       this.form.orderDetailDtos[0].replaceNum = 1
       this.form.orderDetailDtos[0].replaceableNum = replaceableNum || 0
       this.form.orderDetailDtos[0].useInventory = useInventory || 0
+      this.form.orderDTO.useInventory = useInventory || 0
     },
     async handleProductList(data) {
       if (data) {
@@ -260,6 +263,7 @@ export default {
               remark: ''
             }
           ]
+          this.form.orderDTO.useInventory = 0
         })
       }
     },
