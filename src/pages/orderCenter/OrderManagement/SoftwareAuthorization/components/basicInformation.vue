@@ -229,6 +229,8 @@ export default {
     getErpInformationObj() {
       if (this.form.erpAuthOrderDetails.length === 0 || !this.form.erpAuthMerchantDTO.merchantId) {
         this.$message({ type: 'warning', message: '请先选择商户或产品模块信息' })
+      } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && item.unionChannel === '')) {
+        this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else {
         const insufficientObj = this.form.erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
         if (insufficientObj.length > 0) {

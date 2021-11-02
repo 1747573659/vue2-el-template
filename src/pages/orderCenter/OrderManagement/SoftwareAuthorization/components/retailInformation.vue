@@ -127,11 +127,17 @@ export default {
     },
     async handleMerchantInfo(val) {
       this.form.merchantDTO.merchantId = val
-      this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
-      this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
-      this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
-      this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
-      if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
+      if (val) {
+        this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
+        this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
+        this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
+        this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
+        if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
+      } else {
+        this.form.merchantDTO.merchantVersion = ''
+        this.form.merchantDTO.storeCount = ''
+        this.form.merchantDTO.relationProductName = ''
+      }
       this.form.merchantDTO.delayHour = 1
       this.form.merchantDTO.applicationModule = ''
       if (this.form.detailDTOList.length > 0) {
@@ -190,7 +196,7 @@ export default {
       }
     }
   }
-  &-con{
+  &-con {
     padding-bottom: 70px;
   }
 }

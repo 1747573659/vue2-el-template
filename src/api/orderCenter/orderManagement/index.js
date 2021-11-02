@@ -11,9 +11,9 @@ export function queryByPage(data) {
 }
 
 // 下单人接口
-export function queryOrderMan(data) {
+export function queryUserPage(data) {
   return request({
-    url: '/channel/purchase/queryOrderMan',
+    url: '/employeeUser/queryUserPage',
     method: 'POST',
     data
   })

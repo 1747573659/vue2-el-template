@@ -25,7 +25,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
-              <km-select-page v-model="form.createUser" :data.sync="ordererData" option-label="contactor" option-value="id" :request="handleOrderPage" :is-max-page.sync="isOrdererMaxPage" placeholder="下单人" />
+              <km-select-page v-model="form.createUser" :data.sync="ordererData" option-label="userName" option-value="id" :request="handleOrderPage" :is-max-page.sync="isOrdererMaxPage" placeholder="下单人" />
             </el-form-item>
             <el-form-item label="单据编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
@@ -76,7 +76,7 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { orderStatus } from './data'
 
-import { queryBaseInfo, queryOrderMan } from '@/api/orderCenter/orderManagement'
+import { queryBaseInfo, queryUserPage } from '@/api/orderCenter/orderManagement'
 import { queryByPage, replaceOrderExport, replaceOrderExportLog, replaceOrderExportDel, replaceOrderDelete } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
@@ -169,10 +169,10 @@ export default {
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows })
+        const res = await queryUserPage({ userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
-        if (this.ordererData.every(item => item.contactor !== '全部')) {
-          this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
+        if (this.ordererData.every(item => item.userName !== '全部')) {
+          this.ordererData = [{ userName: '全部', id: -1 }].concat(this.ordererData)
         }
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
