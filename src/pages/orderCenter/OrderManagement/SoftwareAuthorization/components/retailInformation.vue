@@ -53,8 +53,12 @@
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
         <template v-if="['', 1].includes(form.merchantDTO.applicationModule)">
-          <el-table-column prop="currentValidTime" label="当前有效期"></el-table-column>
-          <el-table-column prop="delayValidTime" label="延期后有效期"></el-table-column>
+          <el-table-column label="当前有效期">
+            <template slot-scope="scope">{{ scope.row.currentValidTime | formatTime }}</template>
+          </el-table-column>
+          <el-table-column label="延期后有效期">
+            <template slot-scope="scope">{{ scope.row.delayValidTime | formatTime }}</template>
+          </el-table-column>
         </template>
         <template v-else>
           <el-table-column label="当前状态">
@@ -102,6 +106,11 @@ export default {
       checkProductStockLoad: false
     }
   },
+  filters: {
+    formatTime(val) {
+      return dayjs(val).format('YYYY-MM-DD')
+    }
+  },
   methods: {
     handleDelayHour(val) {
       this.form.authOrderDTO.inventoryAmount = val
@@ -137,9 +146,9 @@ export default {
         this.form.merchantDTO.merchantVersion = ''
         this.form.merchantDTO.storeCount = ''
         this.form.merchantDTO.relationProductName = ''
+        this.form.merchantDTO.applicationModule = ''
       }
       this.form.merchantDTO.delayHour = 1
-      this.form.merchantDTO.applicationModule = ''
       if (this.form.detailDTOList.length > 0) {
         if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) this.form.detailDTOList = []
         else if (this.form.merchantDTO.merchantVersion === '3') {

@@ -25,7 +25,15 @@
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
-              <km-select-page v-model="form.createUser" :data.sync="ordererData" option-label="userName" option-value="id" :request="handleOrderPage" :is-max-page.sync="isOrdererMaxPage" placeholder="下单人" />
+              <km-select-page
+                v-model="form.createUser"
+                :data.sync="ordererData"
+                option-label="userName"
+                option-value="id"
+                :request="handleOrderPage"
+                :is-max-page.sync="isOrdererMaxPage"
+                placeholder="下单人"
+              />
             </el-form-item>
             <el-form-item label="单据编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
@@ -106,10 +114,14 @@ export default {
       cueerntAgentId: ''
     }
   },
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getQueryPage()
+    })
+  },
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
-    this.getQueryPage()
     this.getBaseInfo()
   },
   methods: {
@@ -146,7 +158,7 @@ export default {
         this.checkExportLoad = false
       }
     },
-    handleExportRecord ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+    handleExportRecord({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
       return replaceOrderExportLog({ exportType: 8, page: currentPage, rows: pageSize })
     },
     handleExportDel: async function(row) {

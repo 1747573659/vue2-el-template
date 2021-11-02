@@ -41,8 +41,14 @@
         <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
         <el-table-column label="换购产品">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.replaceProductName }}</span>
-            <el-select v-else v-model="scope.row.replaceProductId" @change="handleReplaceProductName" clearable size="small" class="e-select-con">
+            <el-select
+              v-model="scope.row.replaceProductId"
+              :disabled="$route.query.status === 'detail'"
+              @change="handleReplaceProductName"
+              clearable
+              size="small"
+              class="e-select-con"
+            >
               <template v-for="(item, index) in replacedProducts">
                 <el-option :key="index" :label="`[${item.replaceProductCode}] ${item.replaceProductName}`" :value="item.replaceProductCode"></el-option>
               </template>
@@ -50,17 +56,21 @@
           </template>
         </el-table-column>
         <el-table-column prop="replaceableNum" label="可换数量" align="right"></el-table-column>
-        <el-table-column label="实换数量" align="right">
+        <el-table-column prop="replaceNum" label="实换数量" align="right">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.replaceNum }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.replaceNum" @change="handleReplaceNum(scope.row)" style="width:100%"></el-input>
+            <el-input
+              size="small"
+              v-model.number.trim="scope.row.replaceNum"
+              @change="handleReplaceNum(scope.row)"
+              :disabled="$route.query.status === 'detail'"
+              style="width:100%"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
+            <el-input size="small" v-model="scope.row.remark" maxlength="100" :disabled="$route.query.status === 'detail'" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
@@ -116,7 +126,8 @@ export default {
       checkProductVisible: false,
       replacedProducts: [],
       generalInventory: 10,
-      replaceProduct: {}
+      replaceProduct: {},
+      agentProductList: {}
     }
   },
   computed: {
@@ -141,7 +152,7 @@ export default {
         .then(res => {
           this.checkSaveBtnLoad = true
           if (this.$route.query.status === 'add') {
-            this.$router.replace({ name: this.$route.name, query: { id: res, orderStatus: '', status: 'edit' } })
+            this.$router.replace({ name: this.$route.name, query: { id: res, orderStatus: 0, status: 'edit' } })
             document.querySelector('.e-tag_active span').innerText = `软件库存置换单/编辑`
           }
           this.getDetail()
@@ -152,7 +163,7 @@ export default {
           this.checkSaveBtnLoad = false
         })
     },
-    async setOrderSave() {
+    async setOrderSave(action = 0) {
       if (this.form.orderDetailDtos.length === 0) {
         this.$message({ type: 'warning', message: '请选择置换产品' })
         return new Promise((resolve, reject) => reject(new Error()))
@@ -170,7 +181,7 @@ export default {
             return new Promise((resolve, reject) => reject(new Error()))
           } else {
             const data = { orderVO: { ...this.form.orderDTO, orderType: 0, createUser: JSON.parse(localStorage.userInfo).id }, detailVos: this.form.orderDetailDtos }
-            return this.$route.query.status === 'add' ? replaceOrderAdd(data) : replaceOrderUpdate(data)
+            return this.$route.query.status === 'add' ? replaceOrderAdd(data) : replaceOrderUpdate(data, action)
           }
         } else {
           this.$message({ type: 'warning', message: '换购产品库存不足，请先下单' })
@@ -208,34 +219,33 @@ export default {
       this.$refs.product.getProductPage()
     },
     handleReplaceNum(row) {
-      if (!this.replaceProduct.reduceInventory) this.$message({ type: 'warning', message: '请选择换购产品' })
-      else {
-        if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.replaceNum)) {
-          this.$message({ type: 'warning', message: '实换数量范围为[1-999]' })
-          row.replaceNum = 1
-        }
+      if (!row.replaceProductId) this.$message({ type: 'warning', message: '请选择换购产品' })
+      else if (row.replaceableNum < row.replaceNum) {
+        this.$message({ type: 'warning', message: '可换数量不能大于实换数量' })
+        row.replaceNum = row.replaceableNum
+      } else if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.replaceNum)) {
+        this.$message({ type: 'warning', message: '实换数量范围为[1-999]' })
+        row.replaceNum = 1
+      } else {
         return (row.useInventory = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory))
       }
     },
-    async handleReplaceProductName(val) {
+    handleReplaceProductName(val) {
       let [replaceableNum, useInventory] = ['', '']
       if (val) {
-        try {
-          const res = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
-          if (res) {
-            this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-            replaceableNum = Math.floor(NP.divide(res.totalAmount, this.replaceProduct.reduceInventory))
-            useInventory = NP.times(1, this.replaceProduct.reduceInventory)
-            this.form.orderDetailDtos[0].orderInventory = res.totalAmount
-          }
-        } catch (error) {}
-      } else this.form.orderDetailDtos[0].orderInventory = 0
+        if (this.agentProductList) {
+          this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
+          replaceableNum = Math.floor(NP.divide(this.agentProductList.commonAmount, this.replaceProduct.reduceInventory))
+          useInventory = NP.times(1, this.replaceProduct.reduceInventory)
+        }
+      }
       this.form.orderDetailDtos[0].replaceNum = 1
       this.form.orderDetailDtos[0].replaceableNum = replaceableNum || 0
       this.form.orderDetailDtos[0].useInventory = useInventory || 0
     },
-    handleProductList(data) {
+    async handleProductList(data) {
       if (data) {
+        this.agentProductList = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: data.productId })
         this.getOriginalProduct(data.productId).then(() => {
           this.form.orderDetailDtos = [
             {
@@ -244,7 +254,7 @@ export default {
               replaceNum: 1,
               replaceProductId: '',
               replaceProductName: '',
-              orderInventory: 0,
+              orderInventory: this.agentProductList.commonAmount,
               replaceableNum: 0,
               useInventory: 0,
               remark: ''
@@ -290,7 +300,7 @@ export default {
       const { columns, data } = param
       const sums = []
       columns.forEach((column, index) => {
-        if (['useInventory'].includes(column.property)) {
+        if (['replaceNum'].includes(column.property)) {
           const values = data.map(item => parseFloat(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
@@ -301,7 +311,6 @@ export default {
                 return prev
               }
             }, 0)
-            this.form.orderDTO.useInventory = sums[6]
           }
         }
       })

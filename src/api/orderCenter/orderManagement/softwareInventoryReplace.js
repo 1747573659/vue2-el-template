@@ -80,9 +80,9 @@ export function replaceOrderAdd(data) {
 }
 
 // 更新
-export function replaceOrderUpdate(data) {
+export function replaceOrderUpdate(data, status) {
   return request({
-    url: '/replace/order/update',
+    url: '/replace/order/update/' + status,
     method: 'POST',
     data
   })

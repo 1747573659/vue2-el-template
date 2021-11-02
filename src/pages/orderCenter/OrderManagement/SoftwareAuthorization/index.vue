@@ -31,7 +31,7 @@
                 :data.sync="licensedProducts"
                 :request="getProductByPage"
                 :is-max-page.sync="isLicensedProductMaxPage"
-                placeholder="授权产品"
+                placeholder="全部"
                 multiple
                 collapse-tags
               />
@@ -155,6 +155,9 @@ export default {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getProductByPage()
+    this.handleOrderPage().then(() => {
+      this.$refs.selectPage.selectVal = -1
+    })
     this.getBaseInfo().then(() => {
       this.getQueryPage()
     })

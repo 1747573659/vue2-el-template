@@ -21,7 +21,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="商户号">
-          <el-input :value="form.merchantDTO.merchantNo" disabled></el-input>
+          <el-input :value="form.merchantDTO.merchantNo" disabled placeholder="请先选择商户"></el-input>
         </el-form-item>
         <el-form-item label="商户版本">
           <el-input :value="cyVersionMap.get(form.merchantDTO.merchantVersion)" disabled></el-input>
@@ -59,8 +59,12 @@
         <el-table-column label="类型">
           <template slot-scope="scope">{{ scope.row.shopType === 101 ? '门店' : scope.row.shopType === 102 ? '电子发票' : '积分商城' }}</template>
         </el-table-column>
-        <el-table-column prop="currentValidTime" label="当前有效期"></el-table-column>
-        <el-table-column prop="delayValidTime" label="延期后有效期"></el-table-column>
+        <el-table-column label="当前有效期">
+          <template slot-scope="scope">{{ scope.row.currentValidTime | formatTime }}</template>
+        </el-table-column>
+        <el-table-column label="延期后有效期">
+          <template slot-scope="scope">{{ scope.row.delayValidTime | formatTime }}</template>
+        </el-table-column>
         <el-table-column prop="orderInventory" label="下单时库存"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存"></el-table-column>
         <el-table-column label="备注">
@@ -141,6 +145,11 @@ export default {
       pageSize: 10,
       totalPage: 0,
       checkProductStockLoad: false
+    }
+  },
+  filters: {
+    formatTime(val) {
+      return dayjs(val).format('YYYY-MM-DD')
     }
   },
   watch: {
@@ -280,7 +289,7 @@ export default {
       }
     }
   }
-  &-con{
+  &-con {
     padding-bottom: 70px;
   }
 }

@@ -31,7 +31,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="授权状态">
-          <el-input :value="['正式', '试用'][form.merchantDTO.probationFlag]" disabled></el-input>
+          <el-input :value="['正式', '试用'][parseFloat(form.merchantDTO.probationFlag)]" disabled></el-input>
         </el-form-item>
         <el-form-item label="延期时长">
           <el-input value="永久" v-if="[201, 205].includes(form.merchantDTO.applicationSystem)" disabled></el-input>
@@ -42,7 +42,7 @@
       </el-form>
       <el-tabs v-model="activeName">
         <el-tab-pane label="加点" name="1"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="form.merchantDTO.probationFlag === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem)"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="parseFloat(form.merchantDTO.probationFlag) === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem)"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button
@@ -71,7 +71,7 @@
                 size="small"
                 v-model.number.trim="scope.row.addNum"
                 @change="handleAddNumAmount(scope.row)"
-                :disabled="$route.query.status === 'detail'"
+                :disabled="$route.query.status === 'detail'||form.merchantDTO.applicationSystem === 203"
                 style="width:100%"
               ></el-input>
             </template>
@@ -81,8 +81,12 @@
           <el-table-column prop="authId" label="授权ID"></el-table-column>
           <el-table-column prop="authCode" label="授权对象编码"></el-table-column>
           <el-table-column prop="authName" label="授权对象名称"></el-table-column>
-          <el-table-column prop="currentValidTime" label="当前有效期"></el-table-column>
-          <el-table-column prop="delayValidTime" label="延期后有效期"></el-table-column>
+          <el-table-column prop="currentValidTime" label="当前有效期">
+            <template slot-scope="scope">{{ scope.row.currentValidTime | formatTime }}</template>
+          </el-table-column>
+          <el-table-column prop="delayValidTime" label="延期后有效期">
+            <template slot-scope="scope">{{ scope.row.delayValidTime | formatTime }}</template>
+          </el-table-column>
         </template>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
@@ -112,7 +116,9 @@
         <el-table-column prop="UserId" label="授权ID"></el-table-column>
         <el-table-column prop="UserNo" label="授权对象编码"></el-table-column>
         <el-table-column prop="UserName" label="授权对象名称"></el-table-column>
-        <el-table-column prop="EndTime" label="有效期"></el-table-column>
+        <el-table-column prop="EndTime" label="有效期">
+          <template slot-scope="scope">{{ scope.row.EndTime | formatTime }}</template>
+        </el-table-column>
       </el-table>
       <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
@@ -166,6 +172,11 @@ export default {
       activeName: '1'
     }
   },
+  filters: {
+    formatTime(val) {
+      return dayjs(val).format('YYYY-MM-DD')
+    }
+  },
   watch: {
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
@@ -197,6 +208,8 @@ export default {
         this.$message({ type: 'warning', message: '加点数范围为[1-999]' })
         row.addNum = 1
       }
+      console.info(this.form.merchantDTO.delayHour)
+      row.useInventory = NP.times(row.addNum, this.form.merchantDTO.delayHour)
     },
     async getProductStock() {
       try {
@@ -306,7 +319,7 @@ export default {
     handleDelayHour(val) {
       if (this.form.addAuthOrderDetailDTOList.length > 0) {
         this.form.addAuthOrderDetailDTOList.forEach(item => {
-          return (item.useInventory = val)
+          return (item.useInventory = NP.times(val, item.addNum))
         })
       }
       if (this.form.renewAuthOrderDetailDTOList.length > 0) {

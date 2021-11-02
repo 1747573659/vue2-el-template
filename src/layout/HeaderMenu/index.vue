@@ -92,29 +92,8 @@ export default {
     }
   },
   mounted() {
-    // 临时伪代码
-    if (['dev', 'test', 'pre'].includes(process.env.VUE_APP_FLAG)) this.routeMenus = this.routes
-    else
-      this.routeMenus =
-        JSON.parse(getLocal('userInfo')).loginName === '18888888888'
-          ? this.routes
-          : this.routes.map(item => {
-              if (item.name === 'orderCenter') {
-                item.children = item.children.filter(item => item.name !== 'orderManagement')
-              }
-              return item
-            })
-
-    this.routeMenus.forEach(item => {
-      if (item.name === 'orderCenter') {
-        let firstLevel = item.children.find(ele => ele.name === 'orderManagement')
-        if (JSON.parse(getLocal('userInfo')).propertyType === 2) {
-          firstLevel.children = firstLevel.children.filter(
-            child => !['softwareAuthorization', 'softwareInventoryReplace', 'softwareAuthorizationDetails', 'softwareInventoryReplaceDetails'].includes(child.name)
-          )
-        }
-      }
-    })
+    this.routeMenus = this.routes
+    console.info(this.routeMenus)
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
       if (document.body.clientWidth < 1200) this.isDropdown = true

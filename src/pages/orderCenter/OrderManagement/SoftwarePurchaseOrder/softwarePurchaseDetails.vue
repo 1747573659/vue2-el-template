@@ -1,6 +1,6 @@
 <template>
   <section v-permission.page="'SOFT_PURCHASE_ORDER_PLUS,SOFT_PURCHASE_ORDER_EDIT'">
-    <el-tabs v-model="activeName" class="p-purchase-tab">
+    <el-tabs v-model="activeName" class="p-purchase-tab" @tab-click="handleTabPane">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
@@ -37,9 +37,12 @@ export default {
     })
   },
   methods: {
+    handleTabPane (tab) {
+      if (tab.name === 'operationLog') this.getOperateLog()
+    },
     async getOperateLog() {
       try {
-        this.tableData = await operateLog({ orderType: 1, purchaseId: this.$route.query.id })
+        this.operateData = await operateLog({ orderType: 1, purchaseId: this.$route.query.id })
       } catch (error) {}
     }
   }
