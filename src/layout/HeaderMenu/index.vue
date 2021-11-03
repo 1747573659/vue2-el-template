@@ -93,7 +93,6 @@ export default {
   },
   mounted() {
     this.routeMenus = this.routes
-    console.info(this.routeMenus)
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
       if (document.body.clientWidth < 1200) this.isDropdown = true

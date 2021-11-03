@@ -71,7 +71,7 @@
                 size="small"
                 v-model.number.trim="scope.row.addNum"
                 @change="handleAddNumAmount(scope.row)"
-                :disabled="$route.query.status === 'detail'||form.merchantDTO.applicationSystem === 203"
+                :disabled="$route.query.status === 'detail' || form.merchantDTO.applicationSystem === 203"
                 style="width:100%"
               ></el-input>
             </template>
@@ -245,12 +245,13 @@ export default {
             ]
           })
         } catch (error) {}
+      } else {
+        this.form.merchantDTO.probationFlag = ''
       }
     },
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await authOrderYsCustomerList({ Condition: query, OrganNo: this.userBaseInfo.organNo, PageIndex: --page, PageSize: rows })
-        // const res = await authOrderYsCustomerList({ Condition: query, OrganNo: '658', PageIndex: --page, PageSize: rows })
         res.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
         this.shopPageData = this.shopPageData.concat(res || [])
         this.isShopMaxPage = !res || (res && res.length < 10)
@@ -264,7 +265,9 @@ export default {
           const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: this.appModuleObj.outCode, custName: CustName }).catch(() => {})
           this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
         }
-      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantName: '', CustName: '' })
+      } else {
+        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantName: '', CustName: '', applicationSystem: '', probationFlag: '' })
+      }
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
     },

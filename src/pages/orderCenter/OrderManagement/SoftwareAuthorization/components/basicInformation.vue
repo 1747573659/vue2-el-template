@@ -134,7 +134,7 @@ export default {
       ]),
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
-      userBaseInfo: {}
+      userBaseInfo: JSON.parse(localStorage.userInfo)
     }
   },
   computed: {
@@ -151,7 +151,8 @@ export default {
     this.form = deepClone(this.baseInfoMap.get(this.productType).form)
   },
   mounted() {
-    this.getBaseInfo()
+    this.getHandlerMan()
+    if ([3, 4].includes(this.productType)) this.$refs.information.getCustList()
     if (['edit', 'detail'].includes(this.$route.query.status)) this.getDetail()
   },
   methods: {
@@ -314,17 +315,9 @@ export default {
         this.checkBasicInformLoad = false
       }
     },
-    async getBaseInfo() {
+    async getHandlerMan() {
       try {
-        const res = await queryBaseInfo()
-        this.userBaseInfo = res
-        this.getHandlerMan(res.districtCode)
-        if ([3, 4].includes(this.productType)) this.$refs.information.getCustList()
-      } catch (error) {}
-    },
-    async getHandlerMan(area) {
-      try {
-        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area })
+        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userBaseInfo.districtCode })
         this.form.authOrderDTO.handMan = id
         this.form.authOrderDTO.handManName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}

@@ -46,7 +46,7 @@
             <el-form-item label="下单人">
               <km-select-page
                 ref="selectPage"
-                v-model="form.handMan"
+                v-model="form.createUser"
                 :data.sync="ordererData"
                 option-label="userName"
                 option-value="id"
@@ -131,7 +131,7 @@ export default {
       orderStatus,
       licensedProducts: [],
       isLicensedProductMaxPage: false,
-      form: { createTime: '', productType: '', productCodes: [], orderStatus: '', handMan: '', billNo: '' },
+      form: { createTime: '', productType: '', productCodes: [], orderStatus: '', createUser: '', billNo: '' },
       ordererData: [],
       isOrdererMaxPage: false,
       checkTabLock: false,
@@ -140,7 +140,7 @@ export default {
       totalPage: 0,
       pageSize: 10,
       checkExportLoad: false,
-      userBaseInfo: {},
+      userBaseInfo: JSON.parse(localStorage.userInfo),
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -148,19 +148,16 @@ export default {
       }
     }
   },
-  activated() {
-    this.getQueryPage()
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
+      vm.getQueryPage()
+    })
   },
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getProductByPage()
-    this.handleOrderPage().then(() => {
-      this.$refs.selectPage.selectVal = -1
-    })
-    this.getBaseInfo().then(() => {
-      this.getQueryPage()
-    })
+    this.handleOrderPage()
   },
   methods: {
     ...mapActions(['delCachedView']),
@@ -242,12 +239,6 @@ export default {
         this.licensedProducts = this.licensedProducts.concat(res.results || [])
         if (this.licensedProducts.every(item => item.name !== '全部')) this.licensedProducts = [{ name: '全部', code: '' }].concat(this.licensedProducts)
         this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
-      } catch (error) {}
-    },
-    async getBaseInfo() {
-      try {
-        const res = await queryBaseInfo()
-        this.userBaseInfo = res
       } catch (error) {}
     }
   }

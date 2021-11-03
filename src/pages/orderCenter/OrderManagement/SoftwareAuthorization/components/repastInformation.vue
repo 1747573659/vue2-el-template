@@ -257,7 +257,7 @@ export default {
         this.checkProductStockLoad = false
       }
     },
-    async getCustList(query) {
+    async getCustList() {
       const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
       this.custListData = res
       this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
