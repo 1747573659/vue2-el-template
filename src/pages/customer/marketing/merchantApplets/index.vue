@@ -1,20 +1,21 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <el-form :inline="true" :model="form" label-suffix=":" label-width="120px" ref="form" size="small" class="xdd-btn-block__w240">
+      <el-form :inline="true" :model="form" label-suffix=":" :rules="rules" label-width="120px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-form-item label="享钱商户名称">
             <el-input class="p-form-input_width" @clear="()=>{
-                form.shopName=''
-                form.shopId=''
-                }" @focus="selectSeach('shopName')" clearable placeholder="请输入享钱商户名称搜索" size="small" v-model.trim="form.shopName"></el-input>
+                form.shopAdminName=''
+                form.shopAdminId=''
+                }" @focus="selectSeach('shopAdminName')" clearable placeholder="请输入享钱商户名称搜索" size="small" v-model.trim="form.shopAdminName"></el-input>
           </el-form-item>
           <el-form-item label="支付宝商户PID">
-            <el-input class="p-form-input_width" clearable placeholder="请输入支付宝商户PID搜索" size="small" maxlength="30" v-model.trim="form.shopPID"></el-input>
+            <el-input class="p-form-input_width" clearable placeholder="请输入支付宝商户PID搜索" size="small" maxlength="30" v-model.trim="form.authPid"></el-input>
           </el-form-item>
-          <el-form-item label="小程序名称">
-            <el-input class="p-form-input_width" clearable placeholder="请输入小程序名称搜索" size="small" maxlength="15" v-model.trim="form.appName"></el-input>
+          <el-form-item label="小程序名称" prop="miniProgramName">
+            <el-input class="p-form-input_width" clearable placeholder="请输入小程序名称搜索" size="small" maxlength="20" v-model.trim="form.miniProgramName"></el-input>
           </el-form-item>
+          <!-- ================= -->
           <el-form-item label="小程序版本">
             <el-select class="p-form-input_width" clearable v-model="form.appVersion" filterable placeholder="请输入小程序版本搜索">
               <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.label" :value="item.value"></el-option>
@@ -22,7 +23,7 @@
           </el-form-item>
           <el-form-item label="状态">
             <el-select class="p-form-input_width" clearable v-model="form.status" filterable placeholder="请选择小程序状态搜索">
-              <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.label" :value="item.value"></el-option>
+              <el-option v-for="(item,index) in queryAllStatusOption" :key="index" :label="item.statusTypeName" :value="item.statusType"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="小程序APPID">
@@ -41,21 +42,26 @@
     <div class="data-box">
       <el-button @click="selectSeach('orderApp')" v-permission="'MARKETINGMANAGEMENT_ORDER'" style="float:right;margin-bottom:16px" size="small" type="primary">订购小程序</el-button>
       <el-table :data="tableData" v-loading="tableLoading" style="width: 100%">
-        <el-table-column prop="date" label="享钱商户名称" width="180"></el-table-column>
-        <el-table-column prop="name" label="支付宝商户PID" width="180"></el-table-column>
-        <el-table-column prop="address" label="小程序名称"></el-table-column>
-        <el-table-column prop="address" label="小程序APPID"></el-table-column>
-        <el-table-column prop="address" label="联系人"></el-table-column>
-        <el-table-column prop="address" label="联系电话"></el-table-column>
-        <el-table-column prop="address" label="小程序版本"></el-table-column>
-        <el-table-column prop="address" label="状态"></el-table-column>
-        <el-table-column prop="address" label="备注"></el-table-column>
-        <el-table-column prop="address" label="基础资料维护">
+        <el-table-column prop="merchantName" label="享钱商户名称"></el-table-column>
+        <el-table-column prop="authPid" label="支付宝商户PID"></el-table-column>
+        <el-table-column prop="miniProgramName" label="小程序名称"></el-table-column>
+        <el-table-column prop="miniProgramAppid" label="小程序APPID"></el-table-column>
+        <el-table-column prop="createTime" width="110" label="订购时间"></el-table-column>
+        <el-table-column prop="name" label="联系人"></el-table-column>
+        <el-table-column prop="phone" label="联系电话"></el-table-column>
+        <el-table-column prop="versionName" label="小程序版本"></el-table-column>
+        <el-table-column prop="status" label="状态">
+          <template scope="scope">
+            <div>{{initQqueryAllStatus(scope.row.status)}}</div>
+          </template>
+        </el-table-column>
+        <el-table-column prop="miniDesc" label="备注"></el-table-column>
+        <el-table-column label="基础资料维护">
           <template scope="scope">
             <el-button v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row)" type="text">基础资料维护</el-button>
           </template>
         </el-table-column>
-        <el-table-column prop="address" label="操作">
+        <el-table-column label="操作">
           <template>
             <el-button @click="xcxDialogVisible=true" v-permission="'MARKETINGMANAGEMENTlOOKAPP'" type="text">查看小程序</el-button>
             <el-button v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">立即构建</el-button>
@@ -91,12 +97,29 @@
 import selectPage from './components/selectPage.vue'
 import { codeImgDown } from '@/utils/codeImgDown'
 import { queryShopListByPage } from '@/api/customer/merchant'
-import { queryPage } from '@/api/alipay'
+import { queryPage, queryAllStatus } from '@/api/alipay'
 export default {
   name: 'marketingManagement',
   components: { selectPage },
   data () {
+    var checkRegMiniName = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请输入小程序名称'))
+      }
+      let reg = /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/
+      if (!reg.test(value)) {
+        return callback(new Error('仅支持中文、数字、英文及下划线'))
+      }
+      callback()
+    }
     return {
+      rules: {
+        miniProgramName: [
+          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' },
+          { validator: checkRegMiniName, trigger: 'blur' }
+        ],
+      },
+      queryAllStatusOption: [],
       queryShopListByPage,
       xcxDialogVisible: false,
       zfbDialogVisible: false,
@@ -108,10 +131,11 @@ export default {
       },
       dialogVisible: false,
       form: {
-        shopName: '', // 享钱商户名称
-        shopId: '', // 享钱商户ID
-        shopPID: '', // 支付宝商户PID
-        appName: '', // 小程序名称
+        shopAdminName: '', // 享钱商户名称
+        shopAdminId: '', // 享钱商户ID
+        authPid: '', // 支付宝商户PID
+        miniProgramName: '', // 小程序名称
+        // =======
         appVersion: '', // 小程序版本
         status: '', // 状态
         appID: '', // 小程序APPID
@@ -126,8 +150,26 @@ export default {
   },
   created () {
     this.getTable()
+    this.queryAllStatus()
   },
   methods: {
+    initQqueryAllStatus (status) {
+      let value = ''
+      for (let i = 0; i < this.queryAllStatusOption.length; i++) {
+        if (status == this.queryAllStatusOption[i].statusType) {
+          value = this.queryAllStatusOption[i].statusTypeName
+        }
+      }
+      return value
+    },
+    // 状态查询
+    async queryAllStatus () {
+      const res = await queryAllStatus()
+      this.queryAllStatusOption = [{
+        statusTypeName: '全部',
+        statusType: ''
+      }, ...res]
+    },
     async codeImgDown () {
       codeImgDown(this.$refs.code, '文件名称')
     },
@@ -136,8 +178,8 @@ export default {
     },
     clearFrom () {
       this.form = {
-        shopName: '', // 享钱商户名称
-        shopId: '', // 享钱商户ID
+        shopAdminName: '', // 享钱商户名称
+        shopAdminId: '', // 享钱商户ID
         shopPID: '', // 支付宝商户PID
         appName: '', // 小程序名称
         appVersion: '', // 小程序版本
@@ -147,10 +189,11 @@ export default {
       }
     },
     sureVal (value) {
+      console.log(value, this.selectPageAttribute)
       const ref = this.selectPageAttribute.ref
-      if (ref === 'shopName') {
-        this.form.shopName = value.tableItem.name
-        this.form.shopId = value.tableItem.id
+      if (ref === 'shopAdminName') {
+        this.form.shopAdminName = value.tableItem.companyName
+        this.form.shopAdminId = value.tableItem.id
       }
       if (ref === 'orderApp') {
         this.zfbDialogVisible = true
@@ -158,7 +201,7 @@ export default {
     },
     selectSeach (ref) {
       this.selectPageAttribute.ref = ref
-      if (ref === 'shopName') {
+      if (ref === 'shopAdminName') {
         this.selectPageAttribute.title = '享钱商户查询'
         this.selectPageAttribute.placeholder = '请输入享钱商户名称搜索'
       }
@@ -183,12 +226,12 @@ export default {
       this.tableLoading = true
       const res = await queryPage(
         {
-          page: 1,
-          rows: 10,
+          page: this.thisPage,
+          rows: this.pageSize,
         }
       )
       this.tableLoading = false
-      this.tableData = res.results||[]
+      this.tableData = res.results || []
       this.tableTotal = res.totalCount
     }
   }

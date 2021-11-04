@@ -17,7 +17,7 @@
       <el-table-column v-for="(item,index) of columnS" :key="index" :prop="item.prop" :label="item.label"></el-table-column>
     </el-table>
     <div v-if="tableTotal" class="km-page-block">
-      <el-pagination small :current-page="thisPage"  :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="prev, pager, next"></el-pagination>
+      <el-pagination small :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="prev, pager, next"></el-pagination>
     </div>
     <div slot="footer" style=" text-align: center;" class="dialog-footer">
       <el-button @click="handleClose" size="small">取 消</el-button>
@@ -32,6 +32,7 @@ export default {
       immediate: true,
       handler (value) {
         this.selectTableIndex = ''
+        this.seachVal = ''
         if (value) {
           this.getTable()
         }
@@ -52,9 +53,9 @@ export default {
         }]
       }
     }, //表格渲染的字段和标题
-    listApi:{
+    listApi: {
       require: true,
-      type:Function,
+      type: Function,
     },
     title: {
       type: String,
@@ -97,9 +98,9 @@ export default {
     async getTable () {
       this.tableLoading = true
       const res = await this.listApi({
-        id:this.seachVal,
-        page:this.thisPage,
-        rows:this.pageSize
+        id: this.seachVal,
+        page: this.thisPage,
+        rows: this.pageSize
       })
       this.tableLoading = false
       this.tableData = res.results

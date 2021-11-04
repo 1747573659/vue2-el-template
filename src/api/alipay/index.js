@@ -9,6 +9,14 @@ const urlLinks = {
   queryPage: '/alipay/mini/queryPage',
   queryCategory: '/alipay/mini/queryCategory',
   queryArea: '/alipay/mini/queryArea',
+  queryAllStatus:'/alipay/mini/queryAllStatus'
+}
+export function queryAllStatus(data) {
+  return request({
+    url: urlLinks.queryAllStatus,
+    method: 'post',
+    data
+  })
 }
 export function queryArea(data) {
   return request({
