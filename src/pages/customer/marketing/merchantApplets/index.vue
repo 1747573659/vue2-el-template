@@ -3,52 +3,38 @@
     <div class="search-box">
       <el-form :inline="true" :model="form" label-suffix=":" label-width="120px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row>
-          <el-col :span="6">
-            <el-form-item label="享钱商户名称">
-              <el-input @clear="()=>{
+          <el-form-item label="享钱商户名称">
+            <el-input class="p-form-input_width" @clear="()=>{
                 form.shopName=''
                 form.shopId=''
                 }" @focus="selectSeach('shopName')" clearable placeholder="请输入享钱商户名称搜索" size="small" v-model.trim="form.shopName"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="支付宝商户PID">
-              <el-input clearable placeholder="请输入支付宝商户PID搜索" size="small" maxlength="30" v-model.trim="form.shopPID"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="小程序名称">
-              <el-input clearable placeholder="请输入小程序名称搜索" size="small" maxlength="15" v-model.trim="form.appName"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="小程序版本">
-              <el-select clearable v-model="form.appVersion" filterable placeholder="请输入小程序版本搜索">
-                <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="状态">
-              <el-select clearable v-model="form.status" filterable placeholder="请选择小程序状态搜索">
-                <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.label" :value="item.value"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="小程序APPID">
-              <el-input clearable placeholder="请输入小程序APPID搜索" size="small" maxlength="30" v-model.trim="form.appID"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
-            <el-form-item label="联系人">
-              <el-input clearable placeholder="请输入联系人/电话搜索" maxlength="15" size="small" v-model.trim="form.name"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="6">
+          </el-form-item>
+          <el-form-item label="支付宝商户PID">
+            <el-input class="p-form-input_width" clearable placeholder="请输入支付宝商户PID搜索" size="small" maxlength="30" v-model.trim="form.shopPID"></el-input>
+          </el-form-item>
+          <el-form-item label="小程序名称">
+            <el-input class="p-form-input_width" clearable placeholder="请输入小程序名称搜索" size="small" maxlength="15" v-model.trim="form.appName"></el-input>
+          </el-form-item>
+          <el-form-item label="小程序版本">
+            <el-select class="p-form-input_width" clearable v-model="form.appVersion" filterable placeholder="请输入小程序版本搜索">
+              <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="状态">
+            <el-select class="p-form-input_width" clearable v-model="form.status" filterable placeholder="请选择小程序状态搜索">
+              <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.label" :value="item.value"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="小程序APPID">
+            <el-input class="p-form-input_width" clearable placeholder="请输入小程序APPID搜索" size="small" maxlength="30" v-model.trim="form.appID"></el-input>
+          </el-form-item>
+          <el-form-item label="联系人">
+            <el-input class="p-form-input_width" clearable placeholder="请输入联系人/电话搜索" maxlength="15" size="small" v-model.trim="form.name"></el-input>
+          </el-form-item>
+          <el-form-item label="">
             <el-button @click="getTable" type="primary" size="small">搜索</el-button>
             <el-button @click="clearFrom" size="small">重置</el-button>
-          </el-col>
+          </el-form-item>
         </el-row>
       </el-form>
     </div>
@@ -72,6 +58,12 @@
         <el-table-column prop="address" label="操作">
           <template>
             <el-button @click="xcxDialogVisible=true" v-permission="'MARKETINGMANAGEMENTlOOKAPP'" type="text">查看小程序</el-button>
+            <el-button v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">立即构建</el-button>
+            <el-button v-permission="'MARKETINGMANAGEMENTSTATUSlOOK'" type="text">构建状态查询</el-button>
+            <el-button v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">提交审核</el-button>
+            <el-button v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'" type="text">审核状态查询</el-button>
+            <el-button v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
+            <el-button v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -99,6 +91,7 @@
 import selectPage from './components/selectPage.vue'
 import { codeImgDown } from '@/utils/codeImgDown'
 import { queryShopListByPage } from '@/api/customer/merchant'
+import { queryPage } from '@/api/alipay'
 export default {
   name: 'marketingManagement',
   components: { selectPage },
@@ -188,19 +181,23 @@ export default {
     },
     async getTable () {
       this.tableLoading = true
-      // const res = await authShopPage(subData)
+      const res = await queryPage(
+        {
+          page: 1,
+          rows: 10,
+        }
+      )
       this.tableLoading = false
-      // this.tableData = res.results
-      // this.tableTotal = res.totalCount
-      this.tableData = [{
-        name: '支付宝商户PID'
-      }]
-      this.tableTotal = 1
+      this.tableData = res.results||[]
+      this.tableTotal = res.totalCount
     }
   }
 }
 </script>
 <style lang="scss" scoped>
+.p-form-input_width {
+  width: 240px;
+}
 .search-box {
   margin-left: -16px;
   margin-right: -16px;

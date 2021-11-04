@@ -24,35 +24,35 @@ export default {
   props: {
     desc:{
       type:String,
-      default:'建议尺寸 600*600，大小不超过 2M'
-    },
+      default:''
+    },// 描述
     showIconClose: {
       type: Boolean,
       default: false,
-    },
+    }, // 删除按钮
     uploadUrl: {
       require: true,
       type: String,
       default: '',
-    },
+    }, // 上传接口
     accept: {
       type: String,
       default: 'image/gif,image/jpeg,image/jpg,image/png',
-    },
+    }, // 图片类型
     size:{
        type: Number,
-       default:2
-    },
+       default:10240
+    }, // 大小 1km  b为基础
     imageUrl: {
       require: true,
       type: String,
       default: '',
-    },
+    }, // 图片链接
     fileServer: {
       require: true,
       type: String,
       default: '',
-    },
+    }, // 服务地址
   },
   data() {
     return {
@@ -72,12 +72,12 @@ export default {
     beforeUpload(file) {
       const imgTypes = this.accept.split(',')
       const isJPG = imgTypes.includes(file.type)
-      const isLt2M = file.size / 1024 / 1024 < this.size
+      const isLt2M = file.size / 1024 < this.size
       if (!isJPG) {
         return this.$message.error(`上传图片只能是 ${this.accept} 格式!`)
       }
       if (!isLt2M) {
-        return this.$message.error(`上传图片大小不能超过 ${this.size}MB!`)
+        return this.$message.error(`上传图片大小不能超过 ${this.size}kB!`)
       }
       return isLt2M && isJPG
     },

@@ -6,40 +6,38 @@
         <h4 class="title">小程序资料</h4>
         <el-row>
           <el-col :span="6">
-            <el-form-item label="小程序名称" prop="appName">
-              <el-input v-model.trim="form.appName" clearable style="width:80%" placeholder="请输入小程序名称"></el-input>
+            <el-form-item label="小程序名称" prop="miniName">
+              <el-input v-model.trim="form.miniName" clearable style="width:80%" placeholder="请输入小程序名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序英文名" prop="appEnglishName">
-              <el-input v-model.trim="form.appEnglishName" clearable style="width:80%" placeholder="请输入小程序英文名"></el-input>
+            <el-form-item label="小程序英文名" prop="miniEnglishName">
+              <el-input v-model.trim="form.miniEnglishName" clearable style="width:80%" placeholder="请输入小程序英文名"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序类目" prop="miniCategoryIds">
-              <el-select v-model="form.miniCategoryIds" placeholder="请选择小程序类目">
-                <el-option v-for="item in miniCategoryIdsOption" :key="item.value" :label="item.label" :value="item.value" clearable filterable></el-option>
-              </el-select>
+            <el-form-item label="小程序类目??????????" prop="miniCategoryIds">
+              <el-cascader v-model='form.miniCategoryIds' placeholder='请选择小程序类目' filterable clearable :props="miniCategoryIdsProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序归属地区" prop="miniCategoryIds">
-              <el-cascader v-model="form.miniCategoryIds" :options="miniCategoryIdsOption"></el-cascader>
+            <el-form-item label="小程序归属地区??????????" prop="region">
+              <el-cascader v-model='form.region' placeholder='请选择小程序归属地区' filterable clearable :props="regionProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序简介" prop="appSlogan">
-              <el-input v-model.trim="form.appSlogan" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序简介" style="width:80%"></el-input>
+            <el-form-item label="小程序简介" prop="miniSlogan">
+              <el-input v-model.trim="form.miniSlogan" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序简介" style="width:80%"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序描述" prop="appDesc">
-              <el-input v-model.trim="form.appDesc" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序描述" style="width:80%"></el-input>
+            <el-form-item label="小程序描述" prop="miniDesc">
+              <el-input v-model.trim="form.miniDesc" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序描述" style="width:80%"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序LOGO" prop="appLogo">
-              <picUpload desc='只能上传jpg/png格式文件，文件不能超过500kb' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
+            <el-form-item label="小程序LOGO???????" prop="miniLogo">
+              <picUpload v-model="form.miniLogo" :fileServer='fileServer' uploadUrl='/alipay/mini/fileUplaod' desc='只能上传jpg/png格式文件，文件不能超过256kb ' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
         </el-row>
@@ -51,16 +49,16 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="客服邮箱" prop="serviceEmail">
-              <el-input v-model.trim="form.serviceEmail" clearable style="width:80%" placeholder="请输入客服邮箱"></el-input>
+            <el-form-item label="客服邮箱" prop="serviceMail">
+              <el-input maxlength="128" v-model.trim="form.serviceMail" clearable style="width:80%" placeholder="请输入客服邮箱"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
         <h4 class="title">商户资料信息</h4>
         <el-row>
           <el-col :span="6">
-            <el-form-item label="营业执照号" prop="icenseNo">
-              <el-input v-model.trim="form.icenseNo" clearable style="width:80%" placeholder="请输入营业执照号"></el-input>
+            <el-form-item label="营业执照号" prop="licenseNo">
+              <el-input v-model.trim="form.licenseNo" clearable style="width:80%" placeholder="请输入营业执照号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -70,35 +68,35 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="营业执照到期日期" prop="licenseValidDate">
-              <!-- 长期有效那种 -->
+              <!-- 长期有效那种 结束日期为空则默认为长期有效-->
               <el-date-picker v-model="form.licenseValidDate" type="daterange" style="width:90%" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
           </el-col>
         </el-row>
-        <h4 class="title">小程序资料</h4>
+        <h4 class="title">营业执照资料</h4>
         <el-row>
           <el-col :span="4">
-            <el-form-item label="营业执照" prop="app_logo">
+            <el-form-item label="营业执照" prop="licensePic">
               <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="门店门头照" prop="app_logo">
+            <el-form-item label="门店门头照" prop="outDoorPic">
               <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="营业执照授权照" prop="app_logo">
+            <el-form-item label="营业执照授权照">
               <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="特殊资质照" prop="app_logo">
+            <el-form-item label="特殊资质照">
               <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
-            <el-form-item label="其它" prop="app_logo">
+            <el-form-item label="其它">
               <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
@@ -114,11 +112,13 @@
 </template>
 <script>
 import picUpload from './../picUpload'
+import { auditApply, saveBaseData, queryCategory, queryArea } from '@/api/alipay'
+import { fileServer } from '@/api/fileServe/fileServe.js'
 export default {
   name: 'marketingDetile',
   components: { picUpload },
   data () {
-    var checkRegAppName = (rule, value, callback) => {
+    var checkRegMiniName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('请输入小程序名称'))
       }
@@ -128,7 +128,7 @@ export default {
       }
       callback()
     }
-    var checkRegAppEnglishName = (rule, value, callback) => {
+    var checkRegMiniEnglishName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('请输入小程序英文名'))
       }
@@ -149,63 +149,123 @@ export default {
       callback()
     }
     return {
-      miniCategoryIdsOption: [],
+      fileServer: '', // 上次域名
       form: {
-        appName: '',
-        appEnglishName: '',
-        miniCategoryIds: '',
-        appSlogan: '',
-        appDesc: '',
-        servicePhone: '',
-        serviceEmail: '',
-        icenseNo: '',
-        licenseName: '',
-        licenseValidDate: null,
-        appLogo: ''
+        miniName: '', // 小程序名称
+        miniEnglishName: '',// 小程序英文名
+        miniCategoryIds: [], // 小程序类目
+        region: [],// 小程序归属地区
+        miniSlogan: '',// 小程序简介
+        miniDesc: '',// 小程序描述
+        miniLogo: '', // 小程序LOGO
+        servicePhone: '',// 客服电话
+        serviceMail: '',// 客服邮箱
+        licenseNo: '',// 营业执照号
+        licenseName: '',// 营业执照名称
+        licenseValidDate: null,// 营业执照到期日期
+        licensePic: '',// 营业执照
+        outDoorPic: '', // 门店门头照
+        firstSpecialLicensePic: '', // 营业执照授权照
+        secondSpecialLicensePic: '', // 特殊资质照
+        thirdSpecialLicensePic: '' // 其它照片
       },
+      miniCategoryIdsProps: { // 小程序类目
+        lazy: true,
+        async lazyLoad (node, resolve) {
+          const { level } = node;
+          // await queryCategory()
+          setTimeout(() => {
+            const nodes = Array.from({ length: level + 1 })
+              .map(item => ({
+                value: 1,
+                label: `选项`,
+                leaf: level >= 2
+              }));
+            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+            resolve(nodes);
+          }, 1000);
+        }
+      },
+      regionProps: { // 小程序归属地区
+        lazy: true,
+        async lazyLoad (node, resolve) {
+          const { level } = node;
+          // await queryArea()
+          setTimeout(() => {
+            const nodes = Array.from({ length: level + 1 })
+              .map(item => ({
+                value: 1,
+                label: `选项`,
+                leaf: level >= 2
+              }));
+            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
+            resolve(nodes);
+          }, 1000);
+        }
+      },
+      // ==============
+      miniCategoryIdsOption: [],
       rules: {
-        appName: [
+        miniName: [
           { required: true, message: '请输入小程序名称', trigger: 'blur' },
           { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' },
-          { validator: checkRegAppName, trigger: 'blur' }
+          { validator: checkRegMiniName, trigger: 'blur' }
         ],
-        appEnglishName: [
+        miniEnglishName: [
           { required: true, message: '请输入小程序英文名', trigger: 'blur' },
           { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' },
-          { validator: checkRegAppEnglishName, trigger: 'blur' }
+          { validator: checkRegMiniEnglishName, trigger: 'blur' }
         ],
         miniCategoryIds: [
           { required: true, message: '请选择小程序类目', trigger: 'change' }
         ],
-        appSlogan: [
+        region: [
+          { required: true, message: '请选择小程序归属地区', trigger: 'change' }
+        ],
+        miniSlogan: [
           { required: true, message: '请输入小程序简介', trigger: 'blur' },
           { min: 10, max: 32, message: '长度在 10 到 32 个字符', trigger: 'blur' }
         ],
-        appDesc: [
+        miniDesc: [
           { required: true, message: '请输入小程序描述', trigger: 'blur' },
           { min: 20, max: 200, message: '长度在 20 到 200 个字符', trigger: 'blur' }
+        ],
+        miniLogo: [
+          { required: true, message: '请选择小程序LOGO', trigger: 'change' }
         ],
         servicePhone: [
           { required: true, message: '请输入客服电话', trigger: 'blur' },
           { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' },
           { validator: checkRegServicePhone, trigger: 'blur' }
         ],
-        icenseNo: [
+        licenseNo: [
           { required: true, message: '请输入营业执照号', trigger: 'blur' },
+          { min: 5, max: 32, message: '长度在 5 到 32 个字符', trigger: 'blur' },
         ],
         licenseName: [
           { required: true, message: '营业执照名称', trigger: 'blur' },
+          { min: 2, max: 32, message: '长度在 2 到 32 个字符', trigger: 'blur' },
         ],
         licenseValidDate: [
-          { required: true, message: '请选择小程序类目', trigger: 'change' }
+          { required: true, message: '请选择营业执照到期日期', trigger: 'change' }
         ],
-        appLogo: [
-          { required: true, message: '请上传小程序LOGO', trigger: 'change' }
+        licensePic: [
+          { required: true, message: '请选择营业执照', trigger: 'change' }
         ],
+        outDoorPic: [
+          { required: true, message: '请选择营业执照', trigger: 'change' }
+        ]
       }
     }
   },
+  created () {
+    this.getFileServer()
+  },
   methods: {
+    // 获取上次域名
+    async getFileServer () {
+      this.fileServer = await fileServer()
+    },
     onSubmit () {
       console.log('submit!');
     }
