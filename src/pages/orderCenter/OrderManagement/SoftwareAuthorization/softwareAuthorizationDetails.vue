@@ -43,10 +43,7 @@ export default {
     async getOperateLog() {
       try {
         const res = await authOrderLog(this.$route.query.id)
-        this.operateData = res.map(item => {
-          item.operateUserName = item.operateUser
-          return item
-        })
+        this.operateData = res
       } catch (error) {}
     }
   }

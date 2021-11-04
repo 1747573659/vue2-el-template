@@ -114,52 +114,60 @@ export default {
     handleDelayHour(val) {
       this.form.authOrderDTO.inventoryAmount = val
       this.form.detailDTOList.forEach(item => {
-        item.delayValidTime = item.currentValidTime ? dayjs(this.setDelayValidTime(item.currentValidTime)).subtract(1, 'day').format('YYYY-MM-DD 00:00:00') : ''
+        item.delayValidTime = item.currentValidTime
+          ? dayjs(this.setDelayValidTime(item.currentValidTime))
+              .subtract(1, 'day')
+              .format('YYYY-MM-DD 00:00:00')
+          : ''
         item.useInventory = val
       })
     },
     handleApplicationModule() {
+      if (!this.form.merchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
+      else {
+        this.form.detailDTOList = [
+          {
+            currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
+            delayValidTime: this.merchantInfo.KMValidity
+              ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
+                  .subtract(1, 'day')
+                  .format('YYYY-MM-DD 00:00:00')
+              : '',
+            orderInventory: this.productStockObj?.totalAmount ?? 0,
+            useInventory: this.form.merchantDTO.delayHour,
+            productCode: this.merchantInfo.productCode,
+            remark: '',
+            openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp
+          }
+        ]
+        this.form.authOrderDTO.inventoryAmount = 1
+      }
       this.form.merchantDTO.delayHour = 1
-      this.form.authOrderDTO.inventoryAmount = 1
-      this.form.detailDTOList = [
-        {
-          currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
-          delayValidTime: this.merchantInfo.KMValidity ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity)).subtract(1, 'day').format('YYYY-MM-DD 00:00:00') : '',
-          orderInventory: this.productStockObj?.totalAmount ?? 0,
-          useInventory: this.form.merchantDTO.delayHour,
-          productCode: this.merchantInfo.productCode,
-          remark: '',
-          openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp
-        }
-      ]
     },
     async handleMerchantInfo(val) {
       this.form.merchantDTO.merchantId = val
+      this.form.merchantDTO.delayHour = 1
       if (val) {
         this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
         this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
         this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
         this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
         if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
+        this.getProductStock()
       } else {
-        this.form.merchantDTO.merchantVersion = ''
-        this.form.merchantDTO.storeCount = ''
-        this.form.merchantDTO.relationProductName = ''
+        const resetDTO = { merchantVersion: '', storeCount: '', relationProductName: '', applicationModule: '' }
+        this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetDTO)
+        this.form.detailDTOList = []
+      }
+      if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) {
         this.form.merchantDTO.applicationModule = ''
+        this.form.detailDTOList = []
+      } else if (this.form.merchantDTO.merchantVersion === '3' && this.form.detailDTOList.length > 0) {
+        this.form.detailDTOList.forEach(item => {
+          item.currentValidTime = `${this.merchantInfo?.KMValidity} 00:00:00` ?? ''
+          item.delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : ''
+        })
       }
-      this.form.merchantDTO.delayHour = 1
-      if (this.form.detailDTOList.length > 0) {
-        if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) {
-          this.form.merchantDTO.applicationModule = ''
-          this.form.detailDTOList = []
-        } else if (this.form.merchantDTO.merchantVersion === '3') {
-          this.form.detailDTOList.forEach(item => {
-            item.currentValidTime = `${this.merchantInfo?.KMValidity} 00:00:00` ?? ''
-            item.delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : ''
-          })
-        }
-      }
-      this.getProductStock()
     },
     async getProductStock() {
       try {
@@ -190,7 +198,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-retail-con{
+.p-retail-con {
   padding-bottom: 70px;
 }
 .p-information {

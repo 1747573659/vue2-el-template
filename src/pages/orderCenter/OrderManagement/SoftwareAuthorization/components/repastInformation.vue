@@ -216,6 +216,10 @@ export default {
           this.form.detailDTOList = []
           this.getProductStock()
         } catch (error) {}
+      } else {
+        const resetMerchantDTO = { merchantNo: '', merchantVersion: '', relationProductName: '', storeCount: '', applicationModule: 101 }
+        this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetMerchantDTO)
+        this.form.detailDTOList = []
       }
     },
     handleProductVisible() {
@@ -257,7 +261,7 @@ export default {
       }
     },
     async getCustList() {
-      const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
+      const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo, type: 0 })
       this.custListData = res
       this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
     },
@@ -272,7 +276,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-repast-con{
+.p-repast-con {
   padding-bottom: 70px;
 }
 .p-information {
@@ -337,9 +341,9 @@ export default {
     }
   }
 }
-.e-column-remark{
+.e-column-remark {
   .cell {
-      display: inline-block;
-    }
+    display: inline-block;
+  }
 }
 </style>
