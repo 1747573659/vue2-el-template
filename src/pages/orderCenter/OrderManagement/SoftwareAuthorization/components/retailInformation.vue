@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="p-retail-con">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <span class="p-card-title">商户信息</span>
@@ -62,15 +62,14 @@
         </template>
         <template v-else>
           <el-table-column label="当前状态">
-            <template slot-scope="scope">{{ ['未开通', '已开通'][scope.row.currentState] }}</template>
+            <template slot-scope="scope">{{ ['未开通', '已开通'][scope.row.openCustAssistantApp] }}</template>
           </el-table-column>
         </template>
         <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
       </el-table>
@@ -115,7 +114,7 @@ export default {
     handleDelayHour(val) {
       this.form.authOrderDTO.inventoryAmount = val
       this.form.detailDTOList.forEach(item => {
-        item.delayValidTime = item.currentValidTime ? this.setDelayValidTime(item.currentValidTime) : ''
+        item.delayValidTime = item.currentValidTime ? dayjs(this.setDelayValidTime(item.currentValidTime)).subtract(1, 'day').format('YYYY-MM-DD 00:00:00') : ''
         item.useInventory = val
       })
     },
@@ -125,12 +124,12 @@ export default {
       this.form.detailDTOList = [
         {
           currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
-          delayValidTime: this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : '',
+          delayValidTime: this.merchantInfo.KMValidity ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity)).subtract(1, 'day').format('YYYY-MM-DD 00:00:00') : '',
           orderInventory: this.productStockObj?.totalAmount ?? 0,
           useInventory: this.form.merchantDTO.delayHour,
           productCode: this.merchantInfo.productCode,
           remark: '',
-          currentState: this.merchantInfo.OpenCustAssistantApp
+          openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp
         }
       ]
     },
@@ -150,8 +149,10 @@ export default {
       }
       this.form.merchantDTO.delayHour = 1
       if (this.form.detailDTOList.length > 0) {
-        if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) this.form.detailDTOList = []
-        else if (this.form.merchantDTO.merchantVersion === '3') {
+        if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) {
+          this.form.merchantDTO.applicationModule = ''
+          this.form.detailDTOList = []
+        } else if (this.form.merchantDTO.merchantVersion === '3') {
           this.form.detailDTOList.forEach(item => {
             item.currentValidTime = `${this.merchantInfo?.KMValidity} 00:00:00` ?? ''
             item.delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : ''
@@ -189,6 +190,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.p-retail-con{
+  padding-bottom: 70px;
+}
 .p-information {
   &-tab {
     /deep/ {

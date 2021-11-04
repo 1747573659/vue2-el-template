@@ -230,6 +230,7 @@ export default {
     },
     handleProductTypeChange() {
       this.licensedProducts = [{ name: '全部', code: '' }]
+      this.form.productCodes = []
       this.$refs.productCode.selectVal = ''
       this.getProductByPage()
     },

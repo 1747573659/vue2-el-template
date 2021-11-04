@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="p-clound-con">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <span class="p-card-title">商户信息</span>
@@ -91,8 +91,7 @@
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail' && activeName === '2'">
@@ -162,7 +161,7 @@ export default {
       productVal: '',
       checkProductTabLock: false,
       basicProductData: [],
-      currentPage: 0,
+      currentPage: 1,
       pageSize: 10,
       totalPage: 0,
       appModuleObj: {},
@@ -307,7 +306,7 @@ export default {
         const data = {
           condition: this.productVal,
           PageSize: this.pageSize,
-          PageIndex: this.currentPage,
+          PageIndex: --this.currentPage,
           CustId: this.form.merchantDTO.merchantNo,
           AppId: this.appModuleObj.outCode,
           flag: -1
@@ -338,6 +337,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.p-clound-con{
+  padding-bottom: 70px;
+}
 .p-information {
   &-tab {
     /deep/ {

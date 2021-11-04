@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="p-repast-con">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <span class="p-card-title">商户信息</span>
@@ -67,10 +67,9 @@
         </el-table-column>
         <el-table-column prop="orderInventory" label="下单时库存"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存"></el-table-column>
-        <el-table-column label="备注">
+        <el-table-column label="备注" class-name="e-column-remark">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
@@ -273,11 +272,19 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.p-repast-con{
+  padding-bottom: 70px;
+}
 .p-information {
   &-tab {
     /deep/ {
       .el-input__inner {
         text-align: right;
+      }
+      .e-column-remark {
+        .cell {
+          display: inline-block;
+        }
       }
     }
     .e-select-con {
@@ -329,5 +336,10 @@ export default {
       text-align: left !important;
     }
   }
+}
+.e-column-remark{
+  .cell {
+      display: inline-block;
+    }
 }
 </style>

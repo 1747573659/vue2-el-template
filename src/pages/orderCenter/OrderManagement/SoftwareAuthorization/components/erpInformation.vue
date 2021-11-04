@@ -1,5 +1,5 @@
 <template>
-  <section>
+  <section class="p-erpInformation-con">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <span class="p-card-title">商户信息</span>
@@ -77,8 +77,7 @@
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="2" clearable class="e-product_remark"></el-input>
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
@@ -90,7 +89,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择产品模块" width="700px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :destroy-on-close="true" title="选择产品模块" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
           <el-input v-model="productVal" maxlength="50" placeholder="模块编码/模块名称" clearable></el-input>
@@ -162,7 +161,7 @@ export default {
         return {
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
-          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum??0,
+          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
           orderInventory: 0,
           authNum: 1,
           productCode: item.productId,
@@ -245,6 +244,9 @@ export default {
 </script>
 
 <style lang="scss" scoped>
+.p-erpInformation-con {
+  padding-bottom: 70px;
+}
 .p-information {
   &-tab {
     /deep/ {
@@ -261,7 +263,7 @@ export default {
       }
     }
   }
-  &-con{
+  &-con {
     padding-bottom: 70px;
   }
 }

@@ -31,7 +31,7 @@
           size="small"
           type="primary"
           plain
-          :disabled="productType === 3 && form.merchantDTO.applicationModule === 2 && form.detailDTOList[0].currentState === 1"
+          :disabled="productType === 3 && form.merchantDTO.applicationModule === 2 && form.detailDTOList[0].openCustAssistantApp === 1"
           :loading="checkSaveBtnLoad"
           @click="handleSave"
         >
@@ -151,7 +151,7 @@ export default {
     this.form = deepClone(this.baseInfoMap.get(this.productType).form)
   },
   mounted() {
-    this.getHandlerMan()
+    if (this.$route.query.status === 'add') this.getHandlerMan()
     if ([3, 4].includes(this.productType)) this.$refs.information.getCustList()
     if (['edit', 'detail'].includes(this.$route.query.status)) this.getDetail()
   },
@@ -256,9 +256,9 @@ export default {
       }
     },
     handleQueryParams() {
-      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
+      const { handMan, handManName, inventoryAmount, id, billNo } = this.form.authOrderDTO
       return {
-        authOrderVO: { handMan, inventoryAmount, agentId: this.userBaseInfo.agentId, createUser: JSON.parse(localStorage.userInfo).id, id, billNo },
+        authOrderVO: { handMan, inventoryAmount, agentId: this.userBaseInfo.agentId, createUser: this.userBaseInfo.id, id, billNo },
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
