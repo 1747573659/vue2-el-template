@@ -9,7 +9,71 @@ const urlLinks = {
   queryPage: '/alipay/mini/queryPage',
   queryCategory: '/alipay/mini/queryCategory',
   queryArea: '/alipay/mini/queryArea',
-  queryAllStatus:'/alipay/mini/queryAllStatus'
+  queryAllStatus: '/alipay/mini/queryAllStatus',
+  queryAllVersion: '/alipay/mini/queryAllVersion',
+  versionUpload: '/alipay/mini/versionUpload',
+  queryVersion: '/alipay/mini/queryVersion',
+  queryAudit: '/alipay/mini/queryAudit',
+  online: '/alipay/mini/online',
+  offline: '/alipay/mini/offline',
+  qrcodeCreate: '/alipay/mini/qrcodeCreate',
+  versionReUpload: '/alipay/mini/versionReUpload',
+}
+export function versionReUpload(data) {
+  return request({
+    url: urlLinks.versionReUpload,
+    method: 'post',
+    data
+  })
+}
+export function qrcodeCreate(data) {
+  return request({
+    url: urlLinks.qrcodeCreate,
+    method: 'post',
+    data
+  })
+}
+export function offline(data) {
+  return request({
+    url: urlLinks.offline,
+    method: 'post',
+    data
+  })
+}
+export function online(data) {
+  return request({
+    url: urlLinks.online,
+    method: 'post',
+    data
+  })
+}
+export function queryAudit(data) {
+  return request({
+    url: urlLinks.queryAudit,
+    method: 'post',
+    data
+  })
+}
+export function queryVersion(data) {
+  return request({
+    url: urlLinks.queryVersion,
+    method: 'post',
+    data
+  })
+}
+export function versionUpload(data) {
+  return request({
+    url: urlLinks.versionUpload,
+    method: 'post',
+    data
+  })
+}
+export function queryAllVersion(data) {
+  return request({
+    url: urlLinks.queryAllVersion,
+    method: 'post',
+    data
+  })
 }
 export function queryAllStatus(data) {
   return request({
@@ -47,26 +111,26 @@ export function saveBaseData(data) {
   })
 }
 export function modifyBaseData(data) {
-    return request({
-      url: urlLinks.modifyBaseData,
-      method: 'post',
-      params: data
-    })
-  }
+  return request({
+    url: urlLinks.modifyBaseData,
+    method: 'post',
+    params: data
+  })
+}
 export function createLinkUrl(data) {
-    return request({
-      url: urlLinks.createLinkUrl,
-      method: 'post',
-      params: data
-    })
-  }
+  return request({
+    url: urlLinks.createLinkUrl,
+    method: 'post',
+    params: data
+  })
+}
 export function auditReApply(data) {
-    return request({
-      url: urlLinks.auditReApply,
-      method: 'post',
-      params: data
-    })
-  }
+  return request({
+    url: urlLinks.auditReApply,
+    method: 'post',
+    params: data
+  })
+}
 export function auditApply(data) {
   return request({
     url: urlLinks.auditApply,
