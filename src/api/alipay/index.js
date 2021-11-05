@@ -18,6 +18,14 @@ const urlLinks = {
   offline: '/alipay/mini/offline',
   qrcodeCreate: '/alipay/mini/qrcodeCreate',
   versionReUpload: '/alipay/mini/versionReUpload',
+  queryByDatumId: '/alipay/mini/queryByDatumId',
+}
+export function queryByDatumId(data) {
+  return request({
+    url: urlLinks.queryByDatumId,
+    method: 'post',
+    data
+  })
 }
 export function versionReUpload(data) {
   return request({

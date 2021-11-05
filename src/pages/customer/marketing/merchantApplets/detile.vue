@@ -103,7 +103,7 @@
         </el-row>
       </el-form>
       <div style="width:100%;text-align: center;padding:20px 0px  100px 0px">
-        <el-button type="primary" plain>暂存</el-button>
+        <el-button v-if="$route.query.operation=='add'" type="primary" plain>暂存</el-button>
         <el-button type="primary">提交</el-button>
         <el-button plain>取消</el-button>
       </div>
@@ -112,7 +112,7 @@
 </template>
 <script>
 import picUpload from './../picUpload'
-import { auditApply, saveBaseData, queryCategory, queryArea } from '@/api/alipay'
+import { auditApply, saveBaseData, modifyBaseData, queryCategory, queryArea, queryByDatumId } from '@/api/alipay'
 import { fileServer } from '@/api/fileServe/fileServe.js'
 export default {
   name: 'marketingDetile',
@@ -149,7 +149,7 @@ export default {
       callback()
     }
     return {
-      fileServer: '', // 上次域名
+      fileServer: '', // 上传域名
       form: {
         miniName: '', // 小程序名称
         miniEnglishName: '',// 小程序英文名
@@ -173,7 +173,10 @@ export default {
         lazy: true,
         async lazyLoad (node, resolve) {
           const { level } = node;
-          // await queryCategory()
+          await queryCategory({
+            categoryId: "",
+            topParent: true
+          })
           setTimeout(() => {
             const nodes = Array.from({ length: level + 1 })
               .map(item => ({
@@ -190,7 +193,12 @@ export default {
         lazy: true,
         async lazyLoad (node, resolve) {
           const { level } = node;
-          // await queryArea()
+          await queryArea(
+            {
+              areaCode: "",
+              topParent: true
+            }
+          )
           setTimeout(() => {
             const nodes = Array.from({ length: level + 1 })
               .map(item => ({
@@ -203,7 +211,6 @@ export default {
           }, 1000);
         }
       },
-      // ==============
       miniCategoryIdsOption: [],
       rules: {
         miniName: [
@@ -259,9 +266,18 @@ export default {
     }
   },
   created () {
+    console.log(this.$route.query)
     this.getFileServer()
   },
   methods: {
+    // 基础资料维护
+    async saveBaseData () {
+
+    },
+    // 更改
+    async modifyBaseData () {
+
+    },
     // 获取上次域名
     async getFileServer () {
       this.fileServer = await fileServer()

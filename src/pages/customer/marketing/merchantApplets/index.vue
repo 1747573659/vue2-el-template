@@ -58,8 +58,8 @@
         <el-table-column prop="miniDesc" label="备注"></el-table-column>
         <el-table-column label="基础资料维护">
           <template scope="scope">
-            <el-button v-if="[1,2].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row)" type="text">基础资料维护</el-button>
-            <el-button v-if="[8,9,10,11].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row)" type="text">更改小程序资料</el-button>
+            <el-button v-if="[1,2].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'add')" type="text">基础资料维护</el-button>
+            <el-button v-if="[8,9,10,11].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'edit')" type="text">更改小程序资料</el-button>
           </template>
         </el-table-column>
         <el-table-column label="操作" width='220'>
@@ -67,7 +67,8 @@
             <el-button :loading="loadingField=='versionUpload'" v-if="[3].includes(scope.row.status)" @click="versionUpload(scope.row)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">立即构建</el-button>
             <el-button :loading="loadingField=='versionReUpload'" v-if="[10].includes(scope.row.status)" @click="versionReUpload(scope.row)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">重新构建</el-button>
             <el-button :loading="loadingField=='queryVersion'" v-if="[4].includes(scope.row.status)" @click="queryVersion(scope.row)" v-permission="'MARKETINGMANAGEMENTSTATUSlOOK'" type="text">构建状态查询</el-button>
-            <el-button :loading="loadingField=='auditApply'" v-if="[5,11].includes(scope.row.status)" @click="auditApply(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">提交审核</el-button>
+            <el-button :loading="loadingField=='auditApply'" v-if="[5].includes(scope.row.status)" @click="auditApply(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">提交审核</el-button>
+            <el-button :loading="loadingField=='auditReApply'" v-if="[11].includes(scope.row.status)" @click="auditReApply(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">重新提交审核</el-button>
             <el-button :loading="loadingField=='queryAudit'" v-if="[6].includes(scope.row.status)" @click="queryAudit(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'" type="text">审核状态查询</el-button>
             <el-button :loading="loadingField=='online'" v-if="[7,9].includes(scope.row.status)" @click="online(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
             <el-button :loading="loadingField=='offline'" v-if="[8].includes(scope.row.status)" @click="offline(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
@@ -99,7 +100,7 @@
 import selectPage from './components/selectPage.vue'
 import { codeImgDown } from '@/utils/codeImgDown'
 import { queryShopListByPage } from '@/api/customer/merchant'
-import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, versionUpload, qrcodeCreate, queryVersion, queryAudit, online, offline, versionReUpload } from '@/api/alipay'
+import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, versionUpload, auditReApply, qrcodeCreate, queryVersion, queryAudit, online, offline, versionReUpload } from '@/api/alipay'
 import { getLocal } from '@/utils/storage'
 export default {
   name: 'marketingManagement',
@@ -222,6 +223,21 @@ export default {
         this.loadingField = ''
       }
     },
+    // 重新提交审核
+    async auditReApply (row) {
+      this.loadingField = 'auditReApply'
+      try {
+        await auditReApply({
+          currentStatus: row.status,
+          id: row.id
+        })
+        this.$message.success('已提交')
+        this.getTable()
+      } catch (error) {
+      } finally {
+        this.loadingField = ''
+      }
+    },
     // 审核状态查询
     async queryAudit (row) {
       this.loadingField = 'queryAudit'
@@ -324,10 +340,11 @@ export default {
       codeImgDown(this.$refs.code, qrcodeName)
     },
     // 详情
-    marketingDetile (row) {
+    marketingDetile (row, operation) {
       this.$router.push({
         name: 'marketingDetile', query: {
-          id: row.id || ''
+          id: row.id || '',
+          operation
         }
       })
     },
