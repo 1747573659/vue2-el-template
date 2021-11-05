@@ -89,9 +89,6 @@ export const purchaseOrder = {
       try {
         const res = await queryUserPage({ userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
-        if (this.ordererData.every(item => item.contactor !== '全部')) {
-          this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
-        }
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },

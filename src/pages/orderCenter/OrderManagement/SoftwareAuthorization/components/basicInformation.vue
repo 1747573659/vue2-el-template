@@ -181,18 +181,35 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     getYsInformationObj() {
-      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
-        this.$message({ type: 'warning', message: '请先选择商户或应用系统模块' })
+      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo|| !this.form.addAuthOrderDetailDTOList?.[0]?.productCode) {
+        this.$message({ type: 'warning', message: '请先选择商户或已开通应用系统模块' })
       } else {
-        const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
-        return {
-          authOrderVO: Object.assign(
-            this.handleQueryParams().authOrderVO,
-            { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount },
-            { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
-          ),
-          addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
-          renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
+        const addAuthInsufficientObj = this.form.addAuthOrderDetailDTOList.filter(item => item.useInventory > item.orderInventory)
+        const renewAuthInsufficientObj = this.form.renewAuthOrderDetailDTOList.filter(item => item.useInventory > this.$refs.information.productStockObj?.totalAmount)
+        if (addAuthInsufficientObj.length > 0 || renewAuthInsufficientObj.length > 0) {
+          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${this.$refs.information.productStockObj?.totalAmount}`, {
+            title: '系统提示',
+            type: 'warning',
+            confirmButtonText: '去采购',
+            cancelButtonText: '返回修改',
+            beforeClose: (action, instance, done) => {
+              if (action === 'confirm') {
+                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.appModuleObj.productCode } })
+              } else this.$refs.information.getProductStock()
+              done()
+            }
+          }).catch(() => {})
+        } else {
+          const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
+          return {
+            authOrderVO: Object.assign(
+              this.handleQueryParams().authOrderVO,
+              { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount },
+              { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
+            ),
+            addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
+            renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
+          }
         }
       }
     },
@@ -200,15 +217,31 @@ export default {
       if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantNo) {
         this.$message({ type: 'warning', message: '请先选择商户或产品模块信息' })
       } else {
-        const { productCode } = this.form.authOrderDTO
-        const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
-        return {
-          authOrderVO: Object.assign(
-            this.handleQueryParams().authOrderVO,
-            { orderStatus: 0, productType: 4, merchantId, useModal, delayCount },
-            { productCode: this.$refs.information.merchantInfo.productCode || productCode }
-          ),
-          orderDetailVos: this.handleQueryParams().orderDetailVos
+        const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
+        if (insufficientObj.length > 0) {
+          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
+            title: '系统提示',
+            type: 'warning',
+            confirmButtonText: '去采购',
+            cancelButtonText: '返回修改',
+            beforeClose: (action, instance, done) => {
+              if (action === 'confirm') {
+                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
+              } else this.$refs.information.getProductStock()
+              done()
+            }
+          }).catch(() => {})
+        } else {
+          const { productCode } = this.form.authOrderDTO
+          const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
+          return {
+            authOrderVO: Object.assign(
+              this.handleQueryParams().authOrderVO,
+              { orderStatus: 0, productType: 4, merchantId, useModal, delayCount },
+              { productCode: this.$refs.information.merchantInfo.productCode || productCode }
+            ),
+            orderDetailVos: this.handleQueryParams().orderDetailVos
+          }
         }
       }
     },
@@ -216,14 +249,30 @@ export default {
       if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantId) {
         this.$message({ type: 'warning', message: '请先选择商户或产品模块信息' })
       } else {
-        const { merchantId, applicationModule: useModal, delayHour: delayCount, productCode } = this.form.merchantDTO
-        return {
-          authOrderVO: Object.assign(
-            this.handleQueryParams().authOrderVO,
-            { orderStatus: 0, productType: 3, merchantId, useModal, delayCount },
-            { productCode: this.$refs.information.merchantInfo.productCode || productCode }
-          ),
-          orderDetailVos: this.handleQueryParams().orderDetailVos
+        const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
+        if (insufficientObj.length > 0) {
+          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
+            title: '系统提示',
+            type: 'warning',
+            confirmButtonText: '去采购',
+            cancelButtonText: '返回修改',
+            beforeClose: (action, instance, done) => {
+              if (action === 'confirm') {
+                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
+              } else this.$refs.information.getProductStock()
+              done()
+            }
+          }).catch(() => {})
+        } else {
+          const { merchantId, applicationModule: useModal, delayHour: delayCount, productCode } = this.form.merchantDTO
+          return {
+            authOrderVO: Object.assign(
+              this.handleQueryParams().authOrderVO,
+              { orderStatus: 0, productType: 3, merchantId, useModal, delayCount },
+              { productCode: this.$refs.information.merchantInfo.productCode || productCode }
+            ),
+            orderDetailVos: this.handleQueryParams().orderDetailVos
+          }
         }
       }
     },
@@ -256,23 +305,21 @@ export default {
       }
     },
     handleQueryParams() {
-      const { handMan, handManName, inventoryAmount, id, billNo } = this.form.authOrderDTO
+      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
       return {
         authOrderVO: { handMan, inventoryAmount, agentId: this.userBaseInfo.agentId, createUser: this.userBaseInfo.id, id, billNo },
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
     setOrderSave(action = 0) {
-      try {
-        let data = {}
-        const status = this.$route.query.status === 'add'
-        if (this.productType === 1) data = this.getErpInformationObj()
-        else if (this.productType === 3) data = this.getWlsInformationObj()
-        else if (this.productType === 4) data = this.getWcyInformationObj()
-        else if (this.productType === 5) data = this.getYsInformationObj()
-        if (!data) return new Promise((resolve, reject) => reject(new Error()))
-        return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data, action)
-      } catch (error) {}
+      let data = {}
+      const status = this.$route.query.status === 'add'
+      if (this.productType === 1) data = this.getErpInformationObj()
+      else if (this.productType === 3) data = this.getWlsInformationObj()
+      else if (this.productType === 4) data = this.getWcyInformationObj()
+      else if (this.productType === 5) data = this.getYsInformationObj()
+      if (!data) return new Promise((resolve, reject) => reject(new Error()))
+      return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data, action)
     },
     handleSave() {
       this.checkSaveBtnLoad = true

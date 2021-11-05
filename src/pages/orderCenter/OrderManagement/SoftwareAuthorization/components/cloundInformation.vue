@@ -291,6 +291,7 @@ export default {
         const { CustId: merchantNo, CustName } = this.shopPageData.filter(item => item.CustId === val)[0]
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, merchantName: CustName, CustName })
         if (this.form.merchantDTO.applicationSystem) {
+          this.appModuleObj = this.appModulesData.find(item => item.code === this.form.merchantDTO.applicationSystem)
           const res = await authOrderYsTrialPointDetail({ custId: merchantNo, appId: this.appModuleObj.outCode, custName: CustName }).catch(() => {})
           this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
           if (res) {

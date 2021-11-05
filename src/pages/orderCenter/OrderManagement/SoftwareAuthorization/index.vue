@@ -222,14 +222,11 @@ export default {
       try {
         const res = await queryUserPage({ userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
-        if (this.ordererData.every(item => item.userName !== '全部')) {
-          this.ordererData = [{ userName: '全部', id: -1 }].concat(this.ordererData)
-        }
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
     handleProductTypeChange() {
-      this.licensedProducts = [{ name: '全部', code: '' }]
+      this.licensedProducts = []
       this.form.productCodes = []
       this.$refs.productCode.selectVal = ''
       this.getProductByPage()
@@ -238,7 +235,6 @@ export default {
       try {
         const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 1, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
         this.licensedProducts = this.licensedProducts.concat(res.results || [])
-        if (this.licensedProducts.every(item => item.name !== '全部')) this.licensedProducts = [{ name: '全部', code: '' }].concat(this.licensedProducts)
         this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     }
