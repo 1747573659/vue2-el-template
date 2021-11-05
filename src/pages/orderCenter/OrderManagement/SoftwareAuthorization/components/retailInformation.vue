@@ -81,7 +81,7 @@
 import dayjs from 'dayjs'
 import { delayTimes, versionMap } from '../data'
 
-import { authOrderWlsCustList, queryByAgentProduct, authOrderWlsCustInfo } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { authOrderWlsCustList, queryByAgentProduct, authOrderWlsCustInfo, queryByAgentProductAndModule } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   props: {
@@ -122,24 +122,45 @@ export default {
         item.useInventory = val
       })
     },
-    handleApplicationModule() {
+    handleApplicationModule(val) {
       if (!this.form.merchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
-        this.form.detailDTOList = [
-          {
-            currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
-            delayValidTime: this.merchantInfo.KMValidity
-              ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
-                  .subtract(1, 'day')
-                  .format('YYYY-MM-DD 00:00:00')
-              : '',
-            orderInventory: this.productStockObj?.totalAmount ?? 0,
-            useInventory: this.form.merchantDTO.delayHour,
-            productCode: this.merchantInfo.productCode,
-            remark: '',
-            openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp
-          }
-        ]
+        if (val === 2) this.getProductStock()
+        if (this.$route.query.status === 'edit') {
+          authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId }).then(res => {
+            this.form.detailDTOList = [
+              {
+                currentValidTime: `${res?.KMValidity} 00:00:00` ?? '',
+                delayValidTime: res.KMValidity
+                  ? dayjs(this.setDelayValidTime(res.KMValidity))
+                      .subtract(1, 'day')
+                      .format('YYYY-MM-DD 00:00:00')
+                  : '',
+                orderInventory: this.productStockObj?.totalAmount ?? 0,
+                useInventory: this.form.merchantDTO.delayHour,
+                productCode: this.merchantInfo.productCode,
+                remark: '',
+                openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp
+              }
+            ]
+          })
+        } else {
+          this.form.detailDTOList = [
+            {
+              currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
+              delayValidTime: this.merchantInfo.KMValidity
+                ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
+                    .subtract(1, 'day')
+                    .format('YYYY-MM-DD 00:00:00')
+                : '',
+              orderInventory: this.productStockObj?.totalAmount ?? 0,
+              useInventory: this.form.merchantDTO.delayHour,
+              productCode: this.merchantInfo.productCode,
+              remark: '',
+              openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp
+            }
+          ]
+        }
         this.form.authOrderDTO.inventoryAmount = 1
       }
       this.form.merchantDTO.delayHour = 1
@@ -173,7 +194,10 @@ export default {
       try {
         this.checkProductStockLoad = true
         const productCode = this.$route.query.status === 'add' ? this.merchantInfo?.productCode : this.form.authOrderDTO.productCode
-        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
+        this.productStockObj =
+          this.form.merchantDTO.applicationModule !== 2
+            ? await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })
+            : await queryByAgentProductAndModule({ agentId: this.userBaseInfo.agentId, productCode, moduleId: 'WXXCX' })
         this.form.detailDTOList.forEach(item => {
           item.orderInventory = this.productStockObj?.totalAmount ?? 0
         })

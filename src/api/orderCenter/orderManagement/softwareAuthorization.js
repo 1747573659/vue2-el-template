@@ -333,3 +333,12 @@ export function authOrderLog(data) {
     method: 'POST'
   })
 }
+
+// 操作日志
+export function queryByAgentProductAndModule(data) {
+  return request({
+    url: '/soft/inventory/queryByAgentProductAndModule',
+    method: 'POST',
+    data: qs.stringify(data)
+  })
+}

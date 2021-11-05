@@ -89,7 +89,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :destroy-on-close="true" title="选择产品模块" width="700px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" :destroy-on-close="true" title="选择产品模块" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
           <el-input v-model="productVal" maxlength="50" placeholder="模块编码/模块名称" clearable></el-input>

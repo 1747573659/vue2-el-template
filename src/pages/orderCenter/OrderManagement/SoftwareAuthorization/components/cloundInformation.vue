@@ -118,7 +118,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :destroy-on-close="true" title="选择授权对象" width="800px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" :destroy-on-close="true" title="选择授权对象" width="800px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="50" placeholder="授权对象编码/名称" clearable></el-input>
@@ -235,7 +235,7 @@ export default {
     async getProductStock() {
       try {
         this.checkProductStockLoad = true
-        const productCode = this.$route.query.status === 'add' ? this.appModuleObj?.productCode : this.form.authOrderDTO.productCode
+        const productCode = this.appModuleObj?.productCode ?? this.form.authOrderDTO.productCode
         this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
         if (this.form.addAuthOrderDetailDTOList.length > 0) {
           this.form.addAuthOrderDetailDTOList.forEach(item => {
@@ -269,7 +269,8 @@ export default {
                     orderInventory: this.productStockObj?.totalAmount ?? 0,
                     addNum: 1,
                     useInventory: NP.times(this.form.merchantDTO.delayHour, 1),
-                    remark: ''
+                    remark: '',
+                    billNo: this.form.authOrderDTO?.billNo??''
                   }
                 ]
               }
@@ -304,7 +305,8 @@ export default {
                     orderInventory: this.productStockObj?.totalAmount ?? 0,
                     addNum: 1,
                     useInventory: NP.times(this.form.merchantDTO.delayHour, 1),
-                    remark: ''
+                    remark: '',
+                    billNo: this.form.authOrderDTO?.billNo??''
                   }
                 ]
               }
@@ -331,7 +333,8 @@ export default {
           currentValidTime: item.EndTime,
           delayValidTime: this.setDelayValidTime(item.EndTime),
           useInventory: this.form.merchantDTO.delayHour,
-          remark: ''
+          remark: '',
+          billNo: this.form.authOrderDTO?.billNo??''
         }
       })
       this.form.renewAuthOrderDetailDTOList = this.form.renewAuthOrderDetailDTOList.concat(Selections)

@@ -153,7 +153,11 @@ export default {
   mounted() {
     if (this.$route.query.status === 'add') this.getHandlerMan()
     if ([3, 4].includes(this.productType)) this.$refs.information.getCustList()
-    if (['edit', 'detail'].includes(this.$route.query.status)) this.getDetail()
+    if (['edit', 'detail'].includes(this.$route.query.status)) {
+      this.getDetail().then(() => {
+        if (this.$route.query.status === 'edit') this.$refs.information.getProductStock()
+      })
+    }
   },
   methods: {
     handleVerify() {
@@ -181,13 +185,13 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     getYsInformationObj() {
-      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo|| !this.form.addAuthOrderDetailDTOList?.[0]?.productCode) {
+      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo || !this.form.addAuthOrderDetailDTOList?.[0]?.productCode) {
         this.$message({ type: 'warning', message: '请先选择商户或已开通应用系统模块' })
       } else {
-        const addAuthInsufficientObj = this.form.addAuthOrderDetailDTOList.filter(item => item.useInventory > item.orderInventory)
-        const renewAuthInsufficientObj = this.form.renewAuthOrderDetailDTOList.filter(item => item.useInventory > this.$refs.information.productStockObj?.totalAmount)
-        if (addAuthInsufficientObj.length > 0 || renewAuthInsufficientObj.length > 0) {
-          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${this.$refs.information.productStockObj?.totalAmount}`, {
+        const a = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
+        const insufficientObj = a.filter(item => item.useInventory > item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
+        if (insufficientObj.length > 0) {
+          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
             title: '系统提示',
             type: 'warning',
             confirmButtonText: '去采购',

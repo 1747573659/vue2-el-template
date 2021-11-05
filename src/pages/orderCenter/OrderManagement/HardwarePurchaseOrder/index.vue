@@ -41,7 +41,7 @@
               <km-select-page
                 v-model="form.createUser"
                 :data.sync="ordererData"
-                option-label="contactor"
+                option-label="userName"
                 option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"

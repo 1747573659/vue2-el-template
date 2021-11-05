@@ -81,7 +81,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" :destroy-on-close="true" title="选择授权对象" width="700px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" :close-on-click-modal="false" :destroy-on-close="true" title="选择授权对象" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="50" :placeholder="`请输入${form.merchantDTO.applicationModule === 101 ? '门店名称' : '税号'}`" clearable></el-input>
