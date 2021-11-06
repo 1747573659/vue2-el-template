@@ -188,14 +188,13 @@ export default {
     },
     async handleApplicationModule(val) {
       this.form.merchantDTO.delayHour = 1
-      if (this.$route.query.status === 'edit') {
+      if (this.$route.query.status === 'edit' || val === 101) {
         if (this.form.merchantDTO.merchantNo) {
           this.merchantInfo = await this.getWcyCustInfo()
           this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         } else this.$message({ type: 'warning', message: '请先选择商户' })
       }
       if (val !== 101) await this.handleZbProduct()
-      console.info(this.merchantInfo)
       if (val === 103 && this.merchantInfo.productCode) {
         this.form.detailDTOList = [
           {

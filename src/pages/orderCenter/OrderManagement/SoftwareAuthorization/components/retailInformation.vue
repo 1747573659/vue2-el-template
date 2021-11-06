@@ -118,7 +118,7 @@ export default {
       this.form.merchantDTO.delayHour = 1
       if (!this.form.merchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
-        if (this.$route.query.status === 'edit') this.merchantInfo = await this.getWlsCustInfo()
+        if (this.$route.query.status === 'edit' || val === 1) this.merchantInfo = await this.getWlsCustInfo()
         if (this.merchantInfo.productCode) {
           if (val === 2) await this.handleZbProduct()
           this.getProductStock()

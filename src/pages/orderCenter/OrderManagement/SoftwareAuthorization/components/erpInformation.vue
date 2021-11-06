@@ -43,7 +43,7 @@
           刷新库存
         </el-button>
       </div>
-      <el-table :data="form.erpAuthOrderDetails" show-summary :summary-method="getSummaries" class="p-information-tab">
+      <el-table ref="table" :data="form.erpAuthOrderDetails" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>

@@ -357,6 +357,7 @@ export default {
         setTimeout(() => {
           if (this.productType === 1) {
             this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
+            console.info(this.$refs.information.$refs.table)
             this.$refs.information.$refs.unionChannel.selectVal = res?.erpAuthOrderDetails?.[0]?.unionChannelName ?? ''
           }
           if (this.productType === 5) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
