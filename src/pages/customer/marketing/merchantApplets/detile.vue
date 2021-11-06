@@ -247,7 +247,6 @@ export default {
           resolve(res);
         }
       },
-      miniCategoryIdsOption: [],
       rules: {
         miniName: [
           { required: true, message: '请输入小程序名称', trigger: 'blur' },
@@ -352,7 +351,6 @@ export default {
       this.form.thirdSpecialLicensePic = res.thirdSpecialLicensePic
     },
     initSubData () {
-      console.log(this.form)
       let subData = {
         miniName: this.form.miniName,
         miniEnglishName: this.form.miniEnglishName,
