@@ -195,7 +195,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            this.setOrderSave()
+            this.setOrderSave(1)
               .then(async () => {
                 await replaceOrderSubmit({ id: parseFloat(this.$route.query.id) })
                 this.getDetail().then(() => {
@@ -237,7 +237,7 @@ export default {
       if (val) {
         if (this.agentProductList) {
           this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-          replaceableNum = Math.floor(NP.divide(this.agentProductList.commonAmount, this.replaceProduct.reduceInventory))
+          replaceableNum = Math.floor(NP.divide(this.agentProductList?.commonAmount??0, this.replaceProduct.reduceInventory))
           useInventory = NP.times(1, this.replaceProduct.reduceInventory)
         }
       }
@@ -257,7 +257,7 @@ export default {
               replaceNum: 1,
               replaceProductId: '',
               replaceProductName: '',
-              orderInventory: this.agentProductList.commonAmount,
+              orderInventory: this.agentProductList?.commonAmount??0,
               replaceableNum: 0,
               useInventory: 0,
               remark: ''

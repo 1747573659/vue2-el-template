@@ -129,13 +129,15 @@ import { productInfo } from '@/api/orderCenter/orderManagement'
 export default {
   mixins: [basicInfoMixin],
   activated() {
-    if(this.$route.query.productCode) this.handleToStock()
+    if (this.$route.query.productCode) this.handleToStock()
   },
   mounted() {
-    if(this.$route.query.productCode) this.handleToStock()
+    if (this.$route.query.productCode) this.handleToStock()
   },
   methods: {
     async handleToStock() {
+      if (this.form.id) delete this.form.id
+      if (this.form.purchaseOrderDTO.id) delete this.form.purchaseOrderDTO.id
       const { results = [] } = await productInfo({ info: this.$route.query.productCode.trim(), page: 1, rows: 10, orderType: 1 })
       if (results.length > 0) {
         this.form.orderItemList = [

@@ -63,7 +63,7 @@
               ref="unionChannel"
               v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)"
               size="small"
-              v-model="scope.row.unionChannelName"
+              v-model="scope.row.unionChannel"
               option-label="channelName"
               option-value="channelCode"
               :data.sync="channelData"

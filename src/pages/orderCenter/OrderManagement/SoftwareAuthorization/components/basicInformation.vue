@@ -38,7 +38,15 @@
           保存
         </el-button>
       </template>
-      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      <el-button
+        size="small"
+        type="primary"
+        v-if="$route.query.status === 'edit'"
+        v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'"
+        :loading="checkVerifyBtnLoad"
+        @click="handleVerify"
+        >提交</el-button
+      >
     </div>
   </section>
 </template>

@@ -114,16 +114,24 @@ export default {
         item.useInventory = val
       })
     },
-    async handleApplicationModule() {
+    async handleApplicationModule(val) {
       this.form.merchantDTO.delayHour = 1
       if (!this.form.merchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
         if (this.$route.query.status === 'edit') this.merchantInfo = await this.getWlsCustInfo()
         if (this.merchantInfo.productCode) {
-          this.setDetailDTOList()
+          if (val === 2) await this.handleZbProduct()
           this.getProductStock()
+          this.setDetailDTOList()
         } else this.form.detailDTOList = []
       }
+    },
+    async handleZbProduct() {
+      try {
+        const res = await queryByAgentProductAndModule({ moduleId: 'WXXCX', productCode: this.merchantInfo.productCode })
+        this.merchantInfo.productCode = res?.productId ?? ''
+        if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
+      } catch (error) {}
     },
     async handleMerchantInfo(val) {
       this.form.merchantDTO.merchantId = val
@@ -135,7 +143,10 @@ export default {
         this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
         if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
         if (!this.merchantInfo.productCode) this.form.detailDTOList = []
-        else this.getProductStock()
+        else {
+          if (this.form.merchantDTO.applicationModule === 2) await this.handleZbProduct()
+          this.getProductStock()
+        }
       } else {
         const resetDTO = { merchantVersion: '', storeCount: '', relationProductName: '', applicationModule: '' }
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetDTO)
@@ -179,9 +190,7 @@ export default {
       try {
         this.checkProductStockLoad = true
         const productCode = this.merchantInfo.productCode || this.form.authOrderDTO.productCode
-        const baseData = { agentId: this.userBaseInfo.agentId, productCode }
-        this.productStockObj =
-          this.form.merchantDTO.applicationModule !== 2 ? await queryByAgentProduct(baseData) : await queryByAgentProductAndModule(Object.assign(baseData, { moduleId: 'WXXCX' }))
+        this.productStockObj = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })
         this.form.detailDTOList.forEach(item => {
           item.orderInventory = this.productStockObj?.totalAmount ?? 0
         })

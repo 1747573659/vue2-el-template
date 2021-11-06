@@ -1,5 +1,5 @@
 <template>
-  <section v-permission.page="'SOFTWARE_INVENTORY_REPLACE_PLUS,SOFTWARE_INVENTORY_REPLACE_EDIT'">
+  <section v-permission.page="'SOFTWARE_INVENTORY_REPLACE_PLUS,SOFTWARE_INVENTORY_REPLACE_EDIT,SOFTWARE_INVENTORY_REPLACE_SUBMIT'">
     <el-tabs v-model="activeName" class="p-detail-tab" @tab-click="handleTabPane">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>

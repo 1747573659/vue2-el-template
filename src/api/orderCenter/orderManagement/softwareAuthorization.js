@@ -334,11 +334,10 @@ export function authOrderLog(data) {
   })
 }
 
-// 操作日志
+// 根据产品编码+模块编码 查询周边产品=商家助手，积分商城，电子发票
 export function queryByAgentProductAndModule(data) {
   return request({
-    url: '/soft/inventory/queryByAgentProductAndModule',
-    method: 'POST',
-    data: qs.stringify(data)
+    url: '/product/queryByZbProduct/' + data.productCode + '/' + data.moduleId,
+    method: 'POST'
   })
 }

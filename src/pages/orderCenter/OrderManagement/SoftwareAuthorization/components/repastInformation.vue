@@ -179,6 +179,13 @@ export default {
         item.useInventory = val
       })
     },
+    async handleZbProduct() {
+      try {
+        const res = await queryByAgentProductAndModule({ moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC', productCode: this.merchantInfo.productCode })
+        this.merchantInfo.productCode = res?.productId ?? ''
+        if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
+      } catch (error) {}
+    },
     async handleApplicationModule(val) {
       this.form.merchantDTO.delayHour = 1
       if (this.$route.query.status === 'edit') {
@@ -187,7 +194,9 @@ export default {
           this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         } else this.$message({ type: 'warning', message: '请先选择商户' })
       }
-      if (val === 103) {
+      if (val !== 101) await this.handleZbProduct()
+      console.info(this.merchantInfo)
+      if (val === 103 && this.merchantInfo.productCode) {
         this.form.detailDTOList = [
           {
             shopName: this.merchantInfo.CustName,
@@ -223,11 +232,7 @@ export default {
       try {
         this.checkProductStockLoad = true
         const productCode = this.merchantInfo.productCode || this.form.authOrderDTO.productCode
-        const baseData = { agentId: this.userBaseInfo.agentId, productCode }
-        this.productStockObj =
-          this.form.merchantDTO.applicationModule === 101
-            ? await queryByAgentProduct(baseData)
-            : await queryByAgentProductAndModule(Object.assign(baseData, { moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC' }))
+        this.productStockObj = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })
         this.form.detailDTOList.forEach(item => {
           item.orderInventory = this.productStockObj?.totalAmount ?? 0
         })
