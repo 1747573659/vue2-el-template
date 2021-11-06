@@ -36,8 +36,11 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序LOGO???????" prop="miniLogo">
-              <picUpload v-model="form.miniLogo" :fileServer='fileServer' uploadUrl='/alipay/mini/fileUplaod' desc='只能上传jpg/png格式文件，文件不能超过256kb ' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
+            <el-form-item label="小程序LOGO" prop="miniLogo">
+              <picUpload v-model="form.miniLogo" :imageUrl='form.miniLogo' :showIconClose='true' @on-remove='onRemove("miniLogo")' @on-success='(...value)=>uploadSuccess({
+                value,
+                upField:"miniLogo"
+                })' uploadUrl='/alipay/mini/fileUplaod' desc='只能上传jpg/png格式文件，文件不能超过250kb ' :size='250' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
         </el-row>
@@ -77,35 +80,50 @@
         <el-row>
           <el-col :span="4">
             <el-form-item label="营业执照" prop="licensePic">
-              <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload v-model="form.licensePic" :imageUrl='form.licensePic' :showIconClose='true' @on-remove='onRemove("licensePic")' @on-success='(...value)=>uploadSuccess({
+                value,
+                upField:"licensePic"
+                })' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="门店门头照" prop="outDoorPic">
-              <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload v-model="form.outDoorPic" :imageUrl='form.outDoorPic' :showIconClose='true' @on-remove='onRemove("outDoorPic")' @on-success='(...value)=>uploadSuccess({
+                value,
+                upField:"outDoorPic"
+                })' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="营业执照授权照">
-              <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload v-model="form.firstSpecialLicensePic" :imageUrl='form.firstSpecialLicensePic' @on-remove='onRemove("firstSpecialLicensePic")' @on-success='(...value)=>uploadSuccess({
+                value,
+                upField:"firstSpecialLicensePic"
+                })' :showIconClose='true' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="特殊资质照">
-              <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload v-model="form.secondSpecialLicensePic" :imageUrl='form.secondSpecialLicensePic' @on-remove='onRemove("secondSpecialLicensePic")' @on-success='(...value)=>uploadSuccess({
+                value,
+                upField:"secondSpecialLicensePic"
+                })' :showIconClose='true' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="其它">
-              <picUpload desc='' :size='0.49' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload v-model="form.thirdSpecialLicensePic" :imageUrl='form.thirdSpecialLicensePic' @on-remove='onRemove("thirdSpecialLicensePic")' @on-success='(...value)=>uploadSuccess({
+                value,
+                upField:"thirdSpecialLicensePic"
+                })' :showIconClose='true' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
       <div style="width:100%;text-align: center;padding:20px 0px  100px 0px">
-        <el-button v-if="$route.query.operation=='add'" type="primary" plain>暂存</el-button>
-        <el-button type="primary">提交</el-button>
-        <el-button plain>取消</el-button>
+        <el-button @click="saveBaseData()" v-if="$route.query.operation=='add'" type="primary" plain>暂存</el-button>
+        <el-button @click="modifyBaseData()" type="primary">提交</el-button>
+        <el-button @click="cancel" plain>取消</el-button>
       </div>
     </div>
   </div>
@@ -113,7 +131,6 @@
 <script>
 import picUpload from './../picUpload'
 import { auditApply, saveBaseData, modifyBaseData, queryCategory, queryArea, queryByDatumId } from '@/api/alipay'
-import { fileServer } from '@/api/fileServe/fileServe.js'
 export default {
   name: 'marketingDetile',
   components: { picUpload },
@@ -149,7 +166,6 @@ export default {
       callback()
     }
     return {
-      fileServer: '', // 上传域名
       form: {
         miniName: '', // 小程序名称
         miniEnglishName: '',// 小程序英文名
@@ -173,32 +189,30 @@ export default {
         lazy: true,
         async lazyLoad (node, resolve) {
           const { level } = node;
-          await queryCategory({
+          const res = (await queryCategory({
             categoryId: "",
-            topParent: true
-          })
-          setTimeout(() => {
-            const nodes = Array.from({ length: level + 1 })
-              .map(item => ({
-                value: 1,
-                label: `选项`,
-                leaf: level >= 2
-              }));
-            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
-            resolve(nodes);
-          }, 1000);
+            topParent: level === 0 ? true : false
+          })) || []
+          if (res.length) {
+            res.map(item => {
+              item.value = item.categoryId;
+              item.label = item.categoryName;
+              item.leaf = item.hasChild == true ? 0 : 1
+            })
+          }
+          resolve(res);
         }
       },
       regionProps: { // 小程序归属地区
         lazy: true,
         async lazyLoad (node, resolve) {
           const { level } = node;
-          await queryArea(
-            {
-              areaCode: "",
-              topParent: true
-            }
-          )
+          // await queryArea(
+          //   {
+          //     areaCode: "",
+          //     topParent: true
+          //   }
+          // )
           setTimeout(() => {
             const nodes = Array.from({ length: level + 1 })
               .map(item => ({
@@ -260,30 +274,89 @@ export default {
           { required: true, message: '请选择营业执照', trigger: 'change' }
         ],
         outDoorPic: [
-          { required: true, message: '请选择营业执照', trigger: 'change' }
+          { required: true, message: '请选择门店门头照', trigger: 'change' }
         ]
       }
     }
   },
   created () {
-    console.log(this.$route.query)
-    this.getFileServer()
+    const query = this.$route.query
+    if (query.id) {
+      // this.queryByDatumId(query.id)
+    }
   },
   methods: {
+    onRemove (field) {
+      this.form[field] = ''
+    },
+    uploadSuccess (res) {
+      this.form[res.upField] = res.value[0].data.url
+      this.$refs.form.validate(async valid => {
+      })
+    },
+    cancel () {
+      this.$confirm('确定退出吗?', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(() => {
+        this.$store.dispatch('delTagView', this.$route).then(() => {
+          this.$router.push({ path: 'marketingManagement' })
+        })
+      }).catch(() => {
+      })
+    },
+    async queryByDatumId (datumId) {
+      const res = await queryByDatumId({
+        datumId
+      })
+    },
+    initSubData () {
+      let subData = {
+        miniName: this.form.miniName,
+        miniEnglishName: this.form.miniEnglishName,
+        miniCategoryId1: this.form.miniCategoryIds[0] || '',
+        miniCategoryId2: this.form.miniCategoryIds[1] || '',
+        miniCategoryId3: this.form.miniCategoryIds[2] || '',
+        provinceCode: '',
+        cityCode: '',
+        areaCode: '',
+        miniSlogan: this.form.miniSlogan,
+        miniDesc: this.form.miniDesc,
+        miniLogo: this.form.miniLogo,
+        servicePhone: this.form.servicePhone,
+        serviceMail: this.form.serviceMail,
+        licenseNo: this.form.licenseNo,
+        licenseName: this.form.licenseName,
+        licenseStartDate: this.form.licenseValidDate[0],
+        licenseEndDate: this.form.licenseValidDate[1],
+        licensePic: this.form.licensePic,
+        outDoorPic: this.form.outDoorPic,
+        firstSpecialLicensePic: this.form.firstSpecialLicensePic,
+        secondSpecialLicensePic: this.form.secondSpecialLicensePic,
+        thirdSpecialLicensePic: this.form.thirdSpecialLicensePic,
+      }
+      return subData
+    },
     // 基础资料维护
     async saveBaseData () {
-
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          console.log({
+            ...this.initSubData()
+          })
+        }
+      })
     },
     // 更改
     async modifyBaseData () {
-
-    },
-    // 获取上次域名
-    async getFileServer () {
-      this.fileServer = await fileServer()
-    },
-    onSubmit () {
-      console.log('submit!');
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          console.log({
+            ...this.initSubData()
+          })
+        }
+      })
     }
   }
 }

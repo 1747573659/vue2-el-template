@@ -1,9 +1,9 @@
 <template>
   <div>
-    <el-upload class="avatar-uploader" :action="uploadUrl" :headers="{ token: token }" :accept="accept" :show-file-list="false" :on-error="uploadErrer" :on-success="uploadSuccess" :before-upload="beforeUpload">
+    <el-upload class="avatar-uploader" :action="httpUploadUrl" :headers="{ token: token }" :accept="accept" :on-progress="onProgress" :show-file-list="false" :on-error="uploadErrer" :on-success="uploadSuccess" :before-upload="beforeUpload">
       <div v-if="imageUrl" class="avatar-img-content">
         <i v-if="showIconClose" class="avatar-icon-close el-icon-error" @click.stop="handleRemove"></i>
-        <img :src="fileServer + imageUrl" class="avatar" />
+        <img :src="imageUrl" class="avatar" />
       </div>
       <span v-else class="avatar-uploader-icon-block">
         <i class="el-icon-plus avatar-uploader-icon"></i>
@@ -22,9 +22,9 @@ import { getLocal } from '@/utils/storage'
 export default {
   name: 'PicUpload',
   props: {
-    desc:{
-      type:String,
-      default:''
+    desc: {
+      type: String,
+      default: ''
     },// 描述
     showIconClose: {
       type: Boolean,
@@ -39,45 +39,45 @@ export default {
       type: String,
       default: 'image/gif,image/jpeg,image/jpg,image/png',
     }, // 图片类型
-    size:{
-       type: Number,
-       default:10240
-    }, // 大小 1km  b为基础
+    size: {
+      type: Number,
+      default: 10240
+    }, // 大小 1m  kb为基础
     imageUrl: {
       require: true,
       type: String,
       default: '',
     }, // 图片链接
-    fileServer: {
-      require: true,
-      type: String,
-      default: '',
-    }, // 服务地址
   },
-  data() {
+  data () {
     return {
+      httpUploadUrl: process.env.VUE_APP_BASE_API + this.uploadUrl,
       token: getLocal('token'),
     }
   },
   methods: {
-    handleRemove() {
+    handleRemove () {
       this.$emit('on-remove')
     },
-    uploadErrer(err) {
+    uploadErrer (err) {
       this.$message.error('上传失败')
     },
-    uploadSuccess(res, file) {
-      this.$emit('on-success', res)
+    uploadSuccess (res, file) {
+      this.$emit('on-success', res, file)
     },
-    beforeUpload(file) {
+    onProgress(event, file, fileList) {
+    },
+    beforeUpload (file) {
       const imgTypes = this.accept.split(',')
       const isJPG = imgTypes.includes(file.type)
       const isLt2M = file.size / 1024 < this.size
       if (!isJPG) {
-        return this.$message.error(`上传图片只能是 ${this.accept} 格式!`)
+        this.$message.error(`上传图片只能是 ${this.accept} 格式!`)
+        return false
       }
       if (!isLt2M) {
-        return this.$message.error(`上传图片大小不能超过 ${this.size}kB!`)
+        this.$message.error(`上传图片大小不能超过 ${this.size}kB!`)
+        return false
       }
       return isLt2M && isJPG
     },
