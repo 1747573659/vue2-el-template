@@ -161,8 +161,8 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          shopName: this.form.merchantDTO.applicationModule === 101 ? item.BranchName : item.TaxpayerNum,
-          shopCode: item.BranchNo,
+          shopName: this.form.merchantDTO.applicationModule === 101 ? item.BranchName : '电子发票',
+          shopCode: this.form.merchantDTO.applicationModule === 101 ? item.BranchNo : item.TaxpayerNum,
           shopType: item.shopType,
           currentValidTime: item.KMValidity ? `${item.KMValidity} 00:00:00` : dayjs().format('YYYY-MM-DD 00:00:00'),
           delayValidTime: this.setDelayValidTime(item.KMValidity),
