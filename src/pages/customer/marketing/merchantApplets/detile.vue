@@ -121,8 +121,8 @@
         </el-row>
       </el-form>
       <div style="width:100%;text-align: center;padding:20px 0px  100px 0px">
-        <el-button @click="saveBaseData()" v-if="$route.query.operation=='add'" type="primary" plain>暂存</el-button>
-        <el-button @click="modifyBaseData()" type="primary">提交</el-button>
+        <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData()" v-if="$route.query.operation=='add'" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
+        <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData()" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
         <el-button @click="cancel" plain>取消</el-button>
       </div>
     </div>
@@ -166,6 +166,7 @@ export default {
       callback()
     }
     return {
+      loadingField: '',
       form: {
         miniName: '', // 小程序名称
         miniEnglishName: '',// 小程序英文名
@@ -282,7 +283,7 @@ export default {
   created () {
     const query = this.$route.query
     if (query.id) {
-      // this.queryByDatumId(query.id)
+      this.queryByDatumId(query.id)
     }
   },
   methods: {
@@ -310,6 +311,19 @@ export default {
       const res = await queryByDatumId({
         datumId
       })
+      this.form.miniName = res.miniName
+      this.form.miniEnglishName = res.miniEnglishName
+      this.form.miniSlogan = res.miniSlogan
+      this.form.miniDesc = res.miniDesc
+      this.form.servicePhone = res.servicePhone
+      this.form.serviceMail = res.serviceMail
+      this.form.licenseNo = res.licenseNo
+      this.form.licenseName = res.licenseName
+      this.form.licensePic = res.licensePic
+      this.form.outDoorPic = res.outDoorPic
+      this.form.firstSpecialLicensePic = res.firstSpecialLicensePic
+      this.form.secondSpecialLicensePic = res.secondSpecialLicensePic
+      this.form.thirdSpecialLicensePic = res.thirdSpecialLicensePic
     },
     initSubData () {
       let subData = {
@@ -342,9 +356,17 @@ export default {
     async saveBaseData () {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          console.log({
-            ...this.initSubData()
-          })
+          this.loadingField = 'saveBaseData'
+          try {
+            await saveBaseData({
+              ...this.initSubData(),
+              id: this.$route.query.id
+            })
+            this.$message.success('暂存成功')
+          } catch (error) {
+          } finally {
+            this.loadingField = ''
+          }
         }
       })
     },
@@ -352,9 +374,17 @@ export default {
     async modifyBaseData () {
       this.$refs.form.validate(async valid => {
         if (valid) {
-          console.log({
-            ...this.initSubData()
-          })
+          this.loadingField = 'modifyBaseData'
+          try {
+            await modifyBaseData({
+              ...this.initSubData(),
+              id: this.$route.query.id
+            })
+            this.$message.success('提交成功')
+          } catch (error) {
+          } finally {
+            this.loadingField = ''
+          }
         }
       })
     }
