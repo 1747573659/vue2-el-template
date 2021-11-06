@@ -71,7 +71,6 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="营业执照到期日期" prop="licenseStartDate">
-              <!-- 长期有效那种 结束日期为空则默认为长期有效-->
               <el-row>
                 <span>
                   <el-date-picker @change="()=>{
@@ -84,6 +83,9 @@
                 <span>
                   <el-date-picker :picker-options="pickerOptions" v-model="form.licenseEndDate" type="date" placeholder="结束日期"></el-date-picker>
                 </span>
+                <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
+                  <img :src="questionIcon" alt="提示" style="width:20px;margin:5px 0px 0px 5px" />
+                </el-tooltip>
               </el-row>
             </el-form-item>
           </el-col>
@@ -179,6 +181,7 @@ export default {
       callback()
     }
     return {
+      questionIcon: require('@/assets/images/icon/questioin.png'),
       pickerOptions: {
         disabledDate: time => {
           if (!this.form.licenseStartDate) {
