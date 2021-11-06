@@ -4,19 +4,12 @@
       <div slot="header" class="p-card-head">
         <span class="p-card-title">商户信息</span>
       </div>
-      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
+      <el-form :model="form" size="small" :disabled="$route.query.status === 'detail'" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
-          <el-select
-            v-model="form.merchantDTO.merchantName"
-            @change="handleMerchantInfo"
-            :disabled="$route.query.status === 'detail'"
-            placeholder="请输入名称/商户号"
-            filterable
-            clearable
-          >
+          <el-select v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="请输入名称/商户号" filterable clearable>
             <el-option v-for="item in custListData" :key="item.CustId" :label="item.CustNameExpand" :value="item.CustId"></el-option>
           </el-select>
         </el-form-item>
@@ -33,14 +26,14 @@
           <el-input :value="form.merchantDTO.storeCount" disabled></el-input>
         </el-form-item>
         <el-form-item label="应用模块">
-          <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" :disabled="$route.query.status === 'detail'" clearable>
+          <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
             <el-option label="门店" :value="101"></el-option>
             <el-option label="电子发票" :value="102" v-if="form.merchantDTO.merchantVersion !== '2'"></el-option>
             <el-option label="积分商城" :value="103" v-if="form.merchantDTO.merchantVersion === '1'"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="延期时长">
-          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" :disabled="$route.query.status === 'detail'" clearable>
+          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable>
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -51,7 +44,7 @@
         </template>
         <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0" :loading="checkProductStockLoad">刷新库存</el-button>
       </div>
-      <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
+      <el-table :data="form.detailDTOList" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
@@ -81,10 +74,10 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" :close-on-click-modal="false" :destroy-on-close="true" title="选择授权对象" width="700px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择授权对象" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
-          <el-input v-model="productVal" maxlength="50" :placeholder="`请输入${form.merchantDTO.applicationModule === 101 ? '门店名称' : '税号'}`" clearable></el-input>
+          <el-input v-model="productVal" maxlength="30" :placeholder="`请输入${form.merchantDTO.applicationModule === 101 ? '门店名称' : '税号'}`" clearable></el-input>
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
@@ -114,7 +107,8 @@ import {
   authOrderWcyCustInfo,
   queryByAgentProduct,
   authOrderWcyBranchList,
-  authOrderWcyTaxpayerNum
+  authOrderWcyTaxpayerNum,
+  queryByAgentProductAndModule
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -185,41 +179,61 @@ export default {
         item.useInventory = val
       })
     },
-    handleApplicationModule(val) {
-      if (val) {
-        this.form.merchantDTO.delayHour = 1
-        if (val === 103) {
-          this.form.detailDTOList = [
-            {
-              shopName: this.merchantInfo.CustName,
-              shopCode: this.merchantInfo.CustId,
-              shopType: 103,
-              currentValidTime: `${this.merchantInfo.KMValidity} 00:00:00`,
-              delayValidTime: this.setDelayValidTime(this.merchantInfo.KMValidity),
-              orderInventory: this.productStockObj?.totalAmount ?? 0,
-              useInventory: this.form.merchantDTO.delayHour,
-              productCode: this.merchantInfo.productCode,
-              remark: ''
-            }
-          ]
-        } else this.form.detailDTOList = []
+    async handleApplicationModule(val) {
+      this.form.merchantDTO.delayHour = 1
+      if (this.$route.query.status === 'edit') {
+        if (this.form.merchantDTO.merchantNo) {
+          this.merchantInfo = await this.getWcyCustInfo()
+          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
+        } else this.$message({ type: 'warning', message: '请先选择商户' })
       }
+      if (val === 103) {
+        this.form.detailDTOList = [
+          {
+            shopName: this.merchantInfo.CustName,
+            shopCode: this.merchantInfo.CustId,
+            shopType: 103,
+            currentValidTime: `${this.merchantInfo.KMValidity} 00:00:00`,
+            delayValidTime: this.setDelayValidTime(this.merchantInfo.KMValidity),
+            orderInventory: this.productStockObj?.totalAmount ?? 0,
+            useInventory: this.form.merchantDTO.delayHour,
+            productCode: this.merchantInfo.productCode,
+            remark: ''
+          }
+        ]
+        this.getProductStock()
+      } else this.form.detailDTOList = []
+    },
+    getWcyCustInfo() {
+      return authOrderWcyCustInfo({ cust: this.form.merchantDTO.merchantNo })
     },
     async handleMerchantInfo(val) {
       if (val) {
         try {
           this.form.merchantDTO.merchantNo = val
-          this.merchantInfo = await authOrderWcyCustInfo({ cust: val })
+          this.merchantInfo = await this.getWcyCustInfo()
           this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
           const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
           this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
-          this.form.detailDTOList = []
-          this.getProductStock()
         } catch (error) {}
-      } else {
-        const resetMerchantDTO = { merchantNo: '', merchantVersion: '', relationProductName: '', storeCount: '', applicationModule: 101 }
-        this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetMerchantDTO)
-        this.form.detailDTOList = []
+      } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantVersion: '', relationProductName: '', storeCount: '', applicationModule: '' })
+      this.form.detailDTOList = []
+    },
+    async getProductStock() {
+      try {
+        this.checkProductStockLoad = true
+        const productCode = this.merchantInfo.productCode || this.form.authOrderDTO.productCode
+        const baseData = { agentId: this.userBaseInfo.agentId, productCode }
+        this.productStockObj =
+          this.form.merchantDTO.applicationModule === 101
+            ? await queryByAgentProduct(baseData)
+            : await queryByAgentProductAndModule(Object.assign(baseData, { moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC' }))
+        this.form.detailDTOList.forEach(item => {
+          item.orderInventory = this.productStockObj?.totalAmount ?? 0
+        })
+      } catch (error) {
+      } finally {
+        this.checkProductStockLoad = false
       }
     },
     handleProductVisible() {
@@ -230,14 +244,9 @@ export default {
       try {
         this.checkProductTabLock = true
         const isNum = new RegExp(/^\d{1,}$/).test(this.productVal)
+        const storeData = { branch: isNum ? this.productVal : '', branchname: !isNum && this.productVal ? this.productVal : '', cust: this.form.merchantDTO.merchantNo }
         const res =
-          this.form.merchantDTO.applicationModule === 101
-            ? await authOrderWcyBranchList({
-                branch: isNum ? this.productVal : '',
-                branchname: !isNum && this.productVal ? this.productVal : '',
-                cust: this.form.merchantDTO.merchantNo
-              })
-            : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
+          this.form.merchantDTO.applicationModule === 101 ? await authOrderWcyBranchList(storeData) : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
         this.basicProductData = res.map(item => {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
@@ -245,19 +254,6 @@ export default {
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
-      }
-    },
-    async getProductStock() {
-      try {
-        this.checkProductStockLoad = true
-        const productCode = this.$route.query.status === 'add' ? this.merchantInfo?.productCode : this.form.authOrderDTO.productCode
-        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
-        this.form.detailDTOList.forEach(item => {
-          item.orderInventory = this.productStockObj?.totalAmount ?? 0
-        })
-      } catch (error) {
-      } finally {
-        this.checkProductStockLoad = false
       }
     },
     async getCustList() {

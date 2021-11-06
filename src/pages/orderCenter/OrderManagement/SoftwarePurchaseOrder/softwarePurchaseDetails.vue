@@ -13,7 +13,7 @@
 <script>
 import { orderStatus } from '../index'
 import operationLog from '../components/operationLog'
-import basicInformation from './components/basicInformation'
+import basicInformation from './components/basicInformation.vue'
 
 import { operateLog } from '@/api/orderCenter/orderManagement'
 

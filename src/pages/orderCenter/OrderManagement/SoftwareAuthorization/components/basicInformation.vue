@@ -31,7 +31,7 @@
           size="small"
           type="primary"
           plain
-          :disabled="productType === 3 && form.merchantDTO.applicationModule === 2 && form.detailDTOList[0].openCustAssistantApp === 1"
+          :disabled="productType === 3 && form.merchantDTO.applicationModule === 2 && form.detailDTOList.length > 0 && form.detailDTOList[0].openCustAssistantApp === 1"
           :loading="checkSaveBtnLoad"
           @click="handleSave"
         >
@@ -347,9 +347,12 @@ export default {
         const res = await this.baseInfoMap.get(this.productType).detailRequest(this.$route.query.id)
         this.form = res
         setTimeout(() => {
-          if (this.productType === 1) this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
+          if (this.productType === 1) {
+            this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
+            this.$refs.information.$refs.unionChannel.selectVal = res?.erpAuthOrderDetails?.[0]?.unionChannelName ?? ''
+          }
           if (this.productType === 5) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
-        })
+        }, 500)
         this.$nextTick(() => {
           if (this.productType === 3) {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal

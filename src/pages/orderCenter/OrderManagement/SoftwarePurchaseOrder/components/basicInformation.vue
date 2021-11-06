@@ -128,22 +128,27 @@ import { productInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
   mixins: [basicInfoMixin],
+  activated() {
+    if(this.$route.query.productCode) this.handleToStock()
+  },
   mounted() {
-    if (this.$route.query.productCode) this.test()
+    if(this.$route.query.productCode) this.handleToStock()
   },
   methods: {
-    async test() {
+    async handleToStock() {
       const { results = [] } = await productInfo({ info: this.$route.query.productCode.trim(), page: 1, rows: 10, orderType: 1 })
       if (results.length > 0) {
-        this.form.orderItemList = [{
-          productCode: results[0].code,
-          productName: results[0].name,
-          productCount: 1,
-          productPrice: NP.divide(results[0].saleAmount, 100),
-          productAmount: NP.divide(NP.times(1, results[0].saleAmount), 100),
-          sourcePrice: NP.times(1, results[0].saleAmount),
-          remark: ''
-        }]
+        this.form.orderItemList = [
+          {
+            productCode: results[0].code,
+            productName: results[0].name,
+            productCount: 1,
+            productPrice: NP.divide(results[0].saleAmount, 100),
+            productAmount: NP.divide(NP.times(1, results[0].saleAmount), 100),
+            sourcePrice: NP.times(1, results[0].saleAmount),
+            remark: ''
+          }
+        ]
       }
     }
   }

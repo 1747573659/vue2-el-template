@@ -4,7 +4,7 @@
       <div slot="header" class="p-card-head">
         <span class="p-card-title">商户信息</span>
       </div>
-      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
+      <el-form :model="form" size="small" :disabled="$route.query.status === 'detail'" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
@@ -16,7 +16,6 @@
             option-value="custId"
             :data.sync="shopPageData"
             :request="getShopPage"
-            :disabled="$route.query.status === 'detail'"
             :is-max-page.sync="isShopMaxPage"
             @change="handleShopPage"
             placeholder="请输入名称/商户号"
@@ -61,9 +60,10 @@
         <el-table-column label="银联通道">
           <template slot-scope="scope">
             <km-select-page
+              ref="unionChannel"
               v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)"
               size="small"
-              v-model="scope.row.unionChannel"
+              v-model="scope.row.unionChannelName"
               option-label="channelName"
               option-value="channelCode"
               :data.sync="channelData"
@@ -89,7 +89,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" :destroy-on-close="true" title="选择产品模块" width="700px" class="p-address-con">
+    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择产品模块" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
           <el-input v-model="productVal" maxlength="50" placeholder="模块编码/模块名称" clearable></el-input>
