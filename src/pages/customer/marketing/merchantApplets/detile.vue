@@ -69,10 +69,22 @@
               <el-input v-model.trim="form.licenseName" clearable style="width:80%" placeholder="请输入营业执照名称"></el-input>
             </el-form-item>
           </el-col>
-          <el-col :span="6">
-            <el-form-item label="营业执照到期日期" prop="licenseValidDate">
+          <el-col :span="12">
+            <el-form-item label="营业执照到期日期" prop="licenseStartDate">
               <!-- 长期有效那种 结束日期为空则默认为长期有效-->
-              <el-date-picker v-model="form.licenseValidDate" type="daterange" style="width:90%" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+              <el-row>
+                <span>
+                  <el-date-picker @change="()=>{
+                    form.licenseEndDate=''
+                    }" v-model="form.licenseStartDate" type="date" placeholder="开始日期"></el-date-picker>
+                </span>
+                <span>
+                  -
+                </span>
+                <span>
+                  <el-date-picker :picker-options="pickerOptions" v-model="form.licenseEndDate" type="date" placeholder="结束日期"></el-date-picker>
+                </span>
+              </el-row>
             </el-form-item>
           </el-col>
         </el-row>
@@ -167,6 +179,14 @@ export default {
       callback()
     }
     return {
+      pickerOptions: {
+        disabledDate: time => {
+          if (!this.form.licenseStartDate) {
+            return false
+          }
+          return time.getTime() < new Date(this.form.licenseStartDate)
+        }
+      },
       loadingField: '',
       form: {
         miniName: '', // 小程序名称
@@ -180,7 +200,8 @@ export default {
         serviceMail: '',// 客服邮箱
         licenseNo: '',// 营业执照号
         licenseName: '',// 营业执照名称
-        licenseValidDate: null,// 营业执照到期日期
+        licenseStartDate: null,// 营业执照到期日期
+        licenseEndDate: null,
         licensePic: '',// 营业执照
         outDoorPic: '', // 门店门头照
         firstSpecialLicensePic: '', // 营业执照授权照
@@ -265,8 +286,8 @@ export default {
           { required: true, message: '营业执照名称', trigger: 'blur' },
           { min: 2, max: 32, message: '长度在 2 到 32 个字符', trigger: 'blur' },
         ],
-        licenseValidDate: [
-          { required: true, message: '请选择营业执照到期日期', trigger: 'change' }
+        licenseStartDate: [
+          { required: true, message: '请选择营业执照开始日期', trigger: 'change' }
         ],
         licensePic: [
           { required: true, message: '请选择营业执照', trigger: 'change' }
@@ -340,8 +361,8 @@ export default {
         serviceMail: this.form.serviceMail,
         licenseNo: this.form.licenseNo,
         licenseName: this.form.licenseName,
-        licenseStartDate: dayjs(this.form.licenseValidDate[0]).format('YYYY-MM-DD'),
-        licenseEndDate: dayjs(this.form.licenseValidDate[1]).format('YYYY-MM-DD'),
+        licenseStartDate: dayjs(this.form.licenseStartDate).format('YYYY-MM-DD'),
+        licenseEndDate: this.form.licenseEndDate ? dayjs(this.form.licenseEndDate).format('YYYY-MM-DD') : '',
         licensePic: this.form.licensePic,
         outDoorPic: this.form.outDoorPic,
         firstSpecialLicensePic: this.form.firstSpecialLicensePic,
