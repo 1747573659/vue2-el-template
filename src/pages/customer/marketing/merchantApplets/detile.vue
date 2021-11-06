@@ -334,12 +334,17 @@ export default {
       })
       this.form.miniName = res.miniName
       this.form.miniEnglishName = res.miniEnglishName
+      this.form.miniCategoryIds = [res.miniCategoryId1 || '', res.miniCategoryId2 || '', res.miniCategoryId3 || '']
+      this.form.region = [res.provinceCode || '', res.cityCode || '', res.areaCode || '']
       this.form.miniSlogan = res.miniSlogan
       this.form.miniDesc = res.miniDesc
+      this.form.miniLogo = res.miniLogo
       this.form.servicePhone = res.servicePhone
       this.form.serviceMail = res.serviceMail
       this.form.licenseNo = res.licenseNo
       this.form.licenseName = res.licenseName
+      this.form.licenseStartDate = res.licenseStartDate
+      this.form.licenseEndDate = res.licenseEndDate
       this.form.licensePic = res.licensePic
       this.form.outDoorPic = res.outDoorPic
       this.form.firstSpecialLicensePic = res.firstSpecialLicensePic
@@ -365,7 +370,7 @@ export default {
         licenseNo: this.form.licenseNo,
         licenseName: this.form.licenseName,
         licenseStartDate: dayjs(this.form.licenseStartDate).format('YYYY-MM-DD'),
-        licenseEndDate: this.form.licenseEndDate ? dayjs(this.form.licenseEndDate).format('YYYY-MM-DD') : '',
+        licenseEndDate: this.form.licenseEndDate ? dayjs(this.form.licenseEndDate).format('YYYY-MM-DD') : '1970-01-01',
         licensePic: this.form.licensePic,
         outDoorPic: this.form.outDoorPic,
         firstSpecialLicensePic: this.form.firstSpecialLicensePic,
