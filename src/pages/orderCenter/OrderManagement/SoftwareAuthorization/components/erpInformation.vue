@@ -71,7 +71,7 @@
               :disabled="$route.query.status === 'detail'"
               :is-max-page.sync="isChannelPage"
               placeholder="银联通道"
-              class="e-select-con"
+              class="e-select-con js-unionChannel"
             />
           </template>
         </el-table-column>

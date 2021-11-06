@@ -83,11 +83,13 @@
       </el-form>
       <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="BranchName" label="门店名称/税号"></el-table-column>
+        <el-table-column :prop="form.merchantDTO.applicationModule === 101 ? 'BranchName':'TaxpayerNum'" label="门店名称/税号"></el-table-column>
         <el-table-column prop="shopType" label="类型">
           <template slot-scope="scope">{{ scope.row.shopType === 101 ? '门店' : '电子发票' }}</template>
         </el-table-column>
-        <el-table-column prop="KMValidity" label="有效期"></el-table-column>
+        <el-table-column label="有效期">
+          <template slot-scope="scope">{{scope.row.KMValidity || new Date() | formatTime}}</template>
+        </el-table-column>
       </el-table>
       <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
@@ -159,10 +161,10 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          shopName: item.BranchName,
+          shopName: this.form.merchantDTO.applicationModule === 101 ? item.BranchName : item.TaxpayerNum,
           shopCode: item.BranchNo,
           shopType: item.shopType,
-          currentValidTime: `${item.KMValidity} 00:00:00`,
+          currentValidTime: item.KMValidity ? `${item.KMValidity} 00:00:00` : dayjs().format('YYYY-MM-DD 00:00:00'),
           delayValidTime: this.setDelayValidTime(item.KMValidity),
           orderInventory: this.productStockObj?.totalAmount ?? 0,
           useInventory: this.form.merchantDTO.delayHour,

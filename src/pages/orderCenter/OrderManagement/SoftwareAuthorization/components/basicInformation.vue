@@ -357,8 +357,12 @@ export default {
         setTimeout(() => {
           if (this.productType === 1) {
             this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
-            console.info(this.$refs.information.$refs.table)
-            this.$refs.information.$refs.unionChannel.selectVal = res?.erpAuthOrderDetails?.[0]?.unionChannelName ?? ''
+            console.info(document.querySelectorAll('.js-unionChannel'))
+            if (res.erpAuthOrderDetails.length > 0) {
+              res.erpAuthOrderDetails.forEach((item, index) => {
+                if (item.unionChannel) document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+              })
+            }
           }
           if (this.productType === 5) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
         }, 500)
