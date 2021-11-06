@@ -115,34 +115,34 @@ export function saveBaseData(data) {
   return request({
     url: urlLinks.saveBaseData,
     method: 'post',
-    params: data
+    data
   })
 }
 export function modifyBaseData(data) {
   return request({
     url: urlLinks.modifyBaseData,
     method: 'post',
-    params: data
+    data
   })
 }
 export function createLinkUrl(data) {
   return request({
     url: urlLinks.createLinkUrl,
     method: 'post',
-    params: data
+    data
   })
 }
 export function auditReApply(data) {
   return request({
     url: urlLinks.auditReApply,
     method: 'post',
-    params: data
+    data
   })
 }
 export function auditApply(data) {
   return request({
     url: urlLinks.auditApply,
     method: 'post',
-    params: data
+    data
   })
 }

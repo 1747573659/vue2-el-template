@@ -16,12 +16,12 @@
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序类目??????????" prop="miniCategoryIds">
+            <el-form-item label="小程序类目" prop="miniCategoryIds">
               <el-cascader v-model='form.miniCategoryIds' placeholder='请选择小程序类目' filterable clearable :props="miniCategoryIdsProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
-            <el-form-item label="小程序归属地区??????????" prop="region">
+            <el-form-item label="小程序归属地区" prop="region">
               <el-cascader v-model='form.region' placeholder='请选择小程序归属地区' filterable clearable :props="regionProps"></el-cascader>
             </el-form-item>
           </el-col>
@@ -130,7 +130,8 @@
 </template>
 <script>
 import picUpload from './../picUpload'
-import { auditApply, saveBaseData, modifyBaseData, queryCategory, queryArea, queryByDatumId } from '@/api/alipay'
+import { saveBaseData, modifyBaseData, queryCategory, queryArea, queryByDatumId } from '@/api/alipay'
+import dayjs from 'dayjs'
 export default {
   name: 'marketingDetile',
   components: { picUpload },
@@ -191,7 +192,7 @@ export default {
         async lazyLoad (node, resolve) {
           const { level } = node;
           const res = (await queryCategory({
-            categoryId: "",
+            categoryId: level === 0 ? "" : node.data.categoryId,
             topParent: level === 0 ? true : false
           })) || []
           if (res.length) {
@@ -208,22 +209,18 @@ export default {
         lazy: true,
         async lazyLoad (node, resolve) {
           const { level } = node;
-          // await queryArea(
-          //   {
-          //     areaCode: "",
-          //     topParent: true
-          //   }
-          // )
-          setTimeout(() => {
-            const nodes = Array.from({ length: level + 1 })
-              .map(item => ({
-                value: 1,
-                label: `选项`,
-                leaf: level >= 2
-              }));
-            // 通过调用resolve将子节点数据返回，通知组件数据加载完成
-            resolve(nodes);
-          }, 1000);
+          const res = (await queryArea({
+            areaCode: level === 0 ? "" : node.data.areaCode,
+            topParent: level === 0 ? true : false
+          })) || []
+          if (res.length) {
+            res.map(item => {
+              item.value = item.areaCode;
+              item.label = item.areaName;
+              item.leaf = level < 2 ? 0 : 1
+            })
+          }
+          resolve(res);
         }
       },
       miniCategoryIdsOption: [],
@@ -326,15 +323,16 @@ export default {
       this.form.thirdSpecialLicensePic = res.thirdSpecialLicensePic
     },
     initSubData () {
+      console.log(this.form)
       let subData = {
         miniName: this.form.miniName,
         miniEnglishName: this.form.miniEnglishName,
         miniCategoryId1: this.form.miniCategoryIds[0] || '',
         miniCategoryId2: this.form.miniCategoryIds[1] || '',
         miniCategoryId3: this.form.miniCategoryIds[2] || '',
-        provinceCode: '',
-        cityCode: '',
-        areaCode: '',
+        provinceCode: this.form.region[0],
+        cityCode: this.form.region[1],
+        areaCode: this.form.region[2],
         miniSlogan: this.form.miniSlogan,
         miniDesc: this.form.miniDesc,
         miniLogo: this.form.miniLogo,
@@ -342,8 +340,8 @@ export default {
         serviceMail: this.form.serviceMail,
         licenseNo: this.form.licenseNo,
         licenseName: this.form.licenseName,
-        licenseStartDate: this.form.licenseValidDate[0],
-        licenseEndDate: this.form.licenseValidDate[1],
+        licenseStartDate: dayjs(this.form.licenseValidDate[0]).format('YYYY-MM-DD'),
+        licenseEndDate: dayjs(this.form.licenseValidDate[1]).format('YYYY-MM-DD'),
         licensePic: this.form.licensePic,
         outDoorPic: this.form.outDoorPic,
         firstSpecialLicensePic: this.form.firstSpecialLicensePic,
