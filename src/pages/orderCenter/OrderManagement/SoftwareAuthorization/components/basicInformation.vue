@@ -174,7 +174,7 @@ export default {
         type: 'warning'
       })
         .then(() => {
-          this.setOrderSave(1)
+          this.setOrderSave()
             .then(async () => {
               await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
               this.getDetail().then(() => {
@@ -323,7 +323,7 @@ export default {
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
-    setOrderSave(action = 0) {
+    setOrderSave(action = 1) {
       let data = {}
       const status = this.$route.query.status === 'add'
       if (this.productType === 1) data = this.getErpInformationObj()

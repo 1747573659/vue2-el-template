@@ -163,7 +163,7 @@ export default {
           this.checkSaveBtnLoad = false
         })
     },
-    async setOrderSave(action = 0) {
+    async setOrderSave(action = 1) {
       if (this.form.orderDetailDtos.length === 0) {
         this.$message({ type: 'warning', message: '请选择置换产品' })
         return new Promise((resolve, reject) => reject(new Error()))
@@ -195,7 +195,7 @@ export default {
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
-            this.setOrderSave(1)
+            this.setOrderSave()
               .then(async () => {
                 await replaceOrderSubmit({ id: parseFloat(this.$route.query.id) })
                 this.getDetail().then(() => {
