@@ -22,7 +22,7 @@
           </el-form-item>
           <el-form-item label="状态">
             <el-select class="p-form-input_width" clearable v-model="form.status" filterable placeholder="请选择小程序状态搜索">
-              <el-option v-for="(item,index) in queryAllStatusOption" :key="index" :label="item.statusTypeName" :value="item.statusType"></el-option>
+              <el-option v-for="(item,index) in queryAllStatusOption" :key="index" :label="item.statusTypeDesc" :value="item.statusType"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="小程序APPID">
@@ -64,15 +64,15 @@
         </el-table-column>
         <el-table-column label="操作" width='220'>
           <template scope="scope">
-            <el-button :loading="loadingField=='versionUpload'" v-if="[3].includes(scope.row.status)" @click="versionUpload(scope.row)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">立即构建</el-button>
-            <el-button :loading="loadingField=='versionReUpload'" v-if="[10].includes(scope.row.status)" @click="versionReUpload(scope.row)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">重新构建</el-button>
-            <el-button :loading="loadingField=='queryVersion'" v-if="[4].includes(scope.row.status)" @click="queryVersion(scope.row)" v-permission="'MARKETINGMANAGEMENTSTATUSlOOK'" type="text">构建状态查询</el-button>
-            <el-button :loading="loadingField=='auditApply'" v-if="[5].includes(scope.row.status)" @click="auditApply(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">提交审核</el-button>
-            <el-button :loading="loadingField=='auditReApply'" v-if="[11].includes(scope.row.status)" @click="auditReApply(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">重新提交审核</el-button>
-            <el-button :loading="loadingField=='queryAudit'" v-if="[6].includes(scope.row.status)" @click="queryAudit(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'" type="text">审核状态查询</el-button>
-            <el-button :loading="loadingField=='online'" v-if="[7,9].includes(scope.row.status)" @click="online(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
-            <el-button :loading="loadingField=='offline'" v-if="[8].includes(scope.row.status)" @click="offline(scope.row)" v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
-            <el-button :loading="loadingField=='qrcodeCreate'" v-if="[8].includes(scope.row.status)" @click="qrcodeCreate(scope.row)" v-permission="'MARKETINGMANAGEMENTlOOKAPP'" type="text">查看小程序</el-button>
+            <el-button :loading="loadingField==`versionUpload${scope.$index}`" v-if="[3].includes(scope.row.status)" @click="versionUpload(scope)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">立即构建</el-button>
+            <el-button :loading="loadingField==`versionReUpload${scope.$index}`" v-if="[10].includes(scope.row.status)" @click="versionReUpload(scope)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">重新构建</el-button>
+            <el-button :loading="loadingField==`queryVersion${scope.$index}`" v-if="[4].includes(scope.row.status)" @click="queryVersion(scope)" v-permission="'MARKETINGMANAGEMENTSTATUSlOOK'" type="text">构建状态查询</el-button>
+            <el-button :loading="loadingField==`auditApply${scope.$index}`" v-if="[5].includes(scope.row.status)" @click="auditApply(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">提交审核</el-button>
+            <el-button :loading="loadingField==`auditReApply${scope.$index}`" v-if="[11].includes(scope.row.status)" @click="auditReApply(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">重新提交审核</el-button>
+            <el-button :loading="loadingField==`queryAudit${scope.$index}`" v-if="[6].includes(scope.row.status)" @click="queryAudit(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'" type="text">审核状态查询</el-button>
+            <el-button :loading="loadingField==`online${scope.$index}`" v-if="[7,9].includes(scope.row.status)" @click="online(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
+            <el-button :loading="loadingField==`offline${scope.$index}`" v-if="[8].includes(scope.row.status)" @click="offline(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
+            <el-button :loading="loadingField==`qrcodeCreate${scope.$index}`" v-if="[8].includes(scope.row.status)" @click="qrcodeCreate(scope)" v-permission="'MARKETINGMANAGEMENTlOOKAPP'" type="text">查看小程序</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -165,12 +165,12 @@ export default {
   },
   methods: {
     // 立即构建
-    async versionUpload (row) {
-      this.loadingField = 'versionUpload'
+    async versionUpload (scope) {
+      this.loadingField = `versionUpload${scope.$index}`
       try {
         await versionUpload({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.$message.success('构建成功')
         this.getTable()
@@ -180,12 +180,12 @@ export default {
       }
     },
     // 重新构建
-    async versionReUpload (row) {
-      this.loadingField = 'versionReUpload'
+    async versionReUpload (scope) {
+      this.loadingField = `versionReUpload${scope.$index}`
       try {
         await versionReUpload({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.$message.success('构建成功')
         this.getTable()
@@ -195,12 +195,12 @@ export default {
       }
     },
     // 构建状态查询
-    async queryVersion (row) {
-      this.loadingField = 'queryVersion'
+    async queryVersion (scope) {
+      this.loadingField = `queryVersion${scope.$index}`
       try {
         await queryVersion({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.getTable()
       } catch (error) {
@@ -209,12 +209,12 @@ export default {
       }
     },
     // 提交审核
-    async auditApply (row) {
-      this.loadingField = 'auditApply'
+    async auditApply (scope) {
+      this.loadingField = `auditApply${scope.$index}`
       try {
         await auditApply({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.$message.success('已提交')
         this.getTable()
@@ -224,12 +224,12 @@ export default {
       }
     },
     // 重新提交审核
-    async auditReApply (row) {
-      this.loadingField = 'auditReApply'
+    async auditReApply (scope) {
+      this.loadingField = `auditReApply${scope.$index}`
       try {
         await auditReApply({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.$message.success('已提交')
         this.getTable()
@@ -239,12 +239,12 @@ export default {
       }
     },
     // 审核状态查询
-    async queryAudit (row) {
-      this.loadingField = 'queryAudit'
+    async queryAudit (scope) {
+      this.loadingField = `queryAudit${scope.$index}`
       try {
         await queryAudit({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.getTable()
       } catch (error) {
@@ -253,12 +253,12 @@ export default {
       }
     },
     // 上架
-    async online (row) {
-      this.loadingField = 'online'
+    async online (scope) {
+      this.loadingField = `online${scope.$index}`
       try {
         await online({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.$message.success('上架成功')
         this.getTable()
@@ -268,12 +268,12 @@ export default {
       }
     },
     // 下架
-    async offline (row) {
-      this.loadingField = 'offline'
+    async offline (scope) {
+      this.loadingField = `offline${scope.$index}`
       try {
         await offline({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.$message.success('下架成功')
         this.getTable()
@@ -283,15 +283,15 @@ export default {
       }
     },
     // 查看小程序
-    async qrcodeCreate (row) {
-      this.loadingField = 'qrcodeCreate'
+    async qrcodeCreate (scope) {
+      this.loadingField = `qrcodeCreate${scope.$index}`
       try {
         const res = await qrcodeCreate({
-          currentStatus: row.status,
-          id: row.id
+          currentStatus: scope.row.status,
+          id: scope.row.id
         })
         this.qrcodeUrl = res || ''
-        this.qrcodeName = row.miniProgramName
+        this.qrcodeName = scope.row.miniProgramName
         this.xcxDialogVisible = true
       } catch (error) {
       } finally {
@@ -322,7 +322,7 @@ export default {
       let value = ''
       for (let i = 0; i < this.queryAllStatusOption.length; i++) {
         if (status == this.queryAllStatusOption[i].statusType) {
-          value = this.queryAllStatusOption[i].statusTypeName
+          value = this.queryAllStatusOption[i].statusTypeDesc
         }
       }
       return value
@@ -331,7 +331,7 @@ export default {
     async queryAllStatus () {
       const res = await queryAllStatus()
       this.queryAllStatusOption = [{
-        statusTypeName: '全部',
+        statusTypeDesc: '全部',
         statusType: ''
       }, ...res]
     },
@@ -344,6 +344,7 @@ export default {
       this.$router.push({
         name: 'marketingDetile', query: {
           id: row.id || '',
+          miniProgramAppid: row.miniProgramAppid,
           operation
         }
       })

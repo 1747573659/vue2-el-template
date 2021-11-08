@@ -385,7 +385,9 @@ export default {
           try {
             await saveBaseData({
               ...this.initSubData(),
-              id: this.$route.query.id
+              miniProgramId: this.$route.query.id,
+              status:0, //保存状态（0 暂存 1保存）
+              miniProgramAppid: this.$route.query.miniProgramAppid
             })
             this.$message.success('暂存成功')
           } catch (error) {
@@ -403,7 +405,9 @@ export default {
           try {
             await modifyBaseData({
               ...this.initSubData(),
-              id: this.$route.query.id
+              miniProgramId: this.$route.query.id,
+              status: 1, //保存状态（0 暂存 1保存）
+              miniProgramAppid: this.$route.query.miniProgramAppid
             })
             this.$message.success('提交成功')
           } catch (error) {
