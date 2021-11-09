@@ -181,6 +181,7 @@ export default {
       callback()
     }
     return {
+      detileId: '',
       operation: '',
       questionIcon: require('@/assets/images/icon/questioin.png'),
       pickerOptions: {
@@ -361,6 +362,7 @@ export default {
       this.form.firstSpecialLicensePic = res.firstSpecialLicensePic
       this.form.secondSpecialLicensePic = res.secondSpecialLicensePic
       this.form.thirdSpecialLicensePic = res.thirdSpecialLicensePic
+      this.detileId = res.id
     },
     initSubData () {
       let subData = {
@@ -417,6 +419,7 @@ export default {
           try {
             await modifyBaseData({
               ...this.initSubData(),
+              id: this.detileId,
               miniProgramId: this.$route.query.id,
               status: 1, //保存状态（0 暂存 1保存）
               miniProgramAppid: this.$route.query.miniProgramAppid
