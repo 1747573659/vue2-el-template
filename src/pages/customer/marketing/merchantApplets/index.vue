@@ -70,7 +70,7 @@
             <el-button :loading="loadingField==`auditApply${scope.$index}`" v-if="[5].includes(scope.row.status)" @click="auditApply(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">提交审核</el-button>
             <el-button :loading="loadingField==`auditReApply${scope.$index}`" v-if="[11].includes(scope.row.status)" @click="auditReApply(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">重新提交审核</el-button>
             <el-button :loading="loadingField==`queryAudit${scope.$index}`" v-if="[6].includes(scope.row.status)" @click="queryAudit(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'" type="text">审核状态查询</el-button>
-            <el-button :loading="loadingField==`online${scope.$index}`" v-if="[7,9].includes(scope.row.status)" @click="online(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
+            <el-button :loading="loadingField==`online${scope.$index}`" v-if="[7].includes(scope.row.status)" @click="online(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
             <el-button :loading="loadingField==`offline${scope.$index}`" v-if="[8].includes(scope.row.status)" @click="offline(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
             <el-button :loading="loadingField==`qrcodeCreate${scope.$index}`" v-if="[8].includes(scope.row.status)" @click="qrcodeCreate(scope)" v-permission="'MARKETINGMANAGEMENTlOOKAPP'" type="text">查看小程序</el-button>
           </template>
