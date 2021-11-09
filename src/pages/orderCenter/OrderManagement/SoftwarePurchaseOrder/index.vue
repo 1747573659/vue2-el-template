@@ -19,7 +19,12 @@
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
-                <el-option v-for="item in Array.from(orderStatus).filter(item => ![5, 10].includes(item[0]))" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
+                <el-option
+                  v-for="item in Array.from(orderStatus).filter(item => ![5, 10].includes(item[0]))"
+                  :key="item[1].value"
+                  :label="item[1].label"
+                  :value="item[1].value"
+                ></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="付款状态">
@@ -31,8 +36,8 @@
               <km-select-page
                 v-model="form.createUser"
                 :data.sync="ordererData"
-                dict-label="contactor"
-                dict-value="userId"
+                option-label="userName"
+                option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
                 placeholder="下单人"
@@ -63,10 +68,8 @@
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
-            <el-form-item>
-              <template v-permission="'SOFT_PURCHASE_ORDER_PLUS'">
-                <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleSoftWareDetail({ status: 'add' })">新增</el-button>
-              </template>
+            <el-form-item v-permission="'SOFT_PURCHASE_ORDER_PLUS'">
+              <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleSoftWareDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>

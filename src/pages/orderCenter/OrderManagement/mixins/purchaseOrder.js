@@ -3,7 +3,7 @@ import NP from 'number-precision'
 import { orderStatus, paymentStatus } from '../index'
 import { mapActions } from 'vuex'
 
-import { queryByPage, queryBaseInfo, queryOrderMan, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { queryByPage, queryBaseInfo, queryUserPage, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
 
 export const purchaseOrder = {
   data() {
@@ -85,13 +85,10 @@ export const purchaseOrder = {
         this.checkTabLock = false
       }
     },
-    async handleOrderPage({ query = '', page = 1, row = 10 } = {}) {
+    async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryOrderMan({ id: query, agentId: this.cueerntAgentId, page, rows: row })
+        const res = await queryUserPage({ userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
-        if (this.ordererData.every(item => item.contactor !== '全部')) {
-          this.ordererData = [{ contactor: '全部', id: -1 }].concat(this.ordererData)
-        }
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },

@@ -1,7 +1,7 @@
 <template>
   <section class="p-operate-con">
     <div class="p-operate-tab">
-      <el-table :data="tableData" v-loading="checkLogTabLock">
+      <el-table :data="operateData">
         <el-table-column prop="operateTypeName" label="操作类型"></el-table-column>
         <el-table-column prop="operateUserName" label="操作人"></el-table-column>
         <el-table-column prop="createTime" label="操作日期"></el-table-column>
@@ -18,23 +18,30 @@
 import { operateLog } from '@/api/orderCenter/orderManagement'
 
 export default {
-  data() {
-    return {
-      checkLogTabLock: false,
-      tableData: []
-    }
-  },
-  mounted() {
-    this.getOperateLog()
-  },
-  methods: {
-    async getOperateLog() {
-      try {
-        const data = { orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1, purchaseId: this.$route.query.id }
-        this.tableData = await operateLog(data)
-      } catch (error) {}
+  props: {
+    operateData: {
+      type: Array,
+      require: true,
+      default: () => []
     }
   }
+  // data() {
+  //   return {
+  //     checkLogTabLock: false,
+  //     tableData: []
+  //   }
+  // },
+  // mounted() {
+  //   this.getOperateLog()
+  // },
+  // methods: {
+  //   async getOperateLog() {
+  //     try {
+  //       const data = { orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1, purchaseId: this.$route.query.id }
+  //       this.tableData = await operateLog(data)
+  //     } catch (error) {}
+  //   }
+  // }
 }
 </script>
 

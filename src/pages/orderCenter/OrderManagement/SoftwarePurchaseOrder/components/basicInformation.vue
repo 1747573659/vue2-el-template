@@ -110,7 +110,9 @@
       <el-button size="small" plain @click="handleCancel('softwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('softwarePurchaseOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" v-permission="'SOFT_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify"
+        >提交</el-button
+      >
       <template v-if="$route.query.status === 'detail' && form.purchaseOrderDTO.payStatus === 2 && form.purchaseOrderDTO.goodsStatus === 20">
         <el-button size="small" type="primary" @click="handleReceipt">确认收货</el-button>
       </template>
@@ -120,10 +122,38 @@
 </template>
 
 <script>
+import NP from 'number-precision'
 import { basicInfoMixin } from '../../mixins/basicInfoMixin'
+import { productInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
-  mixins: [basicInfoMixin]
+  mixins: [basicInfoMixin],
+  activated() {
+    if (this.$route.query.productCode) this.handleToStock()
+  },
+  mounted() {
+    if (this.$route.query.productCode) this.handleToStock()
+  },
+  methods: {
+    async handleToStock() {
+      if (this.form.id) delete this.form.id
+      if (this.form.purchaseOrderDTO.id) delete this.form.purchaseOrderDTO.id
+      const { results = [] } = await productInfo({ info: this.$route.query.productCode.trim(), page: 1, rows: 10, orderType: 1 })
+      if (results.length > 0) {
+        this.form.orderItemList = [
+          {
+            productCode: results[0].code,
+            productName: results[0].name,
+            productCount: 1,
+            productPrice: NP.divide(results[0].saleAmount, 100),
+            productAmount: NP.divide(NP.times(1, results[0].saleAmount), 100),
+            sourcePrice: NP.times(1, results[0].saleAmount),
+            remark: ''
+          }
+        ]
+      }
+    }
+  }
 }
 </script>
 

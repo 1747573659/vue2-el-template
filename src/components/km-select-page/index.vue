@@ -16,7 +16,7 @@
       style="width:100%"
     >
       <slot>
-        <el-option v-for="(item, index) in data" :key="index" :label="item[dictLabel]" :value="item[dictValue]"></el-option>
+        <el-option v-for="(item, index) in data" :key="index" :label="item[optionLabel]" :value="item[optionValue]"></el-option>
       </slot>
       <div class="el-select-dropdown__empty">{{ isMaxPage ? '加载完毕' : '加载中...' }}</div>
     </el-select>
@@ -30,11 +30,11 @@ export default {
       type: [Array, Object],
       default: () => []
     },
-    dictLabel: {
+    optionLabel: {
       type: String,
       default: 'label'
     },
-    dictValue: {
+    optionValue: {
       type: String,
       default: 'value'
     },
