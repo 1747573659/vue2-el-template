@@ -24,7 +24,7 @@ export function queryByDatumId(data) {
   return request({
     url: urlLinks.queryByDatumId,
     method: 'post',
-    data
+    params: data
   })
 }
 export function versionReUpload(data) {
