@@ -375,6 +375,7 @@ export default {
         const res = await createLinkUrl({
           agentId: value.tableItem.agentId || '',
           shopAdminId: value.tableItem.id,
+          source:2,
           createId: JSON.parse(getLocal('userInfo')).id
         })
         this.iframeSrc = res.referralLink
