@@ -281,7 +281,7 @@ export default {
           { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' },
           { validator: checkRegServicePhone, trigger: 'blur' }
         ],
-        serviceMail:[
+        serviceMail: [
           { required: true, message: '请输入客服邮箱', trigger: 'blur' },
           { min: 5, max: 128, message: '长度在 5 到 128 个字符', trigger: 'blur' },
         ],
@@ -305,14 +305,20 @@ export default {
       }
     }
   },
+  activated () {
+    this.initFun()
+  },
   created () {
-    const query = this.$route.query
-    this.operation = query.operation || ""
-    if (query.id && ['2', '8', '9', '10', '11'].includes(query.status)) {
-      this.queryByDatumId(query.id)
-    }
+    this.initFun()
   },
   methods: {
+    initFun () {
+      const query = this.$route.query
+      this.operation = query.operation || ""
+      if (query.id && [2, 8, 9, 10, 11].includes(query.status)) {
+        this.queryByDatumId(query.id)
+      }
+    },
     onRemove (field) {
       this.form[field] = ''
     },

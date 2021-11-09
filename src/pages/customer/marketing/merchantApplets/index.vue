@@ -158,6 +158,9 @@ export default {
       tableData: []
     }
   },
+  activated () {
+    this.getTable()
+  },
   created () {
     this.getTable()
     this.queryAllStatus()
@@ -344,7 +347,7 @@ export default {
       this.$router.push({
         name: 'marketingDetile', query: {
           id: row.id || '',
-          status:row.status,
+          status: row.status,
           miniProgramAppid: row.miniProgramAppid,
           operation
         }
@@ -375,7 +378,7 @@ export default {
         const res = await createLinkUrl({
           agentId: value.tableItem.agentId || '',
           shopAdminId: value.tableItem.id,
-          source:2,
+          source: 2,
           createId: JSON.parse(getLocal('userInfo')).id
         })
         this.iframeSrc = res.referralLink
