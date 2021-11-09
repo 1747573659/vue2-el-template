@@ -281,6 +281,10 @@ export default {
           { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' },
           { validator: checkRegServicePhone, trigger: 'blur' }
         ],
+        serviceMail:[
+          { required: true, message: '请输入客服邮箱', trigger: 'blur' },
+          { min: 5, max: 128, message: '长度在 5 到 128 个字符', trigger: 'blur' },
+        ],
         licenseNo: [
           { required: true, message: '请输入营业执照号', trigger: 'blur' },
           { min: 5, max: 32, message: '长度在 5 到 32 个字符', trigger: 'blur' },
