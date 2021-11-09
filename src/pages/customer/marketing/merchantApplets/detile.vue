@@ -135,7 +135,7 @@
         </el-row>
       </el-form>
       <div style="width:100%;text-align: center;padding:20px 0px  100px 0px">
-        <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData()" v-if="$route.query.operation=='add'" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
+        <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData()" v-if="operation=='add'" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
         <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData()" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
         <el-button @click="cancel" plain>取消</el-button>
       </div>
@@ -181,6 +181,7 @@ export default {
       callback()
     }
     return {
+      operation: '',
       questionIcon: require('@/assets/images/icon/questioin.png'),
       pickerOptions: {
         disabledDate: time => {
@@ -302,7 +303,8 @@ export default {
   },
   created () {
     const query = this.$route.query
-    if (query.id) {
+    this.operation = query.operation || ""
+    if (query.id && ['2', '8', '9', '10', '11'].includes(query.status)) {
       this.queryByDatumId(query.id)
     }
   },
@@ -386,7 +388,7 @@ export default {
             await saveBaseData({
               ...this.initSubData(),
               miniProgramId: this.$route.query.id,
-              status:0, //保存状态（0 暂存 1保存）
+              status: 0, //保存状态（0 暂存 1保存）
               miniProgramAppid: this.$route.query.miniProgramAppid
             })
             this.$message.success('暂存成功')
@@ -409,6 +411,7 @@ export default {
               status: 1, //保存状态（0 暂存 1保存）
               miniProgramAppid: this.$route.query.miniProgramAppid
             })
+            this.operation = ''
             this.$message.success('提交成功')
           } catch (error) {
           } finally {

@@ -344,6 +344,7 @@ export default {
       this.$router.push({
         name: 'marketingDetile', query: {
           id: row.id || '',
+          status:row.status,
           miniProgramAppid: row.miniProgramAppid,
           operation
         }
