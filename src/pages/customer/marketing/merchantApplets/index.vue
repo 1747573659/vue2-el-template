@@ -84,24 +84,14 @@
     <el-dialog title="商户小程序订购" :visible.sync="zfbDialogVisible" width="820px">
       <iframe :src="iframeSrc" align='middle' frameborder='0' height='600' width='800'></iframe>
     </el-dialog>
-    <el-dialog title="扫码进入小程序" :visible.sync="xcxDialogVisible" width="820px">
-      <div ref="code" style="text-align: center;width:300px;margin:auto;padding:10px;">
-        <img style="width:100%;" :src="qrcodeUrl">
-        <div style="margin:16px auto;font-weight: bold;">{{qrcodeName}}</div>
-      </div>
-      <div slot="footer" style=" text-align: center;" class="dialog-footer">
-        <el-button @click="xcxDialogVisible=false" size="small">关 闭</el-button>
-        <el-button @click="codeImgDown(qrcodeName)" type="primary" size="small">下 载</el-button>
-      </div>
-    </el-dialog>
   </div>
 </template>
 <script>
 import selectPage from './components/selectPage.vue'
-import { codeImgDown } from '@/utils/codeImgDown'
 import { queryShopListByPage } from '@/api/customer/merchant'
 import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, versionUpload, auditReApply, qrcodeCreate, queryVersion, queryAudit, online, offline, versionReUpload } from '@/api/alipay'
 import { getLocal } from '@/utils/storage'
+import { getLoadBufferImage, downLoadImg } from '@/utils/getLoadBufferImage.js'
 export default {
   name: 'marketingManagement',
   components: { selectPage },
@@ -118,8 +108,6 @@ export default {
     return {
       iframeSrc: '',//链接地址
       loadingField: '', // 加载的字段
-      qrcodeUrl: '', // 小程序二维码
-      qrcodeName: '', // 小程序二维码名称
       rules: {
         miniProgramName: [
           { required: false, min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' },
@@ -132,7 +120,6 @@ export default {
       },
       queryAllStatusOption: [],// 审核状态
       queryShopListByPage, // 享钱API
-      xcxDialogVisible: false, // 小程序弹框
       zfbDialogVisible: false, // 支付宝弹框
       appVersionOption: [], // 小程序版本
       selectPageAttribute: {
@@ -289,13 +276,14 @@ export default {
     async qrcodeCreate (scope) {
       this.loadingField = `qrcodeCreate${scope.$index}`
       try {
-        const res = await qrcodeCreate({
-          currentStatus: scope.row.status,
-          id: scope.row.id
+        const res = await getLoadBufferImage({
+          url: '/alipay/mini/qrcodeCreate',
+          data: {
+            currentStatus: scope.row.status,
+            id: scope.row.id
+          }
         })
-        this.qrcodeUrl = res || ''
-        this.qrcodeName = scope.row.miniProgramName
-        this.xcxDialogVisible = true
+        downLoadImg(res, scope.row.miniProgramName)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -337,10 +325,6 @@ export default {
         statusTypeDesc: '全部',
         statusType: ''
       }, ...res]
-    },
-    // 下载
-    async codeImgDown (qrcodeName) {
-      codeImgDown(this.$refs.code, qrcodeName)
     },
     // 详情
     marketingDetile (row, operation) {

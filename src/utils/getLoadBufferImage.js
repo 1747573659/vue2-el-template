@@ -1,0 +1,39 @@
+import axios from 'axios'
+import {
+  getLocal
+} from '@/utils/storage'
+
+// json格式就传data,urlencode就传params
+export function getLoadBufferImage({
+  url,
+  data = {},
+  params = {},
+  method = 'POST'
+}) {
+  return new Promise((resolve, reject) => {
+    axios({
+      url: process.env.VUE_APP_BASE_API + url,
+      method,
+      headers: {
+        token: getLocal('token') || ''
+      },
+      data: Object.keys(data).length ? data : undefined,
+      params: Object.keys(params).length ? params : undefined,
+      responseType: 'blob' // 必须是arraybuffer类型
+    }).then(res => {
+      resolve(window.URL.createObjectURL(res.data))
+    }, err => {
+      reject(err)
+    })
+  })
+}
+
+export function downLoadImg(url, name = '下载图片') {
+  name += '.jpg'
+  let a = document.createElement('a')
+  document.body.appendChild(a)
+  a.href = url
+  a.download = name // 命名下载名称
+  a.click() // 点击触发下载
+  window.URL.revokeObjectURL(url) // 下载完成进行释放
+}
