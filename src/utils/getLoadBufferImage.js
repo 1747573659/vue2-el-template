@@ -21,15 +21,25 @@ export function getLoadBufferImage({
       params: Object.keys(params).length ? params : undefined,
       responseType: 'blob' // 必须是arraybuffer类型
     }).then(res => {
-      resolve(window.URL.createObjectURL(res.data))
+      if (res.data.code) {
+        this.$message.error(res.data.msg)
+        reject(res.data)
+      } else {
+        let name
+        const filenameRegex = /filename[^;=\n]*=((['"]).*?\2|[^;\n]*)/
+        const matches = filenameRegex.exec(res.headers['content-disposition'])
+        if (matches != null && matches[1]) {
+          name = matches[1].replace(/['"]/g, '')
+        }
+        resolve({ url: window.URL.createObjectURL(res.data), name })
+      }
     }, err => {
       reject(err)
     })
   })
 }
 
-export function downLoadImg(url, name = '下载图片') {
-  name += '.jpg'
+export function downLoadImg(url, name = '下载图片.jpg') {
   let a = document.createElement('a')
   document.body.appendChild(a)
   a.href = url

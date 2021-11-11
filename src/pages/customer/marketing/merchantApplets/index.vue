@@ -283,7 +283,7 @@ export default {
             id: scope.row.id
           }
         })
-        downLoadImg(res, scope.row.miniProgramName)
+        downLoadImg(res.url, res.name)
       } catch (error) {
       } finally {
         this.loadingField = ''
