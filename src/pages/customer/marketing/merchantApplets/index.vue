@@ -49,10 +49,10 @@
         <el-table-column prop="name" label="联系人"></el-table-column>
         <el-table-column prop="phone" label="联系电话"></el-table-column>
         <el-table-column prop="versionName" label="小程序版本"></el-table-column>
-        <el-table-column prop="status" label="状态">
+        <el-table-column prop="status" class-name="el-table-column-noHide" label="状态">
           <template scope="scope">
             <span>{{initQqueryAllStatus(scope.row.status)}}</span>
-            <span v-if="[10,11].includes(scope.row.status)">({{scope.row.errorMsg}})</span>
+            <span style="color:red" v-if="[10,11].includes(scope.row.status)">({{scope.row.errorMsg}})</span>
           </template>
         </el-table-column>
         <el-table-column prop="miniDesc" label="备注"></el-table-column>
@@ -438,5 +438,8 @@ export default {
   /deep/.el-select {
     display: block;
   }
+}
+/deep/ .el-table-column-noHide > div {
+  -webkit-line-clamp: 100;
 }
 </style>
