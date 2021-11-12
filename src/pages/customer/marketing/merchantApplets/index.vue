@@ -92,6 +92,7 @@ import { queryShopListByPage } from '@/api/customer/merchant'
 import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, versionUpload, auditReApply, qrcodeCreate, queryVersion, queryAudit, online, offline, versionReUpload } from '@/api/alipay'
 import { getLocal } from '@/utils/storage'
 import { getLoadBufferImage, downLoadImg } from '@/utils/getLoadBufferImage.js'
+import dayjs from 'dayjs'
 export default {
   name: 'marketingManagement',
   components: { selectPage },
@@ -276,14 +277,11 @@ export default {
     async qrcodeCreate (scope) {
       this.loadingField = `qrcodeCreate${scope.$index}`
       try {
-        const res = await getLoadBufferImage({
-          url: '/alipay/mini/qrcodeCreate',
-          data: {
-            currentStatus: scope.row.status,
-            id: scope.row.id
-          }
-        })
-        downLoadImg(res.url, res.name)
+        const res = await qrcodeCreate({ currentStatus: scope.row.status, id: scope.row.id })
+        const imgObj = await getLoadBufferImage({ url: res, method: 'GET' })
+        // 支付宝小程序appid-{时间yyyy-MM-ddHHmmss}-{4位随机数}
+        let name = '支付宝小程序' + scope.row.miniProgramAppid + '-' + dayjs().format('YYYYMMDDHHmmss') + '-' + Math.ceil(Math.random() * 10000) + '.jpg'
+        downLoadImg(imgObj.url, name)
       } catch (error) {
       } finally {
         this.loadingField = ''

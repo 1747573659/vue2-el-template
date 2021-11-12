@@ -12,7 +12,7 @@ export function getLoadBufferImage({
 }) {
   return new Promise((resolve, reject) => {
     axios({
-      url: process.env.VUE_APP_BASE_API + url,
+      url,
       method,
       headers: {
         token: getLocal('token') || ''
