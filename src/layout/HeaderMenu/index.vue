@@ -9,7 +9,7 @@
         <template v-if="routeMenus.length > 0">
           <template v-for="item in routeMenus">
             <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
-              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
+              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children.find(ele => !ele.hidden).path }">{{ item.meta.title }}</router-link>
             </li>
           </template>
         </template>
@@ -20,7 +20,7 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="item in routeMenus" :key="item.path">
             <div :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
-              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children[0].path }">{{ item.meta.title }}</router-link>
+              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children.find(ele => !ele.hidden).path }">{{ item.meta.title }}</router-link>
             </div>
           </el-dropdown-item>
         </el-dropdown-menu>

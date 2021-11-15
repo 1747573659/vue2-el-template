@@ -12,7 +12,7 @@
 
 <script>
 import { mapGetters } from 'vuex'
-import sidebarNav from './component/sidebar'
+import sidebarNav from './component/sidebar.vue'
 import path from 'path'
 
 export default {
