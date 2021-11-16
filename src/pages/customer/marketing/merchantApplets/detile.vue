@@ -231,7 +231,6 @@ export default {
             res.map(item => {
               item.value = item.categoryId;
               item.label = item.categoryName;
-              item.leaf = item.hasChild == true ? 0 : 1
             })
           }
           resolve(res);
@@ -249,7 +248,6 @@ export default {
             res.map(item => {
               item.value = item.areaCode;
               item.label = item.areaName;
-              item.leaf = level < 2 ? 0 : 1
             })
           }
           resolve(res);
