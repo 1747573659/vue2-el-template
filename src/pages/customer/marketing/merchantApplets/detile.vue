@@ -353,7 +353,7 @@ export default {
       this.form.licenseNo = res.licenseNo
       this.form.licenseName = res.licenseName
       this.form.licenseStartDate = res.licenseStartDate
-      this.form.licenseEndDate = res.licenseEndDate
+      this.form.licenseEndDate = res.licenseEndDate === '1970-01-01 00:00:00' ? '' : res.licenseEndDate
       this.form.licensePic = res.licensePic
       this.form.outDoorPic = res.outDoorPic
       this.form.firstSpecialLicensePic = res.firstSpecialLicensePic
