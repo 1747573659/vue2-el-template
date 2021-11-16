@@ -88,7 +88,7 @@
         </el-table-column>
         <el-table-column prop="agentName" label="所属代理商" min-width="150"></el-table-column>
         <el-table-column prop="createTime" label="创建日期" width="110">
-          <template slot-scope="scope">{{ scope.row.createTime.split(' ')[0] }}</template>
+          <template v-if="scope.row.createTime" slot-scope="scope">{{ scope.row.createTime.split(' ')[0] }}</template>
         </el-table-column>
         <el-table-column prop="status" label="状态" width="70">
           <template slot-scope="scope">{{ scope.row.status | fiterStatus }}</template>
