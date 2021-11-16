@@ -2,7 +2,10 @@
   <section class="p-information-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <div class="p-card-title">订单信息</div>
+        <div>
+          <span class="p-card-title">订单信息</span>
+          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
+        </div>
         <div class="p-card-state">
           <span>订单状态：</span>
           <span class="p-card-state_text">{{ currentOrderStatus }}</span>
@@ -418,6 +421,9 @@ export default {
   &-title {
     color: #1f2e4d;
     font-weight: 500;
+  }
+  &-back {
+    color: red;
   }
 }
 .p-infomation-action {
