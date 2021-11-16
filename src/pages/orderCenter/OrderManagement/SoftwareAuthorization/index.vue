@@ -71,6 +71,7 @@
             <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 3 })">微零售</el-button>
             <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 4 })">微餐饮</el-button>
             <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 5 })">云商</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 6 })">加密狗</el-button>
           </el-form-item>
         </el-row>
       </el-form>

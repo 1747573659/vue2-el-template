@@ -21,6 +21,9 @@
         <el-form-item label="受理人">
           <el-input :value="form.authOrderDTO.handManName"></el-input>
         </el-form-item>
+        <el-form-item label="经销商" v-if="Number($route.query.productType) === 6">
+          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+        </el-form-item>
       </el-form>
     </el-card>
     <component ref="information" :is="activeName" :form="form" :userBaseInfo="userBaseInfo"></component>
@@ -54,13 +57,14 @@
 <script>
 import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
-import { orderStatus, formErpObj, formWlsOrWcyObj, formYsObj } from '../data'
+import { orderStatus, formErpObj, formWlsOrWcyObj, formYsObj, formDongleObj } from '../data'
 import erpInformation from './erpInformation'
 import retailInformation from './retailInformation'
 import repastInformation from './repastInformation'
 import cloundInformation from './cloundInformation'
+import dongleInformation from './dongleInformation'
 
-import { queryHandlerMan, queryBaseInfo } from '@/api/orderCenter/orderManagement'
+import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
 import {
   authOrderErpDetail,
   authOrderWlsDetail,
@@ -85,7 +89,8 @@ export default {
     erpInformation,
     retailInformation,
     repastInformation,
-    cloundInformation
+    cloundInformation,
+    dongleInformation
   },
   data() {
     return {
@@ -137,6 +142,17 @@ export default {
             verifyRequest: authOrderYsSubmit,
             addRequest: authOrderYsAdd,
             form: formYsObj
+          }
+        ],
+        [
+          6,
+          {
+            componentName: 'dongleInformation',
+            detailRequest: authOrderYsDetail,
+            updateRequest: authOrderYsUpdate,
+            verifyRequest: authOrderYsSubmit,
+            addRequest: authOrderYsAdd,
+            form: formDongleObj
           }
         ]
       ]),

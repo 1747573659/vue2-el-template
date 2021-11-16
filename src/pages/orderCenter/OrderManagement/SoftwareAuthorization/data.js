@@ -4,7 +4,8 @@ export const productType = new Map([
   [1, { value: 1, label: 'ERP产品' }],
   [3, { value: 3, label: '微零售' }],
   [4, { value: 4, label: '微餐饮' }],
-  [5, { value: 5, label: '云商' }]
+  [5, { value: 5, label: '云商' }],
+  [6, { value: 6, label: '加密狗' }],
 ])
 
 // 订单状态
@@ -80,6 +81,16 @@ export const formYsObj = {
   },
   addAuthOrderDetailDTOList: [],
   renewAuthOrderDetailDTOList: []
+}
+
+export const formDongleObj = {
+  authOrderDTO: {
+    billNo: '', // 单据编码
+    createOrderTime: '',
+    inventoryAmount: '', // 受理人id
+    handManName: '' // 受理人名称
+  },
+  dongleOrderDetails: []
 }
 
 export const versionMap = new Map([

@@ -38,6 +38,11 @@
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="用户级别">
+          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable>
+            <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <el-tabs v-model="activeName">
         <el-tab-pane label="加点" name="1" v-if="showAddBit"></el-tab-pane>
@@ -64,7 +69,7 @@
               size="small"
               v-model.number.trim="scope.row.addNum"
               @change="handleAddNumAmount(scope.row)"
-              :disabled="$route.query.status === 'detail' || form.merchantDTO.applicationSystem === 203"
+              :disabled="$route.query.status === 'detail' || [203, 206].includes(form.merchantDTO.applicationSystem)"
               style="width:100%"
             ></el-input>
           </template>
@@ -181,8 +186,8 @@ export default {
     showAddBit() {
       return (
         [201, 205].includes(this.form.merchantDTO.applicationSystem) ||
-        (this.form.merchantDTO.applicationSystem === 203 && parseFloat(this.form.merchantDTO.probationFlag) === 1) ||
-        this.form.merchantDTO.applicationSystem !== 203
+        ([203, 206].includes(this.form.merchantDTO.applicationSystem) && (parseFloat(this.form.merchantDTO.probationFlag) === 1 || !this.form.merchantDTO.probationFlag)) ||
+        ![203, 206].includes(this.form.merchantDTO.applicationSystem)
       )
     }
   },
