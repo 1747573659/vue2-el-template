@@ -319,7 +319,7 @@ export default {
     initFun () {
       const query = this.$route.query
       this.operation = query.operation || ""
-      if (query.id && [2, 8, 9, 10, 11].includes(query.status)) {
+      if (query.id && [2, 8, 9, 10, 11].includes(Number(query.status))) {
         this.queryByDatumId(query.id)
       }
     },
