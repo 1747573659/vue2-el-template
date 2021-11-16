@@ -404,6 +404,9 @@ export default {
               miniProgramAppid: this.$route.query.miniProgramAppid
             })
             this.$message.success('暂存成功')
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ path: 'marketingManagement' })
+            })
           } catch (error) {
           } finally {
             this.loadingField = ''
@@ -426,6 +429,9 @@ export default {
             })
             this.operation = ''
             this.$message.success('提交成功')
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ path: 'marketingManagement' })
+            })
           } catch (error) {
           } finally {
             this.loadingField = ''
