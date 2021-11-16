@@ -377,7 +377,7 @@ const customer = {
           meta: {
             title: '小程序资料',
             name: 'marketingDetile',
-            cache: true
+            cache: false
           }
         }
       ]
