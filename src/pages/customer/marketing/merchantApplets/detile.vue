@@ -390,22 +390,26 @@ export default {
     },
     // 基础资料维护
     async saveBaseData () {
-      this.loadingField = 'saveBaseData'
-      try {
-        await saveBaseData({
-          ...this.initSubData(),
-          miniProgramId: this.$route.query.id,
-          status: 0, //保存状态（0 暂存 1保存）
-          miniProgramAppid: this.$route.query.miniProgramAppid
-        })
-        this.$message.success('暂存成功')
-        this.$store.dispatch('delTagView', this.$route).then(() => {
-          this.$router.push({ path: 'marketingManagement' })
-        })
-      } catch (error) {
-      } finally {
-        this.loadingField = ''
-      }
+      this.$refs.form.validate(async valid => {
+        if (valid) {
+          this.loadingField = 'saveBaseData'
+          try {
+            await saveBaseData({
+              ...this.initSubData(),
+              miniProgramId: this.$route.query.id,
+              status: 0, //保存状态（0 暂存 1保存）
+              miniProgramAppid: this.$route.query.miniProgramAppid
+            })
+            this.$message.success('暂存成功')
+            this.$store.dispatch('delTagView', this.$route).then(() => {
+              this.$router.push({ path: 'marketingManagement' })
+            })
+          } catch (error) {
+          } finally {
+            this.loadingField = ''
+          }
+        }
+      })
     },
     // 更改
     async modifyBaseData () {
