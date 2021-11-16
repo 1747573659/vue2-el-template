@@ -135,8 +135,14 @@
         </el-row>
       </el-form>
       <div style="width:100%;text-align: center;padding:20px 0px  100px 0px">
-        <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData()" v-if="operation=='add'" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
-        <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData()" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
+        <template v-if="operation=='add'">
+          <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
+          <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
+        </template>
+         <template v-if="operation=='edit'">
+          <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
+          <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
+        </template>
         <el-button @click="cancel" plain>取消</el-button>
       </div>
     </div>
@@ -389,7 +395,7 @@ export default {
       return subData
     },
     // 基础资料维护
-    async saveBaseData () {
+    async saveBaseData (status) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loadingField = 'saveBaseData'
@@ -397,7 +403,7 @@ export default {
             await saveBaseData({
               ...this.initSubData(),
               miniProgramId: this.$route.query.id,
-              status: 0, //保存状态（0 暂存 1保存）
+              status, //保存状态（0 暂存 1保存）
               miniProgramAppid: this.$route.query.miniProgramAppid
             })
             this.$message.success('暂存成功')
@@ -412,7 +418,7 @@ export default {
       })
     },
     // 更改
-    async modifyBaseData () {
+    async modifyBaseData (status) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loadingField = 'modifyBaseData'
@@ -421,10 +427,9 @@ export default {
               ...this.initSubData(),
               id: this.detileId,
               miniProgramId: this.$route.query.id,
-              status: 1, //保存状态（0 暂存 1保存）
+              status, //保存状态（0 暂存 1保存）
               miniProgramAppid: this.$route.query.miniProgramAppid
             })
-            this.operation = ''
             this.$message.success('提交成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'marketingManagement' })
