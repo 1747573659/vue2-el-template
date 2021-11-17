@@ -260,18 +260,29 @@ export default {
     },
     // 下架
     async offline (scope) {
-      this.loadingField = `offline${scope.$index}`
-      try {
-        await offline({
-          currentStatus: scope.row.status,
-          id: scope.row.id
-        })
-        this.$message.success('下架成功')
-        this.getTable()
-      } catch (error) {
-      } finally {
-        this.loadingField = ''
-      }
+      this.$confirm('下架后，小程序将不可用，确认下架吗？', '提示', {
+        confirmButtonText: '确定',
+        cancelButtonText: '取消',
+        type: 'warning'
+      }).then(async () => {
+        this.loadingField = `offline${scope.$index}`
+        try {
+          await offline({
+            currentStatus: scope.row.status,
+            id: scope.row.id
+          })
+          this.$message.success('下架成功')
+          this.getTable()
+        } catch (error) {
+        } finally {
+          this.loadingField = ''
+        }
+      }).catch(() => {
+        this.$message({
+          type: 'info',
+          message: '已取消下架'
+        });          
+      });
     },
     // 查看小程序
     async qrcodeCreate (scope) {
