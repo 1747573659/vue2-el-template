@@ -58,8 +58,8 @@
         <el-table-column prop="miniDesc" label="备注"></el-table-column>
         <el-table-column label="基础资料维护">
           <template scope="scope">
-            <el-button v-if="[1,2].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'add')" type="text">基础资料维护</el-button>
-            <el-button v-if="[8,9,10,11].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'edit')" type="text">更改小程序资料</el-button>
+            <el-button v-if="[1].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'add')" type="text">基础资料维护</el-button>
+            <el-button v-if="[2,8,9,10,11].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'edit')" type="text">更改小程序资料</el-button>
           </template>
         </el-table-column>
         <el-table-column label="操作" width='220'>

@@ -22,7 +22,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序归属地区" prop="region">
-              <el-cascader v-model='form.region' placeholder='请选择小程序归属地区' filterable clearable :props="regionProps"></el-cascader>
+              <el-cascader ref="region" v-model='form.region' placeholder='请选择小程序归属地区' filterable clearable :props="regionProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -139,8 +139,8 @@
           <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
           <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
         </template>
-         <template v-if="operation=='edit'">
-          <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
+        <template v-if="operation=='edit'">
+          <el-button v-if="$route.query.status==2" :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
           <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
         </template>
         <el-button @click="cancel" plain>取消</el-button>
