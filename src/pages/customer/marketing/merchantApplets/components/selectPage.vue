@@ -5,7 +5,7 @@
         <el-input style="width:100%" size="small" clearable v-model.trim="seachVal" :placeholder="placeholder"></el-input>
       </el-col>
       <el-col style=" text-align: right;" :span="4">
-        <el-button size="small" @click="getTable()" :loading="tableLoading" type="primary">查 询</el-button>
+        <el-button size="small" @click="handleCurrentChange(1)" :loading="tableLoading" type="primary">查 询</el-button>
       </el-col>
     </el-row>
     <el-table v-loading="tableLoading" ref="singleTable" :data="tableData" style="width: 100%;margin-top:16px">
@@ -33,6 +33,7 @@ export default {
       handler (value) {
         this.selectTableIndex = ''
         this.seachVal = ''
+        this.thisPage=1
         if (value) {
           this.getTable()
         }
