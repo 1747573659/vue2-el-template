@@ -17,12 +17,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序类目" prop="miniCategoryIds">
-              <el-cascader v-model='form.miniCategoryIds' placeholder='请选择小程序类目' filterable clearable :props="miniCategoryIdsProps"></el-cascader>
+              <el-cascader :key="miniCategoryIdsKey" v-model='form.miniCategoryIds' placeholder='请选择小程序类目' filterable clearable :props="miniCategoryIdsProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序归属地区" prop="region">
-              <el-cascader ref="region" v-model='form.region' placeholder='请选择小程序归属地区' filterable clearable :props="regionProps"></el-cascader>
+              <el-cascader :key="regionKey" v-model='form.region' placeholder='请选择小程序归属地区' filterable clearable :props="regionProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -189,6 +189,8 @@ export default {
     return {
       detileId: '',
       operation: '',
+      miniCategoryIdsKey: Symbol('miniCategoryIdsKey'),
+      regionKey: Symbol('regionKey'),
       questionIcon: require('@/assets/images/icon/questioin.png'),
       pickerOptions: {
         disabledDate: time => {
@@ -231,6 +233,7 @@ export default {
             res.map(item => {
               item.value = item.categoryId;
               item.label = item.categoryName;
+              item.leaf = !item.hasChild
             })
           }
           resolve(res);
@@ -248,6 +251,7 @@ export default {
             res.map(item => {
               item.value = item.areaCode;
               item.label = item.areaName;
+              item.leaf = !item.hasChild
             })
           }
           resolve(res);
@@ -348,7 +352,9 @@ export default {
       this.form.miniName = res.miniName
       this.form.miniEnglishName = res.miniEnglishName
       this.form.miniCategoryIds = [res.miniCategoryId1 || '', res.miniCategoryId2 || '', res.miniCategoryId3 || '']
+      this.miniCategoryIdsKey = Symbol('miniCategoryIdsKey')
       this.form.region = [res.provinceCode || '', res.cityCode || '', res.areaCode || '']
+      this.regionKey = Symbol('regionKey')
       this.form.miniSlogan = res.miniSlogan
       this.form.miniDesc = res.miniDesc
       this.form.miniLogo = res.miniLogo
