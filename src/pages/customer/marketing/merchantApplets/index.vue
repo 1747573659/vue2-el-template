@@ -71,7 +71,9 @@
             <el-button :loading="loadingField==`auditReApply${scope.$index}`" v-if="[11].includes(scope.row.status)" @click="auditReApply(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">重新提交审核</el-button>
             <el-button :loading="loadingField==`queryAudit${scope.$index}`" v-if="[6].includes(scope.row.status)" @click="queryAudit(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'" type="text">审核状态查询</el-button>
             <el-button :loading="loadingField==`online${scope.$index}`" v-if="[7].includes(scope.row.status)" @click="online(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
-            <el-button :loading="loadingField==`offline${scope.$index}`" v-if="[8].includes(scope.row.status)" @click="offline(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
+            <el-popconfirm class="e-popover_con" @confirm="offline(scope)" placement="top-start" title="下架后，小程序将不可用，确认下架吗？" v-else>
+              <el-button style="margin-right: 5px" :loading="loadingField==`offline${scope.$index}`" slot="reference" v-if="[8].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
+            </el-popconfirm>
             <el-button :loading="loadingField==`qrcodeCreate${scope.$index}`" v-if="[8].includes(scope.row.status)" @click="qrcodeCreate(scope)" v-permission="'MARKETINGMANAGEMENTlOOKAPP'" type="text">查看小程序</el-button>
           </template>
         </el-table-column>
@@ -260,29 +262,18 @@ export default {
     },
     // 下架
     async offline (scope) {
-      this.$confirm('下架后，小程序将不可用，确认下架吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
-      }).then(async () => {
-        this.loadingField = `offline${scope.$index}`
-        try {
-          await offline({
-            currentStatus: scope.row.status,
-            id: scope.row.id
-          })
-          this.$message.success('下架成功')
-          this.getTable()
-        } catch (error) {
-        } finally {
-          this.loadingField = ''
-        }
-      }).catch(() => {
-        this.$message({
-          type: 'info',
-          message: '已取消下架'
-        });          
-      });
+      this.loadingField = `offline${scope.$index}`
+      try {
+        await offline({
+          currentStatus: scope.row.status,
+          id: scope.row.id
+        })
+        this.$message.success('下架成功')
+        this.getTable()
+      } catch (error) {
+      } finally {
+        this.loadingField = ''
+      }
     },
     // 查看小程序
     async qrcodeCreate (scope) {
