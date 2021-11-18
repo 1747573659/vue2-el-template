@@ -341,3 +341,38 @@ export function queryByAgentProductAndModule(data) {
     method: 'POST'
   })
 }
+
+// 新增-加密狗授权订单
+export function authOrderDogAdd(data) {
+  return request({
+    url: '/auth/order/dog/add',
+    method: 'POST',
+    data
+  })
+}
+
+// 详情-加密狗授权订单
+export function authOrderDogById(data) {
+  return request({
+    url: '/auth/order/dog/byId/' + data,
+    method: 'POST'
+  })
+}
+
+// 更新-加密狗授权订单
+export function authOrderDogUpdate(data) {
+  return request({
+    url: '/auth/order/dog/update',
+    method: 'POST',
+    data
+  })
+}
+
+// 提交-加密狗授权订单
+export function authOrderDogSubmit(data) {
+  return request({
+    url: '/auth/order/dog/submit',
+    method: 'POST',
+    data
+  })
+}

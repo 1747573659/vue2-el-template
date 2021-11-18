@@ -93,7 +93,7 @@
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
             <template v-else>
-              <el-input size="small" v-model="scope.row.remark" maxlength="100" placeholder="备注内容，可以叉清空" class="p-hardware-product_remark"></el-input>
+              <el-input size="small" v-model="scope.row.remark" maxlength="100" class="p-hardware-product_remark"></el-input>
             </template>
           </template>
         </el-table-column>

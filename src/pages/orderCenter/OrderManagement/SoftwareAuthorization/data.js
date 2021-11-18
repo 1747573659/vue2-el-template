@@ -90,7 +90,7 @@ export const formDongleObj = {
     inventoryAmount: '', // 受理人id
     handManName: '' // 受理人名称
   },
-  dongleOrderDetails: []
+  detailDTOList: []
 }
 
 export const versionMap = new Map([

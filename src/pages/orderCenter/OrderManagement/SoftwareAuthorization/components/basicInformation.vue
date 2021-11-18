@@ -84,7 +84,11 @@ import {
   authOrderErpSubmit,
   authOrderWlsSubmit,
   authOrderWcySubmit,
-  authOrderYsSubmit
+  authOrderYsSubmit,
+  authOrderDogAdd,
+  authOrderDogById,
+  authOrderDogUpdate,
+  authOrderDogSubmit
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -151,10 +155,10 @@ export default {
           6,
           {
             componentName: 'dongleInformation',
-            detailRequest: authOrderYsDetail,
-            updateRequest: authOrderYsUpdate,
-            verifyRequest: authOrderYsSubmit,
-            addRequest: authOrderYsAdd,
+            detailRequest: authOrderDogById,
+            updateRequest: authOrderDogUpdate,
+            verifyRequest: authOrderDogSubmit,
+            addRequest: authOrderDogAdd,
             form: formDongleObj
           }
         ]
@@ -210,6 +214,16 @@ export default {
     },
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+    },
+    getDogInformationObj() {
+      if (!this.form.detailDTOList.length) {
+        this.$message({ type: 'warning', message: '请先选择授权产品' })
+      } else {
+        return {
+          authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
+          orderDetailVos: this.handleQueryParams().orderDetailVos
+        }
+      }
     },
     getYsInformationObj() {
       if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo || !this.form.addAuthOrderDetailDTOList?.[0]?.productCode) {
@@ -349,6 +363,7 @@ export default {
       else if (this.productType === 3) data = this.getWlsInformationObj()
       else if (this.productType === 4) data = this.getWcyInformationObj()
       else if (this.productType === 5) data = this.getYsInformationObj()
+      else if (this.productType === 6) data = this.getDogInformationObj()
       if (!data) return new Promise((resolve, reject) => reject(new Error()))
       return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data, action)
     },
@@ -394,7 +409,7 @@ export default {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
           } else if (this.productType === 5) {
             this.form.merchantDTO.applicationSystem = res.authOrderDTO.useModal
-          }
+          } 
         })
       } catch (error) {
       } finally {

@@ -186,7 +186,7 @@ export default {
     showAddBit() {
       return (
         [201, 205].includes(this.form.merchantDTO.applicationSystem) ||
-        ([203, 206].includes(this.form.merchantDTO.applicationSystem) && (parseFloat(this.form.merchantDTO.probationFlag) === 1 || !this.form.merchantDTO.probationFlag)) ||
+        [203, 206].includes(this.form.merchantDTO.applicationSystem) && parseFloat(this.form.merchantDTO.probationFlag) === 1 ||
         ![203, 206].includes(this.form.merchantDTO.applicationSystem)
       )
     }
@@ -230,7 +230,7 @@ export default {
       this.form.renewAuthOrderDetailDTOList = []
       if (val) {
         this.form.merchantDTO.delayHour = 1
-        if (this.form.merchantDTO.applicationSystem === 203 && parseFloat(this.form.merchantDTO.probationFlag) === 0) this.activeName = '2'
+        if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && parseFloat(this.form.merchantDTO.probationFlag) === 0) this.activeName = '2'
         else this.activeName = '1'
         this.setAddAuthDetailDTOList()
       } else this.form.merchantDTO.probationFlag = ''
