@@ -40,30 +40,35 @@
     </div>
     <div class="data-box">
       <el-button @click="selectSeach('orderApp')" v-permission="'MARKETINGMANAGEMENT_ORDER'" style="float:right;margin-bottom:16px" size="small" type="primary">订购小程序</el-button>
-      <el-table :data="tableData" v-loading="tableLoading" style="width: 100%">
+      <el-table :data="tableData" row-key="id" v-loading="tableLoading" style="width: 100%">
         <el-table-column prop="merchantName" label="享钱商户名称"></el-table-column>
-        <el-table-column prop="authPid" label="支付宝商户PID"></el-table-column>
+        <el-table-column prop="authPid" label="支付宝商户PID" width="160"></el-table-column>
         <el-table-column prop="miniProgramName" label="小程序名称"></el-table-column>
-        <el-table-column prop="miniProgramAppid" label="小程序APPID"></el-table-column>
-        <el-table-column prop="createTime" width="110" align='center' label="订购时间"></el-table-column>
+        <el-table-column prop="miniProgramAppid" label="小程序APPID" width="160"></el-table-column>
+        <el-table-column prop="createTime" width="165" align='center' label="订购时间"></el-table-column>
         <el-table-column prop="name" label="联系人"></el-table-column>
-        <el-table-column prop="phone" label="联系电话"></el-table-column>
+        <el-table-column prop="phone" label="联系电话" width="120"></el-table-column>
         <el-table-column prop="versionName" label="小程序版本"></el-table-column>
-        <el-table-column prop="status" class-name="el-table-column-noHide" label="状态">
-          <template scope="scope">
+        <el-table-column prop="status" class-name="el-table-column-noHide" label="状态" width='100'>
+          <template slot-scope="scope">
             <span>{{initQqueryAllStatus(scope.row.status)}}</span>
             <span style="color:red" v-if="[10,11].includes(scope.row.status)">({{scope.row.errorMsg}})</span>
           </template>
         </el-table-column>
-        <el-table-column prop="miniDesc" label="备注"></el-table-column>
+        <el-table-column prop="miniDesc" label="备注">
+          <template slot-scope="scope">
+            <div style="min-width: 80px;min-height: 35px" v-if="!scope.row.isEdit" @click="clickRemark(scope)">{{scope.row.promotionDesc}}</div>
+            <el-input type="textarea" autosize :ref="`promotionDesc${scope.$index}`" :disabled="remarkInputDisabled" v-else v-model="scope.row.promotionDesc" placeholder="请输入内容" @blur="remarkBlur(scope.row)"></el-input>
+          </template>
+        </el-table-column>
         <el-table-column label="基础资料维护">
-          <template scope="scope">
+          <template slot-scope="scope">
             <el-button v-if="[1].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'add')" type="text">基础资料维护</el-button>
             <el-button v-if="[2,8,9,10,11].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'edit')" type="text">更改小程序资料</el-button>
           </template>
         </el-table-column>
-        <el-table-column label="操作" width='220'>
-          <template scope="scope">
+        <el-table-column label="操作" width='140' align="right">
+          <template slot-scope="scope">
             <el-button :loading="loadingField==`versionUpload${scope.$index}`" v-if="[3].includes(scope.row.status)" @click="versionUpload(scope)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">立即构建</el-button>
             <el-button :loading="loadingField==`versionReUpload${scope.$index}`" v-if="[10].includes(scope.row.status)" @click="versionReUpload(scope)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">重新构建</el-button>
             <el-button :loading="loadingField==`queryVersion${scope.$index}`" v-if="[4].includes(scope.row.status)" @click="queryVersion(scope)" v-permission="'MARKETINGMANAGEMENTSTATUSlOOK'" type="text">构建状态查询</el-button>
@@ -109,6 +114,8 @@ export default {
       callback()
     }
     return {
+      // 当输入完进行请求时将输入框置灰，避免继续更改
+      remarkInputDisabled: false,
       iframeSrc: '',//链接地址
       loadingField: '', // 加载的字段
       rules: {
@@ -273,6 +280,29 @@ export default {
       } catch (error) {
       } finally {
         this.loadingField = ''
+      }
+    },
+    // 点击备注
+    clickRemark ({ row, $index }) {
+      // console.log(scope)
+      this.$set(row, 'isEdit', true)
+      this.$nextTick(() => {
+        this.$refs['promotionDesc' + $index].focus()
+      })
+    },
+    // 备注修改完成(即输入框失去焦点)
+    async remarkBlur (row) {
+      this.remarkInputDisabled = true
+      let data = {
+        promotionId: row.promotionId,
+        id: row.id,
+        promotionDesc: row.promotionDesc
+      }
+      try {
+        // const res = await editCoupon(data)
+        row.isEdit = false
+      } catch (err) {} finally {
+        this.remarkInputDisabled = false
       }
     },
     // 查看小程序
