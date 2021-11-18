@@ -7,12 +7,12 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="小程序名称" prop="miniName">
-              <el-input v-model.trim="form.miniName" :maxlength="10" :minlength="3" clearable style="width:80%" placeholder="请输入小程序名称"></el-input>
+              <el-input v-model.trim="form.miniName" clearable style="width:80%" placeholder="请输入小程序名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序英文名" prop="miniEnglishName">
-              <el-input v-model.trim="form.miniEnglishName" :maxlength="25" :minlength="3" clearable style="width:80%" placeholder="请输入小程序英文名"></el-input>
+              <el-input v-model.trim="form.miniEnglishName" clearable style="width:80%" placeholder="请输入小程序英文名"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -270,12 +270,12 @@ export default {
       rules: {
         miniName: [
           { required: true, message: '请输入小程序名称', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 10 个字符', trigger: 'blur' },
+          { min: 3, max: 10, message: '长度在 3 到 10 个字符', trigger: 'blur' },
           { validator: checkRegMiniName, trigger: 'blur' }
         ],
         miniEnglishName: [
           { required: true, message: '请输入小程序英文名', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' },
+          { min: 3, max: 25, message: '长度在 3 到 25 个字符', trigger: 'blur' },
           { validator: checkRegMiniEnglishName, trigger: 'blur' }
         ],
         miniCategoryIds: [
@@ -297,12 +297,12 @@ export default {
         ],
         servicePhone: [
           { required: true, message: '请输入客服电话', trigger: 'blur' },
-          { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' },
+          { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' },
           { validator: checkRegServicePhone, trigger: 'blur' }
         ],
         serviceMail: [
           { required: true, message: '请输入客服邮箱', trigger: 'blur' },
-          {max: 64, message: '长度在64 个字符以内', trigger: 'blur' },
+          {max: 128, message: '长度在 128 个字符以内', trigger: 'blur' },
           { validator: checkRegserviceMail, trigger: 'blur' }
         ],
         licenseNo: [
