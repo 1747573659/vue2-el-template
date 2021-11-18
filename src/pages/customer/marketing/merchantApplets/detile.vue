@@ -7,12 +7,12 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="小程序名称" prop="miniName">
-              <el-input v-model.trim="form.miniName" clearable style="width:80%" placeholder="请输入小程序名称"></el-input>
+              <el-input v-model.trim="form.miniName" :maxlength="10" :minlength="3" clearable style="width:80%" placeholder="请输入小程序名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序英文名" prop="miniEnglishName">
-              <el-input v-model.trim="form.miniEnglishName" clearable style="width:80%" placeholder="请输入小程序英文名"></el-input>
+              <el-input v-model.trim="form.miniEnglishName" :maxlength="25" :minlength="3" clearable style="width:80%" placeholder="请输入小程序英文名"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -27,12 +27,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序简介" prop="miniSlogan">
-              <el-input v-model.trim="form.miniSlogan" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序简介" style="width:80%"></el-input>
+              <el-input v-model.trim="form.miniSlogan" show-word-limit :maxlength="16" :minlength="3" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序简介" style="width:80%"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序描述" prop="miniDesc">
-              <el-input v-model.trim="form.miniDesc" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序描述" style="width:80%"></el-input>
+              <el-input v-model.trim="form.miniDesc" show-word-limit :maxlength="200" :minlength="30" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序描述" style="width:80%"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
@@ -186,6 +186,16 @@ export default {
       }
       callback()
     }
+    var checkRegserviceMail = (rule, value, callback) => {
+      if (!value) {
+        return callback(new Error('请输入客服邮箱'))
+      }
+      var reg = new RegExp("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$");
+      if (!reg.test(value)) {
+        return callback(new Error('请输入正确的邮箱'))
+      }
+      callback()
+    }
     return {
       detileId: '',
       operation: '',
@@ -260,7 +270,7 @@ export default {
       rules: {
         miniName: [
           { required: true, message: '请输入小程序名称', trigger: 'blur' },
-          { min: 3, max: 20, message: '长度在 3 到 20 个字符', trigger: 'blur' },
+          { min: 3, max: 20, message: '长度在 3 到 10 个字符', trigger: 'blur' },
           { validator: checkRegMiniName, trigger: 'blur' }
         ],
         miniEnglishName: [
@@ -276,23 +286,24 @@ export default {
         ],
         miniSlogan: [
           { required: true, message: '请输入小程序简介', trigger: 'blur' },
-          { min: 10, max: 32, message: '长度在 10 到 32 个字符', trigger: 'blur' }
+          { min: 8, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' }
         ],
         miniDesc: [
           { required: true, message: '请输入小程序描述', trigger: 'blur' },
-          { min: 20, max: 200, message: '长度在 20 到 200 个字符', trigger: 'blur' }
+          { min: 30, max: 200, message: '长度在 30 到 200 个字符', trigger: 'blur' }
         ],
         miniLogo: [
           { required: true, message: '请选择小程序LOGO', trigger: 'change' }
         ],
         servicePhone: [
           { required: true, message: '请输入客服电话', trigger: 'blur' },
-          { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' },
+          { min: 5, max: 15, message: '长度在 5 到 15 个字符', trigger: 'blur' },
           { validator: checkRegServicePhone, trigger: 'blur' }
         ],
         serviceMail: [
           { required: true, message: '请输入客服邮箱', trigger: 'blur' },
-          { min: 5, max: 128, message: '长度在 5 到 128 个字符', trigger: 'blur' },
+          {max: 64, message: '长度在64 个字符以内', trigger: 'blur' },
+          { validator: checkRegserviceMail, trigger: 'blur' }
         ],
         licenseNo: [
           { required: true, message: '请输入营业执照号', trigger: 'blur' },

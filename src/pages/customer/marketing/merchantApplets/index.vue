@@ -45,7 +45,7 @@
         <el-table-column prop="authPid" label="支付宝商户PID" width="160"></el-table-column>
         <el-table-column prop="miniProgramName" label="小程序名称"></el-table-column>
         <el-table-column prop="miniProgramAppid" label="小程序APPID" width="160"></el-table-column>
-        <el-table-column prop="createTime" width="165" align='center' label="订购时间"></el-table-column>
+        <el-table-column prop="createTime" width="165" label="订购时间"></el-table-column>
         <el-table-column prop="name" label="联系人"></el-table-column>
         <el-table-column prop="phone" label="联系电话" width="120"></el-table-column>
         <el-table-column prop="versionName" label="小程序版本"></el-table-column>
