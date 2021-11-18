@@ -38,9 +38,9 @@
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="用户级别">
-          <el-select v-model="form.merchantDTO.delayHour" @change="handleDelayHour" clearable>
-            <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        <el-form-item label="用户级别" v-if="form.merchantDTO.applicationSystem === 206">
+          <el-select v-model="form.authOrderDTO.userLevelNum" :disabled="parseFloat(form.merchantDTO.probationFlag) === 0" clearable>
+            <el-option v-for="item in modulesUserLevel" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
@@ -137,7 +137,7 @@
 <script>
 import dayjs from 'dayjs'
 import NP from 'number-precision'
-import { delayTimes } from '../data'
+import { delayTimes, modulesUserLevel } from '../data'
 
 import {
   authOrderYsCustomerList,
@@ -160,6 +160,7 @@ export default {
   },
   data() {
     return {
+      modulesUserLevel,
       shopPageData: [],
       isShopMaxPage: false,
       appModulesData: [],
@@ -184,11 +185,11 @@ export default {
   },
   computed: {
     showAddBit() {
-      return (
-        [201, 205].includes(this.form.merchantDTO.applicationSystem) ||
-        [203, 206].includes(this.form.merchantDTO.applicationSystem) && parseFloat(this.form.merchantDTO.probationFlag) === 1 ||
-        ![203, 206].includes(this.form.merchantDTO.applicationSystem)
-      )
+      const applicationSystem = this.form.merchantDTO.applicationSystem
+      if ([203, 206].includes(applicationSystem)) {
+        if (this.form.merchantDTO.merchantName === '' || this.form.merchantDTO.probationFlag === '' || parseFloat(this.form.merchantDTO.probationFlag) === 1) return true
+        else return false
+      } else return true
     }
   },
   watch: {
@@ -238,6 +239,7 @@ export default {
     handleShopPage(val) {
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
+      this.form.merchantDTO.probationFlag = ''
       if (val) {
         const { CustId: merchantNo, CustName } = this.shopPageData.find(item => item.CustId === val)
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, merchantName: CustName })
@@ -253,6 +255,8 @@ export default {
           const { merchantNo: custId, CustName = '', merchantName = '' } = this.form.merchantDTO
           const res = await authOrderYsTrialPointDetail({ custId, appId: this.appModuleObj.outCode, custName: CustName || merchantName })
           this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
+          if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && parseFloat(this.form.merchantDTO.probationFlag) === 0) this.activeName = '2'
+          else this.activeName = '1'
           if (res) {
             await this.getProductStock()
             if (this.activeName === '1') {
@@ -293,11 +297,13 @@ export default {
       try {
         this.checkProductStockLoad = true
         const productCode = this.appModuleObj.productCode || this.form.authOrderDTO.productCode
-        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
-        if (this.form.addAuthOrderDetailDTOList.length > 0) {
-          this.form.addAuthOrderDetailDTOList.forEach(item => {
-            item.orderInventory = this.productStockObj?.totalAmount ?? 0
-          })
+        if (productCode) {
+          this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
+          if (this.form.addAuthOrderDetailDTOList.length > 0) {
+            this.form.addAuthOrderDetailDTOList.forEach(item => {
+              item.orderInventory = this.productStockObj?.totalAmount ?? 0
+            })
+          }
         }
       } catch (error) {
       } finally {

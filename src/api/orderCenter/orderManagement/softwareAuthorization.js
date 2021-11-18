@@ -62,9 +62,9 @@ export function authOrderErpDetail(data) {
 }
 
 // 更新-erp授权订单
-export function authOrderErpUpdate(data, status) {
+export function authOrderErpUpdate(data) {
   return request({
-    url: '/auth/order/erp/update/' + status,
+    url: '/auth/order/erp/update',
     method: 'POST',
     data
   })
@@ -106,9 +106,9 @@ export function authOrderWlsSubmit(data) {
 }
 
 // 更新-微零售授权订单
-export function authOrderWlsUpdate(data, status) {
+export function authOrderWlsUpdate(data) {
   return request({
-    url: '/auth/order/wls/update/' + status,
+    url: '/auth/order/wls/update',
     method: 'POST',
     data
   })
@@ -132,9 +132,9 @@ export function authOrderWcyDetail(data) {
 }
 
 // 更新-微餐饮授权订单
-export function authOrderWcyUpdate(data, status) {
+export function authOrderWcyUpdate(data) {
   return request({
-    url: '/auth/order/wcy/update/' + status,
+    url: '/auth/order/wcy/update',
     method: 'POST',
     data
   })
@@ -166,9 +166,9 @@ export function authOrderYsDetail(data) {
 }
 
 // 更新-云商授权订单
-export function authOrderYsUpdate(data, status) {
+export function authOrderYsUpdate(data) {
   return request({
-    url: '/auth/order/ys/update/' + status,
+    url: '/auth/order/ys/update',
     method: 'POST',
     data
   })

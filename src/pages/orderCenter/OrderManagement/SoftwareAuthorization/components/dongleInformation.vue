@@ -53,7 +53,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择产品" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
@@ -125,7 +124,8 @@ export default {
         }
       })
       this.form.detailDTOList = this.form.detailDTOList.concat(Selections)
-      this.getProductStock().then(() => (this.checkProductVisible = false))
+      this.checkProductVisible = false
+      this.getProductStock()
     },
     async getProductStock() {
       try {

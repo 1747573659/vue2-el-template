@@ -5,7 +5,7 @@ export const productType = new Map([
   [3, { value: 3, label: '微零售' }],
   [4, { value: 4, label: '微餐饮' }],
   [5, { value: 5, label: '云商' }],
-  [6, { value: 6, label: '加密狗' }],
+  [6, { value: 6, label: '加密狗' }]
 ])
 
 // 订单状态
@@ -69,7 +69,8 @@ export const formYsObj = {
     billNo: '', // 单据编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
-    handManName: '' // 受理人名称
+    handManName: '', // 受理人名称
+    userLevelNum: ''
   },
   merchantDTO: {
     agentId: '',
@@ -77,7 +78,8 @@ export const formYsObj = {
     merchantName: '',
     merchantNo: '',
     applicationSystem: '',
-    delayHour: 1
+    delayHour: 1,
+    probationFlag: ''
   },
   addAuthOrderDetailDTOList: [],
   renewAuthOrderDetailDTOList: []
@@ -104,3 +106,9 @@ export const cyVersionMap = new Map([
   ['1', '微餐厅'],
   ['2', '慧猿2.0专业版']
 ])
+
+export const modulesUserLevel = [
+  { label: '1-100用户', value: 1 },
+  { label: '101-300用户', value: 2 },
+  { label: '301用户以上', value: 3 }
+]

@@ -79,7 +79,7 @@ module.exports = {
         })
       )
     } else {
-      config.devtool = 'cheap-module-eval-source-map'
+      config.devtool = 'source-map'
     }
   }
   // css: {

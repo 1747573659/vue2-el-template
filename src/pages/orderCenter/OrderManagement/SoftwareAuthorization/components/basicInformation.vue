@@ -250,7 +250,7 @@ export default {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount },
-              { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
+              { productCode: this.form.addAuthOrderDetailDTOList[0].productCode, userLevelNum: this.form.authOrderDTO.userLevelNum }
             ),
             addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
             renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
@@ -356,7 +356,7 @@ export default {
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
-    setOrderSave(action = 1) {
+    setOrderSave() {
       let data = {}
       const status = this.$route.query.status === 'add'
       if (this.productType === 1) data = this.getErpInformationObj()
@@ -365,7 +365,7 @@ export default {
       else if (this.productType === 5) data = this.getYsInformationObj()
       else if (this.productType === 6) data = this.getDogInformationObj()
       if (!data) return new Promise((resolve, reject) => reject(new Error()))
-      return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data, action)
+      return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data)
     },
     handleSave() {
       this.checkSaveBtnLoad = true
@@ -398,7 +398,7 @@ export default {
               })
             }
           }
-          if (this.productType === 5) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
+          if ([4, 5].includes(this.productType)) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
         }, 500)
         this.$nextTick(() => {
           if (this.productType === 3) {
@@ -409,7 +409,7 @@ export default {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
           } else if (this.productType === 5) {
             this.form.merchantDTO.applicationSystem = res.authOrderDTO.useModal
-          } 
+          }
         })
       } catch (error) {
       } finally {

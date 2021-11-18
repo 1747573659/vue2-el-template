@@ -9,9 +9,17 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
-          <el-select v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="请输入名称/商户号" filterable clearable>
-            <el-option v-for="item in custListData" :key="item.CustId" :label="item.CustNameExpand" :value="item.CustId"></el-option>
-          </el-select>
+          <km-select-page
+            ref="selectPage"
+            v-model="form.merchantDTO.merchantName"
+            option-label="CustNameExpand"
+            option-value="CustId"
+            :data.sync="shopPageData"
+            :request="getCustList"
+            :is-max-page.sync="isShopMaxPage"
+            @change="handleMerchantInfo"
+            placeholder="请输入名称/商户号"
+          />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.merchantDTO.merchantNo" disabled placeholder="请先选择商户"></el-input>
@@ -83,12 +91,12 @@
       </el-form>
       <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column :prop="form.merchantDTO.applicationModule === 101 ? 'BranchName':'TaxpayerNum'" label="门店名称/税号"></el-table-column>
+        <el-table-column :prop="form.merchantDTO.applicationModule === 101 ? 'BranchName' : 'TaxpayerNum'" label="门店名称/税号"></el-table-column>
         <el-table-column prop="shopType" label="类型">
           <template slot-scope="scope">{{ scope.row.shopType === 101 ? '门店' : '电子发票' }}</template>
         </el-table-column>
         <el-table-column label="有效期">
-          <template slot-scope="scope">{{scope.row.KMValidity || new Date() | formatTime}}</template>
+          <template slot-scope="scope">{{ scope.row.KMValidity || new Date() | formatTime }}</template>
         </el-table-column>
       </el-table>
       <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
@@ -128,8 +136,8 @@ export default {
     return {
       delayTimes,
       cyVersionMap,
-      custListData: [],
-      isCustListPage: false,
+      shopPageData: [],
+      isShopMaxPage: false,
       merchantInfo: [],
       productStockObj: {},
       checkProductVisible: false,
@@ -193,7 +201,7 @@ export default {
       if (this.$route.query.status === 'edit' || val === 101) {
         if (this.form.merchantDTO.merchantNo) {
           this.merchantInfo = await this.getWcyCustInfo()
-          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
+          this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         } else this.$message({ type: 'warning', message: '请先选择商户' })
       }
       if (val !== 101) await this.handleZbProduct()
@@ -222,7 +230,7 @@ export default {
         try {
           this.form.merchantDTO.merchantNo = val
           this.merchantInfo = await this.getWcyCustInfo()
-          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
+          this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
           const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
           this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
         } catch (error) {}
@@ -262,10 +270,21 @@ export default {
         this.checkProductTabLock = false
       }
     },
-    async getCustList() {
-      const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo, type: 0 })
-      this.custListData = res
-      this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
+    async getCustList({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const isNum = new RegExp(/^\d{1,}$/).test(query)
+        const res = await authOrderWcyCustList({
+          cust: isNum ? query : '',
+          custname: !isNum && query ? query : '',
+          page: --page,
+          size: rows,
+          type: 0,
+          organ: this.userBaseInfo.organNo
+        })
+        res.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
+        this.shopPageData = this.shopPageData.concat(res || [])
+        this.isShopMaxPage = !res || (res && res.length < 10)
+      } catch (error) {}
     },
     setDelayValidTime(date) {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
