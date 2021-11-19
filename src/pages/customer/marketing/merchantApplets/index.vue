@@ -172,7 +172,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.$message.success('构建成功')
+        this.$message.success('构建成功，请稍后刷新列表查看')
         this.tableLoading = true
         let timer = setTimeout(() => {
           this.getTable().then(() => clearTimeout(timer))
@@ -190,7 +190,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.$message.success('构建成功')
+        this.$message.success('构建成功，请稍后刷新列表查看')
         this.tableLoading = true
         let timer = setTimeout(() => {
           this.getTable().then(() => clearTimeout(timer))
@@ -208,7 +208,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.$message.success('已查询')
+        this.$message.success('已查询，请稍后刷新列表查看')
         this.tableLoading = true
         let timer = setTimeout(() => {
           this.getTable().then(() => clearTimeout(timer))
@@ -226,7 +226,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.$message.success('已提交')
+        this.$message.success('已提交，请稍后刷新列表查看')
         this.tableLoading = true
         let timer = setTimeout(() => {
           this.getTable().then(() => clearTimeout(timer))
@@ -244,7 +244,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.$message.success('已提交')
+        this.$message.success('已提交，请稍后刷新列表查看')
         this.tableLoading = true
         let timer = setTimeout(() => {
           this.getTable().then(() => clearTimeout(timer))
@@ -262,7 +262,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.$message.success('已查询')
+        this.$message.success('已查询，请稍后刷新列表查看')
         this.tableLoading = true
         let timer = setTimeout(() => {
           this.getTable().then(() => clearTimeout(timer))
