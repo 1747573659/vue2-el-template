@@ -173,7 +173,7 @@ export default {
           id: scope.row.id
         })
         this.$message.success('构建成功')
-        this.getTable()
+        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -188,7 +188,7 @@ export default {
           id: scope.row.id
         })
         this.$message.success('构建成功')
-        this.getTable()
+        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -202,7 +202,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.getTable()
+        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -217,7 +217,7 @@ export default {
           id: scope.row.id
         })
         this.$message.success('已提交')
-        this.getTable()
+        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -232,7 +232,7 @@ export default {
           id: scope.row.id
         })
         this.$message.success('已提交')
-        this.getTable()
+        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -246,7 +246,7 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        this.getTable()
+        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
