@@ -144,6 +144,7 @@
           <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
         </template>
         <el-button @click="cancel" plain>取消</el-button>
+        <div v-if="[8, 9, 10, 11].includes(Number($route.query.status))" style="margin-top: 20px; color: #666666; font-size: 14px">此次资料修改，将会在下一次小程序版本更新时生效</div>
       </div>
     </div>
   </div>

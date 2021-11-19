@@ -1,46 +1,52 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <el-form :inline="true" :model="form" label-suffix=":" :rules="rules" label-width="120px" ref="form" size="small" class="xdd-btn-block__w240">
-        <el-row>
-          <el-form-item label="享钱商户名称">
-            <el-input class="p-form-input_width" @clear="()=>{
-                form.shopAdminName=''
-                form.shopAdminId=''
-                }" @focus="selectSeach('shopAdminName')" clearable placeholder="请输入享钱商户名称搜索" size="small" v-model.trim="form.shopAdminName"></el-input>
-          </el-form-item>
-          <el-form-item label="支付宝商户PID">
-            <el-input class="p-form-input_width" clearable placeholder="请输入支付宝商户PID搜索" size="small" maxlength="30" v-model.trim="form.authPid"></el-input>
-          </el-form-item>
-          <el-form-item label="小程序名称" prop="miniProgramName">
-            <el-input class="p-form-input_width" clearable placeholder="请输入小程序名称搜索" size="small" maxlength="20" v-model.trim="form.miniProgramName"></el-input>
-          </el-form-item>
-          <el-form-item label="小程序版本">
-            <el-select class="p-form-input_width" clearable v-model="form.version" filterable placeholder="请输入小程序版本搜索">
-              <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.version" :value="item.id"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="状态">
-            <el-select class="p-form-input_width" clearable v-model="form.status" filterable placeholder="请选择小程序状态搜索">
-              <el-option v-for="(item,index) in queryAllStatusOption" :key="index" :label="item.statusTypeDesc" :value="item.statusType"></el-option>
-            </el-select>
-          </el-form-item>
-          <el-form-item label="小程序APPID">
-            <el-input class="p-form-input_width" clearable placeholder="请输入小程序APPID搜索" size="small" maxlength="30" v-model.trim="form.miniProgramAppid"></el-input>
-          </el-form-item>
-          <el-form-item label="联系人" prop="name">
-            <el-input class="p-form-input_width" clearable placeholder="请输入联系人搜索" size="small" v-model.trim="form.name"></el-input>
-          </el-form-item>
-          <el-form-item label="">
-            <el-button @click="search" type="primary" size="small">搜索</el-button>
-            <el-button @click="clearFrom" size="small">重置</el-button>
-          </el-form-item>
+      <el-form :inline="true" :model="form" label-suffix=":" :rules="rules" label-width="110px" ref="form" size="small" class="xdd-btn-block__w240">
+        <el-row type="flex" align="bottom">
+          <el-col :xl="22" :lg="21">
+            <el-form-item label="享钱商户名称">
+              <el-input class="p-form-input_width" @clear="()=>{
+                  form.shopAdminName=''
+                  form.shopAdminId=''
+                  }" @focus="selectSeach('shopAdminName')" clearable placeholder="请输入享钱商户名称搜索" size="small" v-model.trim="form.shopAdminName"></el-input>
+            </el-form-item>
+            <el-form-item label="支付宝商户PID">
+              <el-input class="p-form-input_width" clearable placeholder="请输入支付宝商户PID搜索" size="small" maxlength="30" v-model.trim="form.authPid"></el-input>
+            </el-form-item>
+            <el-form-item label="小程序名称" prop="miniProgramName">
+              <el-input class="p-form-input_width" clearable placeholder="请输入小程序名称搜索" size="small" maxlength="20" v-model.trim="form.miniProgramName"></el-input>
+            </el-form-item>
+            <el-form-item label="小程序版本">
+              <el-select class="p-form-input_width" clearable v-model="form.version" filterable placeholder="请输入小程序版本搜索">
+                <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.version" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="状态">
+              <el-select class="p-form-input_width" clearable v-model="form.status" filterable placeholder="请选择小程序状态搜索">
+                <el-option v-for="(item,index) in queryAllStatusOption" :key="index" :label="item.statusTypeDesc" :value="item.statusType"></el-option>
+              </el-select>
+            </el-form-item>
+            <el-form-item label="小程序APPID">
+              <el-input class="p-form-input_width" clearable placeholder="请输入小程序APPID搜索" size="small" maxlength="30" v-model.trim="form.miniProgramAppid"></el-input>
+            </el-form-item>
+            <el-form-item label="联系人" prop="name">
+              <el-input class="p-form-input_width" clearable placeholder="请输入联系人搜索" size="small" v-model.trim="form.name"></el-input>
+            </el-form-item>
+            <el-form-item>
+              <el-button @click="search" type="primary" size="small">搜索</el-button>
+              <el-button @click="clearFrom" size="small">重置</el-button>
+            </el-form-item>
+          </el-col>
+          <el-col :xl="2" :lg="3">
+            <el-form-item style="float:right">
+              <el-button @click="selectSeach('orderApp')" v-permission="'MARKETINGMANAGEMENT_ORDER'" class="add-btn" size="small" type="primary" plain>订购小程序</el-button>
+            </el-form-item>
+          </el-col>
         </el-row>
       </el-form>
     </div>
     <div class="data-box">
-      <el-button @click="selectSeach('orderApp')" v-permission="'MARKETINGMANAGEMENT_ORDER'" style="float:right;margin-bottom:16px" size="small" type="primary">订购小程序</el-button>
-      <el-table :data="tableData" row-key="id" v-loading="tableLoading" style="width: 100%">
+      <el-table :data="tableData" row-key="id" v-loading="tableLoading" style="width: 100%" :max-height="tabMaxHeight">
         <el-table-column prop="merchantName" label="享钱商户名称"></el-table-column>
         <el-table-column prop="authPid" label="支付宝商户PID" width="160"></el-table-column>
         <el-table-column prop="miniProgramName" label="小程序名称"></el-table-column>
@@ -49,10 +55,10 @@
         <el-table-column prop="name" label="联系人"></el-table-column>
         <el-table-column prop="phone" label="联系电话" width="120"></el-table-column>
         <el-table-column prop="versionName" label="小程序版本"></el-table-column>
-        <el-table-column prop="status" class-name="el-table-column-noHide" label="状态" width='100'>
+        <el-table-column prop="status" class-name="el-table-column-noHide" label="状态" width='120'>
           <template slot-scope="scope">
             <span>{{initQqueryAllStatus(scope.row.status)}}</span>
-            <span style="color:red" v-if="[10,11].includes(scope.row.status)">({{scope.row.errorMsg}})</span>
+            <el-button v-if="[10,11].includes(scope.row.status)" style="margin-left: 10px;" type="text" @click="handleWxCertReason(scope.row)">原因</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="miniDesc" label="备注">
@@ -100,8 +106,10 @@ import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, 
 import { getLocal } from '@/utils/storage'
 import { getLoadBufferImage, downLoadImg } from '@/utils/getLoadBufferImage.js'
 import dayjs from 'dayjs'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 export default {
   name: 'marketingManagement',
+  mixins: [tableMaxHeight],
   components: { selectPage },
   data () {
     var checkRegMiniName = (rule, value, callback) => {
@@ -164,6 +172,9 @@ export default {
     this.queryAllVersion()
   },
   methods: {
+    handleWxCertReason(row) {
+      this.$alert(row.errorMsg, '原因', { confirmButtonText: '确定' })
+    },
     // 立即构建
     async versionUpload (scope) {
       this.loadingField = `versionUpload${scope.$index}`
@@ -492,5 +503,8 @@ export default {
 }
 /deep/ .el-table-column-noHide > div {
   -webkit-line-clamp: 100;
+}
+.add-btn {
+  padding: 8px 15.5px;
 }
 </style>
