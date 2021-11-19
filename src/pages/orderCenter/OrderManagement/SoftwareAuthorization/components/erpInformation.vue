@@ -89,6 +89,7 @@
         </el-table-column>
       </el-table>
     </el-card>
+
     <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择产品模块" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
@@ -96,12 +97,11 @@
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
-      <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="moduleId" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
       </el-table>
-      <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
         <el-button @click="checkProductVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
@@ -136,13 +136,32 @@ export default {
       productVal: '',
       checkProductTabLock: false,
       basicProductData: [],
-      currentPage: 1,
-      pageSize: 10,
-      totalPage: 0,
-      checkProductStockLoad: false
+      checkProductStockLoad: false,
+      selectMaps: new Map(),
+      currentPageSelectSets: new Set()
     }
   },
   methods: {
+    handleSelectAll(selection) {
+      if (selection?.length) {
+        selection.forEach(item => {
+          this.selectMaps.set(item.moduleId, item)
+          this.currentPageSelectSets.add(item.moduleId)
+        })
+      } else {
+        this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
+        this.currentPageSelectSets.clear()
+      }
+    },
+    handleSelect(selection, row) {
+      if (selection.length > this.currentPageSelectSets.size) {
+        this.selectMaps.set(row.moduleId, row)
+        this.currentPageSelectSets.add(row.moduleId)
+      } else {
+        this.selectMaps.delete(row.moduleId)
+        this.currentPageSelectSets.delete(row.moduleId)
+      }
+    },
     handleAuthNumAmount(row) {
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.authNum)) {
         this.$message({ type: 'warning', message: '授权数量范围为[1-999]' })
@@ -157,19 +176,45 @@ export default {
       this.form.erpAuthOrderDetails = []
     },
     handleConfirm() {
-      const Selections = this.$refs.product.selection.map(item => {
-        return {
-          moduleCode: item.moduleId,
-          moduleName: item.moduleName,
-          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
-          orderInventory: 0,
-          authNum: 1,
-          productCode: item.productId,
-          unionChannel: '',
-          remark: ''
-        }
-      })
-      this.form.erpAuthOrderDetails = this.form.erpAuthOrderDetails.concat(Selections)
+      console.info([...this.selectMaps.values()])
+      // if (this.form.erpAuthOrderDetails.length === 0) {
+      //   this.selectMaps.forEach((item, key) => {
+      //     this.form.erpAuthOrderDetails.push({
+      //       moduleCode: item.moduleId,
+      //       moduleName: item.moduleName,
+      //       authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
+      //       orderInventory: 0,
+      //       authNum: 1,
+      //       productCode: item.productId,
+      //       unionChannel: '',
+      //       remark: ''
+      //     })
+      //   })
+      // } else {
+      //   this.selectMaps.forEach((item, key) => {
+      //     if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) this.form.erpAuthOrderDetails.splice(this.form.erpAuthOrderDetails.findIndex())
+      //   })
+      //   // this.form.erpAuthOrderDetails.forEach((item, index) => {
+      //   //   if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
+      //   // })
+      // }
+      // const Selections = []
+      // this.selectMaps.forEach((item, key) => {
+      //   if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) {
+      //     Selections.push({
+      //       moduleCode: item.moduleId,
+      //       moduleName: item.moduleName,
+      //       authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
+      //       orderInventory: 0,
+      //       authNum: 1,
+      //       productCode: item.productId,
+      //       unionChannel: '',
+      //       remark: ''
+      //     })
+      //   }
+      // })
+      // this.form.erpAuthOrderDetails = this.form.erpAuthOrderDetails.concat(Selections)
+
       if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) this.getChannelPage()
       this.getProductStock().then(() => (this.checkProductVisible = false))
     },
@@ -189,14 +234,30 @@ export default {
       if (!this.form.erpAuthMerchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
         this.checkProductVisible = true
+        if (this.selectMaps.size) {
+          this.selectMaps.forEach((item, key) => {
+            if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) this.selectMaps.delete(key)
+          })
+        }
         this.getProductPage()
       }
     },
     async getProductPage() {
       try {
         this.checkProductTabLock = true
+        this.currentPageSelectSets.clear()
         const { merchantId: custId, productCode } = this.form.erpAuthMerchantDTO
         this.basicProductData = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
+        this.$nextTick(() => {
+          if (this.basicProductData.length > 0) {
+            this.basicProductData.forEach(item => {
+              if (this.selectMaps.has(item.moduleId)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.currentPageSelectSets.add(item.moduleId)
+              }
+            })
+          }
+        })
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
@@ -213,7 +274,7 @@ export default {
       try {
         const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
         const res = await authShopPage({ custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', page, rows })
-        res.results.forEach(item => (item.custNameExpand = `${item.custName}（${item.custId}）`))
+        res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
         this.shopPageData = this.shopPageData.concat(res.results || [])
         this.isShopMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

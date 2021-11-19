@@ -99,7 +99,6 @@
           <template slot-scope="scope">{{ scope.row.KMValidity || new Date() | formatTime }}</template>
         </el-table-column>
       </el-table>
-      <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
         <el-button @click="checkProductVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
@@ -281,7 +280,7 @@ export default {
           type: 0,
           organ: this.userBaseInfo.organNo
         })
-        res.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
+        res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustId}）`))
         this.shopPageData = this.shopPageData.concat(res || [])
         this.isShopMaxPage = !res || (res && res.length < 10)
       } catch (error) {}

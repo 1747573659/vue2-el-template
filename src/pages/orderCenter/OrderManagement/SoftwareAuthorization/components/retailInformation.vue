@@ -9,9 +9,20 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
-          <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="请输入名称/商户号" filterable clearable>
+          <!-- <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="请输入名称/商户号" filterable clearable>
             <el-option v-for="item in custListData" :key="item.CustID" :label="item.CustNameExpand" :value="item.CustID"></el-option>
-          </el-select>
+          </el-select> -->
+          <km-select-page
+            ref="selectPage"
+            v-model="form.merchantDTO.merchantName"
+            option-label="CustNameExpand"
+            option-value="CustID"
+            :data.sync="shopPageData"
+            :request="getCustList"
+            :is-max-page.sync="isShopMaxPage"
+            @change="handleMerchantInfo"
+            placeholder="请输入名称/商户号"
+          />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.merchantDTO.merchantId" placeholder="请先选择商户" disabled></el-input>
@@ -199,10 +210,20 @@ export default {
         this.checkProductStockLoad = false
       }
     },
-    async getCustList() {
-      const res = await authOrderWlsCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
-      this.custListData = res
-      this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustID}）`))
+    async getCustList({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const isNum = new RegExp(/^\d{1,}$/).test(query)
+        const res = await authOrderWlsCustList({
+          cust: isNum ? query : '',
+          custname: !isNum && query ? query : '',
+          pageSize: page,
+          pageIndex: rows,
+          organ: this.userBaseInfo.organNo
+        })
+        res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustID}）`))
+        this.shopPageData = this.shopPageData.concat(res || [])
+        this.isShopMaxPage = !res || (res && res.length < 10)
+      } catch (error) {}
     },
     setDelayValidTime(val) {
       const countTime = dayjs(val).isAfter(dayjs().format('YYYY-MM-DD')) ? val : dayjs().format('YYYY-MM-DD')
