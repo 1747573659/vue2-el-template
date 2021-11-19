@@ -265,7 +265,7 @@ export default {
     async getCustList() {
       const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo, type: 0 })
       this.custListData = res
-      this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
+      this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustId}）`))
     },
     setDelayValidTime(date) {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')

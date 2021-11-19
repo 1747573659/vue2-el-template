@@ -314,7 +314,7 @@ export default {
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await authOrderYsCustomerList({ Condition: query, OrganNo: this.userBaseInfo.organNo, PageIndex: --page, PageSize: rows })
-        res.forEach(item => (item.CustNameExpand = `${item.CustName}（${item.CustId}）`))
+        res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustId}）`))
         this.shopPageData = this.shopPageData.concat(res || [])
         this.isShopMaxPage = !res || (res && res.length < 10)
       } catch (error) {}
