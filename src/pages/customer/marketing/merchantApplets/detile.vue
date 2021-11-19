@@ -362,9 +362,11 @@ export default {
       })
       this.form.miniName = res.miniName
       this.form.miniEnglishName = res.miniEnglishName
-      this.form.miniCategoryIds = [res.miniCategoryId1 || '', res.miniCategoryId2 || '', res.miniCategoryId3 || '']
+      this.form.miniCategoryIds = [res.miniCategoryId1 || '', res.miniCategoryId2 || '']
+      res.miniCategoryId3 && this.form.miniCategoryIds.push(res.miniCategoryId3)
       this.miniCategoryIdsKey = Symbol('miniCategoryIdsKey')
-      this.form.region = [res.provinceCode || '', res.cityCode || '', res.areaCode || '']
+      this.form.region = [res.provinceCode || '', res.cityCode || '']
+      res.areaCode && this.form.region.push(res.areaCode)
       this.regionKey = Symbol('regionKey')
       this.form.miniSlogan = res.miniSlogan
       this.form.miniDesc = res.miniDesc
