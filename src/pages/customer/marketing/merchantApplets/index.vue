@@ -57,8 +57,8 @@
         </el-table-column>
         <el-table-column prop="miniDesc" label="备注">
           <template slot-scope="scope">
-            <div style="min-width: 80px;min-height: 35px" v-if="!scope.row.isEdit" @click="clickRemark(scope)">{{scope.row.promotionDesc}}</div>
-            <el-input type="textarea" autosize :ref="`promotionDesc${scope.$index}`" :disabled="remarkInputDisabled" v-else v-model="scope.row.promotionDesc" placeholder="请输入内容" @blur="remarkBlur(scope.row)"></el-input>
+            <div style="min-width: 80px;min-height: 35px" v-if="!scope.row.isEdit" @click="clickRemark(scope)">{{scope.row.miniDesc}}</div>
+            <el-input type="textarea" :maxlength="50" autosize :ref="`miniDesc${scope.$index}`" :disabled="remarkInputDisabled" v-else v-model="scope.row.miniDesc" placeholder="请输入内容" @blur="remarkBlur(scope.row)"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="基础资料维护">
@@ -96,7 +96,7 @@
 <script>
 import selectPage from './components/selectPage.vue'
 import { queryShopListByPage } from '@/api/customer/merchant'
-import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, versionUpload, auditReApply, qrcodeCreate, queryVersion, queryAudit, online, offline, versionReUpload } from '@/api/alipay'
+import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, versionUpload, auditReApply, qrcodeCreate, queryVersion, queryAudit, online, offline, versionReUpload, modifyMiniDesc } from '@/api/alipay'
 import { getLocal } from '@/utils/storage'
 import { getLoadBufferImage, downLoadImg } from '@/utils/getLoadBufferImage.js'
 import dayjs from 'dayjs'
@@ -287,20 +287,21 @@ export default {
       // console.log(scope)
       this.$set(row, 'isEdit', true)
       this.$nextTick(() => {
-        this.$refs['promotionDesc' + $index].focus()
+        this.$refs['miniDesc' + $index].focus()
       })
     },
     // 备注修改完成(即输入框失去焦点)
     async remarkBlur (row) {
       this.remarkInputDisabled = true
       let data = {
-        promotionId: row.promotionId,
         id: row.id,
-        promotionDesc: row.promotionDesc
+        miniDesc: row.miniDesc,
+        source: 1
       }
       try {
-        // const res = await editCoupon(data)
+        const res = await modifyMiniDesc(data)
         row.isEdit = false
+      this.$message.success('备注修改成功')
       } catch (err) {} finally {
         this.remarkInputDisabled = false
       }

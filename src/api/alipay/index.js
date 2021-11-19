@@ -19,6 +19,14 @@ const urlLinks = {
   qrcodeCreate: '/alipay/mini/qrcodeCreate',
   versionReUpload: '/alipay/mini/versionReUpload',
   queryByDatumId: '/alipay/mini/queryByDatumId',
+  modifyMiniDesc: '/alipay/mini/modifyMiniDesc'
+}
+export function modifyMiniDesc(data) {
+  return request({
+    url: urlLinks.modifyMiniDesc,
+    method: 'post',
+    data
+  })
 }
 export function queryByDatumId(data) {
   return request({
