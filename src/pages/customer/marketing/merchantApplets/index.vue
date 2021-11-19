@@ -173,7 +173,10 @@ export default {
           id: scope.row.id
         })
         this.$message.success('构建成功')
-        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
+        this.tableLoading = true
+        let timer = setTimeout(() => {
+          this.getTable().then(() => clearTimeout(timer))
+        }, 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -188,7 +191,10 @@ export default {
           id: scope.row.id
         })
         this.$message.success('构建成功')
-        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
+        this.tableLoading = true
+        let timer = setTimeout(() => {
+          this.getTable().then(() => clearTimeout(timer))
+        }, 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -202,7 +208,11 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
+        this.$message.success('已查询')
+        this.tableLoading = true
+        let timer = setTimeout(() => {
+          this.getTable().then(() => clearTimeout(timer))
+        }, 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -217,7 +227,10 @@ export default {
           id: scope.row.id
         })
         this.$message.success('已提交')
-        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
+        this.tableLoading = true
+        let timer = setTimeout(() => {
+          this.getTable().then(() => clearTimeout(timer))
+        }, 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -232,7 +245,10 @@ export default {
           id: scope.row.id
         })
         this.$message.success('已提交')
-        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
+        this.tableLoading = true
+        let timer = setTimeout(() => {
+          this.getTable().then(() => clearTimeout(timer))
+        }, 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
@@ -246,7 +262,11 @@ export default {
           currentStatus: scope.row.status,
           id: scope.row.id
         })
-        let timer = setTimeout(this.getTable().then(() => clearTimeout(timer)), 1000)
+        this.$message.success('已查询')
+        this.tableLoading = true
+        let timer = setTimeout(() => {
+          this.getTable().then(() => clearTimeout(timer))
+        }, 1000)
       } catch (error) {
       } finally {
         this.loadingField = ''
