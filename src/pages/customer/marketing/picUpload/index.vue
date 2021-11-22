@@ -68,19 +68,44 @@ export default {
     onProgress(event, file, fileList) {
     },
     beforeUpload (file) {
-      const imgTypes = this.accept.split(',')
-      const isJPG = imgTypes.includes(file.type)
-      const isLt2M = file.size / 1024 < this.size
-      if (!isJPG) {
-        this.$message.error(`上传图片只能是 ${this.accept} 格式!`)
-        return false
-      }
-      if (!isLt2M) {
-        this.$message.error(`上传图片大小不能超过 ${this.size}kB!`)
-        return false
-      }
-      return isLt2M && isJPG
+      // const url = window.URL || window.webkitURL
+      const isSize = this.getImgSizeFormFile(file).then(({width, height}) => {
+        const imgTypes = this.accept.split(',')
+        const isJPG = imgTypes.includes(file.type)
+        const isLt2M = file.size / 1024 < this.size
+        if (!isJPG) {
+          this.$message.error(`上传图片只能是 ${this.accept} 格式!`)
+          return Promise.reject()
+        }
+        if (!isLt2M) {
+          this.$message.error(`上传图片大小不能超过 ${this.size}kB!`)
+          return Promise.reject()
+        }
+        // 如果宽高不等，则返回
+        if (width !== height) {
+          this.$message.error(`上传的图片需要宽高相等!`)
+          return Promise.reject()
+        }
+        if(isLt2M && isJPG) {
+          return file
+        } else {
+          return Promise.reject()
+        }
+      })
+      return isSize
     },
+    getImgSizeFormFile(file) {
+      return new Promise((resolve, reject) => {
+        const img = new Image()
+        img.onload = function() {
+          resolve({
+            width: this.width,
+            height: this.height
+          })
+        }
+        img.src = URL.createObjectURL(file)
+      })
+    }
   },
 }
 </script>
