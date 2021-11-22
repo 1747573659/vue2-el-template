@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="search-box">
-      <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="80px" @submit.native.prevent>
+      <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="90px" @submit.native.prevent>
         <el-row type="flex" align="bottom">
           <el-col :xl="22" :lg="21">
             <el-form-item label="订单日期">
@@ -20,11 +20,11 @@
             <el-form-item label="申请经销商" v-if="userInfo.level === 1">
               <km-select-page
                 v-model="form.agentId"
-                :data.sync="ordererData"
-                option-label="userName"
+                :data.sync="agentData"
+                option-label="name"
                 option-value="id"
-                :request="handleOrderPage"
-                :is-max-page.sync="isOrdererMaxPage"
+                :request="handleAgentPage"
+                :is-max-page.sync="isAgentMaxPage"
                 placeholder="请输入经销商ID/名称"
               />
             </el-form-item>
@@ -47,9 +47,9 @@
               />
             </el-form-item>
             <el-form-item label="单据编码">
-              <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
+              <el-input v-model.trim="form.billNo" maxlength="16" clearable></el-input>
             </el-form-item>
-            <el-form-item style="margin-left:80px">
+            <el-form-item style="margin-left:90px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'SOFTWARE_INVENTORY_APPLY_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view
@@ -62,7 +62,7 @@
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
-            <el-form-item v-permission="'SOFTWARE_INVENTORY_APPLY_PLUS'">
+            <el-form-item v-permission="'SOFTWARE_INVENTORY_APPLY_PLUS'" v-if="userInfo.level === 2">
               <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
@@ -73,12 +73,12 @@
       <el-table :data="tableData">
         <el-table-column prop="createTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="单据编码"></el-table-column>
-        <el-table-column prop="useInventory" label="申请经销商" v-if="userInfo.level === 1"></el-table-column>
+        <el-table-column prop="agentName" label="申请经销商" v-if="userInfo.level === 1"></el-table-column>
         <el-table-column prop="useInventory" label="申请库存" align="right"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
-        <el-table-column prop="createUserName" label="受理人" v-if="userInfo.level === 1"></el-table-column>
+        <el-table-column prop="handlerUserName" label="受理人" v-if="userInfo.level === 1"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="150">
           <template slot-scope="scope">
@@ -88,10 +88,12 @@
                 <el-button type="text" size="small" slot="reference">删除</el-button>
               </el-popconfirm>
             </template>
-            <template slot-scope="scope" v-if="userInfo.level === 1 && scope.row.orderStatus === 10">
-              <el-button type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">审核</el-button>
+            <template v-if="userInfo.level === 1 && scope.row.orderStatus === 10">
+              <el-button type="text" size="small" @click="handleToDetail({ status: 'audit' }, scope.row)">审核</el-button>
             </template>
-            <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
+            <template v-if="([10, 20].includes(scope.row.orderStatus) && userInfo.level === 2) || (userInfo.level === 1 && scope.row.orderStatus === 20)">
+              <el-button type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -113,7 +115,8 @@ import {
   applyExportExcelLevelTwo,
   replaceOrderExportLog,
   replaceOrderExportDel,
-  applyOrderDelete
+  applyOrderDelete,
+  queryAgentPage
 } from '@/api/orderCenter/orderManagement/softwareInventoryApply'
 
 export default {
@@ -130,6 +133,8 @@ export default {
       },
       ordererData: [],
       isOrdererMaxPage: false,
+      agentData: [],
+      isAgentMaxPage: false,
       tableData: [],
       checkTabLock: false,
       currentPage: 1,
@@ -162,11 +167,11 @@ export default {
       })
     },
     async handleDelRow(row) {
-        try {
-          await applyOrderDelete(row.id)
-          if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
-          this.getQueryPage()
-        } catch (error) {}
+      try {
+        await applyOrderDelete(row.id)
+        if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
+        this.getQueryPage()
+      } catch (error) {}
     },
     handleQueryParams() {
       const { createTime, ...params } = this.form
@@ -208,6 +213,13 @@ export default {
       } finally {
         this.checkTabLock = false
       }
+    },
+    async handleAgentPage({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const res = await queryAgentPage({ id: query, page, rows })
+        this.agentData = this.agentData.concat(res.results || [])
+        this.isAgentMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {

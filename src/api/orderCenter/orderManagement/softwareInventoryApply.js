@@ -78,3 +78,39 @@ export function applyOrderDetail(data) {
     method: 'POST'
   })
 }
+
+// 软件库存申请单日志
+export function applyOrderLog(data) {
+  return request({
+    url: '/inventory/apply/log',
+    method: 'POST',
+    data
+  })
+}
+
+// 软件库存申请单提交
+export function applyOrderSubmit(data) {
+  return request({
+    url: '/inventory/apply/submit',
+    method: 'POST',
+    data
+  })
+}
+
+// 软件库存申请单审核
+export function applyOrderVerify(data) {
+  return request({
+    url: '/inventory/apply/verify',
+    method: 'POST',
+    data
+  })
+}
+
+// 软件库存申请单申请经销商
+export function queryAgentPage(data) {
+  return request({
+    url: '/agent/queryAgentPage',
+    method: 'POST',
+    data
+  })
+}

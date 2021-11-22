@@ -27,7 +27,7 @@
       </el-form>
     </el-card>
     <el-card shadow="never" class="p-card">
-      <div slot="header">订单明细 <span class="e-product-tip">(提示：每次只能申请一种产品，如要更换请先删除已选产品)</span></div>
+      <div slot="header">订单明细 <span class="e-product-tip" v-if="$route.query.status !== 'audit'">(提示：每次只能申请一种产品，如要更换请先删除已选产品)</span></div>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain :disabled="form.orderDetailDtos.length > 0" @click="handleProductVisible">选择产品</el-button>
       </div>
@@ -38,9 +38,15 @@
         <el-table-column label="申请产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
+        <el-table-column prop="timingInventory" label="下单时库存" v-if="userInfo.level === 1"></el-table-column>
         <el-table-column prop="replaceNum" label="申请数量" align="right">
           <template slot-scope="scope">
-            <el-input size="small" v-model.number.trim="scope.row.useInventory" @change="handleReplaceNum(scope.row)" :disabled="$route.query.status === 'detail'"></el-input>
+            <el-input
+              size="small"
+              v-model.number.trim="scope.row.useInventory"
+              @change="handleReplaceNum(scope.row)"
+              :disabled="['audit', 'detail'].includes($route.query.status)"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="备注">
@@ -48,7 +54,7 @@
             <el-input size="small" v-model="scope.row.remark" maxlength="100" :disabled="$route.query.status === 'detail'" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
+        <el-table-column label="操作" v-if="!['audit', 'detail'].includes($route.query.status)" width="100">
           <template slot-scope="scope">
             <el-popconfirm class="el-button el-button--text" @confirm="form.orderDetailDtos.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
@@ -59,14 +65,25 @@
     </el-card>
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareInventoryApply')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
+      <el-button size="small" type="primary" plain v-if="['add', 'edit', 'audit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <template v-if="$route.query.status === 'edit'" v-permission="'SOFTWARE_INVENTORY_REPLACE_SUBMIT'">
         <el-button size="small" type="primary" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      </template>
+      <template v-if="$route.query.status === 'audit'" v-permission="'SOFTWARE_INVENTORY_REPLACE_AUDIT'">
+        <el-button size="small" type="primary" :loading="checkAuditBtnLoad" @click="handleReview">审核</el-button>
       </template>
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
       <inventory-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
     </template>
+    <el-dialog :destroy-on-close="true" :visible.sync="checkAuditOpinionVisible" @closed="verifyRemark = ''" title="订单审核意见" width="600px" class="e-dialog-audit">
+      <el-input type="textarea" v-model="verifyRemark" placeholder="请填写你的意见" :rows="4" maxlength="100"></el-input>
+      <div slot="footer">
+        <el-button @click="checkAuditOpinionVisible = false" size="small">取消</el-button>
+        <el-button type="primary" plain @click="handleNoAgree" size="small">不同意</el-button>
+        <el-button type="primary" @click="handleAgree" size="small">同意</el-button>
+      </div>
+    </el-dialog>
   </section>
 </template>
 
@@ -77,7 +94,7 @@ import { orderStatus, formObj } from '../data'
 import inventoryProduct from './inventoryProduct.vue'
 
 import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
-import { applyOrderAdd, applyOrderUpdate, applyOrderDetail } from '@/api/orderCenter/orderManagement/softwareInventoryApply'
+import { applyOrderAdd, applyOrderUpdate, applyOrderDetail, applyOrderSubmit, applyOrderVerify } from '@/api/orderCenter/orderManagement/softwareInventoryApply'
 
 export default {
   components: {
@@ -95,7 +112,10 @@ export default {
       generalInventory: 10,
       replaceProduct: {},
       agentProductList: {},
-      userInfo: JSON.parse(localStorage.userInfo)
+      userInfo: JSON.parse(localStorage.userInfo),
+      checkAuditBtnLoad: false,
+      checkAuditOpinionVisible: false,
+      verifyRemark: ''
     }
   },
   computed: {
@@ -112,6 +132,41 @@ export default {
     if (this.$route.query.status !== 'add') this.getDetail()
   },
   methods: {
+    async handleAgree() {
+      try {
+        await applyOrderVerify({ id: this.$route.query.id, reason: this.verifyRemark, result: 0 })
+        this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 20, status: 'detail' } })
+        this.$message({ type: 'success', message: '审核成功' })
+      } catch (error) {
+      } finally {
+        this.checkAuditOpinionVisible = false
+      }
+    },
+    async handleNoAgree() {
+      if (!this.verifyRemark) {
+        this.$message({ type: 'warning', message: '审核意见不能为空' })
+      } else {
+        try {
+          await applyOrderVerify({ id: this.$route.query.id, reason: this.verifyRemark, result: 1 })
+          this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name: 'softwareInventoryApply' }))
+          this.$message({ type: 'success', message: '订单退回成功' })
+        } catch (error) {
+        } finally {
+          this.checkAuditOpinionVisible = false
+        }
+      }
+    },
+    handleReview() {
+      this.checkReviewStatus = true
+      this.setOrderSave()
+        .then(() => {
+          this.checkAuditOpinionVisible = true
+        })
+        .catch(() => {})
+        .finally(() => {
+          this.checkReviewStatus = false
+        })
+    },
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
@@ -146,34 +201,38 @@ export default {
         //   return new Promise((resolve, reject) => reject(new Error()))
         // }
         const data = {
-          orderDTO: { ...this.form.orderDTO, createUser: this.userInfo.id, agentId: this.userInfo.agentId, parentAgentId: this.userInfo.topAgentId },
+          orderDTO: { ...this.form.orderDTO, createUser: this.userInfo.id },
           detailList: this.form.orderDetailDtos
+        }
+        if (this.userInfo.level === 2) {
+          data.orderDTO.agentId = this.userInfo.agentId
+          data.orderDTO.parentAgentId = this.userInfo.topAgentId
         }
         return this.$route.query.status === 'add' ? applyOrderAdd(data) : applyOrderUpdate(data)
       } catch (error) {}
     },
     handleVerify() {
-      // this.$confirm('确定要提交吗？', '提示', {
-      //   type: 'warning',
-      //   beforeClose: (action, instance, done) => {
-      //     if (action === 'confirm') {
-      //       instance.confirmButtonLoading = true
-      //       this.setOrderSave()
-      //         .then(async () => {
-      //           await replaceOrderSubmit({ id: parseFloat(this.$route.query.id) })
-      //           this.getDetail().then(() => {
-      //             this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 30, status: 'detail' } })
-      //           })
-      //           this.$message({ type: 'success', message: '审核成功' })
-      //         })
-      //         .catch(() => {})
-      //         .finally(() => {
-      //           instance.confirmButtonLoading = false
-      //           done()
-      //         })
-      //     } else done()
-      //   }
-      // }).catch(() => {})
+      this.$confirm('确定要提交吗？', '提示', {
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.setOrderSave()
+              .then(async () => {
+                await applyOrderSubmit({ id: parseFloat(this.$route.query.id) })
+                this.getDetail().then(() => {
+                  this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 10, status: 'detail' } })
+                })
+                this.$message({ type: 'success', message: '提交成功' })
+              })
+              .catch(() => {})
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
+          } else done()
+        }
+      }).catch(() => {})
     },
     handleProductVisible() {
       this.checkProductVisible = true
@@ -213,6 +272,9 @@ export default {
             remark: ''
           }
         ]
+        if (this.$route.query.status === 'edit') {
+          this.form.orderDetailDtos[0].billNo = this.form.orderDTO.billNo
+        }
         this.form.orderDTO.useInventory = 1
       }
     },
@@ -353,6 +415,13 @@ export default {
     width: 100%;
     /deep/ .el-input__inner {
       text-align: left !important;
+    }
+  }
+}
+.e-dialog-audit {
+  /deep/ {
+    .el-dialog__body {
+      padding: 10px 20px 8px;
     }
   }
 }

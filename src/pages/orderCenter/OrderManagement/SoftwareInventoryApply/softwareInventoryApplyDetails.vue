@@ -15,7 +15,7 @@ import { orderStatus } from '../index'
 import operationLog from '../components/operationLog'
 import basicInformation from './components/basicInformation.vue'
 
-import { authOrderLog } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
+import { applyOrderLog } from '@/api/orderCenter/orderManagement/softwareInventoryApply'
 
 export default {
   name: 'softwareInventoryApplyDetails',
@@ -42,7 +42,7 @@ export default {
     },
     async getOperateLog() {
       try {
-        const res = await authOrderLog(this.$route.query.id)
+        const res = await applyOrderLog({ id: this.$route.query.id })
         this.operateData = res
       } catch (error) {}
     }
