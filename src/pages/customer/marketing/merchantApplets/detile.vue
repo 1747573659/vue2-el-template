@@ -37,7 +37,7 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序LOGO" prop="miniLogo">
-              <picUpload v-model="form.miniLogo" :imageUrl='form.miniLogo' :showIconClose='true' @on-remove='onRemove("miniLogo")' @on-success='(...value)=>uploadSuccess({
+              <picUpload :isWidthEqHeight="true" v-model="form.miniLogo" :imageUrl='form.miniLogo' :showIconClose='true' @on-remove='onRemove("miniLogo")' @on-success='(...value)=>uploadSuccess({
                 value,
                 upField:"miniLogo"
                 })' uploadUrl='/alipay/mini/fileUplaod' desc='只能上传jpg/png格式文件，文件不能超过250kb ' :size='250' accept='image/jpeg,image/jpg,image/png'></picUpload>
@@ -424,7 +424,7 @@ export default {
               status, //保存状态（0 暂存 1保存）
               miniProgramAppid: this.$route.query.miniProgramAppid
             })
-            this.$message.success('暂存成功')
+            this.$message.success(status ? '资料提交成功' : '资料暂存成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'marketingManagement' })
             })
@@ -448,7 +448,7 @@ export default {
               status, //保存状态（0 暂存 1保存）
               miniProgramAppid: this.$route.query.miniProgramAppid
             })
-            this.$message.success('提交成功')
+            this.$message.success(status ? '资料提交成功' : '资料暂存成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'marketingManagement' })
             })

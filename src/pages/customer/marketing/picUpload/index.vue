@@ -48,6 +48,10 @@ export default {
       type: String,
       default: '',
     }, // 图片链接
+    isWidthEqHeight: {
+      type: Boolean,
+      default: false
+    }
   },
   data () {
     return {
@@ -82,7 +86,7 @@ export default {
           return Promise.reject()
         }
         // 如果宽高不等，则返回
-        if (width !== height) {
+        if (width !== height && this.isWidthEqHeight) {
           this.$message.error(`上传的图片需要宽高相等!`)
           return Promise.reject()
         }
