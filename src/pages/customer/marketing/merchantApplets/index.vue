@@ -58,7 +58,7 @@
         <el-table-column prop="status" class-name="el-table-column-noHide" label="状态" width='120'>
           <template slot-scope="scope">
             <span>{{initQqueryAllStatus(scope.row.status)}}</span>
-            <el-button v-if="[10,11].includes(scope.row.status)" style="margin-left: 10px;" type="text" @click="handleWxCertReason(scope.row)">原因</el-button>
+            <el-button v-if="[10,11].includes(scope.row.status)" style="margin-left: 10px;" type="text" @click="handleReason(scope.row)">原因</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="miniDesc" label="备注">
@@ -172,8 +172,11 @@ export default {
     this.queryAllVersion()
   },
   methods: {
-    handleWxCertReason(row) {
-      this.$alert(row.errorMsg, '原因', { confirmButtonText: '确定' })
+    handleReason(row) {
+      this.$alert(row.errorMsg, '原因', {
+        confirmButtonText: '确定',
+        customClass: 'applets-confirm'
+      })
     },
     // 立即构建
     async versionUpload (scope) {
@@ -506,5 +509,13 @@ export default {
 }
 .add-btn {
   padding: 8px 15.5px;
+}
+</style>
+
+<style lang="scss">
+.applets-confirm {
+  p {
+    word-wrap:break-word
+  }
 }
 </style>
