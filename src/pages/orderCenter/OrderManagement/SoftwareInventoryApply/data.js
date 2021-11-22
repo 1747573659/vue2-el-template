@@ -19,10 +19,10 @@ export const formObj = {
     billNo: '', // 单据编码
     createTime: '', // 订单时间
     useInventory: '', // 消耗库存
-    handUserName: '', // 受理人名称
+    handlerUser: '',
+    handlerUserName: '', // 受理人名称
     agentId: '', // 经销商id
-    agentName: '', // 经销商名称
-    upgradeFee: '' // 升级费用
+    agentName: '' // 经销商名称
   },
   orderDetailDtos: []
 }

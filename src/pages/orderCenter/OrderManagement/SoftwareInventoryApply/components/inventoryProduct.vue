@@ -12,8 +12,8 @@
           <el-radio v-model="checkProductVal" :label="scope.$index"></el-radio>
         </template>
       </el-table-column>
-      <el-table-column prop="productId" label="产品编码"></el-table-column>
-      <el-table-column prop="productName" label="产品名称"></el-table-column>
+      <el-table-column prop="code" label="产品编码"></el-table-column>
+      <el-table-column prop="name" label="产品名称"></el-table-column>
     </el-table>
     <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     <div slot="footer">
@@ -24,7 +24,7 @@
 </template>
 
 <script>
-import { replaceOrderProduct } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
+import { productInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
   data() {
@@ -40,7 +40,7 @@ export default {
   },
   methods: {
     handleRowIndex(row) {
-      this.checkProductVal = this.tableData.findIndex(item => item.productId === row.productId)
+      this.checkProductVal = this.tableData.findIndex(item => item.id === row.id)
     },
     handleConfirm() {
       this.$emit('productData', this.tableData[this.checkProductVal])
@@ -54,9 +54,9 @@ export default {
       try {
         this.checkProductVal = ''
         this.checkProductTabLock = true
-        const res = await replaceOrderProduct({ productInfo: this.productVal.trim(), page: this.currentPage, rows: this.pageSize })
+        const res = await productInfo({ info: this.productVal.trim(), page: this.currentPage, rows: this.pageSize, orderType: 1 })
         this.tableData = res?.results ?? []
-        this.totalPage = res.totalCount ?? 0
+        this.totalPage = res.totalRecord ?? 0
       } catch (error) {
       } finally {
         this.checkProductTabLock = false

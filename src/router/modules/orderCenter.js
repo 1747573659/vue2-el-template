@@ -65,6 +65,7 @@ const orderCenter = {
           component: _import('orderCenter/OrderManagement/SoftwareInventoryApply/softwareInventoryApplyDetails'),
           name: 'softwareInventoryApplyDetails',
           code: 'KM_DEFAULT_CODE',
+          hidden: true,
           meta: { title: '软件库存申请详情', name: 'softwareInventoryApplyDetails', cache: true }
         },
         {

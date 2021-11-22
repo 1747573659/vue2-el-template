@@ -9,9 +9,6 @@
           <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
-          <!-- <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="请输入名称/商户号" filterable clearable>
-            <el-option v-for="item in custListData" :key="item.CustID" :label="item.CustNameExpand" :value="item.CustID"></el-option>
-          </el-select> -->
           <km-select-page
             ref="selectPage"
             v-model="form.merchantDTO.merchantName"

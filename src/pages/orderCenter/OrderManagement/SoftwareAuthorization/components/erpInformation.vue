@@ -176,47 +176,31 @@ export default {
       this.form.erpAuthOrderDetails = []
     },
     handleConfirm() {
-      console.info([...this.selectMaps.values()])
-      // if (this.form.erpAuthOrderDetails.length === 0) {
-      //   this.selectMaps.forEach((item, key) => {
-      //     this.form.erpAuthOrderDetails.push({
-      //       moduleCode: item.moduleId,
-      //       moduleName: item.moduleName,
-      //       authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
-      //       orderInventory: 0,
-      //       authNum: 1,
-      //       productCode: item.productId,
-      //       unionChannel: '',
-      //       remark: ''
-      //     })
-      //   })
-      // } else {
-      //   this.selectMaps.forEach((item, key) => {
-      //     if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) this.form.erpAuthOrderDetails.splice(this.form.erpAuthOrderDetails.findIndex())
-      //   })
-      //   // this.form.erpAuthOrderDetails.forEach((item, index) => {
-      //   //   if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
-      //   // })
-      // }
-      // const Selections = []
-      // this.selectMaps.forEach((item, key) => {
-      //   if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) {
-      //     Selections.push({
-      //       moduleCode: item.moduleId,
-      //       moduleName: item.moduleName,
-      //       authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
-      //       orderInventory: 0,
-      //       authNum: 1,
-      //       productCode: item.productId,
-      //       unionChannel: '',
-      //       remark: ''
-      //     })
-      //   }
-      // })
-      // this.form.erpAuthOrderDetails = this.form.erpAuthOrderDetails.concat(Selections)
-
-      if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) this.getChannelPage()
-      this.getProductStock().then(() => (this.checkProductVisible = false))
+      const addErpDetail = item => {
+        this.form.erpAuthOrderDetails.push({
+          moduleCode: item.moduleId,
+          moduleName: item.moduleName,
+          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
+          orderInventory: 0,
+          authNum: 1,
+          productCode: item.productId,
+          unionChannel: '',
+          remark: ''
+        })
+      }
+      if (this.form.erpAuthOrderDetails.length === 0) this.selectMaps.forEach(item => addErpDetail(item))
+      else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
+        this.form.erpAuthOrderDetails.forEach((item, index) => {
+          if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
+        })
+        this.selectMaps.forEach((item, key) => {
+          if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) addErpDetail(item)
+        })
+      }
+      if (this.form.erpAuthOrderDetails?.length > 0) {
+        if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) this.getChannelPage()
+        this.getProductStock().then(() => (this.checkProductVisible = false))
+      }
     },
     async getProductStock() {
       try {
@@ -249,7 +233,7 @@ export default {
         const { merchantId: custId, productCode } = this.form.erpAuthMerchantDTO
         this.basicProductData = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
         this.$nextTick(() => {
-          if (this.basicProductData.length > 0) {
+          if (this.basicProductData.length > 0 && this.selectMaps.size > 0) {
             this.basicProductData.forEach(item => {
               if (this.selectMaps.has(item.moduleId)) {
                 this.$refs.product.toggleRowSelection(item, true)
