@@ -358,6 +358,7 @@ export default {
     search () {
       this.$refs.form.validate(async valid => {
         if (valid) {
+          this.thisPage = 1
           this.getTable()
         }
       })
