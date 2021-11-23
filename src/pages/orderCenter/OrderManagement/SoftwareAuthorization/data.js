@@ -19,9 +19,7 @@ export const orderStatus = new Map([
 
 // 订单状态
 export const delayTimes = [
-  { value: 1, label: '1年' },
-  { value: 2, label: '2年' },
-  { value: 3, label: '3年' }
+  { value: 1, label: '1年' }
 ]
 
 export const formErpObj = {

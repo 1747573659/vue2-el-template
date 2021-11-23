@@ -89,7 +89,6 @@
         </el-table-column>
       </el-table>
     </el-card>
-
     <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择产品模块" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
@@ -176,7 +175,7 @@ export default {
       this.form.erpAuthOrderDetails = []
     },
     handleConfirm() {
-      const addErpDetail = item => {
+      const addDetailItem = item => {
         this.form.erpAuthOrderDetails.push({
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
@@ -188,13 +187,13 @@ export default {
           remark: ''
         })
       }
-      if (this.form.erpAuthOrderDetails.length === 0) this.selectMaps.forEach(item => addErpDetail(item))
+      if (this.form.erpAuthOrderDetails.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
         this.form.erpAuthOrderDetails.forEach((item, index) => {
           if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
         })
         this.selectMaps.forEach((item, key) => {
-          if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) addErpDetail(item)
+          if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) addDetailItem(item)
         })
       }
       if (this.form.erpAuthOrderDetails?.length > 0) {

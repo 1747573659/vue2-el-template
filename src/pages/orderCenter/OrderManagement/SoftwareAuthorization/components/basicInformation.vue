@@ -218,16 +218,33 @@ export default {
     getDogInformationObj() {
       if (!this.form.detailDTOList.length) {
         this.$message({ type: 'warning', message: '请先选择授权产品' })
+      } else if (this.form.detailDTOList.some(item => !item.authVersion)) {
+        this.$message({ type: 'warning', message: '产品版本不能为空' })
       } else {
-        return {
-          authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
-          orderDetailVos: this.handleQueryParams().orderDetailVos
+        const insufficientObj = this.form.detailDTOList.filter(item => item.authNum > item.orderInventory)
+        if (insufficientObj.length > 0) {
+          this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
+            title: '系统提示',
+            type: 'warning',
+            confirmButtonText: '去采购',
+            cancelButtonText: '返回修改',
+            beforeClose: (action, instance, done) => {
+              if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
+              else this.$refs.information.getProductStock()
+              done()
+            }
+          }).catch(() => {})
+        } else {
+          return {
+            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
+            orderDetailVos: this.handleQueryParams().orderDetailVos
+          }
         }
       }
     },
     getYsInformationObj() {
-      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo || !this.form.addAuthOrderDetailDTOList?.[0]?.productCode) {
-        this.$message({ type: 'warning', message: '请先选择商户或已开通应用系统模块' })
+      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
+        this.$message({ type: 'warning', message: '请先选择商户' })
       } else {
         const a = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
         const insufficientObj = a.filter(item => item.useInventory > item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)

@@ -2,7 +2,7 @@
   <section class="p-erpInformation-con">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <span class="p-card-title">商户信息</span>
+        <span class="p-card-title">订单明细</span>
       </div>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
@@ -60,7 +60,7 @@
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
-      <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="code" label="产品编码"></el-table-column>
         <el-table-column prop="name" label="产品名称"></el-table-column>
@@ -99,31 +99,60 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalPage: 0,
-      checkProductStockLoad: false
+      checkProductStockLoad: false,
+      selectMaps: new Map(),
+      currentPageSelectSets: new Set()
     }
   },
   methods: {
+    handleSelectAll(selection) {
+      if (selection?.length) {
+        selection.forEach(item => {
+          this.selectMaps.set(item.code, item)
+          this.currentPageSelectSets.add(item.code)
+        })
+      } else {
+        this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
+        this.currentPageSelectSets.clear()
+      }
+    },
+    handleSelect(selection, row) {
+      if (selection.length > this.currentPageSelectSets.size) {
+        this.selectMaps.set(row.code, row)
+        this.currentPageSelectSets.add(row.code)
+      } else {
+        this.selectMaps.delete(row.code)
+        this.currentPageSelectSets.delete(row.code)
+      }
+    },
     handleAuthNumAmount(row) {
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.authNum)) {
         this.$message({ type: 'warning', message: '授权数量范围为[1-999]' })
-        return (row.authNum = row.useInventory= 1)
+        return (row.authNum = 1)
       }
     },
     handleConfirm() {
-      const Selections = this.$refs.product.selection.map(item => {
-        return {
+      const addDetailItem = item => {
+        this.form.detailDTOList.push({
           productCode: item.code,
           productCodeName: item.name,
           authVersion: '',
           orderInventory: 0,
           authNum: 1,
-          useInventory: 1,
           dogId: '',
           dogAuthString: '',
           remark: ''
-        }
-      })
-      this.form.detailDTOList = this.form.detailDTOList.concat(Selections)
+        })
+      }
+      if (this.form.detailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      else if (this.selectMaps.size && this.form.detailDTOList?.length > 0) {
+        this.form.detailDTOList.forEach((item, index) => {
+          if (!this.selectMaps.has(item.productCode)) this.form.detailDTOList.splice(index, 1)
+        })
+        this.selectMaps.forEach((item, key) => {
+          if (this.form.detailDTOList.every(ele => ele.productCode !== key)) addDetailItem(item)
+        })
+      }
       this.checkProductVisible = false
       this.getProductStock()
     },
@@ -146,8 +175,18 @@ export default {
     async getProductPage() {
       try {
         this.checkProductTabLock = true
-        const res = await authOrderProductPage({ type: 1, registerMethod: 2, isOnSale: 1, notProductTypeList: this.productVal === '' ? [] : [this.productVal] })
+        const res = await authOrderProductPage({ type: 1, registerMethod: 2, isOnSale: 1, notProductTypeList: [99], info: this.productVal })
         this.basicProductData = res.results || []
+        this.$nextTick(() => {
+          if (this.basicProductData.length > 0 && this.selectMaps.size > 0) {
+            this.basicProductData.forEach(item => {
+              if (this.selectMaps.has(item.code)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.currentPageSelectSets.add(item.code)
+              }
+            })
+          }
+        })
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
