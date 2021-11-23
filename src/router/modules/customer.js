@@ -105,6 +105,13 @@ const customer = {
             name: 'editBrand',
             cache: true
           }
+        },
+        {
+          path: 'merchantList',
+          component: _import('ewechat/merchant'),
+          name: 'ewechatMerchant',
+          code: 'KM_CUSTOMER_MERCHANT_LIST',
+          meta: { title: '商户列表', cache: true, name: 'ewechatMerchant' }
         }
       ]
     },

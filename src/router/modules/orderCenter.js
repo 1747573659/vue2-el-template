@@ -82,6 +82,21 @@ const orderCenter = {
           code: 'KM_DEFAULT_CODE',
           hidden: true,
           meta: { title: '硬件采购详情', name: 'hardwarePurchaseDetails', cache: true }
+        },
+        {
+          path: 'ewechatOrder',
+          component: _import('ewechat/order'),
+          name: 'ewechatOrder',
+          code: 'ORDERCENTER_EWECHAT_ORDER',
+          meta: { title: '企微订单', name: 'ewechatOrder', cache: true }
+        },
+        {
+          path: 'ewechatOrderDetail',
+          component: _import('ewechat/orderDetail'),
+          name: 'ewechatOrderDetail',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '企微订单详情', name: 'ewechatOrderDetail', cache: true }
         }
       ]
     },
