@@ -245,9 +245,11 @@ export default {
     getYsInformationObj() {
       if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
         this.$message({ type: 'warning', message: '请先选择商户' })
+      } else if (!this.$refs.information.showAddBit && !this.form.renewAuthOrderDetailDTOList?.length) {
+        this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
-        const a = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
-        const insufficientObj = a.filter(item => item.useInventory > item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
+        const detailDTOList = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
+        const insufficientObj = detailDTOList.filter(item => item.useInventory > item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
         if (insufficientObj.length > 0) {
           this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
             title: '系统提示',
@@ -263,11 +265,12 @@ export default {
           }).catch(() => {})
         } else {
           const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
+          const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount },
-              { productCode: this.form.addAuthOrderDetailDTOList[0].productCode, userLevelNum: this.form.authOrderDTO.userLevelNum }
+              { productCode, userLevelNum: this.form.authOrderDTO.userLevelNum }
             ),
             addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
             renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
@@ -408,12 +411,11 @@ export default {
         setTimeout(() => {
           if (this.productType === 1) {
             this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
-            console.info(document.querySelectorAll('.js-unionChannel'))
-            if (res.erpAuthOrderDetails.length > 0) {
-              res.erpAuthOrderDetails.forEach((item, index) => {
-                if (item.unionChannel) document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-              })
-            }
+            // if (res.erpAuthOrderDetails.length > 0) {
+            //   res.erpAuthOrderDetails.forEach((item, index) => {
+            //     if (item.unionChannel) document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+            //   })
+            // }
           }
           if ([4, 5].includes(this.productType)) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
         }, 500)

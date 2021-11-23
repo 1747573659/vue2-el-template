@@ -129,7 +129,7 @@ export default {
   },
   mounted() {
     if (this.$route.query.status === 'add') this.getHandlerMan()
-    if (this.$route.query.status !== 'add') this.getDetail()
+    else this.getDetail()
   },
   methods: {
     async handleAgree() {
@@ -188,18 +188,6 @@ export default {
     },
     async setOrderSave(action = 1) {
       try {
-        // const agentProductObj = await queryByAgentProduct({ agentId: this.form.orderDTO.agentId, productCode: this.form.orderDetailDtos[0].productCode })
-        // if (agentProductObj) {
-        //   if (this.form.orderDetailDtos[0].useInventory > agentProductObj.totalAmount) {
-        //     this.form.orderDetailDtos[0].orderInventory = agentProductObj.totalAmount
-        //     this.$message({ type: 'warning', message: `[${this.form.orderDetailDtos[0].productCodeName}]的库存不足，请修改后重试` })
-        //     return new Promise((resolve, reject) => reject(new Error()))
-        //   } else {
-        //   }
-        // } else {
-        //   this.$message({ type: 'warning', message: '换购产品库存不足，请先下单' })
-        //   return new Promise((resolve, reject) => reject(new Error()))
-        // }
         const data = {
           orderDTO: { ...this.form.orderDTO, createUser: this.userInfo.id },
           detailList: this.form.orderDetailDtos
@@ -246,20 +234,6 @@ export default {
         row.useInventory = 1
       } else this.form.orderDTO.useInventory = row.useInventory
     },
-    // handleReplaceProductName(val) {
-    //   let [replaceableNum, useInventory] = ['', '']
-    //   if (val) {
-    //     if (this.agentProductList) {
-    //       this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-    //       replaceableNum = Math.floor(NP.divide(this.agentProductList?.commonAmount??0, this.replaceProduct.reduceInventory))
-    //       useInventory = NP.times(1, this.replaceProduct.reduceInventory)
-    //     }
-    //   }
-    //   this.form.orderDetailDtos[0].replaceNum = 1
-    //   this.form.orderDetailDtos[0].replaceableNum = replaceableNum || 0
-    //   this.form.orderDetailDtos[0].useInventory = useInventory || 0
-    //   this.form.orderDTO.useInventory = useInventory || 0
-    // },
     async handleProductList(data) {
       if (data) {
         this.form.orderDetailDtos = [
@@ -289,20 +263,6 @@ export default {
         this.checkBasicInformLoad = false
       }
     },
-    // async getOriginalProduct(originalProductCode) {
-    //   try {
-    //     const res = await replaceOrderOriginalProduct(originalProductCode)
-    //     this.replacedProducts = res || []
-    //   } catch (error) {}
-    // },
-    // async getBaseInfo() {
-    //   try {
-    //     const res = await queryBaseInfo()
-    //     this.form.orderDTO.agentId = res.agentId
-    //     this.form.orderDTO.agentName = res.name
-    //     this.getHandlerMan(res.districtCode)
-    //   } catch (error) {}
-    // },
     async getHandlerMan() {
       try {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
@@ -310,26 +270,6 @@ export default {
         this.form.orderDTO.handlerUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}
     }
-    // getSummaries(param) {
-    //   const { columns, data } = param
-    //   const sums = []
-    //   columns.forEach((column, index) => {
-    //     if (['replaceNum'].includes(column.property)) {
-    //       const values = data.map(item => parseFloat(item[column.property]))
-    //       if (!values.every(value => isNaN(value))) {
-    //         sums[index] = values.reduce((prev, curr) => {
-    //           const value = Number(curr)
-    //           if (!isNaN(value)) {
-    //             return NP.plus(prev, curr)
-    //           } else {
-    //             return prev
-    //           }
-    //         }, 0)
-    //       }
-    //     }
-    //   })
-    //   return sums
-    // }
   }
 }
 </script>

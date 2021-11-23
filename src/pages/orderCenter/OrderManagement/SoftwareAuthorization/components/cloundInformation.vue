@@ -102,7 +102,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.detailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -116,7 +116,7 @@
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
-      <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="UserId" label="授权ID"></el-table-column>
         <el-table-column prop="UserNo" label="授权对象编码"></el-table-column>
@@ -175,7 +175,9 @@ export default {
       checkProductStockLoad: false,
       delayTimes,
       productStockObj: {},
-      activeName: '1'
+      activeName: '1',
+      selectMaps: new Map(),
+      currentPageSelectSets: new Set()
     }
   },
   filters: {
@@ -193,6 +195,9 @@ export default {
     }
   },
   watch: {
+    showAddBit(newVal) {
+      this.activeName = newVal ? '1' : '2'
+    },
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
         if (newVal.length > 0) {
@@ -226,6 +231,26 @@ export default {
     this.getOrderYsAppModules()
   },
   methods: {
+    handleSelectAll(selection) {
+      if (selection?.length) {
+        selection.forEach(item => {
+          this.selectMaps.set(item.AuthId, item)
+          this.currentPageSelectSets.add(item.AuthId)
+        })
+      } else {
+        this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
+        this.currentPageSelectSets.clear()
+      }
+    },
+    handleSelect(selection, row) {
+      if (selection.length > this.currentPageSelectSets.size) {
+        this.selectMaps.set(row.AuthId, row)
+        this.currentPageSelectSets.add(row.AuthId)
+      } else {
+        this.selectMaps.delete(row.AuthId)
+        this.currentPageSelectSets.delete(row.AuthId)
+      }
+    },
     async handleAppModule(val) {
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
@@ -254,7 +279,7 @@ export default {
         try {
           const { merchantNo: custId, CustName = '', merchantName = '' } = this.form.merchantDTO
           const res = await authOrderYsTrialPointDetail({ custId, appId: this.appModuleObj.outCode, custName: CustName || merchantName })
-          this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
+          this.form.merchantDTO.probationFlag = res.ProbationFlag
           if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && parseFloat(this.form.merchantDTO.probationFlag) === 0) this.activeName = '2'
           else this.activeName = '1'
           if (res) {
@@ -276,10 +301,9 @@ export default {
         } catch (error) {}
       }
     },
-
     handleConfirm() {
-      const Selections = this.$refs.product.selection.map(item => {
-        return {
+      const addDetailItem = item => {
+        this.form.renewAuthOrderDetailDTOList.push({
           authId: item.UserId,
           authCode: item.UserNo,
           authName: item.UserName,
@@ -287,10 +311,19 @@ export default {
           delayValidTime: this.setDelayValidTime(item.EndTime),
           useInventory: this.form.merchantDTO.delayHour,
           remark: '',
-          billNo: this.form.authOrderDTO?.billNo ?? ''
-        }
-      })
-      this.form.renewAuthOrderDetailDTOList = this.form.renewAuthOrderDetailDTOList.concat(Selections)
+          billNo: this.form.authOrderDTO?.billNo ?? '',
+          AuthId: item.AuthId
+        })
+      }
+      if (this.form.renewAuthOrderDetailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      else if (this.selectMaps.size && this.form.renewAuthOrderDetailDTOList?.length > 0) {
+        this.form.renewAuthOrderDetailDTOList.forEach((item, index) => {
+          if (!this.selectMaps.has(item.AuthId)) this.form.renewAuthOrderDetailDTOList.splice(index, 1)
+        })
+        this.selectMaps.forEach((item, key) => {
+          if (this.form.renewAuthOrderDetailDTOList.every(ele => ele.AuthId !== key)) addDetailItem(item)
+        })
+      }
       this.getProductStock().then(() => (this.checkProductVisible = false))
     },
     async getProductStock() {
@@ -341,6 +374,7 @@ export default {
       this.getProductPage()
     },
     async getProductPage() {
+      if (!Object.keys(this.appModuleObj)?.length) this.appModuleObj = this.appModulesData.find(item => item.code === this.form.merchantDTO.applicationSystem)
       try {
         this.checkProductTabLock = true
         const data = {
@@ -353,6 +387,24 @@ export default {
         }
         const res = await authOrderYsByCusAndApplyList(data)
         this.basicProductData = res
+        this.$nextTick(() => {
+          if (this.basicProductData.length > 0 && this.selectMaps.size > 0) {
+            this.basicProductData.forEach(item => {
+              if (this.selectMaps.has(item.AuthId)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.currentPageSelectSets.add(item.AuthId)
+              }
+            })
+          } else {
+            this.basicProductData.forEach(item => {
+              if (this.form.renewAuthOrderDetailDTOList.find(ele => ele.AuthId === item.AuthId)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.selectMaps.set(item.AuthId, item)
+                this.currentPageSelectSets.add(item.AuthId)
+              }
+            })
+          }
+        })
       } catch (error) {
       } finally {
         this.checkProductTabLock = false

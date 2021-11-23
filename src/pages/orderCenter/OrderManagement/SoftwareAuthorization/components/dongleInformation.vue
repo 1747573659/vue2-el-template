@@ -185,6 +185,14 @@ export default {
                 this.currentPageSelectSets.add(item.code)
               }
             })
+          } else {
+            this.basicProductData.forEach(item => {
+              if (this.form.detailDTOList.find(ele => ele.productCode === item.code)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.selectMaps.set(item.code, item)
+                this.currentPageSelectSets.add(item.code)
+              }
+            })
           }
         })
       } catch (error) {

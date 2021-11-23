@@ -68,7 +68,7 @@ export const formYsObj = {
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '', // 受理人名称
-    userLevelNum: ''
+    userLevelNum: 1
   },
   merchantDTO: {
     agentId: '',

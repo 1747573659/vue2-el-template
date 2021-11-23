@@ -89,7 +89,7 @@
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
-      <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column :prop="form.merchantDTO.applicationModule === 101 ? 'BranchName' : 'TaxpayerNum'" label="门店名称/税号"></el-table-column>
         <el-table-column prop="shopType" label="类型">
@@ -146,7 +146,9 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalPage: 0,
-      checkProductStockLoad: false
+      checkProductStockLoad: false,
+      selectMaps: new Map(),
+      currentPageSelectSets: new Set()
     }
   },
   filters: {
@@ -165,9 +167,30 @@ export default {
     }
   },
   methods: {
+    handleSelectAll(selection) {
+      if (selection?.length) {
+        selection.forEach(item => {
+          this.selectMaps.set(item.AuthId, item)
+          this.currentPageSelectSets.add(item.AuthId)
+        })
+      } else {
+        this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
+        this.currentPageSelectSets.clear()
+      }
+    },
+    handleSelect(selection, row) {
+      if (selection.length > this.currentPageSelectSets.size) {
+        this.selectMaps.set(row.AuthId, row)
+        this.currentPageSelectSets.add(row.AuthId)
+      } else {
+        this.selectMaps.delete(row.AuthId)
+        this.currentPageSelectSets.delete(row.AuthId)
+      }
+    },
     handleConfirm() {
-      const Selections = this.$refs.product.selection.map(item => {
-        return {
+
+      const addDetailItem = item => {
+        this.form.detailDTOList.push({
           shopName: this.form.merchantDTO.applicationModule === 101 ? item.BranchName : '电子发票',
           shopCode: this.form.merchantDTO.applicationModule === 101 ? item.BranchNo : item.TaxpayerNum,
           shopType: item.shopType,
@@ -177,9 +200,17 @@ export default {
           useInventory: this.form.merchantDTO.delayHour,
           productCode: this.merchantInfo.productCode,
           remark: ''
-        }
-      })
-      this.form.detailDTOList = this.form.detailDTOList.concat(Selections)
+        })
+      }
+      if (this.form.detailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      else if (this.selectMaps.size && this.form.detailDTOList?.length > 0) {
+        this.form.detailDTOList.forEach((item, index) => {
+          if (!this.selectMaps.has(item.shopCode)) this.form.detailDTOList.splice(index, 1)
+        })
+        this.selectMaps.forEach((item, key) => {
+          if (this.form.detailDTOList.every(ele => ele.shopCode !== key)) addDetailItem(item)
+        })
+      }
       this.getProductStock().then(() => (this.checkProductVisible = false))
     },
     handleDelayHour(val) {
@@ -258,11 +289,29 @@ export default {
         this.checkProductTabLock = true
         const isNum = new RegExp(/^\d{1,}$/).test(this.productVal)
         const storeData = { branch: isNum ? this.productVal : '', branchname: !isNum && this.productVal ? this.productVal : '', cust: this.form.merchantDTO.merchantNo }
-        const res =
-          this.form.merchantDTO.applicationModule === 101 ? await authOrderWcyBranchList(storeData) : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
+        const res = this.form.merchantDTO.applicationModule === 101 ? await authOrderWcyBranchList(storeData) : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
         this.basicProductData = res.map(item => {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
+        })
+        this.$nextTick(() => {
+          const applicationModuleBool = this.form.merchantDTO.applicationModule === 101
+          if (this.basicProductData.length > 0 && this.selectMaps.size > 0) {
+            this.basicProductData.forEach(item => {
+              if (this.selectMaps.has(applicationModuleBool ? item.BranchNo : item.TaxpayerNum)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.currentPageSelectSets.add(applicationModuleBool ? item.BranchNo : item.TaxpayerNum)
+              }
+            })
+          } else {
+            this.basicProductData.forEach(item => {
+              if (this.form.renewAuthOrderDetailDTOList.find(ele => ele.shopCode === applicationModuleBool ? item.BranchNo : item.TaxpayerNum)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.selectMaps.set(applicationModuleBool ? item.BranchNo : item.TaxpayerNum, item)
+                this.currentPageSelectSets.add(applicationModuleBool ? item.BranchNo : item.TaxpayerNum)
+              }
+            })
+          }
         })
       } catch (error) {
       } finally {

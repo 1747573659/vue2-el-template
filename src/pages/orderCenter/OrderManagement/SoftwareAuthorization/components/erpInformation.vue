@@ -195,11 +195,11 @@ export default {
         this.selectMaps.forEach((item, key) => {
           if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) addDetailItem(item)
         })
-      }
+      } else this.form.erpAuthOrderDetails = []
       if (this.form.erpAuthOrderDetails?.length > 0) {
         if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) this.getChannelPage()
         this.getProductStock().then(() => (this.checkProductVisible = false))
-      }
+      } else this.checkProductVisible = false
     },
     async getProductStock() {
       try {
@@ -236,6 +236,14 @@ export default {
             this.basicProductData.forEach(item => {
               if (this.selectMaps.has(item.moduleId)) {
                 this.$refs.product.toggleRowSelection(item, true)
+                this.currentPageSelectSets.add(item.moduleId)
+              }
+            })
+          } else {
+            this.basicProductData.forEach(item => {
+              if (this.form.erpAuthOrderDetails.find(ele => ele.moduleCode === item.moduleId)) {
+                this.$refs.product.toggleRowSelection(item, true)
+                this.selectMaps.set(item.moduleId, item)
                 this.currentPageSelectSets.add(item.moduleId)
               }
             })
