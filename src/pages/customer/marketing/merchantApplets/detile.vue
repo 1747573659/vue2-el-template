@@ -17,12 +17,12 @@
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序类目" prop="miniCategoryIds">
-              <el-cascader :key="miniCategoryIdsKey" v-model='form.miniCategoryIds' placeholder='请选择小程序类目' filterable clearable :props="miniCategoryIdsProps"></el-cascader>
+              <el-cascader :key="miniCategoryIdsKey" v-model='form.miniCategoryIds' placeholder='请选择小程序类目' clearable :props="miniCategoryIdsProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序归属地区" prop="region">
-              <el-cascader :key="regionKey" v-model='form.region' placeholder='请选择小程序归属地区' filterable clearable :props="regionProps"></el-cascader>
+              <el-cascader :key="regionKey" v-model='form.region' placeholder='请选择小程序归属地区' clearable :props="regionProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
