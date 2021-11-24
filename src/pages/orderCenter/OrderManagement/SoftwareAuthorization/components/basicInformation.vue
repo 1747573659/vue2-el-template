@@ -218,11 +218,12 @@ export default {
           }).catch(() => {})
         } else {
           const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
+          const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount },
-              { productCode: this.form.addAuthOrderDetailDTOList[0].productCode }
+              { productCode }
             ),
             addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
             renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
