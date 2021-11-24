@@ -113,8 +113,8 @@
       </el-form>
       <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="UserId" label="授权ID"></el-table-column>
-        <el-table-column prop="UserNo" label="授权对象编码"></el-table-column>
+        <el-table-column prop="AuthId" label="授权ID"></el-table-column>
+        <el-table-column prop="UserId" label="授权对象编码"></el-table-column>
         <el-table-column prop="UserName" label="授权对象名称"></el-table-column>
         <el-table-column prop="EndTime" label="有效期">
           <template slot-scope="scope">{{ scope.row.EndTime | formatTime }}</template>
@@ -271,8 +271,8 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          authId: item.UserId,
-          authCode: item.UserNo,
+          authId: item.AuthId,
+          authCode: item.UserId,
           authName: item.UserName,
           currentValidTime: item.EndTime,
           delayValidTime: this.setDelayValidTime(item.EndTime),
