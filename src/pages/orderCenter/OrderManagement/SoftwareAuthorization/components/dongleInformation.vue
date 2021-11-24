@@ -46,7 +46,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.detailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -105,6 +105,11 @@ export default {
     }
   },
   methods: {
+    handleDelDetailDTO(scope) {
+      this.form.detailDTOList.splice(scope.$index, 1)
+      this.selectMaps.delete(scope.row.productCode)
+      this.currentPageSelectSets.delete(scope.row.productCode)
+    },
     handleSelectAll(selection) {
       if (selection?.length) {
         selection.forEach(item => {
@@ -153,7 +158,7 @@ export default {
         this.selectMaps.forEach((item, key) => {
           if (this.form.detailDTOList.every(ele => ele.productCode !== key)) addDetailItem(item)
         })
-      }
+      } else this.form.detailDTOList = []
       this.checkProductVisible = false
       this.getProductStock()
     },
@@ -170,29 +175,25 @@ export default {
       }
     },
     handleProductVisible() {
-      this.checkProductVisible = true
       this.getProductPage()
+      this.checkProductVisible = true
     },
     async getProductPage() {
       try {
         this.checkProductTabLock = true
+        this.currentPageSelectSets.clear()
         const res = await authOrderProductPage({ type: 1, registerMethod: 2, isOnSale: 1, notProductTypeList: [99], info: this.productVal })
         this.basicProductData = res.results || []
         this.$nextTick(() => {
-          if (this.basicProductData.length > 0 && this.selectMaps.size > 0) {
+          if (this.basicProductData?.length) {
+            let hasDetailDTO = ''
             this.basicProductData.forEach(item => {
-              if (this.selectMaps.has(item.code)) {
-                this.$refs.product.toggleRowSelection(item, true)
+              if (this.form.detailDTOList?.length) hasDetailDTO = this.form.detailDTOList.some(ele => ele.productCode === item.code)
+              if ((this.selectMaps?.size && this.selectMaps.has(item.code)) || hasDetailDTO) {
                 this.currentPageSelectSets.add(item.code)
-              }
-            })
-          } else {
-            this.basicProductData.forEach(item => {
-              if (this.form.detailDTOList.find(ele => ele.productCode === item.code)) {
                 this.$refs.product.toggleRowSelection(item, true)
-                this.selectMaps.set(item.code, item)
-                this.currentPageSelectSets.add(item.code)
               }
+              if (hasDetailDTO) this.selectMaps.set(item.code, item)
             })
           }
         })
