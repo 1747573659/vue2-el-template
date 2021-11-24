@@ -196,8 +196,10 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     getYsInformationObj() {
-      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo || !this.form.addAuthOrderDetailDTOList?.[0]?.productCode) {
-        this.$message({ type: 'warning', message: '请先选择商户或已开通应用系统模块' })
+      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
+        this.$message({ type: 'warning', message: '请先选择商户' })
+      } else if (!this.$refs.information.showAddBit && !this.form.renewAuthOrderDetailDTOList?.length) {
+        this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
         const a = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
         const insufficientObj = a.filter(item => item.useInventory > item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
