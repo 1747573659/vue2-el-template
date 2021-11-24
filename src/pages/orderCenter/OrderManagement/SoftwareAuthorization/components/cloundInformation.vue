@@ -179,14 +179,17 @@ export default {
   },
   computed: {
     showAddBit() {
-      return (
-        [201, 205].includes(this.form.merchantDTO.applicationSystem) ||
-        (this.form.merchantDTO.applicationSystem === 203 && parseFloat(this.form.merchantDTO.probationFlag) === 1) ||
-        this.form.merchantDTO.applicationSystem !== 203
-      )
+      const applicationSystem = this.form.merchantDTO.applicationSystem
+      if ([203, 206].includes(applicationSystem)) {
+        if (this.form.merchantDTO.merchantName === '' || this.form.merchantDTO.probationFlag === '' || parseFloat(this.form.merchantDTO.probationFlag) === 1) return true
+        else return false
+      } else return true
     }
   },
   watch: {
+    showAddBit(newVal) {
+      this.activeName = newVal ? '1' : '2'
+    },
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
         if (newVal.length > 0) {
