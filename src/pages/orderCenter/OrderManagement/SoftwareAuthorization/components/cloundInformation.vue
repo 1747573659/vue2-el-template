@@ -207,7 +207,7 @@ export default {
           const addAuthInventoryAmount = this.form.addAuthOrderDetailDTOList.reduce((accumulator, currentValue) => {
             return accumulator + currentValue.useInventory
           }, 0)
-          const  = newVal.reduce((accumulator, currentValue) => {
+          const renewAuthInventoryAmount = newVal.reduce((accumulator, currentValue) => {
             return accumulator + currentValue.useInventory
           }, 0)
           return (this.form.authOrderDTO.inventoryAmount = addAuthInventoryAmount + renewAuthInventoryAmount)
