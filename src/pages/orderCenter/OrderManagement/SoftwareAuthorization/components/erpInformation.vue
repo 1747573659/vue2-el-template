@@ -59,20 +59,21 @@
         </el-table-column>
         <el-table-column label="银联通道">
           <template slot-scope="scope">
-            <km-select-page
-              ref="unionChannel"
-              v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)"
-              size="small"
-              v-model="scope.row.unionChannel"
-              option-label="channelName"
-              option-value="channelCode"
-              :data.sync="channelData"
-              :request="getChannelPage"
-              :disabled="$route.query.status === 'detail'"
-              :is-max-page.sync="isChannelPage"
-              placeholder="银联通道"
-              class="e-select-con js-unionChannel"
-            />
+            <template v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)">
+              <km-select-page
+                ref="unionChannel"
+                size="small"
+                v-model="scope.row.unionChannel"
+                option-label="channelName"
+                option-value="channelCode"
+                :data.sync="channelData"
+                :request="getChannelPage"
+                :disabled="$route.query.status === 'detail'"
+                :is-max-page.sync="isChannelPage"
+                placeholder="银联通道"
+                class="e-select-con js-unionChannel"
+              />
+            </template>
           </template>
         </el-table-column>
         <el-table-column label="备注">
@@ -82,7 +83,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.erpAuthOrderDetails.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -141,6 +142,11 @@ export default {
     }
   },
   methods: {
+    handleDelDetailDTO(scope) {
+      this.form.erpAuthOrderDetails.splice(scope.$index, 1)
+      this.selectMaps.delete(scope.row.moduleCode)
+      this.currentPageSelectSets.delete(scope.row.moduleCode)
+    },
     handleSelectAll(selection) {
       if (selection?.length) {
         selection.forEach(item => {
@@ -216,13 +222,8 @@ export default {
     handleProductVisible() {
       if (!this.form.erpAuthMerchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
-        this.checkProductVisible = true
-        if (this.selectMaps.size) {
-          this.selectMaps.forEach((item, key) => {
-            if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) this.selectMaps.delete(key)
-          })
-        }
         this.getProductPage()
+        this.checkProductVisible = true
       }
     },
     async getProductPage() {
@@ -232,20 +233,15 @@ export default {
         const { merchantId: custId, productCode } = this.form.erpAuthMerchantDTO
         this.basicProductData = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
         this.$nextTick(() => {
-          if (this.basicProductData.length > 0 && this.selectMaps.size > 0) {
+          if (this.basicProductData?.length) {
+            let hasDetailDTO = ''
             this.basicProductData.forEach(item => {
-              if (this.selectMaps.has(item.moduleId)) {
-                this.$refs.product.toggleRowSelection(item, true)
+              if (this.form.erpAuthOrderDetails?.length) hasDetailDTO = this.form.erpAuthOrderDetails.some(ele => ele.moduleCode === item.moduleId)
+              if ((this.selectMaps?.size && this.selectMaps.has(item.code)) || hasDetailDTO) {
                 this.currentPageSelectSets.add(item.moduleId)
-              }
-            })
-          } else {
-            this.basicProductData.forEach(item => {
-              if (this.form.erpAuthOrderDetails.find(ele => ele.moduleCode === item.moduleId)) {
                 this.$refs.product.toggleRowSelection(item, true)
-                this.selectMaps.set(item.moduleId, item)
-                this.currentPageSelectSets.add(item.moduleId)
               }
+              if (hasDetailDTO) this.selectMaps.set(item.moduleId, item)
             })
           }
         })

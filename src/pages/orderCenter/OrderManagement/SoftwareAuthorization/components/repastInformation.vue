@@ -75,7 +75,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.detailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -85,13 +85,15 @@
     <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择授权对象" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
-          <el-input v-model="productVal" maxlength="30" :placeholder="`请输入${form.merchantDTO.applicationModule === 101 ? '门店名称' : '税号'}`" clearable></el-input>
+          <el-input v-model="productVal" maxlength="30" :placeholder="`请输入${this.applicationStoreModule ? '门店名称' : '税号'}`" clearable></el-input>
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
       <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column :prop="form.merchantDTO.applicationModule === 101 ? 'BranchName' : 'TaxpayerNum'" label="门店名称/税号"></el-table-column>
+        <el-table-column label="门店名称/税号">
+          <template slot-scope="scope">{{ scope.row.shopType === 101 ? scope.row.BranchName : scope.row.TaxpayerNum }}</template>
+        </el-table-column>
         <el-table-column prop="shopType" label="类型">
           <template slot-scope="scope">{{ scope.row.shopType === 101 ? '门店' : '电子发票' }}</template>
         </el-table-column>
@@ -137,7 +139,7 @@ export default {
       cyVersionMap,
       shopPageData: [],
       isShopMaxPage: false,
-      merchantInfo: [],
+      merchantInfo: {},
       productStockObj: {},
       checkProductVisible: false,
       productVal: '',
@@ -156,6 +158,11 @@ export default {
       return dayjs(val).format('YYYY-MM-DD')
     }
   },
+  computed: {
+    applicationStoreModule() {
+      return this.form.merchantDTO.applicationModule === 101
+    }
+  },
   watch: {
     'form.detailDTOList': {
       handler(newVal) {
@@ -167,11 +174,16 @@ export default {
     }
   },
   methods: {
+    handleDelDetailDTO(scope) {
+      this.form.detailDTOList.splice(scope.$index, 1)
+      this.selectMaps.delete(scope.row.moduleCode)
+      this.currentPageSelectSets.delete(scope.row.moduleCode)
+    },
     handleSelectAll(selection) {
       if (selection?.length) {
         selection.forEach(item => {
-          this.selectMaps.set(item.AuthId, item)
-          this.currentPageSelectSets.add(item.AuthId)
+          this.selectMaps.set(this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum, item)
+          this.currentPageSelectSets.add(this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum)
         })
       } else {
         this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
@@ -179,20 +191,20 @@ export default {
       }
     },
     handleSelect(selection, row) {
+      const rowAttr = this.applicationStoreModule ? row.BranchNo : row.TaxpayerNum
       if (selection.length > this.currentPageSelectSets.size) {
-        this.selectMaps.set(row.AuthId, row)
-        this.currentPageSelectSets.add(row.AuthId)
+        this.selectMaps.set(rowAttr, row)
+        this.currentPageSelectSets.add(rowAttr)
       } else {
-        this.selectMaps.delete(row.AuthId)
-        this.currentPageSelectSets.delete(row.AuthId)
+        this.selectMaps.delete(rowAttr)
+        this.currentPageSelectSets.delete(rowAttr)
       }
     },
     handleConfirm() {
-
       const addDetailItem = item => {
         this.form.detailDTOList.push({
-          shopName: this.form.merchantDTO.applicationModule === 101 ? item.BranchName : '电子发票',
-          shopCode: this.form.merchantDTO.applicationModule === 101 ? item.BranchNo : item.TaxpayerNum,
+          shopName: this.applicationStoreModule ? item.BranchName : '电子发票',
+          shopCode: this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum,
           shopType: item.shopType,
           currentValidTime: item.KMValidity ? `${item.KMValidity} 00:00:00` : dayjs().format('YYYY-MM-DD 00:00:00'),
           delayValidTime: this.setDelayValidTime(item.KMValidity),
@@ -289,27 +301,22 @@ export default {
         this.checkProductTabLock = true
         const isNum = new RegExp(/^\d{1,}$/).test(this.productVal)
         const storeData = { branch: isNum ? this.productVal : '', branchname: !isNum && this.productVal ? this.productVal : '', cust: this.form.merchantDTO.merchantNo }
-        const res = this.form.merchantDTO.applicationModule === 101 ? await authOrderWcyBranchList(storeData) : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
+        const res = this.applicationStoreModule ? await authOrderWcyBranchList(storeData) : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
         this.basicProductData = res.map(item => {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
         })
         this.$nextTick(() => {
-          const applicationModuleBool = this.form.merchantDTO.applicationModule === 101
-          if (this.basicProductData.length > 0 && this.selectMaps.size > 0) {
+          if (this.basicProductData?.length) {
+            let hasDetailDTO = ''
+            const productAttr = this.applicationStoreModule ? 'BranchNo' : 'TaxpayerNum'
             this.basicProductData.forEach(item => {
-              if (this.selectMaps.has(applicationModuleBool ? item.BranchNo : item.TaxpayerNum)) {
+              if (this.form.detailDTOList?.length) hasDetailDTO = this.form.detailDTOList.some(ele => ele.shopCode === item[productAttr])
+              if ((this.selectMaps?.size && this.selectMaps.has(item[productAttr])) || hasDetailDTO) {
+                this.currentPageSelectSets.add(item[productAttr])
                 this.$refs.product.toggleRowSelection(item, true)
-                this.currentPageSelectSets.add(applicationModuleBool ? item.BranchNo : item.TaxpayerNum)
               }
-            })
-          } else {
-            this.basicProductData.forEach(item => {
-              if (this.form.renewAuthOrderDetailDTOList.find(ele => ele.shopCode === applicationModuleBool ? item.BranchNo : item.TaxpayerNum)) {
-                this.$refs.product.toggleRowSelection(item, true)
-                this.selectMaps.set(applicationModuleBool ? item.BranchNo : item.TaxpayerNum, item)
-                this.currentPageSelectSets.add(applicationModuleBool ? item.BranchNo : item.TaxpayerNum)
-              }
+              if (hasDetailDTO) this.selectMaps.set(item[productAttr], item)
             })
           }
         })

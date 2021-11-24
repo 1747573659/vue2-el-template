@@ -66,10 +66,10 @@
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareInventoryApply')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit', 'audit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <template v-if="$route.query.status === 'edit'" v-permission="'SOFTWARE_INVENTORY_REPLACE_SUBMIT'">
+      <template v-if="$route.query.status === 'edit'" v-permission="'SOFTWARE_INVENTORY_APPLY_SUBMIT'">
         <el-button size="small" type="primary" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
       </template>
-      <template v-if="$route.query.status === 'audit'" v-permission="'SOFTWARE_INVENTORY_REPLACE_AUDIT'">
+      <template v-if="$route.query.status === 'audit'" v-permission="'SOFTWARE_INVENTORY_APPLY_AUDIT'">
         <el-button size="small" type="primary" :loading="checkAuditBtnLoad" @click="handleReview">审核</el-button>
       </template>
     </div>
