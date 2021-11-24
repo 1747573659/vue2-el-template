@@ -74,19 +74,14 @@
     <div class="data-box">
       <el-table v-loading="loading" :max-height="tabMaxHeight" ref="multipleTable" :data="tableData" @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="companyName" label="商户名称" min-width="150" fixed>
-          <template slot-scope="scope">
-            {{ '[' + scope.row.id + ']' + scope.row.companyName }}
-          </template>
-        </el-table-column>
-        <el-table-column prop="loginName" label="账号" width="115"></el-table-column>
-        <el-table-column prop="contactor" label="联系人" min-width="150"></el-table-column>
-        <el-table-column prop="mobile" label="联系人手机" width="115"></el-table-column>
+        <el-table-column prop="companyName" label="商户名称" min-width="150" fixed></el-table-column>
+        <el-table-column prop="loginName" label="账号" min-width="100"></el-table-column>
+        <el-table-column prop="contactor" label="联系人" width="80"></el-table-column>
         <el-table-column prop="merchantNumber" label="品牌数" align="right" width="70"></el-table-column>
         <el-table-column prop="storeNum" label="门店数" align="right" width="70">
           <template slot-scope="scope"> {{ scope.row.storeNum || 0 }}</template>
         </el-table-column>
-        <el-table-column prop="agentName" label="所属代理商" min-width="150"></el-table-column>
+        <el-table-column prop="agentName" label="所属代理商" min-width="100"></el-table-column>
         <el-table-column prop="createTime" label="创建日期" width="110">
           <template v-if="scope.row.createTime" slot-scope="scope">{{ scope.row.createTime.split(' ')[0] }}</template>
         </el-table-column>
