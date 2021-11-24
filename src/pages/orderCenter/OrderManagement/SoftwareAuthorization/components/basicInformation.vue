@@ -25,11 +25,11 @@
           <el-input :value="form.authOrderDTO.handManName"></el-input>
         </el-form-item>
         <el-form-item label="经销商" v-if="Number($route.query.productType) === 6">
-          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
-    <component ref="information" :is="activeName" :form="form" :userBaseInfo="userBaseInfo"></component>
+    <component ref="information" :is="activeName" :form="form" :userInfo="userInfo"></component>
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
@@ -165,7 +165,7 @@ export default {
       ]),
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
-      userBaseInfo: JSON.parse(localStorage.userInfo)
+      userInfo: JSON.parse(localStorage.userInfo)
     }
   },
   computed: {
@@ -372,7 +372,7 @@ export default {
     handleQueryParams() {
       const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
       return {
-        authOrderVO: { handMan, inventoryAmount, agentId: this.userBaseInfo.agentId, createUser: this.userBaseInfo.id, id, billNo },
+        authOrderVO: { handMan, inventoryAmount, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
@@ -437,7 +437,7 @@ export default {
     },
     async getHandlerMan() {
       try {
-        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userBaseInfo.districtCode })
+        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
         this.form.authOrderDTO.handMan = id
         this.form.authOrderDTO.handManName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}

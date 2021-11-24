@@ -89,7 +89,7 @@
               </el-popconfirm>
             </template>
             <template v-if="userInfo.level === 1 && scope.row.orderStatus === 10">
-              <el-button type="text" size="small" @click="handleToDetail({ status: 'audit' }, scope.row)">审核</el-button>
+              <el-button type="text" size="small" v-permission="'SOFTWARE_INVENTORY_APPLY_AUDIT'" @click="handleToDetail({ status: 'audit' }, scope.row)">审核</el-button>
             </template>
             <template v-if="([10, 20].includes(scope.row.orderStatus) && userInfo.level === 2) || (userInfo.level === 1 && scope.row.orderStatus === 20)">
               <el-button type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>

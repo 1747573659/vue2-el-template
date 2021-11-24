@@ -76,7 +76,7 @@
     <template v-if="['add', 'edit'].includes($route.query.status)">
       <inventory-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
     </template>
-    <el-dialog :destroy-on-close="true" :visible.sync="checkAuditOpinionVisible" @closed="verifyRemark = ''" title="订单审核意见" width="600px" class="e-dialog-audit">
+    <el-dialog :destroy-on-close="true" :visible.sync="checkAuditOpinionVisible" @closed="verifyRemark = ''" title="订单审核意见" width="500px" class="e-dialog-audit">
       <el-input type="textarea" v-model="verifyRemark" placeholder="请填写你的意见" :rows="4" maxlength="100"></el-input>
       <div slot="footer">
         <el-button @click="checkAuditOpinionVisible = false" size="small">取消</el-button>
@@ -132,15 +132,18 @@ export default {
     else this.getDetail()
   },
   methods: {
-    async handleAgree() {
-      try {
-        await applyOrderVerify({ id: this.$route.query.id, reason: this.verifyRemark, result: 0 })
-        this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 20, status: 'detail' } })
-        this.$message({ type: 'success', message: '审核成功' })
-      } catch (error) {
-      } finally {
-        this.checkAuditOpinionVisible = false
-      }
+    handleAgree() {
+      this.setOrderSave().then(async () => {
+        try {
+          await applyOrderVerify({ id: this.$route.query.id, reason: this.verifyRemark, result: 0 })
+          this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 20, status: 'detail' } })
+          this.getDetail()
+          this.$message({ type: 'success', message: '审核成功' })
+        } catch (error) {
+        } finally {
+          this.checkAuditOpinionVisible = false
+        }
+      })
     },
     async handleNoAgree() {
       if (!this.verifyRemark) {
@@ -186,7 +189,7 @@ export default {
           this.checkSaveBtnLoad = false
         })
     },
-    async setOrderSave(action = 1) {
+    async setOrderSave() {
       try {
         const data = {
           orderDTO: { ...this.form.orderDTO, createUser: this.userInfo.id },

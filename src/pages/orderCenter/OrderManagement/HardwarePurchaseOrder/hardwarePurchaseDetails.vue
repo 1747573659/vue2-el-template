@@ -43,6 +43,7 @@ export default {
     async getOperateLog() {
       try {
         this.operateData = await operateLog({ orderType: 0, purchaseId: this.$route.query.id })
+        console.info(this.operateData)
       } catch (error) {}
     }
   }

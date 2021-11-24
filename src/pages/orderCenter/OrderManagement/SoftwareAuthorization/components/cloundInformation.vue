@@ -6,7 +6,7 @@
       </div>
       <el-form :model="form" size="small" :disabled="$route.query.status === 'detail'" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
-          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
           <km-select-page
@@ -153,7 +153,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    userBaseInfo: {
+    userInfo: {
       type: Object,
       default: () => {}
     }
@@ -331,7 +331,7 @@ export default {
         this.checkProductStockLoad = true
         const productCode = this.appModuleObj.productCode || this.form.authOrderDTO.productCode
         if (productCode) {
-          this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
+          this.productStockObj = (await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode })) || {}
           if (this.form.addAuthOrderDetailDTOList.length > 0) {
             this.form.addAuthOrderDetailDTOList.forEach(item => {
               item.orderInventory = this.productStockObj?.totalAmount ?? 0
@@ -357,7 +357,7 @@ export default {
     },
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await authOrderYsCustomerList({ Condition: query, OrganNo: this.userBaseInfo.organNo, PageIndex: --page, PageSize: rows })
+        const res = await authOrderYsCustomerList({ Condition: query, OrganNo: this.userInfo.organNo, PageIndex: --page, PageSize: rows })
         res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustId}）`))
         this.shopPageData = this.shopPageData.concat(res || [])
         this.isShopMaxPage = !res || (res && res.length < 10)

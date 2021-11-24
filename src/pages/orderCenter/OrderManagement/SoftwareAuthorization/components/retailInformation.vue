@@ -6,7 +6,7 @@
       </div>
       <el-form :model="form" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
-          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
           <km-select-page
@@ -89,7 +89,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    userBaseInfo: {
+    userInfo: {
       type: Object,
       default: () => {}
     }
@@ -98,8 +98,8 @@ export default {
     return {
       delayTimes,
       versionMap,
-      custListData: [],
-      isCustListPage: false,
+      shopPageData: [],
+      isShopMaxPage: false,
       merchantInfo: [],
       productStockObj: {},
       checkProductStockLoad: false
@@ -145,7 +145,7 @@ export default {
       this.form.merchantDTO.merchantId = val
       this.form.merchantDTO.delayHour = 1
       if (val) {
-        this.merchantInfo = await this.getWlsCustInfo()
+        this.merchantInfo = this.shopPageData.find(item => item.CustID === val)
         this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
         this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
         this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
@@ -198,7 +198,7 @@ export default {
       try {
         this.checkProductStockLoad = true
         const productCode = this.merchantInfo.productCode || this.form.authOrderDTO.productCode
-        this.productStockObj = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })
+        this.productStockObj = await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode })
         this.form.detailDTOList.forEach(item => {
           item.orderInventory = this.productStockObj?.totalAmount ?? 0
         })
@@ -212,10 +212,10 @@ export default {
         const isNum = new RegExp(/^\d{1,}$/).test(query)
         const res = await authOrderWlsCustList({
           cust: isNum ? query : '',
-          custname: !isNum && query ? query : '',
+          custName: !isNum && query ? query : '',
           pageSize: page,
           pageIndex: rows,
-          organ: this.userBaseInfo.organNo
+          organ: this.userInfo.organNo
         })
         res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustID}）`))
         this.shopPageData = this.shopPageData.concat(res || [])
