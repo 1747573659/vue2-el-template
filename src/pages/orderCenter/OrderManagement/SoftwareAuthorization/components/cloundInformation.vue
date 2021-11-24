@@ -97,7 +97,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.detailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -207,7 +207,7 @@ export default {
           const addAuthInventoryAmount = this.form.addAuthOrderDetailDTOList.reduce((accumulator, currentValue) => {
             return accumulator + currentValue.useInventory
           }, 0)
-          const renewAuthInventoryAmount = newVal.reduce((accumulator, currentValue) => {
+          const  = newVal.reduce((accumulator, currentValue) => {
             return accumulator + currentValue.useInventory
           }, 0)
           return (this.form.authOrderDTO.inventoryAmount = addAuthInventoryAmount + renewAuthInventoryAmount)
