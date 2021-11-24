@@ -85,7 +85,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    userBaseInfo: {
+    userInfo: {
       type: Object,
       default: () => {}
     }
@@ -128,7 +128,7 @@ export default {
     handleAuthNumAmount(row) {
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.authNum)) {
         this.$message({ type: 'warning', message: '授权数量范围为[1-999]' })
-        return (row.authNum = 1)
+        return (row.authNum = row.useInventory = 1)
       }
     },
     handleConfirm() {
@@ -141,7 +141,8 @@ export default {
           authNum: 1,
           dogId: '',
           dogAuthString: '',
-          remark: ''
+          remark: '',
+          useInventory: 1
         })
       }
       if (this.form.detailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
@@ -159,7 +160,7 @@ export default {
     async getProductStock() {
       try {
         this.checkProductStockLoad = true
-        const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.detailDTOList.map(item => item.productCode) })
+        const res = await queryByAgentErpProduct({ agentId: this.userInfo.agentId, productCodes: this.form.detailDTOList.map(item => item.productCode) })
         if (this.form.detailDTOList.length > 0 && res) {
           this.form.detailDTOList.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase()).totalAmount))
         }
