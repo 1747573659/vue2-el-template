@@ -18,10 +18,9 @@
         <div class="form-info">
           <el-row>
             <el-col :span="12" class="archive-form-item">
-              <!-- @focus="shopFocus" -->
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <select-page
-                  :disabled="formYQDisabled"
+                  :disabled="formYQDisabled || [1, 4, 8].includes(this.auditStatus)"
                   style="width: 240px"
                   :value="form.archiveBaseVO.merchantName"
                   @remoteMethod="shopRemoteMethod"
@@ -723,7 +722,9 @@
       </el-form>
     </div>
     <div class="bottom">
-      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" :loading="checkVerify" size="small" type="primary" class="archive-bottom-btn">提交审核</el-button>
+      <el-button v-if="[undefined, 0, 1, 2, 4, 8].includes(auditStatus) || isCopy" @click="toAdd" :loading="checkVerify" size="small" type="primary" class="archive-bottom-btn"
+        >提交审核</el-button
+      >
       <template
         v-if="
           ([undefined, 0, 1, 2, 4, 8, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && !isDetail
@@ -1130,15 +1131,14 @@ export default {
           this.form.archiveBaseVO.companyName = res.name
           this.form.archiveBaseVO.address = res.address.replace(/.*(省|市|自治区|自治州|区)/, '')
           if (res.valid_period) {
-            const validPeriodArr = res.valid_period.replace(/[年月./-]/g, '-').replace(/日/g, '').split('至')
+            const validPeriodArr = res.valid_period
+              .replace(/[年月./-]/g, '-')
+              .replace(/日/g, '')
+              .split('至')
             let endTime = validPeriodArr[1].replace(/长期/, '')
             // 如果开始时间的年份不是四位，或者开始时间不是一个有效的时间字符串，或者结束时间既不是长期也不是有效的时间字符串
             // 那么此次解析出现的时间是错误的时间
-            if (
-              validPeriodArr[0].split('-')[0].length !== 4 ||
-              !Date.parse(validPeriodArr[0]) ||
-              (validPeriodArr[1] !== '长期' && !Date.parse(endTime))
-            ) {
+            if (validPeriodArr[0].split('-')[0].length !== 4 || !Date.parse(validPeriodArr[0]) || (validPeriodArr[1] !== '长期' && !Date.parse(endTime))) {
               this.form.archiveExpandVO.licValidityBigen = ''
               this.form.archiveExpandVO.licValidityEnd = ''
             } else {
@@ -1437,7 +1437,8 @@ export default {
               document.querySelector('.e-tag_active span').innerText = `享付通资质进件/编辑`
             }
             this.$message.success('保存成功')
-          } catch (error) {} finally {
+          } catch (error) {
+          } finally {
             this.checkArchive = false
           }
         }
@@ -1459,7 +1460,8 @@ export default {
             this.$router.push({ path: 'xftArchive' })
           })
           this.$message.success('提交成功')
-        } catch (error) {} finally {
+        } catch (error) {
+        } finally {
           this.checkVerify = false
         }
       }

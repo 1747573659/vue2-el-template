@@ -97,7 +97,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.detailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -113,8 +113,8 @@
       </el-form>
       <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column prop="UserId" label="授权ID"></el-table-column>
-        <el-table-column prop="UserNo" label="授权对象编码"></el-table-column>
+        <el-table-column prop="AuthId" label="授权ID"></el-table-column>
+        <el-table-column prop="UserId" label="授权对象编码"></el-table-column>
         <el-table-column prop="UserName" label="授权对象名称"></el-table-column>
         <el-table-column prop="EndTime" label="有效期">
           <template slot-scope="scope">{{ scope.row.EndTime | formatTime }}</template>
@@ -179,14 +179,17 @@ export default {
   },
   computed: {
     showAddBit() {
-      return (
-        [201, 205].includes(this.form.merchantDTO.applicationSystem) ||
-        (this.form.merchantDTO.applicationSystem === 203 && parseFloat(this.form.merchantDTO.probationFlag) === 1) ||
-        this.form.merchantDTO.applicationSystem !== 203
-      )
+      const applicationSystem = this.form.merchantDTO.applicationSystem
+      if ([203, 206].includes(applicationSystem)) {
+        if (this.form.merchantDTO.merchantName === '' || this.form.merchantDTO.probationFlag === '' || parseFloat(this.form.merchantDTO.probationFlag) === 1) return true
+        else return false
+      } else return true
     }
   },
   watch: {
+    showAddBit(newVal) {
+      this.activeName = newVal ? '1' : '2'
+    },
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
         if (newVal.length > 0) {
@@ -271,8 +274,8 @@ export default {
     handleConfirm() {
       const Selections = this.$refs.product.selection.map(item => {
         return {
-          authId: item.UserId,
-          authCode: item.UserNo,
+          authId: item.AuthId,
+          authCode: item.UserId,
           authName: item.UserName,
           currentValidTime: item.EndTime,
           delayValidTime: this.setDelayValidTime(item.EndTime),
