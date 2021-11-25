@@ -1,7 +1,7 @@
 <template>
   <div class="app-container">
     <div class="search-box">
-      <el-form :inline="true" :model="form" label-suffix=":" :rules="rules" label-width="110px" ref="form" size="small" class="xdd-btn-block__w240">
+      <el-form :inline="true" :model="form" label-suffix=":" label-width="110px" ref="form" size="small" class="xdd-btn-block__w240">
         <el-row type="flex" align="bottom">
           <el-col :xl="22" :lg="21">
             <el-form-item label="享钱商户名称">
@@ -30,7 +30,7 @@
               <el-input class="p-form-input_width" clearable placeholder="请输入小程序APPID搜索" size="small" maxlength="30" v-model.trim="form.miniProgramAppid"></el-input>
             </el-form-item>
             <el-form-item label="联系人" prop="name">
-              <el-input class="p-form-input_width" clearable placeholder="请输入联系人搜索" size="small" v-model.trim="form.name"></el-input>
+              <el-input class="p-form-input_width" clearable placeholder="请输入联系人搜索" size="small" maxlength="20" v-model.trim="form.name"></el-input>
             </el-form-item>
             <el-form-item>
               <el-button @click="search" type="primary" size="small">搜索</el-button>
@@ -356,12 +356,8 @@ export default {
     },
     // 搜索
     search () {
-      this.$refs.form.validate(async valid => {
-        if (valid) {
-          this.thisPage = 1
-          this.getTable()
-        }
-      })
+      this.thisPage = 1
+      this.getTable()
     },
     // 小程序版本
     async queryAllVersion () {
