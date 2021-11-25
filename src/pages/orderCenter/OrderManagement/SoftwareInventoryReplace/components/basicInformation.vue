@@ -229,7 +229,7 @@ export default {
       } else {
         const replaceNum = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory)
         this.form.orderDTO.useInventory = replaceNum
-        return row.useInventory = replaceNum
+        return (row.useInventory = replaceNum)
       }
     },
     handleReplaceProductName(val) {
@@ -237,7 +237,7 @@ export default {
       if (val) {
         if (this.agentProductList) {
           this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-          replaceableNum = Math.floor(NP.divide(this.agentProductList?.commonAmount??0, this.replaceProduct.reduceInventory))
+          replaceableNum = Math.floor(NP.divide(this.agentProductList?.commonAmount ?? 0, this.replaceProduct.reduceInventory))
           useInventory = NP.times(1, this.replaceProduct.reduceInventory)
         }
       }
@@ -257,7 +257,7 @@ export default {
               replaceNum: 1,
               replaceProductId: '',
               replaceProductName: '',
-              orderInventory: this.agentProductList?.commonAmount??0,
+              orderInventory: NP.minus(this.agentProductList?.commonAmount ?? 0, this.agentProductList?.commonLimitAmount ?? 0),
               replaceableNum: 0,
               useInventory: 0,
               remark: ''

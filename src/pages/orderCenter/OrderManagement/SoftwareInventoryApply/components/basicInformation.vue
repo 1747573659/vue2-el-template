@@ -89,12 +89,20 @@
 
 <script>
 import dayjs from 'dayjs'
+import NP from 'number-precision'
 import { deepClone } from '@/utils'
 import { orderStatus, formObj } from '../data'
 import inventoryProduct from './inventoryProduct.vue'
 
 import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
-import { applyOrderAdd, applyOrderUpdate, applyOrderDetail, applyOrderSubmit, applyOrderVerify } from '@/api/orderCenter/orderManagement/softwareInventoryApply'
+import {
+  applyOrderAdd,
+  applyOrderUpdate,
+  applyOrderDetail,
+  applyOrderSubmit,
+  applyOrderVerify,
+  queryByAgentProduct
+} from '@/api/orderCenter/orderManagement/softwareInventoryApply'
 
 export default {
   components: {
@@ -132,18 +140,24 @@ export default {
     else this.getDetail()
   },
   methods: {
-    handleAgree() {
-      this.setOrderSave().then(async () => {
-        try {
-          await applyOrderVerify({ id: this.$route.query.id, reason: this.verifyRemark, result: 0 })
-          this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 20, status: 'detail' } })
-          this.getDetail()
-          this.$message({ type: 'success', message: '审核成功' })
-        } catch (error) {
-        } finally {
-          this.checkAuditOpinionVisible = false
-        }
-      })
+    async getProductStock() {
+      try {
+        const res = await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode: this.form.orderDetailDtos[0].productCode })
+        this.form.orderDetailDtos[0].timingInventory = NP.minus(res?.commonAmount ?? 0, res?.commonLimitAmount ?? 0)
+      } catch (error) {}
+    },
+    async handleAgree() {
+      try {
+        await this.getProductStock()
+        await this.setOrderSave()
+        await applyOrderVerify({ id: this.$route.query.id, reason: this.verifyRemark, result: 0 })
+        this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 20, status: 'detail' } })
+        this.getDetail()
+        this.$message({ type: 'success', message: '审核成功' })
+      } catch (error) {
+      } finally {
+        this.checkAuditOpinionVisible = false
+      }
     },
     async handleNoAgree() {
       if (!this.verifyRemark) {
@@ -160,15 +174,7 @@ export default {
       }
     },
     handleReview() {
-      this.checkReviewStatus = true
-      this.setOrderSave()
-        .then(() => {
-          this.checkAuditOpinionVisible = true
-        })
-        .catch(() => {})
-        .finally(() => {
-          this.checkReviewStatus = false
-        })
+      this.checkAuditOpinionVisible = true
     },
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
@@ -249,9 +255,7 @@ export default {
             remark: ''
           }
         ]
-        if (this.$route.query.status === 'edit') {
-          this.form.orderDetailDtos[0].billNo = this.form.orderDTO.billNo
-        }
+        if (this.$route.query.status === 'edit') this.form.orderDetailDtos[0].billNo = this.form.orderDTO.billNo
         this.form.orderDTO.useInventory = 1
       }
     },

@@ -114,3 +114,12 @@ export function queryAgentPage(data) {
     data
   })
 }
+
+// 查询库存
+export function queryByAgentProduct(data) {
+  return request({
+    url: '/soft/inventory/queryByAgentProduct',
+    method: 'POST',
+    data: qs.stringify(data)
+  })
+}
