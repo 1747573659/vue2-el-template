@@ -54,7 +54,7 @@ export default {
         { prop: 'orderNo', label: '订单编号', width: '230px' },
         { prop: 'corpName', label: '企业名称' },
         { prop: 'channelName', label: '所属渠道' },
-        { prop: 'channelAreaCode', label: '渠道区域' },
+        { prop: 'channelAreaAddress', label: '渠道区域' },
         { prop: 'goods', label: '订购服务', slot: true },
         { prop: 'orderSourceStr', label: '来源渠道' },
         { prop: 'orderStatus', label: '订单状态', attrs: { formatter: statusFormatter } },

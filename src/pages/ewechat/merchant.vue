@@ -69,7 +69,7 @@ export default {
           col: 6
         },
         {
-          label: '超级管理员',
+          label: '企业管理员',
           prop: 'superAdminName',
           type: 'input',
           col: 6
