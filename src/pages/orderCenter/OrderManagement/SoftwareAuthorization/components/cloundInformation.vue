@@ -45,8 +45,9 @@
         </el-form-item>
       </el-form>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="加点" name="1" v-if="showAddBit"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="parseFloat(form.merchantDTO.probationFlag) === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem)"></el-tab-pane>
+        <!-- 订货易/小蜜优批试用 -->
+        <el-tab-pane label="加点" name="1" v-if="showAddPoint"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="showAuthorTab"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <template v-if="activeName === '1'">
@@ -186,12 +187,15 @@ export default {
     }
   },
   computed: {
-    showAddBit() {
-      const applicationSystem = this.form.merchantDTO.applicationSystem
-      if ([203, 206].includes(applicationSystem)) {
-        if (this.form.merchantDTO.merchantName === '' || this.form.merchantDTO.probationFlag === '' || parseFloat(this.form.merchantDTO.probationFlag) === 1) return true
-        else return false
-      } else return true
+    showAddPoint() {
+      const merchantDTO = this.form?.merchantDTO
+      const pointCondition = this.$route.status === 'add' ? merchantDTO?.probationFlag : this.form.authOrderDTO.useModalInner
+      if ([203, 206].includes(merchantDTO?.applicationSystem)) return !merchantDTO?.merchantName && !merchantDTO?.probationFlag && parseFloat(pointCondition)
+      else return true
+    },
+    showAuthorTab() {
+      const authorCondition = this.$route.status === 'add' ? this.form.merchantDTO.probationFlag : this.form.authOrderDTO.useModalInner
+      return !parseFloat(authorCondition) && ![201, 205].includes(this.form.merchantDTO.applicationSystem)
     }
   },
   watch: {
@@ -393,7 +397,7 @@ export default {
         const res = await authOrderYsByCusAndApplyList(data)
         this.basicProductData = res
         this.$nextTick(() => {
-          if(this.basicProductData?.length){
+          if (this.basicProductData?.length) {
             let hasDetailDTO = ''
             this.basicProductData.forEach(item => {
               if (this.form.renewAuthOrderDetailDTOList?.length) hasDetailDTO = this.form.renewAuthOrderDetailDTOList.some(ele => ele.authId === item.AuthId)

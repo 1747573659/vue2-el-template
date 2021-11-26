@@ -245,7 +245,7 @@ export default {
     getYsInformationObj() {
       if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
         this.$message({ type: 'warning', message: '请先选择商户' })
-      } else if (!this.$refs.information.showAddBit && !this.form.renewAuthOrderDetailDTOList?.length) {
+      } else if (this.$refs.information.showAuthorTab && !this.form.renewAuthOrderDetailDTOList?.length) {
         this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
         const detailDTOList = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
@@ -264,12 +264,12 @@ export default {
             }
           }).catch(() => {})
         } else {
-          const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
+          const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal, probationFlag } = this.form.merchantDTO
           const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
-              { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount },
+              { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount, useModalInner: parseFloat(probationFlag || -1) },
               { productCode, userLevelNum: this.form.authOrderDTO.userLevelNum }
             ),
             addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
@@ -302,7 +302,7 @@ export default {
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
-              { orderStatus: 0, productType: 4, merchantId, useModal, delayCount },
+              { orderStatus: 0, productType: 4, merchantId, useModal, delayCount, useModalInner: -1 },
               { productCode: this.$refs.information.merchantInfo.productCode || productCode }
             ),
             orderDetailVos: this.handleQueryParams().orderDetailVos
@@ -333,7 +333,7 @@ export default {
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
-              { orderStatus: 0, productType: 3, merchantId, useModal, delayCount },
+              { orderStatus: 0, productType: 3, merchantId, useModal, delayCount, useModalInner: -1 },
               { productCode: this.$refs.information.merchantInfo.productCode || productCode }
             ),
             orderDetailVos: this.handleQueryParams().orderDetailVos
@@ -361,9 +361,16 @@ export default {
             }
           }).catch(() => {})
         } else {
-          const { merchantId, productCode } = this.form.erpAuthMerchantDTO
+          const { merchantId, productCode, authStatus } = this.form.erpAuthMerchantDTO
           return {
-            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { merchantId, productCode, orderStatus: 0, productType: 1, useModal: -1 }),
+            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, {
+              merchantId,
+              productCode,
+              useModalInner: parseFloat(authStatus || -1),
+              orderStatus: 0,
+              productType: 1,
+              useModal: -1
+            }),
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
         }

@@ -175,7 +175,7 @@ export default {
     },
     handleShopPage(val) {
       if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.filter(item => item.custId === val)[0]
+        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.find(item => item.custId === val)
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
       } else this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount: '', productCode: '', productName: '', authStatus: '', merchantId: '' })
       this.form.erpAuthOrderDetails = []
