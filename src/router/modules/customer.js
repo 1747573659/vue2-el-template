@@ -111,7 +111,7 @@ const customer = {
           component: _import('ewechat/merchant'),
           name: 'ewechatMerchant',
           code: 'KM_CUSTOMER_MERCHANT_LIST',
-          meta: { title: '商户列表', cache: true, name: 'ewechatMerchant' }
+          meta: { title: '企微商户管理', cache: true, name: 'ewechatMerchant' }
         }
       ]
     },
