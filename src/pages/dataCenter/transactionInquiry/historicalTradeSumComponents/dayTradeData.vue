@@ -314,7 +314,6 @@ export default {
       let childs = ''
       this.payPluginList = []
       this.form.payPlugin = ''
-      console.log(value)
       this.paymentList.forEach(item => {
         if (item.id === value) {
           childs = item.childs.split(',')

@@ -83,9 +83,7 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
                   })
                 }
               }
-              }).catch(err => {
-                console.log(err)
-              })
+              }).catch(err => {})
             } else {
               Message.error(data.msg)
             }

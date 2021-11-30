@@ -206,7 +206,7 @@ export default {
                   query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
                 })
               })
-              this.$message({ type: 'success', message: '提交成功' })
+              this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
             })
             .catch(() => {})
         })
@@ -367,14 +367,11 @@ export default {
         } else {
           const { merchantId, productCode, authStatus } = this.form.erpAuthMerchantDTO
           return {
-            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, {
-              merchantId,
-              productCode,
-              useModalInner: parseFloat(authStatus || -1),
-              orderStatus: 0,
-              productType: 1,
-              useModal: -1
-            }),
+            authOrderVO: Object.assign(
+              this.handleQueryParams().authOrderVO,
+              { merchantId, productCode },
+              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
+            ),
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
         }
@@ -419,18 +416,9 @@ export default {
         this.checkBasicInformLoad = true
         const res = await this.baseInfoMap.get(this.productType).detailRequest(this.$route.query.id)
         this.form = res
-        setTimeout(() => {
-          if (this.productType === 1) {
-            this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
-            res.erpAuthOrderDetails.forEach((item, index) => {
-              if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {
-                document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-              }
-            })
-          }
-          if ([4, 5].includes(this.productType)) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
-        }, 500)
         this.$nextTick(() => {
+          const selectPageVal = this.productType === 1 ? res?.erpAuthMerchantDTO?.merchantName ?? '' : res?.merchantDTO?.merchantName ?? ''
+          this.$refs.information.$refs.selectPage.selectVal = selectPageVal
           if (this.productType === 3) {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
             this.form.merchantDTO.merchantId = res.authOrderDTO.merchantId
@@ -441,6 +429,15 @@ export default {
             this.form.merchantDTO.applicationSystem = res.authOrderDTO.useModal
           }
         })
+        if (this.productType === 1) {
+          setTimeout(() => {
+            res.erpAuthOrderDetails.forEach((item, index) => {
+              if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {
+                document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+              }
+            })
+          }, 500)
+        }
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false

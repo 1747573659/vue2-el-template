@@ -21,7 +21,6 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 value-format="yyyy-MM"
-                @change="dateChange"
               >
               </el-date-picker>
             </el-form-item>
@@ -302,7 +301,6 @@ export default {
       this.payPluginList = []
       this.form.payPlugin = ''
       let childs = ''
-      console.log(value)
       this.paymentList.forEach(item => {
         if (item.id === value) {
           childs = item.childs.split(',')
@@ -334,9 +332,6 @@ export default {
         name: 'historicalTradeSumDetail',
         query: { type: 3, payDate: row.payDate, payMethod: this.form.payMethod, searchObject: this.form.searchObject, id: this.form.id }
       })
-    },
-    dateChange(value) {
-      console.log(value)
     },
     async remoteMethod(value) {
       if (!this.form.searchObject) {

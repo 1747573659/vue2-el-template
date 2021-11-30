@@ -304,7 +304,6 @@ export default {
   watch: {
     'formData.transactionTime': {
       handler(newVal, oldVal) {
-        console.log('obj.a changed')
         if (newVal === null) {
           this.formData.transactionTime = [
             dayjs()

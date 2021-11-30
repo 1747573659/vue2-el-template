@@ -397,7 +397,6 @@ export default {
             let hasDetailDTO = ''
             this.basicProductData.forEach(item => {
               if (this.form.renewAuthOrderDetailDTOList?.length) hasDetailDTO = this.form.renewAuthOrderDetailDTOList.some(ele => ele.authId === item.AuthId)
-              console.info(hasDetailDTO)
               if ((this.selectMaps?.size && this.selectMaps.has(item.AuthId)) || hasDetailDTO) {
                 this.currentPageSelectSets.add(item.AuthId)
                 this.$refs.product.toggleRowSelection(item, true)

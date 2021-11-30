@@ -176,7 +176,6 @@ export default {
             this.$router.go(-1)
           })
         } else {
-          console.log('error submit!!')
           return false
         }
       })

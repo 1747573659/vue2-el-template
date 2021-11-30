@@ -52,13 +52,7 @@
             <el-form-item style="margin-left:90px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'SOFTWARE_INVENTORY_APPLY_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
-              <km-export-view
-                ref="export"
-                width="900px"
-                v-permission="'SOFTWARE_INVENTORY_APPLY_EXPORT'"
-                :request-export-log="handleExportRecord"
-                :request-export-del="handleExportDel"
-              />
+              <km-export-view width="900px" v-permission="'SOFTWARE_INVENTORY_APPLY_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
@@ -71,7 +65,9 @@
     </div>
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
-        <el-table-column prop="createTime" label="订单时间" width="165"></el-table-column>
+        <el-table-column label="订单时间" width="165">
+          <template slot-scope="scope">{{ scope.row.createTime | formatCreateTime }}</template>
+        </el-table-column>
         <el-table-column prop="billNo" label="单据编码"></el-table-column>
         <el-table-column prop="agentName" label="申请经销商" v-if="userInfo.level === 1"></el-table-column>
         <el-table-column prop="useInventory" label="申请库存" align="right"></el-table-column>
@@ -148,6 +144,11 @@ export default {
       },
       cueerntAgentId: '',
       userInfo: JSON.parse(getLocal('userInfo'))
+    }
+  },
+  filter: {
+    formatCreateTime(time) {
+      return dayjs(time).format('YYYY-MM-DD HH:mm')
     }
   },
   beforeRouteEnter(to, from, next) {
