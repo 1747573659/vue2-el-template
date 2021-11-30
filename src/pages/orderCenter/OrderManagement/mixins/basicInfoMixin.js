@@ -178,7 +178,6 @@ export const basicInfoMixin = {
       this.$refs.product.getProductPage()
     },
     handleCountAmount(row) {
-      row.productPrice = NP.round(row.productPrice, 2)
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
         this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
         row.productCount = 1
@@ -187,14 +186,15 @@ export const basicInfoMixin = {
         this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
         row.productPrice = 0
       }
+      row.productPrice = NP.round(row.productPrice, 2)
       return (row.productAmount = NP.round(NP.times(row.productCount, parseFloat(row.productPrice)), 2))
     },
     handleAmount(row) {
-      row.productAmount = NP.round(row.productAmount, 2)
-      if (!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
+      if (!/^([0-9]\d{0,9}?)(\.\d{1,2})?$/.test(row.productAmount)) {
         this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
         row.productAmount = 0
       }
+      row.productAmount = NP.round(row.productAmount, 2)
       return (row.productPrice = NP.round(NP.divide(parseFloat(row.productAmount), parseFloat(row.productCount)), 2))
     },
     getHandlerMan: async function() {

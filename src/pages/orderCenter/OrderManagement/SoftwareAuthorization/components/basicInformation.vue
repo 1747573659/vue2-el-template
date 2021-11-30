@@ -249,9 +249,11 @@ export default {
         this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
         const detailDTOList = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
-        const insufficientObj = detailDTOList.filter(item => item.useInventory > item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
+        const insufficientObj = detailDTOList.filter(item => {
+          return item.useInventory > (item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
+        })
         if (insufficientObj.length > 0) {
-          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
+          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`, {
             title: '系统提示',
             type: 'warning',
             confirmButtonText: '去采购',
@@ -266,10 +268,11 @@ export default {
         } else {
           const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal, probationFlag } = this.form.merchantDTO
           const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
+          const useModalInner = probationFlag || probationFlag === 0 ? probationFlag : -1
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
-              { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount, useModalInner: parseFloat(probationFlag || -1) },
+              { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount, useModalInner },
               { productCode, userLevelNum: this.form.authOrderDTO.userLevelNum }
             ),
             addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
@@ -418,11 +421,11 @@ export default {
         setTimeout(() => {
           if (this.productType === 1) {
             this.$refs.information.$refs.selectPage.selectVal = res?.erpAuthMerchantDTO?.merchantName ?? ''
-            // if (res.erpAuthOrderDetails.length > 0) {
-            //   res.erpAuthOrderDetails.forEach((item, index) => {
-            //     if (item.unionChannel) document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-            //   })
-            // }
+            res.erpAuthOrderDetails.forEach((item, index) => {
+              if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {
+                document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+              }
+            })
           }
           if ([4, 5].includes(this.productType)) this.$refs.information.$refs.selectPage.selectVal = res?.merchantDTO?.merchantName ?? ''
         }, 500)

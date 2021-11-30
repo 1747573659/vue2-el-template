@@ -74,6 +74,9 @@ export default {
     }
   },
   methods: {
+    handleEchoVal(val) {
+      this.selectVal = val
+    },
     handleSelectFocus() {
       if (!this.data.length) {
         this.currentPage = 1

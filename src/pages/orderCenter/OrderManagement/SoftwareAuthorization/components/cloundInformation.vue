@@ -30,7 +30,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="授权状态">
-          <el-input :value="['正式', '试用'][parseFloat(form.merchantDTO.probationFlag)]" disabled></el-input>
+          <el-input :value="['正式', '试用'][form.merchantDTO.probationFlag]" disabled></el-input>
         </el-form-item>
         <el-form-item label="延期时长">
           <el-input value="永久" v-if="[201, 205].includes(form.merchantDTO.applicationSystem)" disabled></el-input>
@@ -39,7 +39,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="用户级别" v-if="form.merchantDTO.applicationSystem === 206">
-          <el-select v-model="form.authOrderDTO.userLevelNum" :disabled="parseFloat(form.merchantDTO.probationFlag) === 0" clearable>
+          <el-select v-model="form.authOrderDTO.userLevelNum" :disabled="!form.merchantDTO.probationFlag" clearable>
             <el-option v-for="item in modulesUserLevel" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
@@ -189,17 +189,17 @@ export default {
   computed: {
     showAddPoint() {
       const merchantDTO = this.form?.merchantDTO
-      const pointCondition = this.$route.status === 'add' ? merchantDTO?.probationFlag : this.form.authOrderDTO.useModalInner
-      if ([203, 206].includes(merchantDTO?.applicationSystem)) return !merchantDTO?.merchantName && !merchantDTO?.probationFlag && parseFloat(pointCondition)
+      const pointCondition = this.$route.query.status === 'add' ? merchantDTO?.probationFlag : this.form.authOrderDTO.useModalInner
+      if ([203, 206].includes(merchantDTO?.applicationSystem)) return !merchantDTO?.merchantName && !merchantDTO?.probationFlag && pointCondition
       else return true
     },
     showAuthorTab() {
-      const authorCondition = this.$route.status === 'add' ? this.form.merchantDTO.probationFlag : this.form.authOrderDTO.useModalInner
+      const authorCondition = this.$route.query.status === 'add' ? this.form.merchantDTO.probationFlag : this.form.authOrderDTO.useModalInner
       return !parseFloat(authorCondition) && ![201, 205].includes(this.form.merchantDTO.applicationSystem)
     }
   },
   watch: {
-    showAddBit(newVal) {
+    showAddPoint(newVal) {
       this.activeName = newVal ? '1' : '2'
     },
     'form.addAuthOrderDetailDTOList': {
@@ -265,7 +265,7 @@ export default {
       this.form.renewAuthOrderDetailDTOList = []
       if (val) {
         this.form.merchantDTO.delayHour = 1
-        if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && parseFloat(this.form.merchantDTO.probationFlag) === 0) this.activeName = '2'
+        if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.merchantDTO.probationFlag === 0) this.activeName = '2'
         else this.activeName = '1'
         this.setAddAuthDetailDTOList()
       } else this.form.merchantDTO.probationFlag = ''
@@ -288,8 +288,8 @@ export default {
         try {
           const { merchantNo: custId, CustName = '', merchantName = '' } = this.form.merchantDTO
           const res = await authOrderYsTrialPointDetail({ custId, appId: this.appModuleObj.outCode, custName: CustName || merchantName })
-          this.form.merchantDTO.probationFlag = res.ProbationFlag
-          if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && parseFloat(this.form.merchantDTO.probationFlag) === 0) this.activeName = '2'
+          this.form.merchantDTO.probationFlag = res.ProbationFlag ? parseFloat(res.ProbationFlag) : ''
+          if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.merchantDTO.probationFlag === 0) this.activeName = '2'
           else this.activeName = '1'
           if (res) {
             await this.getProductStock()
@@ -401,7 +401,6 @@ export default {
             let hasDetailDTO = ''
             this.basicProductData.forEach(item => {
               if (this.form.renewAuthOrderDetailDTOList?.length) hasDetailDTO = this.form.renewAuthOrderDetailDTOList.some(ele => ele.authId === item.AuthId)
-              console.info(hasDetailDTO)
               if ((this.selectMaps?.size && this.selectMaps.has(item.AuthId)) || hasDetailDTO) {
                 this.currentPageSelectSets.add(item.AuthId)
                 this.$refs.product.toggleRowSelection(item, true)

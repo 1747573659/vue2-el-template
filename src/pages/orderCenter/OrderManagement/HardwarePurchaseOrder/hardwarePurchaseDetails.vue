@@ -5,7 +5,7 @@
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
     <keep-alive>
-      <component :is="activeName" :operateData="operateData"></component>
+      <component :is="activeName" :operateData="operateData" :test="123"></component>
     </keep-alive>
   </section>
 </template>

@@ -182,8 +182,17 @@ export default {
       try {
         this.checkProductTabLock = true
         this.currentPageSelectSets.clear()
-        const res = await authOrderProductPage({ type: 1, registerMethod: 2, isOnSale: 1, notProductTypeList: [99], info: this.productVal })
+        const res = await authOrderProductPage({
+          type: 1,
+          registerMethod: 2,
+          isOnSale: 1,
+          notProductTypeList: [99],
+          info: this.productVal,
+          page: this.currentPage,
+          rows: this.pageSize
+        })
         this.basicProductData = res.results || []
+        this.totalPage = res?.totalCount ?? 0
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
             let hasDetailDTO = ''
