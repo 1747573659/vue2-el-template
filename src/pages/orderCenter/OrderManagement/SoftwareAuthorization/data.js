@@ -18,9 +18,7 @@ export const orderStatus = new Map([
 ])
 
 // 订单状态
-export const delayTimes = [
-  { value: 1, label: '1年' }
-]
+export const delayTimes = [{ value: 1, label: '1年' }]
 
 export const formErpObj = {
   authOrderDTO: {
@@ -68,7 +66,9 @@ export const formYsObj = {
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '', // 受理人名称
-    userLevelNum: 1
+    useModalInner: -1,
+    userLevel: 1,
+    userLevelNum: 100
   },
   merchantDTO: {
     agentId: '',
@@ -76,8 +76,7 @@ export const formYsObj = {
     merchantName: '',
     merchantNo: '',
     applicationSystem: '',
-    delayHour: 1,
-    probationFlag: ''
+    delayHour: 1
   },
   addAuthOrderDetailDTOList: [],
   renewAuthOrderDetailDTOList: []
@@ -106,7 +105,7 @@ export const cyVersionMap = new Map([
 ])
 
 export const modulesUserLevel = [
-  { label: '1-100用户', value: 1 },
-  { label: '101-300用户', value: 2 },
-  { label: '301用户以上', value: 3 }
+  { label: '1-100用户', value: 1, num: 100 },
+  { label: '101-300用户', value: 2, num: 300 },
+  { label: '301用户以上', value: 3, num: 10000 }
 ]

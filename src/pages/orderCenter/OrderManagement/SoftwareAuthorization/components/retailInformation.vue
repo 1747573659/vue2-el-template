@@ -213,8 +213,8 @@ export default {
         const res = await authOrderWlsCustList({
           cust: isNum ? query : '',
           custName: !isNum && query ? query : '',
-          pageSize: page,
-          pageIndex: rows,
+          pageIndex: page,
+          pageSize: rows,
           organ: this.userInfo.organNo
         })
         res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustID}）`))

@@ -266,14 +266,15 @@ export default {
             }
           }).catch(() => {})
         } else {
-          const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal, probationFlag } = this.form.merchantDTO
+          const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
           const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
-          const useModalInner = probationFlag || probationFlag === 0 ? probationFlag : -1
+          const userLevelNum = this.$refs.information.modulesUserLevel.find(item => item.value === this.form.authOrderDTO.userLevel).num
+          const { useModalInner, userLevel } = this.form.authOrderDTO
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount, useModalInner },
-              { productCode, userLevelNum: this.form.authOrderDTO.userLevelNum }
+              { productCode, userLevelNum, userLevel }
             ),
             addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
             renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
