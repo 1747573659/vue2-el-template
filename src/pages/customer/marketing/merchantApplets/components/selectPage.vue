@@ -10,7 +10,7 @@
     </el-row>
     <el-table v-loading="tableLoading" ref="singleTable" :data="tableData" style="width: 100%;margin-top:16px">
       <el-table-column type="index" width="30">
-        <template scope="scope">
+        <template slot-scope="scope">
           <el-radio v-model="selectTableIndex" :label="scope.$index"></el-radio>
         </template>
       </el-table-column>

@@ -9,7 +9,9 @@
         <template v-if="routeMenus.length > 0">
           <template v-for="item in routeMenus">
             <li :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
-              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children.find(ele => !ele.hidden).path }">{{ item.meta.title }}</router-link>
+              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children.find(ele => !ele.hidden).path }">{{
+                item.meta.title
+              }}</router-link>
             </li>
           </template>
         </template>
@@ -20,7 +22,9 @@
         <el-dropdown-menu slot="dropdown">
           <el-dropdown-item v-for="item in routeMenus" :key="item.path">
             <div :class="{ 'e-head_active': getActiveRoute(item.path) }" :key="item.name" v-if="!item.hidden">
-              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children.find(ele => !ele.hidden).path }">{{ item.meta.title }}</router-link>
+              <router-link :to="{ path: item.path + '/' + item.children[0].path + '/' + item.children[0].children.find(ele => !ele.hidden).path }">{{
+                item.meta.title
+              }}</router-link>
             </div>
           </el-dropdown-item>
         </el-dropdown-menu>
@@ -92,18 +96,20 @@ export default {
     }
   },
   mounted() {
-    // 临时伪代码
-    if (['dev', 'test', 'pre'].includes(process.env.VUE_APP_FLAG)) this.routeMenus = this.routes
-    else
-      this.routeMenus =
-        JSON.parse(getLocal('userInfo')).loginName === '18888888888'
-          ? this.routes
-          : this.routes.map(item => {
-              if (item.name === 'orderCenter') {
-                item.children = item.children.filter(item => item.name !== 'orderManagement')
-              }
-              return item
+    const userInfo = JSON.parse(getLocal('userInfo'))
+    if (process.env.VUE_APP_FLAG === 'pro' && userInfo.loginName !== '18888888888') {
+      this.routes.map(item => {
+        if (item.name === 'orderCenter') {
+          if (userInfo.propertyType === 3) {
+            item.children = item.children.map(ele => {
+              ele.children = ele.children.filter(child => child.name === 'ewechatOrder')
+              return ele
             })
+          } else item.children = item.children.filter(ele => ele.name !== 'orderManagement')
+        }
+      })
+    }
+    this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
       if (document.body.clientWidth < 1200) this.isDropdown = true
