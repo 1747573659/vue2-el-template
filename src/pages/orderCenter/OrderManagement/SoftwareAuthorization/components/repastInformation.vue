@@ -234,7 +234,7 @@ export default {
     async handleZbProduct() {
       try {
         const res = await queryByAgentProductAndModule({ moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC', productCode: this.merchantInfo.productCode })
-        this.merchantInfo.productCode = res?.productId ?? ''
+        this.merchantInfo.productCode = res?.productId ?? this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
       } catch (error) {}
     },

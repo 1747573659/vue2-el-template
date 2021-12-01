@@ -192,6 +192,16 @@ export default {
   },
   methods: {
     handleVerify() {
+      const erpHCMModule =
+        this.productType === 1 &&
+        ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) &&
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
+      if (erpHCMModule) {
+        if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
+          this.$message({ type: 'warning', message: '请选择"总部模块"后再提交' })
+          return
+        }
+      }
       this.$confirm('确定要提交吗？', {
         title: '提示',
         type: 'warning'
@@ -418,7 +428,9 @@ export default {
         this.form = res
         this.$nextTick(() => {
           const selectPageVal = this.productType === 1 ? res?.erpAuthMerchantDTO?.merchantName ?? '' : res?.merchantDTO?.merchantName ?? ''
-          this.$refs.information.$refs.selectPage.selectVal = selectPageVal
+          setTimeout(() => {
+            this.$refs.information.$refs.selectPage.selectVal = selectPageVal
+          }, 500)
           if (this.productType === 3) {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
             this.form.merchantDTO.merchantId = res.authOrderDTO.merchantId

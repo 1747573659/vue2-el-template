@@ -103,6 +103,7 @@ export default {
 .p-export-log {
   display: inline-block;
   margin-left: 12px;
+  line-height: 1.5;
 }
 /deep/ {
   .p-export-con {

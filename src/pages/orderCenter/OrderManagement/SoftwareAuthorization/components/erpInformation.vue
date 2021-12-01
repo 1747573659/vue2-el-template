@@ -222,6 +222,7 @@ export default {
     handleProductVisible() {
       if (!this.form.erpAuthMerchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
+        this.basicProductData = []
         this.getProductPage()
         this.checkProductVisible = true
       }

@@ -100,7 +100,7 @@ export default {
       versionMap,
       shopPageData: [],
       isShopMaxPage: false,
-      merchantInfo: [],
+      merchantInfo: {},
       productStockObj: {},
       checkProductStockLoad: false
     }
@@ -128,9 +128,9 @@ export default {
       else {
         if (this.$route.query.status === 'edit' || val === 1) this.merchantInfo = await this.getWlsCustInfo()
         if (this.merchantInfo.productCode) {
+          this.setDetailDTOList()
           if (val === 2) await this.handleZbProduct()
           this.getProductStock()
-          this.setDetailDTOList()
         } else this.form.detailDTOList = []
       }
     },
@@ -148,24 +148,23 @@ export default {
         this.merchantInfo = this.shopPageData.find(item => item.CustID === val)
         this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
         this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
-        this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
+        this.form.merchantDTO.relationProductName = this.merchantInfo.ProductionTypeName
         if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
+
         if (!this.merchantInfo.productCode) this.form.detailDTOList = []
-        else {
-          if (this.form.merchantDTO.applicationModule === 2) await this.handleZbProduct()
-          this.getProductStock()
-        }
+        else if (this.form.merchantDTO.applicationModule) this.setDetailDTOList()
       } else {
         const resetDTO = { merchantVersion: '', storeCount: '', relationProductName: '', applicationModule: '' }
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetDTO)
         this.form.detailDTOList = []
       }
+
       if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) {
         this.form.merchantDTO.applicationModule = ''
         this.form.detailDTOList = []
       } else if (this.form.merchantDTO.merchantVersion === '3' && this.form.detailDTOList.length > 0) {
         this.form.detailDTOList.forEach(item => {
-          item.currentValidTime = `${this.merchantInfo?.KMValidity} 00:00:00` ?? ''
+          item.currentValidTime = `${dayjs(this.merchantInfo?.KMValidity).format('YYYY-MM-DD')} 00:00:00` ?? ''
           item.delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : ''
         })
       }
