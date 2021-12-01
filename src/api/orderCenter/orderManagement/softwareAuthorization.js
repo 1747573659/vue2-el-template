@@ -317,6 +317,14 @@ export function authOrderYsTrialPointDetail(data) {
   })
 }
 
+// 查询-小蜜有批-用户级别
+export function authOrderYsXmypUserNum(data) {
+  return request({
+    url: '/auth/order/ys/getXmypUserNum/' + data,
+    method: 'POST',
+  })
+}
+
 // 云商-根据客户和应用获取用户信息-社区续费选用户使用
 export function authOrderYsByCusAndApplyList(data) {
   return request({

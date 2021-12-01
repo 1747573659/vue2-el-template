@@ -143,7 +143,8 @@ import {
   authOrderYsAppModules,
   authOrderYsTrialPointDetail,
   queryByAgentProduct,
-  authOrderYsByCusAndApplyList
+  authOrderYsByCusAndApplyList,
+  authOrderYsXmypUserNum
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -277,32 +278,41 @@ export default {
       }
     },
     async setAddAuthDetailDTOList() {
-      this.appModuleObj = this.appModulesData.find(item => item.code === this.form.merchantDTO.applicationSystem)
+      const { merchantNo: custId, CustName = '', merchantName = '', delayHour, applicationSystem } = this.form.merchantDTO
+      this.appModuleObj = this.appModulesData.find(item => item.code === applicationSystem)
       if (this.form.merchantDTO.merchantNo) {
         try {
-          const { merchantNo: custId, CustName = '', merchantName = '' } = this.form.merchantDTO
-          const res = await authOrderYsTrialPointDetail({ custId, appId: this.appModuleObj.outCode, custName: CustName || merchantName })
-          const stateAttr = this.form.merchantDTO.applicationSystem === 206 ? 'IsMPYouPi' : 'ProbationFlag'
-          const useModalInner = res[stateAttr] ? parseFloat(res[stateAttr]) : ''
-          this.form.authOrderDTO.useModalInner = useModalInner
-          if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
-          else this.activeName = '1'
+          const { productCode, name, outCode: appId } = this.appModuleObj
+          const res = await authOrderYsTrialPointDetail({ custId, appId, custName: CustName || merchantName })
           if (res) {
+            const stateAttr = applicationSystem === 206 ? 'IsMPYouPi' : 'ProbationFlag'
+            if (applicationSystem === 206 && !res[stateAttr]) {
+              this.$message({ type: 'error', message: '没有开通该应用' })
+              return
+            }
+            const useModalInner = res[stateAttr] ? parseFloat(res[stateAttr]) : ''
+            this.form.authOrderDTO.useModalInner = useModalInner
             await this.getProductStock()
             if (this.activeName === '1') {
               this.form.addAuthOrderDetailDTOList = [
                 {
-                  productCode: this.appModuleObj.productCode,
-                  productName: this.appModuleObj.name,
-                  orderInventory: this.productStockObj?.totalAmount ?? 0,
+                  productCode,
+                  productName: name,
                   addNum: 1,
-                  useInventory: NP.times(this.form.merchantDTO.delayHour, 1),
                   remark: '',
-                  billNo: this.form.authOrderDTO?.billNo ?? ''
+                  useInventory: NP.times(delayHour, 1),
+                  billNo: this.form.authOrderDTO?.billNo ?? '',
+                  orderInventory: this.productStockObj?.totalAmount ?? 0
                 }
               ]
             }
           }
+          if (applicationSystem === 206) {
+            const authXmypUserNum = await authOrderYsXmypUserNum(custId)
+            this.form.authOrderDTO.userLevel = authXmypUserNum?.userLevel ?? 1
+          }
+          if ([203, 206].includes(applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
+          else this.activeName = '1'
         } catch (error) {}
       }
     },
