@@ -22,7 +22,7 @@ package-lock.json
 *.njsproj
 *.sln
 *.sw?
-
+package-lock.json
 # 打包文件
 km-channel-h5
 
