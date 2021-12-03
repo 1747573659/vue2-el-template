@@ -10,7 +10,7 @@
           刷新库存
         </el-button>
       </div>
-      <el-table ref="table" :data="form.detailDTOList" show-summary :summary-method="getSummaries" class="p-information-tab">
+      <el-table ref="table" :data="form.detailDTOList" max-height="500" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
@@ -175,6 +175,12 @@ export default {
       }
     },
     handleProductVisible() {
+      this.currentPage = 1
+      this.productVal = ''
+      if(!this.form.detailDTOList?.length) {
+        this.selectMaps.clear()
+        this.currentPageSelectSets.clear()
+      }
       this.getProductPage()
       this.checkProductVisible = true
     },
