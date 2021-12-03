@@ -233,17 +233,14 @@ export default {
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.authNum > item.orderInventory)
         if (insufficientObj.length > 0) {
-          this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
-            title: '系统提示',
-            type: 'warning',
-            confirmButtonText: '去采购',
-            cancelButtonText: '返回修改',
+          const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
               else this.$refs.information.getProductStock()
               done()
             }
-          }).catch(() => {})
+          })
+          this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           return {
             authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
@@ -263,18 +260,15 @@ export default {
           return item.useInventory > (item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
         })
         if (insufficientObj.length > 0) {
-          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`, {
-            title: '系统提示',
-            type: 'warning',
-            confirmButtonText: '去采购',
-            cancelButtonText: '返回修改',
+          const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
                 this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.appModuleObj.productCode } })
               } else this.$refs.information.getProductStock()
               done()
             }
-          }).catch(() => {})
+          })
+          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`, confirmOptions).catch(() => {})
         } else {
           const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
           const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
@@ -298,18 +292,15 @@ export default {
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
         if (insufficientObj.length > 0) {
-          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
-            title: '系统提示',
-            type: 'warning',
-            confirmButtonText: '去采购',
-            cancelButtonText: '返回修改',
+          const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
                 this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
               } else this.$refs.information.getProductStock()
               done()
             }
-          }).catch(() => {})
+          })
+          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           const { productCode } = this.form.authOrderDTO
           const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
@@ -330,18 +321,15 @@ export default {
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
         if (insufficientObj.length > 0) {
-          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
-            title: '系统提示',
-            type: 'warning',
-            confirmButtonText: '去采购',
-            cancelButtonText: '返回修改',
+          const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
                 this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
               } else this.$refs.information.getProductStock()
               done()
             }
-          }).catch(() => {})
+          })
+          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           const { merchantId, applicationModule: useModal, delayHour: delayCount, productCode } = this.form.merchantDTO
           return {
@@ -363,17 +351,14 @@ export default {
       } else {
         const insufficientObj = this.form.erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
         if (insufficientObj.length > 0) {
-          this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, {
-            title: '系统提示',
-            type: 'warning',
-            confirmButtonText: '去采购',
-            cancelButtonText: '返回修改',
+          const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
               else this.$refs.information.getProductStock()
               done()
             }
-          }).catch(() => {})
+          })
+          this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           const { merchantId, productCode, authStatus } = this.form.erpAuthMerchantDTO
           return {
@@ -386,6 +371,12 @@ export default {
           }
         }
       }
+    },
+    handleConfirmOption() {
+      const optionVo = { title: '系统提示', type: 'warning', cancelButtonText: '返回修改' }
+      if (this.userInfo.level === 1) optionVo.confirmButtonText = '去采购'
+      else optionVo.showConfirmButton = false
+      return optionVo
     },
     handleQueryParams() {
       const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
