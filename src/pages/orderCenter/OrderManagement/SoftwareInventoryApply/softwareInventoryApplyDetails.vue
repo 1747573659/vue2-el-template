@@ -2,7 +2,7 @@
   <section v-permission.page="'SOFTWARE_INVENTORY_APPLY_PLUS,SOFTWARE_INVENTORY_APPLY_EDIT,SOFTWARE_INVENTORY_APPLY_AUDIT,SOFTWARE_INVENTORY_APPLY_SUBMIT'">
     <el-tabs v-model="activeName" @tab-click="handleTabPane" class="p-detail-tab">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
-      <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
+      <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail', 'audit'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
     <keep-alive>
       <component :is="activeName" :operateData="operateData"></component>

@@ -19,8 +19,8 @@
         <el-table-column label="版本">
           <template slot-scope="scope">
             <el-select v-model="scope.row.authVersion" size="small" :disabled="$route.query.status === 'detail'" placeholder="" class="e-select-con">
-              <el-option :value="1" label="单店版"></el-option>
-              <el-option :value="2" label="网络版"></el-option>
+              <el-option :value="2" label="单店版"></el-option>
+              <el-option :value="1" label="连锁版"></el-option>
             </el-select>
           </template>
         </el-table-column>
