@@ -146,7 +146,7 @@ export default {
       userInfo: JSON.parse(getLocal('userInfo'))
     }
   },
-  filter: {
+  filters: {
     formatCreateTime(time) {
       return dayjs(time).format('YYYY-MM-DD HH:mm')
     }

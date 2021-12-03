@@ -86,7 +86,7 @@
         <el-table-column label="授权产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="inventoryAmount" label="消耗库存"></el-table-column>
+        <el-table-column prop="inventoryAmount" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>

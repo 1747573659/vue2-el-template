@@ -37,7 +37,7 @@
             <el-input v-else size="small" v-model="scope.row.dogId" maxlength="20" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="dogAuthString" label="授权信息串"></el-table-column>
+        <el-table-column prop="dogAuthString" label="授权信息串" show-overflow-tooltip></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>

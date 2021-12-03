@@ -2,7 +2,10 @@
   <section class="p-information-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <div class="p-card-title">订单信息</div>
+        <div>
+          <span class="p-card-title">订单信息</span>
+          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.orderDTO.remark">（订单被退回，原因：{{ form.orderDTO.remark }}）</span>
+        </div>
         <div class="p-card-state">
           <span>订单状态：</span>
           <span class="p-card-state_text">{{ currentOrderStatus }}</span>
@@ -15,7 +18,8 @@
         <el-form-item label="订单时间">
           <el-input :value="`${form.orderDTO.createTime || baseOrderTime}`"></el-input>
         </el-form-item>
-        <el-form-item label="申请库存">
+        <el-form-item>
+          <template slot="label">{{ userInfo.level === 1 ? '消耗' : '申请' }}库存</template>
           <el-input :value="form.orderDTO.useInventory"></el-input>
         </el-form-item>
         <el-form-item label="受理人">
@@ -38,20 +42,17 @@
         <el-table-column label="申请产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="timingInventory" label="下单时库存" v-if="userInfo.level === 1"></el-table-column>
-        <el-table-column prop="replaceNum" label="申请数量" align="right">
+        <el-table-column prop="timingInventory" label="下单时库存" align="right" v-if="userInfo.level === 1"></el-table-column>
+        <el-table-column label="申请数量" align="right">
           <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-model.number.trim="scope.row.useInventory"
-              @change="handleReplaceNum(scope.row)"
-              :disabled="['audit', 'detail'].includes($route.query.status)"
-            ></el-input>
+            <template v-if="userInfo.level === 1 || ['detail'].includes($route.query.status)">{{ scope.row.useInventory }}</template>
+            <el-input v-else size="small" v-model.number.trim="scope.row.useInventory" @change="handleReplaceNum(scope.row)"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <el-input size="small" v-model="scope.row.remark" maxlength="100" :disabled="$route.query.status === 'detail'" clearable class="e-product_remark"></el-input>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
+            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="!['audit', 'detail'].includes($route.query.status)" width="100">
@@ -110,6 +111,7 @@ export default {
   },
   data() {
     return {
+      userInfo: JSON.parse(localStorage.userInfo),
       checkBasicInformLoad: false,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
       form: deepClone(formObj),
@@ -120,7 +122,6 @@ export default {
       generalInventory: 10,
       replaceProduct: {},
       agentProductList: {},
-      userInfo: JSON.parse(localStorage.userInfo),
       checkAuditBtnLoad: false,
       checkAuditOpinionVisible: false,
       verifyRemark: ''
@@ -290,6 +291,7 @@ export default {
     /deep/ {
       .el-input {
         width: 100%;
+        max-width: 240px;
       }
       .el-input__inner {
         text-align: right;
@@ -333,6 +335,9 @@ export default {
     color: #1f2e4d;
     font-weight: 500;
   }
+  &-back {
+    color: red;
+  }
 }
 .p-infomation-action {
   width: calc(100% - 200px - 42px);
@@ -360,6 +365,7 @@ export default {
   }
   &_remark {
     width: 100%;
+    max-width: 240px;
     /deep/ .el-input__inner {
       text-align: left !important;
     }

@@ -427,10 +427,12 @@ export default {
         const res = await this.baseInfoMap.get(this.productType).detailRequest(this.$route.query.id)
         this.form = res
         this.$nextTick(() => {
-          const selectPageVal = this.productType === 1 ? res?.erpAuthMerchantDTO?.merchantName ?? '' : res?.merchantDTO?.merchantName ?? ''
-          setTimeout(() => {
-            this.$refs.information.$refs.selectPage.selectVal = selectPageVal
-          }, 500)
+          if (this.productType !== 6) {
+            const selectPageVal = this.productType === 1 ? res?.erpAuthMerchantDTO?.merchantName ?? '' : res?.merchantDTO?.merchantName ?? ''
+            setTimeout(() => {
+              this.$refs.information.$refs.selectPage.selectVal = selectPageVal
+            }, 500)
+          }
           if (this.productType === 3) {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
             this.form.merchantDTO.merchantId = res.authOrderDTO.merchantId
