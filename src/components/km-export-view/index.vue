@@ -54,8 +54,6 @@ export default {
   methods: {
     handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {

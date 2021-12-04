@@ -202,25 +202,30 @@ export default {
           return
         }
       }
-      this.$confirm('确定要提交吗？', {
-        title: '提示',
-        type: 'warning'
-      })
-        .then(() => {
-          this.setOrderSave()
-            .then(async () => {
-              await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
-              this.getDetail().then(() => {
-                this.$router.replace({
-                  name: this.$route.name,
-                  query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
+      this.$confirm('确定要提交吗？', '提示', {
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.setOrderSave()
+              .then(async () => {
+                await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
+                this.getDetail().then(() => {
+                  this.$router.replace({
+                    name: this.$route.name,
+                    query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
+                  })
                 })
+                this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
               })
-              this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
-            })
-            .catch(() => {})
-        })
-        .catch(() => {})
+              .catch(() => {})
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
+          } else done()
+        }
+      })
     },
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))

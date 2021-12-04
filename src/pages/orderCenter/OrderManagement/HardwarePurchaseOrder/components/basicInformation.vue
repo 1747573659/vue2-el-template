@@ -143,7 +143,7 @@
           <el-input :value="form.purchaseOrderDTO.expressNo"></el-input>
         </el-form-item>
         <el-form-item label="收货状态">
-          <el-input :value="['未收货', '已收货'][form.purchaseOrderDTO.receiveGoodStatus]"></el-input>
+          <el-input :value="form.purchaseOrderDTO.receiveGoodStatus === 30 ? '已收货' : '未收货'"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -151,7 +151,15 @@
       <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('hardwarePurchaseOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" v-permission="'HARDWARE_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      <el-button
+        size="small"
+        type="primary"
+        v-if="$route.query.status === 'edit'"
+        v-permission="'HARDWARE_PURCHASE_ORDER_SUBMIT'"
+        :loading="checkVerifyBtnLoad"
+        @click="handleVerify"
+        >提交</el-button
+      >
       <template v-if="$route.query.status === 'detail' && form.purchaseOrderDTO.payStatus === 2 && form.purchaseOrderDTO.goodsStatus === 20">
         <el-button size="small" type="primary" @click="handleReceipt">确认收货</el-button>
       </template>
@@ -193,17 +201,23 @@ export default {
     }
   },
   methods: {
-    handleReceipt: async function() {
+    async handleReceipt() {
       this.$confirm('确认已收到货了吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: async (action, instance, done) => {
+          if (action === 'confirm') {
+            try {
+              instance.confirmButtonLoading = true
+              await confirmGoods({ id: parseFloat(this.$route.query.id) })
+              this.handleDetail()
+            } catch (error) {
+            } finally {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          } else done()
+        }
       })
-        .then(async () => {
-          await confirmGoods({ id: parseFloat(this.$route.query.id) })
-          this.handleDetail()
-        })
-        .catch(() => {})
     },
     handCommonAddress() {
       this.checkAddressVisible = true

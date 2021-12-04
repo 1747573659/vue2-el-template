@@ -132,16 +132,22 @@ export const basicInfoMixin = {
     },
     handleDel(name) {
       this.$confirm('确定删除单据吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: async (action, instance, done) => {
+          if (action === 'confirm') {
+            try {
+              instance.confirmButtonLoading = true
+              await deleteById({ id: parseFloat(this.$route.query.id) })
+              this.$message({ type: 'success', message: '删除成功' })
+              this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+            } catch (error) {
+            } finally {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          } else done()
+        }
       })
-        .then(async () => {
-          await deleteById({ id: parseFloat(this.$route.query.id) })
-          this.$message({ type: 'success', message: '删除成功' })
-          this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
-        })
-        .catch(() => {})
     },
     async handleDetail() {
       try {

@@ -164,9 +164,9 @@
             <el-link :disabled="scope.row.status !== 1" :href="scope.row.url" :underline="false" target="_blank">
               <el-button :disabled="scope.row.status !== 1" size="small" type="text" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DOWNLOAD')">下载</el-button>
             </el-link>
-            <el-button @click="deleteExprot(scope.row)" size="small" style="margin-left:5px;" type="text" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DEL')"
-              >删除</el-button
-            >
+            <template v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DEL')">
+              <el-button @click="deleteExprot(scope.row)" size="small" style="margin-left:5px;" type="text">删除</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
@@ -475,20 +475,23 @@ export default {
     },
     async deleteExprot(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: async (action, instance, done) => {
+          if (action === 'confirm') {
+            try {
+              instance.confirmButtonLoading = true
+              deleteRecord({ id: row.id }).then(() => {
+                this.$message.success('删除成功')
+                this.exportRecord()
+              })
+            } catch (error) {
+            } finally {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          } else done()
+        }
       })
-        .then(() => {
-          let data = {
-            id: row.id
-          }
-          deleteRecord(data).then(res => {
-            this.$message.success('删除成功')
-            this.exportRecord()
-          })
-        })
-        .catch(() => {})
     },
     async exportRecord() {
       this.centerDialogVisible = true
