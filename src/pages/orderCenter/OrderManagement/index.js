@@ -20,10 +20,10 @@ export const paymentStatus = new Map([
 // 发货状态
 export const deliveryStatus = new Map([
   [-1, { value: -1, label: '全部' }],
-  [0, { value: 0, label: '无需发货' }],
   [10, { value: 10, label: '待发货' }],
   [20, { value: 20, label: '待收货' }],
-  [30, { value: 30, label: '已收货' }]
+  [30, { value: 30, label: '已收货' }],
+  [0, { value: 0, label: '无需发货' }]
 ])
 
 export const formObj = {

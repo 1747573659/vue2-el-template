@@ -60,9 +60,7 @@ export default {
       try {
         await updateUsage({ id: row.id })
         this.getReceiverAddress()
-      } catch (e) {
-      } finally {
-      }
+      } catch (error) {}
     },
     setInitAddress() {
       this.$emit('addressData', this.addressData[this.checkAddressVal])
@@ -91,9 +89,6 @@ export default {
     /deep/ {
       .el-dialog__body {
         padding: 16px 20px;
-      }
-      .el-dialog__footer .el-button {
-        padding: 8px 22px;
       }
     }
   }

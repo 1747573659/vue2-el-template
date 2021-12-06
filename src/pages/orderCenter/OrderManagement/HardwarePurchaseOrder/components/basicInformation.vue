@@ -165,7 +165,7 @@
       </template>
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
-      <purchase-address ref="address" :visible.sync="checkAddressVisible" :agentId="handUserInfo.agentId" @addressData="handleAddressList" />
+      <purchase-address ref="address" width="800px" :visible.sync="checkAddressVisible" :agentId="handUserInfo.agentId" @addressData="handleAddressList" />
       <purchase-product ref="product" :visible.sync="checkProductVisible" @productData="handleProductList" />
     </template>
   </section>

@@ -45,7 +45,7 @@
                 option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
-                placeholder="下单人"
+                placeholder="全部"
               ></km-select-page>
             </el-form-item>
             <el-form-item label="单据编码">

@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { deepClone } from '@/utils'
 import { orderStatus, formObj, paymentStatus } from '../index'
-import purchaseProduct from '../components/purchaseProduct'
+import purchaseProduct from '../components/purchaseProduct.vue'
 
 import {
   queryAgentMoneyStream,
