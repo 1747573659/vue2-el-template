@@ -215,6 +215,7 @@ export default {
                     name: this.$route.name,
                     query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
                   })
+                  document.querySelector('.e-tag_active span').innerText = `软件授权订单/详情`
                 })
                 this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
               })
@@ -232,9 +233,11 @@ export default {
     },
     getDogInformationObj() {
       if (!this.form.detailDTOList.length) {
-        this.$message({ type: 'warning', message: '请先选择授权产品' })
+        this.$message({ type: 'warning', message: '请选择授权产品' })
       } else if (this.form.detailDTOList.some(item => !item.authVersion)) {
-        this.$message({ type: 'warning', message: '产品版本不能为空' })
+        this.$message({ type: 'warning', message: '订单明细产品版本不能为空' })
+      } else if (this.form.detailDTOList.some(item => !item.dogId)) {
+        this.$message({ type: 'warning', message: '订单明细加密狗ID/序列号不能为空' })
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.authNum > item.orderInventory)
         if (insufficientObj.length > 0) {
@@ -256,7 +259,7 @@ export default {
     },
     getYsInformationObj() {
       if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
-        this.$message({ type: 'warning', message: '请先选择商户' })
+        this.$message({ type: 'warning', message: '请选择商户' })
       } else if (this.$refs.information.showAuthorTab && !this.form.renewAuthOrderDetailDTOList?.length) {
         this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
@@ -293,7 +296,7 @@ export default {
     },
     getWcyInformationObj() {
       if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantNo) {
-        this.$message({ type: 'warning', message: '请先选择商户或产品模块信息' })
+        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
         if (insufficientObj.length > 0) {
@@ -322,7 +325,7 @@ export default {
     },
     getWlsInformationObj() {
       if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantId) {
-        this.$message({ type: 'warning', message: '请先选择商户或产品模块信息' })
+        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
         if (insufficientObj.length > 0) {
@@ -350,7 +353,7 @@ export default {
     },
     getErpInformationObj() {
       if (this.form.erpAuthOrderDetails.length === 0 || !this.form.erpAuthMerchantDTO.merchantId) {
-        this.$message({ type: 'warning', message: '请先选择商户或产品模块信息' })
+        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
       } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && item.unionChannel === '')) {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else {

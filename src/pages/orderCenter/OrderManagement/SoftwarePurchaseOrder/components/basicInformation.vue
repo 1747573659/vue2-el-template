@@ -138,20 +138,22 @@ export default {
     async handleToStock() {
       if (this.form.id) delete this.form.id
       if (this.form.purchaseOrderDTO.id) delete this.form.purchaseOrderDTO.id
-      const { results = [] } = await productInfo({ info: this.$route.query.productCode.trim(), page: 1, rows: 10, orderType: 1 })
-      if (results?.length > 0) {
-        this.form.orderItemList = [
-          {
-            productCode: results[0].code,
-            productName: results[0].name,
-            productCount: 1,
-            productPrice: NP.divide(results[0].saleAmount, 100),
-            productAmount: NP.divide(NP.times(1, results[0].saleAmount), 100),
-            sourcePrice: NP.times(1, results[0].saleAmount),
-            remark: ''
-          }
-        ]
-      }
+      try {
+        const { results = [] } = await productInfo({ info: this.$route.query.productCode.trim(), page: 1, rows: 10, orderType: 1 })
+        if (results?.length) {
+          this.form.orderItemList = [
+            {
+              productCode: results[0].code,
+              productName: results[0].name,
+              productCount: 1,
+              productPrice: NP.divide(results[0].saleAmount, 100),
+              productAmount: NP.divide(NP.times(1, results[0].saleAmount), 100),
+              sourcePrice: NP.times(1, results[0].saleAmount),
+              remark: ''
+            }
+          ]
+        }
+      } catch (error) {}
     }
   }
 }

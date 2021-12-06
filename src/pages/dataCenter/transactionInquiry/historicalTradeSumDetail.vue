@@ -38,8 +38,8 @@
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
               <el-button type="primary" class="km-archive-search" :loading="cxLoading" @click="search">查询</el-button>
-               <el-button  @click="downLoadTradeDetailExcel"     :loading="exportLoad" v-permission="'KM_DEFAULT_CODE_EXPORT'" >导出</el-button>
-               <el-button  @click="handleExportLists" v-permission="'KM_DEFAULT_CODE_EXPORT'" >导出记录</el-button>
+              <el-button @click="downLoadTradeDetailExcel" :loading="exportLoad" v-permission="'KM_DEFAULT_CODE_EXPORT'">导出</el-button>
+              <el-button @click="handleExportLists" v-permission="'KM_DEFAULT_CODE_EXPORT'">导出记录</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -152,13 +152,13 @@
         </el-pagination>
       </div>
     </div>
-      <exportEecord  :exportType='$route.query.type==2?5:6' ref="exportEecord"></exportEecord>
+    <exportEecord :exportType="$route.query.type == 2 ? 5 : 6" ref="exportEecord"></exportEecord>
   </div>
 </template>
 
 <script>
 import selectPage from '@/components/selectPage'
-import { detail, queryNewAgentPage, queryShopListByPage ,downLoadTradeDetailExcel} from '@/api/dataCenter/historiyTrade'
+import { detail, queryNewAgentPage, queryShopListByPage, downLoadTradeDetailExcel } from '@/api/dataCenter/historiyTrade'
 import exportEecord from '@/components/exportEecord'
 export default {
   name: 'historicalTradeSumDetail',
@@ -202,13 +202,13 @@ export default {
   },
   created() {},
   methods: {
-     handleExportLists () {
-       this.$refs.exportEecord.exportVisible=true
-     },
-    async  downLoadTradeDetailExcel () {
+    handleExportLists() {
+      this.$refs.exportEecord.exportVisible = true
+    },
+    async downLoadTradeDetailExcel() {
       this.exportLoad = true
       try {
-        await downLoadTradeDetailExcel({...this.initSubData(),export:true})
+        await downLoadTradeDetailExcel({ ...this.initSubData(), export: true })
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
       } catch (error) {
       } finally {
@@ -310,7 +310,7 @@ export default {
       this.activeIndex = String(key)
     },
     setSearchTime(type) {},
-    initSubData () {
+    initSubData() {
       let data = {
         adminId: String(this.$route.query.searchObject) === '2' ? this.$route.query.id : this.form.adminId,
         agentId: String(this.$route.query.searchObject) === '1' ? this.$route.query.id : this.form.agentId,
@@ -324,9 +324,9 @@ export default {
     },
     async getList() {
       this.tableLoading = true
-     
+
       try {
-        const res = await detail({...this.initSubData(),export:false})
+        const res = await detail({ ...this.initSubData(), export: false })
         this.tableData = res
         this.totalPage = res.totalCount
       } catch (error) {
@@ -339,7 +339,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
