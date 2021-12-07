@@ -412,6 +412,7 @@ export default {
   }
   &_remark {
     width: 100%;
+    max-width: 240px;
     /deep/ .el-input__inner {
       text-align: left !important;
     }

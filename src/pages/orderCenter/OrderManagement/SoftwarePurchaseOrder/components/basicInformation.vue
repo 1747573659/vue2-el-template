@@ -110,9 +110,9 @@
       <el-button size="small" plain @click="handleCancel('softwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('softwarePurchaseOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" v-permission="'SOFT_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify"
-        >提交</el-button
-      >
+      <template v-if="$route.query.status === 'edit'">
+        <el-button size="small" type="primary" v-permission="'SOFT_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      </template>
       <template v-if="$route.query.status === 'detail' && form.purchaseOrderDTO.payStatus === 2 && form.purchaseOrderDTO.goodsStatus === 20">
         <el-button size="small" type="primary" @click="handleReceipt">确认收货</el-button>
       </template>

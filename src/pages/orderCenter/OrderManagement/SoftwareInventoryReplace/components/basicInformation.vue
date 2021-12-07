@@ -341,6 +341,7 @@ export default {
     .e-select-con {
       /deep/ .el-input {
         width: 100%;
+        max-width: 240px;
         &__inner {
           text-align: left;
         }
@@ -400,6 +401,7 @@ export default {
   }
   &_remark {
     width: 100%;
+    max-width: 240px;
     /deep/ .el-input__inner {
       text-align: left !important;
     }
