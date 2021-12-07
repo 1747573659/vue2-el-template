@@ -392,14 +392,8 @@ export default {
       try {
         this.checkProductTabLock = true
         this.currentPageSelectSets.clear()
-        const data = {
-          condition: this.productVal,
-          PageSize: 100,
-          PageIndex: 0,
-          CustId: this.form.merchantDTO.merchantNo,
-          AppId: this.appModuleObj.outCode,
-          flag: -1
-        }
+        const data = { PageSize: 100, PageIndex: 0, flag: -1, condition: this.productVal, CustId: this.form.merchantDTO.merchantNo, AppId: this.appModuleObj.outCode }
+        if (this.appModuleObj?.code === 206) data.xmyp = 1
         const res = await authOrderYsByCusAndApplyList(data)
         this.basicProductData = res
         this.$nextTick(() => {

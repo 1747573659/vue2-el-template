@@ -2,7 +2,7 @@
   <section class="p-information-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <div>
+        <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
           <span class="p-card-back" v-if="$route.query.status !== 'add' && form.orderDTO.remark">（订单被退回，原因：{{ form.orderDTO.remark }}）</span>
         </div>
@@ -320,6 +320,9 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .p-card-reason {
+      flex-basis: 80%;
+    }
     /deep/ {
       .el-button {
         font-size: 16px;

@@ -2,7 +2,7 @@
   <section class="p-hardware-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <div>
+        <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
           <span class="p-card-back" v-if="$route.query.status !== 'add' && form.purchaseOrderDTO.remark">（订单被退回，原因：{{ form.purchaseOrderDTO.remark }}）</span>
         </div>
@@ -151,15 +151,9 @@
       <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('hardwarePurchaseOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <el-button
-        size="small"
-        type="primary"
-        v-if="$route.query.status === 'edit'"
-        v-permission="'HARDWARE_PURCHASE_ORDER_SUBMIT'"
-        :loading="checkVerifyBtnLoad"
-        @click="handleVerify"
-        >提交</el-button
-      >
+      <template v-if="$route.query.status === 'edit'">
+        <el-button size="small" type="primary" v-permission="'HARDWARE_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      </template>
       <template v-if="$route.query.status === 'detail' && form.purchaseOrderDTO.payStatus === 2 && form.purchaseOrderDTO.goodsStatus === 20">
         <el-button size="small" type="primary" @click="handleReceipt">确认收货</el-button>
       </template>

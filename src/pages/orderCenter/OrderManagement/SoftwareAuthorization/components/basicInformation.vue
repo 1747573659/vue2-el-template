@@ -2,7 +2,7 @@
   <section class="p-information-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <div>
+        <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
           <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
         </div>
@@ -44,15 +44,9 @@
           保存
         </el-button>
       </template>
-      <el-button
-        size="small"
-        type="primary"
-        v-if="$route.query.status === 'edit'"
-        v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'"
-        :loading="checkVerifyBtnLoad"
-        @click="handleVerify"
-        >提交</el-button
-      >
+      <template v-if="$route.query.status === 'edit'">
+        <el-button size="small" type="primary" v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      </template>
     </div>
   </section>
 </template>
@@ -258,8 +252,12 @@ export default {
       }
     },
     getYsInformationObj() {
-      if (!this.form.merchantDTO.applicationSystem || !this.form.merchantDTO.merchantNo) {
+      if (!this.form.merchantDTO.merchantNo) {
         this.$message({ type: 'warning', message: '请选择商户' })
+      } else if (!this.form.merchantDTO.applicationSystem) {
+        this.$message({ type: 'warning', message: '请选择应用系统' })
+      } else if (!this.form.merchantDTO.delayHour) {
+        this.$message({ type: 'warning', message: '请选择延期时长' })
       } else if (this.$refs.information.showAuthorTab && !this.form.renewAuthOrderDetailDTOList?.length) {
         this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
@@ -474,6 +472,9 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .p-card-reason {
+      flex-basis: 80%;
+    }
     /deep/ {
       .el-button {
         font-size: 16px;
