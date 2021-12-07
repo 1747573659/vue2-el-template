@@ -202,13 +202,10 @@ export default {
     },
     async setOrderSave() {
       try {
-        const data = {
-          orderDTO: { ...this.form.orderDTO, createUser: this.userInfo.id },
-          detailList: this.form.orderDetailDtos
-        }
+        let data = { orderDTO: { ...this.form.orderDTO }, detailList: this.form.orderDetailDtos }
         if (this.userInfo.level === 2) {
-          data.orderDTO.agentId = this.userInfo.agentId
-          data.orderDTO.parentAgentId = this.userInfo.topAgentId
+          const { id, agentId, topAgentId } = this.userInfo
+          data = Object.assign(data, { createUser: id, agentId, parentAgentId: topAgentId })
         }
         return this.$route.query.status === 'add' ? applyOrderAdd(data) : applyOrderUpdate(data)
       } catch (error) {}

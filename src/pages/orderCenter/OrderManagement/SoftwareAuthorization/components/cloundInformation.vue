@@ -345,7 +345,7 @@ export default {
         this.checkProductStockLoad = true
         const productCode = this.appModuleObj.productCode || this.form.authOrderDTO.productCode
         if (productCode) {
-          this.productStockObj = (await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode })) || {}
+          this.productStockObj = (await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode })) || { totalAmount: 0 }
           if (this.form.addAuthOrderDetailDTOList.length > 0) {
             this.form.addAuthOrderDetailDTOList.forEach(item => {
               item.orderInventory = this.productStockObj?.totalAmount ?? 0
@@ -393,7 +393,7 @@ export default {
         this.checkProductTabLock = true
         this.currentPageSelectSets.clear()
         const data = { PageSize: 100, PageIndex: 0, flag: -1, condition: this.productVal, CustId: this.form.merchantDTO.merchantNo, AppId: this.appModuleObj.outCode }
-        if (this.appModuleObj?.code === 206) data.xmyp = 1
+        // if (this.appModuleObj?.code === 206) data.xmyp = 1
         const res = await authOrderYsByCusAndApplyList(data)
         this.basicProductData = res
         this.$nextTick(() => {
