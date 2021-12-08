@@ -102,7 +102,8 @@ import {
   applyOrderDetail,
   applyOrderSubmit,
   applyOrderVerify,
-  queryByAgentProduct
+  queryByAgentProduct,
+  queryAgentById
 } from '@/api/orderCenter/orderManagement/softwareInventoryApply'
 
 export default {
@@ -274,7 +275,8 @@ export default {
     },
     async getHandlerMan() {
       try {
-        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
+        const res = await queryAgentById({ id: this.userInfo.topAgentId })
+        const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: res.districtCode })
         this.form.orderDTO.handlerUser = id
         this.form.orderDTO.handlerUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}
