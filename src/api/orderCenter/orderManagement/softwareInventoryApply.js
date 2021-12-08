@@ -123,12 +123,3 @@ export function queryByAgentProduct(data) {
     data: qs.stringify(data)
   })
 }
-
-// 根据ID查询代理商详情
-export function queryAgentById(data) {
-  return request({
-    url: '/agent/queryAgentById',
-    method: 'POST',
-    data: qs.stringify(data)
-  })
-}
