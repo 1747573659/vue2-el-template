@@ -102,9 +102,8 @@
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { orderStatus } from './data'
-import { getLocal } from '@/utils/storage'
 
-import { queryUserPage } from '@/api/orderCenter/orderManagement'
+import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import {
   queryByPage,
   applyExportExcelLevelOne,
@@ -143,7 +142,7 @@ export default {
         }
       },
       cueerntAgentId: '',
-      userInfo: JSON.parse(getLocal('userInfo'))
+      userInfo: JSON.parse(localStorage.userInfo)
     }
   },
   filters: {
@@ -224,7 +223,7 @@ export default {
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryUserPage({ userName: query, page, rows })
+        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

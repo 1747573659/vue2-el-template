@@ -114,7 +114,7 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { productType, orderStatus } from './data'
 
-import { queryUserPage, queryBaseInfo } from '@/api/orderCenter/orderManagement'
+import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import {
   queryByPage,
   authOrderExport,
@@ -141,7 +141,7 @@ export default {
       totalPage: 0,
       pageSize: 10,
       checkExportLoad: false,
-      userBaseInfo: JSON.parse(localStorage.userInfo),
+      userInfo: JSON.parse(localStorage.userInfo),
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -181,7 +181,7 @@ export default {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
         sysSource: 1,
-        agentId: this.userBaseInfo.agentId,
+        agentId: this.userInfo.agentId,
         minDate: createTime?.[0] ?? '',
         maxDate: createTime?.[1] ?? '',
         page: this.currentPage,
@@ -221,7 +221,7 @@ export default {
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryUserPage({ userName: query, page, rows })
+        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, page, rows, userName: query })
         this.ordererData = this.ordererData.concat(res.results || [])
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

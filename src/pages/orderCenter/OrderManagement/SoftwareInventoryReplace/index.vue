@@ -84,7 +84,7 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { orderStatus } from './data'
 
-import { queryBaseInfo, queryUserPage } from '@/api/orderCenter/orderManagement'
+import { queryBaseInfo, queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import { queryByPage, replaceOrderExport, replaceOrderExportLog, replaceOrderExportDel, replaceOrderDelete } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
@@ -111,7 +111,8 @@ export default {
           return time.getTime() > dayjs().endOf('day')
         }
       },
-      cueerntAgentId: ''
+      cueerntAgentId: '',
+      userInfo: JSON.parse(localStorage.userInfo)
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -181,7 +182,7 @@ export default {
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryUserPage({ userName: query, page, rows })
+        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
