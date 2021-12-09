@@ -73,7 +73,7 @@ const orderCenter = {
           component: _import('orderCenter/OrderManagement/SoftwareInventoryReplace'),
           name: 'softwareInventoryReplace',
           code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYREPLACE',
-          meta: { title: '软件库存置换单', name: 'softwareInventoryReplace', cache: true }
+          meta: { title: '库存换购订单', name: 'softwareInventoryReplace', cache: true }
         },
         {
           path: 'softwareInventoryReplaceDetails',

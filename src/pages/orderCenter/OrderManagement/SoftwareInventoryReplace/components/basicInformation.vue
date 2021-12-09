@@ -55,8 +55,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="replaceableNum" label="可换数量" align="right"></el-table-column>
-        <el-table-column prop="replaceNum" label="实换数量" align="right">
+        <el-table-column prop="replaceNum" label="换购数量" align="right">
           <template slot-scope="scope">
             <el-input
               size="small"
@@ -67,7 +66,6 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
             <el-input size="small" v-model="scope.row.remark" maxlength="100" :disabled="$route.query.status === 'detail'" clearable class="e-product_remark"></el-input>
