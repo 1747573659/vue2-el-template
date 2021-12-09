@@ -128,8 +128,8 @@ export default {
       else {
         if (this.$route.query.status === 'edit' || val === 1) this.merchantInfo = await this.getWlsCustInfo()
         if (this.merchantInfo.productCode) {
-          this.setDetailDTOList()
           if (val === 2) await this.handleZbProduct()
+          this.setDetailDTOList()
           this.getProductStock()
         } else this.form.detailDTOList = []
       }
@@ -150,7 +150,6 @@ export default {
         this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
         this.form.merchantDTO.relationProductName = this.merchantInfo.ProductionTypeName
         if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
-
         if (!this.merchantInfo.productCode) this.form.detailDTOList = []
         else if (this.form.merchantDTO.applicationModule) this.setDetailDTOList()
       } else {
@@ -158,7 +157,6 @@ export default {
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetDTO)
         this.form.detailDTOList = []
       }
-
       if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) {
         this.form.merchantDTO.applicationModule = ''
         this.form.detailDTOList = []
