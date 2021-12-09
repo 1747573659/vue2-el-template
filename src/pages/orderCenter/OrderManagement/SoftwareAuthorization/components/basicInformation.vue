@@ -33,19 +33,14 @@
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button
-          size="small"
-          type="primary"
-          plain
-          :disabled="productType === 3 && form.merchantDTO.applicationModule === 2 && form.detailDTOList.length > 0 && form.detailDTOList[0].openCustAssistantApp === 1"
-          :loading="checkSaveBtnLoad"
-          @click="handleSave"
-        >
+        <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave">
           保存
         </el-button>
       </template>
       <template v-if="$route.query.status === 'edit'">
-        <el-button size="small" type="primary" v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+        <el-button size="small" type="primary" :disabled="isWlsDisableStatus" v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">
+          提交
+        </el-button>
       </template>
     </div>
   </section>
@@ -169,6 +164,9 @@ export default {
         if (orderStatus.has(parseFloat(orderStatusVal))) return orderStatus.get(parseFloat(orderStatusVal)).label
         else return '未保存'
       } else return ''
+    },
+    isWlsDisableStatus() {
+      return this.productType === 3 && this.form.merchantDTO.applicationModule === 2 && this.form.detailDTOList.length > 0 && this.form.detailDTOList[0].openCustAssistantApp === 1
     }
   },
   created() {
@@ -197,30 +195,24 @@ export default {
         }
       }
       this.$confirm('确定要提交吗？', '提示', {
-        type: 'warning',
-        beforeClose: (action, instance, done) => {
-          if (action === 'confirm') {
-            instance.confirmButtonLoading = true
-            this.setOrderSave()
-              .then(async () => {
-                await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
-                this.getDetail().then(() => {
-                  this.$router.replace({
-                    name: this.$route.name,
-                    query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
-                  })
-                  document.querySelector('.e-tag_active span').innerText = `软件授权订单/详情`
-                })
-                this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
-              })
-              .catch(() => {})
-              .finally(() => {
-                instance.confirmButtonLoading = false
-                done()
-              })
-          } else done()
-        }
+        type: 'warning'
       })
+        .then(() => {
+          this.setOrderSave()
+            .then(async () => {
+              await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
+              this.getDetail().then(() => {
+                this.$router.replace({
+                  name: this.$route.name,
+                  query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
+                })
+                document.querySelector('.e-tag_active span').innerText = `软件授权订单/详情`
+              })
+              this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
+            })
+            .catch(() => {})
+        })
+        .catch(() => {})
     },
     handleCancel(name) {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))

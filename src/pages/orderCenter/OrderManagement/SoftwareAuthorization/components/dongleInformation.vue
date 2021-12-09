@@ -5,7 +5,7 @@
         <span class="p-card-title">订单明细</span>
       </div>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
+        <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品</el-button>
         <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.detailDTOList.length === 0">
           刷新库存
         </el-button>
