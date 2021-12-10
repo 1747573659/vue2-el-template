@@ -217,7 +217,7 @@ export default {
       return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
     },
     handleExportDel: async function(row) {
-      return await authOrderExportDel({ id: row.id })
+      return await authOrderExportDel(row.id)
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
