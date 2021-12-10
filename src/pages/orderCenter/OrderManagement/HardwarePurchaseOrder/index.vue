@@ -48,7 +48,7 @@
                 placeholder="全部"
               ></km-select-page>
             </el-form-item>
-            <el-form-item label="单据编码">
+            <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:80px">
@@ -83,7 +83,7 @@
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="165"></el-table-column>
-        <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
+        <el-table-column prop="billNo" label="订单编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="140">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>

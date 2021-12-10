@@ -35,7 +35,7 @@
                 placeholder="下单人"
               />
             </el-form-item>
-            <el-form-item label="单据编码">
+            <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:80px">
@@ -55,7 +55,7 @@
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
         <el-table-column prop="createTime" label="订单时间" width="165"></el-table-column>
-        <el-table-column prop="billNo" label="单据编码"></el-table-column>
+        <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column prop="orderTypeDesc" label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderType) ? orderStatus.get(scope.row.orderType).label : '--' }}</template>

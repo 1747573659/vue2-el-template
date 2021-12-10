@@ -12,7 +12,7 @@
         </div>
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
-        <el-form-item label="单据编码">
+        <el-form-item label="订单编码">
           <el-input :value="form.orderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
@@ -205,7 +205,7 @@ export default {
         let data = { orderDTO: { ...this.form.orderDTO }, detailList: this.form.orderDetailDtos }
         if (this.userInfo.level === 2) {
           const { id, agentId, topAgentId } = this.userInfo
-          data = Object.assign(data, { createUser: id, agentId, parentAgentId: topAgentId })
+          data.orderDTO = Object.assign(data.orderDTO, { createUser: id, agentId, parentAgentId: topAgentId })
         }
         return this.$route.query.status === 'add' ? applyOrderAdd(data) : applyOrderUpdate(data)
       } catch (error) {}

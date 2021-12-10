@@ -55,7 +55,7 @@
                 placeholder="下单人"
               />
             </el-form-item>
-            <el-form-item label="单据编码">
+            <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
             </el-form-item>
           </el-col>
@@ -79,7 +79,7 @@
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="165"></el-table-column>
-        <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
+        <el-table-column prop="billNo" label="订单编码" width="150"></el-table-column>
         <el-table-column prop="productType" label="产品类型">
           <template slot-scope="scope">{{ productType.has(scope.row.productType) ? productType.get(scope.row.productType).label : '' }}</template>
         </el-table-column>

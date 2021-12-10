@@ -22,7 +22,7 @@ export const delayTimes = [{ value: 1, label: '1年' }]
 
 export const formErpObj = {
   authOrderDTO: {
-    billNo: '', // 单据编码
+    billNo: '', // 订单编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '' // 受理人名称
@@ -41,7 +41,7 @@ export const formErpObj = {
 
 export const formWlsOrWcyObj = {
   authOrderDTO: {
-    billNo: '', // 单据编码
+    billNo: '', // 订单编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '' // 受理人名称
@@ -62,7 +62,7 @@ export const formWlsOrWcyObj = {
 
 export const formYsObj = {
   authOrderDTO: {
-    billNo: '', // 单据编码
+    billNo: '', // 订单编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '', // 受理人名称
@@ -84,7 +84,7 @@ export const formYsObj = {
 
 export const formDongleObj = {
   authOrderDTO: {
-    billNo: '', // 单据编码
+    billNo: '', // 订单编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '' // 受理人名称

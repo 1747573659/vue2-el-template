@@ -46,7 +46,7 @@
                 placeholder="下单人"
               />
             </el-form-item>
-            <el-form-item label="单据编码">
+            <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="16" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:90px">
@@ -68,7 +68,7 @@
         <el-table-column label="订单时间" width="165">
           <template slot-scope="scope">{{ scope.row.createTime | formatCreateTime }}</template>
         </el-table-column>
-        <el-table-column prop="billNo" label="单据编码"></el-table-column>
+        <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column prop="agentName" label="申请经销商" v-if="userInfo.level === 1"></el-table-column>
         <el-table-column prop="useInventory" label="申请库存" align="right"></el-table-column>
         <el-table-column label="订单状态">

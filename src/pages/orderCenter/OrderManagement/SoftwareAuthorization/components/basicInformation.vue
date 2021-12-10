@@ -12,7 +12,7 @@
         </div>
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
-        <el-form-item label="单据编码">
+        <el-form-item label="订单编码">
           <el-input :value="form.authOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单时间">

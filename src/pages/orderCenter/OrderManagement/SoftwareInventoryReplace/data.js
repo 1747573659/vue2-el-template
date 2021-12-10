@@ -9,7 +9,7 @@ export const orderStatus = new Map([
 
 export const formObj = {
   orderDTO: {
-    billNo: '', // 单据编码
+    billNo: '', // 订单编码
     createTime: '', // 订单时间
     useInventory: '', // 消耗库存
     handUserName: '', // 受理人名称

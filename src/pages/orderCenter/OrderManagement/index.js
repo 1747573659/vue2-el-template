@@ -29,7 +29,7 @@ export const deliveryStatus = new Map([
 export const formObj = {
   from: false,
   purchaseOrderDTO: {
-    billNo: '', // 单据编码
+    billNo: '', // 订单编码
     createOrderTime: '',
     orderAmount: 0, // 订单金额
     handUser: '', // 受理人id
