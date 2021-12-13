@@ -266,7 +266,7 @@ export default {
               done()
             }
           })
-          this.$confirm(`[${this.$refs.information.appModuleObj.productCode}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`, confirmOptions).catch(() => {})
+          this.$confirm(`[${this.$refs.information.appModuleObj.name}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`, confirmOptions).catch(() => {})
         } else {
           const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
           const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
