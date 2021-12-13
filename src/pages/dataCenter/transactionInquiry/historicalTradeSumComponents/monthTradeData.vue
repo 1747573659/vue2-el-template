@@ -113,7 +113,7 @@
         <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
-              商户优惠(元)
+              商家优惠(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
                   由商家承担的参与微信/支付宝/银联<br />
@@ -128,7 +128,7 @@
         <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
-              商户实退(元)
+              商家实退(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
                   退还用户银行卡或零钱账户的<br />
@@ -143,7 +143,7 @@
         <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
-              商户实收(元)
+              商家实收(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">交易总额-商家优惠-商家实退</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -484,7 +484,7 @@ export default {
                   ${params[0].axisValueLabel}
                 </p>
                 <p style="font-size: 18px;">
-                  <span class="echart-tooltip-bot-title">商户实收:</span>${params[0].data}
+                  <span class="echart-tooltip-bot-title">商家实收:</span>${params[0].data}
                 </p>
               </div>
             `
