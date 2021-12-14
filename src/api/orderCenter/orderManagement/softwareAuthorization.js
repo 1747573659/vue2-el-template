@@ -384,3 +384,11 @@ export function authOrderDogSubmit(data) {
     data
   })
 }
+
+// 提交-加密狗授权订单
+export function queryAllProductList() {
+  return request({
+    url: '/product/list',
+    method: 'POST'
+  })
+}

@@ -154,7 +154,8 @@ export default {
       ]),
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
-      userInfo: JSON.parse(localStorage.userInfo)
+      userInfo: JSON.parse(localStorage.userInfo),
+      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]')
     }
   },
   computed: {
@@ -298,7 +299,11 @@ export default {
               done()
             }
           })
-          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
+          let productName = ''
+          if (this.productLists?.length) {
+            productName = this.productLists.find(item => item.code === this.$refs.information.merchantInfo.productCode).name
+          } else productName = this.$refs.information.merchantInfo.productCode
+          this.$confirm(`[${productName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           const { productCode } = this.form.authOrderDTO
           const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
@@ -327,7 +332,11 @@ export default {
               done()
             }
           })
-          this.$confirm(`[${this.$refs.information.merchantInfo.productCode}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
+          let productName = ''
+          if (this.productLists?.length) {
+            productName = this.productLists.find(item => item.code === this.$refs.information.merchantInfo.productCode).name
+          } else productName = this.$refs.information.merchantInfo.productCode
+          this.$confirm(`[${productName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           const { merchantId, applicationModule: useModal, delayHour: delayCount, productCode } = this.form.merchantDTO
           return {

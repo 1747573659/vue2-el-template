@@ -42,7 +42,17 @@
         <el-table-column label="申请产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="timingInventory" label="库存数量" align="right" v-if="userInfo.level === 1"></el-table-column>
+        <el-table-column prop="timingInventory" label="库存数量" align="right" v-if="userInfo.level === 1">
+          <template slot="header">
+            <section>
+              <span>库存数量</span>
+              <el-tooltip effect="dark" placement="top">
+                <div slot="content">通用无限期库存数量</div>
+                <img :src="questionIcon" alt="提示" class="e-icon-question" />
+              </el-tooltip>
+            </section>
+          </template>
+        </el-table-column>
         <el-table-column label="申请数量" align="right">
           <template slot-scope="scope">
             <template v-if="userInfo.level === 1 || ['detail'].includes($route.query.status)">{{ scope.row.useInventory }}</template>
@@ -111,6 +121,7 @@ export default {
   },
   data() {
     return {
+      questionIcon: require('@/assets/images/icon/questioin.png'),
       userInfo: JSON.parse(localStorage.userInfo),
       checkBasicInformLoad: false,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
@@ -265,8 +276,9 @@ export default {
       try {
         this.checkBasicInformLoad = true
         const res = await applyOrderDetail(this.$route.query.id)
-        this.form.orderDTO = res?.inventoryApplyOrderDTO ?? {}
         this.form.orderDetailDtos = res?.detailList ?? []
+        this.form.orderDTO = res?.inventoryApplyOrderDTO ?? {}
+        if (this.$route.query.status === 'audit') this.getProductStock()
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false
@@ -381,5 +393,10 @@ export default {
       padding: 10px 20px 8px;
     }
   }
+}
+.e-icon-question {
+  width: 14px;
+  height: 14px;
+  margin: 4px 0 0 5px;
 }
 </style>

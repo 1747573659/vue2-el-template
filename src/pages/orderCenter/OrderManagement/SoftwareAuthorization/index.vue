@@ -121,7 +121,8 @@ import {
   authOrderExportLog,
   authOrderExportDel,
   authOrderProductPage,
-  authOrderDelete
+  authOrderDelete,
+  queryAllProductList
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -159,9 +160,16 @@ export default {
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getProductByPage()
     this.handleOrderPage()
+    this.handleAllProductList()
   },
   methods: {
     ...mapActions(['delCachedView']),
+    async handleAllProductList() {
+      try {
+        const res = await queryAllProductList()
+        localStorage.setItem('softWareProductList', JSON.stringify(res))
+      } catch (error) {}
+    },
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
         this.$router.push({

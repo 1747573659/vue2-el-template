@@ -99,7 +99,6 @@ export default {
     const userInfo = JSON.parse(getLocal('userInfo'))
     this.routes.map(item => {
       if (item.name === 'orderCenter') {
-        // if (process.env.VUE_APP_FLAG === 'pro' && userInfo.loginName !== '18888888888') item.children = item.children.filter(ele => ele.name !== 'orderManagement')
         if (userInfo.propertyType === 1) {
           if (userInfo.level === 2) {
             item.children = item.children.map(ele => {
