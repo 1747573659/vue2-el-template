@@ -233,6 +233,7 @@ export default {
     },
     async handleZbProduct() {
       try {
+        console.info(this.merchantInfo)
         const res = await queryByAgentProductAndModule({ moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC', productCode: this.merchantInfo.productCode })
         this.merchantInfo.productCode = res?.productId ?? this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
@@ -243,9 +244,9 @@ export default {
       if (this.$route.query.status === 'edit' || val === 101) {
         if (this.form.merchantDTO.merchantNo) {
           this.merchantInfo = await this.getWcyCustInfo()
-          this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         } else this.$message({ type: 'warning', message: '请先选择商户' })
       }
+      this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
       if (val !== 101) await this.handleZbProduct()
       if (val === 103 && this.merchantInfo.productCode) {
         this.form.detailDTOList = [
