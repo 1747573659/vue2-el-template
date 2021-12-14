@@ -65,7 +65,7 @@
             <template slot-scope="scope">{{ ['未开通', '已开通'][scope.row.openCustAssistantApp] }}</template>
           </el-table-column>
         </template>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">

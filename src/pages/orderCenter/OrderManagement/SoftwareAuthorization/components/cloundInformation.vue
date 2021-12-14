@@ -62,7 +62,7 @@
         </el-table-column>
         <el-table-column prop="productCode" label="产品编码"></el-table-column>
         <el-table-column prop="productName" label="产品名称"></el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column label="加点数" align="right">
           <template slot-scope="scope">
             <el-input

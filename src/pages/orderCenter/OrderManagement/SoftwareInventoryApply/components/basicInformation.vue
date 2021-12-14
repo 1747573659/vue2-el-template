@@ -42,7 +42,7 @@
         <el-table-column label="申请产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="timingInventory" label="下单时库存" align="right" v-if="userInfo.level === 1"></el-table-column>
+        <el-table-column prop="timingInventory" label="库存数量" align="right" v-if="userInfo.level === 1"></el-table-column>
         <el-table-column label="申请数量" align="right">
           <template slot-scope="scope">
             <template v-if="userInfo.level === 1 || ['detail'].includes($route.query.status)">{{ scope.row.useInventory }}</template>

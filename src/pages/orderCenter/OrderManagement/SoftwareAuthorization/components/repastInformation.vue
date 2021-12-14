@@ -66,7 +66,7 @@
         <el-table-column label="延期后有效期">
           <template slot-scope="scope">{{ scope.row.delayValidTime | formatTime }}</template>
         </el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存"></el-table-column>
         <el-table-column label="备注" class-name="e-column-remark">
           <template slot-scope="scope">

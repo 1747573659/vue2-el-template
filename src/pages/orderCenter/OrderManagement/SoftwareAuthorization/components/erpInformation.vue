@@ -50,8 +50,8 @@
         <el-table-column prop="moduleCode" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
         <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
-        <el-table-column prop="authNum" label="本次授权数量" align="right">
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
+        <el-table-column prop="authNum" label="加点数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authNum }}</span>
             <el-input v-else size="small" v-model.number.trim="scope.row.authNum" @change="handleAuthNumAmount(scope.row)" style="width:100%"></el-input>

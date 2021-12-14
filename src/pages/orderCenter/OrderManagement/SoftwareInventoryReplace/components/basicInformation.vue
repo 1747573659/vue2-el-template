@@ -38,7 +38,7 @@
         <el-table-column label="库存产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column label="换购产品">
           <template slot-scope="scope">
             <el-select
