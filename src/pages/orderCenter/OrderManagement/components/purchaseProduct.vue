@@ -72,12 +72,12 @@ export default {
       })
       this.$emit('productData', Selections)
       this.$emit('update:visible', false)
-      this.currentPageSelectSets.clear()
-      this.selectMaps.clear()
     },
     handleProductClose() {
       this.currentPage = 1
       this.productVal = ''
+      this.currentPageSelectSets.clear()
+      this.selectMaps.clear()
     },
     getProductPage: async function() {
       try {
