@@ -153,7 +153,7 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       const StartTime = dayjs().subtract(7, 'days')
-      this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
+      vm.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
       vm.getQueryPage()
     })
   },
