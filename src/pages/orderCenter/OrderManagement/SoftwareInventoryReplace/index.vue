@@ -111,7 +111,6 @@ export default {
           return time.getTime() > dayjs().endOf('day')
         }
       },
-      cueerntAgentId: '',
       userInfo: JSON.parse(localStorage.userInfo)
     }
   },
@@ -123,7 +122,6 @@ export default {
   mounted() {
     const StartTime = dayjs().subtract(7, 'days')
     this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
-    this.getBaseInfo()
   },
   methods: {
     ...mapActions(['delCachedView']),
@@ -185,12 +183,6 @@ export default {
         const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
-      } catch (error) {}
-    },
-    async getBaseInfo() {
-      try {
-        const { agentId = '' } = await queryBaseInfo()
-        this.cueerntAgentId = agentId
       } catch (error) {}
     }
   }
