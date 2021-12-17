@@ -2,7 +2,7 @@ import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { deepClone } from '@/utils'
 import { orderStatus, formObj, paymentStatus } from '../index'
-import purchaseProduct from '../components/purchaseProduct'
+import purchaseProduct from '../components/purchaseProduct.vue'
 
 import {
   queryAgentMoneyStream,
@@ -132,16 +132,22 @@ export const basicInfoMixin = {
     },
     handleDel(name) {
       this.$confirm('确定删除单据吗？', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
-        type: 'warning'
+        type: 'warning',
+        beforeClose: async (action, instance, done) => {
+          if (action === 'confirm') {
+            try {
+              instance.confirmButtonLoading = true
+              await deleteById({ id: parseFloat(this.$route.query.id) })
+              this.$message({ type: 'success', message: '删除成功' })
+              this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+            } catch (error) {
+            } finally {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          } else done()
+        }
       })
-        .then(async () => {
-          await deleteById({ id: parseFloat(this.$route.query.id) })
-          this.$message({ type: 'success', message: '删除成功' })
-          this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
-        })
-        .catch(() => {})
     },
     async handleDetail() {
       try {
@@ -178,7 +184,6 @@ export const basicInfoMixin = {
       this.$refs.product.getProductPage()
     },
     handleCountAmount(row) {
-      row.productPrice = NP.round(row.productPrice, 2)
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
         this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
         row.productCount = 1
@@ -187,14 +192,15 @@ export const basicInfoMixin = {
         this.$message({ type: 'warning', message: '有效单价范围为[0, 9999999.99]' })
         row.productPrice = 0
       }
+      row.productPrice = NP.round(row.productPrice, 2)
       return (row.productAmount = NP.round(NP.times(row.productCount, parseFloat(row.productPrice)), 2))
     },
     handleAmount(row) {
-      row.productAmount = NP.round(row.productAmount, 2)
-      if (!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
+      if (!/^([0-9]\d{0,9}?)(\.\d{1,2})?$/.test(row.productAmount)) {
         this.$message({ type: 'warning', message: '有效金额范围为[0, 9999999999.99]' })
         row.productAmount = 0
       }
+      row.productAmount = NP.round(row.productAmount, 2)
       return (row.productPrice = NP.round(NP.divide(parseFloat(row.productAmount), parseFloat(row.productCount)), 2))
     },
     getHandlerMan: async function() {

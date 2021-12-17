@@ -15,8 +15,6 @@
 </template>
 
 <script>
-import { operateLog } from '@/api/orderCenter/orderManagement'
-
 export default {
   props: {
     operateData: {
@@ -25,23 +23,6 @@ export default {
       default: () => []
     }
   }
-  // data() {
-  //   return {
-  //     checkLogTabLock: false,
-  //     tableData: []
-  //   }
-  // },
-  // mounted() {
-  //   this.getOperateLog()
-  // },
-  // methods: {
-  //   async getOperateLog() {
-  //     try {
-  //       const data = { orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1, purchaseId: this.$route.query.id }
-  //       this.tableData = await operateLog(data)
-  //     } catch (error) {}
-  //   }
-  // }
 }
 </script>
 

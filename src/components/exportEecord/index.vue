@@ -23,7 +23,16 @@
       </el-table-column>
     </el-table>
     <div class="p-export-pagination">
-      <el-pagination background @size-change="handleExportSizeChange" @current-change="handleExportCurrentChange" :page-sizes="[10, 15, 20, 25]" :current-page="exportCurrentPage" :page-size="exportPageSize" layout="total, sizes, prev, pager, next, jumper" :total="exportPageTotal">
+      <el-pagination
+        background
+        @size-change="handleExportSizeChange"
+        @current-change="handleExportCurrentChange"
+        :page-sizes="[10, 15, 20, 25]"
+        :current-page="exportCurrentPage"
+        :page-size="exportPageSize"
+        layout="total, sizes, prev, pager, next, jumper"
+        :total="exportPageTotal"
+      >
       </el-pagination>
     </div>
   </el-dialog>
@@ -38,10 +47,10 @@ export default {
       default: 1
     } // 是否展现
   },
-  data () {
+  data() {
     return {
-      exportVisible: false,  // 是否展现
-      exportLock: false,// 加载
+      exportVisible: false, // 是否展现
+      exportLock: false, // 加载
       exportLists: [], // 表格
       exportCurrentPage: 1, // 分页相关
       exportPageSize: 10,
@@ -51,7 +60,7 @@ export default {
   watch: {
     exportVisible: {
       immediate: true,
-      handler (value) {
+      handler(value) {
         if (value) {
           this.exportCurrentPage = 1
           this.exportPageSize = 10
@@ -61,19 +70,17 @@ export default {
     }
   },
   methods: {
-    handleExportCurrentChange (val) {
+    handleExportCurrentChange(val) {
       this.exportCurrentPage = val
       this.handleExportRecord()
     },
-    handleExportSizeChange (val) {
+    handleExportSizeChange(val) {
       this.exportCurrentPage = 1
       this.exportPageSize = val
       this.handleExportRecord()
     },
-    handleExportDel (row) {
+    handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
@@ -90,10 +97,10 @@ export default {
               })
           } else done()
         }
-      }).catch(err => { })
+      }).catch(err => {})
     },
     // 查询
-    async handleExportRecord () {
+    async handleExportRecord() {
       const data = { exportType: this.exportType, page: this.exportCurrentPage, rows: this.exportPageSize }
       try {
         this.exportLock = true
@@ -103,7 +110,7 @@ export default {
       } finally {
         this.exportLock = false
       }
-    },
+    }
   }
 }
 </script>

@@ -55,7 +55,7 @@
                 placeholder="下单人"
               />
             </el-form-item>
-            <el-form-item label="单据编码">
+            <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
             </el-form-item>
           </el-col>
@@ -71,6 +71,7 @@
             <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 3 })">微零售</el-button>
             <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 4 })">微餐饮</el-button>
             <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 5 })">云商</el-button>
+            <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add', productType: 6 })">加密狗</el-button>
           </el-form-item>
         </el-row>
       </el-form>
@@ -78,14 +79,14 @@
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="165"></el-table-column>
-        <el-table-column prop="billNo" label="单据编码" width="150"></el-table-column>
+        <el-table-column prop="billNo" label="订单编码" width="150"></el-table-column>
         <el-table-column prop="productType" label="产品类型">
           <template slot-scope="scope">{{ productType.has(scope.row.productType) ? productType.get(scope.row.productType).label : '' }}</template>
         </el-table-column>
         <el-table-column label="授权产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="inventoryAmount" label="消耗库存"></el-table-column>
+        <el-table-column prop="inventoryAmount" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
         </el-table-column>
@@ -113,14 +114,15 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { productType, orderStatus } from './data'
 
-import { queryUserPage, queryBaseInfo } from '@/api/orderCenter/orderManagement'
+import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import {
   queryByPage,
   authOrderExport,
   authOrderExportLog,
   authOrderExportDel,
   authOrderProductPage,
-  authOrderDelete
+  authOrderDelete,
+  queryAllProductList
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -140,7 +142,7 @@ export default {
       totalPage: 0,
       pageSize: 10,
       checkExportLoad: false,
-      userBaseInfo: JSON.parse(localStorage.userInfo),
+      userInfo: JSON.parse(localStorage.userInfo),
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -150,17 +152,24 @@ export default {
   },
   beforeRouteEnter(to, from, next) {
     next(vm => {
+      const StartTime = dayjs().subtract(7, 'days')
+      vm.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
       vm.getQueryPage()
     })
   },
   mounted() {
-    const StartTime = dayjs().subtract(7, 'days')
-    this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
     this.getProductByPage()
     this.handleOrderPage()
+    this.handleAllProductList()
   },
   methods: {
     ...mapActions(['delCachedView']),
+    async handleAllProductList() {
+      try {
+        const res = await queryAllProductList()
+        localStorage.setItem('softWareProductList', JSON.stringify(res))
+      } catch (error) {}
+    },
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
         this.$router.push({
@@ -180,7 +189,7 @@ export default {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
         sysSource: 1,
-        agentId: this.userBaseInfo.agentId,
+        agentId: this.userInfo.agentId,
         minDate: createTime?.[0] ?? '',
         maxDate: createTime?.[1] ?? '',
         page: this.currentPage,
@@ -216,11 +225,11 @@ export default {
       return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
     },
     handleExportDel: async function(row) {
-      return await authOrderExportDel({ id: row.id })
+      return await authOrderExportDel(row.id)
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryUserPage({ userName: query, page, rows })
+        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, page, rows, userName: query })
         this.ordererData = this.ordererData.concat(res.results || [])
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

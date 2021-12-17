@@ -6,12 +6,20 @@
       </div>
       <el-form :model="form" size="small" :disabled="$route.query.status === 'detail'" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
-          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
-          <el-select v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="请输入名称/商户号" filterable clearable>
-            <el-option v-for="item in custListData" :key="item.CustId" :label="item.CustNameExpand" :value="item.CustId"></el-option>
-          </el-select>
+          <km-select-page
+            ref="selectPage"
+            v-model="form.merchantDTO.merchantName"
+            option-label="CustNameExpand"
+            option-value="CustId"
+            :data.sync="shopPageData"
+            :request="getCustList"
+            :is-max-page.sync="isShopMaxPage"
+            @change="handleMerchantInfo"
+            placeholder="请输入名称/商户号"
+          />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.merchantDTO.merchantNo" disabled placeholder="请先选择商户"></el-input>
@@ -58,7 +66,7 @@
         <el-table-column label="延期后有效期">
           <template slot-scope="scope">{{ scope.row.delayValidTime | formatTime }}</template>
         </el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存"></el-table-column>
         <el-table-column label="备注" class-name="e-column-remark">
           <template slot-scope="scope">
@@ -67,7 +75,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.detailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -77,21 +85,22 @@
     <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择授权对象" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
-          <el-input v-model="productVal" maxlength="30" :placeholder="`请输入${form.merchantDTO.applicationModule === 101 ? '门店名称' : '税号'}`" clearable></el-input>
+          <el-input v-model="productVal" maxlength="30" :placeholder="`请输入${this.applicationStoreModule ? '门店名称' : '税号'}`" clearable></el-input>
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
-      <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column :prop="form.merchantDTO.applicationModule === 101 ? 'BranchName':'TaxpayerNum'" label="门店名称/税号"></el-table-column>
+        <el-table-column label="门店名称/税号">
+          <template slot-scope="scope">{{ scope.row.shopType === 101 ? scope.row.BranchName : scope.row.TaxpayerNum }}</template>
+        </el-table-column>
         <el-table-column prop="shopType" label="类型">
           <template slot-scope="scope">{{ scope.row.shopType === 101 ? '门店' : '电子发票' }}</template>
         </el-table-column>
         <el-table-column label="有效期">
-          <template slot-scope="scope">{{scope.row.KMValidity || new Date() | formatTime}}</template>
+          <template slot-scope="scope">{{ scope.row.KMValidity || new Date() | formatTime }}</template>
         </el-table-column>
       </el-table>
-      <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
         <el-button @click="checkProductVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
@@ -119,7 +128,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    userBaseInfo: {
+    userInfo: {
       type: Object,
       default: () => {}
     }
@@ -128,9 +137,9 @@ export default {
     return {
       delayTimes,
       cyVersionMap,
-      custListData: [],
-      isCustListPage: false,
-      merchantInfo: [],
+      shopPageData: [],
+      isShopMaxPage: false,
+      merchantInfo: {},
       productStockObj: {},
       checkProductVisible: false,
       productVal: '',
@@ -139,12 +148,19 @@ export default {
       currentPage: 1,
       pageSize: 10,
       totalPage: 0,
-      checkProductStockLoad: false
+      checkProductStockLoad: false,
+      selectMaps: new Map(),
+      currentPageSelectSets: new Set()
     }
   },
   filters: {
     formatTime(val) {
       return dayjs(val).format('YYYY-MM-DD')
+    }
+  },
+  computed: {
+    applicationStoreModule() {
+      return this.form.merchantDTO.applicationModule === 101
     }
   },
   watch: {
@@ -158,11 +174,37 @@ export default {
     }
   },
   methods: {
+    handleDelDetailDTO(scope) {
+      this.form.detailDTOList.splice(scope.$index, 1)
+      this.selectMaps.delete(scope.row.moduleCode)
+      this.currentPageSelectSets.delete(scope.row.moduleCode)
+    },
+    handleSelectAll(selection) {
+      if (selection?.length) {
+        selection.forEach(item => {
+          this.selectMaps.set(this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum, item)
+          this.currentPageSelectSets.add(this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum)
+        })
+      } else {
+        this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
+        this.currentPageSelectSets.clear()
+      }
+    },
+    handleSelect(selection, row) {
+      const rowAttr = this.applicationStoreModule ? row.BranchNo : row.TaxpayerNum
+      if (selection.length > this.currentPageSelectSets.size) {
+        this.selectMaps.set(rowAttr, row)
+        this.currentPageSelectSets.add(rowAttr)
+      } else {
+        this.selectMaps.delete(rowAttr)
+        this.currentPageSelectSets.delete(rowAttr)
+      }
+    },
     handleConfirm() {
-      const Selections = this.$refs.product.selection.map(item => {
-        return {
-          shopName: this.form.merchantDTO.applicationModule === 101 ? item.BranchName : '电子发票',
-          shopCode: this.form.merchantDTO.applicationModule === 101 ? item.BranchNo : item.TaxpayerNum,
+      const addDetailItem = item => {
+        this.form.detailDTOList.push({
+          shopName: this.applicationStoreModule ? item.BranchName : '电子发票',
+          shopCode: this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum,
           shopType: item.shopType,
           currentValidTime: item.KMValidity ? `${item.KMValidity} 00:00:00` : dayjs().format('YYYY-MM-DD 00:00:00'),
           delayValidTime: this.setDelayValidTime(item.KMValidity),
@@ -170,9 +212,17 @@ export default {
           useInventory: this.form.merchantDTO.delayHour,
           productCode: this.merchantInfo.productCode,
           remark: ''
-        }
-      })
-      this.form.detailDTOList = this.form.detailDTOList.concat(Selections)
+        })
+      }
+      if (this.form.detailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      else if (this.selectMaps.size && this.form.detailDTOList?.length > 0) {
+        this.form.detailDTOList.forEach((item, index) => {
+          if (!this.selectMaps.has(item.shopCode)) this.form.detailDTOList.splice(index, 1)
+        })
+        this.selectMaps.forEach((item, key) => {
+          if (this.form.detailDTOList.every(ele => ele.shopCode !== key)) addDetailItem(item)
+        })
+      }
       this.getProductStock().then(() => (this.checkProductVisible = false))
     },
     handleDelayHour(val) {
@@ -183,8 +233,9 @@ export default {
     },
     async handleZbProduct() {
       try {
+        console.info(this.merchantInfo)
         const res = await queryByAgentProductAndModule({ moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC', productCode: this.merchantInfo.productCode })
-        this.merchantInfo.productCode = res?.productId ?? ''
+        this.merchantInfo.productCode = res?.productId ?? this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
       } catch (error) {}
     },
@@ -193,9 +244,9 @@ export default {
       if (this.$route.query.status === 'edit' || val === 101) {
         if (this.form.merchantDTO.merchantNo) {
           this.merchantInfo = await this.getWcyCustInfo()
-          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         } else this.$message({ type: 'warning', message: '请先选择商户' })
       }
+      this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
       if (val !== 101) await this.handleZbProduct()
       if (val === 103 && this.merchantInfo.productCode) {
         this.form.detailDTOList = [
@@ -222,7 +273,7 @@ export default {
         try {
           this.form.merchantDTO.merchantNo = val
           this.merchantInfo = await this.getWcyCustInfo()
-          this.merchantInfo.productCode = this.custListData.find(item => item.CustId === this.merchantInfo.CustId).productCode
+          this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
           const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
           this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
         } catch (error) {}
@@ -233,7 +284,7 @@ export default {
       try {
         this.checkProductStockLoad = true
         const productCode = this.merchantInfo.productCode || this.form.authOrderDTO.productCode
-        this.productStockObj = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })
+        this.productStockObj = await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode })
         this.form.detailDTOList.forEach(item => {
           item.orderInventory = this.productStockObj?.totalAmount ?? 0
         })
@@ -251,21 +302,45 @@ export default {
         this.checkProductTabLock = true
         const isNum = new RegExp(/^\d{1,}$/).test(this.productVal)
         const storeData = { branch: isNum ? this.productVal : '', branchname: !isNum && this.productVal ? this.productVal : '', cust: this.form.merchantDTO.merchantNo }
-        const res =
-          this.form.merchantDTO.applicationModule === 101 ? await authOrderWcyBranchList(storeData) : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
+        const res = this.applicationStoreModule ? await authOrderWcyBranchList(storeData) : await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
         this.basicProductData = res.map(item => {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
+        })
+        this.$nextTick(() => {
+          if (this.basicProductData?.length) {
+            let hasDetailDTO = ''
+            const productAttr = this.applicationStoreModule ? 'BranchNo' : 'TaxpayerNum'
+            this.basicProductData.forEach(item => {
+              if (this.form.detailDTOList?.length) hasDetailDTO = this.form.detailDTOList.some(ele => ele.shopCode === item[productAttr])
+              if ((this.selectMaps?.size && this.selectMaps.has(item[productAttr])) || hasDetailDTO) {
+                this.currentPageSelectSets.add(item[productAttr])
+                this.$refs.product.toggleRowSelection(item, true)
+              }
+              if (hasDetailDTO) this.selectMaps.set(item[productAttr], item)
+            })
+          }
         })
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
       }
     },
-    async getCustList() {
-      const res = await authOrderWcyCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo, type: 0 })
-      this.custListData = res
-      this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustId}）`))
+    async getCustList({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const isNum = new RegExp(/^\d{1,}$/).test(query)
+        const res = await authOrderWcyCustList({
+          cust: isNum ? query : '',
+          custname: !isNum && query ? query : '',
+          page: --page,
+          size: rows,
+          type: 0,
+          organ: this.userInfo.organNo
+        })
+        res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustId}）`))
+        this.shopPageData = this.shopPageData.concat(res || [])
+        this.isShopMaxPage = !res || (res && res.length < 10)
+      } catch (error) {}
     },
     setDelayValidTime(date) {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
@@ -338,6 +413,7 @@ export default {
   }
   &_remark {
     width: 100%;
+    max-width: 240px;
     /deep/ .el-input__inner {
       text-align: left !important;
     }

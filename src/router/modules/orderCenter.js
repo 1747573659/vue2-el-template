@@ -54,11 +54,26 @@ const orderCenter = {
           meta: { title: '软件采购详情', name: 'softwarePurchaseDetails', cache: true }
         },
         {
+          path: 'softwareInventoryApply',
+          component: _import('orderCenter/OrderManagement/SoftwareInventoryApply'),
+          name: 'softwareInventoryApply',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYAPPLY',
+          meta: { title: '软件库存申请单', name: 'softwareInventoryApply', cache: true }
+        },
+        {
+          path: 'softwareInventoryApplyDetails',
+          component: _import('orderCenter/OrderManagement/SoftwareInventoryApply/softwareInventoryApplyDetails'),
+          name: 'softwareInventoryApplyDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '软件库存申请详情', name: 'softwareInventoryApplyDetails', cache: true }
+        },
+        {
           path: 'softwareInventoryReplace',
           component: _import('orderCenter/OrderManagement/SoftwareInventoryReplace'),
           name: 'softwareInventoryReplace',
           code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYREPLACE',
-          meta: { title: '软件库存置换单', name: 'softwareInventoryReplace', cache: true }
+          meta: { title: '库存换购订单', name: 'softwareInventoryReplace', cache: true }
         },
         {
           path: 'softwareInventoryReplaceDetails',

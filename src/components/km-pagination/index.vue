@@ -48,12 +48,12 @@ export default {
     }
   },
   methods: {
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.$emit('update:pageSize', val)
       this.$emit('update:currentPage', 1)
       this.request()
     },
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.$emit('update:currentPage', val)
       this.request()
     }

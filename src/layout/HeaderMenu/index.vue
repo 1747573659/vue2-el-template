@@ -97,18 +97,18 @@ export default {
   },
   mounted() {
     const userInfo = JSON.parse(getLocal('userInfo'))
-    if (process.env.VUE_APP_FLAG === 'pro' && userInfo.loginName !== '18888888888') {
-      this.routes.map(item => {
-        if (item.name === 'orderCenter') {
-          if (userInfo.propertyType === 3) {
+    this.routes.map(item => {
+      if (item.name === 'orderCenter') {
+        if (userInfo.propertyType === 1) {
+          if (userInfo.level === 2) {
             item.children = item.children.map(ele => {
-              ele.children = ele.children.filter(child => child.name === 'ewechatOrder')
+              ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder'].includes(child.name))
               return ele
             })
-          } else item.children = item.children.filter(ele => ele.name !== 'orderManagement')
-        }
-      })
-    }
+          }
+        } else item.children = item.children.filter(ele => ele.name !== 'orderManagement')
+      }
+    })
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
@@ -131,10 +131,7 @@ export default {
       this.userName = JSON.parse(getLocal('userInfo')).userName
     },
     handleLoginOut() {
-      this.$confirm('确认退出吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      })
+      this.$confirm('确认退出吗?', '提示')
         .then(() => {
           this.$store.dispatch('Logout')
         })

@@ -78,6 +78,8 @@ module.exports = {
           deleteOriginalAssets: false // 是否删除源文件
         })
       )
+    } else {
+      config.devtool = 'source-map'
     }
   }
   // css: {

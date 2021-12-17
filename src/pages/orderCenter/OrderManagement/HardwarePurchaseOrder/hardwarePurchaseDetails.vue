@@ -1,5 +1,5 @@
 <template>
-  <section v-permission.page="'HARDWARE_PURCHASE_ORDER_PLUS,HARDWARE_PURCHASE_ORDER_EDIT'">
+  <section>
     <el-tabs v-model="activeName" class="p-hardware-tab" @tab-click="handleTabPane">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>

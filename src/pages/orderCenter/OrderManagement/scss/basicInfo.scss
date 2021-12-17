@@ -4,6 +4,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
+    .p-card-reason {
+      flex-basis: 80%;
+    }
     /deep/ {
       .el-button {
         font-size: 16px;
@@ -71,7 +74,7 @@
   }
 }
 
-.e-card-product{
+.e-card-product {
   text-align: right;
   padding-bottom: 10px;
   margin-top: -10px;

@@ -62,9 +62,9 @@ export function authOrderErpDetail(data) {
 }
 
 // 更新-erp授权订单
-export function authOrderErpUpdate(data, status) {
+export function authOrderErpUpdate(data) {
   return request({
-    url: '/auth/order/erp/update/' + status,
+    url: '/auth/order/erp/update',
     method: 'POST',
     data
   })
@@ -106,9 +106,9 @@ export function authOrderWlsSubmit(data) {
 }
 
 // 更新-微零售授权订单
-export function authOrderWlsUpdate(data, status) {
+export function authOrderWlsUpdate(data) {
   return request({
-    url: '/auth/order/wls/update/' + status,
+    url: '/auth/order/wls/update',
     method: 'POST',
     data
   })
@@ -132,9 +132,9 @@ export function authOrderWcyDetail(data) {
 }
 
 // 更新-微餐饮授权订单
-export function authOrderWcyUpdate(data, status) {
+export function authOrderWcyUpdate(data) {
   return request({
-    url: '/auth/order/wcy/update/' + status,
+    url: '/auth/order/wcy/update',
     method: 'POST',
     data
   })
@@ -166,9 +166,9 @@ export function authOrderYsDetail(data) {
 }
 
 // 更新-云商授权订单
-export function authOrderYsUpdate(data, status) {
+export function authOrderYsUpdate(data) {
   return request({
-    url: '/auth/order/ys/update/' + status,
+    url: '/auth/order/ys/update',
     method: 'POST',
     data
   })
@@ -317,6 +317,14 @@ export function authOrderYsTrialPointDetail(data) {
   })
 }
 
+// 查询-小蜜有批-用户级别
+export function authOrderYsXmypUserNum(data) {
+  return request({
+    url: '/auth/order/ys/getXmypUserNum/' + data,
+    method: 'POST',
+  })
+}
+
 // 云商-根据客户和应用获取用户信息-社区续费选用户使用
 export function authOrderYsByCusAndApplyList(data) {
   return request({
@@ -338,6 +346,49 @@ export function authOrderLog(data) {
 export function queryByAgentProductAndModule(data) {
   return request({
     url: '/product/queryByZbProduct/' + data.productCode + '/' + data.moduleId,
+    method: 'POST'
+  })
+}
+
+// 新增-加密狗授权订单
+export function authOrderDogAdd(data) {
+  return request({
+    url: '/auth/order/dog/add',
+    method: 'POST',
+    data
+  })
+}
+
+// 详情-加密狗授权订单
+export function authOrderDogById(data) {
+  return request({
+    url: '/auth/order/dog/byId/' + data,
+    method: 'POST'
+  })
+}
+
+// 更新-加密狗授权订单
+export function authOrderDogUpdate(data) {
+  return request({
+    url: '/auth/order/dog/update',
+    method: 'POST',
+    data
+  })
+}
+
+// 提交-加密狗授权订单
+export function authOrderDogSubmit(data) {
+  return request({
+    url: '/auth/order/dog/submit',
+    method: 'POST',
+    data
+  })
+}
+
+// 提交-加密狗授权订单
+export function queryAllProductList() {
+  return request({
+    url: '/product/list',
     method: 'POST'
   })
 }

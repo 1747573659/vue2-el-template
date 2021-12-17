@@ -140,8 +140,8 @@
                 >立即签约</el-button
               >
             </template>
-            <template v-else-if="[7, 10, 11].includes(scope.row.archiveBaseDTO.directAuditStatus)" v-permission="'WXARCHIVE_LIST_PROGRESS'">
-              <el-button type="text" size="small" @click="$router.push({ name: 'wxProgress', query: { id: scope.row.archiveBaseDTO.id } })">申请进度</el-button>
+            <template v-else-if="[7, 10, 11].includes(scope.row.archiveBaseDTO.directAuditStatus)">
+              <el-button type="text" size="small" v-permission="'WXARCHIVE_LIST_PROGRESS'" @click="handleToProgress">申请进度</el-button>
             </template>
           </template>
         </el-table-column>
@@ -227,7 +227,7 @@ export default {
         channelMchId: '',
         msg: '',
         sortStatus: 'desc',
-        archiveIds:'' // 资料ID
+        archiveIds: '' // 资料ID
       },
       isSearchLock: false, // 锁状态
       isTabLock: false,
@@ -256,6 +256,9 @@ export default {
   },
   methods: {
     ...mapActions(['delCachedView']),
+    handleToProgress(row) {
+      this.$router.push({ name: 'wxProgress', query: { id: row.archiveBaseDTO.id } })
+    },
     handleDirectAuditStatus: async function(row) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id: row.archiveBaseDTO.id })
@@ -355,7 +358,7 @@ export default {
         merchantShortName: msg,
         page: this.currentPage,
         rows: this.pageSize,
-        archiveIds:archiveIds?[archiveIds]:[]
+        archiveIds: archiveIds ? [archiveIds] : []
       })
     },
     handleSearch() {

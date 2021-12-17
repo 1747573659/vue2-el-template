@@ -2,7 +2,7 @@
   <section class="p-hardware-con" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
-        <div>
+        <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
           <span class="p-card-back" v-if="$route.query.status !== 'add' && form.purchaseOrderDTO.remark">（订单被退回，原因：{{ form.purchaseOrderDTO.remark }}）</span>
         </div>
@@ -12,7 +12,7 @@
         </div>
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
-        <el-form-item label="单据编码">
+        <el-form-item label="订单编码">
           <el-input :value="form.purchaseOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单日期">
@@ -38,7 +38,7 @@
           <el-input :value="form.purchaseOrderDTO.agentGuaranteeMoney | formatAmount"></el-input>
         </el-form-item>
         <el-form-item label="付款状态">
-          <el-input :value="`${form.purchaseOrderDTO.payStatus ? paymentStatus.get(form.purchaseOrderDTO.payStatus).label : ''}`"></el-input>
+          <el-input :value="`${form.purchaseOrderDTO.payStatus ? paymentStatus.get(form.purchaseOrderDTO.payStatus).label : '未付款'}`"></el-input>
         </el-form-item>
         <el-form-item label="付款时间">
           <el-input :value="form.purchaseOrderDTO.payTime"></el-input>
@@ -93,7 +93,7 @@
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
             <template v-else>
-              <el-input size="small" v-model="scope.row.remark" maxlength="100" placeholder="" class="p-hardware-product_remark"></el-input>
+              <el-input size="small" v-model="scope.row.remark" maxlength="100" class="p-hardware-product_remark"></el-input>
             </template>
           </template>
         </el-table-column>
@@ -110,9 +110,9 @@
       <el-button size="small" plain @click="handleCancel('softwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('softwarePurchaseOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <el-button size="small" type="primary" v-if="$route.query.status === 'edit'" v-permission="'SOFT_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify"
-        >提交</el-button
-      >
+      <template v-if="$route.query.status === 'edit'">
+        <el-button size="small" type="primary" v-permission="'SOFT_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      </template>
       <template v-if="$route.query.status === 'detail' && form.purchaseOrderDTO.payStatus === 2 && form.purchaseOrderDTO.goodsStatus === 20">
         <el-button size="small" type="primary" @click="handleReceipt">确认收货</el-button>
       </template>
@@ -138,20 +138,22 @@ export default {
     async handleToStock() {
       if (this.form.id) delete this.form.id
       if (this.form.purchaseOrderDTO.id) delete this.form.purchaseOrderDTO.id
-      const { results = [] } = await productInfo({ info: this.$route.query.productCode.trim(), page: 1, rows: 10, orderType: 1 })
-      if (results.length > 0) {
-        this.form.orderItemList = [
-          {
-            productCode: results[0].code,
-            productName: results[0].name,
-            productCount: 1,
-            productPrice: NP.divide(results[0].saleAmount, 100),
-            productAmount: NP.divide(NP.times(1, results[0].saleAmount), 100),
-            sourcePrice: NP.times(1, results[0].saleAmount),
-            remark: ''
-          }
-        ]
-      }
+      try {
+        const { results = [] } = await productInfo({ info: this.$route.query.productCode.trim(), page: 1, rows: 10, orderType: 1 })
+        if (results?.length) {
+          this.form.orderItemList = [
+            {
+              productCode: results[0].code,
+              productName: results[0].name,
+              productCount: 1,
+              productPrice: NP.divide(results[0].saleAmount, 100),
+              productAmount: NP.divide(NP.times(1, results[0].saleAmount), 100),
+              sourcePrice: NP.times(1, results[0].saleAmount),
+              remark: ''
+            }
+          ]
+        }
+      } catch (error) {}
     }
   }
 }
