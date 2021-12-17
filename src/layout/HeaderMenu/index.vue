@@ -131,10 +131,7 @@ export default {
       this.userName = JSON.parse(getLocal('userInfo')).userName
     },
     handleLoginOut() {
-      this.$confirm('确认退出吗?', '提示', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消'
-      })
+      this.$confirm('确认退出吗?', '提示')
         .then(() => {
           this.$store.dispatch('Logout')
         })

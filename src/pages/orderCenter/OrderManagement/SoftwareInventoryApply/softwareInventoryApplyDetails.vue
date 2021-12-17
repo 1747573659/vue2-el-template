@@ -1,8 +1,8 @@
 <template>
   <section>
-    <el-tabs v-model="activeName" class="p-detail-tab" @tab-click="handleTabPane">
+    <el-tabs v-model="activeName" @tab-click="handleTabPane" class="p-detail-tab">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
-      <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
+      <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail', 'audit'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
     <keep-alive>
       <component :is="activeName" :operateData="operateData"></component>
@@ -12,13 +12,13 @@
 
 <script>
 import { orderStatus } from '../index'
-import operationLog from '../components/operationLog'
+import operationLog from '../components/operationLog.vue'
 import basicInformation from './components/basicInformation.vue'
 
-import { authOrderLog } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
+import { applyOrderLog } from '@/api/orderCenter/orderManagement/softwareInventoryApply'
 
 export default {
-  name: 'softwareInventoryReplaceDetails',
+  name: 'softwareInventoryApplyDetails',
   components: {
     basicInformation,
     operationLog
@@ -30,19 +30,19 @@ export default {
     }
   },
   mounted() {
-    if (['edit', 'detail'].includes(this.$route.query.status)) this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
-      document.querySelector('.e-tag_active span').innerText = `库存换购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
+      document.querySelector('.e-tag_active span').innerText = `软件库存申请单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
   },
   methods: {
     handleTabPane(tab) {
       if (tab.name === 'operationLog') this.getOperateLog()
+      else this.operateData = []
     },
     async getOperateLog() {
       try {
-        const res = await authOrderLog(this.$route.query.id)
+        const res = await applyOrderLog({ id: this.$route.query.id })
         this.operateData = res
       } catch (error) {}
     }
@@ -54,9 +54,9 @@ export default {
 .p-detail-tab {
   margin-left: -16px;
   margin-right: -16px;
+  padding-left: 20px;
+  padding-right: 20px;
   background-color: #fff;
-  padding-left: 16px;
-  padding-right: 16px;
   /deep/ {
     .el-tabs__header {
       margin-bottom: 0;

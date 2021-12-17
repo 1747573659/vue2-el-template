@@ -6,7 +6,7 @@
       </div>
       <el-form :model="form" size="small" :disabled="$route.query.status === 'detail'" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
-          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
           <km-select-page
@@ -50,8 +50,8 @@
         <el-table-column prop="moduleCode" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
         <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
-        <el-table-column prop="authNum" label="本次授权数量" align="right">
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
+        <el-table-column prop="authNum" label="加点数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authNum }}</span>
             <el-input v-else size="small" v-model.number.trim="scope.row.authNum" @change="handleAuthNumAmount(scope.row)" style="width:100%"></el-input>
@@ -59,20 +59,21 @@
         </el-table-column>
         <el-table-column label="银联通道">
           <template slot-scope="scope">
-            <km-select-page
-              ref="unionChannel"
-              v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)"
-              size="small"
-              v-model="scope.row.unionChannel"
-              option-label="channelName"
-              option-value="channelCode"
-              :data.sync="channelData"
-              :request="getChannelPage"
-              :disabled="$route.query.status === 'detail'"
-              :is-max-page.sync="isChannelPage"
-              placeholder="银联通道"
-              class="e-select-con js-unionChannel"
-            />
+            <template v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)">
+              <km-select-page
+                ref="unionChannel"
+                size="small"
+                v-model="scope.row.unionChannel"
+                option-label="channelName"
+                option-value="channelCode"
+                :data.sync="channelData"
+                :request="getChannelPage"
+                :disabled="$route.query.status === 'detail'"
+                :is-max-page.sync="isChannelPage"
+                placeholder="银联通道"
+                class="e-select-con js-unionChannel"
+              />
+            </template>
           </template>
         </el-table-column>
         <el-table-column label="备注">
@@ -82,7 +83,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.erpAuthOrderDetails.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -96,12 +97,11 @@
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
-      <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="moduleId" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
       </el-table>
-      <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
         <el-button @click="checkProductVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
@@ -121,7 +121,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    userBaseInfo: {
+    userInfo: {
       type: Object,
       default: () => {}
     }
@@ -136,13 +136,37 @@ export default {
       productVal: '',
       checkProductTabLock: false,
       basicProductData: [],
-      currentPage: 1,
-      pageSize: 10,
-      totalPage: 0,
-      checkProductStockLoad: false
+      checkProductStockLoad: false,
+      selectMaps: new Map(),
+      currentPageSelectSets: new Set()
     }
   },
   methods: {
+    handleDelDetailDTO(scope) {
+      this.form.erpAuthOrderDetails.splice(scope.$index, 1)
+      this.selectMaps.delete(scope.row.moduleCode)
+      this.currentPageSelectSets.delete(scope.row.moduleCode)
+    },
+    handleSelectAll(selection) {
+      if (selection?.length) {
+        selection.forEach(item => {
+          this.selectMaps.set(item.moduleId, item)
+          this.currentPageSelectSets.add(item.moduleId)
+        })
+      } else {
+        this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
+        this.currentPageSelectSets.clear()
+      }
+    },
+    handleSelect(selection, row) {
+      if (selection.length > this.currentPageSelectSets.size) {
+        this.selectMaps.set(row.moduleId, row)
+        this.currentPageSelectSets.add(row.moduleId)
+      } else {
+        this.selectMaps.delete(row.moduleId)
+        this.currentPageSelectSets.delete(row.moduleId)
+      }
+    },
     handleAuthNumAmount(row) {
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.authNum)) {
         this.$message({ type: 'warning', message: '授权数量范围为[1-999]' })
@@ -151,14 +175,14 @@ export default {
     },
     handleShopPage(val) {
       if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.filter(item => item.custId === val)[0]
+        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.find(item => item.custId === val)
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
       } else this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount: '', productCode: '', productName: '', authStatus: '', merchantId: '' })
       this.form.erpAuthOrderDetails = []
     },
     handleConfirm() {
-      const Selections = this.$refs.product.selection.map(item => {
-        return {
+      const addDetailItem = item => {
+        this.form.erpAuthOrderDetails.push({
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
           authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
@@ -167,16 +191,26 @@ export default {
           productCode: item.productId,
           unionChannel: '',
           remark: ''
-        }
-      })
-      this.form.erpAuthOrderDetails = this.form.erpAuthOrderDetails.concat(Selections)
-      if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) this.getChannelPage()
-      this.getProductStock().then(() => (this.checkProductVisible = false))
+        })
+      }
+      if (this.form.erpAuthOrderDetails.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
+        this.form.erpAuthOrderDetails.forEach((item, index) => {
+          if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
+        })
+        this.selectMaps.forEach((item, key) => {
+          if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) addDetailItem(item)
+        })
+      } else this.form.erpAuthOrderDetails = []
+      if (this.form.erpAuthOrderDetails?.length > 0) {
+        if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) this.getChannelPage()
+        this.getProductStock().then(() => (this.checkProductVisible = false))
+      } else this.checkProductVisible = false
     },
     async getProductStock() {
       try {
         this.checkProductStockLoad = true
-        const res = await queryByAgentErpProduct({ agentId: this.userBaseInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode) })
+        const res = await queryByAgentErpProduct({ agentId: this.userInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
           this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase()).totalAmount))
         }
@@ -188,15 +222,30 @@ export default {
     handleProductVisible() {
       if (!this.form.erpAuthMerchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
-        this.checkProductVisible = true
+        this.basicProductData = []
         this.getProductPage()
+        this.checkProductVisible = true
       }
     },
     async getProductPage() {
       try {
         this.checkProductTabLock = true
+        this.currentPageSelectSets.clear()
         const { merchantId: custId, productCode } = this.form.erpAuthMerchantDTO
         this.basicProductData = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
+        this.$nextTick(() => {
+          if (this.basicProductData?.length) {
+            let hasDetailDTO = ''
+            this.basicProductData.forEach(item => {
+              if (this.form.erpAuthOrderDetails?.length) hasDetailDTO = this.form.erpAuthOrderDetails.some(ele => ele.moduleCode === item.moduleId)
+              if ((this.selectMaps?.size && this.selectMaps.has(item.code)) || hasDetailDTO) {
+                this.currentPageSelectSets.add(item.moduleId)
+                this.$refs.product.toggleRowSelection(item, true)
+              }
+              if (hasDetailDTO) this.selectMaps.set(item.moduleId, item)
+            })
+          }
+        })
       } catch (error) {
       } finally {
         this.checkProductTabLock = false
@@ -299,6 +348,7 @@ export default {
   }
   &_remark {
     width: 100%;
+    max-width: 240px;
     /deep/ .el-input__inner {
       text-align: left !important;
     }

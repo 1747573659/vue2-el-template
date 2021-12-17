@@ -9,7 +9,7 @@
         </div>
       </div>
       <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
-        <el-form-item label="单据编码">
+        <el-form-item label="订单编码">
           <el-input :value="form.orderDTO.billNo" placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
@@ -38,7 +38,7 @@
         <el-table-column label="库存产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column label="换购产品">
           <template slot-scope="scope">
             <el-select
@@ -55,8 +55,7 @@
             </el-select>
           </template>
         </el-table-column>
-        <el-table-column prop="replaceableNum" label="可换数量" align="right"></el-table-column>
-        <el-table-column prop="replaceNum" label="实换数量" align="right">
+        <el-table-column prop="replaceNum" label="换购数量" align="right">
           <template slot-scope="scope">
             <el-input
               size="small"
@@ -67,7 +66,6 @@
             ></el-input>
           </template>
         </el-table-column>
-        <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
             <el-input size="small" v-model="scope.row.remark" maxlength="100" :disabled="$route.query.status === 'detail'" clearable class="e-product_remark"></el-input>
@@ -85,8 +83,8 @@
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareInventoryReplace')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
-      <template v-if="$route.query.status === 'edit'" v-permission="'SOFTWARE_INVENTORY_REPLACE_SUBMIT'">
-        <el-button size="small" type="primary" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+      <template v-if="$route.query.status === 'edit'">
+        <el-button size="small" type="primary" v-permission="'SOFTWARE_INVENTORY_REPLACE_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
       </template>
     </div>
     <template v-if="['add', 'edit'].includes($route.query.status)">
@@ -153,7 +151,7 @@ export default {
           this.checkSaveBtnLoad = true
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res, orderStatus: 0, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = `软件库存置换单/编辑`
+            document.querySelector('.e-tag_active span').innerText = `库存换购订单/编辑`
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })
@@ -229,7 +227,7 @@ export default {
       } else {
         const replaceNum = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory)
         this.form.orderDTO.useInventory = replaceNum
-        return row.useInventory = replaceNum
+        return (row.useInventory = replaceNum)
       }
     },
     handleReplaceProductName(val) {
@@ -237,7 +235,7 @@ export default {
       if (val) {
         if (this.agentProductList) {
           this.replaceProduct = this.replacedProducts.filter(item => item.replaceProductCode === val)[0]
-          replaceableNum = Math.floor(NP.divide(this.agentProductList?.commonAmount??0, this.replaceProduct.reduceInventory))
+          replaceableNum = Math.floor(NP.divide(this.agentProductList?.commonAmount ?? 0, this.replaceProduct.reduceInventory))
           useInventory = NP.times(1, this.replaceProduct.reduceInventory)
         }
       }
@@ -257,7 +255,7 @@ export default {
               replaceNum: 1,
               replaceProductId: '',
               replaceProductName: '',
-              orderInventory: this.agentProductList?.commonAmount??0,
+              orderInventory: NP.minus(this.agentProductList?.commonAmount ?? 0, this.agentProductList?.commonLimitAmount ?? 0),
               replaceableNum: 0,
               useInventory: 0,
               remark: ''
@@ -341,6 +339,7 @@ export default {
     .e-select-con {
       /deep/ .el-input {
         width: 100%;
+        max-width: 240px;
         &__inner {
           text-align: left;
         }
@@ -400,6 +399,7 @@ export default {
   }
   &_remark {
     width: 100%;
+    max-width: 240px;
     /deep/ .el-input__inner {
       text-align: left !important;
     }

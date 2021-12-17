@@ -6,7 +6,7 @@
       </div>
       <el-form :model="form" size="small" :disabled="$route.query.status === 'detail'" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
-          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
           <km-select-page
@@ -30,7 +30,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="授权状态">
-          <el-input :value="['正式', '试用'][parseFloat(form.merchantDTO.probationFlag)]" disabled></el-input>
+          <el-input :value="['正式', '试用'][form.authOrderDTO.useModalInner]" disabled></el-input>
         </el-form-item>
         <el-form-item label="延期时长">
           <el-input value="永久" v-if="[201, 205].includes(form.merchantDTO.applicationSystem)" disabled></el-input>
@@ -38,10 +38,15 @@
             <el-option v-for="item in delayTimes" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="用户级别" v-if="form.merchantDTO.applicationSystem === 206">
+          <el-select v-model="form.authOrderDTO.userLevel" :disabled="!parseFloat(form.authOrderDTO.useModalInner)" clearable>
+            <el-option v-for="item in modulesUserLevel" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="加点" name="1" v-if="showAddBit"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="parseFloat(form.merchantDTO.probationFlag) === 0 && ![201, 205].includes(form.merchantDTO.applicationSystem)"></el-tab-pane>
+        <el-tab-pane label="加点" name="1" v-if="showAddPoint"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="showAuthorTab"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <template v-if="activeName === '1'">
@@ -57,14 +62,14 @@
         </el-table-column>
         <el-table-column prop="productCode" label="产品编码"></el-table-column>
         <el-table-column prop="productName" label="产品名称"></el-table-column>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column label="加点数" align="right">
           <template slot-scope="scope">
             <el-input
               size="small"
               v-model.number.trim="scope.row.addNum"
               @change="handleAddNumAmount(scope.row)"
-              :disabled="$route.query.status === 'detail' || form.merchantDTO.applicationSystem === 203"
+              :disabled="$route.query.status === 'detail' || [203, 206].includes(form.merchantDTO.applicationSystem)"
               style="width:100%"
             ></el-input>
           </template>
@@ -97,7 +102,7 @@
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -107,11 +112,11 @@
     <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择授权对象" width="800px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
-          <el-input v-model="productVal" maxlength="30" placeholder="授权对象编码/名称" clearable></el-input>
+          <el-input v-model="productVal" maxlength="30" placeholder="授权ID/名称" clearable></el-input>
         </el-form-item>
         <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
       </el-form>
-      <el-table ref="product" :data="basicProductData" v-loading="checkProductTabLock">
+      <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="AuthId" label="授权ID"></el-table-column>
         <el-table-column prop="UserId" label="授权对象编码"></el-table-column>
@@ -120,7 +125,6 @@
           <template slot-scope="scope">{{ scope.row.EndTime | formatTime }}</template>
         </el-table-column>
       </el-table>
-      <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
         <el-button @click="checkProductVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
@@ -132,14 +136,15 @@
 <script>
 import dayjs from 'dayjs'
 import NP from 'number-precision'
-import { delayTimes } from '../data'
+import { delayTimes, modulesUserLevel } from '../data'
 
 import {
   authOrderYsCustomerList,
   authOrderYsAppModules,
   authOrderYsTrialPointDetail,
   queryByAgentProduct,
-  authOrderYsByCusAndApplyList
+  authOrderYsByCusAndApplyList,
+  authOrderYsXmypUserNum
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -148,13 +153,14 @@ export default {
       type: Object,
       default: () => {}
     },
-    userBaseInfo: {
+    userInfo: {
       type: Object,
       default: () => {}
     }
   },
   data() {
     return {
+      modulesUserLevel,
       shopPageData: [],
       isShopMaxPage: false,
       appModulesData: [],
@@ -162,14 +168,13 @@ export default {
       productVal: '',
       checkProductTabLock: false,
       basicProductData: [],
-      currentPage: 1,
-      pageSize: 10,
-      totalPage: 0,
       appModuleObj: {},
       checkProductStockLoad: false,
       delayTimes,
       productStockObj: {},
-      activeName: '1'
+      activeName: '1',
+      selectMaps: new Map(),
+      currentPageSelectSets: new Set()
     }
   },
   filters: {
@@ -178,16 +183,17 @@ export default {
     }
   },
   computed: {
-    showAddBit() {
-      const applicationSystem = this.form.merchantDTO.applicationSystem
-      if ([203, 206].includes(applicationSystem)) {
-        if (this.form.merchantDTO.merchantName === '' || this.form.merchantDTO.probationFlag === '' || parseFloat(this.form.merchantDTO.probationFlag) === 1) return true
-        else return false
-      } else return true
+    showAddPoint() {
+      const merchantDTO = this.form?.merchantDTO
+      if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && this.form.authOrderDTO.useModalInner
+      else return true
+    },
+    showAuthorTab() {
+      return !parseFloat(this.form.authOrderDTO.useModalInner) && ![201, 205].includes(this.form.merchantDTO.applicationSystem)
     }
   },
   watch: {
-    showAddBit(newVal) {
+    showAddPoint(newVal) {
       this.activeName = newVal ? '1' : '2'
     },
     'form.addAuthOrderDetailDTOList': {
@@ -223,57 +229,96 @@ export default {
     this.getOrderYsAppModules()
   },
   methods: {
+    handleDelDetailDTO(scope) {
+      this.form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)
+      this.selectMaps.delete(scope.row.authId)
+      this.currentPageSelectSets.delete(scope.row.authId)
+    },
+    handleSelectAll(selection) {
+      if (selection?.length) {
+        selection.forEach(item => {
+          this.selectMaps.set(item.AuthId, item)
+          this.currentPageSelectSets.add(item.AuthId)
+        })
+      } else {
+        this.currentPageSelectSets.forEach(item => this.selectMaps.delete(item))
+        this.currentPageSelectSets.clear()
+      }
+    },
+    handleSelect(selection, row) {
+      if (selection.length > this.currentPageSelectSets.size) {
+        this.selectMaps.set(row.AuthId, row)
+        this.currentPageSelectSets.add(row.AuthId)
+      } else {
+        this.selectMaps.delete(row.AuthId)
+        this.currentPageSelectSets.delete(row.AuthId)
+      }
+    },
     async handleAppModule(val) {
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
       if (val) {
         this.form.merchantDTO.delayHour = 1
-        if (this.form.merchantDTO.applicationSystem === 203 && parseFloat(this.form.merchantDTO.probationFlag) === 0) this.activeName = '2'
+        if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
         else this.activeName = '1'
         this.setAddAuthDetailDTOList()
-      } else this.form.merchantDTO.probationFlag = ''
+      } else this.form.authOrderDTO.useModalInner = -1
     },
     handleShopPage(val) {
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
+      this.form.authOrderDTO.useModalInner = -1
       if (val) {
         const { CustId: merchantNo, CustName } = this.shopPageData.find(item => item.CustId === val)
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo, merchantName: CustName })
         if (this.form.merchantDTO.applicationSystem) this.setAddAuthDetailDTOList()
       } else {
-        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantName: '', applicationSystem: '', probationFlag: '' })
+        this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantName: '', applicationSystem: '' })
+        this.form.authOrderDTO.useModalInner = -1
       }
     },
     async setAddAuthDetailDTOList() {
-      this.appModuleObj = this.appModulesData.find(item => item.code === this.form.merchantDTO.applicationSystem)
+      const { merchantNo: custId, CustName = '', merchantName = '', delayHour, applicationSystem } = this.form.merchantDTO
+      this.appModuleObj = this.appModulesData.find(item => item.code === applicationSystem)
       if (this.form.merchantDTO.merchantNo) {
         try {
-          const { merchantNo: custId, CustName = '', merchantName = '' } = this.form.merchantDTO
-          const res = await authOrderYsTrialPointDetail({ custId, appId: this.appModuleObj.outCode, custName: CustName || merchantName })
-          this.$set(this.form.merchantDTO, 'probationFlag', res?.ProbationFlag ?? '')
+          const { productCode, name, outCode: appId } = this.appModuleObj
+          const res = await authOrderYsTrialPointDetail({ custId, appId, custName: CustName || merchantName })
           if (res) {
+            const stateAttr = applicationSystem === 206 ? 'IsMPYouPi' : 'ProbationFlag'
+            if (applicationSystem === 206 && !res[stateAttr]) {
+              this.$message({ type: 'error', message: '没有开通该应用' })
+              return
+            }
+            const useModalInner = res[stateAttr] ? parseFloat(res[stateAttr]) : ''
+            this.form.authOrderDTO.useModalInner = useModalInner
             await this.getProductStock()
             if (this.activeName === '1') {
               this.form.addAuthOrderDetailDTOList = [
                 {
-                  productCode: this.appModuleObj.productCode,
-                  productName: this.appModuleObj.name,
-                  orderInventory: this.productStockObj?.totalAmount ?? 0,
+                  productCode,
+                  productName: name,
                   addNum: 1,
-                  useInventory: NP.times(this.form.merchantDTO.delayHour, 1),
                   remark: '',
-                  billNo: this.form.authOrderDTO?.billNo ?? ''
+                  useInventory: NP.times(delayHour, 1),
+                  billNo: this.form.authOrderDTO?.billNo ?? '',
+                  orderInventory: this.productStockObj?.totalAmount ?? 0
                 }
               ]
             }
           }
+          if (applicationSystem === 206) {
+            const authXmypUserNum = await authOrderYsXmypUserNum(custId)
+            this.form.authOrderDTO.userLevel = authXmypUserNum?.userLevel ?? 1
+          }
+          if ([203, 206].includes(applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
+          else this.activeName = '1'
         } catch (error) {}
       }
     },
-
     handleConfirm() {
-      const Selections = this.$refs.product.selection.map(item => {
-        return {
+      const addDetailItem = item => {
+        this.form.renewAuthOrderDetailDTOList.push({
           authId: item.AuthId,
           authCode: item.UserId,
           authName: item.UserName,
@@ -282,20 +327,30 @@ export default {
           useInventory: this.form.merchantDTO.delayHour,
           remark: '',
           billNo: this.form.authOrderDTO?.billNo ?? ''
-        }
-      })
-      this.form.renewAuthOrderDetailDTOList = this.form.renewAuthOrderDetailDTOList.concat(Selections)
+        })
+      }
+      if (this.form.renewAuthOrderDetailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      else if (this.selectMaps.size && this.form.renewAuthOrderDetailDTOList?.length > 0) {
+        this.form.renewAuthOrderDetailDTOList.forEach((item, index) => {
+          if (!this.selectMaps.has(item.authId)) this.form.renewAuthOrderDetailDTOList.splice(index, 1)
+        })
+        this.selectMaps.forEach((item, key) => {
+          if (this.form.renewAuthOrderDetailDTOList.every(ele => ele.authId !== key)) addDetailItem(item)
+        })
+      } else this.form.renewAuthOrderDetailDTOList = []
       this.getProductStock().then(() => (this.checkProductVisible = false))
     },
     async getProductStock() {
       try {
         this.checkProductStockLoad = true
         const productCode = this.appModuleObj.productCode || this.form.authOrderDTO.productCode
-        this.productStockObj = (await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })) || {}
-        if (this.form.addAuthOrderDetailDTOList.length > 0) {
-          this.form.addAuthOrderDetailDTOList.forEach(item => {
-            item.orderInventory = this.productStockObj?.totalAmount ?? 0
-          })
+        if (productCode) {
+          this.productStockObj = (await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode })) || { totalAmount: 0 }
+          if (this.form.addAuthOrderDetailDTOList.length > 0) {
+            this.form.addAuthOrderDetailDTOList.forEach(item => {
+              item.orderInventory = this.productStockObj?.totalAmount ?? 0
+            })
+          }
         }
       } catch (error) {
       } finally {
@@ -316,7 +371,7 @@ export default {
     },
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await authOrderYsCustomerList({ Condition: query, OrganNo: this.userBaseInfo.organNo, PageIndex: --page, PageSize: rows })
+        const res = await authOrderYsCustomerList({ Condition: query, OrganNo: this.userInfo.organNo, PageIndex: --page, PageSize: rows })
         res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustId}）`))
         this.shopPageData = this.shopPageData.concat(res || [])
         this.isShopMaxPage = !res || (res && res.length < 10)
@@ -333,18 +388,27 @@ export default {
       this.getProductPage()
     },
     async getProductPage() {
+      if (!Object.keys(this.appModuleObj)?.length) this.appModuleObj = this.appModulesData.find(item => item.code === this.form.merchantDTO.applicationSystem)
       try {
         this.checkProductTabLock = true
-        const data = {
-          condition: this.productVal,
-          PageSize: this.pageSize,
-          PageIndex: --this.currentPage,
-          CustId: this.form.merchantDTO.merchantNo,
-          AppId: this.appModuleObj.outCode,
-          flag: -1
-        }
+        this.currentPageSelectSets.clear()
+        const data = { PageSize: 100, PageIndex: 0, flag: -1, condition: this.productVal, CustId: this.form.merchantDTO.merchantNo, AppId: this.appModuleObj.outCode }
+        if (this.appModuleObj?.code === 206) data.xmyp = 1
         const res = await authOrderYsByCusAndApplyList(data)
         this.basicProductData = res
+        this.$nextTick(() => {
+          if (this.basicProductData?.length) {
+            let hasDetailDTO = ''
+            this.basicProductData.forEach(item => {
+              if (this.form.renewAuthOrderDetailDTOList?.length) hasDetailDTO = this.form.renewAuthOrderDetailDTOList.some(ele => ele.authId === item.AuthId)
+              if ((this.selectMaps?.size && this.selectMaps.has(item.AuthId)) || hasDetailDTO) {
+                this.currentPageSelectSets.add(item.AuthId)
+                this.$refs.product.toggleRowSelection(item, true)
+              }
+              if (hasDetailDTO) this.selectMaps.set(item.AuthId, item)
+            })
+          }
+        })
       } catch (error) {
       } finally {
         this.checkProductTabLock = false

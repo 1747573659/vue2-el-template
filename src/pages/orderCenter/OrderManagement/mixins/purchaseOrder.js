@@ -3,7 +3,7 @@ import NP from 'number-precision'
 import { orderStatus, paymentStatus } from '../index'
 import { mapActions } from 'vuex'
 
-import { queryByPage, queryBaseInfo, queryUserPage, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
+import { queryByPage, queryBaseInfo, queryAgentAllUser, exportOrder, exportRecordList, deleteExport } from '@/api/orderCenter/orderManagement'
 
 export const purchaseOrder = {
   data() {
@@ -19,6 +19,7 @@ export const purchaseOrder = {
       totalPage: 0,
       pageSize: 10,
       checkExportLoad: false,
+      userInfo: JSON.parse(localStorage.userInfo),
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -87,7 +88,7 @@ export const purchaseOrder = {
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryUserPage({ userName: query, page, rows })
+        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

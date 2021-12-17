@@ -54,8 +54,6 @@ export default {
   methods: {
     handleExportDel(row) {
       this.$confirm('确定要删除这条导出记录吗？', '删除', {
-        confirmButtonText: '确定',
-        cancelButtonText: '取消',
         type: 'warning',
         beforeClose: (action, instance, done) => {
           if (action === 'confirm') {
@@ -103,6 +101,7 @@ export default {
 .p-export-log {
   display: inline-block;
   margin-left: 12px;
+  line-height: 1.5;
 }
 /deep/ {
   .p-export-con {

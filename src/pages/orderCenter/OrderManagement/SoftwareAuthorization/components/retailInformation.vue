@@ -6,12 +6,20 @@
       </div>
       <el-form :model="form" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="经销商">
-          <el-input disabled :value="`${userBaseInfo.agentId ? '[' + userBaseInfo.agentId + ']' : ''}${userBaseInfo.name}`"></el-input>
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
         <el-form-item label="商户名称" class="is-required">
-          <el-select ref="shopPage" v-model="form.merchantDTO.merchantName" @change="handleMerchantInfo" placeholder="请输入名称/商户号" filterable clearable>
-            <el-option v-for="item in custListData" :key="item.CustID" :label="item.CustNameExpand" :value="item.CustID"></el-option>
-          </el-select>
+          <km-select-page
+            ref="selectPage"
+            v-model="form.merchantDTO.merchantName"
+            option-label="CustNameExpand"
+            option-value="CustID"
+            :data.sync="shopPageData"
+            :request="getCustList"
+            :is-max-page.sync="isShopMaxPage"
+            @change="handleMerchantInfo"
+            placeholder="请输入名称/商户号"
+          />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.merchantDTO.merchantId" placeholder="请先选择商户" disabled></el-input>
@@ -57,7 +65,7 @@
             <template slot-scope="scope">{{ ['未开通', '已开通'][scope.row.openCustAssistantApp] }}</template>
           </el-table-column>
         </template>
-        <el-table-column prop="orderInventory" label="下单时库存" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
@@ -81,7 +89,7 @@ export default {
       type: Object,
       default: () => {}
     },
-    userBaseInfo: {
+    userInfo: {
       type: Object,
       default: () => {}
     }
@@ -90,9 +98,9 @@ export default {
     return {
       delayTimes,
       versionMap,
-      custListData: [],
-      isCustListPage: false,
-      merchantInfo: [],
+      shopPageData: [],
+      isShopMaxPage: false,
+      merchantInfo: {},
       productStockObj: {},
       checkProductStockLoad: false
     }
@@ -121,8 +129,8 @@ export default {
         if (this.$route.query.status === 'edit' || val === 1) this.merchantInfo = await this.getWlsCustInfo()
         if (this.merchantInfo.productCode) {
           if (val === 2) await this.handleZbProduct()
-          this.getProductStock()
           this.setDetailDTOList()
+          this.getProductStock()
         } else this.form.detailDTOList = []
       }
     },
@@ -137,16 +145,13 @@ export default {
       this.form.merchantDTO.merchantId = val
       this.form.merchantDTO.delayHour = 1
       if (val) {
-        this.merchantInfo = await this.getWlsCustInfo()
+        this.merchantInfo = this.shopPageData.find(item => item.CustID === val)
         this.form.merchantDTO.merchantVersion = String(this.merchantInfo.VersionType)
         this.form.merchantDTO.storeCount = this.merchantInfo.BranchCount
-        this.form.merchantDTO.relationProductName = this.merchantInfo.productionTypeName
+        this.form.merchantDTO.relationProductName = this.merchantInfo.ProductionTypeName
         if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
         if (!this.merchantInfo.productCode) this.form.detailDTOList = []
-        else {
-          if (this.form.merchantDTO.applicationModule === 2) await this.handleZbProduct()
-          this.getProductStock()
-        }
+        else if (this.form.merchantDTO.applicationModule) this.setDetailDTOList()
       } else {
         const resetDTO = { merchantVersion: '', storeCount: '', relationProductName: '', applicationModule: '' }
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetDTO)
@@ -157,7 +162,7 @@ export default {
         this.form.detailDTOList = []
       } else if (this.form.merchantDTO.merchantVersion === '3' && this.form.detailDTOList.length > 0) {
         this.form.detailDTOList.forEach(item => {
-          item.currentValidTime = `${this.merchantInfo?.KMValidity} 00:00:00` ?? ''
+          item.currentValidTime = `${dayjs(this.merchantInfo?.KMValidity).format('YYYY-MM-DD')} 00:00:00` ?? ''
           item.delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : ''
         })
       }
@@ -190,7 +195,7 @@ export default {
       try {
         this.checkProductStockLoad = true
         const productCode = this.merchantInfo.productCode || this.form.authOrderDTO.productCode
-        this.productStockObj = await queryByAgentProduct({ agentId: this.userBaseInfo.agentId, productCode })
+        this.productStockObj = await queryByAgentProduct({ agentId: this.userInfo.agentId, productCode })
         this.form.detailDTOList.forEach(item => {
           item.orderInventory = this.productStockObj?.totalAmount ?? 0
         })
@@ -199,10 +204,20 @@ export default {
         this.checkProductStockLoad = false
       }
     },
-    async getCustList() {
-      const res = await authOrderWlsCustList({ cust: '', custname: '', organ: this.userBaseInfo.organNo })
-      this.custListData = res
-      this.custListData.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustID}）`))
+    async getCustList({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const isNum = new RegExp(/^\d{1,}$/).test(query)
+        const res = await authOrderWlsCustList({
+          cust: isNum ? query : '',
+          custName: !isNum && query ? query : '',
+          pageIndex: page,
+          pageSize: rows,
+          organ: this.userInfo.organNo
+        })
+        res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustID}）`))
+        this.shopPageData = this.shopPageData.concat(res || [])
+        this.isShopMaxPage = !res || (res && res.length < 10)
+      } catch (error) {}
     },
     setDelayValidTime(val) {
       const countTime = dayjs(val).isAfter(dayjs().format('YYYY-MM-DD')) ? val : dayjs().format('YYYY-MM-DD')
@@ -270,6 +285,7 @@ export default {
   }
   &_remark {
     width: 100%;
+    max-width: 240px;
     /deep/ .el-input__inner {
       text-align: left !important;
     }

@@ -108,7 +108,7 @@ export function replaceOrderSubmit(data) {
 // 操作日志
 export function authOrderLog(data) {
   return request({
-    url: '/auth/order/log/' + data,
+    url: '/replace/order/log/' + data,
     method: 'POST'
   })
 }

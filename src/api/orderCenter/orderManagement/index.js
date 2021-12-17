@@ -11,9 +11,9 @@ export function queryByPage(data) {
 }
 
 // 下单人接口
-export function queryUserPage(data) {
+export function queryAgentAllUser(data) {
   return request({
-    url: '/employeeUser/queryUserPage',
+    url: '/employeeUser/queryAgentAllUser',
     method: 'POST',
     data
   })
