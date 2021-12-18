@@ -9,7 +9,11 @@
           <div class="com-edit-block">
             <div class="com-edit-ruleForm__content">
               <el-form-item label="代理商名称：" prop="name">
-                <el-input v-model.trim="ruleForm.name" maxlength="50" placeholder=""></el-input>
+                <el-input v-model.trim="ruleForm.name" :disabled="userInfo.propertyType === 1" maxlength="50" placeholder=""></el-input>
+              </el-form-item>
+              <el-form-item label="类型">
+                <span v-if="$route.name === 'addAgent'">享钱代理商</span>
+                <span v-else>{{ ['科脉经销商', '享钱代理商'][userInfo.propertyType - 1] }}</span>
               </el-form-item>
               <el-form-item label="地区" prop="districtCode">
                 <area-select :areaList="areaValue" :key="areaKey" @change="areaChange"></area-select>
@@ -23,8 +27,7 @@
               </el-form-item>
               <el-form-item label="代理商角色：" prop="roleId">
                 <el-select v-model="ruleForm.roleId" placeholder="请选择代理商角色">
-                  <el-option v-for="item in agentRoleOptions" :key="item.id" :label="item.name" :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in agentRoleOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
               </el-form-item>
               <el-form-item label="联系人邮箱：" prop="email">
@@ -32,14 +35,19 @@
               </el-form-item>
               <el-form-item label="BD经理：" prop="channelManagerId" class="item-block">
                 <el-select v-model="ruleForm.channelManagerId" placeholder="请选择BD经理">
-                  <el-option v-for="item in channelManagerOptions" :key="item.id" :label="item.name" :value="item.id">
-                  </el-option>
+                  <el-option v-for="item in channelManagerOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
                 </el-select>
                 <el-button type="text" class="item-btn" @click="dialogVisible = true">管理</el-button>
               </el-form-item>
               <el-form-item label="代理商分成比例：" prop="proportion" class="icon-block">
                 <el-input v-model="ruleForm.proportion" placeholder="0至100"></el-input>
-                <el-popover :close-delay="0" placement="top" width="350" trigger="hover" content="代理商分润 =（商户成本费率-代理商成本费率）*代理商分润比例，100表示分润全额返给代理商，0表示代理商不参与分润">
+                <el-popover
+                  :close-delay="0"
+                  placement="top"
+                  width="350"
+                  trigger="hover"
+                  content="代理商分润 =（商户成本费率-代理商成本费率）*代理商分润比例，100表示分润全额返给代理商，0表示代理商不参与分润"
+                >
                   <!-- <i slot="reference" class="el-icon-question icon-question"></i> -->
                   <img :src="questionIcon" slot="reference" alt="提示" class="e-icon-question icon-question" />
                 </el-popover>
@@ -58,7 +66,14 @@
                 <el-input v-model="ruleForm.legalPerson" maxlength="10" placeholder=""></el-input>
               </el-form-item>
               <el-form-item label="营业执照：" prop="businessLicense">
-                <pic-upload :uploadUrl="uploadUrl" :imageUrl="ruleForm.businessLicense" :fileServer="ossFileServe" :showIconClose="true" @on-remove="onRemove" @on-success="onUploadSuccess">
+                <pic-upload
+                  :uploadUrl="uploadUrl"
+                  :imageUrl="ruleForm.businessLicense"
+                  :fileServer="ossFileServe"
+                  :showIconClose="true"
+                  @on-remove="onRemove"
+                  @on-success="onUploadSuccess"
+                >
                 </pic-upload>
               </el-form-item>
               <el-form-item label="商务姓名：" prop="contact">
@@ -135,40 +150,25 @@
 </template>
 
 <script>
-import {
-  queryRole,
-  queryChannel,
-  addAgent,
-  deleteChannel,
-  addChannel,
-  queryAgentById,
-  queryDistricDto,
-  checkAgentName,
-  checkChannelName,
-} from '@/api/customer/agent'
+import { queryRole, queryChannel, addAgent, deleteChannel, addChannel, queryAgentById, queryDistricDto, checkAgentName, checkChannelName } from '@/api/customer/agent'
 import areaSelect from '@/components/areaSelect'
 import PicUpload from '@/components/picUpload'
 import picUploadMixin from '@/mixins/picUpload'
 import { deepClone } from '@/utils'
-import {
-  isMPRelaxed,
-  isEmail,
-  isPositiveInteger,
-  isPositiveNumber,
-} from '@/utils/common'
+import { isMPRelaxed, isEmail, isPositiveInteger, isPositiveNumber } from '@/utils/common'
 
 export default {
   name: 'BaseEdit',
   components: {
     areaSelect,
-    PicUpload,
+    PicUpload
   },
   mixins: [picUploadMixin],
   props: {
     isEdit: {
       type: Boolean,
-      default: false,
-    },
+      default: false
+    }
   },
   data() {
     const validatorMobile = (rule, value, callback) => {
@@ -194,9 +194,7 @@ export default {
     const validatorProportion = (rule, value, callback) => {
       if (value === '') {
         callback('请输入代理商分成比例')
-      } else if (
-        !(isPositiveNumber(value) && Number(value) >= 0 && Number(value) <= 100)
-      ) {
+      } else if (!(isPositiveNumber(value) && Number(value) >= 0 && Number(value) <= 100)) {
         callback('请输入0至100的数字')
       } else {
         callback()
@@ -207,7 +205,7 @@ export default {
       if (value === '') {
         callback('请输入代理商名称')
       } else if (value !== this.validatorName) {
-        checkAgentName({ name: value }).then((res) => {
+        checkAgentName({ name: value }).then(res => {
           if (res) {
             callback(res)
           } else {
@@ -220,6 +218,7 @@ export default {
     }
 
     return {
+      userInfo: JSON.parse(localStorage.userInfo),
       questionIcon: require('@/assets/images/icon/questioin.png'),
       arrBD: [],
       validatorName: '',
@@ -228,7 +227,7 @@ export default {
       areaKey: 0,
       areaValue: [],
       BDForm: {
-        channelName: '',
+        channelName: ''
       },
       channelData: [],
       psw: 888888,
@@ -254,38 +253,32 @@ export default {
         roleId: '',
         taxpayerNo: '',
         taxpayerTelephone: '',
-        telephone: '',
+        telephone: ''
       },
       rules: {
         name: [
           { required: true, validator: validatorName, trigger: 'blur' },
-          { min: 1, max: 50, message: '长度在1到50个字符', trigger: 'blur' },
+          { min: 1, max: 50, message: '长度在1到50个字符', trigger: 'blur' }
         ],
         districtCode: {
           required: true,
           message: '请选择地区',
-          trigger: 'change',
+          trigger: 'change'
         },
         mobile: {
           required: true,
           validator: validatorMobile,
-          trigger: 'blur',
+          trigger: 'blur'
         },
-        roleId: [
-          { required: true, message: '请选择代理商角色', trigger: 'change' },
-        ],
+        roleId: [{ required: true, message: '请选择代理商角色', trigger: 'change' }],
         email: {
           required: true,
           validator: validatorEmail,
-          trigger: 'blur',
+          trigger: 'blur'
         },
-        channelManagerId: [
-          { required: true, message: '请选择BD经理', trigger: 'change' },
-        ],
-        proportion: [
-          { required: true, validator: validatorProportion, trigger: 'blur' },
-        ],
-      },
+        channelManagerId: [{ required: true, message: '请选择BD经理', trigger: 'change' }],
+        proportion: [{ required: true, validator: validatorProportion, trigger: 'blur' }]
+      }
     }
   },
   watch: {
@@ -295,7 +288,7 @@ export default {
         this.channelData = deepClone(this.channelManagerOptions)
         this.arrBD = []
       }
-    },
+    }
   },
   created() {
     if (this.isEdit) {
@@ -349,7 +342,7 @@ export default {
         return this.$message.error('该BD经理已经存在')
       }
 
-      checkChannelName({ name }).then((res) => {
+      checkChannelName({ name }).then(res => {
         if (res) {
           return this.$message.error(res)
         }
@@ -360,7 +353,7 @@ export default {
       })
     },
     queryChannel() {
-      queryChannel().then((res) => {
+      queryChannel().then(res => {
         this.channelManagerOptions = res
         this.channelData = deepClone(res)
       })
@@ -385,12 +378,12 @@ export default {
       } catch {}
     },
     queryRole() {
-      queryRole({ type: 1 }).then((res) => {
+      queryRole({ type: 1 }).then(res => {
         this.agentRoleOptions = res
       })
     },
     submitForm() {
-      this.$refs['ruleForm'].validate((valid) => {
+      this.$refs['ruleForm'].validate(valid => {
         if (valid) {
           this.submitLoading = true
           addAgent(this.ruleForm)
@@ -410,13 +403,13 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => {
         this.$router.push({ path: '/customer/agent/agentManage' })
       })
-    },
-  },
+    }
+  }
 }
 </script>
 
 <style lang="scss" scoped>
-.com-edit-wrapper{
+.com-edit-wrapper {
   border-top: 16px solid #f7f8fa;
   border-bottom: 16px solid #f7f8fa;
   background-color: #fff;

@@ -99,6 +99,20 @@ const orderCenter = {
           meta: { title: '硬件采购详情', name: 'hardwarePurchaseDetails', cache: true }
         },
         {
+          path: 'demandDevelopmentFee',
+          component: _import('orderCenter/OrderManagement/DemandDevelopmentFee/demandDevelopmentFee'),
+          name: 'demandDevelopmentFee',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE',
+          meta: { title: '需求开发收费单', name: 'demandDevelopmentFee', cache: true }
+        },
+        {
+          path: 'selfServiceEquipment',
+          component: _import('orderCenter/OrderManagement/SelfServiceEquipment/selfServiceEquipment'),
+          name: 'selfServiceEquipment',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_SELFSERVICEEQUIPMENT',
+          meta: { title: '自助设备授权查询', name: 'selfServiceEquipment', cache: false }
+        },
+        {
           path: 'ewechatOrder',
           component: _import('ewechat/order'),
           name: 'ewechatOrder',

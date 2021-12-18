@@ -5,8 +5,7 @@
 </template>
 
 <script>
-import BaseEdit from './components/BaseEdit'
-import { queryAgentById } from '@/api/customer/agent'
+import BaseEdit from './components/BaseEdit.vue'
 
 export default {
   name: 'editAgent',

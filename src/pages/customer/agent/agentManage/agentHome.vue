@@ -3,14 +3,14 @@
     <div class="search-box">
       <el-row>
         <el-col>
-          <el-form :inline="true" size="small" :model="form" class="xdd-btn-block__w240">
-            <el-form-item label="代理商信息：">
+          <el-form :inline="true" size="small" label-suffix=":" :model="form" class="xdd-btn-block__w240">
+            <el-form-item label="代理商信息">
               <el-input v-model="form.id" maxlength="50" placeholder="请输入代理商编号/名称" clearable></el-input>
             </el-form-item>
-            <el-form-item label="手机号：">
+            <el-form-item label="手机号">
               <el-input v-model="form.mobile" maxlength="11" placeholder="请输入手机号" clearable></el-input>
             </el-form-item>
-            <el-form-item label="BD经理：">
+            <el-form-item label="BD经理">
               <selectCopy
                 :options="channelManagerOptions"
                 :valus.sync="form.channelManagerId"
@@ -20,16 +20,18 @@
                 :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               ></selectCopy>
             </el-form-item>
+            <el-form-item label="类型">
+              <el-select v-model="form.type" clearable>
+                <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="getPageList">查询</el-button>
             </el-form-item>
-
             <el-form-item style="float: right;margin-right: 0;">
               <el-button v-permission="'AGENT_MANAGE_ADD'" type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
               <el-dropdown style="margin-left: 12px;">
-                <el-button size="small">
-                  更多
-                </el-button>
+                <el-button size="small">更多</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
                   <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
@@ -197,16 +199,15 @@ export default {
       dialogVisible: false,
       loading: false,
       channelManagerOptions: [],
-      form: {
-        channelManagerId: '',
-        id: '',
-        mobile: '',
-        page: 1,
-        rows: 10
-      },
+      form: { channelManagerId: '', id: '', mobile: '', page: 1, rows: 10, type: '' },
       tableData: [],
       total: 0,
-      multipleSelection: []
+      multipleSelection: [],
+      typeOptions: [
+        { label: '全部', value: '' },
+        { label: '经销商', value: 1 },
+        { label: '代理商', value: 2 }
+      ]
     }
   },
   computed: {
@@ -367,12 +368,12 @@ export default {
       this.multipleSelection = val
     },
     addShop() {
-      this.delCachedView({ name: 'addAgent' }).then(()=> {
+      this.delCachedView({ name: 'addAgent' }).then(() => {
         this.$router.push({ path: '/customer/agent/addAgent' })
       })
     },
     handleEdit(id) {
-      this.delCachedView({ name: 'editAgent' }).then(()=> {
+      this.delCachedView({ name: 'editAgent' }).then(() => {
         this.$router.push({ path: '/customer/agent/editAgent', query: { id } })
       })
     }
@@ -381,7 +382,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
