@@ -1,19 +1,26 @@
 import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
 import { setLocal, removeLocal } from '@/utils/storage'
 import { login, getMenuInfo, logout, popUpsByAuditStatus, queryBaseInfo } from '@/api/login'
+import { authShopPage } from '@/api/customer/merchant'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import router from '@/router'
+
+import dayjs from 'dayjs'
 
 const state = {
   routes: [], // 路由权限
   btns: [],
-  xftAuditStatus: false
+  xftAuditStatus: false,
+  nonactivatedXq: false,
+  nonactivatedXqList: []
 }
 
 const getters = {
   routes: state => state.routes,
   btns: state => state.btns,
-  xftAuditStatus: state => state.xftAuditStatus
+  xftAuditStatus: state => state.xftAuditStatus,
+  nonactivatedXq: state => state.nonactivatedXq,
+  nonactivatedXqList: state => state.nonactivatedXqList
 }
 
 const mutations = {
@@ -33,7 +40,35 @@ const mutations = {
   },
   SET_AUDITSTATUS: (state, status) => {
     state.xftAuditStatus = status
+  },
+  SET_NONACTIVATEDXQ: (state, status) => {
+    state.nonactivatedXq = status
+  },
+  SET_NONACTIVATEDXQLIST: (state, list) => {
+    state.nonactivatedXqList = state.nonactivatedXqList.concat(list || [])
   }
+}
+
+let page = 0, maxPage = false
+
+const adminUserType = 11
+
+// 获取该经销商下商户未开通享钱的列表
+const authShopPageMethod = (commit, { userType = 0 }) => {
+  authShopPage({
+    queryType: 2,
+    page: ++page,
+    rows: 10,
+    xqUsedStatusList: [1, 2, 3],
+    status: 0,
+    startFirstLoginDate: dayjs().subtract(14, 'days').format('YYYY-MM-DD') + ' 00:00:00',
+    endFirstLoginDate: dayjs().subtract(1, 'days').format('YYYY-MM-DD') + ' 23:59:59'
+  }).then(res => {
+    // 有一条不符合享钱开通条件的数据就弹出，只对类型是“经销商”的管理员弹出
+    commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userType === adminUserType)
+    commit('SET_NONACTIVATEDXQLIST', res.results)
+    maxPage = res && res.results.length !== 10
+  })
 }
 
 const actions = {
@@ -47,6 +82,7 @@ const actions = {
         .then(response => {
           popUpsByAuditStatus().then(res => commit('SET_AUDITSTATUS', Boolean(res)))
           setLocal('token', response.token)
+          authShopPageMethod(commit, response.userInfo)
           // 重新设置异步路由里面的重定向地址
           const treeRoute = routeTree(response.menus)
           const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
@@ -115,6 +151,10 @@ const actions = {
   // 添加按钮权限
   SetBtns({ commit }, list) {
     commit('SET_BTNS', list)
+  },
+  authShopPageMethodAction({commit}) {
+    // 当能下拉加载的时候userType必定为1，所以直接写死传进去就好
+    !maxPage && authShopPageMethod(commit, { userType: adminUserType })
   }
 }
 
