@@ -189,7 +189,7 @@ export default {
       align-items: flex-end;
       justify-content: center;
       /deep/ .el-button {
-        margin-left: 6px;
+        margin-left: 50px;
         margin-bottom: 7px;
       }
     }

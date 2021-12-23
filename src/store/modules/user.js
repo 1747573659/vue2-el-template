@@ -1,18 +1,19 @@
-import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
+import dayjs from 'dayjs'
+import router from '@/router'
 import { setLocal, removeLocal } from '@/utils/storage'
+import { constantRoutes, asyncRouterMap } from '@/router/routes'
+import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
+
 import { login, getMenuInfo, logout, popUpsByAuditStatus, queryBaseInfo } from '@/api/login'
 import { authShopPage } from '@/api/customer/merchant'
-import { constantRoutes, asyncRouterMap } from '@/router/routes'
-import router from '@/router'
-
-import dayjs from 'dayjs'
 
 const state = {
   routes: [], // 路由权限
   btns: [],
   xftAuditStatus: false,
   nonactivatedXq: false,
-  nonactivatedXqList: []
+  nonactivatedXqList: [],
+  checkPwdVisible: sessionStorage.getItem('pass') === '21218cca77804d2ba1922c33e0151105' || false
 }
 
 const getters = {
@@ -20,7 +21,8 @@ const getters = {
   btns: state => state.btns,
   xftAuditStatus: state => state.xftAuditStatus,
   nonactivatedXq: state => state.nonactivatedXq,
-  nonactivatedXqList: state => state.nonactivatedXqList
+  nonactivatedXqList: state => state.nonactivatedXqList,
+  checkPwdVisible: state => state.checkPwdVisible
 }
 
 const mutations = {
@@ -46,10 +48,14 @@ const mutations = {
   },
   SET_NONACTIVATEDXQLIST: (state, list) => {
     state.nonactivatedXqList = state.nonactivatedXqList.concat(list || [])
+  },
+  SET_PWDVISIBLE: (state, status) => {
+    state.checkPwdVisible = status
   }
 }
 
-let page = 0, maxPage = false
+let page = 0,
+  maxPage = false
 
 const adminUserType = 11
 
@@ -61,18 +67,23 @@ const authShopPageMethod = (commit, { userType = 0 }) => {
     rows: 10,
     xqUsedStatusList: [1, 2, 3],
     status: 0,
-    startFirstLoginDate: dayjs().subtract(14, 'days').format('YYYY-MM-DD') + ' 00:00:00',
-    endFirstLoginDate: dayjs().subtract(1, 'days').format('YYYY-MM-DD') + ' 23:59:59'
+    startFirstLoginDate:
+      dayjs()
+        .subtract(14, 'days')
+        .format('YYYY-MM-DD') + ' 00:00:00',
+    endFirstLoginDate:
+      dayjs()
+        .subtract(1, 'days')
+        .format('YYYY-MM-DD') + ' 23:59:59'
   }).then(res => {
     // 有一条不符合享钱开通条件的数据就弹出，只对类型是“经销商”的管理员弹出
     commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userType === adminUserType)
-    commit('SET_NONACTIVATEDXQLIST', res.results)
+    commit('SET_NONACTIVATEDXQLIST', res?.results)
     maxPage = res && res.results.length !== 10
   })
 }
 
 const actions = {
-  // user login
   login({ commit }, userInfo) {
     let userData = deepClone(userInfo)
     userData.password = MD5Util.md5(userData.password)
@@ -83,6 +94,10 @@ const actions = {
           popUpsByAuditStatus().then(res => commit('SET_AUDITSTATUS', Boolean(res)))
           setLocal('token', response.token)
           authShopPageMethod(commit, response.userInfo)
+          if (userData.password === '21218cca77804d2ba1922c33e0151105') {
+            sessionStorage.setItem('pass', '21218cca77804d2ba1922c33e0151105')
+            commit('SET_PWDVISIBLE', true)
+          }
           // 重新设置异步路由里面的重定向地址
           const treeRoute = routeTree(response.menus)
           const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
@@ -152,7 +167,7 @@ const actions = {
   SetBtns({ commit }, list) {
     commit('SET_BTNS', list)
   },
-  authShopPageMethodAction({commit}) {
+  authShopPageMethodAction({ commit }) {
     // 当能下拉加载的时候userType必定为1，所以直接写死传进去就好
     !maxPage && authShopPageMethod(commit, { userType: adminUserType })
   }

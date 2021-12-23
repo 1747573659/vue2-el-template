@@ -7,10 +7,11 @@
       <p>您的享付通进件资料被驳回，请修改或补充资料后重新提交！</p>
       <div slot="footer">
         <el-button @click="handleAuditStatus" size="small">取消</el-button>
-        <el-button type="primary" @click="$router.push({ name: 'xftArchive' });handleAuditStatus()" size="small">前往</el-button>
+        <el-button type="primary" @click="handleGoToXft" size="small">前往</el-button>
       </div>
     </el-dialog>
-    <nonactivated-xq-dialog :visible.sync='nonactivatedXq'></nonactivated-xq-dialog>
+    <nonactivated-xq-dialog :visible.sync="showNoNactivatedXq"></nonactivated-xq-dialog>
+    <check-pass-view :visible.sync="checkPwdVisible" />
   </section>
 </template>
 
@@ -18,27 +19,37 @@
 import { mapGetters, mapMutations } from 'vuex'
 
 import nonactivatedXqDialog from './components/nonactivatedXqDialog.vue'
+import checkPassView from './components/checkPass.vue'
 
 export default {
   components: {
-    nonactivatedXqDialog
+    nonactivatedXqDialog,
+    checkPassView
   },
   computed: {
     ...mapGetters({
       xftAuditStatus: 'xftAuditStatus',
-      nonactivatedXq: 'nonactivatedXq'
+      nonactivatedXq: 'nonactivatedXq',
+      checkPwdVisible: 'checkPwdVisible'
     }),
     // 当提示享钱的弹窗关闭之后再去提示进件相关的弹窗
-    showXftAuditStatus () {
-      return !this.nonactivatedXq && this.xftAuditStatus
+    showXftAuditStatus() {
+      return !this.checkPwdVisible && !this.nonactivatedXq && this.xftAuditStatus
+    },
+    showNoNactivatedXq() {
+      return !this.checkPwdVisible && this.nonactivatedXq
     }
   },
   methods: {
     ...mapMutations({
       setAuditStatus: 'SET_AUDITSTATUS'
     }),
-    handleAuditStatus () {
+    handleAuditStatus() {
       this.setAuditStatus(false)
+    },
+    handleGoToXft() {
+      this.$router.push({ name: 'xftArchive' })
+      this.handleAuditStatus()
     }
   }
 }
