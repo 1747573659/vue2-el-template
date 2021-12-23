@@ -123,7 +123,7 @@
 <script>
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
-import { orderStatus, registerStatus } from './data'
+// import { orderStatus, registerStatus } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import { queryByPage, authOrderExport, authOrderExportLog, authOrderExportDel, authOrderProductPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
@@ -132,8 +132,8 @@ export default {
   name: 'erpAuthorizedTransfer',
   data() {
     return {
-      orderStatus,
-      registerStatus,
+      // orderStatus,
+      // registerStatus,
       licensedProducts: [],
       isLicensedProductMaxPage: false,
       ordererData: [],

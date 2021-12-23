@@ -3,7 +3,7 @@
        <div class="search-box">
         <com-form ref="queryForm" :raw-form="queryConfig" label-width="120px" label-position="right" :is-in-page="true">
           <el-col :span="6" slot="buttons">
-            <el-form-item label-width="30px">
+            <el-form-item label-width="120px">
               <el-button size="small" type="primary" @click="query" :loading="queryLoading">查询</el-button>
               <el-button size="small" type="primary" @click="reset" :loading="resetLoading">重置</el-button>
               <el-button size="small" type="primary" @click="exportExcel">导出</el-button>
