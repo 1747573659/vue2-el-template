@@ -77,9 +77,11 @@ const authShopPageMethod = (commit, { userType = 0 }) => {
         .format('YYYY-MM-DD') + ' 23:59:59'
   }).then(res => {
     // 有一条不符合享钱开通条件的数据就弹出，只对类型是“经销商”的管理员弹出
-    commit('SET_NONACTIVATEDXQ', res && res.results.length > 0 && userType === adminUserType)
-    commit('SET_NONACTIVATEDXQLIST', res?.results)
-    maxPage = res && res.results.length !== 10
+    if (res && res.results) {
+      commit('SET_NONACTIVATEDXQ', res.results.length > 0 && userType === adminUserType)
+      commit('SET_NONACTIVATEDXQLIST', res.results)
+      maxPage = res.results.length !== 10
+    }
   })
 }
 
