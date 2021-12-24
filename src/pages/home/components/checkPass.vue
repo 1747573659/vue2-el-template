@@ -12,7 +12,6 @@
       </el-form>
     </section>
     <div slot="footer">
-      <el-button @click="Logout" size="small">退出</el-button>
       <el-button type="primary" :loading="isPwdSubmit" @click="handleSubmit" size="small">确认修改</el-button>
     </div>
   </el-dialog>
@@ -74,8 +73,9 @@ export default {
             this.isPwdSubmit = true
             await modifyPwd({ newPassword: this.form.newPassword, oldPassword: '888888' })
             this.setPwdVisible(false)
-            this.$message({ type: 'success', message: '修改成功' })
+            this.$message({ type: 'success', message: '修改成功，将重新登录' })
             sessionStorage.removeItem('pass')
+            this.Logout()
           } catch (e) {
           } finally {
             this.isPwdSubmit = false

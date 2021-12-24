@@ -20,6 +20,7 @@
 
 <script>
 import { MD5Util } from '@/utils'
+import { mapActions } from 'vuex'
 
 import { modifyPwd } from '@/api/login'
 
@@ -71,6 +72,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['Logout']),
     handleDiaClose() {
       this.$emit('update:status', false)
       this.$refs.passForm.resetFields()
@@ -80,12 +82,10 @@ export default {
         if (valid) {
           try {
             this.isLoading = true
-            await modifyPwd({
-              newPassword: this.passwordInfo.newPass,
-              oldPassword: this.passwordInfo.oldPass
-            })
+            await modifyPwd({ newPassword: this.passwordInfo.newPass, oldPassword: this.passwordInfo.oldPass })
             this.handleDiaClose()
             this.$message({ message: '修改成功', type: 'success' })
+            this.Logout()
           } catch (e) {
           } finally {
             this.isLoading = false
