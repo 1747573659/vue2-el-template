@@ -54,7 +54,7 @@ export default {
             trigger: 'blur',
             validator: (rule, value, callback) => {
               if (value === '') callback(new Error('确认新密码不能为空'))
-              else if (value !== Number(this.form.verifyNewPassword)) callback(new Error('两次新密码不一致!'))
+              else if (value !== Number(this.form.newPassword)) callback(new Error('两次新密码不一致!'))
               else callback()
             }
           }
