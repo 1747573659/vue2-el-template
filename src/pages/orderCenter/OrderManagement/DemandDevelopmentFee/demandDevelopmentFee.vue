@@ -2,7 +2,7 @@
   <section>
     <div class="search-box">
       <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="80px" @submit.native.prevent>
-        <el-row>
+        <el-row type="flex" align="bottom">
           <el-col :xl="22" :lg="21">
             <el-form-item label="订单日期">
               <el-date-picker
@@ -18,8 +18,8 @@
               ></el-date-picker>
             </el-form-item>
             <el-form-item label="行业">
-              <el-select v-model="form.productType" placeholder="产品类型" @change="handleProductTypeChange" clearable>
-                <el-option v-for="item in productType" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
+              <el-select v-model="form.industry" @change="handleProductTypeChange" clearable>
+                <el-option v-for="item in industryTypes" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="产品">
@@ -69,12 +69,12 @@
               <km-export-view v-permission="'DEMAND_DEVELOPMENT_FEE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
+          <el-col :xl="2" :lg="3" style="text-align:right">
+            <el-form-item v-permission="'DEMAND_DEVELOPMENT_FEE_PLUS'">
+              <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
+            </el-form-item>
+          </el-col>
         </el-row>
-        <el-col :xl="2" :lg="3" style="text-align:right">
-          <el-form-item v-permission="'DEMAND_DEVELOPMENT_FEE_PLUS'">
-            <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleSoftWareDetail({ status: 'add' })">新增</el-button>
-          </el-form-item>
-        </el-col>
       </el-form>
     </div>
     <div class="data-box" v-loading="checkTabLock">
@@ -82,7 +82,7 @@
         <el-table-column prop="createOrderTime" label="订单时间"></el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column label="行业">
-          <template slot-scope="scope">{{ productType.has(scope.row.productType) ? productType.get(scope.row.productType).label : '' }}</template>
+          <template slot-scope="scope">{{ industryTypes.has(scope.row.industryType) ? industryTypes.get(scope.row.industryType).label : '' }}</template>
         </el-table-column>
         <el-table-column label="产品">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</template>
@@ -96,7 +96,7 @@
         <el-table-column prop="developerFee" label="开发费用"></el-table-column>
         <el-table-column label="付款状态">
           <template slot-scope="scope">
-            <span :class="{ 'p-mark-text': scope.row.payStatus !== 2 }">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '--' }}</span>
+            <span :class="{ 'p-mark-text': scope.row.payStatus !== 2 }">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
@@ -123,9 +123,10 @@
 </template>
 
 <script>
+import NP from 'number-precision'
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
-import { productType, orderStatus, paymentStatus } from './data'
+import { industryTypes, orderStatus, paymentStatus } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import { queryByPage, authOrderExport, authOrderExportLog, authOrderExportDel, authOrderProductPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
@@ -134,7 +135,7 @@ export default {
   name: 'demandDevelopmentFee',
   data() {
     return {
-      productType,
+      industryTypes,
       orderStatus,
       paymentStatus,
       licensedProducts: [],
@@ -156,10 +157,15 @@ export default {
       }
     }
   },
+  filters: {
+    formatAmount(val) {
+      return val ? NP.divide(val, 100) : 0
+    }
+  },
   beforeRouteEnter(to, from, next) {
     next(vm => {
-      const StartTime = dayjs().subtract(30, 'days')
-      vm.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
+        const StartTime = dayjs().subtract(30, 'days')
+        vm.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
       vm.getQueryPage()
     })
   },
@@ -170,10 +176,10 @@ export default {
   methods: {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
-      this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
+      this.delCachedView({ name: 'demandDevelopmentFeeDetails' }).then(() => {
         this.$router.push({
-          name: 'softwareAuthorizationDetails',
-          query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }, status.productType ? {} : { productType: row.productType })
+          name: 'demandDevelopmentFeeDetails',
+          query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus })
         })
       })
     },

@@ -11,151 +11,111 @@
           <span class="p-card-state_text">{{ currentOrderStatus }}</span>
         </div>
       </div>
-      <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
+
+      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="订单编码">
-          <el-input :value="form.authOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
+          <el-input :value="form.purchaseOrderDTO.billNo" disabledplaceholder="保存后自动生成" disabled></el-input>
         </el-form-item>
-        <el-form-item label="订单时间">
-          <el-input :value="`${form.authOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
-        </el-form-item>
-        <el-form-item label="消耗库存">
-          <el-input :value="form.authOrderDTO.inventoryAmount"></el-input>
+        <el-form-item label="订单日期">
+          <el-input :value="`${form.purchaseOrderDTO.createOrderTime || baseOrderTime}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input :value="form.authOrderDTO.handManName"></el-input>
+          <el-input :value="form.purchaseOrderDTO.handManName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="经销商" v-if="Number($route.query.productType) === 6">
-          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
+        <el-form-item label="产品">
+          <km-select-page
+            ref="productCode"
+            v-model="form.productCode"
+            option-label="name"
+            option-value="code"
+            :data.sync="licensedProducts"
+            :request="getProductByPage"
+            :is-max-page.sync="isLicensedProductMaxPage"
+            placeholder="全部"
+          />
+        </el-form-item>
+        <el-form-item label="开发人天">
+          <el-input :value="form.purchaseOrderDTO.developerManDays"></el-input>
+        </el-form-item>
+        <el-form-item label="开发费用">
+          <el-input :value="form.purchaseOrderDTO.developerFee"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
-    <component ref="information" :is="activeName" :form="form" :userInfo="userInfo"></component>
+
+    <el-card shadow="never" class="p-card">
+      <div slot="header" class="p-card-head">
+        <span class="p-card-title">账款信息</span>
+      </div>
+      <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
+        <el-form-item label="账面余额">
+          <el-input :value="agentPaperMoney"></el-input>
+        </el-form-item>
+        <el-form-item label="未核销担保金">
+          <el-input :value="form.purchaseOrderDTO.agentGuaranteeMoney | formatAmount"></el-input>
+        </el-form-item>
+        <el-form-item label="付款状态">
+          <el-input :value="`${paymentStatus.has(form.purchaseOrderDTO.payStatus) ? paymentStatus.get(form.purchaseOrderDTO.payStatus).label : '未付款'}`"></el-input>
+        </el-form-item>
+        <el-form-item label="付款时间">
+          <el-input :value="form.purchaseOrderDTO.payTime"></el-input>
+        </el-form-item>
+        <el-form-item label="付款方式">
+          <el-input :value="form.purchaseOrderDTO.payMethod"></el-input>
+        </el-form-item>
+        <el-form-item label="收款人">
+          <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName"></el-input>
+        </el-form-item>
+        <el-form-item label="使用余额">
+          <el-input :value="useAmount"></el-input>
+        </el-form-item>
+        <el-form-item label="使用担保金">
+          <el-input :value="form.purchaseOrderDTO.useGuarantee | formatAmount"></el-input>
+        </el-form-item>
+        <el-form-item label="经销商">
+          <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
+        </el-form-item>
+      </el-form>
+    </el-card>
     <div class="p-infomation-action">
-      <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <template v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave">
-          保存
-        </el-button>
-      </template>
+      <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('hardwarePurchaseOrder')">删除</el-button>
+      <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <template v-if="$route.query.status === 'edit'">
-        <el-button size="small" type="primary" :disabled="isWlsDisableStatus" v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">
-          提交
-        </el-button>
+        <el-button size="small" type="primary" v-permission="'HARDWARE_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
       </template>
     </div>
   </section>
 </template>
 
 <script>
+import NP from 'number-precision'
 import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
-import { orderStatus, formErpObj, formWlsOrWcyObj, formYsObj, formDongleObj } from '../data'
-import erpInformation from './erpInformation'
-import retailInformation from './retailInformation.vue'
-import repastInformation from './repastInformation.vue'
-import cloundInformation from './cloundInformation.vue'
-import dongleInformation from './dongleInformation.vue'
+import { orderStatus, formObj, paymentStatus } from '../data'
 
 import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
-import {
-  authOrderErpDetail,
-  authOrderWlsDetail,
-  authOrderWcyDetail,
-  authOrderYsDetail,
-  authOrderErpUpdate,
-  authOrderWlsUpdate,
-  authOrderWcyUpdate,
-  authOrderYsUpdate,
-  authOrderErpAdd,
-  authOrderWlsAdd,
-  authOrderWcyAdd,
-  authOrderYsAdd,
-  authOrderErpSubmit,
-  authOrderWlsSubmit,
-  authOrderWcySubmit,
-  authOrderYsSubmit,
-  authOrderDogAdd,
-  authOrderDogById,
-  authOrderDogUpdate,
-  authOrderDogSubmit
-} from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { authOrderProductPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
-  components: {
-    erpInformation,
-    retailInformation,
-    repastInformation,
-    cloundInformation,
-    dongleInformation
-  },
   data() {
     return {
+      paymentStatus,
       checkBasicInformLoad: false,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
-      form: {},
-      activeName: 'erpInformation',
+      form: deepClone(formObj),
       productType: parseFloat(this.$route.query.productType),
-      baseInfoMap: new Map([
-        [
-          1,
-          {
-            componentName: 'erpInformation',
-            detailRequest: authOrderErpDetail,
-            updateRequest: authOrderErpUpdate,
-            verifyRequest: authOrderErpSubmit,
-            addRequest: authOrderErpAdd,
-            form: formErpObj
-          }
-        ],
-        [
-          3,
-          {
-            componentName: 'retailInformation',
-            detailRequest: authOrderWlsDetail,
-            updateRequest: authOrderWlsUpdate,
-            verifyRequest: authOrderWlsSubmit,
-            addRequest: authOrderWlsAdd,
-            form: formWlsOrWcyObj
-          }
-        ],
-        [
-          4,
-          {
-            componentName: 'repastInformation',
-            detailRequest: authOrderWcyDetail,
-            updateRequest: authOrderWcyUpdate,
-            verifyRequest: authOrderWcySubmit,
-            addRequest: authOrderWcyAdd,
-            form: formWlsOrWcyObj
-          }
-        ],
-        [
-          5,
-          {
-            componentName: 'cloundInformation',
-            detailRequest: authOrderYsDetail,
-            updateRequest: authOrderYsUpdate,
-            verifyRequest: authOrderYsSubmit,
-            addRequest: authOrderYsAdd,
-            form: formYsObj
-          }
-        ],
-        [
-          6,
-          {
-            componentName: 'dongleInformation',
-            detailRequest: authOrderDogById,
-            updateRequest: authOrderDogUpdate,
-            verifyRequest: authOrderDogSubmit,
-            addRequest: authOrderDogAdd,
-            form: formDongleObj
-          }
-        ]
-      ]),
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
       userInfo: JSON.parse(localStorage.userInfo),
-      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]')
+      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]'),
+      licensedProducts: [],
+      isLicensedProductMaxPage: false
+    }
+  },
+  filters: {
+    formatAmount(val) {
+      return val ? NP.divide(val, 100) : 0
     }
   },
   computed: {
@@ -166,13 +126,16 @@ export default {
         else return '未保存'
       } else return ''
     },
-    isWlsDisableStatus() {
-      return this.productType === 3 && this.form.merchantDTO.applicationModule === 2 && this.form.detailDTOList.length > 0 && this.form.detailDTOList[0].openCustAssistantApp === 1
+    agentPaperMoney() {
+      const agentPaperGiftMoney = this.form.purchaseOrderDTO.agentPaperGiftMoney
+        ? '（另有赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperGiftMoney) + '）'
+        : ''
+      return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperMoney) + agentPaperGiftMoney
+    },
+    useAmount() {
+      const useAmountGift = this.form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmountGift) + '）' : ''
+      return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmount) + useAmountGift
     }
-  },
-  created() {
-    this.activeName = this.baseInfoMap.get(this.productType).componentName
-    this.form = deepClone(this.baseInfoMap.get(this.productType).form)
   },
   mounted() {
     if (this.$route.query.status === 'add') this.getHandlerMan()
@@ -460,6 +423,13 @@ export default {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
         this.form.authOrderDTO.handMan = id
         this.form.authOrderDTO.handManName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
+      } catch (error) {}
+    },
+    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 1, productTypeList: [] })
+        this.licensedProducts = this.licensedProducts.concat(res.results || [])
+        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     }
   }

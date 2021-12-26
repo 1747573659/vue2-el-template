@@ -76,7 +76,8 @@ export const formYsObj = {
     merchantName: '',
     merchantNo: '',
     applicationSystem: '',
-    delayHour: 1
+    delayHour: 1,
+    operationType: 1
   },
   addAuthOrderDetailDTOList: [],
   renewAuthOrderDetailDTOList: []

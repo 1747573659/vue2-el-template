@@ -1,6 +1,6 @@
 <template>
   <section>
-    <el-tabs v-model="activeName" class="p-purchase-tab" @tab-click="handleTabPane">
+    <el-tabs v-model="activeName" class="p-detail-tab" @tab-click="handleTabPane">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
       <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
     </el-tabs>
@@ -11,14 +11,14 @@
 </template>
 
 <script>
-import { orderStatus } from '../index'
-import operationLog from '../components/operationLog'
+import { orderStatus } from './data'
+import operationLog from '../components/operationLog.vue'
 import basicInformation from './components/basicInformation.vue'
 
-import { operateLog } from '@/api/orderCenter/orderManagement'
+import { authOrderLog } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
-  name: 'softwarePurchaseDetails',
+  name: 'demandDevelopmentFeeDetails',
   components: {
     basicInformation,
     operationLog
@@ -30,19 +30,21 @@ export default {
     }
   },
   mounted() {
+    if (['edit', 'detail'].includes(this.$route.query.status)) this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
-      document.querySelector('.e-tag_active span').innerText = `软件采购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
+      document.querySelector('.e-tag_active span').innerText = `需求开发收费单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
   },
   methods: {
-    handleTabPane (tab) {
+    handleTabPane(tab) {
       if (tab.name === 'operationLog') this.getOperateLog()
       else this.operateData = []
     },
     async getOperateLog() {
       try {
-        this.operateData = await operateLog({ orderType: 1, purchaseId: this.$route.query.id })
+        const res = await authOrderLog(this.$route.query.id)
+        this.operateData = res
       } catch (error) {}
     }
   }
@@ -50,7 +52,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-purchase-tab {
+.p-detail-tab {
   margin-left: -16px;
   margin-right: -16px;
   background-color: #fff;

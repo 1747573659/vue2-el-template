@@ -407,11 +407,15 @@ export default {
       if (subData.isOnline === '') {
         delete subData.isOnline
       }
-      this.tableLoading = true
-      const res = await authShopPage(subData)
-      this.tableLoading = false
-      this.tableList = res.results
-      this.tableTotal = res.totalCount
+      try {
+        this.tableLoading = true
+        const res = await authShopPage(subData)
+        this.tableList = res.results
+        this.tableTotal = res.totalCount
+      } catch (error) {
+      } finally {
+        this.tableLoading = false
+      }
     }
   }
 }

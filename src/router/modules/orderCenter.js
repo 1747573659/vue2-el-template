@@ -51,7 +51,7 @@ const orderCenter = {
           name: 'softwarePurchaseDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '软件采购详情', name: 'softwarePurchaseDetails', cache: true }
+          meta: { title: '软件采购订单详情', name: 'softwarePurchaseDetails', cache: true }
         },
         {
           path: 'softwareInventoryApply',
@@ -66,7 +66,7 @@ const orderCenter = {
           name: 'softwareInventoryApplyDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '软件库存申请详情', name: 'softwareInventoryApplyDetails', cache: true }
+          meta: { title: '软件库存申请单详情', name: 'softwareInventoryApplyDetails', cache: true }
         },
         {
           path: 'softwareInventoryReplace',
@@ -81,7 +81,7 @@ const orderCenter = {
           name: 'softwareInventoryReplaceDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '软件库存置换详情', name: 'softwareInventoryReplaceDetails', cache: true }
+          meta: { title: '库存换购订单详情', name: 'softwareInventoryReplaceDetails', cache: true }
         },
         {
           path: 'hardwarePurchaseOrder',
@@ -96,7 +96,7 @@ const orderCenter = {
           name: 'hardwarePurchaseDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '硬件采购详情', name: 'hardwarePurchaseDetails', cache: true }
+          meta: { title: '硬件采购订单详情', name: 'hardwarePurchaseDetails', cache: true }
         },
         {
           path: 'demandDevelopmentFee',
@@ -104,6 +104,14 @@ const orderCenter = {
           name: 'demandDevelopmentFee',
           code: 'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE',
           meta: { title: '需求开发收费单', name: 'demandDevelopmentFee', cache: true }
+        },
+        {
+          path: 'demandDevelopmentFeeDetails',
+          component: _import('orderCenter/OrderManagement/DemandDevelopmentFee/demandDevelopmentFeeDetails'),
+          name: 'demandDevelopmentFeeDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '需求开发收费单详情', name: 'demandDevelopmentFeeDetails', cache: true }
         },
         {
           path: 'selfServiceEquipment',

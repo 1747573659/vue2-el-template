@@ -37,6 +37,7 @@
           <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
             <el-option label="微商城" :value="1"></el-option>
             <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
+            <el-option label="电子发票" :value="3" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="延期时长" v-if="['', 1].includes(form.merchantDTO.applicationModule)">
