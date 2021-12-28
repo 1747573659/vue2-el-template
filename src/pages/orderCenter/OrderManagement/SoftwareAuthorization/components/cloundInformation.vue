@@ -268,8 +268,7 @@ export default {
       }
     },
     async handleAppModule(val) {
-      this.form.addAuthOrderDetailDTOList = []
-      this.form.renewAuthOrderDetailDTOList = []
+      this.resetDTOList()
       if (val) {
         this.form.merchantDTO.delayHour = 1
         if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
@@ -277,9 +276,14 @@ export default {
         this.setAddAuthDetailDTOList()
       } else this.form.authOrderDTO.useModalInner = -1
     },
-    handleShopPage(val) {
+    resetDTOList() {
+      this.selectMaps.clear()
+      this.currentPageSelectSets.clear()
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
+    },
+    handleShopPage(val) {
+      this.resetDTOList()
       this.form.authOrderDTO.useModalInner = -1
       if (val) {
         const { CustId: merchantNo, CustName } = this.shopPageData.find(item => item.CustId === val)
@@ -342,7 +346,7 @@ export default {
           billNo: this.form.authOrderDTO?.billNo ?? ''
         })
       }
-      if (this.form.renewAuthOrderDetailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      if (this.form.renewAuthOrderDetailDTOList.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.renewAuthOrderDetailDTOList?.length > 0) {
         this.form.renewAuthOrderDetailDTOList.forEach((item, index) => {
           if (!this.selectMaps.has(item.authId)) this.form.renewAuthOrderDetailDTOList.splice(index, 1)
