@@ -214,7 +214,7 @@ export default {
           remark: ''
         })
       }
-      if (this.form.detailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      if (this.form.detailDTOList.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.detailDTOList?.length > 0) {
         this.form.detailDTOList.forEach((item, index) => {
           if (!this.selectMaps.has(item.shopCode)) this.form.detailDTOList.splice(index, 1)
@@ -233,7 +233,6 @@ export default {
     },
     async handleZbProduct() {
       try {
-        console.info(this.merchantInfo)
         const res = await queryByAgentProductAndModule({ moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC', productCode: this.merchantInfo.productCode })
         this.merchantInfo.productCode = res?.productId ?? this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
         if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
@@ -263,10 +262,15 @@ export default {
           }
         ]
         this.getProductStock()
-      } else this.form.detailDTOList = []
+      } else this.resetDTOList()
     },
     getWcyCustInfo() {
       return authOrderWcyCustInfo({ cust: this.form.merchantDTO.merchantNo })
+    },
+    resetDTOList() {
+      this.form.detailDTOList = []
+      this.selectMaps.clear()
+      this.currentPageSelectSets.clear()
     },
     async handleMerchantInfo(val) {
       if (val) {
@@ -278,7 +282,7 @@ export default {
           this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
         } catch (error) {}
       } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantVersion: '', relationProductName: '', storeCount: '', applicationModule: '' })
-      this.form.detailDTOList = []
+      this.resetDTOList()
     },
     async getProductStock() {
       try {

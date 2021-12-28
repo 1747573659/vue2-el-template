@@ -179,6 +179,8 @@ export default {
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
       } else this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount: '', productCode: '', productName: '', authStatus: '', merchantId: '' })
       this.form.erpAuthOrderDetails = []
+      this.selectMaps.clear()
+      this.currentPageSelectSets.clear()
     },
     handleConfirm() {
       const addDetailItem = item => {
@@ -193,7 +195,7 @@ export default {
           remark: ''
         })
       }
-      if (this.form.erpAuthOrderDetails.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
         this.form.erpAuthOrderDetails.forEach((item, index) => {
           if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
