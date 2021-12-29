@@ -97,7 +97,7 @@ export default {
   },
   mounted() {
     const userInfo = JSON.parse(getLocal('userInfo'))
-    if (process.env.VUE_APP_FLAG === 'pro' && userInfo.loginName !== '18888888888') {
+    if (process.env.VUE_APP_FLAG === 'pro' && !['17608470987', '13866666666', '17608470847'].includes(userInfo.loginName)) {
       this.routes.map(item => {
         if (item.name === 'orderCenter') {
           if (userInfo.propertyType === 3) {
