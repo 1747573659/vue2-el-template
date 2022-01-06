@@ -69,7 +69,7 @@
         <el-table-column prop="productCode" label="产品编码"></el-table-column>
         <el-table-column prop="productName" label="产品名称"></el-table-column>
         <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
-        <el-table-column label="加点数" align="right">
+        <el-table-column label="加点数量" align="right">
           <template slot-scope="scope">
             <el-input
               size="small"
@@ -376,7 +376,7 @@ export default {
     },
     handleAddNumAmount(row) {
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.addNum)) {
-        this.$message({ type: 'warning', message: '加点数范围为[1-999]' })
+        this.$message({ type: 'warning', message: '加点数量范围为[1-999]' })
         row.addNum = 1
       }
       row.useInventory = NP.times(row.addNum, this.form.merchantDTO.delayHour)
