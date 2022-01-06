@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 // 列表
-export function queryChannelDevelopPage(data) {
+export function queryErpTransferPage(data) {
   return request({
-    url: '/channel/require/develop/page',
+    url: '/channel/erp/transfer/page',
     method: 'POST',
     data
   })

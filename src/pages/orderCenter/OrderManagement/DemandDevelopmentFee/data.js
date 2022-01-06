@@ -20,7 +20,6 @@ export const orderStatus = new Map([
 export const paymentStatus = new Map([
   ['', { value: '', label: '全部' }],
   [0, { value: 0, label: '未付款' }],
-  [1, { value: 1, label: '部分付款' }],
   [2, { value: 2, label: '已付款' }]
 ])
 

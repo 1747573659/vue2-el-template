@@ -127,7 +127,6 @@ import { industryTypes, orderStatus, paymentStatus } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import { queryChannelDevelopPage, queryProductCode } from '@/api/orderCenter/orderManagement/demandDevelopmentFee'
-import { queryByPage, authOrderExport, authOrderExportLog, authOrderExportDel, authOrderProductPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   name: 'demandDevelopmentFee',
@@ -175,10 +174,7 @@ export default {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'demandDevelopmentFeeDetails' }).then(() => {
-        this.$router.push({
-          name: 'demandDevelopmentFeeDetails',
-          query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus })
-        })
+        this.$router.push({ name: 'demandDevelopmentFeeDetails', query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }) })
       })
     },
     handleQueryParams() {

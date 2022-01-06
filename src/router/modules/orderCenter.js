@@ -114,6 +114,21 @@ const orderCenter = {
           meta: { title: '需求开发收费单详情', name: 'demandDevelopmentFeeDetails', cache: true }
         },
         {
+          path: 'erpAuthorizedTransfer',
+          component: _import('orderCenter/OrderManagement/ErpAuthorizedTransfer/erpAuthorizedTransfer'),
+          name: 'erpAuthorizedTransfer',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_ERPAUTHORIZEDTRANSFER',
+          meta: { title: 'erp授权转移单', name: 'erpAuthorizedTransfer', cache: true }
+        },
+        {
+          path: 'erpAuthorizedTransferDetails',
+          component: _import('orderCenter/OrderManagement/ErpAuthorizedTransfer/erpAuthorizedTransferDetails'),
+          name: 'erpAuthorizedTransferDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: 'erp授权转移单详情', name: 'erpAuthorizedTransferDetails', cache: true }
+        },
+        {
           path: 'selfServiceEquipment',
           component: _import('orderCenter/OrderManagement/SelfServiceEquipment/selfServiceEquipment'),
           name: 'selfServiceEquipment',

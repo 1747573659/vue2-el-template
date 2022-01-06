@@ -2,7 +2,7 @@
   <section>
     <div class="search-box">
       <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="80px" @submit.native.prevent>
-        <el-row>
+        <el-row type="flex" align="bottom">
           <el-col :xl="22" :lg="21">
             <el-form-item label="订单日期">
               <el-date-picker
@@ -20,12 +20,12 @@
             <el-form-item label="授权产品">
               <km-select-page
                 ref="productCode"
-                v-model="form.productCodes"
+                v-model="form.newMerchantProductCode"
                 option-label="name"
                 option-value="code"
-                :data.sync="licensedProducts"
+                :data.sync="productLists"
                 :request="getProductByPage"
-                :is-max-page.sync="isLicensedProductMaxPage"
+                :is-max-page.sync="isProductMaxPage"
                 placeholder="全部"
                 multiple
                 collapse-tags
@@ -39,8 +39,8 @@
               </el-select>
             </el-form-item>
             <el-form-item label="注册方式">
-              <el-select v-model="form.registerStatus" clearable>
-                <el-option v-for="item in registerStatus" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
+              <el-select v-model="form.oldRegistType" clearable>
+                <el-option v-for="item in oldRegistTypes" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="下单人">
@@ -50,29 +50,30 @@
                 :data.sync="ordererData"
                 option-label="userName"
                 option-value="id"
-                :request="handleOrderPage"
+                :request="handleOrdererPage"
                 :is-max-page.sync="isOrdererMaxPage"
-                placeholder="下单人"
+                placeholder="全部"
               />
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="16" clearable></el-input>
             </el-form-item>
             <el-form-item label="商户信息">
-              <el-input v-model.trim="form.msg" maxlength="40" placeholder="请输入旧商户号/新商户号" clearable></el-input>
+              <el-input v-model.trim="form.merchantId" maxlength="40" placeholder="请输入旧商户号/新商户号" clearable></el-input>
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
-              <el-button size="small" v-permission="'ERP_AUTHORIZED_TRANSFER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
-              <km-export-view v-permission="'ERP_AUTHORIZED_TRANSFER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+              <!-- <el-button size="small" v-permission="'ERP_AUTHORIZED_TRANSFER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
+              <km-export-view v-permission="'ERP_AUTHORIZED_TRANSFER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" /> -->
+            </el-form-item>
+          </el-col>
+          <el-col :xl="2" :lg="3" style="text-align:right">
+            <!-- <el-form-item v-permission="'ERP_AUTHORIZED_TRANSFER_PLUS'"> -->
+            <el-form-item>
+              <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>
-        <el-col :xl="2" :lg="3" style="text-align:right">
-          <el-form-item v-permission="'ERP_AUTHORIZED_TRANSFER_PLUS'">
-            <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleSoftWareDetail({ status: 'add' })">新增</el-button>
-          </el-form-item>
-        </el-col>
       </el-form>
     </div>
     <div class="data-box" v-loading="checkTabLock">
@@ -80,20 +81,22 @@
         <el-table-column prop="createOrderTime" label="订单时间"></el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column label="旧商户注册方式">
-          <template slot-scope="scope">{{ registerStatus.has(scope.row.oldRegister) ? registerStatus.get(scope.row.oldRegister).label : '--' }}</template>
+          <template slot-scope="scope">{{ oldRegistTypes.has(scope.row.oldRegistType) ? oldRegistTypes.get(scope.row.oldRegistType).label : '--' }}</template>
         </el-table-column>
         <el-table-column label="授权产品">
-          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</template>
+          <template slot-scope="scope">{{
+            `${scope.row.newMerchantProductCode ? '[' + scope.row.newMerchantProductCode + ']' : ''}${scope.row.newMerchantProductCodeName || ''}`
+          }}</template>
         </el-table-column>
-        <el-table-column prop="oldMerchantNo" label="旧商户号"></el-table-column>
-        <el-table-column prop="newMerchantNo" label="新商户号"></el-table-column>
+        <el-table-column prop="oldMerchantId" label="旧商户号"></el-table-column>
+        <el-table-column prop="newMerchantId" label="新商户号"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
-        <el-table-column prop="handManName" label="下单人"></el-table-column>
+        <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">
@@ -111,34 +114,35 @@
 <script>
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
-import { orderStatus, registerStatus } from './data'
+import { orderStatus, oldRegistTypes } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
-import { queryByPage, authOrderExport, authOrderExportLog, authOrderExportDel, authOrderProductPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { queryErpTransferPage, queryProductCode } from '@/api/orderCenter/orderManagement/erpAuthorizedTransfer'
 
 export default {
   name: 'erpAuthorizedTransfer',
   data() {
     return {
       orderStatus,
-      registerStatus,
-      licensedProducts: [],
-      isLicensedProductMaxPage: false,
+      oldRegistTypes,
+      productLists: [],
+      isProductMaxPage: false,
       ordererData: [],
       isOrdererMaxPage: false,
-      checkExportLoad: false,
-      form: { createTime: '', productCodes: [], orderStatus: '', registerStatus: '', createUser: '', billNo: '', msg: '' },
+      form: { createTime: '', newMerchantProductCode: [], orderStatus: '', oldRegistType: '', createUser: '', billNo: '', merchantId: '' },
       checkTabLock: false,
       tableData: [],
       currentPage: 1,
       totalPage: 0,
       pageSize: 10,
-      userInfo: JSON.parse(localStorage.userInfo),
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
         }
-      }
+      },
+      userInfo: JSON.parse(localStorage.userInfo),
+
+      checkExportLoad: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -150,25 +154,21 @@ export default {
   },
   mounted() {
     this.getProductByPage()
-    this.handleOrderPage()
+    this.handleOrdererPage()
   },
   methods: {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
-      this.delCachedView({ name: 'softwareAuthorizationDetails' }).then(() => {
-        this.$router.push({
-          name: 'softwareAuthorizationDetails',
-          query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }, status.productType ? {} : { productType: row.productType })
-        })
+      this.delCachedView({ name: 'erpAuthorizedTransferDetails' }).then(() => {
+        this.$router.push({ name: 'erpAuthorizedTransferDetails', query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }) })
       })
     },
     handleQueryParams() {
       const { createTime, ...params } = this.form
       return Object.assign(params, {
-        sysSource: 1,
-        agentId: this.userInfo.agentId,
-        minDate: createTime?.[0] ?? '',
-        maxDate: createTime?.[1] ?? '',
+        from: 0,
+        createOrderTimeStart: createTime?.[0] ?? '',
+        createOrderTimeEnd: createTime?.[1] ?? '',
         page: this.currentPage,
         rows: this.pageSize
       })
@@ -180,7 +180,7 @@ export default {
     async getQueryPage() {
       try {
         this.checkTabLock = true
-        const res = await queryByPage(this.handleQueryParams())
+        const res = await queryErpTransferPage(this.handleQueryParams())
         this.tableData = res?.results ?? []
         this.totalPage = res?.totalCount ?? 0
       } catch (error) {
@@ -188,23 +188,23 @@ export default {
         this.checkTabLock = false
       }
     },
-    async handleExport() {
-      try {
-        this.checkExportLoad = true
-        await authOrderExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
-        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-      } catch (error) {
-      } finally {
-        this.checkExportLoad = false
-      }
-    },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
-    },
-    handleExportDel: async function(row) {
-      return await authOrderExportDel(row.id)
-    },
-    async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {
+    // async handleExport() {
+    //   try {
+    //     this.checkExportLoad = true
+    //     await authOrderExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+    //     this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+    //   } catch (error) {
+    //   } finally {
+    //     this.checkExportLoad = false
+    //   }
+    // },
+    // handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+    //   return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
+    // },
+    // handleExportDel: async function(row) {
+    //   return await authOrderExportDel(row.id)
+    // },
+    async handleOrdererPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, page, rows, userName: query })
         this.ordererData = this.ordererData.concat(res.results || [])
@@ -213,9 +213,9 @@ export default {
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 1, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
-        this.licensedProducts = this.licensedProducts.concat(res.results || [])
-        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+        const res = await queryProductCode({ info: query, page, rows, productIndustry: this.form.industry })
+        this.productLists = this.productLists.concat(res.results || [])
+        this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     }
   }
