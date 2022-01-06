@@ -4,45 +4,43 @@
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
-          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
+          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.remark">（订单被退回，原因：{{ form.remark }}）</span>
         </div>
         <div class="p-card-state">
           <span>订单状态：</span>
           <span class="p-card-state_text">{{ currentOrderStatus }}</span>
         </div>
       </div>
-
-      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
+      <el-form ref="orderForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="订单编码">
-          <el-input :value="form.purchaseOrderDTO.billNo" disabledplaceholder="保存后自动生成" disabled></el-input>
+          <el-input :value="form.billNo" disabledplaceholder="保存后自动生成" disabled></el-input>
         </el-form-item>
         <el-form-item label="订单日期">
-          <el-input :value="`${form.purchaseOrderDTO.createOrderTime || baseOrderTime}`" disabled></el-input>
+          <el-input :value="`${form.createOrderTime || baseOrderTime}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input :value="form.purchaseOrderDTO.handManName" disabled></el-input>
+          <el-input :value="form.handUserName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="产品">
+        <el-form-item label="产品" prop="productCode">
           <km-select-page
-            ref="productCode"
+            ref="product"
             v-model="form.productCode"
             option-label="name"
             option-value="code"
-            :data.sync="licensedProducts"
+            :data.sync="productLists"
             :request="getProductByPage"
-            :is-max-page.sync="isLicensedProductMaxPage"
-            placeholder="全部"
+            :is-max-page.sync="isProductMaxPage"
+            placeholder=""
           />
         </el-form-item>
-        <el-form-item label="开发人天">
-          <el-input :value="form.purchaseOrderDTO.developerManDays"></el-input>
+        <el-form-item label="开发人天" prop="developDay">
+          <el-input v-model="form.developDay" clearable></el-input>
         </el-form-item>
-        <el-form-item label="开发费用">
-          <el-input :value="form.purchaseOrderDTO.developerFee"></el-input>
+        <el-form-item label="开发费用" prop="developAmount">
+          <el-input v-model.trim="form.developAmount" clearable></el-input>
         </el-form-item>
       </el-form>
     </el-card>
-
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <span class="p-card-title">账款信息</span>
@@ -52,34 +50,34 @@
           <el-input :value="agentPaperMoney"></el-input>
         </el-form-item>
         <el-form-item label="未核销担保金">
-          <el-input :value="form.purchaseOrderDTO.agentGuaranteeMoney | formatAmount"></el-input>
+          <el-input :value="form.agentGuaranteeMoney | formatAmount"></el-input>
         </el-form-item>
         <el-form-item label="付款状态">
-          <el-input :value="`${paymentStatus.has(form.purchaseOrderDTO.payStatus) ? paymentStatus.get(form.purchaseOrderDTO.payStatus).label : '未付款'}`"></el-input>
+          <el-input :value="`${paymentStatus.has(form.payStatus) ? paymentStatus.get(form.payStatus).label : '未付款'}`"></el-input>
         </el-form-item>
         <el-form-item label="付款时间">
-          <el-input :value="form.purchaseOrderDTO.payTime"></el-input>
+          <el-input :value="form.payTime"></el-input>
         </el-form-item>
         <el-form-item label="付款方式">
-          <el-input :value="form.purchaseOrderDTO.payMethod"></el-input>
+          <el-input :value="form.payMethod"></el-input>
         </el-form-item>
         <el-form-item label="收款人">
-          <el-input :value="form.purchaseOrderDTO.receiveMoneyPeopleName"></el-input>
+          <el-input :value="form.payManName"></el-input>
         </el-form-item>
         <el-form-item label="使用余额">
           <el-input :value="useAmount"></el-input>
         </el-form-item>
         <el-form-item label="使用担保金">
-          <el-input :value="form.purchaseOrderDTO.useGuarantee | formatAmount"></el-input>
+          <el-input :value="form.useGuarantee | formatAmount"></el-input>
         </el-form-item>
         <el-form-item label="经销商">
-          <el-input :value="`${form.purchaseOrderDTO.agentId ? '[' + form.purchaseOrderDTO.agentId + ']' : ''}${form.purchaseOrderDTO.agentName}`"></el-input>
+          <el-input :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>
     <div class="p-infomation-action">
-      <el-button size="small" plain @click="handleCancel('hardwarePurchaseOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('hardwarePurchaseOrder')">删除</el-button>
+      <el-button size="small" plain @click="handleCancel('demandDevelopmentFee')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('demandDevelopmentFee')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <template v-if="$route.query.status === 'edit'">
         <el-button size="small" type="primary" v-permission="'HARDWARE_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
@@ -94,8 +92,15 @@ import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
 import { orderStatus, formObj, paymentStatus } from '../data'
 
-import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
-import { authOrderProductPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { queryHandlerMan, queryAgentMoneyStream } from '@/api/orderCenter/orderManagement'
+import {
+  queryProductCode,
+  channelDevelopAdd,
+  channelDevelopById,
+  channelDevelopUpdate,
+  channelDevelopSubmit,
+  channelDevelopDelete
+} from '@/api/orderCenter/orderManagement/demandDevelopmentFee'
 
 export default {
   data() {
@@ -104,13 +109,22 @@ export default {
       checkBasicInformLoad: false,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
       form: deepClone(formObj),
-      productType: parseFloat(this.$route.query.productType),
-      checkSaveBtnLoad: false,
-      checkVerifyBtnLoad: false,
+      productLists: [],
+      isProductMaxPage: false,
       userInfo: JSON.parse(localStorage.userInfo),
-      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]'),
-      licensedProducts: [],
-      isLicensedProductMaxPage: false
+      rules: {
+        productCode: [{ required: true, message: '请选择产品', trigger: ['blur', 'change'] }],
+        developDay: [
+          { required: true, message: '请输入开发人天', trigger: ['blur', 'change'] },
+          { pattern: /^\+?[1-9]{1}[0-9]{0,3}\d{0,0}$/, message: '开发人天范围为1-9999', trigger: 'blur' }
+        ],
+        developAmount: [
+          { required: true, message: '请输入开发费用', trigger: ['blur', 'change'] },
+          { pattern: /^([0-9]\d{0,10}?)(\.\d{1,2})?$/, message: '开发费用范围为[0, 99999999999.99]', trigger: 'blur' }
+        ]
+      },
+      checkSaveBtnLoad: false,
+      checkVerifyBtnLoad: false
     }
   },
   filters: {
@@ -127,252 +141,43 @@ export default {
       } else return ''
     },
     agentPaperMoney() {
-      const agentPaperGiftMoney = this.form.purchaseOrderDTO.agentPaperGiftMoney
-        ? '（另有赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperGiftMoney) + '）'
-        : ''
-      return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperMoney) + agentPaperGiftMoney
+      const agentPaperGiftMoney = this.form.agentPaperGiftMoney ? '（另有赠金' + this.$options.filters['formatAmount'](this.form.agentPaperGiftMoney) + '）' : ''
+      return this.$options.filters['formatAmount'](this.form.agentPaperMoney) + agentPaperGiftMoney
     },
     useAmount() {
-      const useAmountGift = this.form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmountGift) + '）' : ''
-      return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmount) + useAmountGift
+      const useAmountGift = this.form.useAmountGift ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.useAmountGift) + '）' : ''
+      return this.$options.filters['formatAmount'](this.form.useAmount) + useAmountGift
     }
   },
   mounted() {
-    if (this.$route.query.status === 'add') this.getHandlerMan()
-    if ([3, 4].includes(this.productType)) this.$refs.information.getCustList()
-    if (['edit', 'detail'].includes(this.$route.query.status)) {
-      this.getDetail().then(() => {
-        if (this.$route.query.status === 'edit') this.$refs.information.getProductStock()
-      })
-    }
+    if (this.$route.query.status === 'add') {
+      this.getHandlerMan()
+      this.getAgentMoneyStream()
+    } else this.getDetail()
   },
   methods: {
     handleVerify() {
-      const erpHCMModule =
-        this.productType === 1 &&
-        ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
-      if (erpHCMModule) {
-        if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
-          this.$message({ type: 'warning', message: '请选择"总部模块"后再提交' })
-          return
-        }
-      }
-      this.$confirm('确定要提交吗？', '提示', {
-        type: 'warning'
-      })
-        .then(() => {
-          this.setOrderSave()
-            .then(async () => {
-              await this.baseInfoMap.get(this.productType).verifyRequest({ id: parseFloat(this.$route.query.id), result: 0 })
-              this.getDetail().then(() => {
-                this.$router.replace({
-                  name: this.$route.name,
-                  query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
-                })
-                document.querySelector('.e-tag_active span').innerText = `软件授权订单/详情`
-              })
-              this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
-            })
-            .catch(() => {})
+      this.checkVerifyBtnLoad = true
+      this.setOrderSave()
+        .then(async () => {
+          await channelDevelopSubmit({ id: this.form.id })
+          this.getDetail().then(() => {
+            this.$router.replace({ name: this.$route.name, query: { id: this.form.id, orderStatus: this.form.orderStatus, status: 'detail' } })
+          })
+          this.$message({ type: 'success', message: '提交成功' })
         })
         .catch(() => {})
-    },
-    handleCancel(name) {
-      this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
-    },
-    getDogInformationObj() {
-      if (!this.form.detailDTOList.length) {
-        this.$message({ type: 'warning', message: '请选择授权产品' })
-      } else if (this.form.detailDTOList.some(item => !item.authVersion)) {
-        this.$message({ type: 'warning', message: '订单明细产品版本不能为空' })
-      } else if (this.form.detailDTOList.some(item => !item.dogId)) {
-        this.$message({ type: 'warning', message: '订单明细加密狗ID/序列号不能为空' })
-      } else {
-        const insufficientObj = this.form.detailDTOList.filter(item => item.authNum > item.orderInventory)
-        if (insufficientObj.length > 0) {
-          const confirmOptions = Object.assign(this.handleConfirmOption(), {
-            beforeClose: (action, instance, done) => {
-              if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
-              else this.$refs.information.getProductStock()
-              done()
-            }
-          })
-          this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
-        } else {
-          return {
-            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
-            orderDetailVos: this.handleQueryParams().orderDetailVos
-          }
-        }
-      }
-    },
-    getYsInformationObj() {
-      if (!this.form.merchantDTO.merchantNo) {
-        this.$message({ type: 'warning', message: '请选择商户' })
-      } else if (!this.form.merchantDTO.applicationSystem) {
-        this.$message({ type: 'warning', message: '请选择应用系统' })
-      } else if (!this.form.merchantDTO.delayHour) {
-        this.$message({ type: 'warning', message: '请选择延期时长' })
-      } else if (this.$refs.information.showAuthorTab && !this.form.renewAuthOrderDetailDTOList?.length) {
-        this.$message({ type: 'warning', message: '请选择授权对象' })
-      } else {
-        const detailDTOList = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
-        const insufficientObj = detailDTOList.filter(item => {
-          return item.useInventory > (item?.orderInventory ?? this.$refs.information.productStockObj?.totalAmount)
+        .finally(() => {
+          this.checkVerifyBtnLoad = false
         })
-        if (insufficientObj.length > 0) {
-          const confirmOptions = Object.assign(this.handleConfirmOption(), {
-            beforeClose: (action, instance, done) => {
-              if (action === 'confirm') {
-                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.appModuleObj.productCode } })
-              } else this.$refs.information.getProductStock()
-              done()
-            }
-          })
-          this.$confirm(`[${this.$refs.information.appModuleObj.name}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`, confirmOptions).catch(() => {})
-        } else {
-          const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
-          const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
-          const userLevelNum = this.$refs.information.modulesUserLevel.find(item => item.value === this.form.authOrderDTO.userLevel).num
-          const { useModalInner, userLevel } = this.form.authOrderDTO
-          return {
-            authOrderVO: Object.assign(
-              this.handleQueryParams().authOrderVO,
-              { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount, useModalInner },
-              { productCode, userLevelNum, userLevel }
-            ),
-            addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
-            renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
-          }
-        }
-      }
-    },
-    getWcyInformationObj() {
-      if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantNo) {
-        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
-      } else {
-        const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
-        if (insufficientObj.length > 0) {
-          const confirmOptions = Object.assign(this.handleConfirmOption(), {
-            beforeClose: (action, instance, done) => {
-              if (action === 'confirm') {
-                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
-              } else this.$refs.information.getProductStock()
-              done()
-            }
-          })
-          let productName = ''
-          if (this.productLists?.length) {
-            productName = this.productLists.find(item => item.code === this.$refs.information.merchantInfo.productCode).name
-          } else productName = this.$refs.information.merchantInfo.productCode
-          this.$confirm(`[${productName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
-        } else {
-          const { productCode } = this.form.authOrderDTO
-          const { merchantNo: merchantId, applicationModule: useModal, delayHour: delayCount } = this.form.merchantDTO
-          return {
-            authOrderVO: Object.assign(
-              this.handleQueryParams().authOrderVO,
-              { orderStatus: 0, productType: 4, merchantId, useModal, delayCount, useModalInner: -1 },
-              { productCode: this.$refs.information.merchantInfo.productCode || productCode }
-            ),
-            orderDetailVos: this.handleQueryParams().orderDetailVos
-          }
-        }
-      }
-    },
-    getWlsInformationObj() {
-      if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantId) {
-        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
-      } else {
-        const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
-        if (insufficientObj.length > 0) {
-          const confirmOptions = Object.assign(this.handleConfirmOption(), {
-            beforeClose: (action, instance, done) => {
-              if (action === 'confirm') {
-                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
-              } else this.$refs.information.getProductStock()
-              done()
-            }
-          })
-          let productName = ''
-          if (this.productLists?.length) {
-            productName = this.productLists.find(item => item.code === this.$refs.information.merchantInfo.productCode).name
-          } else productName = this.$refs.information.merchantInfo.productCode
-          this.$confirm(`[${productName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
-        } else {
-          const { merchantId, applicationModule: useModal, delayHour: delayCount, productCode } = this.form.merchantDTO
-          return {
-            authOrderVO: Object.assign(
-              this.handleQueryParams().authOrderVO,
-              { orderStatus: 0, productType: 3, merchantId, useModal, delayCount, useModalInner: -1 },
-              { productCode: this.$refs.information.merchantInfo.productCode || productCode }
-            ),
-            orderDetailVos: this.handleQueryParams().orderDetailVos
-          }
-        }
-      }
-    },
-    getErpInformationObj() {
-      if (this.form.erpAuthOrderDetails.length === 0 || !this.form.erpAuthMerchantDTO.merchantId) {
-        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
-      } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && item.unionChannel === '')) {
-        this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
-      } else {
-        const insufficientObj = this.form.erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
-        if (insufficientObj.length > 0) {
-          const confirmOptions = Object.assign(this.handleConfirmOption(), {
-            beforeClose: (action, instance, done) => {
-              if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
-              else this.$refs.information.getProductStock()
-              done()
-            }
-          })
-          this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
-        } else {
-          const { merchantId, productCode, authStatus } = this.form.erpAuthMerchantDTO
-          return {
-            authOrderVO: Object.assign(
-              this.handleQueryParams().authOrderVO,
-              { merchantId, productCode },
-              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
-            ),
-            orderDetailVos: this.handleQueryParams().orderDetailVos
-          }
-        }
-      }
-    },
-    handleConfirmOption() {
-      const optionVo = { title: '系统提示', type: 'warning', cancelButtonText: '返回修改' }
-      if (this.userInfo.level === 1) optionVo.confirmButtonText = '去采购'
-      else optionVo.showConfirmButton = false
-      return optionVo
-    },
-    handleQueryParams() {
-      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
-      return {
-        authOrderVO: { handMan, inventoryAmount, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
-        orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
-      }
-    },
-    setOrderSave() {
-      let data = {}
-      const status = this.$route.query.status === 'add'
-      if (this.productType === 1) data = this.getErpInformationObj()
-      else if (this.productType === 3) data = this.getWlsInformationObj()
-      else if (this.productType === 4) data = this.getWcyInformationObj()
-      else if (this.productType === 5) data = this.getYsInformationObj()
-      else if (this.productType === 6) data = this.getDogInformationObj()
-      if (!data) return new Promise((resolve, reject) => reject(new Error()))
-      return status ? this.baseInfoMap.get(this.productType).addRequest(data) : this.baseInfoMap.get(this.productType).updateRequest(data)
     },
     handleSave() {
       this.checkSaveBtnLoad = true
       this.setOrderSave()
         .then(res => {
           if (this.$route.query.status === 'add') {
-            this.$router.replace({ name: this.$route.name, query: { id: res, productType: this.productType, orderStatus: 0, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = `软件授权订单/编辑`
+            this.$router.replace({ name: this.$route.name, query: { id: res.id, orderStatus: res.orderStatus, status: 'edit' } })
+            document.querySelector('.e-tag_active span').innerText = '需求开发收费单/编辑'
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })
@@ -382,54 +187,81 @@ export default {
           this.checkSaveBtnLoad = false
         })
     },
+    async setOrderSave() {
+      let isValidatePass = false
+      await this.$refs.orderForm.validate(valid => {
+        if (valid) isValidatePass = true
+        else isValidatePass = false
+      })
+      if (isValidatePass) {
+        const { developDay, developAmount, productCode, handUser, id, ...params } = this.form
+        const data = { agentId: this.userInfo.agentId, id, developDay, developAmount: NP.times(developAmount, 100), productCode, handUser }
+        return this.$route.query.status === 'add' ? channelDevelopAdd(data) : channelDevelopUpdate(data)
+      } else return new Promise((resolve, reject) => reject(new Error()))
+    },
     async getDetail() {
       try {
         this.checkBasicInformLoad = true
-        const res = await this.baseInfoMap.get(this.productType).detailRequest(this.$route.query.id)
+        const res = await channelDevelopById(this.$route.query.id)
+        res.developAmount = NP.divide(res.developAmount, 100)
         this.form = res
-        this.$nextTick(() => {
-          if (this.productType !== 6) {
-            const selectPageVal = this.productType === 1 ? res?.erpAuthMerchantDTO?.merchantName ?? '' : res?.merchantDTO?.merchantName ?? ''
-            setTimeout(() => {
-              this.$refs.information.$refs.selectPage.selectVal = selectPageVal
-            }, 500)
-          }
-          if (this.productType === 3) {
-            this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
-            this.form.merchantDTO.merchantId = res.authOrderDTO.merchantId
-            this.form.merchantDTO.productCode = res.authOrderDTO.productCode
-          } else if (this.productType === 4) {
-            this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
-          } else if (this.productType === 5) {
-            this.form.merchantDTO.applicationSystem = res.authOrderDTO.useModal
-          }
-        })
-        if (this.productType === 1) {
-          setTimeout(() => {
-            res.erpAuthOrderDetails.forEach((item, index) => {
-              if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {
-                document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-              }
-            })
-          }, 500)
-        }
+        setTimeout(() => {
+          this.$refs.product.selectVal = res.productCodeName
+        }, 500)
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false
       }
     },
+    handleCancel(name) {
+      this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+    },
+    handleDel(name) {
+      this.$confirm('确定删除单据吗？', '提示', {
+        type: 'warning',
+        beforeClose: async (action, instance, done) => {
+          if (action === 'confirm') {
+            try {
+              instance.confirmButtonLoading = true
+              await channelDevelopDelete(this.$route.query.id)
+              this.$message({ type: 'success', message: '删除成功' })
+              this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+            } catch (error) {
+            } finally {
+              instance.confirmButtonLoading = false
+              done()
+            }
+          } else done()
+        }
+      })
+    },
+    handleQueryParams() {
+      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
+      return {
+        authOrderVO: { handMan, inventoryAmount, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
+        orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
+      }
+    },
     async getHandlerMan() {
       try {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
-        this.form.authOrderDTO.handMan = id
-        this.form.authOrderDTO.handManName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
+        this.form.handUser = id
+        this.form.handUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 1, productTypeList: [] })
-        this.licensedProducts = this.licensedProducts.concat(res.results || [])
-        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+        const res = await queryProductCode({ info: query, page, rows })
+        this.productLists = this.productLists.concat(res.results || [])
+        this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
+    },
+    async getAgentMoneyStream() {
+      try {
+        const { paperMoney, paperMoneyGift, noQualityGuaranteeMoney } = await queryAgentMoneyStream({ agentId: this.userInfo.agentId })
+        this.form.agentPaperMoney = paperMoney
+        this.form.agentPaperGiftMoney = paperMoneyGift
+        this.form.agentGuaranteeMoney = noQualityGuaranteeMoney
       } catch (error) {}
     }
   }
@@ -481,23 +313,6 @@ export default {
   z-index: 1000;
   /deep/ .el-button {
     padding: 8px 22px;
-  }
-}
-.e-product {
-  &-choose {
-    text-align: right;
-    padding-bottom: 10px;
-    margin-top: -10px;
-  }
-  &-tip {
-    color: #8c919c;
-    font-size: 14px;
-  }
-  &_remark {
-    width: 100%;
-    /deep/ .el-input__inner {
-      text-align: left !important;
-    }
   }
 }
 </style>

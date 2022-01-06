@@ -48,7 +48,6 @@
                   trigger="hover"
                   content="代理商分润 =（商户成本费率-代理商成本费率）*代理商分润比例，100表示分润全额返给代理商，0表示代理商不参与分润"
                 >
-                  <!-- <i slot="reference" class="el-icon-question icon-question"></i> -->
                   <img :src="questionIcon" slot="reference" alt="提示" class="e-icon-question icon-question" />
                 </el-popover>
               </el-form-item>

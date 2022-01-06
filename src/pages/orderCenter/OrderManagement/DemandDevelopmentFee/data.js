@@ -2,9 +2,8 @@
 export const industryTypes = new Map([
   ['', { value: '', label: '全部' }],
   [1, { value: 1, label: '零售' }],
-  [3, { value: 3, label: '餐饮' }],
-  [4, { value: 4, label: '专卖' }],
-  [5, { value: 5, label: '通用' }]
+  [2, { value: 2, label: '餐饮' }],
+  [3, { value: 3, label: '专卖' }]
 ])
 
 // 订单状态
@@ -19,28 +18,30 @@ export const orderStatus = new Map([
 
 // 付款状态
 export const paymentStatus = new Map([
-  [-1, { value: -1, label: '全部' }],
+  ['', { value: '', label: '全部' }],
   [0, { value: 0, label: '未付款' }],
   [1, { value: 1, label: '部分付款' }],
   [2, { value: 2, label: '已付款' }]
 ])
 
 export const formObj = {
-  purchaseOrderDTO: {
-    billNo: '', // 订单编码
-    createOrderTime: '',
-    handUser: '', // 受理人id
-    handUserName: '', // 受理人名称
-    // 账款信息
-    agentPaperMoney: '', // 账面余额
-    agentGuaranteeMoney: '', // 未核销担保金
-    payStatus: '', // 付款状态
-    payTime: '', // 付款时间
-    payMethod: '', // 付款方式
-    receiveMoneyPeople: '', // 收款人
-    useGuarantee: '', // 使用担保金
-    agentId: '', // 经销商id
-    agentName: '' // 经销商名称
-  },
-  orderItemList: []
+  id: '',
+  billNo: '', //订单编码
+  createOrderTime: '', //订单时间
+  handUser: '', //受理人
+  handUserName: '', //受理人名称
+  productCode: '', //产品编码
+  productCodeName: '', //产品名称
+  developDay: '', //开发人天
+  developAmount: '', //开发费用
+  agentPaperMoney: '', //经销商账面余额
+  agentGuaranteeMoney: '', //经销商未核销担保金
+  payStatus: 0, //付款状态
+  payMethod: '',
+  payTime: '', //付款时间
+  payManName: '', //收款人
+  useGuarantee: '', //使用担保金
+  agentId: '', //经销商id
+  agentName: '', //经销商名称
+  remark: '' //原因
 }

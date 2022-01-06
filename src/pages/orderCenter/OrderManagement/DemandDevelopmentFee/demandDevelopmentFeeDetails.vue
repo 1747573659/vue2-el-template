@@ -15,7 +15,7 @@ import { orderStatus } from './data'
 import operationLog from '../components/operationLog.vue'
 import basicInformation from './components/basicInformation.vue'
 
-import { authOrderLog } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { channelDevelopLog } from '@/api/orderCenter/orderManagement/demandDevelopmentFee'
 
 export default {
   name: 'demandDevelopmentFeeDetails',
@@ -30,7 +30,6 @@ export default {
     }
   },
   mounted() {
-    if (['edit', 'detail'].includes(this.$route.query.status)) this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
       document.querySelector('.e-tag_active span').innerText = `需求开发收费单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
@@ -43,7 +42,7 @@ export default {
     },
     async getOperateLog() {
       try {
-        const res = await authOrderLog(this.$route.query.id)
+        const res = await channelDevelopLog({ orderId: Number(this.$route.query.id), orderType: 1 })
         this.operateData = res
       } catch (error) {}
     }
