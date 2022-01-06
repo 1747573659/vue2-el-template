@@ -23,9 +23,11 @@
   </div>
 </template>
 <script>
-import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
 import { routeTreeLevel, sortData } from '@/utils/modules/routeTree.js'
+
+import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
+
 export default {
   name: 'RoleForm',
   props: {
@@ -228,8 +230,16 @@ export default {
         if (id) {
           this.queryRoleById()
         }
-        const res = await queryAllPCMenu({ roleId: id })
+        const res = await queryAllPCMenu({ roleId: id})
         var cid = 444444
+        // 屏蔽二级经销商采购订单权限选择
+        let softwarePurchaseOrderItemId = ''
+        let hardwarePurchaseOrderItemId = ''
+        res.allMenus = res.allMenus.filter(item => {
+          if(item.code === 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER') softwarePurchaseOrderItemId = item.id
+          if(item.code === 'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER') hardwarePurchaseOrderItemId = item.id
+          return !['ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER'].includes(item.code) && ![softwarePurchaseOrderItemId, hardwarePurchaseOrderItemId].includes(item.parentId)
+        })
         let newRouteTree = routeTree(res.allMenus)
         let isNodeCheck, isDisabled
         let sysMenuThree =
