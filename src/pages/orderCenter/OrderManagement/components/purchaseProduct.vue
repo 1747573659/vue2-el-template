@@ -44,8 +44,7 @@ export default {
         { label: '全部', value: '' },
         { label: '零售', value: 1 },
         { label: '餐饮', value: 2 },
-        { label: '专卖', value: 3 },
-        { label: '通用', value: 4 }
+        { label: '专卖', value: 3 }
       ]
     }
   },
@@ -100,7 +99,8 @@ export default {
           info: this.productVal.trim(),
           page: this.currentPage,
           rows: this.pageSize,
-          orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
+          orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1,
+          productIndustry: this.industry
         })
         this.basicProductData = res?.results ?? []
         this.totalPage = res.totalRecord ?? 0

@@ -21,7 +21,7 @@
         <el-form-item label="受理人">
           <el-input :value="form.handUserName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="升级费用">
+        <el-form-item label="升级费用" prop="upgradeAmount">
           <el-input v-model.trim="form.upgradeAmount" clearable></el-input>
         </el-form-item>
         <el-form-item label="旧商户注册方式" prop="oldRegistType">
@@ -154,8 +154,8 @@
       </el-form>
     </el-card>
     <div class="p-infomation-action">
-      <el-button size="small" plain @click="handleCancel('erpAuthorizedTransfer')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
-      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('erpAuthorizedTransfer')">删除</el-button>
+      <el-button size="small" plain @click="handleCancel('softwareUpdateOrder')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('softwareUpdateOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <template v-if="$route.query.status === 'edit'">
         <el-button size="small" type="primary" @click="handleVerify">提交</el-button>
@@ -174,12 +174,12 @@ import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
 import {
   authShopPage,
   queryProductCode,
-  channelErpTransferAdd,
-  channelErpTransferUpdate,
-  channelErpTransferById,
-  channelErpTransferDel,
-  channelErpTransferSubmit
-} from '@/api/orderCenter/orderManagement/erpAuthorizedTransfer'
+  channelSoftUpgradeAdd,
+  channelSoftUpgradeUpdate,
+  channelSoftUpgradeById,
+  channelSoftUpgradeDel,
+  channelSoftUpgradeSubmit
+} from '@/api/orderCenter/orderManagement/softwareUpdateOrder'
 
 export default {
   data() {
@@ -196,6 +196,10 @@ export default {
         newMerchantAuthCount: [
           { required: true, message: '请输入新商户门店授权站点', trigger: ['blur', 'change'] },
           { pattern: /^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/, message: '门店授权站点范围为1-999', trigger: 'blur' }
+        ],
+        upgradeAmount:[
+          { required: true, message: '请输入升级费用', trigger: ['blur', 'change'] },
+          { pattern: /^([0-9]\d{0,10}?)(\.\d{1,2})?$/, message: '升级费用范围为[0, 99999999999.99]', trigger: 'blur' }
         ]
       },
       userInfo: JSON.parse(localStorage.userInfo),
@@ -296,7 +300,7 @@ export default {
               instance.confirmButtonLoading = true
               this.setOrderSave()
                 .then(async () => {
-                  await channelErpTransferSubmit({ id: parseFloat(this.$route.query.id) })
+                  await channelSoftUpgradeSubmit({ id: parseFloat(this.$route.query.id) })
                   this.getDetail().then(() => {
                     this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 10, status: 'detail' } })
                   })
@@ -334,20 +338,21 @@ export default {
           handUser,
           id,
           billNo,
-          newMerchantAuthCount,
-          newMerchantAuthType,
           newMerchantId,
+          newMerchantAuthCount,
           newMerchantProductCode,
+          newMerchantAuthType,
           oldMerchantId,
           oldMerchantProductCode,
           oldRegistType,
+          upgradeAmount,
           ...params
         } = this.form
         const data = Object.assign(
-          { agentId: this.userInfo.agentId, id, handUser },
+          { agentId: this.userInfo.agentId, billNo, id, handUser, upgradeAmount },
           { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
         )
-        return this.$route.query.status === 'add' ? channelErpTransferAdd(data) : channelErpTransferUpdate(data)
+        return this.$route.query.status === 'add' ? channelSoftUpgradeAdd(data) : channelSoftUpgradeUpdate(data)
       } else return new Promise((resolve, reject) => reject(new Error()))
     },
     async handleValidateForm() {
@@ -373,7 +378,7 @@ export default {
     async getDetail() {
       try {
         this.checkBasicInformLoad = true
-        const res = await channelErpTransferById(this.$route.query.id)
+        const res = await channelSoftUpgradeById(this.$route.query.id)
         this.form = res
         setTimeout(() => {
           this.$refs.oldMerchantSelect.selectVal = res.oldMerchantName
@@ -394,7 +399,7 @@ export default {
           if (action === 'confirm') {
             try {
               instance.confirmButtonLoading = true
-              await channelErpTransferDel(this.$route.query.id)
+              await channelSoftUpgradeDel(this.$route.query.id)
               this.$message({ type: 'success', message: '删除成功' })
               this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
             } catch (error) {
@@ -408,7 +413,7 @@ export default {
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryProductCode({ info: query, page, rows, registType: this.form.oldRegistType, newOrderType: 36 })
+        const res = await queryProductCode({ info: query, page, rows, registType: this.form.oldRegistType, newOrderType: 37 })
         this.productLists = this.productLists.concat(res.results || [])
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

@@ -21,7 +21,7 @@
               ></selectCopy>
             </el-form-item>
             <el-form-item label="类型">
-              <el-select v-model="form.type" clearable>
+              <el-select v-model="form.propertyType" clearable>
                 <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -199,7 +199,7 @@ export default {
       dialogVisible: false,
       loading: false,
       channelManagerOptions: [],
-      form: { channelManagerId: '', id: '', mobile: '', page: 1, rows: 10, type: '' },
+      form: { channelManagerId: '', id: '', mobile: '', propertyType:'', page: 1, rows: 10 },
       tableData: [],
       total: 0,
       multipleSelection: [],
@@ -264,7 +264,6 @@ export default {
       }
 
       if (selectPayType.length === 0) {
-        // return this.$message.error('合计金额为零，数据异常')
         return this.$message.error('请选择分配醒额')
       }
 

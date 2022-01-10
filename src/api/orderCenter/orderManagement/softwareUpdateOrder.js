@@ -37,45 +37,45 @@ export function channelDevelopLog(data) {
 }
 
 // 新增
-export function channelErpTransferAdd(data) {
+export function channelSoftUpgradeAdd(data) {
   return request({
-    url: '/channel/erp/transfer/add',
+    url: '/channel/soft/upgrade/add',
     method: 'POST',
     data
   })
 }
 
 // 更新
-export function channelErpTransferUpdate(data) {
+export function channelSoftUpgradeUpdate(data) {
   return request({
-    url: '/channel/erp/transfer/update',
+    url: '/channel/soft/upgrade/update',
     method: 'POST',
     data
   })
 }
 
 // 更新
-export function channelErpTransferById(data) {
+export function channelSoftUpgradeById(data) {
   return request({
-    url: '/channel/erp/transfer/queryById/' + data,
+    url: '/channel/soft/upgrade/queryById/' + data,
     method: 'POST',
     data
   })
 }
 
 // 删除
-export function channelErpTransferDel(data) {
+export function channelSoftUpgradeDel(data) {
   return request({
-    url: '/channel/erp/transfer/del/' + data,
+    url: '/channel/soft/upgrade/del/' + data,
     method: 'POST',
     data
   })
 }
 
 // 提交
-export function channelErpTransferSubmit(data) {
+export function channelSoftUpgradeSubmit(data) {
   return request({
-    url: '/channel/erp/transfer/submit',
+    url: '/channel/soft/upgrade/submit',
     method: 'POST',
     data
   })
