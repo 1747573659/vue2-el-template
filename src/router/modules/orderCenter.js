@@ -136,6 +136,21 @@ const orderCenter = {
           meta: { title: '自助设备授权查询', name: 'selfServiceEquipment', cache: false }
         },
         {
+          path: 'softwareUpdateOrder',
+          component: _import('orderCenter/OrderManagement/SoftwareUpdateOrder/softwareUpdateOrder'),
+          name: 'softwareUpdateOrder',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREUPDATEORDER',
+          meta: { title: '软件升级订单', name: 'softwareUpdateOrder', cache: true }
+        },
+        {
+          path: 'softwareUpdateOrderDetails',
+          component: _import('orderCenter/OrderManagement/SoftwareUpdateOrder/softwareUpdateOrderDetails'),
+          name: 'softwareUpdateOrderDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '软件升级订单详情', name: 'softwareUpdateOrderDetails', cache: true }
+        },
+        {
           path: 'ewechatOrder',
           component: _import('ewechat/order'),
           name: 'ewechatOrder',

@@ -19,7 +19,6 @@
             </el-form-item>
             <el-form-item label="授权产品">
               <km-select-page
-                ref="productCode"
                 v-model="form.newMerchantProductCode"
                 option-label="name"
                 option-value="code"
@@ -80,9 +79,7 @@
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间"></el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
-        <el-table-column label="旧商户注册方式">
-          <template slot-scope="scope">{{ oldRegistTypes.has(scope.row.oldRegistType) ? oldRegistTypes.get(scope.row.oldRegistType).label : '--' }}</template>
-        </el-table-column>
+        <el-table-column prop="oldRegistTypeName" label="旧商户注册方式" width="120"></el-table-column>
         <el-table-column label="授权产品">
           <template slot-scope="scope">{{
             `${scope.row.newMerchantProductCode ? '[' + scope.row.newMerchantProductCode + ']' : ''}${scope.row.newMerchantProductCodeName || ''}`
@@ -90,7 +87,7 @@
         </el-table-column>
         <el-table-column prop="oldMerchantId" label="旧商户号"></el-table-column>
         <el-table-column prop="newMerchantId" label="新商户号"></el-table-column>
-        <el-table-column label="订单状态">
+        <el-table-column label="订单状态" width="100">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
@@ -100,7 +97,8 @@
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">
-              <el-button v-permission="'ERP_AUTHORIZED_TRANSFER_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+              <!-- <el-button v-permission="'ERP_AUTHORIZED_TRANSFER_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button> -->
+              <el-button type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
@@ -141,8 +139,7 @@ export default {
         }
       },
       userInfo: JSON.parse(localStorage.userInfo),
-
-      checkExportLoad: false
+      // checkExportLoad: false
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -213,7 +210,7 @@ export default {
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryProductCode({ info: query, page, rows, productIndustry: this.form.industry })
+        const res = await queryProductCode({ info: query, page, rows, newOrderType: 36 })
         this.productLists = this.productLists.concat(res.results || [])
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

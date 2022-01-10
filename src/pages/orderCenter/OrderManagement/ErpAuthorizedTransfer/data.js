@@ -14,3 +14,28 @@ export const oldRegistTypes = new Map([
   [0, { value: 0, label: "软注册" }],
   [1, { value: 1, label: "加密狗" }]
 ]);
+
+// form 基础对象
+export const formObj = {
+  id: "",
+  billNo: "", // 订单编码
+  createOrderTime: "", // 订单时间
+  handUser: "", // 受理人
+  handUserName: "", // 受理人名称
+  oldRegistType: "", // 旧商户注册方式
+  oldMerchantName: "", // 旧商户名称
+  oldMerchantId: "", // 旧商户号
+  oldMerchantAuthType: "", // 授权状态
+  oldMerchantProductCode: "", // 产品编码
+  oldMerchantProductCodeName: "", // 产品名称
+  oldAddress: "", // 地区
+  oldMerchantAuthCount: "", // 门店授权站点
+  newMerchantName: "", // 新商户名称
+  newMerchantId: "", // 新商户号
+  newMerchantAuthType: 1, // 授权状态
+  newMerchantProductCode: "", // 产品编码
+  newMerchantProductCodeName: "", // 产品名称
+  newAddress: "", // newAddress
+  newMerchantAuthCount: "", // 门店授权站点
+  remark: "" // 原因
+};

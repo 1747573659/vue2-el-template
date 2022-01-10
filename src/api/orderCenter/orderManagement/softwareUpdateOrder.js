@@ -1,9 +1,9 @@
 import request from '@/utils/request'
 
 // 列表
-export function queryErpTransferPage(data) {
+export function querySoftUpgradePage(data) {
   return request({
-    url: '/channel/erp/transfer/page',
+    url: '/channel/soft/upgrade/page',
     method: 'POST',
     data
   })

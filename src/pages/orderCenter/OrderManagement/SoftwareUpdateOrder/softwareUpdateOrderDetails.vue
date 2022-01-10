@@ -15,10 +15,10 @@ import { orderStatus } from './data'
 import operationLog from '../components/operationLog.vue'
 import basicInformation from './components/basicInformation.vue'
 
-import { channelDevelopLog } from '@/api/orderCenter/orderManagement/erpAuthorizedTransfer'
+import { channelDevelopLog } from '@/api/orderCenter/orderManagement/softwareUpdateOrder'
 
 export default {
-  name: 'erpAuthorizedTransferDetails',
+  name: 'softwareUpdateOrderDetails',
   components: {
     basicInformation,
     operationLog
@@ -32,7 +32,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
-      document.querySelector('.e-tag_active span').innerText = `erp授权转移单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
+      document.querySelector('.e-tag_active span').innerText = `软件升级订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
   },
   methods: {

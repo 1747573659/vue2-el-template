@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con" v-loading="checkBasicInformLoad">
+  <section v-loading="checkBasicInformLoad" style="padding-bottom:72px">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
@@ -21,8 +21,8 @@
         <el-form-item label="受理人">
           <el-input :value="form.handUserName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="经销商">
-          <el-input :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`" disabled></el-input>
+        <el-form-item label="升级费用">
+          <el-input v-model.trim="form.upgradeAmount" clearable></el-input>
         </el-form-item>
         <el-form-item label="旧商户注册方式" prop="oldRegistType">
           <el-select v-model="form.oldRegistType" @change="handleOldRegistType" placeholder="旧商户注册方式" clearable>
@@ -60,7 +60,7 @@
             <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
           </el-form-item>
           <el-form-item label="地区">
-            <el-input :value="form.oldAddress" disabled></el-input>
+            <el-input :value="form.oldMerchantAddress" disabled></el-input>
           </el-form-item>
           <el-form-item label="门店授权站点">
             <el-input :value="form.oldMerchantAuthCount" disabled></el-input>
@@ -112,10 +112,44 @@
           <el-input :value="`${form.newMerchantProductCode ? '[' + form.newMerchantProductCode + ']' : ''}${form.newMerchantProductCodeName || ''}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="地区">
-          <el-input :value="form.newAddress" disabled></el-input>
+          <el-input :value="form.newMerchantAddress" disabled></el-input>
         </el-form-item>
         <el-form-item label="门店授权站点" prop="newMerchantAuthCount">
           <el-input v-model="form.newMerchantAuthCount"></el-input>
+        </el-form-item>
+      </el-form>
+    </el-card>
+    <el-card shadow="never" class="p-card">
+      <div slot="header" class="p-card-head">
+        <span class="p-card-title">账款信息</span>
+      </div>
+      <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
+        <el-form-item label="账面余额">
+          <el-input :value="agentPaperMoney"></el-input>
+        </el-form-item>
+        <el-form-item label="未核销担保金">
+          <el-input :value="form.agentGuaranteeMoney | formatAmount"></el-input>
+        </el-form-item>
+        <el-form-item label="付款状态">
+          <el-input :value="`${form.payStatus ? paymentStatus.get(form.payStatus).label : '未付款'}`"></el-input>
+        </el-form-item>
+        <el-form-item label="付款时间">
+          <el-input :value="form.payTime"></el-input>
+        </el-form-item>
+        <el-form-item label="付款方式">
+          <el-input :value="form.payMethod"></el-input>
+        </el-form-item>
+        <el-form-item label="收款人">
+          <el-input :value="form.payManName"></el-input>
+        </el-form-item>
+        <el-form-item label="使用余额">
+          <el-input :value="useAmount"></el-input>
+        </el-form-item>
+        <el-form-item label="使用担保金">
+          <el-input :value="form.useGuarantee | formatAmount"></el-input>
+        </el-form-item>
+        <el-form-item label="经销商">
+          <el-input :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`" disabled></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -132,6 +166,7 @@
 
 <script>
 import dayjs from 'dayjs'
+import NP from 'number-precision'
 import { deepClone } from '@/utils'
 import { orderStatus, formObj, oldRegistTypes } from '../data'
 
@@ -175,6 +210,11 @@ export default {
       checkBasicInformLoad: false
     }
   },
+  filters: {
+    formatAmount(val) {
+      return val ? NP.divide(val, 100) : 0
+    }
+  },
   computed: {
     currentOrderStatus() {
       const { status, orderStatus: orderStatusVal } = this.$route.query
@@ -182,6 +222,14 @@ export default {
         if (orderStatus.has(parseFloat(orderStatusVal))) return orderStatus.get(parseFloat(orderStatusVal)).label
         else return '未保存'
       } else return ''
+    },
+    agentPaperMoney() {
+      const agentPaperGiftMoney = this.form.agentPaperGiftMoney ? '（另有赠金' + this.$options.filters['formatAmount'](this.form.agentPaperGiftMoney) + '）' : ''
+      return this.$options.filters['formatAmount'](this.form.agentPaperMoney) + agentPaperGiftMoney
+    },
+    useAmount() {
+      const useAmountGift = this.form.useAmountGift ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.useAmountGift) + '）' : ''
+      return this.$options.filters['formatAmount'](this.form.useAmount) + useAmountGift
     }
   },
   mounted() {
@@ -427,18 +475,20 @@ export default {
     color: red;
   }
 }
-.p-infomation-action {
-  width: calc(100% - 200px - 42px);
-  height: 56px;
-  position: fixed;
-  bottom: 0;
-  background-color: #fff;
-  line-height: 56px;
-  text-align: center;
-  box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
-  z-index: 1000;
-  /deep/ .el-button {
-    padding: 8px 22px;
+.p-infomation {
+  &-action {
+    width: calc(100% - 200px - 42px);
+    height: 56px;
+    position: fixed;
+    bottom: 0;
+    background-color: #fff;
+    line-height: 56px;
+    text-align: center;
+    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+    z-index: 1000;
+    /deep/ .el-button {
+      padding: 8px 22px;
+    }
   }
 }
 </style>

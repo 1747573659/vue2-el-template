@@ -23,6 +23,7 @@ export const paymentStatus = new Map([
   [2, { value: 2, label: '已付款' }]
 ])
 
+// form 基础对象
 export const formObj = {
   id: '',
   billNo: '', //订单编码
@@ -40,7 +41,5 @@ export const formObj = {
   payTime: '', //付款时间
   payManName: '', //收款人
   useGuarantee: '', //使用担保金
-  agentId: '', //经销商id
-  agentName: '', //经销商名称
   remark: '' //原因
 }

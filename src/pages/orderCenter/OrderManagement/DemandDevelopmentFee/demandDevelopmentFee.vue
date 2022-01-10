@@ -79,12 +79,12 @@
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
-        <el-table-column prop="billNo" label="订单编码"></el-table-column>
-        <el-table-column prop="industryName" label="行业"></el-table-column>
-        <el-table-column label="产品">
-          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</template>
+        <el-table-column prop="billNo" label="订单编码" width="160"></el-table-column>
+        <el-table-column prop="industryName" label="行业" width="80"></el-table-column>
+        <el-table-column label="产品" width="150">
+          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column label="订单状态" width="90">
+        <el-table-column label="订单状态" width="80">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
@@ -234,7 +234,7 @@ export default {
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryProductCode({ info: query, page, rows, productIndustry: this.form.industry })
+        const res = await queryProductCode({ info: query, page, rows, productIndustry: this.form.industry, newOrderType: 35 })
         this.productLists = this.productLists.concat(res.results || [])
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
