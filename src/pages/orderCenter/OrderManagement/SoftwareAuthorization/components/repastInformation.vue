@@ -145,9 +145,6 @@ export default {
       productVal: '',
       checkProductTabLock: false,
       basicProductData: [],
-      currentPage: 1,
-      pageSize: 10,
-      totalPage: 0,
       checkProductStockLoad: false,
       selectMaps: new Map(),
       currentPageSelectSets: new Set()

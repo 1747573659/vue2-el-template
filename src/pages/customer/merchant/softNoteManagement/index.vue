@@ -80,7 +80,7 @@
       <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableList" style="width: 100%;">
         <el-table-column align="right" type="index" label="序号" width="70"></el-table-column>
         <el-table-column prop="custId" width="180" label="软注编码"></el-table-column>
-        <el-table-column prop="custName" width="146" label="软注商户/享钱商户">
+        <el-table-column width="146" label="软注商户/享钱商户">
           <template slot-scope="scope">
             <div>{{ scope.row.custName }}{{ scope.row.merchantName ? `/${scope.row.merchantName}` : '' }}</div>
           </template>
@@ -134,7 +134,8 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <template v-if="scope.row.status === '2'">
-              <el-button v-permission="'SOFT_NOTE_MANAGEMENT_EDIT'" type="text" @click="checkMerchantVisible = true">编辑</el-button>
+              <!-- <el-button v-permission="'SOFT_NOTE_MANAGEMENT_EDIT'" type="text" @click="checkMerchantVisible = true">编辑</el-button> -->
+              <el-button type="text" @click="handleMerchantEdit(scope.row)">编辑</el-button>
             </template>
           </template>
         </el-table-column>
@@ -153,7 +154,7 @@
       </div>
     </div>
     <el-dialog title="编辑" :visible.sync="checkMerchantVisible" width="600px" custom-class="p-merchant-dialog">
-      <el-form :model="merchantForm" :rules="merchantRules" size="small" label-suffix=":" label-width="110px" @submit.native.prevent>
+      <el-form ref="merchantForm" :model="merchantForm" :rules="merchantRules" size="small" label-suffix=":" label-width="110px" @submit.native.prevent>
         <el-form-item label="软注商户" prop="merchant">
           <span>{{ merchantForm.merchant }}</span>
         </el-form-item>
@@ -166,7 +167,7 @@
         </el-form-item>
       </el-form>
       <div slot="footer">
-        <el-button @click="handleMerchantCancel" size="small">取消</el-button>
+        <el-button @click="checkMerchantVisible = false" size="small">取消</el-button>
         <el-button type="primary" :loading="isMerchantSubmit" @click="handleMerchantSubmit" size="small">确定</el-button>
       </div>
     </el-dialog>
@@ -177,7 +178,7 @@ import { authorizationState } from './publicData/authorizationState' // 授权�
 import { isOnlineState } from './publicData/isOnlineState' // 在线状态
 import { openingState } from './publicData/openingState' // 享钱开通状态
 import selectPage from '@/components/selectPage' //选择组件
-import { authShopPage, queryAuthErpByPage, queryShopListByPage } from '@/api/customer/merchant' //api
+import { authShopPage, queryAuthErpByPage, queryShopListByPage, setCustomExpireUpdate } from '@/api/customer/merchant' //api
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 import dayjs from 'dayjs'
 
@@ -226,19 +227,20 @@ export default {
       checkMerchantVisible: false,
       isMerchantSubmit: false,
       merchantForm: {
-        merchant: '蛙笑测试',
+        merchant: '',
         validPeriod: '',
-        kmValidPeriod: '2021-12-30 03:24:35',
-        remark: ''
+        remark: '',
+        expireDate: '',
+        custId: ''
       },
       merchantRules: {
         validPeriod: [
           { required: true, message: '客户有效期不能为空', trigger: ['blur', 'change'] },
           {
             required: true,
-            trigger: 'change',
+            trigger: ['blur', 'change'],
             validator: (rule, value, callback) => {
-              if (dayjs(value).isBefore(dayjs()) || dayjs(value).isAfter(dayjs(this.merchantForm.kmValidPeriod))) {
+              if (dayjs(value).isBefore(dayjs()) || dayjs(value).isAfter(dayjs(this.merchantForm.expireDate))) {
                 callback(new Error('客户有效期不能小于今天 / 客户有效期不能大于 授权有效期'))
               }
               callback()
@@ -250,17 +252,36 @@ export default {
   },
   computed: {
     lockValidityPeriod() {
-      return dayjs().isAfter(this.merchantForm.kmValidPeriod)
+      return dayjs().isAfter(this.merchantForm.expireDate)
     }
   },
   created() {
     this.authShopPage()
   },
   methods: {
-    handleMerchantCancel() {
-      this.checkMerchantVisible = false
+    handleMerchantEdit(row) {
+      this.merchantForm = Object.assign(this.merchantForm, { merchant: row.custName, expireDate: row.expireDate, custId: row.custId })
+      this.checkMerchantVisible = true
     },
-    handleMerchantSubmit() {},
+    async handleMerchantSubmit() {
+      try {
+        this.isMerchantSubmit = true
+        const data = {
+          custId: this.merchantForm.custId,
+          custRemark: this.merchantForm.remark,
+          dealersAuthExpireDate: dayjs(this.merchantForm.validPeriod)
+            .endOf('day')
+            .format('YYYY-MM-DD HH:mm:ss')
+        }
+        await setCustomExpireUpdate(data)
+        this.checkMerchantVisible = false
+        this.merchantForm = { merchant: '', validPeriod: '', remark: '', expireDate: '', custId: '' }
+        this.$refs.merchantForm.resetFields()
+        this.$message({ type: 'success', message: '修改成功' })
+      } catch (error) {} finally {
+        this.isMerchantSubmit = false
+      }
+    },
     selectPageFocusErp() {
       this.isMaxPageErp = false
       this.ObjContentListErp = []

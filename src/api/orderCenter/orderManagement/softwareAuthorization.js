@@ -321,7 +321,7 @@ export function authOrderYsTrialPointDetail(data) {
 export function authOrderYsXmypUserNum(data) {
   return request({
     url: '/auth/order/ys/getXmypUserNum/' + data,
-    method: 'POST',
+    method: 'POST'
   })
 }
 
@@ -389,6 +389,14 @@ export function authOrderDogSubmit(data) {
 export function queryAllProductList() {
   return request({
     url: '/product/list',
+    method: 'POST'
+  })
+}
+
+// 是否显示授权门店栏目
+export function getOrderErpCode(data) {
+  return request({
+    url: '/auth/order/erp/code/' + data,
     method: 'POST'
   })
 }

@@ -36,7 +36,44 @@
         <el-form-item label="门店授权站点">
           <el-input :value="form.erpAuthMerchantDTO.authCount" disabled></el-input>
         </el-form-item>
+        <el-form-item label="授权类型" v-if="form.erpAuthMerchantDTO.productCode === 'ZHCT10'">
+          <el-select clearable v-model="form.authOrderDTO.erpStore" placeholder="授权类型" style="width: 240px">
+            <el-option label="按门店" :value="1"></el-option>
+            <el-option label="按站点" :value="2"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
+    </el-card>
+    <el-card shadow="never" class="p-card">
+      <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
+        <el-button type="primary" size="small" plain @click="handleProductVisible">选择授权门店</el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.erpAuthOrderDetails.length === 0">
+          刷新库存
+        </el-button>
+      </div>
+      <el-table ref="table" :data="form.erpAuthOrderDetails" show-summary :summary-method="getSummaries" class="p-information-tab">
+        <el-table-column label="序号" width="100">
+          <template slot-scope="scope">{{ scope.$index + 1 }}</template>
+        </el-table-column>
+        <el-table-column prop="moduleCode" label="门店编码"></el-table-column>
+        <el-table-column prop="moduleName" label="门店名称"></el-table-column>
+        <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
+        <el-table-column prop="orderInventory" label="本次授权数量" align="right"></el-table-column>
+        <el-table-column label="备注">
+          <template slot-scope="scope">
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
+          <template slot-scope="scope">
+            <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
+              <el-button type="text" size="small" slot="reference">删除</el-button>
+            </el-popconfirm>
+          </template>
+        </el-table-column>
+      </el-table>
+    </el-card>
+    <el-card shadow="never" class="p-card">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
         <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.erpAuthOrderDetails.length === 0">
@@ -113,7 +150,7 @@
 <script>
 import NP from 'number-precision'
 
-import { authShopPage, authModuleList, queryByAgentErpProduct, queryChannelPage } from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { authShopPage, authModuleList, queryByAgentErpProduct, queryChannelPage, getOrderErpCode } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   props: {
@@ -140,6 +177,9 @@ export default {
       selectMaps: new Map(),
       currentPageSelectSets: new Set()
     }
+  },
+  mounted() {
+    this.getOrderErpCode()
   },
   methods: {
     handleDelDetailDTO(scope) {
@@ -258,6 +298,12 @@ export default {
         const res = await queryChannelPage({ channelName: query, page, rows })
         this.channelData = this.channelData.concat(res.results || [])
         this.isChannelPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
+    },
+    async getOrderErpCode() {
+      try {
+        const res = await getOrderErpCode({ productCode: this.form.erpAuthMerchantDTO.productCode })
+        console.info(res)
       } catch (error) {}
     },
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
