@@ -72,6 +72,7 @@
           </el-form-item>
           <el-form-item label="产品" prop="oldMerchantProductCode">
             <km-select-page
+              ref="product"
               v-model="form.oldMerchantProductCode"
               option-label="name"
               option-value="code"
@@ -238,8 +239,6 @@ export default {
     handleVerify() {
       if (this.form.oldMerchantProductCode.toUpperCase() !== this.form.newMerchantProductCode.toUpperCase()) {
         this.$message({ type: 'warning', message: '新旧商户的产品不一致，请修改后再操作' })
-      } else if (!this.newShopPageVo.xqStatus) {
-        this.$message({ type: 'warning', message: '请先开通享钱' })
       } else {
         this.$confirm('确定要提交吗？', '提示', {
           type: 'warning',
@@ -328,8 +327,9 @@ export default {
         const res = await channelErpTransferById(this.$route.query.id)
         this.form = res
         setTimeout(() => {
-          this.$refs.oldMerchantSelect.selectVal = res.oldMerchantName
-          this.$refs.newMerchantSelect.selectVal = res.newMerchantName
+          if (this.form.oldRegistType !== 1) this.$refs.oldMerchantSelect.selectVal = res?.oldMerchantName ?? ''
+          else this.$refs.product.selectVal = res?.oldMerchantProductCodeName ?? ''
+          this.$refs.newMerchantSelect.selectVal = res?.newMerchantName ?? ''
         }, 300)
       } catch (error) {
       } finally {
@@ -357,10 +357,9 @@ export default {
           } else done()
         }
       })
-    },
-    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
+    },    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryProductCode({ info: query, page, rows, registType: this.form.oldRegistType, newOrderType: 36 })
+        const res = await queryProductCode({ info: query, page, rows, registType: Math.pow(0, this.form.oldRegistType), newOrderType: 36 })
         this.productLists = this.productLists.concat(res.results || [])
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
@@ -374,12 +373,12 @@ export default {
     },
     getOldShopPage({ query = '', page = 1, rows = 10 } = {}) {
       const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
-      const data = { custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status: 2, page, rows }
+      const data = { custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status: '2', page, rows }
       this.getShopPage(data, 'oldShopPageData', 'isOldShopMaxPage')
     },
     getNewShopPage({ query = '', page = 1, rows = 10 } = {}) {
       const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
-      const data = { custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status: 0, page, rows }
+      const data = { custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status: '0', page, rows }
       this.getShopPage(data, 'newShopPageData', 'isNewShopMaxPage')
     },
     async getShopPage(params, dataObj, isMaxpage) {

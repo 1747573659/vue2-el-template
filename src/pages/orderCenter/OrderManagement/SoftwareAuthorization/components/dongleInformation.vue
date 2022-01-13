@@ -177,7 +177,7 @@ export default {
     handleProductVisible() {
       this.currentPage = 1
       this.productVal = ''
-      if(!this.form.detailDTOList?.length) {
+      if (!this.form.detailDTOList?.length) {
         this.selectMaps.clear()
         this.currentPageSelectSets.clear()
       }

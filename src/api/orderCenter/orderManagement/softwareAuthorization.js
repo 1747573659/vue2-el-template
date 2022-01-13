@@ -400,3 +400,21 @@ export function getOrderErpCode(data) {
     method: 'POST'
   })
 }
+
+// 获取站点信息
+export function getOrderErpSiteInfo(data) {
+  return request({
+    url: '/auth/order/erp/siteInfo',
+    method: 'POST',
+    data
+  })
+}
+
+// 获取通道类型
+export function getOrderErpChannel(data) {
+  return request({
+    url: '/auth/order/erp/getChannel',
+    method: 'POST',
+    data
+  })
+}
