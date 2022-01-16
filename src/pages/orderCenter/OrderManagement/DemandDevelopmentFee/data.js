@@ -26,20 +26,20 @@ export const paymentStatus = new Map([
 // form 基础对象
 export const formObj = {
   id: '',
-  billNo: '', //订单编码
-  createOrderTime: '', //订单时间
-  handUser: '', //受理人
-  handUserName: '', //受理人名称
-  productCode: '', //产品编码
-  productCodeName: '', //产品名称
-  developDay: '', //开发人天
-  developAmount: '', //开发费用
-  agentPaperMoney: '', //经销商账面余额
-  agentGuaranteeMoney: '', //经销商未核销担保金
-  payStatus: 0, //付款状态
-  payMethod: '',
-  payTime: '', //付款时间
-  payManName: '', //收款人
-  useGuarantee: '', //使用担保金
-  remark: '' //原因
+  billNo: '', // 订单编码
+  createOrderTime: '', // 订单时间
+  handUser: '', // 受理人
+  handUserName: '', // 受理人名称
+  productCode: '', // 产品编码
+  productCodeName: '', // 产品名称
+  developDay: '', // 开发人天
+  developAmount: '', // 开发费用
+  agentPaperMoney: '', // 经销商账面余额
+  agentGuaranteeMoney: '', // 经销商未核销担保金
+  payStatus: 0, // 付款状态
+  payMethod: '', // 付款方式
+  payTime: '', // 付款时间
+  payManName: '', // 收款人
+  useGuarantee: '', // 使用担保金
+  remark: '' // 原因
 }

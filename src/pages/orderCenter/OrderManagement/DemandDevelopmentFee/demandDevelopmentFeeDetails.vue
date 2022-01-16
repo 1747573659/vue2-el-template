@@ -42,8 +42,7 @@ export default {
     },
     async getOperateLog() {
       try {
-        const res = await channelDevelopLog({ orderId: Number(this.$route.query.id), orderType: 1 })
-        this.operateData = res
+        this.operateData = (await channelDevelopLog({ orderId: Number(this.$route.query.id), orderType: 1 })) || []
       } catch (error) {}
     }
   }

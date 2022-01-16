@@ -68,7 +68,7 @@
         </template>
         <template v-if="form.oldRegistType === 1">
           <el-form-item label="加密狗ID" prop="oldMerchantId" key="2">
-            <el-input v-model="form.oldMerchantId" placeholder="加密狗ID" clearable></el-input>
+            <el-input v-model="form.oldMerchantId" maxlength="30" placeholder="加密狗ID" clearable></el-input>
           </el-form-item>
           <el-form-item label="产品" prop="oldMerchantProductCode">
             <km-select-page

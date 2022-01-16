@@ -35,7 +35,7 @@ export const formObj = {
   newMerchantAuthType: 1, // 授权状态
   newMerchantProductCode: "", // 产品编码
   newMerchantProductCodeName: "", // 产品名称
-  newAddress: "", // newAddress
+  newAddress: "", // 地区
   newMerchantAuthCount: "", // 门店授权站点
   remark: "" // 原因
 };

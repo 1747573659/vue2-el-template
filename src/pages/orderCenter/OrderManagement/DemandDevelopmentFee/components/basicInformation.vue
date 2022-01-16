@@ -75,12 +75,12 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <div class="p-infomation-action">
+    <div class="p-information-action">
       <el-button size="small" plain @click="handleCancel('demandDevelopmentFee')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('demandDevelopmentFee')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <template v-if="$route.query.status === 'edit'">
-        <el-button size="small" type="primary" v-permission="'HARDWARE_PURCHASE_ORDER_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
+        <el-button size="small" type="primary" :loading="checkVerifyBtnLoad" @click="handleVerify">提交</el-button>
       </template>
     </div>
   </section>
@@ -108,10 +108,10 @@ export default {
       paymentStatus,
       checkBasicInformLoad: false,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
-      form: deepClone(formObj),
+      userInfo: JSON.parse(localStorage.userInfo),
       productLists: [],
       isProductMaxPage: false,
-      userInfo: JSON.parse(localStorage.userInfo),
+      form: deepClone(formObj),
       rules: {
         productCode: [{ required: true, message: '请选择产品', trigger: ['blur', 'change'] }],
         developDay: [
@@ -189,13 +189,10 @@ export default {
     },
     async setOrderSave() {
       let isValidatePass = false
-      await this.$refs.orderForm.validate(valid => {
-        if (valid) isValidatePass = true
-        else isValidatePass = false
-      })
+      await this.$refs.orderForm.validate(valid => (isValidatePass = !!valid))
       if (isValidatePass) {
         const { developDay, developAmount, productCode, handUser, id, ...params } = this.form
-        const data = { agentId: this.userInfo.agentId, id, developDay, developAmount: NP.times(developAmount, 100), productCode, handUser }
+        const data = { agentId: this.userInfo.agentId, developAmount: NP.times(developAmount, 100), id, developDay, productCode, handUser }
         return this.$route.query.status === 'add' ? channelDevelopAdd(data) : channelDevelopUpdate(data)
       } else return new Promise((resolve, reject) => reject(new Error()))
     },
@@ -207,7 +204,7 @@ export default {
         this.form = res
         setTimeout(() => {
           this.$refs.product.selectVal = res.productCodeName
-        }, 500)
+        }, 300)
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false
@@ -225,7 +222,7 @@ export default {
               instance.confirmButtonLoading = true
               await channelDevelopDelete(this.$route.query.id)
               this.$message({ type: 'success', message: '删除成功' })
-              this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+              this.handleCancel(name)
             } catch (error) {
             } finally {
               instance.confirmButtonLoading = false
@@ -234,13 +231,6 @@ export default {
           } else done()
         }
       })
-    },
-    handleQueryParams() {
-      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
-      return {
-        authOrderVO: { handMan, inventoryAmount, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
-        orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
-      }
     },
     async getHandlerMan() {
       try {
@@ -251,7 +241,7 @@ export default {
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryProductCode({ info: query, page, rows, newOrderType: 35 })
+        const res = await queryProductCode({ info: query, newOrderType: 35, page, rows })
         this.productLists = this.productLists.concat(res.results || [])
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
@@ -301,7 +291,7 @@ export default {
     color: red;
   }
 }
-.p-infomation-action {
+.p-information-action {
   width: calc(100% - 200px - 42px);
   height: 56px;
   position: fixed;

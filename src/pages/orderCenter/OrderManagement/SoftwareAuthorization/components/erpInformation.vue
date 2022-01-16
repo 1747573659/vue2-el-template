@@ -44,25 +44,25 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card shadow="never" class="p-card" v-if="isStoreCard">
+    <el-card shadow="never" class="p-card" v-if="isStoreCard || form.erpStoreOrderDetailList.length > 0">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <span style="margin-right:20px">下单时库存: {{ storeOrderInventory }}</span>
         <el-button type="primary" size="small" plain @click="handleAuthorStoreVisible">选择授权门店</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.erpStoreList.length === 0">
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.erpStoreOrderDetailList.length === 0">
           刷新库存
         </el-button>
       </div>
-      <el-table :data="form.erpStoreList" show-summary :summary-method="getStoreSummaries" class="p-information-tab">
+      <el-table :data="form.erpStoreOrderDetailList" show-summary :summary-method="getStoreSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
-        <el-table-column prop="moduleCode" label="门店编码"></el-table-column>
-        <el-table-column prop="moduleName" label="门店名称"></el-table-column>
-        <el-table-column prop="authPoint" label="已授权点数" align="right"></el-table-column>
-        <el-table-column prop="authNum" label="本次授权数量" align="right">
+        <el-table-column prop="authStoreId" label="门店编码"></el-table-column>
+        <el-table-column prop="authStoreName" label="门店名称"></el-table-column>
+        <el-table-column prop="authSiteCount" label="已授权点数" align="right"></el-table-column>
+        <el-table-column prop="authPoint" label="本次授权数量" align="right">
           <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.authNum }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.authNum" @change="handleAuthNumAmount(scope.row)" style="width:100%"></el-input>
+            <span v-if="$route.query.status === 'detail'">{{ scope.row.authPoint }}</span>
+            <el-input v-else size="small" v-model.number.trim="scope.row.authPoint" @change="handleAuthNumAmount(scope.row, 'authPoint')" style="width:100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="备注">
@@ -101,8 +101,8 @@
               v-else
               size="small"
               v-model.number.trim="scope.row.authNum"
-              :disabled="form.erpStoreList.length > 0"
-              @change="handleAuthNumAmount(scope.row)"
+              :disabled="scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0"
+              @change="handleAuthNumAmount(scope.row, 'authNum')"
               style="width:100%"
             ></el-input>
           </template>
@@ -144,7 +144,7 @@
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
             <el-popconfirm
-              v-if="scope.row.moduleCode !== 'MDZD' || (scope.row.moduleCode === 'MDZD' && form.erpStoreList.length === 0)"
+              v-if="scope.row.moduleCode !== 'MDZD' || (scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length === 0)"
               class="el-button el-button--text"
               @confirm="handleDelDetailDTO(scope)"
               placement="top-start"
@@ -252,21 +252,17 @@ export default {
   },
   methods: {
     handleChannelPage(scope, val) {
-      scope.row.unionChannelType = ''
-      scope.row.channelTypes = []
-      if (val) {
-        scope.row.channelTypes = this.channelTypes.filter(ele => this.channelData.find(item => item.channelCode === val).funTypes.includes(ele.value))
-        scope.row.unionChannelType = scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
-      }
+      scope.row.channelTypes = val ? this.channelTypes.filter(ele => this.channelData.find(item => item.channelCode === val).funTypes.includes(ele.value)) : []
+      scope.row.unionChannelType = val && scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
     },
     checkSelectable(row) {
-      if (this.form.erpStoreList.length > 0) {
+      if (this.form.erpStoreOrderDetailList.length > 0) {
         return row.moduleId !== 'MDZD'
       } else return true
     },
     handleErpStore(val) {
       if (!val) {
-        this.form.erpStoreList = []
+        this.form.erpStoreOrderDetailList = []
         this.selectAuthorMaps.clear()
         this.currentPageSelectAuthorSets.clear()
       }
@@ -293,20 +289,22 @@ export default {
     },
     async handleAuthorStoreConfirm() {
       const addDetailItem = item => {
-        this.form.erpStoreList.push({
-          moduleCode: item.authStoreId,
-          moduleName: item.authStoreName,
-          authPoint: item.authSiteCount,
-          authNum: 1,
+        this.form.erpStoreOrderDetailList.push({
+          authStoreId: item.authStoreId,
+          authStoreName: item.authStoreName,
+          authSiteCount: item.authSiteCount,
+          authPoint: 1,
           remark: ''
         })
       }
-      if (this.form.erpStoreList.length === 0 && this.selectAuthorMaps.size) {
+      if (this.form.erpStoreOrderDetailList.length === 0 && this.selectAuthorMaps.size) {
         this.selectAuthorMaps.forEach(item => addDetailItem(item))
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'MDZD')) {
           this.currentPageSelectSets.clear()
           let { merchantId: custId, productCode } = this.form.erpAuthMerchantDTO
-          productCode = this.form.erpAuthMerchantDTO.productCode === 'ZHCT10' && this.form.authOrderDTO.erpStore === 1 ? 'ZHCT20' : 'ZHCT10'
+          if (this.form.erpAuthMerchantDTO.productCode === 'ZHCT10') {
+            productCode = this.form.authOrderDTO.erpStore === 1 ? 'ZHCT20' : 'ZHCT10'
+          }
           await authModuleList({ moduleInfo: this.productVal, custId, productCode }).then(res => {
             const siteInZdItem = res.find(item => item.moduleId === 'MDZD') || []
             this.form.erpAuthOrderDetails.push({
@@ -323,20 +321,20 @@ export default {
           })
           this.getProductStock()
         }
-      } else if (this.selectAuthorMaps.size && this.form.erpStoreList?.length > 0) {
-        this.form.erpStoreList.forEach((item, index) => {
-          if (!this.selectAuthorMaps.has(item.moduleCode)) this.form.erpStoreList.splice(index, 1)
+      } else if (this.selectAuthorMaps.size && this.form.erpStoreOrderDetailList?.length > 0) {
+        this.form.erpStoreOrderDetailList.forEach((item, index) => {
+          if (!this.selectAuthorMaps.has(item.authStoreId)) this.form.erpStoreOrderDetailList.splice(index, 1)
         })
         this.selectAuthorMaps.forEach((item, key) => {
-          if (this.form.erpStoreList.every(ele => ele.moduleCode !== key)) addDetailItem(item)
+          if (this.form.erpStoreOrderDetailList.every(ele => ele.authStoreId !== key)) addDetailItem(item)
         })
-      } else this.form.erpStoreList = []
+      } else this.form.erpStoreOrderDetailList = []
       this.checkAuthorStoreVisible = false
     },
     handleAuthorStoreDelDetailDTO(scope) {
-      this.form.erpStoreList.splice(scope.$index, 1)
-      this.selectAuthorMaps.delete(scope.row.moduleCode)
-      this.currentPageSelectAuthorSets.delete(scope.row.moduleCode)
+      this.form.erpStoreOrderDetailList.splice(scope.$index, 1)
+      this.selectAuthorMaps.delete(scope.row.authStoreId)
+      this.currentPageSelectAuthorSets.delete(scope.row.authStoreId)
     },
     handleDelDetailDTO(scope) {
       this.form.erpAuthOrderDetails.splice(scope.$index, 1)
@@ -363,10 +361,10 @@ export default {
         this.currentPageSelectSets.delete(row.moduleId)
       }
     },
-    handleAuthNumAmount(row) {
-      if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.authNum)) {
+    handleAuthNumAmount(row, property) {
+      if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row[property])) {
         this.$message({ type: 'warning', message: '授权数量范围为[1-999]' })
-        row.authNum = 1
+        row[property] = 1
       }
     },
     handleShopPage(val) {
@@ -416,7 +414,7 @@ export default {
         const res = await queryByAgentErpProduct({ agentId: this.userInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
           this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase()).totalAmount))
-          if (this.form.erpStoreList.length > 0) {
+          if (this.form.erpStoreOrderDetailList.length > 0) {
             this.storeOrderInventory = this.form.erpAuthOrderDetails.find(item => item.moduleId === 'MDZD').orderInventory
           }
         }
@@ -452,7 +450,7 @@ export default {
           if (this.basicAuthorStoreData?.length) {
             let hasDetailDTO = ''
             this.basicAuthorStoreData.forEach(item => {
-              if (this.form.erpStoreList?.length) hasDetailDTO = this.form.erpStoreList.some(ele => ele.moduleCode === item.authStoreId)
+              if (this.form.erpStoreOrderDetailList?.length) hasDetailDTO = this.form.erpStoreOrderDetailList.some(ele => ele.authStoreId === item.authStoreId)
               if ((this.selectAuthorMaps?.size && this.selectAuthorMaps.has(item.authStoreId)) || hasDetailDTO) {
                 this.currentPageSelectAuthorSets.add(item.authStoreId)
                 this.$refs.authorStore.toggleRowSelection(item, true)
@@ -537,7 +535,7 @@ export default {
       const { columns, data } = param
       const sums = []
       columns.forEach((column, index) => {
-        if (['authNum'].includes(column.property)) {
+        if (['authPoint'].includes(column.property)) {
           const values = data.map(item => parseFloat(item[column.property]))
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {

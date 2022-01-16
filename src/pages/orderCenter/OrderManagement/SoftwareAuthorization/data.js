@@ -37,7 +37,7 @@ export const formErpObj = {
     productName: '',
     authCount: ''
   },
-  erpStoreList: [],
+  erpStoreOrderDetailList: [],
   erpAuthOrderDetails: []
 }
 

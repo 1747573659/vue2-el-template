@@ -195,7 +195,7 @@ export default {
           return
         }
       }
-      this.$confirm('确定要提交吗？', '提示', {
+      this.$confirm('请再次确认加点数量，一经提交不可撤回', '提示', {
         type: 'warning'
       })
         .then(() => {
@@ -372,8 +372,9 @@ export default {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { merchantId, productCode },
-              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
+              { orderStatus: 0, productType: 1, erpStore: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
             ),
+            erpStoreList: this.form.erpStoreOrderDetailList,
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
         }

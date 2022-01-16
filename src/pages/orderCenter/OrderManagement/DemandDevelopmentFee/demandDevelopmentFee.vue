@@ -24,6 +24,7 @@
             </el-form-item>
             <el-form-item label="产品">
               <km-select-page
+                ref="productCode"
                 v-model="form.productCodeList"
                 option-label="name"
                 option-value="code"
@@ -49,13 +50,12 @@
             </el-form-item>
             <el-form-item label="下单人">
               <km-select-page
-                ref="selectPage"
                 v-model="form.createUser"
-                :data.sync="ordererData"
+                :data.sync="orderPersonData"
                 option-label="userName"
                 option-value="id"
-                :request="handleOrdererPage"
-                :is-max-page.sync="isOrdererMaxPage"
+                :request="getOrderPersonPage"
+                :is-max-page.sync="isOrderPersonMaxPage"
                 placeholder="全部"
               />
             </el-form-item>
@@ -64,8 +64,6 @@
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
-              <!-- <el-button size="small" v-permission="'DEMAND_DEVELOPMENT_FEE_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
-              <km-export-view v-permission="'DEMAND_DEVELOPMENT_FEE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" /> -->
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
@@ -97,7 +95,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
-        <el-table-column prop="createUserName" label="下单人"></el-table-column>
+        <el-table-column prop="createUserName" label="下单人" width="150"></el-table-column>
         <el-table-column label="使用本金" align="right">
           <template slot-scope="scope">{{ scope.row.useAmount | formatAmount }}</template>
         </el-table-column>
@@ -137,8 +135,8 @@ export default {
       paymentStatus,
       productLists: [],
       isProductMaxPage: false,
-      ordererData: [],
-      isOrdererMaxPage: false,
+      orderPersonData: [],
+      isOrderPersonMaxPage: false,
       form: { createTime: '', industry: '', productCodeList: [], orderStatus: '', payStatus: '', createUser: '', billNo: '' },
       checkExportLoad: false,
       checkTabLock: false,
@@ -168,7 +166,7 @@ export default {
   },
   mounted() {
     this.getProductByPage()
-    this.handleOrdererPage()
+    this.getOrderPersonPage()
   },
   methods: {
     ...mapActions(['delCachedView']),
@@ -202,25 +200,9 @@ export default {
         this.checkTabLock = false
       }
     },
-    // async handleExport() {
-    //   try {
-    //     this.checkExportLoad = true
-    //     await authOrderExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
-    //     this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-    //   } catch (error) {
-    //   } finally {
-    //     this.checkExportLoad = false
-    //   }
-    // },
-    // handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-    //   return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
-    // },
-    // handleExportDel: async function(row) {
-    //   return await authOrderExportDel(row.id)
-    // },
-    async handleOrdererPage({ query = '', page = 1, rows = 10 } = {}) {
+    async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, page, rows, userName: query })
+        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, userName: query, page, rows })
         this.ordererData = this.ordererData.concat(res.results || [])
         this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
@@ -228,13 +210,13 @@ export default {
     handleIndustryChange() {
       this.productLists = []
       this.isProductMaxPage = false
-      this.form.productCodes = []
+      this.form.productCodeList = []
       this.$refs.productCode.selectVal = ''
       this.getProductByPage()
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryProductCode({ info: query, page, rows, productIndustry: this.form.industry, newOrderType: 35 })
+        const res = await queryProductCode({ info: query, productIndustry: this.form.industry, newOrderType: 35, page, rows })
         this.productLists = this.productLists.concat(res.results || [])
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}

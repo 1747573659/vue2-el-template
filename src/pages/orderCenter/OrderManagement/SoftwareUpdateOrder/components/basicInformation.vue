@@ -197,7 +197,7 @@ export default {
           { required: true, message: '请输入新商户门店授权站点', trigger: ['blur', 'change'] },
           { pattern: /^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/, message: '门店授权站点范围为1-999', trigger: 'blur' }
         ],
-        upgradeAmount:[
+        upgradeAmount: [
           { required: true, message: '请输入升级费用', trigger: ['blur', 'change'] },
           { pattern: /^([0-9]\d{0,10}?)(\.\d{1,2})?$/, message: '升级费用范围为[0, 99999999999.99]', trigger: 'blur' }
         ]
@@ -288,33 +288,27 @@ export default {
       }
     },
     handleVerify() {
-      if (this.form.oldMerchantProductCode.toUpperCase() !== this.form.newMerchantProductCode.toUpperCase()) {
-        this.$message({ type: 'warning', message: '新旧商户的产品不一致，请修改后再操作' })
-      } else if (!this.newShopPageVo.xqStatus) {
-        this.$message({ type: 'warning', message: '请先开通享钱' })
-      } else {
-        this.$confirm('确定要提交吗？', '提示', {
-          type: 'warning',
-          beforeClose: (action, instance, done) => {
-            if (action === 'confirm') {
-              instance.confirmButtonLoading = true
-              this.setOrderSave()
-                .then(async () => {
-                  await channelSoftUpgradeSubmit({ id: parseFloat(this.$route.query.id) })
-                  this.getDetail().then(() => {
-                    this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 10, status: 'detail' } })
-                  })
-                  this.$message({ type: 'success', message: '提交成功' })
+      this.$confirm('确定要提交吗？', '提示', {
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            this.setOrderSave()
+              .then(async () => {
+                await channelSoftUpgradeSubmit({ id: parseFloat(this.$route.query.id) })
+                this.getDetail().then(() => {
+                  this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 10, status: 'detail' } })
                 })
-                .catch(() => {})
-                .finally(() => {
-                  instance.confirmButtonLoading = false
-                  done()
-                })
-            } else done()
-          }
-        }).catch(() => {})
-      }
+                this.$message({ type: 'success', message: '提交成功' })
+              })
+              .catch(() => {})
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
+          } else done()
+        }
+      }).catch(() => {})
     },
     handleSave() {
       this.checkSaveBtnLoad = true
