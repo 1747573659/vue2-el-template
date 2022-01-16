@@ -35,7 +35,7 @@
       <div slot="header" class="p-card-head">
         <span class="p-card-title">旧商户信息</span>
       </div>
-      <el-form ref="oldForm" :model="form" :rules="rules" size="small" :inline="true" label-suffix=":" label-width="110px">
+      <el-form ref="oldForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
         <template v-if="['', 0].includes(form.oldRegistType)">
           <el-form-item label="商户名称" prop="oldMerchantName" key="1">
             <km-select-page
@@ -89,7 +89,7 @@
       <div slot="header" class="p-card-head">
         <span class="p-card-title">新商户信息</span>
       </div>
-      <el-form ref="newForm" :model="form" :rules="rules" size="small" :inline="true" label-suffix=":" label-width="110px">
+      <el-form ref="newForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="商户名称" prop="newMerchantName">
           <km-select-page
             ref="newMerchantSelect"
@@ -357,7 +357,8 @@ export default {
           } else done()
         }
       })
-    },    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
+    },
+    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await queryProductCode({ info: query, page, rows, registType: Math.pow(0, this.form.oldRegistType), newOrderType: 36 })
         this.productLists = this.productLists.concat(res.results || [])

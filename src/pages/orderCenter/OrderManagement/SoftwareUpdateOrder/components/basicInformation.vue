@@ -35,7 +35,7 @@
       <div slot="header" class="p-card-head">
         <span class="p-card-title">旧商户信息</span>
       </div>
-      <el-form ref="oldForm" :model="form" :rules="rules" size="small" :inline="true" label-suffix=":" label-width="110px">
+      <el-form ref="oldForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
         <template v-if="['', 0].includes(form.oldRegistType)">
           <el-form-item label="商户名称" prop="oldMerchantName" key="1">
             <km-select-page
@@ -88,7 +88,7 @@
       <div slot="header" class="p-card-head">
         <span class="p-card-title">新商户信息</span>
       </div>
-      <el-form ref="newForm" :model="form" :rules="rules" size="small" :inline="true" label-suffix=":" label-width="110px">
+      <el-form ref="newForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="商户名称" prop="newMerchantName">
           <km-select-page
             ref="newMerchantSelect"
@@ -343,7 +343,7 @@ export default {
           ...params
         } = this.form
         const data = Object.assign(
-          { agentId: this.userInfo.agentId, billNo, id, handUser, upgradeAmount },
+          { agentId: this.userInfo.agentId, billNo, id, handUser, upgradeAmount: NP.times(upgradeAmount, 100) },
           { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
         )
         return this.$route.query.status === 'add' ? channelSoftUpgradeAdd(data) : channelSoftUpgradeUpdate(data)
@@ -373,6 +373,7 @@ export default {
       try {
         this.checkBasicInformLoad = true
         const res = await channelSoftUpgradeById(this.$route.query.id)
+        res.upgradeAmount = NP.divide(res.upgradeAmount, 100)
         this.form = res
         setTimeout(() => {
           this.$refs.oldMerchantSelect.selectVal = res.oldMerchantName
