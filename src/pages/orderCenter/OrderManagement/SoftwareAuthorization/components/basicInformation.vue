@@ -371,8 +371,8 @@ export default {
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
-              { merchantId, productCode },
-              { orderStatus: 0, productType: 1, erpStore: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
+              { merchantId, productCode, erpStore: this.form.authOrderDTO.erpStore },
+              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
             ),
             erpStoreList: this.form.erpStoreOrderDetailList,
             orderDetailVos: this.handleQueryParams().orderDetailVos

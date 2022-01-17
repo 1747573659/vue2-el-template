@@ -134,8 +134,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <template v-if="scope.row.status === '2'">
-              <!-- <el-button v-permission="'SOFT_NOTE_MANAGEMENT_EDIT'" type="text" @click="checkMerchantVisible = true">编辑</el-button> -->
-              <el-button type="text" @click="handleMerchantEdit(scope.row)">编辑</el-button>
+              <el-button type="text" v-permission="'SOFT_NOTE_MANAGEMENT_EDIT'" @click="handleMerchantEdit(scope.row)">编辑</el-button>
             </template>
           </template>
         </el-table-column>
@@ -148,7 +147,7 @@
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
           background
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           layout="total, sizes, prev, pager, next, jumper"
         ></el-pagination>
       </div>

@@ -4,7 +4,7 @@
       <el-form-item label="产品信息">
         <el-input v-model="productVal" maxlength="50" placeholder="请输入产品编码/名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="行业">
+      <el-form-item label="行业" v-if="$route.name==='softwarePurchaseDetails'">
         <el-select v-model="industry" clearable placeholder="全部">
           <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>

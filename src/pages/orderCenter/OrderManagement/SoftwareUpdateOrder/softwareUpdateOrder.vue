@@ -1,7 +1,7 @@
 <template>
   <section>
     <div class="search-box">
-      <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="90px" @submit.native.prevent>
+      <el-form size="small" ref="form" :model="form" :inline="true" label-suffix=":" label-width="90px" @submit.native.prevent>
         <el-row type="flex" align="bottom">
           <el-col :xl="22" :lg="21">
             <el-form-item label="订单日期">
@@ -64,30 +64,27 @@
               <km-select-page
                 ref="selectPage"
                 v-model="form.createUser"
-                :data.sync="ordererData"
+                :data.sync="orderPersonData"
                 option-label="userName"
                 option-value="id"
-                :request="handleOrdererPage"
-                :is-max-page.sync="isOrdererMaxPage"
+                :request="getOrderPersonPage"
+                :is-max-page.sync="isOrderPersonMaxPage"
                 placeholder="全部"
               />
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="16" clearable></el-input>
             </el-form-item>
-            <el-form-item label="商户信息">
+            <el-form-item label="商户信息" :rules="[{ min: 5, max: 40, message: '至少输入5个字符', trigger: 'blur' }]" prop="merchantId">
               <el-input v-model.trim="form.merchantId" maxlength="40" placeholder="请输入旧商户号/新商户号" clearable></el-input>
             </el-form-item>
-
             <el-form-item style="margin-left:90px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
-              <!--              <el-button size="small" :loading="checkExportLoad" @click="handleExport">导出</el-button>-->
-              <!--              <km-export-view :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />-->
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
             <el-form-item>
-              <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
+              <el-button type="primary" size="small" v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
         </el-row>
@@ -98,9 +95,17 @@
         <el-table-column prop="createOrderTime" label="订单时间"></el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column prop="oldRegistTypeName" label="旧商户注册方式" width="120"></el-table-column>
-        <el-table-column prop="oldMerchantProductCodeName" label="升级前产品"></el-table-column>
+        <el-table-column label="升级前产品" width="120">
+          <template slot-scope="scope">
+            <span>{{ `${scope.row.oldMerchantProductCode ? '[' + scope.row.oldMerchantProductCode + ']' : ''}${scope.row.oldMerchantProductCodeName || ''}` }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="oldMerchantId" label="旧商户号"></el-table-column>
-        <el-table-column prop="newMerchantProductCodeName" label="升级后产品"></el-table-column>
+        <el-table-column label="升级后产品" width="120">
+          <template slot-scope="scope">
+            <span>{{ `${scope.row.newMerchantProductCode ? '[' + scope.row.newMerchantProductCode + ']' : ''}${scope.row.newMerchantProductCodeName || ''}` }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="newMerchantId" label="新商户号"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">
@@ -125,7 +130,7 @@
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">
-              <el-button type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+              <el-button type="text" size="small" v-permission="'SOFTWARE_UPDATE_ORDER_EDIT'" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
@@ -155,8 +160,8 @@ export default {
       form: { createTime: '', productCodeBeforeList: [], productCodeAfterList: [], orderStatus: '', payStatus: '', oldRegistType: '', createUser: '', billNo: '', merchantId: '' },
       productLists: [],
       isProductMaxPage: false,
-      ordererData: [],
-      isOrdererMaxPage: false,
+      orderPersonData: [],
+      isOrderPersonMaxPage: false,
       checkTabLock: false,
       tableData: [],
       currentPage: 1,
@@ -184,16 +189,13 @@ export default {
   },
   mounted() {
     this.getProductByPage()
-    this.handleOrdererPage()
+    this.getOrderPersonPage()
   },
   methods: {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
       this.delCachedView({ name: 'softwareUpdateOrderDetails' }).then(() => {
-        this.$router.push({
-          name: 'softwareUpdateOrderDetails',
-          query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }, status.productType ? {} : { productType: row.productType })
-        })
+        this.$router.push({ name: 'softwareUpdateOrderDetails', query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }) })
       })
     },
     handleQueryParams() {
@@ -207,8 +209,12 @@ export default {
       })
     },
     handleSearch() {
-      this.currentPage = 1
-      this.getQueryPage()
+      this.$refs.form.validate(valid => {
+        if (valid) {
+          this.currentPage = 1
+          this.getQueryPage()
+        }
+      })
     },
     async getQueryPage() {
       try {
@@ -221,27 +227,11 @@ export default {
         this.checkTabLock = false
       }
     },
-    // async handleExport() {
-    //   try {
-    //     this.checkExportLoad = true
-    //     await authOrderExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
-    //     this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-    //   } catch (error) {
-    //   } finally {
-    //     this.checkExportLoad = false
-    //   }
-    // },
-    // handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-    //   return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
-    // },
-    // handleExportDel: async function(row) {
-    //   return await authOrderExportDel(row.id)
-    // },
-    async handleOrdererPage({ query = '', page = 1, rows = 10 } = {}) {
+    async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, page, rows, userName: query })
-        this.ordererData = this.ordererData.concat(res.results || [])
-        this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
+        this.orderPersonData = this.orderPersonData.concat(res.results || [])
+        this.isOrderPersonMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {

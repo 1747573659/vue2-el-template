@@ -102,7 +102,7 @@ export default {
         if (userInfo.propertyType === 1) {
           if (userInfo.level === 2) {
             item.children = item.children.map(ele => {
-              ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer'].includes(child.name))
+              ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name))
               return ele
             })
           }

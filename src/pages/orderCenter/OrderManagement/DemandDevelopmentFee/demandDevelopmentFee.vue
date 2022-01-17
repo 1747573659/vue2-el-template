@@ -82,11 +82,7 @@
         <el-table-column label="产品" width="150">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column label="订单状态" width="80">
-          <template slot-scope="scope">
-            <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
-          </template>
-        </el-table-column>
+        <el-table-column prop="orderStatusName" label="订单状态" width="80"></el-table-column>
         <el-table-column prop="developDay" label="开发人天" align="right" width="80"></el-table-column>
         <el-table-column prop="developAmount" label="开发费用" align="right"></el-table-column>
         <el-table-column label="付款状态" width="90">
@@ -106,7 +102,7 @@
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">
-              <el-button type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+              <el-button type="text" size="small" v-permission="'DEMAND_DEVELOPMENT_FEE_EDIT'" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
@@ -200,19 +196,19 @@ export default {
         this.checkTabLock = false
       }
     },
-    async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {
-      try {
-        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, userName: query, page, rows })
-        this.ordererData = this.ordererData.concat(res.results || [])
-        this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
-      } catch (error) {}
-    },
     handleIndustryChange() {
       this.productLists = []
       this.isProductMaxPage = false
       this.form.productCodeList = []
       this.$refs.productCode.selectVal = ''
       this.getProductByPage()
+    },
+    async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, userName: query, page, rows })
+        this.orderPersonData = this.orderPersonData.concat(res.results || [])
+        this.isOrderPersonMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {

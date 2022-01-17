@@ -187,8 +187,8 @@ export default {
     async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await queryAgentAllUser({ agentId: this.userInfo.agentId, page, rows, userName: query })
-        this.ordererData = this.ordererData.concat(res.results || [])
-        this.isOrdererMaxPage = !res.results || (res.results && res.results.length < 10)
+        this.orderPersonData = this.orderPersonData.concat(res.results || [])
+        this.isOrderPersonMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {

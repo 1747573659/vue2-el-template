@@ -98,7 +98,7 @@
             :data.sync="newShopPageData"
             :request="getNewShopPage"
             :is-max-page.sync="isNewShopMaxPage"
-            @change="handleShopPage"
+            @change="val => handleShopPage(val, 'new')"
             placeholder="请输入名称/商户号"
           />
         </el-form-item>
@@ -158,7 +158,7 @@
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('softwareUpdateOrder')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <template v-if="$route.query.status === 'edit'">
-        <el-button size="small" type="primary" @click="handleVerify">提交</el-button>
+        <el-button size="small" type="primary" v-permission="'SOFTWARE_UPDATE_ORDER_SUBMIT'" @click="handleVerify">提交</el-button>
       </template>
     </div>
   </section>
@@ -185,8 +185,9 @@ export default {
   data() {
     return {
       oldRegistTypes,
-      form: deepClone(formObj),
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
+      userInfo: JSON.parse(localStorage.userInfo),
+      form: deepClone(formObj),
       rules: {
         oldRegistType: [{ required: true, message: '请选择旧商户注册方式', trigger: ['blur', 'change'] }],
         oldMerchantName: [{ required: true, message: '请选择旧商户名称', trigger: ['blur', 'change'] }],
@@ -202,12 +203,10 @@ export default {
           { pattern: /^([0-9]\d{0,10}?)(\.\d{1,2})?$/, message: '升级费用范围为[0, 99999999999.99]', trigger: 'blur' }
         ]
       },
-      userInfo: JSON.parse(localStorage.userInfo),
       oldShopPageData: [],
       isOldShopMaxPage: false,
       newShopPageData: [],
       isNewShopMaxPage: false,
-      newShopPageVo: {},
       productLists: [],
       isProductMaxPage: false,
       checkSaveBtnLoad: false,
@@ -243,21 +242,22 @@ export default {
   methods: {
     handleOldRegistType(val) {
       if (val) {
+        const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldAddress, oldMerchantAuthCount } = formObj
         this.form = Object.assign(this.form, {
-          oldMerchantName: '',
-          oldMerchantId: '',
-          oldMerchantAuthType: '',
-          oldMerchantProductCode: '',
-          oldMerchantProductCodeName: '',
-          oldAddress: '',
-          oldMerchantAuthCount: ''
+          oldMerchantName,
+          oldMerchantId,
+          oldMerchantAuthType,
+          oldMerchantProductCode,
+          oldMerchantProductCodeName,
+          oldAddress,
+          oldMerchantAuthCount
         })
       }
     },
     handleShopPage(val, type) {
       if (val) {
+        const { authCount, productId, productName, status, custId, companyProvince, companyCity } = this[`${type}ShopPageData`].find(item => item.custId === val)
         if (type === 'old') {
-          const { authCount, productId, productName, status, custId, companyProvince, companyCity } = this.oldShopPageData.find(item => item.custId === val)
           this.form = Object.assign(this.form, {
             oldMerchantAuthCount: authCount.includes(';') ? authCount.split(';')[1] : authCount,
             oldMerchantProductCode: productId,
@@ -267,8 +267,6 @@ export default {
             oldAddress: companyProvince + companyCity
           })
         } else {
-          this.newShopPageVo = this.newShopPageData.find(item => item.custId === val)
-          const { productId, productName, status, custId, companyProvince, companyCity } = this.newShopPageVo
           this.form = Object.assign(this.form, {
             newMerchantAuthCount: ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1,
             newMerchantProductCode: productId,
@@ -280,10 +278,11 @@ export default {
         }
       } else {
         if (type === 'old') {
-          this.form = Object.assign(this.form, { oldMerchantAuthCount: '', oldMerchantProductCode: '', oldMerchantProductCodeName: '', oldMerchantAuthType: '', oldMerchantId: '' })
+          const { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId } = formObj
+          this.form = Object.assign(this.form, { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId })
         } else {
-          this.newShopPageVo = {}
-          this.form = Object.assign(this.form, { newMerchantAuthCount: '', newMerchantProductCode: '', newMerchantProductCodeName: '', newMerchantAuthType: '', newMerchantId: '' })
+          const { newMerchantAuthCount, newMerchantProductCode, newMerchantProductCodeName, newMerchantAuthType, newMerchantId } = formObj
+          this.form = Object.assign(this.form, { newMerchantAuthCount, newMerchantProductCode, newMerchantProductCodeName, newMerchantAuthType, newMerchantId })
         }
       }
     },
@@ -328,22 +327,10 @@ export default {
     },
     async setOrderSave() {
       if (this.handleValidateForm()) {
-        const {
-          handUser,
-          id,
-          billNo,
-          newMerchantId,
-          newMerchantAuthCount,
-          newMerchantProductCode,
-          newMerchantAuthType,
-          oldMerchantId,
-          oldMerchantProductCode,
-          oldRegistType,
-          upgradeAmount,
-          ...params
-        } = this.form
+        const { handUser, id, newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType } = this.form
+        const { billNo, upgradeAmount } = this.form
         const data = Object.assign(
-          { agentId: this.userInfo.agentId, billNo, id, handUser, upgradeAmount: NP.times(upgradeAmount, 100) },
+          { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
           { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
         )
         return this.$route.query.status === 'add' ? channelSoftUpgradeAdd(data) : channelSoftUpgradeUpdate(data)
@@ -396,7 +383,7 @@ export default {
               instance.confirmButtonLoading = true
               await channelSoftUpgradeDel(this.$route.query.id)
               this.$message({ type: 'success', message: '删除成功' })
-              this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
+              this.handleCancel(name)
             } catch (error) {
             } finally {
               instance.confirmButtonLoading = false
@@ -406,18 +393,18 @@ export default {
         }
       })
     },
-    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
-      try {
-        const res = await queryProductCode({ info: query, page, rows, registType: this.form.oldRegistType, newOrderType: 37 })
-        this.productLists = this.productLists.concat(res.results || [])
-        this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
-      } catch (error) {}
-    },
     async getHandlerMan() {
       try {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
         this.form.handUser = id
         this.form.handUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
+      } catch (error) {}
+    },
+    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const res = await queryProductCode({ info: query, page, rows, registType: this.form.oldRegistType, newOrderType: 37 })
+        this.productLists = this.productLists.concat(res.results || [])
+        this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
     getOldShopPage({ query = '', page = 1, rows = 10 } = {}) {

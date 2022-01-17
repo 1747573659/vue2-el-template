@@ -90,7 +90,7 @@
         </el-table-column>
       </el-table>
       <div class="km-page-block">
-        <el-pagination :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+        <el-pagination :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 30, 50]" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
     <selectPage @sureVal='sureVal' :listApi='queryShopListByPage' v-bind:dialogVisible.sync='dialogVisible' :placeholder='selectPageAttribute.placeholder' :title="selectPageAttribute.title"></selectPage>
