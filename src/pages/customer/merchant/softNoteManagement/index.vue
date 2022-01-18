@@ -239,7 +239,7 @@ export default {
             required: true,
             trigger: ['blur', 'change'],
             validator: (rule, value, callback) => {
-              if (dayjs(value).isBefore(dayjs()) || dayjs(value).isAfter(dayjs(this.merchantForm.expireDate))) {
+              if (dayjs(value).isBefore(dayjs().startOf('day')) || dayjs(value).isAfter(dayjs(this.merchantForm.expireDate))) {
                 callback(new Error('客户有效期不能小于今天 / 客户有效期不能大于 授权有效期'))
               }
               callback()
@@ -259,7 +259,8 @@ export default {
   },
   methods: {
     handleMerchantEdit(row) {
-      this.merchantForm = Object.assign(this.merchantForm, { merchant: row.custName, expireDate: row.expireDate, custId: row.custId })
+      const { custName: merchant, dealersAuthExpireDate: validPeriod, expireDate, custId } = row
+      this.merchantForm = Object.assign(this.merchantForm, { merchant, validPeriod, expireDate, custId })
       this.checkMerchantVisible = true
     },
     async handleMerchantSubmit() {
@@ -276,8 +277,10 @@ export default {
         this.checkMerchantVisible = false
         this.merchantForm = { merchant: '', validPeriod: '', remark: '', expireDate: '', custId: '' }
         this.$refs.merchantForm.resetFields()
+        this.authShopPage()
         this.$message({ type: 'success', message: '修改成功' })
-      } catch (error) {} finally {
+      } catch (error) {
+      } finally {
         this.isMerchantSubmit = false
       }
     },
