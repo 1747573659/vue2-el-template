@@ -84,7 +84,9 @@
         </el-table-column>
         <el-table-column prop="orderStatusName" label="订单状态" width="80"></el-table-column>
         <el-table-column prop="developDay" label="开发人天" align="right" width="80"></el-table-column>
-        <el-table-column prop="developAmount" label="开发费用" align="right"></el-table-column>
+        <el-table-column label="开发费用" align="right">
+          <template slot-scope="scope">{{scope.row.developAmount | formatAmount}}</template>
+        </el-table-column>
         <el-table-column label="付款状态" width="90">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.payStatus !== 2 }">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '' }}</span>

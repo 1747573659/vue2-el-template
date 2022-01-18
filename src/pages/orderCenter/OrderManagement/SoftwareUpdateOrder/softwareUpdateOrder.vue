@@ -112,7 +112,9 @@
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="upgradeAmount" label="升级费用" align="right"></el-table-column>
+        <el-table-column label="升级费用" align="right">
+          <template slot-scope="scope">{{ scope.row.upgradeAmount | formatAmount }}</template>
+        </el-table-column>
         <el-table-column label="付款状态">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.payStatus !== 2 }">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '' }}</span>
