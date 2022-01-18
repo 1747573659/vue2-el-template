@@ -19,8 +19,10 @@
 </template>
 
 <script>
-import { modifyPwd } from '@/api/login'
 import { MD5Util } from '@/utils'
+import { mapActions } from 'vuex'
+
+import { modifyPwd } from '@/api/login'
 
 export default {
   props: {
@@ -51,7 +53,15 @@ export default {
         newPass: [
           { required: true, message: '新密码不能为空', trigger: 'blur' },
           { min: 6, message: '新密码必须6位数字', trigger: 'blur' },
-          { type: 'number', message: '新密码必须6位数字', trigger: 'blur', transform: value => this.$options.filters.formValidateNum(value, 'number') }
+          { type: 'number', message: '新密码必须6位数字', trigger: 'blur', transform: value => this.$options.filters.formValidateNum(value, 'number') },
+          {
+            required: true,
+            trigger: 'blur',
+            validator: (rule, value, callback) => {
+              if (MD5Util.md5(String(value)) === '21218cca77804d2ba1922c33e0151105') callback(new Error('新密码不能为初始密码'))
+              else callback()
+            }
+          }
         ],
         checkPass: [
           { validator: validatePass, required: true, trigger: 'blur' },
@@ -62,6 +72,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['Logout']),
     handleDiaClose() {
       this.$emit('update:status', false)
       this.$refs.passForm.resetFields()
@@ -71,12 +82,10 @@ export default {
         if (valid) {
           try {
             this.isLoading = true
-            await modifyPwd({
-              newPassword: this.passwordInfo.newPass,
-              oldPassword: this.passwordInfo.oldPass
-            })
+            await modifyPwd({ newPassword: this.passwordInfo.newPass, oldPassword: this.passwordInfo.oldPass })
             this.handleDiaClose()
             this.$message({ message: '修改成功', type: 'success' })
+            this.Logout()
           } catch (e) {
           } finally {
             this.isLoading = false
