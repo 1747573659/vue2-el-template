@@ -125,7 +125,7 @@
       <el-button size="small" plain v-if="$route.query.status === 'edit'" @click="handleDel('erpAuthorizedTransfer')">删除</el-button>
       <el-button size="small" type="primary" plain v-if="['add', 'edit'].includes($route.query.status)" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       <template v-if="$route.query.status === 'edit'">
-        <el-button size="small" type="primary" @click="handleVerify">提交</el-button>
+        <el-button size="small" type="primary" v-permission="'ERP_AUTHORIZED_TRANSFER_SUBMIT'" @click="handleVerify">提交</el-button>
       </template>
     </div>
   </section>

@@ -65,7 +65,7 @@
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
-            <el-form-item>
+            <el-form-item v-permission="'ERP_AUTHORIZED_TRANSFER_PLUS'">
               <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
           </el-col>
@@ -94,7 +94,7 @@
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">
-              <el-button type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
+              <el-button type="text" size="small" v-permission="'ERP_AUTHORIZED_TRANSFER_EDIT'" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
             </template>
             <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
