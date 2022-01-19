@@ -281,21 +281,18 @@ export default {
         })
     },
     setOrderSave() {
-      return this.handleValidateForm()
-        .then(async () => {
-          if (this.isFormValidatePass) {
-            const { oldMerchantId, oldMerchantProductCode, oldRegistType, oldMerchantAuthType, oldMerchantAuthCount } = this.form
-            const { handUser, id, newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode } = this.form
-            let data = Object.assign(
-              { agentId: this.userInfo.agentId, id, handUser },
-              { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
-            )
-            if (oldRegistType === 0) data = Object.assign(data, { oldMerchantAuthType, oldMerchantAuthCount })
-            return this.$route.query.status === 'add' ? await channelErpTransferAdd(data) : await channelErpTransferUpdate(data)
-          } else {
-            return new Promise((resolve, reject) => reject(new Error()))
-          }
-        })
+      return this.handleValidateForm().then(async () => {
+        if (this.isFormValidatePass) {
+          const { oldMerchantId, oldMerchantProductCode, oldRegistType, oldMerchantAuthType, oldMerchantAuthCount } = this.form
+          const { handUser, id, newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode } = this.form
+          let data = Object.assign(
+            { agentId: this.userInfo.agentId, id, handUser },
+            { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
+          )
+          if (oldRegistType === 0) data = Object.assign(data, { oldMerchantAuthType, oldMerchantAuthCount })
+          return this.$route.query.status === 'add' ? await channelErpTransferAdd(data) : await channelErpTransferUpdate(data)
+        } else return new Promise((resolve, reject) => reject(new Error()))
+      })
     },
     handleValidateForm() {
       const reFormArr = ['orderForm', 'oldForm', 'newForm']

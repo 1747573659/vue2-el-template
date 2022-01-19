@@ -353,7 +353,7 @@ export default {
           })
         })
       }
-      Promise.all(validateFormFunc())
+      return Promise.all(validateFormFunc())
         .then(() => {
           this.isFormValidatePass = true
         })
