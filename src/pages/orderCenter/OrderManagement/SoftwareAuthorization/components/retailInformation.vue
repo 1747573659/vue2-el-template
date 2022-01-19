@@ -251,10 +251,9 @@ export default {
       this.form.merchantDTO.delayHour = 1
       if (!this.form.merchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
-        if (this.$route.query.status === 'edit' || val === 1) this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
         if (this.merchantInfo?.productCode) {
           if (val !== 1) await this.handleZbProduct()
-          if (val === 2) {
+          if (val !== 3) {
             this.setDetailDTOList()
             this.getProductStock()
           } else this.resetDTOList()
@@ -311,7 +310,7 @@ export default {
             useInventory: this.form.merchantDTO.delayHour,
             orderInventory: this.productStockObj?.totalAmount ?? 0,
             openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp,
-            currentValidTime: `${this.merchantInfo?.KMValidity} 00:00:00` ?? '',
+            currentValidTime: this.merchantInfo?.KMValidity ? dayjs(this.merchantInfo?.KMValidity).startOf('day').format('YYYY-MM-DD') : '',
             delayValidTime: this.merchantInfo.KMValidity
               ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
                   .subtract(1, 'day')
