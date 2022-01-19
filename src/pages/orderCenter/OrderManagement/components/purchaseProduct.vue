@@ -15,7 +15,7 @@
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="code" label="产品编码"></el-table-column>
       <el-table-column prop="name" label="产品名称"></el-table-column>
-      <el-table-column prop="industryName" label="行业" width="100" v-if="$route.name==='softwarePurchaseDetails'"></el-table-column>
+      <el-table-column prop="industryName" label="所属行业" width="100" v-if="$route.name==='softwarePurchaseDetails'"></el-table-column>
     </el-table>
     <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     <div slot="footer">

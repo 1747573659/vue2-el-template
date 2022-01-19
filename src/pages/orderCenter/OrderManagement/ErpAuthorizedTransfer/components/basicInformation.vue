@@ -54,7 +54,7 @@
             <el-input :value="form.oldMerchantId" placeholder="请先选择商户" disabled></el-input>
           </el-form-item>
           <el-form-item label="授权状态">
-            <el-input :value="form.oldMerchantAuthType ? '试用' : '正式'" disabled></el-input>
+            <el-input :value="form.oldMerchantAuthType !== '' ? form.oldMerchantAuthType ? '试用' : '正式' : ''" disabled></el-input>
           </el-form-item>
           <el-form-item label="产品">
             <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
@@ -107,7 +107,7 @@
           <el-input :value="form.newMerchantId" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="授权状态">
-          <el-input :value="form.newMerchantAuthType ? '试用' : '正式'" disabled></el-input>
+          <el-input :value="form.newMerchantAuthType !== '' ? form.newMerchantAuthType ? '试用' : '正式' : ''" disabled></el-input>
         </el-form-item>
         <el-form-item label="产品">
           <el-input :value="`${form.newMerchantProductCode ? '[' + form.newMerchantProductCode + ']' : ''}${form.newMerchantProductCodeName || ''}`" disabled></el-input>

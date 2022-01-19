@@ -173,13 +173,14 @@
   </section>
 </template>
 <script>
+import dayjs from 'dayjs'
 import { authorizationState } from './publicData/authorizationState' // 授权状态
 import { isOnlineState } from './publicData/isOnlineState' // 在线状态
 import { openingState } from './publicData/openingState' // 享钱开通状态
 import selectPage from '@/components/selectPage' //选择组件
-import { authShopPage, queryAuthErpByPage, queryShopListByPage, setCustomExpireUpdate } from '@/api/customer/merchant' //api
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
-import dayjs from 'dayjs'
+
+import { authShopPage, queryAuthErpByPage, queryShopListByPage, setCustomExpireUpdate } from '@/api/customer/merchant' //api
 
 export default {
   name: 'softNoteManagement',
@@ -240,7 +241,7 @@ export default {
             trigger: ['blur', 'change'],
             validator: (rule, value, callback) => {
               if (dayjs(value).isBefore(dayjs().startOf('day')) || dayjs(value).isAfter(dayjs(this.merchantForm.expireDate))) {
-                callback(new Error('客户有效期不能小于今天 / 客户有效期不能大于 授权有效期'))
+                callback(new Error('客户有效期不能小于今天/客户有效期不能大于授权有效期'))
               }
               callback()
             }
@@ -263,26 +264,24 @@ export default {
       this.merchantForm = Object.assign(this.merchantForm, { merchant, validPeriod, expireDate, custId })
       this.checkMerchantVisible = true
     },
-    async handleMerchantSubmit() {
-      try {
-        this.isMerchantSubmit = true
-        const data = {
-          custId: this.merchantForm.custId,
-          custRemark: this.merchantForm.remark,
-          dealersAuthExpireDate: dayjs(this.merchantForm.validPeriod)
-            .endOf('day')
-            .format('YYYY-MM-DD HH:mm:ss')
+    handleMerchantSubmit() {
+      this.$refs.merchantForm.validate(async valid => {
+        if (valid) {
+          const { custId, remark: custRemark, validPeriod } = this.merchantForm
+          try {
+            this.isMerchantSubmit = true
+            await setCustomExpireUpdate({ custId, custRemark, dealersAuthExpireDate: dayjs(validPeriod).format('YYYY-MM-DD 23:59:59') })
+            this.checkMerchantVisible = false
+            this.merchantForm = { merchant: '', validPeriod: '', remark: '', expireDate: '', custId: '' }
+            this.$refs.merchantForm.resetFields()
+            this.authShopPage()
+            this.$message({ type: 'success', message: '修改成功' })
+          } catch (error) {
+          } finally {
+            this.isMerchantSubmit = false
+          }
         }
-        await setCustomExpireUpdate(data)
-        this.checkMerchantVisible = false
-        this.merchantForm = { merchant: '', validPeriod: '', remark: '', expireDate: '', custId: '' }
-        this.$refs.merchantForm.resetFields()
-        this.authShopPage()
-        this.$message({ type: 'success', message: '修改成功' })
-      } catch (error) {
-      } finally {
-        this.isMerchantSubmit = false
-      }
+      })
     },
     selectPageFocusErp() {
       this.isMaxPageErp = false

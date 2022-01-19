@@ -44,7 +44,7 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card shadow="never" class="p-card" v-if="isStoreCard || form.erpStoreOrderDetailList.length > 0">
+    <el-card shadow="never" class="p-card" v-if="isStoreCard || (form.erpStoreOrderDetailList && form.erpStoreOrderDetailList.length > 0)">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <span style="margin-right:20px">下单时库存: {{ storeOrderInventory }}</span>
         <el-button type="primary" size="small" plain @click="handleAuthorStoreVisible">选择授权门店</el-button>
@@ -101,7 +101,7 @@
               v-else
               size="small"
               v-model.number.trim="scope.row.authNum"
-              :disabled="scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0"
+              :disabled="scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList && form.erpStoreOrderDetailList.length > 0"
               @change="handleAuthNumAmount(scope.row, 'authNum')"
               style="width:100%"
             ></el-input>
@@ -144,7 +144,7 @@
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
             <el-popconfirm
-              v-if="scope.row.moduleCode !== 'MDZD' || (scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length === 0)"
+              v-if="scope.row.moduleCode !== 'MDZD' || (scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList && form.erpStoreOrderDetailList.length === 0)"
               class="el-button el-button--text"
               @confirm="handleDelDetailDTO(scope)"
               placement="top-start"
