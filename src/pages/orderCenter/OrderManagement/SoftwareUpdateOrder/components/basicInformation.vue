@@ -60,7 +60,7 @@
             <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
           </el-form-item>
           <el-form-item label="地区">
-            <el-input :value="form.oldMerchantAddress" disabled></el-input>
+            <el-input :value="form.oldAddress" disabled></el-input>
           </el-form-item>
           <el-form-item label="门店授权站点">
             <el-input :value="form.oldMerchantAuthCount" disabled></el-input>
@@ -112,7 +112,7 @@
           <el-input :value="`${form.newMerchantProductCode ? '[' + form.newMerchantProductCode + ']' : ''}${form.newMerchantProductCodeName || ''}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="地区">
-          <el-input :value="form.newMerchantAddress" disabled></el-input>
+          <el-input :value="form.newAddress" disabled></el-input>
         </el-form-item>
         <el-form-item label="门店授权站点" prop="newMerchantAuthCount">
           <el-input v-model="form.newMerchantAuthCount"></el-input>
