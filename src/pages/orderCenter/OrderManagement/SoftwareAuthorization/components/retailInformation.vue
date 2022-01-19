@@ -37,7 +37,7 @@
           <el-select v-model="form.merchantDTO.applicationModule" @change="handleApplicationModule" clearable>
             <el-option label="微商城" :value="1"></el-option>
             <el-option label="商家助手" :value="2" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
-            <el-option label="电子发票" :value="3" v-if="form.merchantDTO.merchantVersion !== '3'"></el-option>
+            <el-option label="电子发票" :value="3"></el-option>
           </el-select>
         </el-form-item>
         <el-form-item label="延期时长" v-if="form.merchantDTO.applicationModule !== 2">
@@ -168,7 +168,7 @@ export default {
     async getProductPage() {
       try {
         this.checkProductTabLock = true
-        const res = await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantNo })
+        const res = await authOrderWcyTaxpayerNum({ cust: this.form.merchantDTO.merchantId })
         this.basicProductData = res.map(item => {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
@@ -251,13 +251,20 @@ export default {
       this.form.merchantDTO.delayHour = 1
       if (!this.form.merchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
-        if (this.$route.query.status === 'edit' || val === 1) this.merchantInfo = await this.getWlsCustInfo()
-        if (this.merchantInfo.productCode) {
+        if (this.$route.query.status === 'edit' || val === 1) this.merchantInfo = await authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
+        if (this.merchantInfo?.productCode) {
           if (val !== 1) await this.handleZbProduct()
-          this.setDetailDTOList()
-          this.getProductStock()
-        } else this.form.detailDTOList = []
+          if (val === 2) {
+            this.setDetailDTOList()
+            this.getProductStock()
+          } else this.resetDTOList()
+        } else this.resetDTOList()
       }
+    },
+    resetDTOList() {
+      this.form.detailDTOList = []
+      this.selectMaps.clear()
+      this.currentPageSelectSets.clear()
     },
     async handleZbProduct() {
       try {
@@ -313,9 +320,6 @@ export default {
           }
         ]
       }
-    },
-    getWlsCustInfo() {
-      return authOrderWlsCustInfo({ cust: this.form.merchantDTO.merchantId })
     },
     async getProductStock() {
       try {

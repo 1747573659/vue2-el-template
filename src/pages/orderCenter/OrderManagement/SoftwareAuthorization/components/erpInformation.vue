@@ -58,7 +58,7 @@
         </el-table-column>
         <el-table-column prop="authStoreId" label="门店编码"></el-table-column>
         <el-table-column prop="authStoreName" label="门店名称"></el-table-column>
-        <el-table-column prop="authSiteCount" label="已授权点数" align="right"></el-table-column>
+        <el-table-column prop="authSiteCount" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
         <el-table-column prop="authPoint" label="本次授权数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authPoint }}</span>
@@ -228,7 +228,6 @@ export default {
       channelData: [],
       isChannelPage: false,
       isStoreCard: false,
-
       checkProductVisible: false,
       productVal: '',
       checkProductTabLock: false,
@@ -376,6 +375,12 @@ export default {
       this.form.erpAuthOrderDetails = []
       this.selectMaps.clear()
       this.currentPageSelectSets.clear()
+      // 授权门店模块重置
+      this.form.erpStoreOrderDetailList = []
+      this.storeOrderInventory = 0
+      this.isStoreCard = false
+      this.selectAuthorMaps.clear()
+      this.currentPageSelectAuthorSets.clear()
     },
     handleConfirm() {
       const addDetailItem = item => {
@@ -415,7 +420,7 @@ export default {
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
           this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase()).totalAmount))
           if (this.form.erpStoreOrderDetailList.length > 0) {
-            this.storeOrderInventory = this.form.erpAuthOrderDetails.find(item => item.moduleId === 'MDZD').orderInventory
+            this.storeOrderInventory = this.form.erpAuthOrderDetails.find(item => item.moduleCode === 'MDZD').orderInventory
           }
         }
       } catch (error) {

@@ -26,7 +26,7 @@ export const formErpObj = {
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '', // 受理人名称
-    erpStore: 0 // 授权类型
+    erpStore: '' // 授权类型
   },
   erpAuthMerchantDTO: {
     agentId: '',
