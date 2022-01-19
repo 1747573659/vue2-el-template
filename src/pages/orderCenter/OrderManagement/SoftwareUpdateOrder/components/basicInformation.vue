@@ -188,6 +188,7 @@ export default {
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
       userInfo: JSON.parse(localStorage.userInfo),
       form: deepClone(formObj),
+      isFormValidatePass: false,
       rules: {
         oldRegistType: [{ required: true, message: '请选择旧商户注册方式', trigger: ['blur', 'change'] }],
         oldMerchantName: [{ required: true, message: '请选择旧商户名称', trigger: ['blur', 'change'] }],
@@ -259,13 +260,14 @@ export default {
         const { authCount, productId, productName, status, custId, companyProvince, companyCity } = this[`${type}ShopPageData`].find(item => item.custId === val)
         if (type === 'old') {
           this.form = Object.assign(this.form, {
-            oldMerchantAuthCount: authCount.includes(';') ? authCount.split(';')[1] : authCount,
+            oldMerchantAuthCount: authCount && authCount.includes(';') ? authCount.split(';')[1] : authCount,
             oldMerchantProductCode: productId,
             oldMerchantProductCodeName: productName,
             oldMerchantAuthType: status === '2' ? 0 : 1,
             oldMerchantId: custId,
             oldAddress: companyProvince + companyCity
           })
+          if (this.form.newMerchantId) this.form.newMerchantAuthCount = ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1
         } else {
           this.form = Object.assign(this.form, {
             newMerchantAuthCount: ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1,
@@ -325,18 +327,21 @@ export default {
           this.checkSaveBtnLoad = false
         })
     },
-    async setOrderSave() {
-      if (this.handleValidateForm()) {
-        const { handUser, id, newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType } = this.form
-        const { billNo, upgradeAmount } = this.form
-        const data = Object.assign(
-          { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
-          { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
-        )
-        return this.$route.query.status === 'add' ? channelSoftUpgradeAdd(data) : channelSoftUpgradeUpdate(data)
-      } else return new Promise((resolve, reject) => reject(new Error()))
+    setOrderSave() {
+      return this.handleValidateForm().then(async () => {
+        if (this.isFormValidatePass) {
+          const { oldMerchantId, oldMerchantProductCode, oldRegistType, oldMerchantAuthType, oldMerchantAuthCount } = this.form
+          const { handUser, id, billNo, upgradeAmount, newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode } = this.form
+          let data = Object.assign(
+            { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
+            { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
+          )
+          if (oldRegistType === 0) data = Object.assign(data, { oldMerchantAuthType, oldMerchantAuthCount })
+          return this.$route.query.status === 'add' ? await channelSoftUpgradeAdd(data) : await channelSoftUpgradeUpdate(data)
+        } else return new Promise((resolve, reject) => reject(new Error()))
+      })
     },
-    async handleValidateForm() {
+    handleValidateForm() {
       const reFormArr = ['orderForm', 'oldForm', 'newForm']
       const validateFormFunc = () => {
         return reFormArr.map(item => {
@@ -348,12 +353,12 @@ export default {
           })
         })
       }
-      await Promise.all(validateFormFunc())
+      Promise.all(validateFormFunc())
         .then(() => {
-          return true
+          this.isFormValidatePass = true
         })
         .catch(() => {
-          return false
+          this.isFormValidatePass = false
         })
     },
     async getDetail() {
@@ -365,7 +370,7 @@ export default {
         setTimeout(() => {
           this.$refs.oldMerchantSelect.selectVal = res.oldMerchantName
           this.$refs.newMerchantSelect.selectVal = res.newMerchantName
-        }, 300)
+        }, 500)
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false
@@ -407,19 +412,16 @@ export default {
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
-    getOldShopPage({ query = '', page = 1, rows = 10 } = {}) {
-      const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
-      const data = { custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status: 2, page, rows }
-      this.getShopPage(data, 'oldShopPageData', 'isOldShopMaxPage')
+    async getOldShopPage({ query = '', page = 1, rows = 10 } = {}) {
+      await this.getShopPage({ query, page, rows, status: '2' }, 'oldShopPageData', 'isOldShopMaxPage')
     },
-    getNewShopPage({ query = '', page = 1, rows = 10 } = {}) {
-      const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
-      const data = { custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status: 0, page, rows }
-      this.getShopPage(data, 'newShopPageData', 'isNewShopMaxPage')
+    async getNewShopPage({ query = '', page = 1, rows = 10 } = {}) {
+      await this.getShopPage({ query, page, rows, status: '0' }, 'newShopPageData', 'isNewShopMaxPage')
     },
-    async getShopPage(params, dataObj, isMaxpage) {
+    async getShopPage({ query = '', page = 1, rows = 10, status = '' } = {}, dataObj, isMaxpage) {
       try {
-        const res = await authShopPage(params)
+        const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
+        const res = await authShopPage({ custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status, page, rows })
         res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
         this[dataObj] = this[dataObj].concat(res.results || [])
         this[isMaxpage] = !res.results || (res.results && res.results.length < 10)
