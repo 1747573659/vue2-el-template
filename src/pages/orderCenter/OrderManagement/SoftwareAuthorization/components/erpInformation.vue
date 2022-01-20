@@ -398,7 +398,7 @@ export default {
           remark: ''
         })
       }
-      if(this.selectMaps.has('MDZD') && this.form.erpStoreOrderDetailList.length===0){
+      if(this.selectMaps.has('MDZD') && this.isStoreCard && this.form.erpStoreOrderDetailList.length === 0){
         this.$message({ type: 'warning', message: '至少选择一个授权门店' })
         return
       } else if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
