@@ -111,6 +111,7 @@
 <script>
 import dayjs from 'dayjs'
 import { delayTimes, versionMap } from '../data'
+import { deepClone } from '@/utils'
 
 import {
   authOrderWlsCustList,
@@ -142,6 +143,7 @@ export default {
       checkProductStockLoad: false,
       productVal: '',
       basicProductData: [],
+      searchProductData: [],
       checkProductVisible: false,
       checkProductTabLock: false,
       selectMaps: new Map(),
@@ -156,7 +158,7 @@ export default {
   methods: {
     handleTaxpayerNum() {
       if (this.productVal === '') this.getProductPage()
-      else this.basicProductData = JSON.parse(JSON.stringify(this.basicProductData)).filter(item => item.TaxpayerNum === this.productVal)
+      else this.basicProductData = this.searchProductData.filter(item => item.TaxpayerNum === this.productVal)
     },
     handleDelDetailDTO(scope) {
       this.form.detailDTOList.splice(scope.$index, 1)
@@ -175,6 +177,7 @@ export default {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
         })
+        this.searchProductData = deepClone(this.basicProductData)
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
             let hasDetailDTO = ''

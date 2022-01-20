@@ -112,6 +112,7 @@
 <script>
 import dayjs from 'dayjs'
 import { delayTimes, cyVersionMap } from '../data'
+import { deepClone } from '@/utils'
 
 import {
   authOrderWcyCustList,
@@ -145,6 +146,7 @@ export default {
       productVal: '',
       checkProductTabLock: false,
       basicProductData: [],
+      searchProductData: [],
       checkProductStockLoad: false,
       selectMaps: new Map(),
       currentPageSelectSets: new Set()
@@ -173,7 +175,7 @@ export default {
   methods: {
     handleTaxpayerNum() {
       if (!this.applicationStoreModule && this.productVal !== '') {
-        this.basicProductData = JSON.parse(JSON.stringify(this.basicProductData)).filter(item => item.TaxpayerNum === this.productVal)
+        this.basicProductData = this.searchProductData.filter(item => item.TaxpayerNum === this.productVal)
       } else this.getProductPage()
     },
     handleDelDetailDTO(scope) {
@@ -313,6 +315,7 @@ export default {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
         })
+        this.searchProductData = deepClone(this.basicProductData)
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
             let hasDetailDTO = ''

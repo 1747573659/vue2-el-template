@@ -190,14 +190,16 @@ export default {
   },
   computed: {
     showAddPoint() {
+      console.info(123)
       const merchantDTO = this.form?.merchantDTO
       const authOrderDTO = this.form?.authOrderDTO
       if ([202, 204].includes(merchantDTO?.applicationSystem) && !parseFloat(authOrderDTO.useModalInner)) {
-        return merchantDTO.operationType === 1 || this.form.addAuthOrderDetailDTOList.length > 0
+        return merchantDTO.operationType === 1
       } else if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && authOrderDTO.useModalInner
       else return true
     },
     showAuthorTab() {
+      console.info(456)
       const merchantDTO = this.form?.merchantDTO
       const authOrderDTO = this.form?.authOrderDTO
       if (!parseFloat(authOrderDTO.useModalInner)) {
@@ -245,9 +247,15 @@ export default {
   methods: {
     handleOperationType(val) {
       if (val === 1) {
+        this.activeName = '1'
         this.form.renewAuthOrderDetailDTOList = []
         this.setAddAuthDetailDTOList()
-      } else if (val === 2) this.form.addAuthOrderDetailDTOList = []
+      } else if (val === 2) {
+        this.activeName = '2'
+        this.form.addAuthOrderDetailDTOList = []
+      }
+      this.showAddPoint
+      this.showAuthorTab
     },
     handleDelDetailDTO(scope) {
       this.form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)
@@ -278,8 +286,8 @@ export default {
       this.resetDTOList()
       if (val) {
         this.form.merchantDTO.delayHour = 1
-        if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
-        else this.activeName = '1'
+        // if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
+        // else this.activeName = '1'
         this.setAddAuthDetailDTOList()
       } else this.form.authOrderDTO.useModalInner = -1
     },
@@ -316,6 +324,7 @@ export default {
             }
             const useModalInner = res[stateAttr] ? parseFloat(res[stateAttr]) : ''
             this.form.authOrderDTO.useModalInner = useModalInner
+
             await this.getProductStock()
             if (this.activeName === '1') {
               this.form.addAuthOrderDetailDTOList = [
@@ -331,6 +340,7 @@ export default {
               ]
             }
           }
+
           if (applicationSystem === 206) {
             const authXmypUserNum = await authOrderYsXmypUserNum(custId)
             this.form.authOrderDTO.userLevel = authXmypUserNum?.userLevel ?? 1

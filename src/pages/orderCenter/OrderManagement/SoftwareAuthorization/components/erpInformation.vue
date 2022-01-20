@@ -264,6 +264,8 @@ export default {
       this.currentPageSelectAuthorSets.clear()
       const MZIndex = this.form.erpAuthOrderDetails.findIndex(item => item.moduleCode === 'MDZD')
       this.form.erpAuthOrderDetails.splice(MZIndex, 1)
+      this.selectMaps.clear()
+      this.currentPageSelectSets.clear()
     },
     handleAuthorStoreSelect(selection, row) {
       if (selection.length > this.currentPageSelectAuthorSets.size) {
@@ -333,9 +335,11 @@ export default {
       this.form.erpStoreOrderDetailList.splice(scope.$index, 1)
       this.selectAuthorMaps.delete(scope.row.authStoreId)
       this.currentPageSelectAuthorSets.delete(scope.row.authStoreId)
-      const MZIndex = this.form.erpAuthOrderDetails.findIndex(item => item.moduleCode === 'MDZD')
-      this.form.erpAuthOrderDetails.splice(MZIndex, 1)
-      this.storeOrderInventory = 0
+      if (this.form.erpStoreOrderDetailList.length === 0) {
+        const MZIndex = this.form.erpAuthOrderDetails.findIndex(item => item.moduleCode === 'MDZD')
+        this.form.erpAuthOrderDetails.splice(MZIndex, 1)
+        this.storeOrderInventory = 0
+      }
     },
     handleDelDetailDTO(scope) {
       this.form.erpAuthOrderDetails.splice(scope.$index, 1)
@@ -558,7 +562,6 @@ export default {
               }
             }, 0)
             this.form.erpAuthOrderDetails.forEach(item => {
-              console.info(sums)
               if (item.moduleCode === 'MDZD') item.authNum = sums[['2', '3'].includes(this.form.erpAuthMerchantDTO.authStatus) ? 4 : 3]
               return item
             })
