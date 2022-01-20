@@ -90,14 +90,12 @@
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="30" placeholder="请输入税号" clearable></el-input>
         </el-form-item>
-        <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
+        <el-button type="primary" size="small" @click="handleTaxpayerNum">查询</el-button>
       </el-form>
       <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
-        <el-table-column label="税号">
-          <template slot-scope="scope">{{ scope.row.shopType === 101 ? scope.row.BranchName : scope.row.TaxpayerNum }}</template>
-        </el-table-column>
-        <el-table-column prop="shopType" label="类型">税号</el-table-column>
+        <el-table-column prop="TaxpayerNum" label="税号"></el-table-column>
+        <el-table-column label="类型">税号</el-table-column>
         <el-table-column label="有效期">
           <template slot-scope="scope">{{ scope.row.KMValidity || new Date() | formatTime }}</template>
         </el-table-column>
@@ -156,6 +154,10 @@ export default {
     }
   },
   methods: {
+    handleTaxpayerNum() {
+      if (this.productVal === '') this.getProductPage()
+      else this.basicProductData = JSON.parse(JSON.stringify(this.basicProductData)).filter(item => item.TaxpayerNum === this.productVal)
+    },
     handleDelDetailDTO(scope) {
       this.form.detailDTOList.splice(scope.$index, 1)
       this.selectMaps.delete(scope.row.moduleCode)
@@ -310,7 +312,11 @@ export default {
             useInventory: this.form.merchantDTO.delayHour,
             orderInventory: this.productStockObj?.totalAmount ?? 0,
             openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp,
-            currentValidTime: this.merchantInfo?.KMValidity ? dayjs(this.merchantInfo?.KMValidity).startOf('day').format('YYYY-MM-DD') : '',
+            currentValidTime: this.merchantInfo?.KMValidity
+              ? dayjs(this.merchantInfo?.KMValidity)
+                  .startOf('day')
+                  .format('YYYY-MM-DD')
+              : '',
             delayValidTime: this.merchantInfo.KMValidity
               ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
                   .subtract(1, 'day')

@@ -87,7 +87,7 @@
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="30" :placeholder="`请输入${this.applicationStoreModule ? '门店名称' : '税号'}`" clearable></el-input>
         </el-form-item>
-        <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
+        <el-button type="primary" size="small" @click="handleTaxpayerNum">查询</el-button>
       </el-form>
       <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
@@ -171,6 +171,11 @@ export default {
     }
   },
   methods: {
+    handleTaxpayerNum() {
+      if (!this.applicationStoreModule && this.productVal !== '') {
+        this.basicProductData = JSON.parse(JSON.stringify(this.basicProductData)).filter(item => item.TaxpayerNum === this.productVal)
+      } else this.getProductPage()
+    },
     handleDelDetailDTO(scope) {
       this.form.detailDTOList.splice(scope.$index, 1)
       this.selectMaps.delete(scope.row.moduleCode)

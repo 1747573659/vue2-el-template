@@ -440,6 +440,10 @@ export default {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
           } else if (this.productType === 5) {
             this.form.merchantDTO.applicationSystem = res.authOrderDTO.useModal
+            if ([202, 204].includes(this.form.merchantDTO.applicationSystem)) {
+              if (this.form?.addAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 1
+              else if (this.form?.renewAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 2
+            }
           }
         })
         if (this.productType === 1) {

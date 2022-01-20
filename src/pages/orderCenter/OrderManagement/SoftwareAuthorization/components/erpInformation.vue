@@ -255,15 +255,15 @@ export default {
       scope.row.unionChannelType = val && scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
     },
     checkSelectable(row) {
-      if (this.form.erpStoreOrderDetailList.length > 0) return row.moduleId !== 'MDZD' 
+      if (this.form.erpStoreOrderDetailList.length > 0) return row.moduleId !== 'MDZD'
       else return true
     },
-    handleErpStore(val) {
-      if (!val) {
-        this.form.erpStoreOrderDetailList = []
-        this.selectAuthorMaps.clear()
-        this.currentPageSelectAuthorSets.clear()
-      }
+    handleErpStore() {
+      this.form.erpStoreOrderDetailList = []
+      this.selectAuthorMaps.clear()
+      this.currentPageSelectAuthorSets.clear()
+      const MZIndex = this.form.erpAuthOrderDetails.findIndex(item => item.moduleCode === 'MDZD')
+      this.form.erpAuthOrderDetails.splice(MZIndex, 1)
     },
     handleAuthorStoreSelect(selection, row) {
       if (selection.length > this.currentPageSelectAuthorSets.size) {
@@ -398,7 +398,7 @@ export default {
           remark: ''
         })
       }
-      if(this.selectMaps.has('MDZD') && this.isStoreCard && this.form.erpStoreOrderDetailList.length === 0){
+      if (this.selectMaps.has('MDZD') && this.isStoreCard && this.form.erpStoreOrderDetailList.length === 0) {
         this.$message({ type: 'warning', message: '至少选择一个授权门店' })
         return
       } else if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))

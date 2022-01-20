@@ -44,7 +44,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="操作类型" v-if="form.authOrderDTO.useModalInner === 0 && [202, 204].includes(form.merchantDTO.applicationSystem)">
-          <el-select v-model="form.merchantDTO.operationType" clearable>
+          <el-select v-model="form.merchantDTO.operationType" @change="handleOperationType" clearable>
             <el-option label="加点" :value="1"></el-option>
             <el-option label="续费" :value="2"></el-option>
           </el-select>
@@ -192,8 +192,9 @@ export default {
     showAddPoint() {
       const merchantDTO = this.form?.merchantDTO
       const authOrderDTO = this.form?.authOrderDTO
-      if ([202, 204].includes(merchantDTO?.applicationSystem) && !parseFloat(authOrderDTO.useModalInner)) return merchantDTO.operationType === 1
-      else if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && authOrderDTO.useModalInner
+      if ([202, 204].includes(merchantDTO?.applicationSystem) && !parseFloat(authOrderDTO.useModalInner)) {
+        return merchantDTO.operationType === 1 || this.form.addAuthOrderDetailDTOList.length > 0
+      } else if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && authOrderDTO.useModalInner
       else return true
     },
     showAuthorTab() {
@@ -242,6 +243,12 @@ export default {
     this.getOrderYsAppModules()
   },
   methods: {
+    handleOperationType(val) {
+      if (val === 1) {
+        this.form.renewAuthOrderDetailDTOList = []
+        this.setAddAuthDetailDTOList()
+      } else if (val === 2) this.form.addAuthOrderDetailDTOList = []
+    },
     handleDelDetailDTO(scope) {
       this.form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)
       this.selectMaps.delete(scope.row.authId)

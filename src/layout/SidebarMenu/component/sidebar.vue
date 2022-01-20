@@ -13,7 +13,7 @@
         <span v-if="routes.meta && routes.meta.title" slot="title">{{ routes.meta.title }}</span>
       </template>
       <template v-if="routes.children && routes.children.length > 0">
-        <sidebar-nav v-for="child in routes.children" :key="child.name" :routes="child" :basePath="resolvePath(child.path)"></sidebar-nav>
+        <sidebar-nav v-for="(child, index) in routes.children" :key="index" :routes="child" :basePath="resolvePath(child.path)"></sidebar-nav>
       </template>
     </el-submenu>
   </section>

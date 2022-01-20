@@ -3,10 +3,10 @@
     <div class="search-box">
       <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="90px" @submit.native.prevent>
         <el-form-item label="商户号">
-          <el-input v-model.trim="form.custId" clearable></el-input>
+          <el-input v-model.trim="form.custId" maxlength="10" clearable></el-input>
         </el-form-item>
         <el-form-item label="商户名称">
-          <el-input v-model.trim="form.custName" clearable></el-input>
+          <el-input v-model.trim="form.custName" maxlength="30" clearable></el-input>
         </el-form-item>
         <el-form-item>
           <el-button type="primary" size="small" @click="handleSearch">查询</el-button>

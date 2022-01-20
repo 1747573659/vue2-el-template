@@ -20,7 +20,7 @@
                 :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
               ></selectCopy>
             </el-form-item>
-            <el-form-item label="类型">
+            <el-form-item label="类型" v-if="userInfo.propertyType === 1">
               <el-select v-model="form.propertyType" clearable>
                 <el-option v-for="item in typeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
@@ -53,8 +53,12 @@
         @selection-change="handleSelectionChange"
       >
         <el-table-column type="selection" width="40"></el-table-column>
-        <el-table-column prop="id" label="代理商编号"></el-table-column>
-        <el-table-column prop="name" label="代理商名称"></el-table-column>
+        <el-table-column label="代理商">
+          <template slot-scope="scope">{{ `${scope.row.id ? '[' + scope.row.id + ']' : ''}${scope.row.name || ''}` }}</template>
+        </el-table-column>
+        <el-table-column label="类型" v-if="userInfo.propertyType === 1">
+          <template slot-scope="scope">{{ scope.row.propertyType === 1 ? '经销商' : '代理商' }}</template>
+        </el-table-column>
         <el-table-column prop="mobile" label="手机" width="140"></el-table-column>
         <el-table-column prop="channelManagerName" label="BD经理"></el-table-column>
         <el-table-column prop="proportion" label="分成比例">
@@ -191,6 +195,7 @@ export default {
   },
   data() {
     return {
+      userInfo: JSON.parse(localStorage.userInfo),
       activeUserId: 0,
       quotaLoading: false,
       quotaNameOptions: [],
