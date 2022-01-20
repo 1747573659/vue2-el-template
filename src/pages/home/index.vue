@@ -11,7 +11,7 @@
       </div>
     </el-dialog>
     <nonactivated-xq-dialog :visible.sync="showNoNactivatedXq"></nonactivated-xq-dialog>
-    <check-pass-view :visible.sync="checkPwdVisible" />
+    <check-pass-view :visible.sync="checkPwdVisible" v-if="environment"/>
   </section>
 </template>
 
@@ -22,6 +22,11 @@ import nonactivatedXqDialog from './components/nonactivatedXqDialog.vue'
 import checkPassView from './components/checkPass.vue'
 
 export default {
+  data(){
+    return {
+      environment: process.env.VUE_APP_FLAG === 'pro'
+    }
+  },
   components: {
     nonactivatedXqDialog,
     checkPassView

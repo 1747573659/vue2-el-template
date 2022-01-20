@@ -255,9 +255,8 @@ export default {
       scope.row.unionChannelType = val && scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
     },
     checkSelectable(row) {
-      if (this.form.erpStoreOrderDetailList.length > 0) {
-        return row.moduleId !== 'MDZD'
-      } else return true
+      if (this.form.erpStoreOrderDetailList.length > 0) return row.moduleId !== 'MDZD' 
+      else return true
     },
     handleErpStore(val) {
       if (!val) {
@@ -334,6 +333,9 @@ export default {
       this.form.erpStoreOrderDetailList.splice(scope.$index, 1)
       this.selectAuthorMaps.delete(scope.row.authStoreId)
       this.currentPageSelectAuthorSets.delete(scope.row.authStoreId)
+      const MZIndex = this.form.erpAuthOrderDetails.findIndex(item => item.moduleCode === 'MDZD')
+      this.form.erpAuthOrderDetails.splice(MZIndex, 1)
+      this.storeOrderInventory = 0
     },
     handleDelDetailDTO(scope) {
       this.form.erpAuthOrderDetails.splice(scope.$index, 1)
@@ -396,7 +398,10 @@ export default {
           remark: ''
         })
       }
-      if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
+      if(this.selectMaps.has('MDZD') && this.form.erpStoreOrderDetailList.length===0){
+        this.$message({ type: 'warning', message: '至少选择一个授权门店' })
+        return
+      } else if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
         this.form.erpAuthOrderDetails.forEach((item, index) => {
           if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
@@ -405,6 +410,7 @@ export default {
           if (this.form.erpAuthOrderDetails.every(ele => ele.moduleCode !== key)) addDetailItem(item)
         })
       } else this.form.erpAuthOrderDetails = []
+      // 产品模块中包含有银联通道模块
       if (this.form.erpAuthOrderDetails?.length > 0) {
         if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) {
           this.getChannelPage()
@@ -552,7 +558,8 @@ export default {
               }
             }, 0)
             this.form.erpAuthOrderDetails.forEach(item => {
-              if (item.moduleCode === 'MDZD') item.authNum = sums[4]
+              console.info(sums)
+              if (item.moduleCode === 'MDZD') item.authNum = sums[['2', '3'].includes(this.form.erpAuthMerchantDTO.authStatus) ? 4 : 3]
               return item
             })
           }
