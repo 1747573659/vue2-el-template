@@ -405,7 +405,7 @@ export default {
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryProductCode({ info: query, page, rows, registType: this.form.oldRegistType, newOrderType: 37 })
+        const res = await queryProductCode({ info: query, page, rows, registType: this.form.oldRegistType, newOrderType: 36 })
         this.productLists = this.productLists.concat(res.results || [])
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
