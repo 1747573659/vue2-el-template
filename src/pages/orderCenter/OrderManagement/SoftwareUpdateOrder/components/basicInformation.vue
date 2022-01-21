@@ -72,6 +72,7 @@
           </el-form-item>
           <el-form-item label="产品" prop="oldMerchantProductCode">
             <km-select-page
+              ref="product"
               v-model="form.oldMerchantProductCode"
               option-label="name"
               option-value="code"
@@ -256,7 +257,7 @@ export default {
     },
     handleShopPage(val, type) {
       if (val) {
-        const { authCount, productId, productName, status, custId, oldMerchantAddress, newMerchantAddress } = this[`${type}ShopPageData`].find(item => item.custId === val)
+        const { authCount, productId, productName, status, custId, companyProvince, companyCity } = this[`${type}ShopPageData`].find(item => item.custId === val)
         if (type === 'old') {
           this.form = Object.assign(this.form, {
             oldMerchantAuthCount: authCount && authCount.includes(';') ? authCount.split(';')[1] : authCount,
@@ -264,7 +265,7 @@ export default {
             oldMerchantProductCodeName: productName,
             oldMerchantAuthType: status === '2' ? 0 : 1,
             oldMerchantId: custId,
-            oldMerchantAddress
+            oldMerchantAddress: companyProvince + companyCity
           })
           if (this.form.newMerchantId) this.form.newMerchantAuthCount = ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1
         } else {
@@ -274,7 +275,7 @@ export default {
             newMerchantProductCodeName: productName,
             newMerchantAuthType: status === '2' ? 0 : 1,
             newMerchantId: custId,
-            newMerchantAddress
+            newMerchantAddress: companyProvince + companyCity
           })
         }
       } else {
@@ -367,7 +368,8 @@ export default {
         res.upgradeAmount = NP.divide(res.upgradeAmount, 100)
         this.form = res
         setTimeout(() => {
-          this.$refs.oldMerchantSelect.selectVal = res.oldMerchantName
+          if (this.form.oldRegistType !== 1) this.$refs.oldMerchantSelect.selectVal = res?.oldMerchantName ?? ''
+          else this.$refs.product.selectVal = res?.oldMerchantProductCodeName ?? ''
           this.$refs.newMerchantSelect.selectVal = res.newMerchantName
         }, 500)
       } catch (error) {
