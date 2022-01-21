@@ -13,7 +13,7 @@
       </div>
       <el-form ref="orderForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="130px">
         <el-form-item label="订单编码">
-          <el-input :value="form.billNo" disabledplaceholder="保存后自动生成" disabled></el-input>
+          <el-input :value="form.billNo" placeholder="保存后自动生成" disabled></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
           <el-input :value="`${form.createOrderTime || baseOrderTime}`" disabled></el-input>

@@ -79,7 +79,7 @@
         <el-table-column prop="oldRegistTypeName" label="旧商户注册方式" width="120"></el-table-column>
         <el-table-column label="授权产品">
           <template slot-scope="scope">
-            <span>{{ `${scope.row.newMerchantProductCode ? '[' + scope.row.newMerchantProductCode + ']' : ''}${scope.row.newMerchantProductCodeName || ''}` }}</span>
+            <span>{{ `${scope.row.oldMerchantProductCode ? '[' + scope.row.oldMerchantProductCode + ']' : ''}${scope.row.oldMerchantProductCodeName || ''}` }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="oldMerchantId" label="旧商户号"></el-table-column>

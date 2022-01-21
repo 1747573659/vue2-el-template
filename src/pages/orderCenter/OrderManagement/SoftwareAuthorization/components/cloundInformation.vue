@@ -277,8 +277,6 @@ export default {
       this.resetDTOList()
       if (val) {
         this.form.merchantDTO.delayHour = 1
-        // if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
-        // else this.activeName = '1'
         this.setAddAuthDetailDTOList()
       } else this.form.authOrderDTO.useModalInner = -1
     },

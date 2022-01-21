@@ -13,7 +13,7 @@
       </div>
       <el-form ref="orderForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="130px">
         <el-form-item label="订单编码">
-          <el-input :value="form.billNo" disabledplaceholder="保存后自动生成" disabled></el-input>
+          <el-input :value="form.billNo" placeholder="保存后自动生成" disabled></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
           <el-input :value="`${form.createOrderTime || baseOrderTime}`" disabled></el-input>
@@ -60,7 +60,7 @@
             <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
           </el-form-item>
           <el-form-item label="地区">
-            <el-input :value="form.oldAddress" disabled></el-input>
+            <el-input :value="form.oldMerchantAddress" disabled></el-input>
           </el-form-item>
           <el-form-item label="门店授权站点">
             <el-input :value="form.oldMerchantAuthCount" disabled></el-input>
@@ -112,7 +112,7 @@
           <el-input :value="`${form.newMerchantProductCode ? '[' + form.newMerchantProductCode + ']' : ''}${form.newMerchantProductCodeName || ''}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="地区">
-          <el-input :value="form.newAddress" disabled></el-input>
+          <el-input :value="form.newMerchantAddress" disabled></el-input>
         </el-form-item>
         <el-form-item label="门店授权站点" prop="newMerchantAuthCount">
           <el-input v-model="form.newMerchantAuthCount"></el-input>
@@ -168,7 +168,7 @@
 import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { deepClone } from '@/utils'
-import { orderStatus, formObj, oldRegistTypes } from '../data'
+import { orderStatus, formObj, paymentStatus, oldRegistTypes } from '../data'
 
 import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
 import {
@@ -185,6 +185,7 @@ export default {
   data() {
     return {
       oldRegistTypes,
+      paymentStatus,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
       userInfo: JSON.parse(localStorage.userInfo),
       form: deepClone(formObj),
@@ -242,20 +243,20 @@ export default {
   },
   methods: {
     handleOldRegistType(val) {
-      const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldAddress, oldMerchantAuthCount } = formObj
+      const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAddress, oldMerchantAuthCount } = formObj
       this.form = Object.assign(this.form, {
         oldMerchantName,
         oldMerchantId,
         oldMerchantAuthType,
         oldMerchantProductCode,
         oldMerchantProductCodeName,
-        oldAddress,
+        oldMerchantAddress,
         oldMerchantAuthCount
       })
     },
     handleShopPage(val, type) {
       if (val) {
-        const { authCount, productId, productName, status, custId, companyProvince, companyCity } = this[`${type}ShopPageData`].find(item => item.custId === val)
+        const { authCount, productId, productName, status, custId, oldMerchantAddress, newMerchantAddress } = this[`${type}ShopPageData`].find(item => item.custId === val)
         if (type === 'old') {
           this.form = Object.assign(this.form, {
             oldMerchantAuthCount: authCount && authCount.includes(';') ? authCount.split(';')[1] : authCount,
@@ -263,7 +264,7 @@ export default {
             oldMerchantProductCodeName: productName,
             oldMerchantAuthType: status === '2' ? 0 : 1,
             oldMerchantId: custId,
-            oldAddress: companyProvince + companyCity
+            oldMerchantAddress
           })
           if (this.form.newMerchantId) this.form.newMerchantAuthCount = ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1
         } else {
@@ -273,7 +274,7 @@ export default {
             newMerchantProductCodeName: productName,
             newMerchantAuthType: status === '2' ? 0 : 1,
             newMerchantId: custId,
-            newAddress: companyProvince + companyCity
+            newMerchantAddress
           })
         }
       } else {

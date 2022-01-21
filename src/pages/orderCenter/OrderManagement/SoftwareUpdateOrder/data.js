@@ -41,7 +41,7 @@ export const formObj = {
   oldMerchantAuthCount: '', // 门店授权站点
   newMerchantName: '', // 新商户名称
   newMerchantId: '', // 新商户号
-  newMerchantAuthType: 1, // 授权状态
+  newMerchantAuthType: '', // 授权状态
   newMerchantProductCode: '', // 产品编码
   newMerchantProductCodeName: '', // 产品名称
   newMerchantAddress: '', // newAddress
