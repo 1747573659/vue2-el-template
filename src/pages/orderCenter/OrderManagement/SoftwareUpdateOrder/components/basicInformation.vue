@@ -242,18 +242,16 @@ export default {
   },
   methods: {
     handleOldRegistType(val) {
-      if (val) {
-        const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldAddress, oldMerchantAuthCount } = formObj
-        this.form = Object.assign(this.form, {
-          oldMerchantName,
-          oldMerchantId,
-          oldMerchantAuthType,
-          oldMerchantProductCode,
-          oldMerchantProductCodeName,
-          oldAddress,
-          oldMerchantAuthCount
-        })
-      }
+      const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldAddress, oldMerchantAuthCount } = formObj
+      this.form = Object.assign(this.form, {
+        oldMerchantName,
+        oldMerchantId,
+        oldMerchantAuthType,
+        oldMerchantProductCode,
+        oldMerchantProductCodeName,
+        oldAddress,
+        oldMerchantAuthCount
+      })
     },
     handleShopPage(val, type) {
       if (val) {

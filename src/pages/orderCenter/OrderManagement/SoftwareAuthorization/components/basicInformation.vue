@@ -251,8 +251,6 @@ export default {
         this.$message({ type: 'warning', message: '请选择应用系统' })
       } else if (!this.form.merchantDTO.delayHour) {
         this.$message({ type: 'warning', message: '请选择延期时长' })
-      } else if (this.$refs.information.showAuthorTab && !this.form.renewAuthOrderDetailDTOList?.length) {
-        this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
         const detailDTOList = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
         const insufficientObj = detailDTOList.filter(item => {

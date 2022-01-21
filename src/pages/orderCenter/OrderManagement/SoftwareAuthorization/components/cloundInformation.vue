@@ -51,8 +51,8 @@
         </el-form-item>
       </el-form>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="加点" name="1" v-if="showAddPoint"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="showAuthorTab"></el-tab-pane>
+        <el-tab-pane label="加点" name="1" v-if="showAddPoint()"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="showAuthorTab()"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <template v-if="activeName === '1'">
@@ -188,30 +188,7 @@ export default {
       return dayjs(val).format('YYYY-MM-DD')
     }
   },
-  computed: {
-    showAddPoint() {
-      console.info(123)
-      const merchantDTO = this.form?.merchantDTO
-      const authOrderDTO = this.form?.authOrderDTO
-      if ([202, 204].includes(merchantDTO?.applicationSystem) && !parseFloat(authOrderDTO.useModalInner)) {
-        return merchantDTO.operationType === 1
-      } else if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && authOrderDTO.useModalInner
-      else return true
-    },
-    showAuthorTab() {
-      console.info(456)
-      const merchantDTO = this.form?.merchantDTO
-      const authOrderDTO = this.form?.authOrderDTO
-      if (!parseFloat(authOrderDTO.useModalInner)) {
-        if ([202, 204].includes(merchantDTO.applicationSystem)) return merchantDTO.operationType === 2
-        else return ![201, 205].includes(merchantDTO.applicationSystem)
-      } else return false
-    }
-  },
   watch: {
-    showAddPoint(newVal) {
-      this.activeName = newVal ? '1' : '2'
-    },
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
         if (newVal.length > 0) {
@@ -245,6 +222,22 @@ export default {
     this.getOrderYsAppModules()
   },
   methods: {
+    showAddPoint() {
+      const merchantDTO = this.form?.merchantDTO
+      const authOrderDTO = this.form?.authOrderDTO
+      if ([202, 204].includes(merchantDTO?.applicationSystem) && !parseFloat(authOrderDTO.useModalInner)) {
+        return merchantDTO.operationType === 1
+      } else if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && authOrderDTO.useModalInner
+      else return true
+    },
+    showAuthorTab() {
+      const merchantDTO = this.form?.merchantDTO
+      const authOrderDTO = this.form?.authOrderDTO
+      if (!parseFloat(authOrderDTO.useModalInner)) {
+        if ([202, 204].includes(merchantDTO.applicationSystem)) return merchantDTO.operationType === 2
+        else return ![201, 205].includes(merchantDTO.applicationSystem)
+      } else return false
+    },
     handleOperationType(val) {
       if (val === 1) {
         this.activeName = '1'
@@ -254,8 +247,6 @@ export default {
         this.activeName = '2'
         this.form.addAuthOrderDetailDTOList = []
       }
-      this.showAddPoint
-      this.showAuthorTab
     },
     handleDelDetailDTO(scope) {
       this.form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)
