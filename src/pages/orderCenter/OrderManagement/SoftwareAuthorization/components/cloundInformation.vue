@@ -223,26 +223,29 @@ export default {
   },
   methods: {
     showAddPoint() {
-      const merchantDTO = this.form?.merchantDTO
-      const authOrderDTO = this.form?.authOrderDTO
-      if ([202, 204].includes(merchantDTO?.applicationSystem) && !parseFloat(authOrderDTO.useModalInner)) {
-        return merchantDTO.operationType === 1
-      } else if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && authOrderDTO.useModalInner
+      const {
+        merchantDTO: { applicationSystem, merchantName, operationType },
+        authOrderDTO: { useModalInner }
+      } = this.form
+      if ([202, 204].includes(applicationSystem) && !useModalInner) return operationType === 1
+      else if ([203, 206].includes(applicationSystem)) return merchantName !== '' && useModalInner
       else return true
     },
     showAuthorTab() {
-      const merchantDTO = this.form?.merchantDTO
-      const authOrderDTO = this.form?.authOrderDTO
-      if (!parseFloat(authOrderDTO.useModalInner)) {
-        if ([202, 204].includes(merchantDTO.applicationSystem)) return merchantDTO.operationType === 2
-        else return ![201, 205].includes(merchantDTO.applicationSystem)
+      const {
+        merchantDTO: { applicationSystem, operationType },
+        authOrderDTO: { useModalInner }
+      } = this.form
+      if (!useModalInner) {
+        if ([202, 204].includes(applicationSystem)) return operationType === 2
+        else return ![201, 205].includes(applicationSystem)
       } else return false
     },
     handleOperationType(val) {
       if (val === 1) {
         this.activeName = '1'
-        this.form.renewAuthOrderDetailDTOList = []
         this.setAddAuthDetailDTOList()
+        this.form.renewAuthOrderDetailDTOList = []
       } else if (val === 2) {
         this.activeName = '2'
         this.form.addAuthOrderDetailDTOList = []
