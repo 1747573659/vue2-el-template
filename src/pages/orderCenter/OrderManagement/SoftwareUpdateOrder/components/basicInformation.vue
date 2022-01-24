@@ -171,7 +171,7 @@ import NP from 'number-precision'
 import { deepClone } from '@/utils'
 import { orderStatus, formObj, paymentStatus, oldRegistTypes } from '../data'
 
-import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
+import { queryHandlerMan, queryAgentMoneyStream } from '@/api/orderCenter/orderManagement'
 import {
   authShopPage,
   queryProductCode,
@@ -239,8 +239,10 @@ export default {
     }
   },
   mounted() {
-    if (this.$route.query.status === 'add') this.getHandlerMan()
-    else this.getDetail()
+    if (this.$route.query.status === 'add') {
+      this.getHandlerMan()
+      this.getAgentMoneyStream()
+    } else this.getDetail()
   },
   methods: {
     handleOldRegistType(val) {
@@ -404,6 +406,14 @@ export default {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
         this.form.handUser = id
         this.form.handUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
+      } catch (error) {}
+    },
+    async getAgentMoneyStream() {
+      try {
+        const { paperMoney, paperMoneyGift, noQualityGuaranteeMoney } = await queryAgentMoneyStream({ agentId: this.userInfo.agentId })
+        this.form.agentPaperMoney = paperMoney
+        this.form.agentPaperGiftMoney = paperMoneyGift
+        this.form.agentGuaranteeMoney = noQualityGuaranteeMoney
       } catch (error) {}
     },
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
