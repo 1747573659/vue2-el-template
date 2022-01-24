@@ -130,7 +130,7 @@
         <el-table-column label="银联功能类型">
           <template slot-scope="scope">
             <template v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)">
-              <el-select size="small" v-model="scope.row.unionChannelType" clearable class="e-select-con">
+              <el-select size="small" v-model="scope.row.unionChannelType" :disabled="$route.query.status === 'detail'" clearable class="e-select-con js-unionChannelType">
                 <el-option v-for="(item, index) in scope.row.channelTypes" :label="item.label" :value="item.value" :key="index"></el-option>
               </el-select>
             </template>
@@ -255,7 +255,7 @@ export default {
       scope.row.unionChannelType = val && scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
     },
     checkSelectable(row) {
-      if (this.form.erpStoreOrderDetailList.length > 0) return row.moduleId !== 'MDZD'
+      if (this.form.erpStoreOrderDetailList?.length > 0) return row.moduleId !== 'MDZD'
       else return true
     },
     handleErpStore() {

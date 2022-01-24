@@ -449,6 +449,7 @@ export default {
             res.erpAuthOrderDetails.forEach((item, index) => {
               if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {
                 document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+                document.querySelectorAll('.js-unionChannelType')[index].childNodes[1].childNodes[1].value = item.unionChannelTypeName
               }
             })
           }, 500)
