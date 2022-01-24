@@ -92,22 +92,22 @@
     </div>
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
-        <el-table-column prop="createOrderTime" label="订单时间"></el-table-column>
-        <el-table-column prop="billNo" label="订单编码"></el-table-column>
+        <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
+        <el-table-column prop="billNo" label="订单编码" width="120"></el-table-column>
         <el-table-column prop="oldRegistTypeName" label="旧商户注册方式" width="120"></el-table-column>
         <el-table-column label="升级前产品" width="120">
           <template slot-scope="scope">
             <span>{{ `${scope.row.oldMerchantProductCode ? '[' + scope.row.oldMerchantProductCode + ']' : ''}${scope.row.oldMerchantProductCodeName || ''}` }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="oldMerchantId" label="旧商户号"></el-table-column>
+        <el-table-column prop="oldMerchantId" label="旧商户号" width="180"></el-table-column>
         <el-table-column label="升级后产品" width="120">
           <template slot-scope="scope">
             <span>{{ `${scope.row.newMerchantProductCode ? '[' + scope.row.newMerchantProductCode + ']' : ''}${scope.row.newMerchantProductCodeName || ''}` }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="newMerchantId" label="新商户号"></el-table-column>
-        <el-table-column label="订单状态">
+        <el-table-column prop="newMerchantId" label="新商户号" width="180"></el-table-column>
+        <el-table-column label="订单状态" width="140">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
@@ -121,7 +121,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
-        <el-table-column prop="createUserName" label="下单人"></el-table-column>
+        <el-table-column prop="createUserName" label="下单人" width="110"></el-table-column>
         <el-table-column label="使用本金" align="right">
           <template slot-scope="scope">{{ scope.row.useAmount | formatAmount }}</template>
         </el-table-column>

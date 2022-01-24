@@ -82,7 +82,7 @@
         <el-table-column label="产品" width="150">
           <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
-        <el-table-column label="订单状态" width="80">
+        <el-table-column label="订单状态" width="140">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ scope.row.orderStatusName }}</span>
           </template>
