@@ -445,6 +445,7 @@ export default {
           }
         })
         if (this.productType === 1) {
+          if (!this.form.erpStoreOrderDetailList) this.form.erpStoreOrderDetailList = []
           setTimeout(() => {
             res.erpAuthOrderDetails.forEach((item, index) => {
               if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {

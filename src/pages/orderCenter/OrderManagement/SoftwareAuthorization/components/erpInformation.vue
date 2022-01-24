@@ -321,7 +321,7 @@ export default {
           })
           this.getProductStock()
         }
-      } else if (this.selectAuthorMaps.size && this.form.erpStoreOrderDetailList?.length > 0) {
+      } else if (this.selectAuthorMaps.size && this.form.erpStoreOrderDetailList.length > 0) {
         this.form.erpStoreOrderDetailList.forEach((item, index) => {
           if (!this.selectAuthorMaps.has(item.authStoreId)) this.form.erpStoreOrderDetailList.splice(index, 1)
         })
