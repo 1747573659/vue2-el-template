@@ -22,7 +22,7 @@ export const formObj = {
   createOrderTime: '', // 订单时间
   handUser: '', // 受理人
   handUserName: '', // 受理人名称
-  oldRegistType: '', // 旧商户注册方式
+  oldRegistType: 0, // 旧商户注册方式
   oldMerchantName: '', // 旧商户名称
   oldMerchantId: '', // 旧商户号
   oldMerchantAuthType: '', // 授权状态

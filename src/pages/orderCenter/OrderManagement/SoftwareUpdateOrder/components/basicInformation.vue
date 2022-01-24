@@ -256,6 +256,7 @@ export default {
         oldMerchantAddress,
         oldMerchantAuthCount
       })
+      if (this.$refs.oldMerchantSelect) this.$refs.oldMerchantSelect.selectVal = ''
     },
     handleShopPage(val, type) {
       if (val) {
