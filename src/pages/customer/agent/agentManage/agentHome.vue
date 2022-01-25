@@ -13,7 +13,7 @@
             <el-form-item label="BD经理">
               <selectCopy
                 :options="channelManagerOptions"
-                :valus.sync="form.channelManagerId"
+                :value.sync="form.channelManagerId"
                 filterable
                 clearable
                 placeholder="请选择BD经理"

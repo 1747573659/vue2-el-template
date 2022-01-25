@@ -107,6 +107,13 @@ export default {
             })
           }
         } else item.children = item.children.filter(ele => ele.name !== 'orderManagement')
+      } else if (item.name === 'customer') {
+        if (userInfo.propertyType === 2) {
+          item.children = item.children.map(ele => {
+            ele.children = ele.children.filter(child => !['softNoteManagement'].includes(child.name))
+            return ele
+          })
+        }
       }
     })
     this.routeMenus = this.routes

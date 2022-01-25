@@ -260,8 +260,8 @@ export default {
   },
   methods: {
     handleMerchantEdit(row) {
-      const { custName: merchant, dealersAuthExpireDate: validPeriod, expireDate, custId } = row
-      this.merchantForm = Object.assign(this.merchantForm, { merchant, validPeriod, expireDate, custId })
+      const { custName: merchant, dealersAuthExpireDate: validPeriod, expireDate, custId, custRemark: remark } = row
+      this.merchantForm = Object.assign(this.merchantForm, { merchant, validPeriod, expireDate, custId, remark })
       this.checkMerchantVisible = true
     },
     handleMerchantSubmit() {
