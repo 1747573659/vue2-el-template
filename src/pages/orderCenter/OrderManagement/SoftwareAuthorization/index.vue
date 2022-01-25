@@ -88,7 +88,9 @@
         </el-table-column>
         <el-table-column prop="inventoryAmount" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="订单状态">
-          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
+          <template slot-scope="scope">
+            <span :class="{ 'p-mark-text': scope.row.orderStatus !== 20 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="handManName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
@@ -256,5 +258,8 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
+}
+.p-mark-text {
+  color: red;
 }
 </style>

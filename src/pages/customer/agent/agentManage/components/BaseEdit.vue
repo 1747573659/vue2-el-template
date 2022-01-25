@@ -9,11 +9,11 @@
           <div class="com-edit-block">
             <div class="com-edit-ruleForm__content">
               <el-form-item label="代理商名称" prop="name">
-                <el-input v-model.trim="ruleForm.name" :disabled="userInfo.propertyType === 1 && $route.meta.name === 'editAgent'" maxlength="50" placeholder=""></el-input>
+                <el-input v-model.trim="ruleForm.name" :disabled="ruleForm.propertyType === 1 && $route.meta.name === 'editAgent'" maxlength="50" placeholder=""></el-input>
               </el-form-item>
               <el-form-item label="类型">
                 <span v-if="$route.name === 'addAgent'">享钱代理商</span>
-                <span v-else>{{ ['科脉经销商', '享钱代理商'][userInfo.propertyType - 1] }}</span>
+                <span v-else>{{ ['科脉经销商', '享钱代理商'][ruleForm.propertyType - 1] }}</span>
               </el-form-item>
               <el-form-item label="地区" prop="districtCode">
                 <area-select :areaList="areaValue" :key="areaKey" @change="areaChange"></area-select>
@@ -214,7 +214,6 @@ export default {
     }
 
     return {
-      userInfo: JSON.parse(localStorage.userInfo),
       questionIcon: require('@/assets/images/icon/questioin.png'),
       arrBD: [],
       validatorName: '',

@@ -64,6 +64,8 @@
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
+              <el-button size="small" v-permission="'DEMAND_DEVELOPMENT_FEE_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
+              <km-export-view v-permission="'DEMAND_DEVELOPMENT_FEE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
@@ -126,7 +128,7 @@ import { mapActions } from 'vuex'
 import { industryTypes, orderStatus, paymentStatus } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
-import { queryChannelDevelopPage, queryProductCode } from '@/api/orderCenter/orderManagement/demandDevelopmentFee'
+import { queryChannelDevelopPage, queryProductCode, channelExport, channelExportLog, channelExportDel } from '@/api/orderCenter/orderManagement/demandDevelopmentFee'
 
 export default {
   name: 'demandDevelopmentFee',
@@ -201,6 +203,22 @@ export default {
       } finally {
         this.checkTabLock = false
       }
+    },
+    async handleExport() {
+      try {
+        this.checkExportLoad = true
+        await channelExport(this.handleQueryParams())
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+      } catch (error) {
+      } finally {
+        this.checkExportLoad = false
+      }
+    },
+    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      return await channelExportLog({ exportType: 35, page: currentPage, rows: pageSize })
+    },
+    handleExportDel: async function(row) {
+      return await channelExportDel(row.id)
     },
     handleIndustryChange() {
       this.productLists = []

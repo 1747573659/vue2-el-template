@@ -80,11 +80,15 @@
             </el-form-item>
             <el-form-item style="margin-left:90px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
+              <el-button size="small" v-permission="'SOFTWARE_UPDATE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
+              <km-export-view v-permission="'SOFTWARE_UPDATE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
             <el-form-item>
-              <el-button type="primary" size="small" v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
+              <el-button type="primary" size="small" v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })"
+                >新增</el-button
+              >
             </el-form-item>
           </el-col>
         </el-row>
@@ -150,7 +154,7 @@ import { mapActions } from 'vuex'
 import { orderStatus, oldRegistTypes, paymentStatus } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
-import { querySoftUpgradePage, queryProductCode } from '@/api/orderCenter/orderManagement/softwareUpdateOrder'
+import { querySoftUpgradePage, queryProductCode, channelSoftUpgradeExport, channelSoftUpgradeExportLog, channelSoftUpgradeExportDel } from '@/api/orderCenter/orderManagement/softwareUpdateOrder'
 
 export default {
   name: 'softwareUpdateOrder',
@@ -164,6 +168,7 @@ export default {
       isProductMaxPage: false,
       orderPersonData: [],
       isOrderPersonMaxPage: false,
+      checkExportLoad: false,
       checkTabLock: false,
       tableData: [],
       currentPage: 1,
@@ -228,6 +233,22 @@ export default {
       } finally {
         this.checkTabLock = false
       }
+    },
+    async handleExport() {
+      try {
+        this.checkExportLoad = true
+        await channelSoftUpgradeExport(this.handleQueryParams())
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+      } catch (error) {
+      } finally {
+        this.checkExportLoad = false
+      }
+    },
+    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      return await channelSoftUpgradeExportLog({ exportType: 36, page: currentPage, rows: pageSize })
+    },
+    handleExportDel: async function(row) {
+      return await channelSoftUpgradeExportDel(row.id)
     },
     async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {
       try {

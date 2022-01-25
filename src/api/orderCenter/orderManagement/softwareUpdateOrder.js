@@ -80,3 +80,29 @@ export function channelSoftUpgradeSubmit(data) {
     data
   })
 }
+
+// 导出
+export function channelSoftUpgradeExport(data) {
+  return request({
+    url: '/channel/soft/upgrade/export',
+    method: 'POST',
+    data
+  })
+}
+
+// 导出记录
+export function channelSoftUpgradeExportLog(data) {
+  return request({
+    url: '/export/log/page',
+    method: 'POST',
+    data
+  })
+}
+
+// 导出删除
+export function channelSoftUpgradeExportDel(data) {
+  return request({
+    url: '/channel/soft/upgrade/del/' + data,
+    method: 'POST'
+  })
+}

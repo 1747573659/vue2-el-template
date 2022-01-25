@@ -62,6 +62,8 @@
             </el-form-item>
             <el-form-item style="margin-left:80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
+              <el-button size="small" v-permission="'ERP_AUTHORIZED_TRANSFER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
+              <km-export-view v-permission="'ERP_AUTHORIZED_TRANSFER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align:right">
@@ -84,7 +86,7 @@
         </el-table-column>
         <el-table-column prop="oldMerchantId" label="旧商户号"></el-table-column>
         <el-table-column prop="newMerchantId" label="新商户号"></el-table-column>
-        <el-table-column label="订单状态" width="100">
+        <el-table-column label="订单状态" width="140">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
@@ -111,7 +113,13 @@ import { mapActions } from 'vuex'
 import { orderStatus, oldRegistTypes } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
-import { queryErpTransferPage, queryProductCode } from '@/api/orderCenter/orderManagement/erpAuthorizedTransfer'
+import {
+  queryErpTransferPage,
+  queryProductCode,
+  channelErpTransferExport,
+  channelErpTransferExportLog,
+  channelErpTransferExportDel
+} from '@/api/orderCenter/orderManagement/erpAuthorizedTransfer'
 
 export default {
   name: 'erpAuthorizedTransfer',
@@ -125,6 +133,7 @@ export default {
       orderPersonData: [],
       isOrderPersonMaxPage: false,
       form: { createTime: '', newMerchantProductCode: [], orderStatus: '', oldRegistType: '', createUser: '', billNo: '', merchantId: '' },
+      checkExportLoad: false,
       checkTabLock: false,
       tableData: [],
       currentPage: 1,
@@ -183,6 +192,22 @@ export default {
       } finally {
         this.checkTabLock = false
       }
+    },
+    async handleExport() {
+      try {
+        this.checkExportLoad = true
+        await channelErpTransferExport(this.handleQueryParams())
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+      } catch (error) {
+      } finally {
+        this.checkExportLoad = false
+      }
+    },
+    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      return await channelErpTransferExportLog({ exportType: 37, page: currentPage, rows: pageSize })
+    },
+    handleExportDel: async function(row) {
+      return await channelErpTransferExportDel(row.id)
     },
     async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {
       try {

@@ -80,3 +80,29 @@ export function channelErpTransferSubmit(data) {
     data
   })
 }
+
+// 导出
+export function channelErpTransferExport(data) {
+  return request({
+    url: '/channel/erp/transfer/export',
+    method: 'POST',
+    data
+  })
+}
+
+// 导出记录
+export function channelErpTransferExportLog(data) {
+  return request({
+    url: '/export/log/page',
+    method: 'POST',
+    data
+  })
+}
+
+// 导出删除
+export function channelErpTransferExportDel(data) {
+  return request({
+    url: '/channel/erp/transfer/del/' + data,
+    method: 'POST'
+  })
+}

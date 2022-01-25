@@ -69,3 +69,29 @@ export function channelDevelopLog(data) {
     data
   })
 }
+
+// 导出
+export function channelExport(data) {
+  return request({
+    url: '/channel/require/develop/export',
+    method: 'POST',
+    data
+  })
+}
+
+// 导出记录
+export function channelExportLog(data) {
+  return request({
+    url: '/export/log/page',
+    method: 'POST',
+    data
+  })
+}
+
+// 导出删除
+export function channelExportDel(data) {
+  return request({
+    url: '/channel/require/develop/del/' + data,
+    method: 'POST'
+  })
+}

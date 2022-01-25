@@ -418,3 +418,11 @@ export function getOrderErpChannel(data) {
     data
   })
 }
+
+// 获取商户信息（mis 和架构类型）
+export function getOrderErpCustInfo(data) {
+  return request({
+    url: '/auth/order/erp/custInfo/' + data,
+    method: 'POST'
+  })
+}

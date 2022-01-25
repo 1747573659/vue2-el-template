@@ -80,13 +80,17 @@
         <el-table-column prop="createOrderTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="订单编码" width="150"></el-table-column>
         <el-table-column label="订单状态" width="140">
-          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
+          <template slot-scope="scope">
+            <span :class="{ 'p-mark-text': scope.row.orderStatus !== 40 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
+          </template>
         </el-table-column>
         <el-table-column label="订单金额" align="right" min-width="100">
           <template slot-scope="scope">{{ scope.row.orderAmount | formatAmount }}</template>
         </el-table-column>
         <el-table-column label="付款状态">
-          <template slot-scope="scope">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '--' }}</template>
+          <template slot-scope="scope">
+            <span :class="{ 'p-mark-text': scope.row.payStatus !== 2 }">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '--' }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
@@ -148,5 +152,8 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
+}
+.p-mark-text {
+  color: red;
 }
 </style>

@@ -44,7 +44,7 @@
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card shadow="never" class="p-card" v-if="isStoreCard || (form.erpStoreOrderDetailList && form.erpStoreOrderDetailList.length > 0)">
+    <el-card shadow="never" class="p-card" v-if="isStoreCard || form.erpStoreOrderDetailList.length > 0">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <span style="margin-right:20px">下单时库存: {{ storeOrderInventory }}</span>
         <el-button type="primary" size="small" plain @click="handleAuthorStoreVisible">选择授权门店</el-button>
@@ -101,7 +101,7 @@
               v-else
               size="small"
               v-model.number.trim="scope.row.authNum"
-              :disabled="scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList && form.erpStoreOrderDetailList.length > 0"
+              :disabled="scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0 || orderErpCustInfo.architectureType === 1"
               @change="handleAuthNumAmount(scope.row, 'authNum')"
               style="width:100%"
             ></el-input>
@@ -144,7 +144,7 @@
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
             <el-popconfirm
-              v-if="scope.row.moduleCode !== 'MDZD' || (scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList && form.erpStoreOrderDetailList.length === 0)"
+              v-if="scope.row.moduleCode !== 'MDZD' || (scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length === 0)"
               class="el-button el-button--text"
               @confirm="handleDelDetailDTO(scope)"
               placement="top-start"
@@ -207,7 +207,8 @@ import {
   queryChannelPage,
   getOrderErpCode,
   getOrderErpSiteInfo,
-  getOrderErpChannel
+  getOrderErpChannel,
+  getOrderErpCustInfo
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -246,11 +247,13 @@ export default {
       storeOrderInventory: 0,
       selectAuthorMaps: new Map(),
       currentPageSelectAuthorSets: new Set(),
-      channelTypes: []
+      channelTypes: [],
+      orderErpCustInfo: {}
     }
   },
   methods: {
     handleChannelPage(scope, val) {
+      scope.row.unionChannelName = this.channelData.find(item => item.channelCode === val).channelName
       scope.row.channelTypes = val ? this.channelTypes.filter(ele => this.channelData.find(item => item.channelCode === val).funTypes.includes(ele.value)) : []
       scope.row.unionChannelType = val && scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
     },
@@ -405,6 +408,12 @@ export default {
       if (this.selectMaps.has('MDZD') && this.isStoreCard && this.form.erpStoreOrderDetailList.length === 0) {
         this.$message({ type: 'warning', message: '至少选择一个授权门店' })
         return
+      } else if (!this.orderErpCustInfo.misStatus) {
+        const channelBanks = Array.from(this.currentPageSelectSets.values()).filter(item => ['BNK', 'BNK1', 'BNK5'].includes(item))
+        if (channelBanks.length > 0) {
+          this.$message({ type: 'warning', message: '只能选一种银联接口' })
+          return
+        }
       } else if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
         this.form.erpAuthOrderDetails.forEach((item, index) => {
@@ -486,7 +495,9 @@ export default {
       else if (productCode === 'ZHCT10' && erpStore === '') this.$message({ type: 'warning', message: '请选择授权类型' })
       else {
         this.basicProductData = []
-        this.getProductPage()
+        this.getOrderErpCustInfo().then(() => {
+          this.getProductPage()
+        })
         this.checkProductVisible = true
       }
     },
@@ -498,7 +509,13 @@ export default {
         if (this.form.erpAuthMerchantDTO.productCode === 'ZHCT10') {
           productCode = this.form.authOrderDTO.erpStore === 1 ? 'ZHCT20' : 'ZHCT10'
         }
-        this.basicProductData = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
+        const res = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
+        if (this.orderErpCustInfo.misStatus) {
+          this.basicProductData = res.filter(item => {
+            if (this.orderErpCustInfo.architectureType === 1) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId)
+            else if (this.orderErpCustInfo.architectureType === 2) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId) || item.authNum > 0
+          })
+        }
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
             let hasDetailDTO = ''
@@ -535,6 +552,13 @@ export default {
     async getOrderErpCode() {
       try {
         this.isStoreCard = (await getOrderErpCode(this.form.erpAuthMerchantDTO.productCode)) || false
+      } catch (error) {}
+    },
+    async getOrderErpCustInfo() {
+      try {
+        const res = await getOrderErpCustInfo(this.form.erpAuthMerchantDTO.merchantId)
+        const { misStatus, architectureType } = res
+        this.orderErpCustInfo = { misStatus, architectureType }
       } catch (error) {}
     },
     async getShopPage({ query = '', page = 1, rows = 10 } = {}) {
