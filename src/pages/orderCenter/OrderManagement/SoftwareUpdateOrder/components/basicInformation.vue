@@ -54,7 +54,7 @@
             <el-input :value="form.oldMerchantId" placeholder="请先选择商户" disabled></el-input>
           </el-form-item>
           <el-form-item label="授权状态">
-            <el-input :value="form.oldMerchantAuthType !== '' ? (form.oldMerchantAuthType ? '试用' : '正式') : ''" disabled></el-input>
+            <el-input :value="form.oldMerchantAuthType !== '' ? merchantAuthType.get(form.oldMerchantAuthType) : ''" disabled></el-input>
           </el-form-item>
           <el-form-item label="产品">
             <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
@@ -107,7 +107,7 @@
           <el-input :value="form.newMerchantId" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="授权状态">
-          <el-input :value="form.newMerchantAuthType !== '' ? (form.newMerchantAuthType ? '试用' : '正式') : ''" disabled></el-input>
+          <el-input :value="form.newMerchantAuthType !== '' ? merchantAuthType.get(form.newMerchantAuthType) : ''" disabled></el-input>
         </el-form-item>
         <el-form-item label="产品">
           <el-input :value="`${form.newMerchantProductCode ? '[' + form.newMerchantProductCode + ']' : ''}${form.newMerchantProductCodeName || ''}`" disabled></el-input>
@@ -169,7 +169,7 @@
 import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { deepClone } from '@/utils'
-import { orderStatus, formObj, paymentStatus, oldRegistTypes } from '../data'
+import { orderStatus, formObj, paymentStatus, oldRegistTypes, merchantAuthType } from '../data'
 
 import { queryHandlerMan, queryAgentMoneyStream } from '@/api/orderCenter/orderManagement'
 import {
@@ -187,6 +187,7 @@ export default {
     return {
       oldRegistTypes,
       paymentStatus,
+      merchantAuthType,
       baseOrderTime: dayjs().format('YYYY-MM-DD'),
       userInfo: JSON.parse(localStorage.userInfo),
       form: deepClone(formObj),

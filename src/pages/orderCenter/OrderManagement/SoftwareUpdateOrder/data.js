@@ -22,6 +22,13 @@ export const paymentStatus = new Map([
   [2, { value: 2, label: '已付款' }]
 ])
 
+export const merchantAuthType = new Map([
+  [0, '正式'],
+  [1, '试用'],
+  [2, '试用'],
+  [3, '停用']
+])
+
 // form 基础对象
 export const formObj = {
   id: '',

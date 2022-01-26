@@ -8,6 +8,13 @@ export const orderStatus = new Map([
   [30, { value: 30, label: '已审核', name: '详情' }]
 ])
 
+export const merchantAuthType = new Map([
+  [0, '正式'],
+  [1, '试用'],
+  [2, '试用'],
+  [3, '停用']
+])
+
 // 注册方式
 export const oldRegistTypes = new Map([
   ['', { value: '', label: '全部' }],
