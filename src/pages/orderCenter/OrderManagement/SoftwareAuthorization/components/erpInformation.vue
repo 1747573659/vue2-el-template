@@ -517,7 +517,7 @@ export default {
           })
         }
         this.$nextTick(() => {
-          if (this.basicProductData?.length) {
+          if (this.basicProductData.length) {
             let hasDetailDTO = ''
             this.basicProductData.forEach(item => {
               if (this.form.erpAuthOrderDetails?.length) hasDetailDTO = this.form.erpAuthOrderDetails.some(ele => ele.moduleCode === item.moduleId)
