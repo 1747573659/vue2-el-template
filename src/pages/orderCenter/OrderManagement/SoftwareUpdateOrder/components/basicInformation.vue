@@ -321,7 +321,7 @@ export default {
         .then(res => {
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res.id, orderStatus: res.orderStatus, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = 'erp授权转移单/编辑'
+            document.querySelector('.e-tag_active span').innerText = '软件升级订单/编辑'
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })
