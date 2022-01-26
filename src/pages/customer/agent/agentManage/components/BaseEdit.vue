@@ -125,10 +125,10 @@
           <el-button type="primary" @click="addBD">增加BD经理</el-button>
         </el-form-item>
       </el-form>
-      <el-table :data="channelData" tooltip-effect="dark" style="width: 100%" max-height="450px">
-        <el-table-column label="BD经理名称" width="224">
+      <el-table :data="channelData" tooltip-effect="dark" max-height="450px">
+        <el-table-column label="BD经理名称">
           <template slot-scope="scope">
-            <el-input size="small" placeholder="请输入内容" maxlength="30" v-model="scope.row.name"></el-input>
+            <el-input size="small" v-model.trim="scope.row.name" maxlength="30" style="width: 100%;"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="right">
@@ -306,6 +306,8 @@ export default {
     async queryAgentById() {
       const res = await queryAgentById({ id: Number(this.$route.query.id) })
       this.ruleForm = res
+      this.ruleForm.roleId = ''
+      this.ruleForm.channelManagerId = ''
       this.validatorName = res.name
 
       if (res.districtCode) {
