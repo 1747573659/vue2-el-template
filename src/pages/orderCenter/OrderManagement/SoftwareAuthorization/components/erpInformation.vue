@@ -405,6 +405,7 @@ export default {
           remark: ''
         })
       }
+      // 校验逻辑
       if (this.selectMaps.has('MDZD') && this.isStoreCard && this.form.erpStoreOrderDetailList.length === 0) {
         this.$message({ type: 'warning', message: '至少选择一个授权门店' })
         return
@@ -414,8 +415,11 @@ export default {
           this.$message({ type: 'warning', message: '只能选一种银联接口' })
           return
         }
-      } else if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
-      else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
+      } 
+      // 数据处理逻辑
+      if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) {
+        this.selectMaps.forEach(item => addDetailItem(item))
+      }else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
         this.form.erpAuthOrderDetails.forEach((item, index) => {
           if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
         })
