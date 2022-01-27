@@ -510,14 +510,17 @@ export default {
           productCode = this.form.authOrderDTO.erpStore === 1 ? 'ZHCT20' : 'ZHCT10'
         }
         const res = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
-        if (this.orderErpCustInfo.misStatus) {
+        // misStatus=>MIS状态：1开通，0未开通
+        if (this.orderErpCustInfo.misStatus||this.orderErpCustInfo.misStatus===0) {
+          // architectureType=>架构类型: 1.C/S架构、2.B/S架构、3.SAAS；默认0.空
+          // 此处具体业务看数据化2.1.6 银联mis流程图
           this.basicProductData = res.filter(item => {
             if (this.orderErpCustInfo.architectureType === 1) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId)
             else if (this.orderErpCustInfo.architectureType === 2) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId) || item.authNum > 0
           })
         }
         this.$nextTick(() => {
-          if (this.basicProductData.length) {
+          if (this.basicProductData?.length) {
             let hasDetailDTO = ''
             this.basicProductData.forEach(item => {
               if (this.form.erpAuthOrderDetails?.length) hasDetailDTO = this.form.erpAuthOrderDetails.some(ele => ele.moduleCode === item.moduleId)
