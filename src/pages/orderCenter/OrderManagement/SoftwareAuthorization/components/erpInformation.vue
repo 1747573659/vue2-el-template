@@ -410,8 +410,9 @@ export default {
         this.$message({ type: 'warning', message: '至少选择一个授权门店' })
         return
       } else if (!this.orderErpCustInfo.misStatus) {
+        // better 2022-01-28 优化银联mis模块勾选数量
         const channelBanks = Array.from(this.currentPageSelectSets.values()).filter(item => ['BNK', 'BNK1', 'BNK5'].includes(item))
-        if (channelBanks.length > 0) {
+        if (channelBanks.length > 1) {
           this.$message({ type: 'warning', message: '只能选一种银联接口' })
           return
         }
