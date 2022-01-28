@@ -515,13 +515,17 @@ export default {
         }
         const res = (await authModuleList({ moduleInfo: this.productVal, custId, productCode })) || []
         // misStatus=>MIS状态：1开通，0未开通
-        if (this.orderErpCustInfo.misStatus||this.orderErpCustInfo.misStatus===0) {
+        if (this.orderErpCustInfo.misStatus) {
           // architectureType=>架构类型: 1.C/S架构、2.B/S架构、3.SAAS；默认0.空
           // 此处具体业务看数据化2.1.6 银联mis流程图
+          // 若已开通银联mis，B/S产品只能继续授权之前已经授权的银联模块加点；C/S产品过滤掉['BNK', 'BNK1', 'BNK5']相关模块选项
           this.basicProductData = res.filter(item => {
             if (this.orderErpCustInfo.architectureType === 1) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId)
             else if (this.orderErpCustInfo.architectureType === 2) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId) || item.authNum > 0
           })
+        }else{
+          // 银联状态没有开通，则正常显示关联模块信息，不进行过滤
+           this.basicProductData = res
         }
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
