@@ -114,6 +114,7 @@
                 ref="unionChannel"
                 size="small"
                 v-model="scope.row.unionChannel"
+                :modelName='scope.row.unionChannelName'
                 option-label="channelName"
                 option-value="channelCode"
                 :data.sync="channelData"
