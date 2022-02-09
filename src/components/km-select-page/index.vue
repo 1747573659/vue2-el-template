@@ -109,7 +109,7 @@ export default {
       this.currentPage = 1
       this.$emit('update:data', [])
       this.$emit('update:isMaxPage', false)
-      this.$refs.selectPage.$children[1].$children[0].wrap.scrollTop = 0
+      if (this.$refs.selectPage.$children[1].$children[0])  this.$refs.selectPage.$children[1].$children[0].wrap.scrollTop = 0
     }
   }
 }
