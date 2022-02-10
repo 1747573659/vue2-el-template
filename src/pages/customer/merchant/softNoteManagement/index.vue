@@ -126,9 +126,9 @@
         </el-table-column>
         <el-table-column prop="isOnline" width="88" label="在线状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.isOnline">在线</div>
-            <div v-else-if="!scope.row.isOnline">离线</div>
-            <div v-else>--</div>
+            <div v-if="scope.row.isOnline===true">在线</div>
+            <div v-else-if="scope.row.isOnline===false">离线</div>
+            <div v-else>未知</div>
           </template>
         </el-table-column>
         <el-table-column label="操作">
