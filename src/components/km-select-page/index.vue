@@ -78,7 +78,10 @@ export default {
     }
   },
   mounted() {
-    if (this.modelName) this.handleRemoteSearch(this.modelName)
+    if (this.modelName) {
+      this.handleRemoteSearch(this.modelName)
+      this.selectVal=this.modelName
+    }
   },
   methods: {
     handleEchoVal(val) {
