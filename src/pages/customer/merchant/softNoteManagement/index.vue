@@ -414,7 +414,7 @@ export default {
         authShopMessage: this.form.authShopMessage,
         productId: this.form.productId,
         status: this.form.status,
-        isOnline: this.form.isOnline,
+        isOnlineStr: this.form.isOnline,
         xqOpenStatus: this.form.xqOpenStatus
       }
       if (this.form.firstLoginDate && this.form.firstLoginDate.length) {
@@ -426,8 +426,8 @@ export default {
         subData.endFirstGrantAuthDate = `${this.form.firstGrantAuthDate[1]} 23:59:59`
       }
 
-      if (subData.isOnline === '') {
-        delete subData.isOnline
+      if (subData.isOnlineStr === '') {
+        delete subData.isOnlineStr
       }
       try {
         this.tableLoading = true
