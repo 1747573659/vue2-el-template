@@ -26,10 +26,6 @@
 <script>
 export default {
   props: {
-    value:{
-      type:[String,Number,Array,Object],
-      default:''
-    },
     modelName:{
       type: String,
       default:''
@@ -82,7 +78,6 @@ export default {
     }
   },
   mounted() {
-    if (this.value) this.selectVal=this.value
     if (this.modelName) this.handleRemoteSearch(this.modelName)
   },
   methods: {
