@@ -52,7 +52,7 @@
           刷新库存
         </el-button>
       </div>
-      <el-table :data="form.erpStoreOrderDetailList" show-summary :summary-method="getStoreSummaries" class="p-information-tab">
+      <el-table :data="formErpStoreOrderDetailList" show-summary :summary-method="getStoreSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
@@ -78,6 +78,7 @@
           </template>
         </el-table-column>
       </el-table>
+      <km-pagination v-if="form.erpStoreOrderDetailList.length" :request="getFormErpStoreOrderDetailList" layout="prev, pager, next" :current-page.sync="erpStoreOrderDetailListpCurrentPage" :page-size.sync="erpStoreOrderDetailListpPageSize" :total="form.erpStoreOrderDetailList.length" />
     </el-card>
     <el-card shadow="never" class="p-card">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
@@ -182,7 +183,7 @@
         <el-form-item label="门店名称">
           <el-input v-model="authorForm.storeName" maxlength="30" placeholder="" clearable></el-input>
         </el-form-item>
-        <el-button type="primary" size="small" @click="getAuthorStorePage">查询</el-button>
+        <el-button type="primary" size="small" @click="findGetAuthorStorePage">查询</el-button>
       </el-form>
       <el-table ref="authorStore" :data="basicAuthorStoreData" @select="handleAuthorStoreSelect" @select-all="handleAuthorStoreSelectAll" v-loading="checkAuthorStoreTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
@@ -225,6 +226,8 @@ export default {
   },
   data() {
     return {
+      erpStoreOrderDetailListpPageSize:10,
+      erpStoreOrderDetailListpCurrentPage:1,
       shopPageData: [],
       isShopMaxPage: false,
       channelData: [],
@@ -252,7 +255,21 @@ export default {
       orderErpCustInfo: {}
     }
   },
+  computed:{
+    formErpStoreOrderDetailList () {
+      const array =JSON.parse(JSON.stringify(this.form.erpStoreOrderDetailList))
+      let offset = (this.erpStoreOrderDetailListpCurrentPage - 1) * this.erpStoreOrderDetailListpPageSize;
+      return (offset + this.erpStoreOrderDetailListpPageSize >= array.length) ? array.slice(offset, array.length) : array.slice(offset, offset + this.erpStoreOrderDetailListpPageSize)
+    }
+  },
   methods: {
+    getFormErpStoreOrderDetailList() {
+      console.log(this.erpStoreOrderDetailListpCurrentPage)
+    },
+    findGetAuthorStorePage() {
+      this.currentPage=1
+      this.getAuthorStorePage()
+    },
     handleChannelPage(scope, val) {
       scope.row.unionChannelName = this.channelData.find(item => item.channelCode === val).channelName
       scope.row.channelTypes = val ? this.channelTypes.filter(ele => this.channelData.find(item => item.channelCode === val).funTypes.includes(ele.value)) : []
@@ -336,7 +353,9 @@ export default {
       this.checkAuthorStoreVisible = false
     },
     handleAuthorStoreDelDetailDTO(scope) {
-      this.form.erpStoreOrderDetailList.splice(scope.$index, 1)
+      this.form.erpStoreOrderDetailList.map((item,index)=>{
+        if (item.authStoreId==scope.row.authStoreId) this.form.erpStoreOrderDetailList.splice(index, 1)
+      })
       this.selectAuthorMaps.delete(scope.row.authStoreId)
       this.currentPageSelectAuthorSets.delete(scope.row.authStoreId)
       if (this.form.erpStoreOrderDetailList.length === 0) {
