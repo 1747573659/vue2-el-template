@@ -448,9 +448,13 @@ export default {
           if (!this.form.erpStoreOrderDetailList) this.form.erpStoreOrderDetailList = []
           setTimeout(() => {
             res.erpAuthOrderDetails.forEach((item, index) => {
-              if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {
-                document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-                document.querySelectorAll('.js-unionChannelType')[index].childNodes[1].childNodes[1].value = item.unionChannelTypeName
+              if (document.querySelectorAll('.el-table__row')[index]) {
+                if (item.unionChannel) {
+                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+                }
+                if (item.unionChannelType) {
+                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannelType')[0].childNodes[1].childNodes[1].value = item.unionChannelTypeName
+                }
               }
             })
           }, 500)
