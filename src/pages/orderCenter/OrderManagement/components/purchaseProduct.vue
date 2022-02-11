@@ -9,7 +9,7 @@
           <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
       </el-form-item>
-      <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
+      <el-button type="primary" size="small" @click="find()">查询</el-button>
     </el-form>
     <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
       <el-table-column type="selection" width="55"></el-table-column>
@@ -50,6 +50,10 @@ export default {
     }
   },
   methods: {
+    find() {
+      this.currentPage=1
+      this.getProductPage()
+    },
     handleSelectAll(selection) {
       if (selection?.length) {
         selection.forEach(item => {
