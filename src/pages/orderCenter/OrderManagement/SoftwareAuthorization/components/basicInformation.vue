@@ -195,6 +195,12 @@ export default {
           return
         }
       }
+      if (this.productType === 1 && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) && !(this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName)) {
+        if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
+          this.$message({ type: 'warning', message: '请在ERP完善营业执照后再操作' })
+          return
+        }
+      }
       this.$confirm('请再次确认加点数量，一经提交不可撤回', '提示', {
         type: 'warning'
       })
