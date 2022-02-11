@@ -26,6 +26,10 @@
 <script>
 export default {
   props: {
+    modelName:{
+      type: String,
+      default:''
+    },
     data: {
       type: [Array, Object],
       default: () => []
@@ -73,6 +77,12 @@ export default {
       }
     }
   },
+  mounted() {
+    if (this.modelName) {
+      this.handleRemoteSearch(this.modelName)
+      this.selectVal=this.modelName
+    }
+  },
   methods: {
     handleEchoVal(val) {
       this.selectVal = val
@@ -109,7 +119,7 @@ export default {
       this.currentPage = 1
       this.$emit('update:data', [])
       this.$emit('update:isMaxPage', false)
-      this.$refs.selectPage.$children[1].$children[0].wrap.scrollTop = 0
+      if (this.$refs.selectPage.$children[1].$children[0])  this.$refs.selectPage.$children[1].$children[0].wrap.scrollTop = 0
     }
   }
 }

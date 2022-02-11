@@ -126,9 +126,9 @@
         </el-table-column>
         <el-table-column prop="isOnline" width="88" label="在线状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.isOnline">在线</div>
-            <div v-else-if="!scope.row.isOnline">离线</div>
-            <div v-else>--</div>
+            <div v-if="scope.row.isOnline===true">在线</div>
+            <div v-else-if="scope.row.isOnline===false">离线</div>
+            <div v-else>未知</div>
           </template>
         </el-table-column>
         <el-table-column label="操作">
@@ -414,7 +414,7 @@ export default {
         authShopMessage: this.form.authShopMessage,
         productId: this.form.productId,
         status: this.form.status,
-        isOnline: this.form.isOnline,
+        isOnlineStr: this.form.isOnline,
         xqOpenStatus: this.form.xqOpenStatus
       }
       if (this.form.firstLoginDate && this.form.firstLoginDate.length) {
@@ -426,8 +426,8 @@ export default {
         subData.endFirstGrantAuthDate = `${this.form.firstGrantAuthDate[1]} 23:59:59`
       }
 
-      if (subData.isOnline === '') {
-        delete subData.isOnline
+      if (subData.isOnlineStr === '') {
+        delete subData.isOnlineStr
       }
       try {
         this.tableLoading = true
