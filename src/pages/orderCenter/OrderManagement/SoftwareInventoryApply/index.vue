@@ -69,7 +69,9 @@
           <template slot-scope="scope">{{ scope.row.createTime | formatCreateTime }}</template>
         </el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
-        <el-table-column prop="agentName" label="申请经销商" v-if="userInfo.level === 1"></el-table-column>
+        <el-table-column prop="agentName" label="申请经销商" v-if="userInfo.level === 1">
+            <template slot-scope="scope">[{{scope.row.agentId}}]{{ scope.row.agentName }}</template>
+        </el-table-column>
         <el-table-column prop="useInventory" label="申请库存" align="right"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">
