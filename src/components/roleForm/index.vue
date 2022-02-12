@@ -233,7 +233,7 @@ export default {
         const res = await queryAllPCMenu({ roleId: id })
         var cid = 444444
         // 屏蔽二级经销商采购订单权限选择
-        const purchaseOrderCodes = ['ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER', 'XDD_PAY_SHOP_SOFTNOTEMANGEMENT']
+        const purchaseOrderCodes = ['ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREUPDATEORDER']
         const purchaseOrderIds = []
         res.allMenus = res.allMenus.filter(item => {
           if (purchaseOrderCodes.includes(item.code)) purchaseOrderIds.push(item.id)
