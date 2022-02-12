@@ -101,7 +101,7 @@
               v-else
               size="small"
               v-model.number.trim="scope.row.authNum"
-              :disabled="scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0 || orderErpCustInfo.architectureType === 1"
+              :disabled="(scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0) || orderErpCustInfo.architectureType === 1"
               @change="handleAuthNumAmount(scope.row, 'authNum')"
               style="width:100%"
             ></el-input>
@@ -114,7 +114,7 @@
                 ref="unionChannel"
                 size="small"
                 v-model="scope.row.unionChannel"
-                :modelName='scope.row.unionChannelName'
+                :modelName="scope.row.unionChannelName"
                 option-label="channelName"
                 option-value="channelCode"
                 :data.sync="channelData"
@@ -417,11 +417,11 @@ export default {
           this.$message({ type: 'warning', message: '只能选一种银联接口' })
           return
         }
-      } 
+      }
       // 数据处理逻辑
       if (this.form.erpAuthOrderDetails.length === 0 && this.selectMaps.size) {
         this.selectMaps.forEach(item => addDetailItem(item))
-      }else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
+      } else if (this.selectMaps.size && this.form.erpAuthOrderDetails?.length > 0) {
         this.form.erpAuthOrderDetails.forEach((item, index) => {
           if (!this.selectMaps.has(item.moduleCode)) this.form.erpAuthOrderDetails.splice(index, 1)
         })
@@ -443,7 +443,10 @@ export default {
         this.checkProductStockLoad = true
         const res = await queryByAgentErpProduct({ agentId: this.userInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode) })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
-          this.form.erpAuthOrderDetails.forEach(item => (item.orderInventory = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase()).totalAmount))
+          this.form.erpAuthOrderDetails.forEach(item => {
+            let orderInventoryItem = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase())
+            item.orderInventory = orderInventoryItem?.totalAmount??0
+          })
           if (this.form.erpStoreOrderDetailList.length > 0) {
             this.storeOrderInventory = this.form.erpAuthOrderDetails.find(item => item.moduleCode === 'MDZD').orderInventory
           }
@@ -525,9 +528,9 @@ export default {
             if (this.orderErpCustInfo.architectureType === 1) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId)
             else if (this.orderErpCustInfo.architectureType === 2) return !['BNK', 'BNK1', 'BNK5'].includes(item.moduleId) || item.authNum > 0
           })
-        }else{
+        } else {
           // 银联状态没有开通，则正常显示关联模块信息，不进行过滤
-           this.basicProductData = res
+          this.basicProductData = res
         }
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
