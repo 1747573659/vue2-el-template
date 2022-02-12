@@ -52,7 +52,7 @@
           刷新库存
         </el-button>
       </div>
-      <el-table :data="formErpStoreOrderDetailList" show-summary :summary-method="getStoreSummaries" class="p-information-tab">
+      <el-table :data="erpStoreOrderTabData" show-summary :summary-method="getStoreSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
@@ -78,7 +78,13 @@
           </template>
         </el-table-column>
       </el-table>
-      <km-pagination v-if="form.erpStoreOrderDetailList.length" :request="getFormErpStoreOrderDetailList" layout="prev, pager, next" :current-page.sync="erpStoreOrderDetailListpCurrentPage" :page-size.sync="erpStoreOrderDetailListpPageSize" :total="form.erpStoreOrderDetailList.length" />
+      <km-pagination
+        v-if="isStoreCard || form.erpStoreOrderDetailList.length > 0"
+        :current-page.sync="erpStoreOrderCurrentPage"
+        :page-size.sync="erpStoreOrderPageSize"
+        :total="form.erpStoreOrderDetailList.length"
+        layout="prev, pager, next"
+      />
     </el-card>
     <el-card shadow="never" class="p-card">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
@@ -183,7 +189,7 @@
         <el-form-item label="门店名称">
           <el-input v-model="authorForm.storeName" maxlength="30" placeholder="" clearable></el-input>
         </el-form-item>
-        <el-button type="primary" size="small" @click="findGetAuthorStorePage">查询</el-button>
+        <el-button type="primary" size="small" @click="handleAuthorStoreSearch">查询</el-button>
       </el-form>
       <el-table ref="authorStore" :data="basicAuthorStoreData" @select="handleAuthorStoreSelect" @select-all="handleAuthorStoreSelectAll" v-loading="checkAuthorStoreTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
@@ -226,8 +232,6 @@ export default {
   },
   data() {
     return {
-      erpStoreOrderDetailListpPageSize:10,
-      erpStoreOrderDetailListpCurrentPage:1,
       shopPageData: [],
       isShopMaxPage: false,
       channelData: [],
@@ -252,22 +256,20 @@ export default {
       selectAuthorMaps: new Map(),
       currentPageSelectAuthorSets: new Set(),
       channelTypes: [],
-      orderErpCustInfo: {}
+      orderErpCustInfo: {},
+      erpStoreOrderCurrentPage: 1,
+      erpStoreOrderPageSize: 10
     }
   },
-  computed:{
-    formErpStoreOrderDetailList () {
-      const array =JSON.parse(JSON.stringify(this.form.erpStoreOrderDetailList))
-      let offset = (this.erpStoreOrderDetailListpCurrentPage - 1) * this.erpStoreOrderDetailListpPageSize;
-      return (offset + this.erpStoreOrderDetailListpPageSize >= array.length) ? array.slice(offset, array.length) : array.slice(offset, offset + this.erpStoreOrderDetailListpPageSize)
+  computed: {
+    erpStoreOrderTabData() {
+      const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size))
+      return chunk(this.form.erpStoreOrderDetailList, this.erpStoreOrderPageSize)[this.erpStoreOrderCurrentPage - 1]
     }
   },
   methods: {
-    getFormErpStoreOrderDetailList() {
-      console.log(this.erpStoreOrderDetailListpCurrentPage)
-    },
-    findGetAuthorStorePage() {
-      this.currentPage=1
+    handleAuthorStoreSearch() {
+      this.currentPage = 1
       this.getAuthorStorePage()
     },
     handleChannelPage(scope, val) {
@@ -353,8 +355,8 @@ export default {
       this.checkAuthorStoreVisible = false
     },
     handleAuthorStoreDelDetailDTO(scope) {
-      this.form.erpStoreOrderDetailList.map((item,index)=>{
-        if (item.authStoreId==scope.row.authStoreId) this.form.erpStoreOrderDetailList.splice(index, 1)
+      this.form.erpStoreOrderDetailList.map((item, index) => {
+        if (item.authStoreId == scope.row.authStoreId) this.form.erpStoreOrderDetailList.splice(index, 1)
       })
       this.selectAuthorMaps.delete(scope.row.authStoreId)
       this.currentPageSelectAuthorSets.delete(scope.row.authStoreId)
@@ -464,7 +466,7 @@ export default {
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
           this.form.erpAuthOrderDetails.forEach(item => {
             let orderInventoryItem = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase())
-            item.orderInventory = orderInventoryItem?.totalAmount??0
+            item.orderInventory = orderInventoryItem?.totalAmount ?? 0
           })
           if (this.form.erpStoreOrderDetailList.length > 0) {
             this.storeOrderInventory = this.form.erpAuthOrderDetails.find(item => item.moduleCode === 'MDZD').orderInventory
