@@ -108,7 +108,10 @@
               v-else
               size="small"
               v-model.number.trim="scope.row.authNum"
-              :disabled="(scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0) || orderErpCustInfo.architectureType === 1"
+              :disabled="
+                (scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0) ||
+                  (orderErpCustInfo.architectureType === 1 && ['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode))
+              "
               @change="handleAuthNumAmount(scope.row, 'authNum')"
               style="width:100%"
             ></el-input>
@@ -127,7 +130,7 @@
                 :data.sync="channelData"
                 :request="getChannelPage"
                 @change="val => handleChannelPage(scope, val)"
-                :disabled="$route.query.status === 'detail'"
+                :disabled="$route.query.status === 'detail' || Boolean(channelByCustIdStatus)"
                 :is-max-page.sync="isChannelPage"
                 placeholder="银联通道"
                 class="e-select-con js-unionChannel"
@@ -138,7 +141,14 @@
         <el-table-column label="银联功能类型">
           <template slot-scope="scope">
             <template v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)">
-              <el-select size="small" v-model="scope.row.unionChannelType" :disabled="$route.query.status === 'detail'" clearable class="e-select-con js-unionChannelType">
+              <el-select
+                size="small"
+                v-model="scope.row.unionChannelType"
+                :disabled="$route.query.status === 'detail' || Boolean(channelByCustIdStatus)"
+                clearable
+                class="e-select-con js-unionChannelType"
+                placeholder="银联功能类型"
+              >
                 <el-option v-for="(item, index) in scope.row.channelTypes" :label="item.label" :value="item.value" :key="index"></el-option>
               </el-select>
             </template>
@@ -216,7 +226,8 @@ import {
   getOrderErpCode,
   getOrderErpSiteInfo,
   getOrderErpChannel,
-  getOrderErpCustInfo
+  getOrderErpCustInfo,
+  getChannelByCustId
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -258,7 +269,8 @@ export default {
       channelTypes: [],
       orderErpCustInfo: {},
       erpStoreOrderCurrentPage: 1,
-      erpStoreOrderPageSize: 10
+      erpStoreOrderPageSize: 10,
+      channelByCustIdStatus: ''
     }
   },
   computed: {
@@ -455,6 +467,7 @@ export default {
         if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) {
           this.getChannelPage()
           this.getOrderErpChannel()
+          this.getChannelByCustId()
         }
         this.getProductStock().then(() => (this.checkProductVisible = false))
       } else this.checkProductVisible = false
@@ -487,12 +500,14 @@ export default {
       else if (productCode === 'ZHCT10' && erpStore === '') this.$message({ type: 'warning', message: '请选择授权类型' })
       else {
         this.basicAuthorStoreData = []
+        this.currentPage = 1
         this.getAuthorStorePage()
         this.checkAuthorStoreVisible = true
       }
     },
     async getAuthorStorePage() {
       try {
+        this.currentPageSelectAuthorSets.clear()
         const {
           erpAuthMerchantDTO: { merchantId: custId, productCode }
         } = this.form
@@ -584,6 +599,11 @@ export default {
         const res = await queryChannelPage({ channelName: query, page, rows })
         this.channelData = this.channelData.concat(res.results || [])
         this.isChannelPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) {}
+    },
+    async getChannelByCustId() {
+      try {
+        this.channelByCustIdStatus = (await getChannelByCustId(this.form.erpAuthMerchantDTO.merchantId)) || ''
       } catch (error) {}
     },
     async getOrderErpCode() {

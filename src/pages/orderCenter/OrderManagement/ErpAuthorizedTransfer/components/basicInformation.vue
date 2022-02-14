@@ -228,12 +228,13 @@ export default {
           })
         }
       } else {
+        console.info(123)
         if (type === 'old') {
-          const { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId } = formObj
-          this.form = Object.assign(this.form, { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId })
+          const { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId, oldAddress } = formObj
+          this.form = Object.assign(this.form, { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId, oldAddress })
         } else {
-          const { newMerchantAuthCount, newMerchantProductCode, newMerchantProductCodeName, newMerchantAuthType, newMerchantId } = formObj
-          this.form = Object.assign(this.form, { newMerchantAuthCount, newMerchantProductCode, newMerchantProductCodeName, newMerchantAuthType, newMerchantId })
+          const { newMerchantAuthCount, newMerchantProductCode, newMerchantProductCodeName, newMerchantAuthType, newMerchantId, newAddress } = formObj
+          this.form = Object.assign(this.form, { newMerchantAuthCount, newMerchantProductCode, newMerchantProductCodeName, newMerchantAuthType, newMerchantId, newAddress })
         }
       }
     },

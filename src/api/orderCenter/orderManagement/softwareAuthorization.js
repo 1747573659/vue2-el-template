@@ -426,3 +426,11 @@ export function getOrderErpCustInfo(data) {
     method: 'POST'
   })
 }
+
+// 直接获取通道类型
+export function getChannelByCustId(data) {
+  return request({
+    url: '/auth/order/erp/queryChannelByCustId/' + data,
+    method: 'POST'
+  })
+}

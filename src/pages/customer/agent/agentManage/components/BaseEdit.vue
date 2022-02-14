@@ -291,7 +291,6 @@ export default {
       // 编辑时获取代理商基本信息
       this.queryAgentById()
     }
-
     this.queryRole()
     this.queryChannel()
   },
@@ -306,8 +305,6 @@ export default {
     async queryAgentById() {
       const res = await queryAgentById({ id: Number(this.$route.query.id) })
       this.ruleForm = res
-      this.ruleForm.roleId = ''
-      this.ruleForm.channelManagerId = ''
       this.validatorName = res.name
 
       if (res.districtCode) {
