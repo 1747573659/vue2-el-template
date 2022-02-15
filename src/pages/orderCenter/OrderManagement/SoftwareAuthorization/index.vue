@@ -120,7 +120,6 @@ import {
   authOrderExportLog,
   authOrderExportDel,
   authOrderProductPage,
-  authOrderDelete,
   queryAllProductList
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 

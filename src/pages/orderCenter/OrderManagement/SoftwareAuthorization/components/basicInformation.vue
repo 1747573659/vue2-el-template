@@ -32,6 +32,7 @@
     <component ref="information" :is="activeName" :form="form" :userInfo="userInfo"></component>
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" @click="handleDelRow(scope.row)" v-if="$route.query.status === 'edit'">删除</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
         <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave">
           保存
@@ -77,7 +78,8 @@ import {
   authOrderDogAdd,
   authOrderDogById,
   authOrderDogUpdate,
-  authOrderDogSubmit
+  authOrderDogSubmit,
+  authOrderDelete
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -184,6 +186,25 @@ export default {
     }
   },
   methods: {
+    handleDelRow() {
+      this.$confirm('确定要删除吗？', '删除', {
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            authOrderDelete(this.form.authOrderDTO.id)
+              .then(() => {
+                this.$message({ type: 'success', message: '删除成功' })
+                this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name: 'softwareAuthorization' }))
+              })
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
+          } else done()
+        }
+      }).catch(err => {})
+    },
     handleVerify() {
       const erpHCMModule =
         this.productType === 1 &&
@@ -195,7 +216,11 @@ export default {
           return
         }
       }
-      if (this.productType === 1 && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) && !(this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName)) {
+      if (
+        this.productType === 1 &&
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) &&
+        !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName
+      ) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请在ERP完善营业执照后再操作' })
           return
