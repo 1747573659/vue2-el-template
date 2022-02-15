@@ -228,7 +228,6 @@ export default {
           })
         }
       } else {
-        console.info(123)
         if (type === 'old') {
           const { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId, oldAddress } = formObj
           this.form = Object.assign(this.form, { oldMerchantAuthCount, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAuthType, oldMerchantId, oldAddress })

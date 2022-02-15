@@ -97,7 +97,7 @@ export default {
       checkProductTabLock: false,
       basicProductData: [],
       currentPage: 1,
-      pageSize: 3,
+      pageSize: 10,
       totalPage: 0,
       checkProductStockLoad: false,
       selectMaps: new Map(),
