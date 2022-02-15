@@ -97,29 +97,25 @@ export default {
   },
   mounted() {
     const userInfo = JSON.parse(getLocal('userInfo'))
-    if (!JSON.parse(sessionStorage.getItem('isPilotAgent'))) {
-      this.routes.map(item => {
-        if (item.name === 'orderCenter') {
-          if (userInfo.propertyType === 1) {
-            if (userInfo.level === 2) {
-              item.children = item.children.map(ele => {
-                ele.children = ele.children.filter(
-                  child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name)
-                )
-                return ele
-              })
-            }
-          } else item.children = item.children.filter(ele => ele.name !== 'orderManagement')
-        } else if (item.name === 'customer') {
-          if (userInfo.propertyType === 2) {
+    this.routes.map(item => {
+      if (item.name === 'orderCenter') {
+        if (userInfo.propertyType === 3) {
+          item.children = item.children.map(ele => {
+            ele.children = ele.children.filter(child => child.name === 'ewechatOrder')
+            return ele
+          })
+        } else {
+          if (!JSON.parse(sessionStorage.getItem('isPilotAgent')) || userInfo.propertyType !== 1) {
+            item.children = item.children.filter(ele => ele.name !== 'orderManagement')
+          } else if (userInfo.propertyType === 1 && userInfo.level === 2) {
             item.children = item.children.map(ele => {
-              ele.children = ele.children.filter(child => !['softNoteManagement'].includes(child.name))
+              ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name))
               return ele
             })
           }
         }
-      })
-    }
+      }
+    })
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
