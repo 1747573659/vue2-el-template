@@ -13,7 +13,17 @@ const urlLinks = {
   initImg: '/initImg',
   checkSliderImg: '/checkSliderImg',
   queryBackgroundById: '/loginBackground/queryBackgroundById',
+  isPilotAgent: '/common/isPilotAgent'
 }
+
+// 判断是否是试点代理商账户
+export function isPilotAgent(data) {
+  return request({
+    url: urlLinks.isPilotAgent,
+    method: 'post'
+  })
+}
+
 // 根据应用系统ID查询图片调用地址
 export function queryBackgroundById(data) {
   return request({

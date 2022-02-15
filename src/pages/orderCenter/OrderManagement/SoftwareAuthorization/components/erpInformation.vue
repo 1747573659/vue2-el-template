@@ -604,6 +604,13 @@ export default {
     async getChannelByCustId() {
       try {
         this.channelByCustIdStatus = (await getChannelByCustId(this.form.erpAuthMerchantDTO.merchantId)) || ''
+        if (this.channelByCustIdStatus) {
+          const bnkChannelIndex = this.form.erpAuthOrderDetails.findIndex(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))
+          document.querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = this.channelByCustIdStatus.channelName
+          this.form.erpAuthOrderDetails[bnkChannelIndex].unionChannel = this.channelByCustIdStatus.channelCode
+          this.form.erpAuthOrderDetails[bnkChannelIndex].channelTypes = this.channelTypes.filter(ele => this.channelByCustIdStatus.funTypes.includes(ele.value)) || []
+          this.form.erpAuthOrderDetails[bnkChannelIndex].unionChannelType = this.channelByCustIdStatus.funTypes[0]
+        }
       } catch (error) {}
     },
     async getOrderErpCode() {
