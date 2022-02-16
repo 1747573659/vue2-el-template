@@ -101,9 +101,9 @@ const actions = {
             commit('SET_PWDVISIBLE', true)
           }
           isPilotAgent()
-            .then(res => sessionStorage.setItem('isPilotAgent', res))
+            .then(res => localStorage.setItem('isPilotAgent', res))
             .catch(() => {
-              sessionStorage.setItem('isPilotAgent', false)
+              localStorage.setItem('isPilotAgent', false)
             })
           // 重新设置异步路由里面的重定向地址
           const treeRoute = routeTree(response.menus)

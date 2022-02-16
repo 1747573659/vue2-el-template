@@ -105,7 +105,7 @@ export default {
             return ele
           })
         } else {
-          if (!JSON.parse(sessionStorage.getItem('isPilotAgent')) || userInfo.propertyType !== 1) {
+          if (!JSON.parse(localStorage.getItem('isPilotAgent')) || userInfo.propertyType !== 1) {
             item.children = item.children.filter(ele => ele.name !== 'orderManagement')
           } else if (userInfo.propertyType === 1 && userInfo.level === 2) {
             item.children = item.children.map(ele => {
