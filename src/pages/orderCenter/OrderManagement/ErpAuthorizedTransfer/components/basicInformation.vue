@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con" v-loading="checkBasicInformLoad">
+  <section class="p-information-con" style="padding-bottom:60px" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
