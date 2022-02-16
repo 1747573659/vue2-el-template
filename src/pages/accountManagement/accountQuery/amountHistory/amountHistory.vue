@@ -64,6 +64,7 @@
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 export default {
+  name: 'amountHistory',
   components: { tableSummary },
   data () {
     return {
@@ -97,6 +98,9 @@ export default {
         date: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD'), dayjs((new Date()).getTime()).format('YYYY-MM-DD')],
       }
     }
+  },
+  created () {
+    this.handleCurrentChange(1)
   },
   methods: {
     // 分页

@@ -27,7 +27,7 @@ const accountManagement = {
           component: () => import('@/pages/accountManagement/accountQuery/amountHistory/amountHistory.vue'),
           name: 'amountHistory',
           code: 'XDD_ACCMANAGEMENT_ACCQUERY_AMOUNTHISTORY',
-          meta: { title: '余额变动流水', name: 'amountHistory' }
+          meta: { title: '余额变动流水', name: 'amountHistory',cache: true }
         }
       ]
     },
@@ -48,14 +48,14 @@ const accountManagement = {
           component: () => import('@/pages/accountManagement/softStockQuery/querySoftStock/querySoftStock.vue'),
           name: 'querySoftStock',
           code: 'XDD_ACCMANAGEMENT_SOFTSTOCK_QUERY',
-          meta: { title: '软件库存查询', name: 'querySoftStock' }
+          meta: { title: '软件库存查询', name: 'querySoftStock' ,cache: true}
         },
         {
           path: 'softStockChangeHistory',
           component: () => import('@/pages/accountManagement/softStockQuery/softStockChangeHistory/softStockChangeHistory.vue'),
           name: 'softStockChangeHistory',
           code: 'XDD_ACCMANAGEMENT_SOFTSTOCK_HISTORY',
-          meta: { title: '软件库存变动流水', name: 'softStockChangeHistory' }
+          meta: { title: '软件库存变动流水', name: 'softStockChangeHistory',cache: true }
         }
       ]
     },
@@ -76,7 +76,7 @@ const accountManagement = {
           component: () => import('@/pages/accountManagement/resultsQuery/resultsQueryDealer/index.vue'),
           name: 'resultsQueryDealer',
           code: 'XDD_RSSULTSQUERY_DEALER',
-          meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY' }
+          meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY',cache: true }
         }
       ]
     }
