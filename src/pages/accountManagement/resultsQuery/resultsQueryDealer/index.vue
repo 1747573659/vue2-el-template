@@ -5,7 +5,7 @@
         <el-col :span="20">
           <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
             <el-form-item label="订单日期:">
-              <el-date-picker v-model="form.date" :picker-options="pickerOptions" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+              <el-date-picker v-model="form.orderTime" :picker-options="pickerOptions" type="daterange" range-separator="至" start-placeholder="开始日期" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
             <el-form-item label="行业:">
               <el-select clearable placeholder="全部" @change="industryChange" size="small" style="width:100%" v-model="form.industry">
@@ -115,7 +115,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-show="tableTotal > 0" class="el-page-block">
+      <div v-show="tableTotal > 0" class="km-page-block">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="thisPage" :page-sizes="[10, 30, 50]" :page-size.sync="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="tableTotal"></el-pagination>
       </div>
     </div>
@@ -148,7 +148,6 @@ export default {
       tableTotal: 0, // 表格总页数
       thisPage: 1, // 当前页
       pageSize: 10, // 每页多少条
-      // 原产品列表
       businessTypeList: [
         {
           id: 1,
@@ -172,11 +171,11 @@ export default {
       }, // 表格汇总数据
       productTypeList: [],
       form: {
-        typeList: [],
-        date: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD'), dayjs((new Date()).getTime()).format('YYYY-MM-DD')],
+        orderTime: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')],
         industry: '',
         productType: '',
         productCode: [],
+        typeList: [],
         useRebate: '',
         billNo: ''
       }
@@ -184,15 +183,13 @@ export default {
   },
   created () {
     this.handleCurrentChange(1)
+    this.queryTypeList()
   },
   methods: {
-    async getProductByPage ({ query = '', page = 1, row = 10 } = {}) {
-      try {
-        // const res = await authorProductByPage({ info: query, page, row, productIndustryList: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
-        // this.licensedProductData = this.licensedProductData.concat(res.results || [])
-        // this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
-      } catch (error) { }
-    },
+    //   1： queryTypeList
+    //   2： getProductByPage
+    //   3：表格
+    //   4：汇总
     productTypeChange () {
       this.form.productCode = []
       this.$refs.productCodes.selectVal = ''
@@ -200,8 +197,8 @@ export default {
       this.isLicensedProductMaxPage = false
     },
     industryChange () {
-      this.$refs.productCodes.selectVal = ''
       this.form.productCode = []
+      this.$refs.productCodes.selectVal = ''
       this.licensedProductData = []
       this.isLicensedProductMaxPage = false
     },
@@ -220,14 +217,17 @@ export default {
       try {
         this.tableLoading = true
         let subData = {
+          industry: this.form.industry,
+          productType: this.form.productType,
+          productCodes: this.form.productCode,
           typeList: this.form.typeList,
+          useRebate: this.form.useRebate,
           billNo: this.form.billNo
         }
-        if (this.form.date && this.form.date.length) {
-          subData.state = this.form.date[0]
-          subData.end = this.form.date[1]
+        if (this.form.orderTime && this.form.orderTime.length) {
+          subData.startOrderTime = this.form.orderTime[0]
+          subData.endOrderTime = this.form.orderTime[1]
         }
-        this.detailCount(subData)
         console.log(subData)
         // const res = await contractPage({
         //   ...subData,
@@ -240,9 +240,27 @@ export default {
         this.tableLoading = false
       }
     },
+    async queryTypeList () {
+      try {
+        // let res = await queryTypeList()
+        // this.productTypeList = []
+        // res.map((item) => {
+        //   if (![6, 7].includes(item.id)) {
+        //     this.productTypeList.push(item)
+        //   }
+        // })
+      } catch (error) { }
+    },
+    async getProductByPage ({ query = '', page = 1, row = 10 } = {}) {
+      try {
+        // const res = await authorProductByPage({ info: query, page, row, productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
+        // this.licensedProductData = this.licensedProductData.concat(res.results || [])
+        // this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+      } catch (error) { }
+    },
     // 表单汇总
     async detailCount (subData) {
-      // // const res = (await detailCount(subData)) || {}
+      // const res = (await detailCount(subData)) || {}
       // const keys = Object.keys(this.tableSummaryObj)
       // keys.map(item => {
       //   this.tableSummaryObj[item].value = res[item] || 0

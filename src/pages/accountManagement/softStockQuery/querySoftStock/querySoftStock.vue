@@ -39,7 +39,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-show="tableTotal > 0" class="el-page-block">
+      <div v-show="tableTotal > 0" class="km-page-block">
         <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="thisPage" :page-sizes="[10, 30, 50]" :page-size.sync="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="tableTotal"></el-pagination>
       </div>
     </div>

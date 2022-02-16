@@ -30,6 +30,9 @@ export function formatNumber (num, precision, separator) {
   }
   return '0.00'
 }
+export function formatNumberFilter (num, precision) {
+  return formatNumber(num, precision || 0)
+}
 /**
  * 文件流下载
  * @param {string} url 请求路径
