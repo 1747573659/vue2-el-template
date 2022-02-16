@@ -1,33 +1,33 @@
 <template>
-     <div class="km-container-con">
-       <div class="search-box">
-        <com-form ref="queryForm" :raw-form="queryConfig" label-width="120px" label-position="right" :is-in-page="true">
-          <el-col :span="6" slot="buttons">
-            <el-form-item label-width="120px">
-              <el-button size="small" type="primary" @click="query" :loading="queryLoading">查询</el-button>
-              <el-button size="small" type="primary" @click="reset" :loading="resetLoading">重置</el-button>
-              <el-button size="small" type="primary" @click="exportExcel">导出</el-button>
-              <slot name="btn"></slot>
-            </el-form-item>
-          </el-col>
-        </com-form>
-      </div>
-      <div class="data-box">
-        <com-table
-          ref="table"
-          :source="list"
-          :columns="listConfig"
-          :size="size"
-          :page="page"
-          :total="total"
-          :loading="tableLoading"
-          :is-in-page="true"
-          @page-change="onPageChange"
-          @size-change="onSizeChange"
-        >
-        </com-table>
-      </div>
+  <div class="km-container-con">
+    <div class="search-box">
+      <com-form ref="queryForm" :raw-form="queryConfig" label-width="90px" label-position="right" :is-in-page="true">
+        <el-col :span="8" slot="buttons" style="padding-left: 0; padding-right: 0;">
+          <el-form-item label-width="90px">
+            <el-button size="small" type="primary" @click="query" :loading="queryLoading">查询</el-button>
+            <el-button size="small" plain @click="reset" :loading="resetLoading">重置</el-button>
+            <el-button size="small" @click="exportExcel">导出</el-button>
+            <slot name="btn"></slot>
+          </el-form-item>
+        </el-col>
+      </com-form>
     </div>
+    <div class="data-box">
+      <com-table
+        ref="table"
+        :source="list"
+        :columns="listConfig"
+        :size="size"
+        :page="page"
+        :total="total"
+        :loading="tableLoading"
+        :is-in-page="true"
+        @page-change="onPageChange"
+        @size-change="onSizeChange"
+      >
+      </com-table>
+    </div>
+  </div>
 </template>
 
 <script>
@@ -43,7 +43,7 @@ import comTable from '../components/table.vue'
 import comForm from '../components/form.vue'
 import { downloadBufferFile } from '@/utils/index'
 const DOWNLOAD_URL = process.env.VUE_APP_BASE_API
-const defaultQueryFormatter = (args) => {
+const defaultQueryFormatter = args => {
   return args
 }
 
@@ -76,7 +76,7 @@ export default {
       default: () => defaultQueryFormatter
     }
   },
-  data () {
+  data() {
     return {
       page: 1,
       size: 10,
@@ -87,16 +87,16 @@ export default {
       tableLoading: false
     }
   },
-  provide () {
+  provide() {
     return {
       page: this
     }
   },
-  mounted () {
+  mounted() {
     this.getList()
   },
   methods: {
-    async getList () {
+    async getList() {
       try {
         this.tableLoading = true
         const queryFormData = this.$refs.queryForm.form
@@ -113,32 +113,32 @@ export default {
         this.tableLoading = false
       }
     },
-    async query () {
+    async query() {
       this.queryLoading = true
       await this.getList()
       this.queryLoading = false
     },
-    async reset () {
+    async reset() {
       this.resetLoading = true
       this.$refs.queryForm.reset()
       await this.getList()
       this.resetLoading = false
     },
-    onSizeChange (size) {
+    onSizeChange(size) {
       this.page = 1
       this.size = size
       this.getList()
     },
-    onPageChange (page) {
+    onPageChange(page) {
       this.page = page
       this.getList()
     },
-    async exportExcel () {
+    async exportExcel() {
       const queryFormData = this.$refs.queryForm.form
       const params = this.queryFormatter(queryFormData)
       try {
         const res = await downloadBufferFile(DOWNLOAD_URL + this.downloadApi, { isExport: true, params }, 'POST', 'json')
-      } catch(e) {
+      } catch (e) {
         this.$message.error('下载出错了')
       }
     }
@@ -147,7 +147,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
+.search-box {
+  margin-left: -16px;
+  margin-right: -16px;
+  border-bottom: 16px solid #f7f8fa;
+}
 /deep/ {
   .el-select {
     width: 240px;
@@ -159,5 +163,4 @@ export default {
     }
   }
 }
-
 </style>
