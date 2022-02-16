@@ -30,6 +30,10 @@ export default {
       type: [Array, Object],
       default: () => []
     },
+    interfaceParameters: {
+      type: Object,
+      default: () => {}
+    },
     optionLabel: {
       type: String,
       default: 'label'
@@ -47,7 +51,16 @@ export default {
       default: false
     }
   },
-  data() {
+  watch: {
+    data: {
+      handler (newVal) {
+        this.filterObj(newVal)
+      },
+      immediate: true,
+      deep: true
+    }
+  },
+  data () {
     return {
       selectVal: '',
       queryParams: '',
@@ -74,26 +87,64 @@ export default {
     }
   },
   methods: {
+    filterObj (objcArray) {
+      for (let i = 0; i < objcArray.length; i++) {
+        for (let j = i + 1; j < objcArray.length;) {
+          if (objcArray[i][this.optionValue] === objcArray[j][this.optionValue]) {
+            objcArray.splice(j, 1) // 去除重复的对象；
+          } else {
+            j++
+          }
+        }
+      }
+      this.$emit('update:data', objcArray)
+      return objcArray
+    },
     handleEchoVal(val) {
       this.selectVal = val
     },
     handleSelectFocus() {
       if (!this.data.length) {
         this.currentPage = 1
-        this.request({ page: this.currentPage })
+        this.request({ page: this.currentPage, ...this.interfaceParameters })
       }
     },
     handleSelectClear() {
       this.initSelect()
       this.queryParams = ''
-      this.request({ page: this.currentPage })
+      this.request({ page: this.currentPage, ...this.interfaceParameters })
     },
-    handleRemoteSearch(query) {
-      this.$emit('update:data', [])
-      if (query !== this.queryParams) this.initSelect()
+    handleRemoteSearch (query) {
+      let updateData = []
+      // 解决远程搜索时候原来list 会被清空问题
+      if (this.data.length) { // 有值才去
+        this.data.map(item => {
+          if (this.$refs.selectPage.multiple) { // 多选是数组。单选是字符串
+            if (this.selectVal.length) { // 要有选中值
+              this.selectVal.map(it => {
+                if (it === item[this.optionValue]) {
+                  updateData.push({
+                    [this.optionLabel]: item[this.optionLabel],
+                    [this.optionValue]: it
+                  })
+                }
+              })
+            }
+          } else {
+            if (this.selectVal === item[this.optionValue]) {
+              updateData.push({
+                [this.optionLabel]: item[this.optionLabel],
+                [this.optionValue]: this.selectVal
+              })
+            }
+          }
+        })
+      }
+      this.$emit('update:data', updateData)
+      if (query !== this.queryParams) this.initSelect(updateData)
       this.checkSelectLoad = true
       this.queryParams = query
-      this.request({ query, page: 1 }).finally(() => {
+      this.request({ query, page: 1, ...this.interfaceParameters }).finally(() => {
         this.checkSelectLoad = false
       })
     },
@@ -101,15 +152,15 @@ export default {
       if (this.isMaxPage || this.handleLoadMore.intercept) return
       this.handleLoadMore.intercept = true
       this.currentPage++
-      this.request({ query: this.queryParams, page: this.currentPage }).finally(() => {
+      this.request({ query: this.queryParams, page: this.currentPage, ...this.interfaceParameters }).finally(() => {
         this.handleLoadMore.intercept = false
       })
     },
-    initSelect() {
+    initSelect(updateData = []) {
       this.currentPage = 1
-      this.$emit('update:data', [])
+      this.$emit('update:data', updateData)
       this.$emit('update:isMaxPage', false)
-      this.$refs.selectPage.$children[1].$children[0].wrap.scrollTop = 0
+      if (this.$refs.selectPage.$children[1].$children[0]) this.$refs.selectPage.$children[1].$children[0].wrap.scrollTop = 0
     }
   }
 }
