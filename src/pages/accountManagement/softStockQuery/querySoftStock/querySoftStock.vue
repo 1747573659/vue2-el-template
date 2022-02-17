@@ -48,6 +48,7 @@
 <script>
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQuery'
+import { productQueryByPage } from '@/api/product'
 export default {
   name: 'querySoftStock',
   components: { tableSummary },
@@ -72,6 +73,7 @@ export default {
         limitTotalAmount: { label: '限期库存', value: '', formatNumber: true, },
       }, // 表格汇总数据
       form: {
+        orders:{},
         inventoryType: '',
         productCode: ''
       }
@@ -102,8 +104,8 @@ export default {
         productTypeList: [1, 2]
       }
       try {
-        //   const res = await authProductQueryByPage(data)
-        //   this.allProductList = res.results
+        const res = await productQueryByPage(data)
+        this.allProductList = res.results
       } catch (error) { }
     },
     // 分页
@@ -121,33 +123,28 @@ export default {
       try {
         this.tableLoading = true
         let subData = {
+          orders:this.form.orders,
           productCode: this.form.productCode,
           inventoryType: this.form.inventoryType
         }
-        if (this.form.date && this.form.date.length) {
-          subData.state = this.form.date[0]
-          subData.end = this.form.date[1]
-        }
-        this.detailCount(subData)
-        console.log(subData)
-        // const res = await contractPage({
-        //   ...subData,
-        //   page: this.thisPage,
-        //   rows: this.pageSize
-        // })
-        // this.tableList = res.results
-        // this.tableTotal = res.totalCount
+        const res = await getInventoryWaterAndSummary({
+          ...subData,
+          page: this.thisPage,
+          rows: this.pageSize
+        })
+        this.detailCount(res)
+        this.tableList = res.results
+        this.tableTotal = res.totalCount
       } finally {
         this.tableLoading = false
       }
     },
     // 表单汇总
-    async detailCount (subData) {
-      // // const res = (await detailCount(subData)) || {}
-      // const keys = Object.keys(this.tableSummaryObj)
-      // keys.map(item => {
-      //   this.tableSummaryObj[item].value = res[item] || 0
-      // })
+    async detailCount (res) {
+      const keys = Object.keys(this.tableSummaryObj)
+      keys.map(item => {
+        this.tableSummaryObj[item].value = res[item] || 0
+      })
     },
   }
 }
