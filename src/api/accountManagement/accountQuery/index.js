@@ -8,6 +8,6 @@ export function queryProvinceList(data) {
   return request({
     url: urlLinks.queryProvinceList,
     method: 'post',
-    params: data
+    data
   })
 }

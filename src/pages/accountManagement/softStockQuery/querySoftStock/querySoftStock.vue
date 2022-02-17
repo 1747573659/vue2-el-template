@@ -35,7 +35,7 @@
         <el-table-column prop="limitAmount" label="限期库存" sortable="custom" align="right"></el-table-column>
         <el-table-column label="操作" width="140">
           <template slot-scope="scope">
-            <el-button @click="detail(scope.row)" type="text" size="small" v-if="permissonChecelenus('XDD_ACCMANAGEMENT_SOFTSTOCK_QUERY_DETILE')">详情</el-button>
+            <el-button @click="detail(scope.row)" type="text" size="small" v-permission="'XDD_ACCMANAGEMENT_SOFTSTOCK_QUERY_DETILE'">详情</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -73,7 +73,7 @@ export default {
         limitTotalAmount: { label: '限期库存', value: '', formatNumber: true, },
       }, // 表格汇总数据
       form: {
-        orders:{},
+        orders: {},
         inventoryType: '',
         productCode: ''
       }
@@ -86,8 +86,8 @@ export default {
   methods: {
     // 新页签打开“软件库存变动流水”，自动填充过滤条件：截止日期、经销商、产品
     detail (row) {
-      const { agentId, agentName, productCode } = row
-      this.$router.push({ name: 'softStockChangeHistory', query: { agentId, agentName, productCode } })
+      const { agentId, agentName, productCode, productName } = row
+      this.$router.push({ name: 'softStockChangeHistory', query: { productCode, productName } })
     },
     handleTabSort ({ prop, order }) {
       this.form.orders = { [prop]: order ? order.substring(0, order.indexOf('ending')) : '' }
@@ -123,7 +123,7 @@ export default {
       try {
         this.tableLoading = true
         let subData = {
-          orders:this.form.orders,
+          orders: this.form.orders,
           productCode: this.form.productCode,
           inventoryType: this.form.inventoryType
         }

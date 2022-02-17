@@ -124,7 +124,7 @@
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { detailPage, detailCount } from '@/api/accountManagement/resultsQuery'
-import { productQueryByPage } from '@/api/product'
+import { productQueryByPage, productQueryTypeList } from '@/api/product'
 export default {
   name: 'resultsQueryDealer',
   components: { tableSummary },
@@ -245,13 +245,13 @@ export default {
     },
     async queryTypeList () {
       try {
-        // let res = await queryTypeList()
-        // this.productTypeList = []
-        // res.map((item) => {
-        //   if (![6, 7].includes(item.id)) {
-        //     this.productTypeList.push(item)
-        //   }
-        // })
+        let res = await productQueryTypeList()
+        this.productTypeList = []
+        res.map((item) => {
+          if (![6, 7].includes(item.id)) {
+            this.productTypeList.push(item)
+          }
+        })
       } catch (error) { }
     },
     async getProductByPage ({ query = '', page = 1, row = 10 } = {}) {

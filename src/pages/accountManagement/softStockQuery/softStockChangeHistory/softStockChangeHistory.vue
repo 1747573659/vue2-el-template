@@ -134,14 +134,26 @@ export default {
         limitAmountDecrease: { label: '期间减少限期库存', value: '', formatNumber: true }
       }, // 表格汇总数据
       form: {
-        orderTime: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')],
+        orderTime: [],
         productCode: [],
         businessTypeList: []
       }
     }
   },
-  created () {
-    this.handleCurrentChange(1)
+  beforeRouteEnter (to, from, next) {
+    next((vm) => {
+      // 通过 `vm` 访问组件实例
+      // 当从软件库存查询页面跳转过来时，将跳转的只赋值 再去请求列表
+      const { productCode, productName } = vm.$route.query
+      if (productCode) {
+        vm.form.productCode = [productCode]
+        vm.form.orderTime = []
+        vm.getProductByPage({ query: productName, page: 1, row: 10 })
+      } else {
+        vm.form.orderTime = [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')]
+      }
+      vm.handleCurrentChange(1)
+    })
   },
   methods: {
     getBusinessType (value) {
