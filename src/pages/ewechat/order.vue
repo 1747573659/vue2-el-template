@@ -22,7 +22,7 @@
 
 <script>
 import page from './components/page.vue'
-import { getOrderList, downloadOrderList } from '@/api/ewechat'
+import { getOrderList, downloadOrderList, cancelOrder } from '@/api/ewechat'
 
 export default {
   components: {
