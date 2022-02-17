@@ -27,8 +27,8 @@
             </el-form-item>
             <el-form-item label="使用返利: ">
               <el-select clearable placeholder="全部" size="small" style="width: 100%" v-model="form.useRebate">
-                <el-option label="是" value="1"></el-option>
-                <el-option label="否" value="0"></el-option>
+                <el-option label="是" :value="1"></el-option>
+                <el-option label="否" :value="0"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="订单编码:">
@@ -124,12 +124,12 @@
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { detailPage, detailCount } from '@/api/accountManagement/resultsQuery'
+import { productQueryByPage } from '@/api/product'
 export default {
   name: 'resultsQueryDealer',
   components: { tableSummary },
   data () {
     return {
-      // =========================================
       licensedProductData: [],
       isLicensedProductMaxPage: false,
       industryList: [{
@@ -181,8 +181,8 @@ export default {
         orderTime: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')],
         industry: '',
         productType: '',
-        productCode: [],
-        businessType: [],
+        productCode: '',
+        businessType: '',
         useRebate: '',
         billNo: ''
       }
@@ -193,11 +193,6 @@ export default {
     this.queryTypeList()
   },
   methods: {
-    // 产品类型 产品
-    //   1： queryTypeList
-    //   2： getProductByPage
-    //   3：表格
-    //   4：汇总
     productTypeChange () {
       this.form.productCode = []
       this.$refs.productCodes.selectVal = ''
@@ -261,9 +256,9 @@ export default {
     },
     async getProductByPage ({ query = '', page = 1, row = 10 } = {}) {
       try {
-        // const res = await authorProductByPage({ info: query, page, row, productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
-        // this.licensedProductData = this.licensedProductData.concat(res.results || [])
-        // this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+        const res = await productQueryByPage({ info: query, page, row, productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
+        this.licensedProductData = this.licensedProductData.concat(res.results || [])
+        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) { }
     },
     // 表单汇总
