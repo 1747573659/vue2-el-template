@@ -47,7 +47,7 @@
 </template>
 <script>
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
-import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQuery'
+import { getInventoryAndSummary } from '@/api/accountManagement/softStockQuery'
 import { productQueryByPage } from '@/api/product'
 export default {
   name: 'querySoftStock',
@@ -127,7 +127,7 @@ export default {
           productCode: this.form.productCode,
           inventoryType: this.form.inventoryType
         }
-        const res = await getInventoryWaterAndSummary({
+        const res = await getInventoryAndSummary({
           ...subData,
           page: this.thisPage,
           rows: this.pageSize

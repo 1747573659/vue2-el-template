@@ -8,7 +8,7 @@
               <km-select-page multiple ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
             </el-form-item>
             <el-form-item label="业务类型:">
-              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.typeList">
+              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.businessTypeList">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
               </el-select>
             </el-form-item>
@@ -76,7 +76,7 @@
           </template>
         </el-table-column>
         <el-table-column prop="afterLimitAmount" label="期末限期库存" align="right"></el-table-column>
-         <el-table-column prop="expireTime" label="限期库存有效期" width="130px">
+        <el-table-column prop="expireTime" label="限期库存有效期" width="130px">
           <template slot-scope="scope">
             <span>{{ scope.row.expireTime === '1970-01-01 00:00:00' ? '--' : scope.row.expireTime.split(' ')[0] }}</span>
           </template>
@@ -91,6 +91,8 @@
 <script>
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { productQueryByPage } from '@/api/product'
+import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQuery'
 export default {
   name: 'softStockChangeHistory',
   components: { tableSummary },
@@ -98,13 +100,6 @@ export default {
     return {
       licensedProductData: [],
       isLicensedProductMaxPage: false,
-      industryList: [{
-        id: 1,
-        name: '零售专卖'
-      }, {
-        id: 2,
-        name: '餐饮'
-      }],
       pickerOptions: {
         disabledDate (time) {
           return time.getTime() > dayjs().endOf('day')
@@ -138,46 +133,24 @@ export default {
         limitAmountIncrease: { label: '期间增加限期库存', value: '', formatNumber: true },
         limitAmountDecrease: { label: '期间减少限期库存', value: '', formatNumber: true }
       }, // 表格汇总数据
-      productTypeList: [],
       form: {
         orderTime: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')],
-        industry: '',
-        productType: '',
         productCode: [],
-        typeList: [],
-        useRebate: '',
-        billNo: ''
+        businessTypeList: []
       }
     }
   },
   created () {
     this.handleCurrentChange(1)
-    this.queryTypeList()
   },
   methods: {
     getBusinessType (value) {
       if (value) {
-        let res = this.businessTypeList.filter(item => value === item.code)
+        let res = this.businessTypeList.filter(item => value === item.id)
         return res.length ? res[0].name : '--'
       } else {
         return '--'
       }
-    },
-    //   1： queryTypeList
-    //   2： getProductByPage
-    //   3：表格
-    //   4：汇总
-    productTypeChange () {
-      this.form.productCode = []
-      this.$refs.productCodes.selectVal = ''
-      this.licensedProductData = []
-      this.isLicensedProductMaxPage = false
-    },
-    industryChange () {
-      this.form.productCode = []
-      this.$refs.productCodes.selectVal = ''
-      this.licensedProductData = []
-      this.isLicensedProductMaxPage = false
     },
     // 分页
     handleSizeChange (val) {
@@ -194,54 +167,39 @@ export default {
       try {
         this.tableLoading = true
         let subData = {
-          industry: this.form.industry,
-          productType: this.form.productType,
-          productCodes: this.form.productCode,
-          typeList: this.form.typeList,
-          useRebate: this.form.useRebate,
-          billNo: this.form.billNo
+          productCodeList: this.form.productCode,
+          businessTypeList: this.form.businessTypeList
         }
         if (this.form.orderTime && this.form.orderTime.length) {
-          subData.startOrderTime = this.form.orderTime[0]
-          subData.endOrderTime = this.form.orderTime[1]
+          subData.startTime = this.form.orderTime[0]
+          subData.endTime = this.form.orderTime[1]
         }
-        console.log(subData)
-        // const res = await contractPage({
-        //   ...subData,
-        //   page: this.thisPage,
-        //   rows: this.pageSize
-        // })
-        // this.tableList = res.results
-        // this.tableTotal = res.totalCount
+        const res = await getInventoryWaterAndSummary({
+          ...subData,
+          page: this.thisPage,
+          rows: this.pageSize
+        })
+        this.detailCount(res)
+        this.tableList = res.results
+        this.tableTotal = res.totalCount
       } finally {
         this.tableLoading = false
       }
     },
-    async queryTypeList () {
-      try {
-        // let res = await queryTypeList()
-        // this.productTypeList = []
-        // res.map((item) => {
-        //   if (![6, 7].includes(item.id)) {
-        //     this.productTypeList.push(item)
-        //   }
-        // })
-      } catch (error) { }
-    },
     async getProductByPage ({ query = '', page = 1, row = 10 } = {}) {
       try {
-        // const res = await authorProductByPage({ info: query, page, row, productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
-        // this.licensedProductData = this.licensedProductData.concat(res.results || [])
-        // this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+        // productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType]
+        const res = await productQueryByPage({ info: query, page, row, })
+        this.licensedProductData = this.licensedProductData.concat(res.results || [])
+        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) { }
     },
     // 表单汇总
-    async detailCount (subData) {
-      // const res = (await detailCount(subData)) || {}
-      // const keys = Object.keys(this.tableSummaryObj)
-      // keys.map(item => {
-      //   this.tableSummaryObj[item].value = res[item] || 0
-      // })
+    async detailCount (res) {
+      const keys = Object.keys(this.tableSummaryObj)
+      keys.map(item => {
+        this.tableSummaryObj[item].value = res[item] || 0
+      })
     },
   }
 }
