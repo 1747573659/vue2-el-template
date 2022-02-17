@@ -13,7 +13,7 @@
               <el-input v-model.trim="form.billNo" maxlength='16' size="small" placeholder="请输入订单编码" clearable></el-input>
             </el-form-item>
             <el-form-item label="业务日期:">
-              <el-date-picker v-model="form.date" type="daterange" range-separator="至" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+              <el-date-picker v-model="form.date" type="daterange" range-separator="至" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
@@ -63,6 +63,7 @@
 <script>
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { changePage, changeSumPage } from '@/api/accountManagement/accountQuery'
 export default {
   name: 'amountHistory',
   components: { tableSummary },
@@ -95,7 +96,7 @@ export default {
       form: {
         typeList: [],
         billNo: '',
-        date: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD'), dayjs((new Date()).getTime()).format('YYYY-MM-DD')],
+        date: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')],
       }
     }
   },
@@ -122,29 +123,28 @@ export default {
           billNo: this.form.billNo
         }
         if (this.form.date && this.form.date.length) {
-          subData.state = this.form.date[0]
-          subData.end = this.form.date[1]
+          subData.createStartTime = this.form.date[0]
+          subData.createEndTime = this.form.date[1]
         }
         this.detailCount(subData)
-        console.log(subData)
-        // const res = await contractPage({
-        //   ...subData,
-        //   page: this.thisPage,
-        //   rows: this.pageSize
-        // })
-        // this.tableList = res.results
-        // this.tableTotal = res.totalCount
+        const res = await changePage({
+          ...subData,
+          page: this.thisPage,
+          rows: this.pageSize
+        })
+        this.tableList = res.results
+        this.tableTotal = res.totalCount
       } finally {
         this.tableLoading = false
       }
     },
     // 表单汇总
     async detailCount (subData) {
-      // // const res = (await detailCount(subData)) || {}
-      // const keys = Object.keys(this.tableSummaryObj)
-      // keys.map(item => {
-      //   this.tableSummaryObj[item].value = res[item] || 0
-      // })
+      const res = (await changeSumPage(subData)) || {}
+      const keys = Object.keys(this.tableSummaryObj)
+      keys.map(item => {
+        this.tableSummaryObj[item].value = res[item] || 0
+      })
     },
   }
 }
