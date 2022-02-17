@@ -35,7 +35,7 @@
         <el-table-column prop="limitAmount" label="限期库存" sortable="custom" align="right"></el-table-column>
         <el-table-column label="操作" width="140">
           <template slot-scope="scope">
-            <el-button @click="detail(scope.row)" type="text" size="small" v-if="permissonChecelenus('ACCOUNT_START_EDIT')">详情</el-button>
+            <el-button @click="detail(scope.row)" type="text" size="small" v-if="permissonChecelenus('XDD_ACCMANAGEMENT_SOFTSTOCK_QUERY_DETILE')">详情</el-button>
           </template>
         </el-table-column>
       </el-table>

@@ -18,16 +18,15 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品: ">
-              <km-select-page multiple ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
+              <km-select-page ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
             </el-form-item>
             <el-form-item label="业务类型:">
-              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.typeList">
+              <el-select clearable class="address-select" collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.businessType">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="使用返利: ">
-              <el-select clearable placeholder="" size="small" style="width: 100%" v-model="form.useRebate">
-                <el-option label="全部" value=""></el-option>
+              <el-select clearable placeholder="全部" size="small" style="width: 100%" v-model="form.useRebate">
                 <el-option label="是" value="1"></el-option>
                 <el-option label="否" value="0"></el-option>
               </el-select>
@@ -124,19 +123,27 @@
 <script>
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { detailPage, detailCount } from '@/api/accountManagement/resultsQuery'
 export default {
   name: 'resultsQueryDealer',
   components: { tableSummary },
   data () {
     return {
+      // =========================================
       licensedProductData: [],
       isLicensedProductMaxPage: false,
       industryList: [{
         id: 1,
-        name: '零售专卖'
+        name: '零售'
       }, {
         id: 2,
         name: '餐饮'
+      }, {
+        id: 3,
+        name: '专卖'
+      }, {
+        id: 99,
+        name: '硬件'
       }],
       pickerOptions: {
         disabledDate (time) {
@@ -175,7 +182,7 @@ export default {
         industry: '',
         productType: '',
         productCode: [],
-        typeList: [],
+        businessType: [],
         useRebate: '',
         billNo: ''
       }
@@ -186,6 +193,7 @@ export default {
     this.queryTypeList()
   },
   methods: {
+    // 产品类型 产品
     //   1： queryTypeList
     //   2： getProductByPage
     //   3：表格
@@ -219,8 +227,8 @@ export default {
         let subData = {
           industry: this.form.industry,
           productType: this.form.productType,
-          productCodes: this.form.productCode,
-          typeList: this.form.typeList,
+          productCode: this.form.productCode,
+          businessType: this.form.businessType,
           useRebate: this.form.useRebate,
           billNo: this.form.billNo
         }
@@ -228,14 +236,14 @@ export default {
           subData.startOrderTime = this.form.orderTime[0]
           subData.endOrderTime = this.form.orderTime[1]
         }
-        console.log(subData)
-        // const res = await contractPage({
-        //   ...subData,
-        //   page: this.thisPage,
-        //   rows: this.pageSize
-        // })
-        // this.tableList = res.results
-        // this.tableTotal = res.totalCount
+        this.detailCount(subData)
+        const res = await detailPage({
+          ...subData,
+          page: this.thisPage,
+          rows: this.pageSize
+        })
+        this.tableList = res.results || []
+        this.tableTotal = res.totalCount
       } finally {
         this.tableLoading = false
       }
@@ -260,11 +268,11 @@ export default {
     },
     // 表单汇总
     async detailCount (subData) {
-      // const res = (await detailCount(subData)) || {}
-      // const keys = Object.keys(this.tableSummaryObj)
-      // keys.map(item => {
-      //   this.tableSummaryObj[item].value = res[item] || 0
-      // })
+      const res = (await detailCount(subData)) || {}
+      const keys = Object.keys(this.tableSummaryObj)
+      keys.map(item => {
+        this.tableSummaryObj[item].value = res[item] || 0
+      })
     },
   }
 }
