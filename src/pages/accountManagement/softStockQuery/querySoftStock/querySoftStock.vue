@@ -47,6 +47,7 @@
 </template>
 <script>
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQuery'
 export default {
   name: 'querySoftStock',
   components: { tableSummary },
