@@ -49,6 +49,7 @@
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { getInventoryAndSummary } from '@/api/accountManagement/softStockQuery'
 import { productQueryByPage } from '@/api/product'
+import { mapActions } from 'vuex'
 export default {
   name: 'querySoftStock',
   components: { tableSummary },
@@ -84,10 +85,19 @@ export default {
     this.handleCurrentChange(1)
   },
   methods: {
+    ...mapActions(['delCachedView']),
     // 新页签打开“软件库存变动流水”，自动填充过滤条件：截止日期、经销商、产品
     detail (row) {
-      const { agentId, agentName, productCode, productName } = row
-      this.$router.push({ name: 'softStockChangeHistory', query: { productCode, productName } })
+      const { productCode, productName } = row
+      this.delCachedView({ name: 'softStockChangeHistory' }).then(() => {
+        this.$router.push({
+          name: 'softStockChangeHistory',
+          query: {
+            productCode,
+            productName
+          }
+        })
+      })
     },
     handleTabSort ({ prop, order }) {
       this.form.orders = { [prop]: order ? order.substring(0, order.indexOf('ending')) : '' }

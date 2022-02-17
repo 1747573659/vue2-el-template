@@ -12,6 +12,10 @@ export function toThousandfilter (num) {
     .replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
 }
 
+export function formatAmount(val) {
+  return val ? NP.divide(val, 100) : 0
+}
+
 export function toFormatTime (times, type) {
   if (times) {
     let date = new Date(times)
