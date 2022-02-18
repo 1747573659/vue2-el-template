@@ -62,27 +62,27 @@
         </el-table-column>
         <el-table-column prop="unitPrice" label="单价" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.unitPrice |formatAmountDivide|toFixedMoneyFilter}}</div>
+            <div>{{scope.row.unitPrice |toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="orderAmount" label="订单金额" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.orderAmount|formatAmountDivide |toFixedMoneyFilter}}</div>
+            <div>{{scope.row.orderAmount|toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="performanceAmount" label="业绩" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.performanceAmount|formatAmountDivide |toFixedMoneyFilter}}</div>
+            <div>{{scope.row.performanceAmount|toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="originAmount" label="本金" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.originAmount |formatAmountDivide|toFixedMoneyFilter}}</div>
+            <div>{{scope.row.originAmount |toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="bonusAmount" label="使用赠金" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.bonusAmount|formatAmountDivide |toFixedMoneyFilter}}</div>
+            <div>{{scope.row.bonusAmount|toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="useRebate" label="使用返利" width='100'>
@@ -92,7 +92,7 @@
         </el-table-column>
         <el-table-column prop="depositAmount" label="使用担保金" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.depositAmount |formatAmountDivide|toFixedMoneyFilter}}</div>
+            <div>{{scope.row.depositAmount |toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="depositName" label="担保人" width='120'></el-table-column>
@@ -100,17 +100,17 @@
         <el-table-column prop="billNo" label="订单编码" width='160'></el-table-column>
         <el-table-column prop="deductionOriginAmount" label="扣款后本额" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.deductionOriginAmount|formatAmountDivide |toFixedMoneyFilter}}</div>
+            <div>{{scope.row.deductionOriginAmount|toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="deductionBonusAmount" label="扣款后赠金" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.deductionBonusAmount |formatAmountDivide|toFixedMoneyFilter}}</div>
+            <div>{{scope.row.deductionBonusAmount |toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="noWriteAmount" label="未核销金额" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.noWriteAmount |formatAmountDivide|toFixedMoneyFilter}}</div>
+            <div>{{scope.row.noWriteAmount |toFixedFilter}}</div>
           </template>
         </el-table-column>
       </el-table>
@@ -125,6 +125,7 @@ import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { detailPage, detailCount } from '@/api/accountManagement/resultsQuery'
 import { productQueryByPage, productQueryTypeList } from '@/api/product'
+import { formatAmountDivide } from '@/filters'
 export default {
   name: 'resultsQueryDealer',
   components: { tableSummary },
@@ -266,7 +267,7 @@ export default {
       const res = (await detailCount(subData)) || {}
       const keys = Object.keys(this.tableSummaryObj)
       keys.map(item => {
-        this.tableSummaryObj[item].value = res[item] || 0
+        this.tableSummaryObj[item].value =formatAmountDivide(res[item]) || 0
       })
     },
   }

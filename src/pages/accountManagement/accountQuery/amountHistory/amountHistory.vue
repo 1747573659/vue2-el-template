@@ -29,26 +29,26 @@
         <el-table-column prop="businessTypeName" label="业务类型"></el-table-column>
         <el-table-column prop="changeMoney" label="变动余额" align='right'>
           <template slot-scope="scope">
-            <div>{{ scope.row.changeMoney | formatAmount }}</div>
-            <div v-if="scope.row.changeMoneyGift">赠金{{ scope.row.changeMoneyGift | formatAmount }}</div>
+            <div>{{ scope.row.changeMoney | toFixedFilter }}</div>
+            <div v-if="scope.row.changeMoneyGift">赠金{{ scope.row.changeMoneyGift | toFixedFilter }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="paperMoney" label="账面余额" align='right'>
           <template slot-scope="scope">
-            <div>{{ scope.row.paperMoney | formatAmount }}</div>
-            <div v-if="scope.row.paperMoneyGift">赠金{{ scope.row.paperMoneyGift | formatAmount }}</div>
+            <div>{{ scope.row.paperMoney | toFixedFilter }}</div>
+            <div v-if="scope.row.paperMoneyGift">赠金{{ scope.row.paperMoneyGift | toFixedFilter }}</div>
           </template>
         </el-table-column>
         <el-table-column label="变动担保金" align='right'>
-          <template slot-scope="scope">{{ scope.row.changeGuaranteeMoney | formatAmount }}</template>
+          <template slot-scope="scope">{{ scope.row.changeGuaranteeMoney | toFixedFilter }}</template>
         </el-table-column>
         <el-table-column label="未核销担保金" align='right'>
-          <template slot-scope="scope">{{ scope.row.noQualityGuaranteeMoney | formatAmount }}</template>
+          <template slot-scope="scope">{{ scope.row.noQualityGuaranteeMoney | toFixedFilter }}</template>
         </el-table-column>
         <el-table-column prop="currentMoney" label="可用金额" align='right'>
           <template slot-scope="scope">
-            <div>{{ scope.row.currentMoney | formatAmount }}</div>
-            <div v-if="scope.row.currentMoneyGift">赠金{{ scope.row.currentMoneyGift | formatAmount}}</div>
+            <div>{{ scope.row.currentMoney | toFixedFilter }}</div>
+            <div v-if="scope.row.currentMoneyGift">赠金{{ scope.row.currentMoneyGift | toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="remark" label="备注"></el-table-column>
@@ -64,6 +64,7 @@
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { changePage, changeSumPage } from '@/api/accountManagement/accountQuery'
+import { formatAmountDivide } from '@/filters'
 export default {
   name: 'amountHistory',
   components: { tableSummary },
@@ -143,7 +144,7 @@ export default {
       const res = (await changeSumPage(subData)) || {}
       const keys = Object.keys(this.tableSummaryObj)
       keys.map(item => {
-        this.tableSummaryObj[item].value = res[item] || 0
+        this.tableSummaryObj[item].value = formatAmountDivide(res[item]) || 0
       })
     },
   }
