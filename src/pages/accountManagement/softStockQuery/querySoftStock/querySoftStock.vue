@@ -29,10 +29,34 @@
             <span>{{ '[' + scope.row.productCode + ']' + scope.row.productName }}</span>
           </template>
         </el-table-column>
-        <el-table-column prop="totalAmount" label="总库存" sortable="custom" align="right"></el-table-column>
+        <el-table-column prop="totalAmount" label="总库存" sortable="custom" align="right">
+          <template slot="header">
+            <span class="table-tr-design">
+              <span style="margin-right: 5px">总库存</span>
+              <el-tooltip :hide-after="0" class="item" content="" effect="light" placement="top">
+                <span slot="content" style="font-size: 14px">
+                  通用库存+项目库存
+                </span>
+                <i class="el-icon-warning-outline tooltip-icon"></i>
+              </el-tooltip>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column prop="commonAmount" label="通用库存" sortable="custom" align="right"></el-table-column>
         <el-table-column prop="projectAmount" label="项目库存" sortable="custom" align="right"></el-table-column>
-        <el-table-column prop="limitAmount" label="限期库存" sortable="custom" align="right"></el-table-column>
+        <el-table-column prop="limitAmount" label="限期库存" sortable="custom" align="right">
+          <template slot="header">
+            <span class="table-tr-design">
+              <span style="margin-right: 5px">限期库存</span>
+              <el-tooltip :hide-after="0" class="item" content="" effect="light" placement="top">
+                <span slot="content" style="font-size: 14px">
+                  通用库存、项目库存中有限期的库存
+                </span>
+                <i class="el-icon-warning-outline tooltip-icon"></i>
+              </el-tooltip>
+            </span>
+          </template>
+        </el-table-column>
         <el-table-column label="操作" width="140">
           <template slot-scope="scope">
             <el-button @click="detail(scope.row)" type="text" size="small" v-permission="'XDD_ACCMANAGEMENT_SOFTSTOCK_QUERY_DETILE'">详情</el-button>

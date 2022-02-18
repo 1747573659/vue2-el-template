@@ -13,10 +13,12 @@
               </el-select>
             </el-form-item>
             <el-form-item label="业务日期:">
-              <el-date-picker v-model="form.orderTime" :picker-options="pickerOptions" type="daterange" range-separator="至" start-placeholder="开始日期" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" end-placeholder="结束日期"></el-date-picker>
+              <el-date-picker v-model="form.startTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
+              <span style="padding: 0 2px">—</span>
+              <el-date-picker v-model="form.endTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 23:59:59"></el-date-picker>
             </el-form-item>
             <el-form-item>
-              <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
+              <el-button style="margin-left:36px" type="primary" @click="handleCurrentChange(1)">查询</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -61,7 +63,7 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="checkTime" label="业务时间" width="100px"></el-table-column>
+        <el-table-column prop="checkTime" label="业务时间" width="110px"></el-table-column>
         <el-table-column prop="checkPersonName" label="受理人"></el-table-column>
         <el-table-column prop="documentNumber" label="订单编码" width="160"></el-table-column>
         <el-table-column prop="changeAmount" label="变动项目库存" align="right">
@@ -111,19 +113,14 @@ export default {
       thisPage: 1, // 当前页
       pageSize: 10, // 每页多少条
       businessTypeList: [
-        {
-          id: 1,
-          name: '软件采购'
-        }, {
-          id: 2,
-          name: '软件升级'
-        }, {
-          id: 3,
-          name: '需求开发'
-        }, {
-          id: 4,
-          name: '业绩调整'
-        }
+        { id: 1, name: '初始化' },
+        { id: 2, name: '收款单' },
+        { id: 3, name: '采购扣款' },
+        { id: 4, name: '手工调整' },
+        { id: 5, name: '活动过期' },
+        { id: 6, name: '担保单变动' },
+        { id: 8, name: '需求开发' },
+        { id: 9, name: '软件升级' }
       ],
       tableSummaryObj: {
         commonAmountIncrease: { label: '期间增加通用库存', value: '', formatNumber: true },
@@ -134,7 +131,8 @@ export default {
         limitAmountDecrease: { label: '期间减少限期库存', value: '', formatNumber: true }
       }, // 表格汇总数据
       form: {
-        orderTime: [],
+        startTime: '',
+        endTime: '',
         productCode: [],
         businessTypeList: []
       }
@@ -147,10 +145,12 @@ export default {
       const { productCode, productName } = vm.$route.query
       if (productCode) {
         vm.form.productCode = [productCode]
-        vm.form.orderTime = []
+        vm.form.startTime = ''
+        vm.form.endTime = ''
         vm.getProductByPage({ query: productName, page: 1, row: 10 })
       } else {
-        vm.form.orderTime = [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')]
+        vm.form.startTime = dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00')
+        vm.form.endTime = dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')
       }
       vm.handleCurrentChange(1)
     })
@@ -180,11 +180,9 @@ export default {
         this.tableLoading = true
         let subData = {
           productCodeList: this.form.productCode,
-          businessTypeList: this.form.businessTypeList
-        }
-        if (this.form.orderTime && this.form.orderTime.length) {
-          subData.startTime = this.form.orderTime[0]
-          subData.endTime = this.form.orderTime[1]
+          businessTypeList: this.form.businessTypeList,
+          startTime: this.form.startTime||'',
+          endTime: this.form.endTime||''
         }
         const res = await getInventoryWaterAndSummary({
           ...subData,
