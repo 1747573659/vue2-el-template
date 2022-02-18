@@ -166,6 +166,10 @@ export default {
       this.currentPageSelectSets.delete(scope.row.moduleCode)
     },
     handleProductVisible() {
+      if (!this.merchantInfo.productCode && this.form.merchantDTO.applicationModule === 3) {
+        this.$message({ type: 'warning', message: '找不到对应的周边产品' })
+        return 
+      }
       this.checkProductVisible = true
       this.getProductPage()
     },
@@ -274,7 +278,7 @@ export default {
       try {
         const applicationModule = this.form.merchantDTO.applicationModule
         const res = await queryByAgentProductAndModule({ moduleId: applicationModule === 2 ? 'WXXCX' : 'DZFP', productCode: this.merchantInfo.productCode })
-        this.merchantInfo.productCode = res?.productId ?? this.shopPageData.find(item => item.CustID === this.merchantInfo.CustID).productCode
+        this.merchantInfo.productCode = res.productId
         if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
       } catch (error) {}
     },
@@ -318,7 +322,7 @@ export default {
             currentValidTime: this.merchantInfo?.KMValidity
               ? dayjs(this.merchantInfo?.KMValidity)
                   .startOf('day')
-                  .format('YYYY-MM-DD')
+                  .format('YYYY-MM-DD 00:00:00')
               : '',
             delayValidTime: this.merchantInfo.KMValidity
               ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
