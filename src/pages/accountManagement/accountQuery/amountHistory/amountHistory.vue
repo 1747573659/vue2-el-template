@@ -13,7 +13,9 @@
               <el-input v-model.trim="form.billNo" maxlength='16' size="small" placeholder="请输入订单编码" clearable></el-input>
             </el-form-item>
             <el-form-item label="业务日期:">
-              <el-date-picker v-model="form.date" type="daterange" range-separator="至" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" start-placeholder="开始日期" end-placeholder="结束日期"></el-date-picker>
+              <el-date-picker v-model="form.createStartTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
+              <span style="padding: 0 2px">—</span>
+              <el-date-picker v-model="form.createEndTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 23:59:59"></el-date-picker>
             </el-form-item>
             <el-form-item>
               <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
@@ -97,7 +99,8 @@ export default {
       form: {
         typeList: [],
         billNo: '',
-        date: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')],
+        createStartTime: dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'),
+        createEndTime: dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')
       }
     }
   },
@@ -121,11 +124,9 @@ export default {
         this.tableLoading = true
         let subData = {
           typeList: this.form.typeList,
-          billNo: this.form.billNo
-        }
-        if (this.form.date && this.form.date.length) {
-          subData.createStartTime = this.form.date[0]
-          subData.createEndTime = this.form.date[1]
+          billNo: this.form.billNo,
+          createStartTime: this.form.createStartTime || '',
+          createEndTime: this.form.createEndTime || '',
         }
         this.detailCount(subData)
         const res = await changePage({
