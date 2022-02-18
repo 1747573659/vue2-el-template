@@ -8,7 +8,7 @@
               <el-date-picker v-model="form.orderTime" :picker-options="pickerOptions" type="daterange" range-separator="至" start-placeholder="开始日期" value-format="yyyy-MM-dd HH:mm:ss" :default-time="['00:00:00', '23:59:59']" end-placeholder="结束日期"></el-date-picker>
             </el-form-item>
             <el-form-item label="行业:">
-              <el-select clearable placeholder="全部" @change="industryChange" size="small" style="width:100%" v-model="form.industry">
+              <el-select multiple clearable placeholder="全部" @change="industryChange" size="small" style="width:100%" v-model="form.industry">
                 <el-option :key="index" :label="item.name" :value="item.id" v-for="(item,index) in industryList"></el-option>
               </el-select>
             </el-form-item>
@@ -18,7 +18,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品: ">
-              <km-select-page ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
+              <km-select-page multiple ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
             </el-form-item>
             <el-form-item label="业务类型:">
               <el-select clearable class="address-select" collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.businessType">
@@ -180,9 +180,9 @@ export default {
       productTypeList: [],
       form: {
         orderTime: [dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')],
-        industry: '',
+        industry: [],
         productType: '',
-        productCode: '',
+        productCode: [],
         businessType: '',
         useRebate: '',
         billNo: ''
@@ -196,13 +196,13 @@ export default {
   methods: {
     productTypeChange () {
       this.form.productCode = []
-      this.$refs.productCodes.selectVal = ''
+      this.$refs.productCodes.selectVal = []
       this.licensedProductData = []
       this.isLicensedProductMaxPage = false
     },
     industryChange () {
       this.form.productCode = []
-      this.$refs.productCodes.selectVal = ''
+      this.$refs.productCodes.selectVal = []
       this.licensedProductData = []
       this.isLicensedProductMaxPage = false
     },
@@ -221,9 +221,9 @@ export default {
       try {
         this.tableLoading = true
         let subData = {
-          industry: this.form.industry,
+          industrys: this.form.industry,
           productType: this.form.productType,
-          productCode: this.form.productCode,
+          productCodes: this.form.productCode,
           businessType: this.form.businessType,
           useRebate: this.form.useRebate,
           billNo: this.form.billNo
@@ -257,7 +257,7 @@ export default {
     },
     async getProductByPage ({ query = '', page = 1, row = 10 } = {}) {
       try {
-        const res = await productQueryByPage({ info: query, page, row, productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
+        const res = await productQueryByPage({ info: query, page, row, productIndustryList: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType] })
         this.licensedProductData = this.licensedProductData.concat(res.results || [])
         this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) { }
@@ -267,7 +267,7 @@ export default {
       const res = (await detailCount(subData)) || {}
       const keys = Object.keys(this.tableSummaryObj)
       keys.map(item => {
-        this.tableSummaryObj[item].value =formatAmountDivide(res[item]) || 0
+        this.tableSummaryObj[item].value = formatAmountDivide(res[item]) || 0
       })
     },
   }
