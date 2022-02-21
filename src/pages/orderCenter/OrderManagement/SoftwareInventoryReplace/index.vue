@@ -58,7 +58,9 @@
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column prop="orderTypeDesc" label="订单状态">
-          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderType) ? orderStatus.get(scope.row.orderType).label : '--' }}</template>
+          <template slot-scope="scope">
+            <span :class="{ 'p-mark-text': scope.row.orderType !== 30 }">{{ orderStatus.has(scope.row.orderType) ? orderStatus.get(scope.row.orderType).label : '--' }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
@@ -84,7 +86,7 @@ import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { orderStatus } from './data'
 
-import { queryBaseInfo, queryAgentAllUser } from '@/api/orderCenter/orderManagement'
+import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import { queryByPage, replaceOrderExport, replaceOrderExportLog, replaceOrderExportDel, replaceOrderDelete } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
@@ -192,5 +194,8 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
+}
+.p-mark-text {
+  color: red;
 }
 </style>

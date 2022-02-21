@@ -87,7 +87,7 @@
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="30" :placeholder="`请输入${this.applicationStoreModule ? '门店名称' : '税号'}`" clearable></el-input>
         </el-form-item>
-        <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
+        <el-button type="primary" size="small" @click="handleTaxpayerNum">查询</el-button>
       </el-form>
       <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
@@ -112,6 +112,7 @@
 <script>
 import dayjs from 'dayjs'
 import { delayTimes, cyVersionMap } from '../data'
+import { deepClone } from '@/utils'
 
 import {
   authOrderWcyCustList,
@@ -145,9 +146,7 @@ export default {
       productVal: '',
       checkProductTabLock: false,
       basicProductData: [],
-      currentPage: 1,
-      pageSize: 10,
-      totalPage: 0,
+      searchProductData: [],
       checkProductStockLoad: false,
       selectMaps: new Map(),
       currentPageSelectSets: new Set()
@@ -174,6 +173,11 @@ export default {
     }
   },
   methods: {
+    handleTaxpayerNum() {
+      if (!this.applicationStoreModule && this.productVal !== '') {
+        this.basicProductData = this.searchProductData.filter(item => item.TaxpayerNum === this.productVal)
+      } else this.getProductPage()
+    },
     handleDelDetailDTO(scope) {
       this.form.detailDTOList.splice(scope.$index, 1)
       this.selectMaps.delete(scope.row.moduleCode)
@@ -206,7 +210,7 @@ export default {
           shopName: this.applicationStoreModule ? item.BranchName : '电子发票',
           shopCode: this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum,
           shopType: item.shopType,
-          currentValidTime: item.KMValidity ? `${item.KMValidity} 00:00:00` : dayjs().format('YYYY-MM-DD 00:00:00'),
+          currentValidTime: item.KMValidity ? `${item.KMValidity} 23:59:59` : dayjs().format('YYYY-MM-DD 23:59:59'),
           delayValidTime: this.setDelayValidTime(item.KMValidity),
           orderInventory: this.productStockObj?.totalAmount ?? 0,
           useInventory: this.form.merchantDTO.delayHour,
@@ -214,7 +218,7 @@ export default {
           remark: ''
         })
       }
-      if (this.form.detailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      if (this.form.detailDTOList.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.detailDTOList?.length > 0) {
         this.form.detailDTOList.forEach((item, index) => {
           if (!this.selectMaps.has(item.shopCode)) this.form.detailDTOList.splice(index, 1)
@@ -233,9 +237,8 @@ export default {
     },
     async handleZbProduct() {
       try {
-        console.info(this.merchantInfo)
         const res = await queryByAgentProductAndModule({ moduleId: this.form.merchantDTO.applicationModule === 102 ? 'DZFP' : 'JFSC', productCode: this.merchantInfo.productCode })
-        this.merchantInfo.productCode = res?.productId ?? this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
+        this.merchantInfo.productCode = res.productId
         if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
       } catch (error) {}
     },
@@ -254,7 +257,7 @@ export default {
             shopName: this.merchantInfo.CustName,
             shopCode: this.merchantInfo.CustId,
             shopType: 103,
-            currentValidTime: `${this.merchantInfo.KMValidity} 00:00:00`,
+            currentValidTime: `${this.merchantInfo.KMValidity} 23:59:59`,
             delayValidTime: this.setDelayValidTime(this.merchantInfo.KMValidity),
             orderInventory: this.productStockObj?.totalAmount ?? 0,
             useInventory: this.form.merchantDTO.delayHour,
@@ -263,10 +266,15 @@ export default {
           }
         ]
         this.getProductStock()
-      } else this.form.detailDTOList = []
+      } else this.resetDTOList()
     },
     getWcyCustInfo() {
       return authOrderWcyCustInfo({ cust: this.form.merchantDTO.merchantNo })
+    },
+    resetDTOList() {
+      this.form.detailDTOList = []
+      this.selectMaps.clear()
+      this.currentPageSelectSets.clear()
     },
     async handleMerchantInfo(val) {
       if (val) {
@@ -278,7 +286,7 @@ export default {
           this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
         } catch (error) {}
       } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantVersion: '', relationProductName: '', storeCount: '', applicationModule: '' })
-      this.form.detailDTOList = []
+      this.resetDTOList()
     },
     async getProductStock() {
       try {
@@ -294,6 +302,10 @@ export default {
       }
     },
     handleProductVisible() {
+      if (!this.merchantInfo.productCode && this.form.merchantDTO.applicationModule === 102) {
+        this.$message({ type: 'warning', message: '找不到对应的周边产品' })
+        return
+      }
       this.checkProductVisible = true
       this.getProductPage()
     },
@@ -307,6 +319,7 @@ export default {
           item.shopType = this.form.merchantDTO.applicationModule
           return item
         })
+        this.searchProductData = deepClone(this.basicProductData)
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
             let hasDetailDTO = ''
@@ -346,7 +359,7 @@ export default {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
       return dayjs(countTime)
         .add(this.form.merchantDTO.delayHour, 'year')
-        .format('YYYY-MM-DD 00:00:00')
+        .format('YYYY-MM-DD 23:59:59')
     }
   }
 }

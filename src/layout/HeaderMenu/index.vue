@@ -97,18 +97,25 @@ export default {
   },
   mounted() {
     const userInfo = JSON.parse(getLocal('userInfo'))
-    if (process.env.VUE_APP_FLAG === 'pro' && !['17608470987', '13866666666', '17608470847'].includes(userInfo.loginName)) {
-      this.routes.map(item => {
-        if (item.name === 'orderCenter') {
-          if (userInfo.propertyType === 3) {
+    this.routes.map(item => {
+      if (item.name === 'orderCenter') {
+        if (userInfo.propertyType === 3) {
+          item.children = item.children.map(ele => {
+            ele.children = ele.children.filter(child => child.name === 'ewechatOrder')
+            return ele
+          })
+        } else {
+          if (!JSON.parse(localStorage.getItem('isPilotAgent')) || userInfo.propertyType !== 1) {
+            item.children = item.children.filter(ele => ele.name !== 'orderManagement')
+          } else if (userInfo.propertyType === 1 && userInfo.level === 2) {
             item.children = item.children.map(ele => {
-              ele.children = ele.children.filter(child => child.name === 'ewechatOrder')
+              ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name))
               return ele
             })
-          } else item.children = item.children.filter(ele => ele.name !== 'orderManagement')
+          }
         }
-      })
-    }
+      }
+    })
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
     this.$nextTick(() => {
@@ -148,11 +155,8 @@ export default {
       if (this.routes[index].children?.length) this.setAsideRoutes(this.routes[index].children)
     },
     includeRouter(route, routes) {
-      if (routes.name === route.name) {
-        return true
-      } else if (routes?.children) {
-        return routes.children.some(childItem => this.includeRouter(route, childItem))
-      }
+      if (routes.name === route.name) return true
+      else if (routes?.children) return routes.children.some(childItem => this.includeRouter(route, childItem))
     }
   }
 }

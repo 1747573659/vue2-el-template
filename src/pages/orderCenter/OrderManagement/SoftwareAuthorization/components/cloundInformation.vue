@@ -43,10 +43,16 @@
             <el-option v-for="item in modulesUserLevel" :key="item.value" :label="item.label" :value="item.value"></el-option>
           </el-select>
         </el-form-item>
+        <el-form-item label="操作类型" v-if="form.authOrderDTO.useModalInner === 0 && [202, 204].includes(form.merchantDTO.applicationSystem)">
+          <el-select v-model="form.merchantDTO.operationType" @change="handleOperationType" clearable>
+            <el-option label="加点" :value="1"></el-option>
+            <el-option label="续费" :value="2"></el-option>
+          </el-select>
+        </el-form-item>
       </el-form>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="加点" name="1" v-if="showAddPoint"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="showAuthorTab"></el-tab-pane>
+        <el-tab-pane label="加点" name="1" v-if="showAddPoint()"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="showAuthorTab()"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <template v-if="activeName === '1'">
@@ -63,7 +69,7 @@
         <el-table-column prop="productCode" label="产品编码"></el-table-column>
         <el-table-column prop="productName" label="产品名称"></el-table-column>
         <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
-        <el-table-column label="加点数" align="right">
+        <el-table-column label="加点数量" align="right">
           <template slot-scope="scope">
             <el-input
               size="small"
@@ -182,20 +188,7 @@ export default {
       return dayjs(val).format('YYYY-MM-DD')
     }
   },
-  computed: {
-    showAddPoint() {
-      const merchantDTO = this.form?.merchantDTO
-      if ([203, 206].includes(merchantDTO?.applicationSystem)) return merchantDTO.merchantName !== '' && this.form.authOrderDTO.useModalInner
-      else return true
-    },
-    showAuthorTab() {
-      return !parseFloat(this.form.authOrderDTO.useModalInner) && ![201, 205].includes(this.form.merchantDTO.applicationSystem)
-    }
-  },
   watch: {
-    showAddPoint(newVal) {
-      this.activeName = newVal ? '1' : '2'
-    },
     'form.addAuthOrderDetailDTOList': {
       handler(newVal) {
         if (newVal.length > 0) {
@@ -229,6 +222,35 @@ export default {
     this.getOrderYsAppModules()
   },
   methods: {
+    showAddPoint() {
+      const {
+        merchantDTO: { applicationSystem, merchantName, operationType },
+        authOrderDTO: { useModalInner }
+      } = this.form
+      if ([202, 204].includes(applicationSystem) && !useModalInner) return operationType === 1
+      else if ([203, 206].includes(applicationSystem)) return merchantName !== '' && useModalInner
+      else return true
+    },
+    showAuthorTab() {
+      const {
+        merchantDTO: { applicationSystem, operationType },
+        authOrderDTO: { useModalInner }
+      } = this.form
+      if (!useModalInner) {
+        if ([202, 204].includes(applicationSystem)) return operationType === 2
+        else return ![201, 205].includes(applicationSystem)
+      } else return false
+    },
+    handleOperationType(val) {
+      if (val === 1) {
+        this.activeName = '1'
+        this.setAddAuthDetailDTOList()
+        this.form.renewAuthOrderDetailDTOList = []
+      } else if (val === 2) {
+        this.activeName = '2'
+        this.form.addAuthOrderDetailDTOList = []
+      }
+    },
     handleDelDetailDTO(scope) {
       this.form.renewAuthOrderDetailDTOList.splice(scope.$index, 1)
       this.selectMaps.delete(scope.row.authId)
@@ -255,18 +277,20 @@ export default {
       }
     },
     async handleAppModule(val) {
-      this.form.addAuthOrderDetailDTOList = []
-      this.form.renewAuthOrderDetailDTOList = []
+      this.resetDTOList()
       if (val) {
         this.form.merchantDTO.delayHour = 1
-        if ([203, 206].includes(this.form.merchantDTO.applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
-        else this.activeName = '1'
         this.setAddAuthDetailDTOList()
       } else this.form.authOrderDTO.useModalInner = -1
     },
-    handleShopPage(val) {
+    resetDTOList() {
+      this.selectMaps.clear()
+      this.currentPageSelectSets.clear()
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
+    },
+    handleShopPage(val) {
+      this.resetDTOList()
       this.form.authOrderDTO.useModalInner = -1
       if (val) {
         const { CustId: merchantNo, CustName } = this.shopPageData.find(item => item.CustId === val)
@@ -292,6 +316,7 @@ export default {
             }
             const useModalInner = res[stateAttr] ? parseFloat(res[stateAttr]) : ''
             this.form.authOrderDTO.useModalInner = useModalInner
+
             await this.getProductStock()
             if (this.activeName === '1') {
               this.form.addAuthOrderDetailDTOList = [
@@ -307,6 +332,7 @@ export default {
               ]
             }
           }
+
           if (applicationSystem === 206) {
             const authXmypUserNum = await authOrderYsXmypUserNum(custId)
             this.form.authOrderDTO.userLevel = authXmypUserNum?.userLevel ?? 1
@@ -329,7 +355,7 @@ export default {
           billNo: this.form.authOrderDTO?.billNo ?? ''
         })
       }
-      if (this.form.renewAuthOrderDetailDTOList.length === 0) this.selectMaps.forEach(item => addDetailItem(item))
+      if (this.form.renewAuthOrderDetailDTOList.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
       else if (this.selectMaps.size && this.form.renewAuthOrderDetailDTOList?.length > 0) {
         this.form.renewAuthOrderDetailDTOList.forEach((item, index) => {
           if (!this.selectMaps.has(item.authId)) this.form.renewAuthOrderDetailDTOList.splice(index, 1)
@@ -359,7 +385,7 @@ export default {
     },
     handleAddNumAmount(row) {
       if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.addNum)) {
-        this.$message({ type: 'warning', message: '加点数范围为[1-999]' })
+        this.$message({ type: 'warning', message: '加点数量范围为[1-999]' })
         row.addNum = 1
       }
       row.useInventory = NP.times(row.addNum, this.form.merchantDTO.delayHour)

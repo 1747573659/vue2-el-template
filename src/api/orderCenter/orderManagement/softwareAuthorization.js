@@ -321,7 +321,7 @@ export function authOrderYsTrialPointDetail(data) {
 export function authOrderYsXmypUserNum(data) {
   return request({
     url: '/auth/order/ys/getXmypUserNum/' + data,
-    method: 'POST',
+    method: 'POST'
   })
 }
 
@@ -389,6 +389,48 @@ export function authOrderDogSubmit(data) {
 export function queryAllProductList() {
   return request({
     url: '/product/list',
+    method: 'POST'
+  })
+}
+
+// 是否显示授权门店栏目
+export function getOrderErpCode(data) {
+  return request({
+    url: '/auth/order/erp/code/' + data,
+    method: 'POST'
+  })
+}
+
+// 获取站点信息
+export function getOrderErpSiteInfo(data) {
+  return request({
+    url: '/auth/order/erp/siteInfo',
+    method: 'POST',
+    data
+  })
+}
+
+// 获取通道类型
+export function getOrderErpChannel(data) {
+  return request({
+    url: '/auth/order/erp/getChannel',
+    method: 'POST',
+    data
+  })
+}
+
+// 获取商户信息（mis 和架构类型）
+export function getOrderErpCustInfo(data) {
+  return request({
+    url: '/auth/order/erp/custInfo/' + data,
+    method: 'POST'
+  })
+}
+
+// 直接获取通道类型
+export function getChannelByCustId(data) {
+  return request({
+    url: '/auth/order/erp/queryChannelByCustId/' + data,
     method: 'POST'
   })
 }

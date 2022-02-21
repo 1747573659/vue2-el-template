@@ -30,7 +30,6 @@ export default {
     }
   },
   mounted() {
-    if (['edit', 'detail'].includes(this.$route.query.status)) this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
       document.querySelector('.e-tag_active span').innerText = `软件授权订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`

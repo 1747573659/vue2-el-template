@@ -26,6 +26,10 @@
 <script>
 export default {
   props: {
+    modelName:{
+      type: String,
+      default:''
+    },
     data: {
       type: [Array, Object],
       default: () => []
@@ -84,6 +88,12 @@ export default {
       unbind(el) {
         if (el.unbindEventListener) el.unbindEventListener()
       }
+    }
+  },
+  mounted() {
+    if (this.modelName) {
+      this.handleRemoteSearch(this.modelName)
+      this.selectVal=this.modelName
     }
   },
   methods: {

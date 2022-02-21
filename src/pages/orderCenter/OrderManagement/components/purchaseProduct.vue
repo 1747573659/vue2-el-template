@@ -1,15 +1,21 @@
 <template>
   <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" @close="handleProductClose" title="选择产品" width="800px" class="p-address-con">
-    <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
+    <el-form size="small" :inline="true" label-width="70px" @submit.native.prevent>
       <el-form-item label="产品信息">
         <el-input v-model="productVal" maxlength="50" placeholder="请输入产品编码/名称" clearable></el-input>
       </el-form-item>
-      <el-button type="primary" size="small" @click="getProductPage">查询</el-button>
+      <el-form-item label="行业" v-if="$route.name==='softwarePurchaseDetails'">
+        <el-select v-model="industry" clearable placeholder="全部">
+          <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+        </el-select>
+      </el-form-item>
+      <el-button type="primary" size="small" @click="find()">查询</el-button>
     </el-form>
     <el-table ref="product" :data="basicProductData" @select="handleSelect" @select-all="handleSelectAll" v-loading="checkProductTabLock">
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="code" label="产品编码"></el-table-column>
       <el-table-column prop="name" label="产品名称"></el-table-column>
+      <el-table-column prop="industryName" label="所属行业" width="100" v-if="$route.name==='softwarePurchaseDetails'"></el-table-column>
     </el-table>
     <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     <div slot="footer">
@@ -27,16 +33,27 @@ export default {
   data() {
     return {
       productVal: '',
+      industry: '',
       checkProductTabLock: false,
       basicProductData: [],
       currentPage: 1,
       pageSize: 10,
       totalPage: 0,
       selectMaps: new Map(),
-      currentPageSelectSets: new Set()
+      currentPageSelectSets: new Set(),
+      industryOptions: [
+        { label: '全部', value: '' },
+        { label: '零售', value: 1 },
+        { label: '餐饮', value: 2 },
+        { label: '专卖', value: 3 }
+      ]
     }
   },
   methods: {
+    find() {
+      this.currentPage=1
+      this.getProductPage()
+    },
     handleSelectAll(selection) {
       if (selection?.length) {
         selection.forEach(item => {
@@ -76,6 +93,7 @@ export default {
     handleProductClose() {
       this.currentPage = 1
       this.productVal = ''
+      this.industry = ''
       this.currentPageSelectSets.clear()
       this.selectMaps.clear()
     },
@@ -87,7 +105,8 @@ export default {
           info: this.productVal.trim(),
           page: this.currentPage,
           rows: this.pageSize,
-          orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1
+          orderType: this.$route.name === 'hardwarePurchaseDetails' ? 0 : 1,
+          productIndustry: this.industry
         })
         this.basicProductData = res?.results ?? []
         this.totalPage = res.totalRecord ?? 0

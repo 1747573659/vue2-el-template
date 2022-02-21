@@ -30,7 +30,6 @@ export default {
     }
   },
   mounted() {
-    this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
       document.querySelector('.e-tag_active span').innerText = `软件采购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
@@ -39,6 +38,7 @@ export default {
   methods: {
     handleTabPane (tab) {
       if (tab.name === 'operationLog') this.getOperateLog()
+      else this.operateData = []
     },
     async getOperateLog() {
       try {

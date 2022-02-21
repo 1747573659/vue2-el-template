@@ -25,7 +25,8 @@ export const formErpObj = {
     billNo: '', // 订单编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
-    handManName: '' // 受理人名称
+    handManName: '', // 受理人名称
+    erpStore: '' // 授权类型
   },
   erpAuthMerchantDTO: {
     agentId: '',
@@ -36,6 +37,7 @@ export const formErpObj = {
     productName: '',
     authCount: ''
   },
+  erpStoreOrderDetailList: [],
   erpAuthOrderDetails: []
 }
 
@@ -76,7 +78,8 @@ export const formYsObj = {
     merchantName: '',
     merchantNo: '',
     applicationSystem: '',
-    delayHour: 1
+    delayHour: 1,
+    operationType: 1
   },
   addAuthOrderDetailDTOList: [],
   renewAuthOrderDetailDTOList: []

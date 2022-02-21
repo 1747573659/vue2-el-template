@@ -4,7 +4,7 @@ import { setLocal, removeLocal } from '@/utils/storage'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
 
-import { login, getMenuInfo, logout, popUpsByAuditStatus, queryBaseInfo } from '@/api/login'
+import { login, getMenuInfo, logout, popUpsByAuditStatus, queryBaseInfo, isPilotAgent } from '@/api/login'
 import { authShopPage } from '@/api/customer/merchant'
 
 const state = {
@@ -100,6 +100,11 @@ const actions = {
             sessionStorage.setItem('pass', '21218cca77804d2ba1922c33e0151105')
             commit('SET_PWDVISIBLE', true)
           }
+          isPilotAgent()
+            .then(res => localStorage.setItem('isPilotAgent', res))
+            .catch(() => {
+              localStorage.setItem('isPilotAgent', false)
+            })
           // 重新设置异步路由里面的重定向地址
           const treeRoute = routeTree(response.menus)
           const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)

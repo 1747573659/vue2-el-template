@@ -30,15 +30,15 @@ export default {
     }
   },
   mounted() {
-    this.getOperateLog()
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
       document.querySelector('.e-tag_active span').innerText = `硬件采购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
   },
   methods: {
-    handleTabPane (tab) {
+    handleTabPane(tab) {
       if (tab.name === 'operationLog') this.getOperateLog()
+      else this.operateData = []
     },
     async getOperateLog() {
       try {

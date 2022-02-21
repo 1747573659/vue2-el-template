@@ -112,7 +112,7 @@
           @size-change="getPageList"
           @current-change="handleCurrentChange"
           :current-page.sync="form.page"
-          :page-sizes="[10, 15, 30]"
+          :page-sizes="[10, 30, 50]"
           :page-size.sync="form.rows"
           layout="total, sizes, prev, pager, next, jumper"
           :total="total"

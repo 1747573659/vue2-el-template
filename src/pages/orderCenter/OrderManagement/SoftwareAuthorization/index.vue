@@ -88,7 +88,9 @@
         </el-table-column>
         <el-table-column prop="inventoryAmount" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="订单状态">
-          <template slot-scope="scope">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</template>
+          <template slot-scope="scope">
+            <span :class="{ 'p-mark-text': scope.row.orderStatus !== 20 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
+          </template>
         </el-table-column>
         <el-table-column prop="handManName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
@@ -96,9 +98,6 @@
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">
               <el-button v-permission="'SOFTWARE_AUTHORIZATION_EDIT'" type="text" size="small" @click="handleToDetail({ status: 'edit' }, scope.row)">编辑</el-button>
-              <el-popconfirm class="el-button el-button--text" @confirm="handleDelRow(scope.row)" placement="top-start" title="确定删除所选数据吗？">
-                <el-button type="text" size="small" slot="reference">删除</el-button>
-              </el-popconfirm>
             </template>
             <el-button v-else type="text" size="small" @click="handleToDetail({ status: 'detail' }, scope.row)">详情</el-button>
           </template>
@@ -121,7 +120,6 @@ import {
   authOrderExportLog,
   authOrderExportDel,
   authOrderProductPage,
-  authOrderDelete,
   queryAllProductList
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
@@ -177,13 +175,6 @@ export default {
           query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }, status.productType ? {} : { productType: row.productType })
         })
       })
-    },
-    async handleDelRow(row) {
-      try {
-        await authOrderDelete(row.id)
-        if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
-        this.getQueryPage()
-      } catch (error) {}
     },
     handleQueryParams() {
       const { createTime, ...params } = this.form
@@ -256,5 +247,8 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
+}
+.p-mark-text {
+  color: red;
 }
 </style>

@@ -10,7 +10,19 @@
             <el-input v-model.trim="form.authShopMessage" size="small" placeholder="软注商户名称/联系人/手机号" clearable :maxlength="50"></el-input>
           </el-form-item>
           <el-form-item label="软注产品:">
-            <select-page placeholder="请输入名称" @focus="selectPageFocusErp" id="code" @change="selectPageChangeErp" @clear="selectPageClearErp" :name="selectPageNameErp" @remoteMethod="remoteMethodErp" :isMaxPage="isMaxPageErp" :options="ObjContentListErp" @loadMore="loadMoreErp" style="width: 100%">
+            <select-page
+              placeholder="请输入名称"
+              @focus="selectPageFocusErp"
+              id="code"
+              @change="selectPageChangeErp"
+              @clear="selectPageClearErp"
+              :name="selectPageNameErp"
+              @remoteMethod="remoteMethodErp"
+              :isMaxPage="isMaxPageErp"
+              :options="ObjContentListErp"
+              @loadMore="loadMoreErp"
+              style="width: 100%"
+            >
             </select-page>
           </el-form-item>
           <el-form-item label="授权状态:">
@@ -29,11 +41,33 @@
             </el-select>
           </el-form-item>
           <el-form-item label="注册日期:">
-            <el-date-picker style="width:240px" v-model="form.firstLoginDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
+            <el-date-picker
+              style="width:240px"
+              v-model="form.firstLoginDate"
+              type="daterange"
+              range-separator="至"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :clearable="true"
+              :picker-options="pickerOptions"
+            >
             </el-date-picker>
           </el-form-item>
           <el-form-item label="转正日期:">
-            <el-date-picker style="width:240px" v-model="form.firstGrantAuthDate" type="daterange" range-separator="至" format="yyyy-MM-dd" value-format="yyyy-MM-dd" start-placeholder="开始日期" end-placeholder="结束日期" :clearable="true" :picker-options="pickerOptions">
+            <el-date-picker
+              style="width:240px"
+              v-model="form.firstGrantAuthDate"
+              type="daterange"
+              range-separator="至"
+              format="yyyy-MM-dd"
+              value-format="yyyy-MM-dd"
+              start-placeholder="开始日期"
+              end-placeholder="结束日期"
+              :clearable="true"
+              :picker-options="pickerOptions"
+            >
             </el-date-picker>
           </el-form-item>
           <el-form-item style="padding-left: 30px;">
@@ -46,7 +80,7 @@
       <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableList" style="width: 100%;">
         <el-table-column align="right" type="index" label="序号" width="70"></el-table-column>
         <el-table-column prop="custId" width="180" label="软注编码"></el-table-column>
-        <el-table-column prop="custName" width="146" label="软注商户/享钱商户">
+        <el-table-column width="146" label="软注商户/享钱商户">
           <template slot-scope="scope">
             <div>{{ scope.row.custName }}{{ scope.row.merchantName ? `/${scope.row.merchantName}` : '' }}</div>
           </template>
@@ -92,31 +126,67 @@
         </el-table-column>
         <el-table-column prop="isOnline" width="88" label="在线状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.isOnline">在线</div>
-            <div v-else-if="!scope.row.isOnline">离线</div>
-            <div v-else>--</div>
+            <div v-if="scope.row.isOnline===true">在线</div>
+            <div v-else-if="scope.row.isOnline===false">离线</div>
+            <div v-else>未知</div>
+          </template>
+        </el-table-column>
+        <el-table-column label="操作">
+          <template slot-scope="scope">
+            <template v-if="scope.row.status === '2'">
+              <el-button type="text" v-permission="'SOFT_NOTE_MANAGEMENT_EDIT'" @click="handleMerchantEdit(scope.row)">编辑</el-button>
+            </template>
           </template>
         </el-table-column>
       </el-table>
       <div class="km-page-block">
-        <el-pagination :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 15, 30]" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+        <el-pagination
+          :current-page="thisPage"
+          :total="tableTotal"
+          :page-size="pageSize"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          background
+          :page-sizes="[10, 30, 50]"
+          layout="total, sizes, prev, pager, next, jumper"
+        ></el-pagination>
       </div>
     </div>
+    <el-dialog title="编辑" :visible.sync="checkMerchantVisible" width="600px" custom-class="p-merchant-dialog">
+      <el-form ref="merchantForm" :model="merchantForm" :rules="merchantRules" size="small" label-suffix=":" label-width="110px" @submit.native.prevent>
+        <el-form-item label="软注商户" prop="merchant">
+          <span>{{ merchantForm.merchant }}</span>
+        </el-form-item>
+        <el-form-item label="客户有效期" prop="validPeriod">
+          <el-date-picker v-model="merchantForm.validPeriod" :disabled="lockValidityPeriod" placeholder="客户有效期" type="date" clearable></el-date-picker>
+          <span style="margin-left: 10px;">23:59:59</span>
+        </el-form-item>
+        <el-form-item label="客户备注" prop="remark" style="padding-top:5px">
+          <el-input type="textarea" v-model="merchantForm.remark" :rows="4" maxlength="100"></el-input>
+        </el-form-item>
+      </el-form>
+      <div slot="footer">
+        <el-button @click="checkMerchantVisible = false" size="small">取消</el-button>
+        <el-button type="primary" :loading="isMerchantSubmit" @click="handleMerchantSubmit" size="small">确定</el-button>
+      </div>
+    </el-dialog>
   </section>
 </template>
 <script>
+import dayjs from 'dayjs'
 import { authorizationState } from './publicData/authorizationState' // 授权状态
 import { isOnlineState } from './publicData/isOnlineState' // 在线状态
 import { openingState } from './publicData/openingState' // 享钱开通状态
 import selectPage from '@/components/selectPage' //选择组件
-import { authShopPage, queryAuthErpByPage, queryShopListByPage } from '@/api/customer/merchant' //api
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
+import { authShopPage, queryAuthErpByPage, queryShopListByPage, setCustomExpireUpdate } from '@/api/customer/merchant' //api
 
 export default {
   name: 'softNoteManagement',
   mixins: [tableMaxHeight],
   components: { selectPage },
-  data () {
+  data() {
     return {
       // erp产品板块
       selectPageNoErp: 1, //其他地方复制过来的
@@ -124,7 +194,6 @@ export default {
       searchStringErp: '',
       ObjContentListErp: [],
       selectPageNameErp: '', //其他地方复制过来的
-      //享钱板块
       selectPageNo: 1, //其他地方复制过来的
       isMaxPage: false,
       searchString: '',
@@ -154,14 +223,67 @@ export default {
         firstLoginDate: null, // 注册日期
         firstGrantAuthDate: null // 转正日期
       }, // 搜索表单
-      allErpProductList: [] // 软注产品列表
+      allErpProductList: [], // 软注产品列表
+      checkMerchantVisible: false,
+      isMerchantSubmit: false,
+      merchantForm: {
+        merchant: '',
+        validPeriod: '',
+        remark: '',
+        expireDate: '',
+        custId: ''
+      },
+      merchantRules: {
+        validPeriod: [
+          { required: true, message: '客户有效期不能为空', trigger: ['blur', 'change'] },
+          {
+            required: true,
+            trigger: ['blur', 'change'],
+            validator: (rule, value, callback) => {
+              if (dayjs(value).isBefore(dayjs().startOf('day')) || dayjs(value).isAfter(dayjs(this.merchantForm.expireDate))) {
+                callback(new Error('客户有效期不能小于今天/客户有效期不能大于授权有效期'))
+              }
+              callback()
+            }
+          }
+        ]
+      }
     }
   },
-  created () {
+  computed: {
+    lockValidityPeriod() {
+      return dayjs().isAfter(this.merchantForm.expireDate)
+    }
+  },
+  created() {
     this.authShopPage()
   },
   methods: {
-    selectPageFocusErp () {
+    handleMerchantEdit(row) {
+      const { custName: merchant, dealersAuthExpireDate: validPeriod, expireDate, custId, custRemark: remark } = row
+      this.merchantForm = Object.assign(this.merchantForm, { merchant, validPeriod, expireDate, custId, remark })
+      this.checkMerchantVisible = true
+    },
+    handleMerchantSubmit() {
+      this.$refs.merchantForm.validate(async valid => {
+        if (valid) {
+          const { custId, remark: custRemark, validPeriod } = this.merchantForm
+          try {
+            this.isMerchantSubmit = true
+            await setCustomExpireUpdate({ custId, custRemark, dealersAuthExpireDate: dayjs(validPeriod).format('YYYY-MM-DD 23:59:59') })
+            this.checkMerchantVisible = false
+            this.merchantForm = { merchant: '', validPeriod: '', remark: '', expireDate: '', custId: '' }
+            this.$refs.merchantForm.resetFields()
+            this.authShopPage()
+            this.$message({ type: 'success', message: '修改成功' })
+          } catch (error) {
+          } finally {
+            this.isMerchantSubmit = false
+          }
+        }
+      })
+    },
+    selectPageFocusErp() {
       this.isMaxPageErp = false
       this.ObjContentListErp = []
       this.searchStringErp = ''
@@ -170,7 +292,7 @@ export default {
         this.remoteMethodErp()
       }
     },
-    selectPageFocus () {
+    selectPageFocus() {
       this.isMaxPage = false
       this.ObjContentList = []
       this.searchString = ''
@@ -179,27 +301,27 @@ export default {
         this.remoteMethod()
       }
     },
-    selectPageChangeErp (value) {
+    selectPageChangeErp(value) {
       this.form.productId = value
     },
-    selectPageChange (value) {
+    selectPageChange(value) {
       this.form.shopId = value
     },
-    loadMoreErp () {
+    loadMoreErp() {
       // 如果不是最后一页就加载下一页
       if (!this.isMaxPageErp) {
         this.selectPageNoErp++
         this.remoteMethodErp(this.searchStringErp)
       }
     },
-    loadMore () {
+    loadMore() {
       // 如果不是最后一页就加载下一页
       if (!this.isMaxPage) {
         this.selectPageNo++
         this.remoteMethod(this.searchString)
       }
     },
-    selectPageClearErp () {
+    selectPageClearErp() {
       this.isMaxPageErp = false
       this.ObjContentListErp = []
       this.searchStringErp = ''
@@ -207,14 +329,14 @@ export default {
       this.form.productId = ''
     },
     // 如果点击了清除按钮则将相关数据清空
-    selectPageClear () {
+    selectPageClear() {
       this.isMaxPage = false
       this.ObjContentList = []
       this.searchString = ''
       this.selectPageNo = 1
       this.form.shopId = ''
     },
-    async remoteMethodErp (value) {
+    async remoteMethodErp(value) {
       // 当输入新的值的时候，就把相关数据进行情况
       if (value !== this.searchStringErp) {
         this.selectPageNoErp = 1
@@ -241,9 +363,9 @@ export default {
         } else {
           this.isMaxPageErp = true
         }
-      } catch (error) { }
+      } catch (error) {}
     },
-    async remoteMethod (value) {
+    async remoteMethod(value) {
       // 当输入新的值的时候，就把相关数据进行情况
       if (value !== this.searchString) {
         this.selectPageNo = 1
@@ -270,21 +392,21 @@ export default {
         } else {
           this.isMaxPage = true
         }
-      } catch (error) { }
+      } catch (error) {}
     },
     // 分页
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.thisPage = 1
       this.pageSize = val
       this.authShopPage()
     },
     // 分页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.thisPage = val
       this.authShopPage()
     },
     // 分页查询
-    async authShopPage () {
+    async authShopPage() {
       let subData = {
         rows: this.pageSize,
         page: this.thisPage,
@@ -292,8 +414,7 @@ export default {
         authShopMessage: this.form.authShopMessage,
         productId: this.form.productId,
         status: this.form.status,
-        isOnline: this.form.isOnline,
-        // shopId: this.form.shopId,
+        isOnlineStr: this.form.isOnline,
         xqOpenStatus: this.form.xqOpenStatus
       }
       if (this.form.firstLoginDate && this.form.firstLoginDate.length) {
@@ -305,22 +426,19 @@ export default {
         subData.endFirstGrantAuthDate = `${this.form.firstGrantAuthDate[1]} 23:59:59`
       }
 
-      if (subData.isOnline === '') {
-        delete subData.isOnline
+      if (subData.isOnlineStr === '') {
+        delete subData.isOnlineStr
       }
-      this.tableLoading = true
-      const res = await authShopPage(subData)
-      this.tableLoading = false
-      this.tableList = res.results
-      this.tableTotal = res.totalCount
+      try {
+        this.tableLoading = true
+        const res = await authShopPage(subData)
+        this.tableList = res.results
+        this.tableTotal = res.totalCount
+      } catch (error) {
+      } finally {
+        this.tableLoading = false
+      }
     }
-    // // 详情
-    // details(row) {
-    //   this.$router.push({
-    //     path: 'softNoteManagementDetile'
-    //     // query: { custId: row.custId }
-    //   })
-    // }
   }
 }
 </script>
@@ -330,5 +448,15 @@ export default {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
+}
+.el-dialog__wrapper {
+  /deep/ {
+    .p-merchant-dialog {
+      .el-dialog__body {
+        padding-top: 20px;
+        padding-bottom: 0;
+      }
+    }
+  }
 }
 </style>
