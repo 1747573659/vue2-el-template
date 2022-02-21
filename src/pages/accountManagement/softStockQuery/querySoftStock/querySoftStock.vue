@@ -112,13 +112,14 @@ export default {
     ...mapActions(['delCachedView']),
     // 新页签打开“软件库存变动流水”，自动填充过滤条件：截止日期、经销商、产品
     detail (row) {
-      const { productCode, productName } = row
+      const { productCode, productName, agentId } = row
       this.delCachedView({ name: 'softStockChangeHistory' }).then(() => {
         this.$router.push({
           name: 'softStockChangeHistory',
           query: {
             productCode,
-            productName
+            productName,
+            agentId
           }
         })
       })

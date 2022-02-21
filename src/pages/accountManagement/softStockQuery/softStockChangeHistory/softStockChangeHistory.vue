@@ -114,13 +114,12 @@ export default {
       pageSize: 10, // 每页多少条
       businessTypeList: [
         { id: 1, name: '初始化' },
-        { id: 2, name: '收款单' },
-        { id: 3, name: '采购扣款' },
+        { id: 2, name: '采购' },
+        { id: 3, name: '授权' },
         { id: 4, name: '手工调整' },
         { id: 5, name: '活动过期' },
-        { id: 6, name: '担保单变动' },
-        { id: 8, name: '需求开发' },
-        { id: 9, name: '软件升级' }
+        { id: 6, name: '库存申请' },
+        { id: 7, name: '库存换购' }
       ],
       tableSummaryObj: {
         commonAmountIncrease: { label: '期间增加通用库存', value: '', formatNumber: true },
@@ -131,6 +130,7 @@ export default {
         limitAmountDecrease: { label: '期间减少限期库存', value: '', formatNumber: true }
       }, // 表格汇总数据
       form: {
+        agentId: '',
         startTime: '',
         endTime: '',
         productCode: [],
@@ -142,12 +142,13 @@ export default {
     next((vm) => {
       // 通过 `vm` 访问组件实例
       // 当从软件库存查询页面跳转过来时，将跳转的只赋值 再去请求列表
-      const { productCode, productName } = vm.$route.query
+      const { productCode, productName, agentId } = vm.$route.query
       if (productCode) {
         vm.form.productCode = [productCode]
+        vm.form.agentId = agentId
         vm.form.startTime = ''
         vm.form.endTime = ''
-        vm.getProductByPage({ query: productName, page: 1, row: 10 })
+        vm.getProductByPage({ query: productName, page: 1, row: 10, init: true })
       } else {
         vm.form.startTime = dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00')
         vm.form.endTime = dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')
@@ -179,10 +180,11 @@ export default {
       try {
         this.tableLoading = true
         let subData = {
+          agentId: this.form.agentId,
           productCodeList: this.form.productCode,
           businessTypeList: this.form.businessTypeList,
-          startTime: this.form.startTime||'',
-          endTime: this.form.endTime||''
+          startTime: this.form.startTime || '',
+          endTime: this.form.endTime || ''
         }
         const res = await getInventoryWaterAndSummary({
           ...subData,
@@ -196,12 +198,23 @@ export default {
         this.tableLoading = false
       }
     },
-    async getProductByPage ({ query = '', page = 1, row = 10 } = {}) {
+    async getProductByPage ({ query = '', page = 1, row = 10, init = false } = {}) {
       try {
         // productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType]
         const res = await productQueryByPage({ info: query, page, row, })
         this.licensedProductData = this.licensedProductData.concat(res.results || [])
+        if (this.licensedProductData.length) {
+          this.licensedProductData.map(item => {
+            item.code = item.code.toUpperCase()
+          })
+        }
         this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+        if (init) {
+          setTimeout(() => {
+            this.form.productCode = [this.$route.query.productCode]
+            this.$refs.productCodes.handleEchoVal(this.form.productCode)
+          }, 600)
+        }
       } catch (error) { }
     },
     // 表单汇总
