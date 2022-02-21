@@ -168,7 +168,7 @@ export default {
     handleProductVisible() {
       if (!this.merchantInfo.productCode && this.form.merchantDTO.applicationModule === 3) {
         this.$message({ type: 'warning', message: '找不到对应的周边产品' })
-        return 
+        return
       }
       this.checkProductVisible = true
       this.getProductPage()
@@ -226,7 +226,7 @@ export default {
           shopName: this.applicationStoreModule ? item.BranchName : '电子发票',
           shopCode: this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum,
           shopType: item.shopType,
-          currentValidTime: item.KMValidity ? `${item.KMValidity} 00:00:00` : dayjs().format('YYYY-MM-DD 00:00:00'),
+          currentValidTime: item.KMValidity ? `${item.KMValidity} 23:59:59` : dayjs().format('YYYY-MM-DD 23:59:59'),
           delayValidTime: this.setDelayValidTime(item.KMValidity),
           orderInventory: this.productStockObj?.totalAmount ?? 0,
           useInventory: this.form.merchantDTO.delayHour,
@@ -251,7 +251,7 @@ export default {
         item.delayValidTime = item.currentValidTime
           ? dayjs(this.setDelayValidTime(item.currentValidTime))
               .subtract(1, 'day')
-              .format('YYYY-MM-DD 00:00:00')
+              .format('YYYY-MM-DD 23:59:59')
           : ''
         item.useInventory = val
       })
@@ -292,18 +292,22 @@ export default {
         this.form.merchantDTO.relationProductName = this.merchantInfo.ProductionTypeName
         if (this.merchantInfo.VersionType === 3) this.form.merchantDTO.applicationModule = 1
         if (!this.merchantInfo.productCode) this.form.detailDTOList = []
-        else if (this.form.merchantDTO.applicationModule) this.setDetailDTOList()
+        else if (this.form.merchantDTO.applicationModule) {
+          this.setDetailDTOList()
+          this.getProductStock()
+        }
       } else {
         const resetDTO = { merchantVersion: '', storeCount: '', relationProductName: '', applicationModule: '' }
         this.form.merchantDTO = Object.assign(this.form.merchantDTO, resetDTO)
         this.form.detailDTOList = []
       }
+
       if (['2', '5'].includes(this.form.merchantDTO.merchantVersion)) {
         this.form.merchantDTO.applicationModule = ''
         this.form.detailDTOList = []
       } else if (this.form.merchantDTO.merchantVersion === '3' && this.form.detailDTOList.length > 0) {
         this.form.detailDTOList.forEach(item => {
-          item.currentValidTime = `${dayjs(this.merchantInfo?.KMValidity).format('YYYY-MM-DD')} 00:00:00` ?? ''
+          item.currentValidTime = `${dayjs(this.merchantInfo?.KMValidity).format('YYYY-MM-DD')} 23:59:59` ?? ''
           item.delayValidTime = this.merchantInfo.KMValidity ? this.setDelayValidTime(this.merchantInfo.KMValidity) : ''
         })
       }
@@ -322,12 +326,12 @@ export default {
             currentValidTime: this.merchantInfo?.KMValidity
               ? dayjs(this.merchantInfo?.KMValidity)
                   .startOf('day')
-                  .format('YYYY-MM-DD 00:00:00')
+                  .format('YYYY-MM-DD 23:59:59')
               : '',
             delayValidTime: this.merchantInfo.KMValidity
               ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
                   .subtract(1, 'day')
-                  .format('YYYY-MM-DD 00:00:00')
+                  .format('YYYY-MM-DD 23:59:59')
               : ''
           }
         ]
@@ -365,7 +369,7 @@ export default {
       const countTime = dayjs(val).isAfter(dayjs().format('YYYY-MM-DD')) ? val : dayjs().format('YYYY-MM-DD')
       return dayjs(countTime)
         .add(this.form.merchantDTO.delayHour, 'year')
-        .format('YYYY-MM-DD 00:00:00')
+        .format('YYYY-MM-DD 23:59:59')
     }
   }
 }

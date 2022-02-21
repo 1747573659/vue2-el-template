@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con"  style="padding-bottom:72px" v-loading="checkBasicInformLoad">
+  <section class="p-information-con" style="padding-bottom:72px" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
@@ -206,21 +206,14 @@ export default {
       }).catch(err => {})
     },
     handleVerify() {
-      const erpHCMModule =
-        this.productType === 1 &&
-        ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
+      const erpHCMModule = this.productType === 1 && ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
       if (erpHCMModule) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请选择"总部模块"后再提交' })
           return
         }
       }
-      if (
-        this.productType === 1 &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) &&
-        !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName
-      ) {
+      if (this.productType === 1 && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) && !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请在ERP完善营业执照后再操作' })
           return
@@ -385,6 +378,24 @@ export default {
       } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && item.unionChannel === '')) {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else {
+        if (this.form.erpAuthMerchantDTO.productCode === 'HCM11') {
+          const hcmModuleCodes = this.form.erpAuthOrderDetails.filter(item => ['MDZD', 'ZBMK'].includes(item.moduleCode))
+          if (hcmModuleCodes.length === 2) {
+            const hcmModuleCodesCount = hcmModuleCodes.reduce((accumulator, currentValue) => {
+              return accumulator + currentValue.authNum
+            }, 0)
+            if (hcmModuleCodesCount > hcmModuleCodes[0].orderInventory) {
+              const confirmOptions = Object.assign(this.handleConfirmOption(), {
+                beforeClose: (action, instance, done) => {
+                  if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: 'HCM11' } })
+                  else this.$refs.information.getProductStock()
+                  done()
+                }
+              })
+              this.$confirm(`[${hcmModuleCodes[0].moduleName}]的库存不足，当前库存: ${hcmModuleCodes[0].orderInventory}`, confirmOptions).catch(() => {})
+            }
+          }
+        }
         const insufficientObj = this.form.erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
         if (insufficientObj.length > 0) {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {

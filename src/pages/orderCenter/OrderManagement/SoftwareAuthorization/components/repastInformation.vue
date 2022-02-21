@@ -210,7 +210,7 @@ export default {
           shopName: this.applicationStoreModule ? item.BranchName : '电子发票',
           shopCode: this.applicationStoreModule ? item.BranchNo : item.TaxpayerNum,
           shopType: item.shopType,
-          currentValidTime: item.KMValidity ? `${item.KMValidity} 00:00:00` : dayjs().format('YYYY-MM-DD 00:00:00'),
+          currentValidTime: item.KMValidity ? `${item.KMValidity} 23:59:59` : dayjs().format('YYYY-MM-DD 23:59:59'),
           delayValidTime: this.setDelayValidTime(item.KMValidity),
           orderInventory: this.productStockObj?.totalAmount ?? 0,
           useInventory: this.form.merchantDTO.delayHour,
@@ -257,7 +257,7 @@ export default {
             shopName: this.merchantInfo.CustName,
             shopCode: this.merchantInfo.CustId,
             shopType: 103,
-            currentValidTime: `${this.merchantInfo.KMValidity} 00:00:00`,
+            currentValidTime: `${this.merchantInfo.KMValidity} 23:59:59`,
             delayValidTime: this.setDelayValidTime(this.merchantInfo.KMValidity),
             orderInventory: this.productStockObj?.totalAmount ?? 0,
             useInventory: this.form.merchantDTO.delayHour,
@@ -359,7 +359,7 @@ export default {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
       return dayjs(countTime)
         .add(this.form.merchantDTO.delayHour, 'year')
-        .format('YYYY-MM-DD 00:00:00')
+        .format('YYYY-MM-DD 23:59:59')
     }
   }
 }
