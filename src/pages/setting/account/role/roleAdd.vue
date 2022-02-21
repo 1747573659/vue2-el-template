@@ -220,6 +220,18 @@ export default {
         }
         const res = await queryAllPCMenu({ roleId: id })
         var cid = 444444
+        // 屏蔽二级经销商采购订单权限选择
+        const userInfo = JSON.parse(localStorage.getItem('userInfo'))
+        if(userInfo.propertyType === 1 && userInfo.level === 2 || userInfo.propertyType === 2){
+          let purchaseOrderCodes = ['ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREUPDATEORDER']
+          if (userInfo.propertyType === 2) purchaseOrderCodes = purchaseOrderCodes.concat(['XDD_PAY_SHOP_SOFTNOTEMANGEMENT', 'ORDERCENTER_ORDERMANAGEMENT', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREAUTHORIZATION', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYREPLACE', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYAPPLY', 'ORDERCENTER_ORDERMANAGEMENT_SELFSERVICEEQUIPMENT', 'ORDERCENTER_ORDERMANAGEMENT_ERPAUTHORIZEDTRANSFER', 'ORDERCENTER_EWECHAT_ORDER'])
+          const purchaseOrderIds = []
+          res.allMenus = res.allMenus.filter(item => {
+            if (purchaseOrderCodes.includes(item.code)) purchaseOrderIds.push(item.id)
+            return !purchaseOrderCodes.includes(item.code) && !purchaseOrderIds.includes(item.parentId)
+          })
+        }
+        console.info(res.allMenus)
         let newRouteTree = routeTree(res.allMenus)
         let isNodeCheck, isDisabled
         let sysMenuThree =

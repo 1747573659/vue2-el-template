@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con" v-loading="checkBasicInformLoad">
+  <section class="p-information-con"  style="padding-bottom:72px" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
@@ -25,8 +25,8 @@
         <el-form-item label="受理人">
           <el-input :value="form.orderDTO.handlerUserName"></el-input>
         </el-form-item>
-        <el-form-item label="经销商">
-          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
+        <el-form-item label="申请经销商">
+          <el-input disabled :value="`${form.orderDTO.agentId ? '[' + form.orderDTO.agentId + ']' : ''}${form.orderDTO.agentName}`"></el-input>
         </el-form-item>
       </el-form>
     </el-card>

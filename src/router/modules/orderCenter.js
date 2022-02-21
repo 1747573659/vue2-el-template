@@ -51,7 +51,7 @@ const orderCenter = {
           name: 'softwarePurchaseDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '软件采购详情', name: 'softwarePurchaseDetails', cache: true }
+          meta: { title: '软件采购订单详情', name: 'softwarePurchaseDetails', cache: true }
         },
         {
           path: 'softwareInventoryApply',
@@ -66,7 +66,7 @@ const orderCenter = {
           name: 'softwareInventoryApplyDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '软件库存申请详情', name: 'softwareInventoryApplyDetails', cache: true }
+          meta: { title: '软件库存申请单详情', name: 'softwareInventoryApplyDetails', cache: true }
         },
         {
           path: 'softwareInventoryReplace',
@@ -81,7 +81,7 @@ const orderCenter = {
           name: 'softwareInventoryReplaceDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '软件库存置换详情', name: 'softwareInventoryReplaceDetails', cache: true }
+          meta: { title: '库存换购订单详情', name: 'softwareInventoryReplaceDetails', cache: true }
         },
         {
           path: 'hardwarePurchaseOrder',
@@ -96,7 +96,59 @@ const orderCenter = {
           name: 'hardwarePurchaseDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: '硬件采购详情', name: 'hardwarePurchaseDetails', cache: true }
+          meta: { title: '硬件采购订单详情', name: 'hardwarePurchaseDetails', cache: true }
+        },
+        {
+          path: 'demandDevelopmentFee',
+          component: _import('orderCenter/OrderManagement/DemandDevelopmentFee/demandDevelopmentFee'),
+          name: 'demandDevelopmentFee',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE',
+          meta: { title: '需求开发收费单', name: 'demandDevelopmentFee', cache: true }
+        },
+        {
+          path: 'demandDevelopmentFeeDetails',
+          component: _import('orderCenter/OrderManagement/DemandDevelopmentFee/demandDevelopmentFeeDetails'),
+          name: 'demandDevelopmentFeeDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '需求开发收费单详情', name: 'demandDevelopmentFeeDetails', cache: true }
+        },
+        {
+          path: 'erpAuthorizedTransfer',
+          component: _import('orderCenter/OrderManagement/ErpAuthorizedTransfer/erpAuthorizedTransfer'),
+          name: 'erpAuthorizedTransfer',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_ERPAUTHORIZEDTRANSFER',
+          meta: { title: 'ERP授权转移单', name: 'erpAuthorizedTransfer', cache: true }
+        },
+        {
+          path: 'erpAuthorizedTransferDetails',
+          component: _import('orderCenter/OrderManagement/ErpAuthorizedTransfer/erpAuthorizedTransferDetails'),
+          name: 'erpAuthorizedTransferDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: 'erp授权转移单详情', name: 'erpAuthorizedTransferDetails', cache: true }
+        },
+        {
+          path: 'selfServiceEquipment',
+          component: _import('orderCenter/OrderManagement/SelfServiceEquipment/selfServiceEquipment'),
+          name: 'selfServiceEquipment',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_SELFSERVICEEQUIPMENT',
+          meta: { title: '自助设备授权查询', name: 'selfServiceEquipment', cache: false }
+        },
+        {
+          path: 'softwareUpdateOrder',
+          component: _import('orderCenter/OrderManagement/SoftwareUpdateOrder/softwareUpdateOrder'),
+          name: 'softwareUpdateOrder',
+          code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREUPDATEORDER',
+          meta: { title: '软件升级订单', name: 'softwareUpdateOrder', cache: true }
+        },
+        {
+          path: 'softwareUpdateOrderDetails',
+          component: _import('orderCenter/OrderManagement/SoftwareUpdateOrder/softwareUpdateOrderDetails'),
+          name: 'softwareUpdateOrderDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '软件升级订单详情', name: 'softwareUpdateOrderDetails', cache: true }
         },
         {
           path: 'ewechatOrder',

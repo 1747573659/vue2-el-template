@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con" v-loading="checkBasicInformLoad">
+  <section class="p-information-con" style="padding-bottom:72px" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
@@ -32,6 +32,7 @@
     <component ref="information" :is="activeName" :form="form" :userInfo="userInfo"></component>
     <div class="p-infomation-action">
       <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" @click="handleDelRow" v-if="$route.query.status === 'edit'">删除</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
         <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave">
           保存
@@ -51,10 +52,10 @@ import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
 import { orderStatus, formErpObj, formWlsOrWcyObj, formYsObj, formDongleObj } from '../data'
 import erpInformation from './erpInformation'
-import retailInformation from './retailInformation'
-import repastInformation from './repastInformation'
-import cloundInformation from './cloundInformation'
-import dongleInformation from './dongleInformation'
+import retailInformation from './retailInformation.vue'
+import repastInformation from './repastInformation.vue'
+import cloundInformation from './cloundInformation.vue'
+import dongleInformation from './dongleInformation.vue'
 
 import { queryHandlerMan } from '@/api/orderCenter/orderManagement'
 import {
@@ -77,7 +78,8 @@ import {
   authOrderDogAdd,
   authOrderDogById,
   authOrderDogUpdate,
-  authOrderDogSubmit
+  authOrderDogSubmit,
+  authOrderDelete
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -184,18 +186,40 @@ export default {
     }
   },
   methods: {
+    handleDelRow() {
+      this.$confirm('确定要删除吗？', '删除', {
+        type: 'warning',
+        beforeClose: (action, instance, done) => {
+          if (action === 'confirm') {
+            instance.confirmButtonLoading = true
+            authOrderDelete(this.form.authOrderDTO.id)
+              .then(() => {
+                this.$message({ type: 'success', message: '删除成功' })
+                this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name: 'softwareAuthorization' }))
+              })
+              .finally(() => {
+                instance.confirmButtonLoading = false
+                done()
+              })
+          } else done()
+        }
+      }).catch(err => {})
+    },
     handleVerify() {
-      const erpHCMModule =
-        this.productType === 1 &&
-        ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
+      const erpHCMModule = this.productType === 1 && ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
       if (erpHCMModule) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请选择"总部模块"后再提交' })
           return
         }
       }
-      this.$confirm('确定要提交吗？', '提示', {
+      if (this.productType === 1 && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) && !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName) {
+        if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
+          this.$message({ type: 'warning', message: '请在ERP完善营业执照后再操作' })
+          return
+        }
+      }
+      this.$confirm('请再次确认加点数量，一经提交不可撤回', '提示', {
         type: 'warning'
       })
         .then(() => {
@@ -251,8 +275,6 @@ export default {
         this.$message({ type: 'warning', message: '请选择应用系统' })
       } else if (!this.form.merchantDTO.delayHour) {
         this.$message({ type: 'warning', message: '请选择延期时长' })
-      } else if (this.$refs.information.showAuthorTab && !this.form.renewAuthOrderDetailDTOList?.length) {
-        this.$message({ type: 'warning', message: '请选择授权对象' })
       } else {
         const detailDTOList = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
         const insufficientObj = detailDTOList.filter(item => {
@@ -356,6 +378,24 @@ export default {
       } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && item.unionChannel === '')) {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else {
+        if (this.form.erpAuthMerchantDTO.productCode === 'HCM11') {
+          const hcmModuleCodes = this.form.erpAuthOrderDetails.filter(item => ['MDZD', 'ZBMK'].includes(item.moduleCode))
+          if (hcmModuleCodes.length === 2) {
+            const hcmModuleCodesCount = hcmModuleCodes.reduce((accumulator, currentValue) => {
+              return accumulator + currentValue.authNum
+            }, 0)
+            if (hcmModuleCodesCount > hcmModuleCodes[0].orderInventory) {
+              const confirmOptions = Object.assign(this.handleConfirmOption(), {
+                beforeClose: (action, instance, done) => {
+                  if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: 'HCM11' } })
+                  else this.$refs.information.getProductStock()
+                  done()
+                }
+              })
+              this.$confirm(`[${hcmModuleCodes[0].moduleName}]的库存不足，当前库存: ${hcmModuleCodes[0].orderInventory}`, confirmOptions).catch(() => {})
+            }
+          }
+        }
         const insufficientObj = this.form.erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
         if (insufficientObj.length > 0) {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
@@ -371,9 +411,10 @@ export default {
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
-              { merchantId, productCode },
+              { merchantId, productCode, erpStore: this.form.erpStoreOrderDetailList && this.form.erpStoreOrderDetailList.length > 0 ? 1 : 0 },
               { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
             ),
+            erpStoreList: this.form.erpStoreOrderDetailList,
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
         }
@@ -439,13 +480,23 @@ export default {
             this.form.merchantDTO.applicationModule = res.authOrderDTO.useModal
           } else if (this.productType === 5) {
             this.form.merchantDTO.applicationSystem = res.authOrderDTO.useModal
+            if ([202, 204].includes(this.form.merchantDTO.applicationSystem)) {
+              if (this.form?.addAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 1
+              else if (this.form?.renewAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 2
+            }
           }
         })
         if (this.productType === 1) {
+          if (!this.form.erpStoreOrderDetailList) this.form.erpStoreOrderDetailList = []
           setTimeout(() => {
             res.erpAuthOrderDetails.forEach((item, index) => {
-              if (item.unionChannel && document.querySelectorAll('.js-unionChannel')[index]) {
-                document.querySelectorAll('.js-unionChannel')[index].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+              if (document.querySelectorAll('.el-table__row')[index]) {
+                if (item.unionChannel) {
+                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
+                }
+                if (item.unionChannelType) {
+                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannelType')[0].childNodes[1].childNodes[1].value = item.unionChannelTypeName
+                }
               }
             })
           }, 500)

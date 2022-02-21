@@ -9,7 +9,7 @@ export const authorizationState = [
     value: '0'
   },
   {
-    label: '已授权',
+    label: '正式',
     value: '2'
   },
   {

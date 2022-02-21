@@ -6,10 +6,14 @@ export const isOnlineState = [
   },
   {
     label: '在线',
-    value: true
+    value: 1
   },
   {
     label: '离线',
-    value: false
+    value: 0
+  },
+  {
+    label: '未知',
+    value: 2
   }
 ]

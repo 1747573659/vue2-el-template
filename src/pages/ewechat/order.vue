@@ -1,42 +1,35 @@
 <template>
   <div>
-    <page
-        ref="page"
-        :api="getOrderList"
-        :query-config="queryForm"
-        :list-config="columns"
-        :query-formatter="queryFormatter"
-        :download-api="downloadOrderList">
+    <page ref="page" :api="getOrderList" :query-config="queryForm" :list-config="columns" :query-formatter="queryFormatter" :download-api="downloadOrderList">
+      <template #table_operation="scope">
+        <el-button type="text" @click="toDetail(scope.row)">详情</el-button>
+      </template>
 
-        <template #table_operation="scope">
-          <el-button type="text" @click="toDetail(scope.row)">详情</el-button>
-        </template>
+      <template #table_goods="scope">
+        <div v-for="good in scope.row.goods" :key="good.id">{{ good.name + ' * ' + good.quantity }}</div>
+      </template>
 
-        <template #table_goods="scope">
-          <div v-for="good in scope.row.goods" :key="good.id">{{ good.name + ' * ' + good.quantity }}</div>
+      <template #table_orderAmount="scope">
+        <template v-if="scope.row.changeAmount === 0">{{ (scope.row.orderAmount / 100).toFixed(2) }}</template>
+        <template v-else>
+          <div>原价: {{ (scope.row.orderAmount / 100).toFixed(2) }}</div>
+          <div>改价: {{ (scope.row.changeAmount / 100).toFixed(2) }}</div>
         </template>
-
-        <template #table_orderAmount="scope">
-          <template v-if="scope.row.changeAmount === 0">{{ (scope.row.orderAmount / 100).toFixed(2) }}</template>
-          <template v-else>
-            <div>原价: {{ (scope.row.orderAmount / 100).toFixed(2) }}</div>
-            <div>改价: {{ (scope.row.changeAmount / 100).toFixed(2) }}</div>
-          </template>
-        </template>
-      </page>
+      </template>
+    </page>
   </div>
 </template>
 
 <script>
 import page from './components/page.vue'
-import { getOrderList, downloadOrderList } from '@/api/ewechat'
-import comForm from './components/form.vue'
+import { getOrderList, downloadOrderList, cancelOrder } from '@/api/ewechat'
+
 export default {
   components: {
-    page,
+    page
   },
-  data () {
-    const statusFormatter = (row) => {
+  data() {
+    const statusFormatter = row => {
       const statusMap = ['已取消', '待付款', '已付款', '待审核']
       return statusMap[Number(row.orderStatus) + 1]
     }
@@ -121,11 +114,11 @@ export default {
           default: [],
           col: 6
         }
-      ],
+      ]
     }
   },
   methods: {
-    queryFormatter (queryFormData) {
+    queryFormatter(queryFormData) {
       const params = {
         ...queryFormData,
         startTime: queryFormData.dateRange[0] || '',
@@ -134,7 +127,7 @@ export default {
       delete params.dateRange
       return params
     },
-    toDetail (row) {
+    toDetail(row) {
       this.$router.push('/orderCenter/orderManagement/ewechatOrderDetail?orderNo=' + row.orderNo)
     }
   }
@@ -142,7 +135,6 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 .radio-wrapper {
   line-height: 40px;
 }
@@ -158,5 +150,4 @@ export default {
     }
   }
 }
-
 </style>

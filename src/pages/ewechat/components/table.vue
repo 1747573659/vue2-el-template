@@ -43,7 +43,7 @@
         @size-change="handleSizeChange"
         :page-size="size"
         :total="total"
-        :page-sizes="[10, 15, 20, 25]"
+        :page-sizes="[10, 30, 50]"
         @current-change="handleCurrentChange"
       />
 

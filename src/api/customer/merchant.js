@@ -1,4 +1,5 @@
 import request from '@/utils/request'
+import qs from 'qs'
 
 const urlLinks = {
   queryShopListByPage: '/shop/queryShopListByPage',
@@ -21,8 +22,18 @@ const urlLinks = {
   checkMerchant: '/merchant/checkMerchant',
   authShopPage: '/authShop/page',
   getAllErpProduct: '/authShop/getAllErpProduct',
-  queryAuthErpByPage: '/authShop/queryAuthErpByPage'
+  queryAuthErpByPage: '/authShop/queryAuthErpByPage',
+  customExpireUpdate: '/authShop/customExpireUpdate'
 }
+
+export function setCustomExpireUpdate(data) {
+  return request({
+    url: urlLinks.customExpireUpdate,
+    method: 'post',
+    data: qs.stringify(data)
+  })
+}
+
 export function queryAuthErpByPage(data) {
   return request({
     url: urlLinks.queryAuthErpByPage,

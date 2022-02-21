@@ -1,21 +1,9 @@
 <template>
   <div class="form custom-form">
-    <el-form
-      ref="form"
-      :model="form"
-      :rules="rules"
-      :label-width="labelWidth"
-      :label-position="labelPosition"
-      size="small"
-      @validate="onValidate"
-    >
-      <el-row :gutter="gutter">
-        <el-col
-          v-for="(item, index) in rawForm"
-          :key="index"
-          :span="item.col || 24"
-        >
-          <el-form-item v-if="!item.hide" :prop="item.prop" :class="{'is-text': item.type === 'text'}">
+    <el-form ref="form" :model="form" :rules="rules" :label-width="labelWidth" :label-position="labelPosition" size="small" @validate="onValidate">
+      <el-row :gutter="gutter" style="margin-left: 0; margin-right: 0;">
+        <el-col v-for="(item, index) in rawForm" :key="index" :span="item.col || 24" style="padding-left: 0; padding-right: 0;">
+          <el-form-item v-if="!item.hide" :prop="item.prop" :class="{ 'is-text': item.type === 'text' }">
             <!-- 自定义label start-->
             <template v-slot:label>
               <slot :name="'label-' + item.prop" v-if="!isInPage || item.label">{{ item.label + ':' }}</slot>
@@ -28,23 +16,16 @@
               v-if="item.type === 'select'"
               :ref="item.prop"
               v-model="form[item.prop]"
-              :placeholder="item.attrs && item.attrs.placeholder || '请选择' + item.label"
+              :placeholder="(item.attrs && item.attrs.placeholder) || '请选择' + item.label"
               v-bind="item.attrs || {}"
               v-on="listeners[item.prop] || {}"
             >
-              <el-option
-                v-for="(option, i) in item.options || []"
-                :key="i"
-                :label="option.label"
-                :value="option.value"
-              />
+              <el-option v-for="(option, i) in item.options || []" :key="i" :label="option.label" :value="option.value" />
             </el-select>
             <!-- select 选择框end -->
 
             <!-- 普通文本start -->
-            <span
-              v-else-if="item.type === 'text'"
-            >{{ form[item.prop] }}</span>
+            <span v-else-if="item.type === 'text'">{{ form[item.prop] }}</span>
             <!-- 普通文本end -->
 
             <!-- switch start -->
@@ -61,29 +42,15 @@
 
             <!-- slot start -->
             <template v-else-if="item.type === 'slot'">
-              <slot
-                :name="item.prop"
-                v-bind="form"
-                v-if="!isInPage"
-              ></slot>
+              <slot :name="item.prop" v-bind="form" v-if="!isInPage"></slot>
               <render-slot :ctx="page" :name="item.prop" slot-type="form" :form="form" v-if="isInPage"></render-slot>
             </template>
 
             <!-- slot end -->
 
             <!-- 单选框组 start -->
-            <el-radio-group
-              v-else-if="item.type === 'radio'"
-              :ref="item.prop"
-              v-model="form[item.prop]"
-              v-bind="item.attrs || {}"
-              v-on="listeners[item.prop] || {}"
-            >
-              <el-radio
-                v-for="(r, i) in item.options"
-                :key="i"
-                :label="r.value"
-              >{{ r.label }}</el-radio>
+            <el-radio-group v-else-if="item.type === 'radio'" :ref="item.prop" v-model="form[item.prop]" v-bind="item.attrs || {}" v-on="listeners[item.prop] || {}">
+              <el-radio v-for="(r, i) in item.options" :key="i" :label="r.value">{{ r.label }}</el-radio>
             </el-radio-group>
             <!-- 单选框组 end -->
 
@@ -92,7 +59,7 @@
               v-else-if="item.type === 'time'"
               :ref="item.prop"
               v-model="form[item.prop]"
-              :placeholder="item.attrs && item.attrs.placeholder || '请选择' + item.label"
+              :placeholder="(item.attrs && item.attrs.placeholder) || '请选择' + item.label"
               v-bind="item.attrs || {}"
               v-on="listeners[item.prop] || {}"
             />
@@ -103,7 +70,7 @@
               v-else-if="item.type === 'date'"
               :ref="item.prop"
               v-model="form[item.prop]"
-              :placeholder="item.attrs && item.attrs.placeholder || '请选择' + item.label"
+              :placeholder="(item.attrs && item.attrs.placeholder) || '请选择' + item.label"
               type="date"
               v-bind="item.attrs || {}"
               value-format="yyyy-MM-dd"
@@ -116,7 +83,7 @@
               v-else-if="item.type === 'datetime'"
               :ref="item.prop"
               v-model="form[item.prop]"
-              :placeholder="item.attrs && item.attrs.placeholder || '请选择' + item.label"
+              :placeholder="(item.attrs && item.attrs.placeholder) || '请选择' + item.label"
               type="datetime"
               v-bind="item.attrs || {}"
               v-on="listeners[item.prop] || {}"
@@ -138,26 +105,13 @@
             <!-- 日期时间范围选择器 end -->
 
             <!-- 头像上传 start -->
-            <avatar
-              v-else-if="item.type === 'avatar'"
-              :ref="item.prop"
-              v-model="form[item.prop]"
-              v-bind="item.attrs || {}"
-              v-on="listeners[item.prop] || {}"
-            />
+            <avatar v-else-if="item.type === 'avatar'" :ref="item.prop" v-model="form[item.prop]" v-bind="item.attrs || {}" v-on="listeners[item.prop] || {}" />
             <!-- 头像上传 end -->
-
 
             <!-- 数字输入框 start -->
             <div class="el-input-number-wrapper" v-else-if="item.type === 'number'">
               <label v-if="item.prepend" style="padding-right: 12px;">{{ item.prepend }}</label>
-              <el-input-number
-                :controls="false"
-                :ref="item.prop"
-                v-model="form[item.prop]"
-                v-bind="item.attrs || {}"
-                v-on="listeners[item.prop] || {}">
-              </el-input-number>
+              <el-input-number :controls="false" :ref="item.prop" v-model="form[item.prop]" v-bind="item.attrs || {}" v-on="listeners[item.prop] || {}"> </el-input-number>
               <label v-if="item.append" style="padding-left: 12px;">{{ item.append }}</label>
             </div>
             <!-- 数字输入框 end -->
@@ -169,15 +123,15 @@
               :ref="item.prop"
               :value="form[item.prop]"
               v-bind="item.attrs || {}"
-              :placeholder="item.attrs && item.attrs.placeholder || '请输入' + item.label"
-              :type="item.type !== 'input' && item.type || 'text'"
+              :placeholder="(item.attrs && item.attrs.placeholder) || '请输入' + item.label"
+              :type="(item.type !== 'input' && item.type) || 'text'"
               :row="item.type === 'textarea' ? item.row : ''"
               :maxlength="item.maxlength > 0 ? item.maxlength : '-1'"
               @input="onInput($event, item)"
               v-on="listeners[item.prop] || {}"
             >
-               <template slot="append" v-if="item.append">{{ item.append }}</template>
-               <template slot="prepend" v-if="item.prepend">{{ item.prepend }}</template>
+              <template slot="append" v-if="item.append">{{ item.append }}</template>
+              <template slot="prepend" v-if="item.prepend">{{ item.prepend }}</template>
             </el-input>
             <!-- input 输入框 -->
           </el-form-item>
@@ -194,7 +148,7 @@ import avatar from './avatar.vue'
 export default {
   components: {
     avatar,
-    renderSlot,
+    renderSlot
   },
   props: {
     isInPage: {
@@ -208,9 +162,7 @@ export default {
           label: '活动名称',
           prop: 'name',
           type: 'input',
-          rules: [
-            { required: true, trigger: ['change', 'blur'], message: '请选择活动区域' }
-          ]
+          rules: [{ required: true, trigger: ['change', 'blur'], message: '请选择活动区域' }]
         },
         {
           label: '活动区域',
@@ -220,9 +172,7 @@ export default {
             { label: '上海', value: 'shanghang' },
             { label: '北京', value: 'beijing' }
           ],
-          rules: [
-            { required: true, trigger: ['change', 'blur'], message: '请选择活动区域' }
-          ]
+          rules: [{ required: true, trigger: ['change', 'blur'], message: '请选择活动区域' }]
         }
       ]
     },
@@ -244,7 +194,7 @@ export default {
       default: {}
     }
   },
-  data () {
+  data() {
     return {
       form: {},
       listeners: {},
@@ -253,14 +203,15 @@ export default {
     }
   },
   computed: {
-    rules () {
+    rules() {
       const res = {}
       this.rawForm.forEach(item => {
-        Array.isArray(item.rules) && item.rules.forEach(rule => {
-          if (!rule.message && typeof rule.validator !== 'function' && item.label) {
-            rule.message = ((item.type === 'input') ? '请输入' : '请选择') + item.label
-          }
-        })
+        Array.isArray(item.rules) &&
+          item.rules.forEach(rule => {
+            if (!rule.message && typeof rule.validator !== 'function' && item.label) {
+              rule.message = (item.type === 'input' ? '请输入' : '请选择') + item.label
+            }
+          })
         res[item.prop] = item.rules
       })
       return res
@@ -268,7 +219,7 @@ export default {
   },
   watch: {
     form: {
-      handler () {
+      handler() {
         if (this.dataStatus === 0) {
           this.dataStatus = 1
         } else if (this.dataStatus === 1) {
@@ -278,13 +229,13 @@ export default {
       deep: true
     }
   },
-  created () {
+  created() {
     this.rawForm.forEach(item => {
       this.$set(this.form, item.prop, item.default || '')
     })
     this.distributeListeners()
   },
-  mounted () {
+  mounted() {
     this.setfocus()
   },
   methods: {
@@ -293,7 +244,7 @@ export default {
      * this.$listeners 获得form的事件, 根据form事件名称分发给每个控件
      * 例如: @change_username: 这样就监听了prop===username 的控件的change事件
      */
-    distributeListeners () {
+    distributeListeners() {
       for (const key in this.$listeners || {}) {
         const childEvents = key.split('_')
         if (childEvents.length >= 2) {
@@ -310,7 +261,7 @@ export default {
     /**
      * 监听输入框输入事件, 限制只能输入数字
      */
-    onInput (value, rawData) {
+    onInput(value, rawData) {
       const prop = rawData.prop
       if (rawData.filterLetter) {
         this.form[prop] = value.replace(/[^\d]/g, '') || ''
@@ -322,7 +273,7 @@ export default {
     /**
      *  检验表单数据
      */
-    valid () {
+    valid() {
       this.canFocusError = true
       return new Promise((resolve, reject) => {
         this.$refs.form
@@ -332,7 +283,7 @@ export default {
               resolve({ ...this.form })
             }
           })
-          .catch((e) => {
+          .catch(e => {
             reject(e)
           })
       })
@@ -340,7 +291,7 @@ export default {
     /**
      *  监听validate方法, 当报错的时候, 自动focus报错的第一项
      */
-    onValidate (prop, isValid) {
+    onValidate(prop, isValid) {
       if (!isValid && this.canFocusError) {
         this.canFocusError = false
         const target = this.$refs[prop] ? this.$refs[prop][0] : {}
@@ -353,7 +304,7 @@ export default {
      * auto foucus, 如果有设置defaultfoucs, 则foucs到这一项,
      * 如果没有, 则focus到符合条件的第一项
      */
-    setfocus () {
+    setfocus() {
       let formItemRef = null
       let autoFocusRef = null
       for (let i = 0; i < this.rawForm.length; i++) {
@@ -363,7 +314,7 @@ export default {
           typeof formItemRef.focus === 'function' && formItemRef.focus()
           break
         } else {
-          if (!formItemRef.disabled && !formItemRef.readonly && (typeof formItemRef.focus === 'function') && !autoFocusRef) {
+          if (!formItemRef.disabled && !formItemRef.readonly && typeof formItemRef.focus === 'function' && !autoFocusRef) {
             autoFocusRef = formItemRef
           }
         }
@@ -373,13 +324,13 @@ export default {
     /**
      * reset 表单数据
      */
-    reset () {
+    reset() {
       this.$refs.form.resetFields()
     },
     /**
      *  填充表达数据
      */
-    setData (data) {
+    setData(data) {
       this.dataStatus = 0
       for (const key in this.form) {
         const isUnf = data[key] === undefined
@@ -394,7 +345,7 @@ export default {
      * @params key : 原始数据的某个key
      * @params value : 更改后的值
      */
-    setRawData (prop, key, value) {
+    setRawData(prop, key, value) {
       this.rawForm.forEach(item => {
         const p = item.prop
         if (p === prop) {
@@ -408,7 +359,7 @@ export default {
      * @params key : attrs的某个key
      * @params value : 更改后的值
      */
-    setAttrsData (prop, key, value) {
+    setAttrsData(prop, key, value) {
       this.rawForm.forEach(item => {
         const p = item.prop
         if (p === prop) {
@@ -420,7 +371,7 @@ export default {
     /**
      * 关闭form组件前, form data 有改动需要提示弹窗(可在页面组件中的beforeRouteLeave调用)
      */
-    async beforeCloseCheck () {
+    async beforeCloseCheck() {
       let canClose = true
       if (this.dataStatus === 2) {
         const confirm = await this.$confirm('数据未保存，确定要关闭窗口？')
@@ -440,40 +391,42 @@ export default {
 
 <style lang="scss" scoped>
 .form {
-    width: 100%;
-    height: 100%;
-    position: relative;
+  width: 100%;
+  height: 100%;
+  position: relative;
 }
 </style>
 
-<style lang="scss" >
+<style lang="scss">
 .custom-form {
-    .el-input, .el-date-editor--daterange {
-      width: 100%!important;
-    }
-    .el-select {
-        width: 100%;
+  .el-input,
+  .el-date-editor--daterange {
+    width: 100% !important;
+  }
+  .el-select {
+    width: 100%;
 
-        .el-input {
-          width: 100%;
-        }
+    .el-input {
+      width: 100%;
     }
+  }
 
-    .el-select-dropdown {
-      min-width: 240px;
-    }
+  .el-select-dropdown {
+    min-width: 240px;
+  }
 
-    .el-form-item--small {
-      height: auto;
-    }
+  .el-form-item--small {
+    height: auto;
+  }
 
-    .el-input-number, .el-input-number--samll {
-      width: auto;
-    }
+  .el-input-number,
+  .el-input-number--samll {
+    width: auto;
+  }
 }
 </style>
 <style lang="scss">
 .is-text {
-  margin-bottom: 0!important;
+  margin-bottom: 0 !important;
 }
 </style>
