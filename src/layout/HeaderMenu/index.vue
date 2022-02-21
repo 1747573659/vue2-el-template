@@ -115,6 +115,12 @@ export default {
           }
         }
       }
+      if (item.name === 'customer' && userInfo.propertyType === 2) {
+        item.children = item.children.map(ele => {
+          ele.children = ele.children.filter(child => !['softNoteManagement'].includes(child.name))
+          return ele
+        })
+      }
     })
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
