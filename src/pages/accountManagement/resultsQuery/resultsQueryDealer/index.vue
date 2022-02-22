@@ -57,12 +57,12 @@
         <el-table-column prop="businessTypeName" label="业务类型" width='120'></el-table-column>
         <el-table-column prop="num" label="数量" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.num |formatNumberFilter}}</div>
+            <div v-if="scope.row.num">{{scope.row.num |formatNumberFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="unitPrice" label="单价" width='140' align='right'>
           <template slot-scope="scope">
-            <div>{{scope.row.unitPrice |toFixedFilter}}</div>
+            <div v-if="scope.row.unitPrice">{{scope.row.unitPrice |toFixedFilter}}</div>
           </template>
         </el-table-column>
         <el-table-column prop="orderAmount" label="订单金额" width='140' align='right'>
