@@ -49,7 +49,7 @@
         <el-table-column prop="quarter" label="季度" width='80' align='right'></el-table-column>
         <el-table-column prop="channelManangerName" label="渠道经理" width='100'></el-table-column>
         <el-table-column prop="industryName" label="行业" width='100'></el-table-column>
-        <el-table-column prop="productCode" label="产品">
+        <el-table-column prop="productCode" width='200' label="产品">
           <template slot-scope="scope">
             <div>{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</div>
           </template>
