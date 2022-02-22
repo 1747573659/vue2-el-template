@@ -97,7 +97,7 @@ export default {
   },
   mounted() {
     const userInfo = JSON.parse(getLocal('userInfo'))
-    this.routes.map(item => {
+    this.routes.map((item,itemIndex) => {
       if (item.name === 'orderCenter') {
         if (userInfo.propertyType === 3) {
           item.children = item.children.map(ele => {
@@ -136,6 +136,9 @@ export default {
           return ele
         })
         item.children=children
+      }
+      if (item.children&&!item.children.length) {
+        this.routes.splice(itemIndex,1)
       }
     })
     this.routeMenus = this.routes
