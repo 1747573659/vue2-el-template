@@ -18,7 +18,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="产品: ">
-              <km-select-page multiple ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
+              <km-select-page multiple collapse-tags ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
             </el-form-item>
             <el-form-item label="业务类型:">
               <el-select clearable class="address-select" collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.businessType">
