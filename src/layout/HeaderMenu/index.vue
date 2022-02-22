@@ -121,6 +121,22 @@ export default {
           return ele
         })
       }
+      if (item.name==='accountManagement'){
+        let children= []
+        item.children = item.children.map(ele => {
+          if (userInfo.propertyType!==1||userInfo.level!==1) {
+            ele.children = ele.children.filter(child => !['amountHistory','resultsQueryDealer'].includes(child.name))
+          }
+          if (userInfo.propertyType!==1) {
+            ele.children = ele.children.filter(child => !['querySoftStock','softStockChangeHistory'].includes(child.name))
+          }
+          if (ele.children.length) {
+            children.push(ele)
+          }
+          return ele
+        })
+        item.children=children
+      }
     })
     this.routeMenus = this.routes
     this.getChildRoutes(this.$route)
