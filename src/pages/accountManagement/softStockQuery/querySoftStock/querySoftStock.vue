@@ -133,10 +133,10 @@ export default {
       let data = {
         page: 1,
         rows: 500,
-        isOnSale: '1',
+        // isOnSale: '1',
         type: '1',
         notProductTypeList: [99],
-        productTypeList: [1, 2]
+        // productTypeList: [1, 2]
       }
       try {
         const res = await productQueryByPage(data)
