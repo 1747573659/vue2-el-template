@@ -231,7 +231,6 @@ export default {
             return !purchaseOrderCodes.includes(item.code) && !purchaseOrderIds.includes(item.parentId)
           })
         }
-        console.info(res.allMenus)
         let newRouteTree = routeTree(res.allMenus)
         let isNodeCheck, isDisabled
         let sysMenuThree =

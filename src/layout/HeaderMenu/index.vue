@@ -97,7 +97,7 @@ export default {
   },
   mounted() {
     const userInfo = JSON.parse(getLocal('userInfo'))
-    this.routes.map((item,itemIndex) => {
+    this.routes.map((item, itemIndex) => {
       if (item.name === 'orderCenter') {
         if (userInfo.propertyType === 3) {
           item.children = item.children.map(ele => {
@@ -121,24 +121,15 @@ export default {
           return ele
         })
       }
-      if (item.name==='accountManagement'){
-        let children= []
-        item.children = item.children.map(ele => {
-          if (userInfo.propertyType!==1||userInfo.level!==1) {
-            ele.children = ele.children.filter(child => !['amountHistory','resultsQueryDealer'].includes(child.name))
-          }
-          if (userInfo.propertyType!==1) {
-            ele.children = ele.children.filter(child => !['querySoftStock','softStockChangeHistory'].includes(child.name))
-          }
-          if (ele.children.length) {
-            children.push(ele)
-          }
-          return ele
-        })
-        item.children=children
-      }
-      if (item.children&&!item.children.length) {
-        this.routes.splice(itemIndex,1)
+      if (item.name === 'accountManagement') {
+        if (userInfo.propertyType !== 1) {
+          this.routes.splice(itemIndex, 1)
+        } else {
+          item.children = item.children.filter(ele => {
+            if (userInfo.propertyType === 1 && userInfo.level !== 1) return ele.name === 'softStockQuery'
+            else return ele
+          })
+        }
       }
     })
     this.routeMenus = this.routes

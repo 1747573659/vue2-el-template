@@ -134,8 +134,8 @@ export default {
           page: this.thisPage,
           rows: this.pageSize
         })
-        this.tableList = res.results
-        this.tableTotal = res.totalCount
+        this.tableList = res.results || []
+        this.tableTotal = res.totalCount || 0
       } finally {
         this.tableLoading = false
       }
