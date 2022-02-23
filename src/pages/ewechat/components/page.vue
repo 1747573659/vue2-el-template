@@ -1,9 +1,9 @@
 <template>
   <div class="km-container-con">
     <div class="search-box">
-      <com-form ref="queryForm" :raw-form="queryConfig" label-width="90px" label-position="right" :is-in-page="true">
+      <com-form ref="queryForm" :raw-form="queryConfig" label-width="110px" label-position="right" :is-in-page="true">
         <el-col :span="8" slot="buttons" style="padding-left: 0; padding-right: 0;">
-          <el-form-item label-width="90px">
+          <el-form-item label-width="110px">
             <el-button size="small" type="primary" @click="query" :loading="queryLoading">查询</el-button>
             <el-button size="small" plain @click="reset" :loading="resetLoading">重置</el-button>
             <el-button size="small" @click="exportExcel">导出</el-button>

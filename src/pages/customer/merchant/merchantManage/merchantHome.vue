@@ -323,8 +323,8 @@ export default {
       }
       queryShopListByPage(data)
         .then(res => {
-          this.tableData = res.results
-          this.total = res.totalCount
+          this.tableData = res.results || []
+          this.total = res.totalCount || 0
         })
         .catch(() => {
           this.total = 0

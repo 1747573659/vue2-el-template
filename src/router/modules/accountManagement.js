@@ -76,7 +76,7 @@ const accountManagement = {
           component: () => import('@/pages/accountManagement/resultsQuery/resultsQueryDealer/index.vue'),
           name: 'resultsQueryDealer',
           code: 'XDD_RSSULTSQUERY_DEALER',
-          meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY',cache: true }
+          meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY_DEALER',cache: true }
         }
       ]
     }

@@ -373,8 +373,8 @@ export default {
       try {
         this.isTabLock = true
         const res = await queryPage(this.handleQueryTabParams())
-        this.tableData = res.results
-        this.totalPage = res.totalCount
+        this.tableData = res.results || []
+        this.totalPage = res.totalCount || 0
       } catch (error) {
       } finally {
         this.isTabLock = false
