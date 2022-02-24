@@ -107,7 +107,7 @@ export default {
         } else {
           if (!JSON.parse(localStorage.getItem('isPilotAgent')) || userInfo.propertyType !== 1) {
             item.children = item.children.filter(ele => ele.name !== 'orderManagement')
-          } else if (userInfo.propertyType === 1 && userInfo.level === 2) {
+          } else if (userInfo.propertyType === 1 && userInfo.level !== 1) {
             item.children = item.children.map(ele => {
               ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name))
               return ele
@@ -126,8 +126,11 @@ export default {
           this.routes.splice(itemIndex, 1)
         } else {
           item.children = item.children.filter(ele => {
-            if (userInfo.propertyType === 1 && userInfo.level !== 1) return ele.name === 'softStockQuery'
-            else return ele
+            if (userInfo.propertyType === 1 && userInfo.level !== 1) {
+              if (ele.name === 'softStockQuery') {
+                return (ele.children = ele.children.filter(item => item.name !== 'softwareInventoryReplace'))
+              }
+            } else return ele
           })
         }
       }

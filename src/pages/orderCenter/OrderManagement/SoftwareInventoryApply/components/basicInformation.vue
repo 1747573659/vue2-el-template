@@ -201,7 +201,7 @@ export default {
           this.checkSaveBtnLoad = true
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res, orderStatus: 0, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = `软件库存申请单/编辑`
+            document.querySelector('.e-tag_active span').innerText = `软件分销订单/编辑`
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })

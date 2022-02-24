@@ -80,10 +80,6 @@
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间" width="110"></el-table-column>
         <el-table-column prop="billNo" label="订单编码" width="160"></el-table-column>
-        <el-table-column prop="industryName" label="行业" width="80"></el-table-column>
-        <el-table-column label="产品" width="150">
-          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
-        </el-table-column>
         <el-table-column label="订单状态" width="140">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ scope.row.orderStatusName }}</span>
@@ -97,6 +93,10 @@
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.payStatus !== 2 }">{{ paymentStatus.has(scope.row.payStatus) ? paymentStatus.get(scope.row.payStatus).label : '' }}</span>
           </template>
+        </el-table-column>
+        <el-table-column prop="industryName" label="行业" width="80"></el-table-column>
+        <el-table-column label="产品" width="150">
+          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productCodeName || ''}` }}</template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人" width="150"></el-table-column>

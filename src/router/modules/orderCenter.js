@@ -58,7 +58,7 @@ const orderCenter = {
           component: _import('orderCenter/OrderManagement/SoftwareInventoryApply'),
           name: 'softwareInventoryApply',
           code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYAPPLY',
-          meta: { title: '软件库存申请单', name: 'softwareInventoryApply', cache: true }
+          meta: { title: '软件分销订单', name: 'softwareInventoryApply', cache: true }
         },
         {
           path: 'softwareInventoryApplyDetails',
@@ -67,13 +67,6 @@ const orderCenter = {
           code: 'KM_DEFAULT_CODE',
           hidden: true,
           meta: { title: '软件库存申请单详情', name: 'softwareInventoryApplyDetails', cache: true }
-        },
-        {
-          path: 'softwareInventoryReplace',
-          component: _import('orderCenter/OrderManagement/SoftwareInventoryReplace'),
-          name: 'softwareInventoryReplace',
-          code: 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYREPLACE',
-          meta: { title: '库存换购订单', name: 'softwareInventoryReplace', cache: true }
         },
         {
           path: 'softwareInventoryReplaceDetails',
@@ -103,7 +96,7 @@ const orderCenter = {
           component: _import('orderCenter/OrderManagement/DemandDevelopmentFee/demandDevelopmentFee'),
           name: 'demandDevelopmentFee',
           code: 'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE',
-          meta: { title: '需求开发收费单', name: 'demandDevelopmentFee', cache: true }
+          meta: { title: '需求开发订单', name: 'demandDevelopmentFee', cache: true }
         },
         {
           path: 'demandDevelopmentFeeDetails',
@@ -118,7 +111,7 @@ const orderCenter = {
           component: _import('orderCenter/OrderManagement/ErpAuthorizedTransfer/erpAuthorizedTransfer'),
           name: 'erpAuthorizedTransfer',
           code: 'ORDERCENTER_ORDERMANAGEMENT_ERPAUTHORIZEDTRANSFER',
-          meta: { title: 'ERP授权变更单', name: 'erpAuthorizedTransfer', cache: true }
+          meta: { title: 'ERP授权变更申请', name: 'erpAuthorizedTransfer', cache: true }
         },
         {
           path: 'erpAuthorizedTransferDetails',
@@ -127,13 +120,6 @@ const orderCenter = {
           code: 'KM_DEFAULT_CODE',
           hidden: true,
           meta: { title: 'erp授权变更单详情', name: 'erpAuthorizedTransferDetails', cache: true }
-        },
-        {
-          path: 'selfServiceEquipment',
-          component: _import('orderCenter/OrderManagement/SelfServiceEquipment/selfServiceEquipment'),
-          name: 'selfServiceEquipment',
-          code: 'ORDERCENTER_ORDERMANAGEMENT_SELFSERVICEEQUIPMENT',
-          meta: { title: '自助设备授权查询', name: 'selfServiceEquipment', cache: false }
         },
         {
           path: 'softwareUpdateOrder',

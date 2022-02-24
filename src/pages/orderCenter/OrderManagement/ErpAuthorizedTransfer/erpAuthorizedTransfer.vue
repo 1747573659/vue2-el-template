@@ -78,6 +78,11 @@
       <el-table :data="tableData">
         <el-table-column prop="createOrderTime" label="订单时间"></el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
+        <el-table-column label="订单状态" width="140">
+          <template slot-scope="scope">
+            <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
+          </template>
+        </el-table-column>
         <el-table-column prop="oldRegistTypeName" label="旧商户注册方式" width="120"></el-table-column>
         <el-table-column label="授权产品">
           <template slot-scope="scope">
@@ -86,11 +91,6 @@
         </el-table-column>
         <el-table-column prop="oldMerchantId" label="旧商户号"></el-table-column>
         <el-table-column prop="newMerchantId" label="新商户号"></el-table-column>
-        <el-table-column label="订单状态" width="140">
-          <template slot-scope="scope">
-            <span :class="{ 'p-mark-text': scope.row.orderStatus !== 30 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
-          </template>
-        </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="110">

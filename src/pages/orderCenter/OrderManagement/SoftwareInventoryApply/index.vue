@@ -72,12 +72,12 @@
         <el-table-column prop="agentName" label="申请经销商" v-if="userInfo.level === 1">
             <template slot-scope="scope">[{{scope.row.agentId}}]{{ scope.row.agentName }}</template>
         </el-table-column>
-        <el-table-column prop="useInventory" label="申请库存" align="right"></el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderStatus !== 20 }">{{ orderStatus.has(scope.row.orderStatus) ? orderStatus.get(scope.row.orderStatus).label : '--' }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="useInventory" label="申请库存" align="right"></el-table-column>
         <el-table-column prop="handlerUserName" label="受理人" v-if="userInfo.level === 1"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="150">

@@ -56,12 +56,12 @@
       <el-table :data="tableData">
         <el-table-column prop="createTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
-        <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column prop="orderTypeDesc" label="订单状态">
           <template slot-scope="scope">
             <span :class="{ 'p-mark-text': scope.row.orderType !== 30 }">{{ orderStatus.has(scope.row.orderType) ? orderStatus.get(scope.row.orderType).label : '--' }}</span>
           </template>
         </el-table-column>
+        <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
         <el-table-column label="操作" fixed="right" width="150">
