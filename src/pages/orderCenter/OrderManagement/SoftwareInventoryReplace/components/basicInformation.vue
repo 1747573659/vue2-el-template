@@ -280,7 +280,10 @@ export default {
     async getOriginalProduct(originalProductCode) {
       try {
         const res = await replaceOrderOriginalProduct(originalProductCode)
-        this.replacedProducts = res || []
+        this.replacedProducts = res.map(item => {
+          item.replaceProductCode = item.replaceProductCode.toUpperCase()
+          return item
+        }) || []
       } catch (error) {}
     },
     async getBaseInfo() {

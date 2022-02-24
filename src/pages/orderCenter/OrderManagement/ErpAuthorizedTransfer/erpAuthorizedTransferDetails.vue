@@ -32,7 +32,7 @@ export default {
   mounted() {
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
-      document.querySelector('.e-tag_active span').innerText = `ERP授权转移单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
+      document.querySelector('.e-tag_active span').innerText = `ERP授权变更单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
     })
   },
   methods: {

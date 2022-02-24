@@ -118,7 +118,7 @@ const orderCenter = {
           component: _import('orderCenter/OrderManagement/ErpAuthorizedTransfer/erpAuthorizedTransfer'),
           name: 'erpAuthorizedTransfer',
           code: 'ORDERCENTER_ORDERMANAGEMENT_ERPAUTHORIZEDTRANSFER',
-          meta: { title: 'ERP授权转移单', name: 'erpAuthorizedTransfer', cache: true }
+          meta: { title: 'ERP授权变更单', name: 'erpAuthorizedTransfer', cache: true }
         },
         {
           path: 'erpAuthorizedTransferDetails',
@@ -126,7 +126,7 @@ const orderCenter = {
           name: 'erpAuthorizedTransferDetails',
           code: 'KM_DEFAULT_CODE',
           hidden: true,
-          meta: { title: 'erp授权转移单详情', name: 'erpAuthorizedTransferDetails', cache: true }
+          meta: { title: 'erp授权变更单详情', name: 'erpAuthorizedTransferDetails', cache: true }
         },
         {
           path: 'selfServiceEquipment',
