@@ -565,11 +565,12 @@ export default {
         } else {
           this.basicProductData = res
         }
-        if (this.form.erpAuthMerchantDTO.productCode === 'HCM11') {
-          this.basicProductData.forEach(item => {
-            if (item.moduleId === 'ZBMK') item.productId = 'HCM11'
-          })
-        }
+        // 采购单多单库存扣减有问题，暂时屏蔽此逻辑
+        // if (this.form.erpAuthMerchantDTO.productCode === 'HCM11') {
+        //   this.basicProductData.forEach(item => {
+        //     if (item.moduleId === 'ZBMK') item.productId = 'HCM11'
+        //   })
+        // }
         this.$nextTick(() => {
           if (this.basicProductData?.length) {
             let hasDetailDTO = ''
