@@ -206,14 +206,22 @@ export default {
       }).catch(err => {})
     },
     handleVerify() {
-      const erpHCMModule = this.productType === 1 && ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
+      const erpHCMModule =
+        this.productType === 1 &&
+        ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) &&
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
       if (erpHCMModule) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请选择"总部模块"后再提交' })
           return
         }
       }
-      if (this.productType === 1 && [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) && !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName) {
+      if (
+        this.productType === 1 &&
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) &&
+        this.$refs.information.shopPageData.length > 0 &&
+        !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName
+      ) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请在ERP完善营业执照后再操作' })
           return
@@ -489,6 +497,7 @@ export default {
         if (this.productType === 1) {
           if (!this.form.erpStoreOrderDetailList) this.form.erpStoreOrderDetailList = []
           setTimeout(() => {
+            this.$refs.information.getShopPage({ query: this.form.erpAuthMerchantDTO.merchantId })
             res.erpAuthOrderDetails.forEach((item, index) => {
               if (document.querySelectorAll('.el-table__row')[index]) {
                 if (item.unionChannel) {
