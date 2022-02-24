@@ -5,7 +5,7 @@
         <el-col :span="20">
           <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
             <el-form-item label="业务类型:">
-              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="请选择" size="small" style="width:100%" v-model="form.typeList">
+              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.typeList">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
               </el-select>
             </el-form-item>
