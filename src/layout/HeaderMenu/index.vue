@@ -126,9 +126,12 @@ export default {
           this.routes.splice(itemIndex, 1)
         } else {
           item.children = item.children.filter(ele => {
-            if (userInfo.propertyType === 1 && userInfo.level !== 1) {
+            if (userInfo.propertyType === 1) {
               if (ele.name === 'softStockQuery') {
-                return (ele.children = ele.children.filter(item => item.name !== 'softwareInventoryReplace'))
+                return (ele.children = ele.children.filter(item => {
+                  if (!JSON.parse(localStorage.getItem('isPilotAgent'))) return !['softwareInventoryReplace', 'selfServiceEquipment'].includes(ele.name)
+                  else if (userInfo.level !== 1) return item.name !== 'softwareInventoryReplace'
+                }))
               }
             } else return ele
           })
