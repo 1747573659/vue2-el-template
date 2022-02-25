@@ -16,7 +16,9 @@
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
         <el-table-column prop="serialNo" label="序列号"></el-table-column>
-        <el-table-column prop="productCodeName" label="产品"></el-table-column>
+        <el-table-column label="产品">
+          <template slot-scope="scope">{{ scope.row.productCode ? `[${scope.row.productCode}] ${scope.row.productName}` : ''}}</template>
+        </el-table-column>
         <el-table-column prop="custId" label="商户编码"></el-table-column>
         <el-table-column prop="custName" label="商户名称"></el-table-column>
         <el-table-column label="使用状态">
@@ -50,7 +52,7 @@ export default {
   },
   methods: {
     handleQueryParams() {
-      return Object.assign(this.form, { orderAuth: -1, page: this.currentPage, rows: this.pageSize })
+      return Object.assign(this.form, { orderAuth: '', page: this.currentPage, rows: this.pageSize })
     },
     handleSearch() {
       this.currentPage = 1
