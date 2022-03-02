@@ -200,8 +200,7 @@ export default {
     },
     async getProductByPage ({ query = '', page = 1, row = 10, init = false } = {}) {
       try {
-        // productIndustry: this.form.industry, productTypeList: this.form.productType === '' ? [] : [this.form.productType]
-        const res = await productQueryByPage({ info: query, page, row,type:1,notProductTypeList:[99] })
+        const res = await productQueryByPage({ info: query, page, row, type:1, notProductTypeList:[99] })
         this.licensedProductData = this.licensedProductData.concat(res.results || [])
         if (this.licensedProductData.length) {
           this.licensedProductData.map(item => {
