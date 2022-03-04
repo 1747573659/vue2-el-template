@@ -93,6 +93,13 @@ const accountManagement = {
           name: 'resultsQueryDealer',
           code: 'XDD_RSSULTSQUERY_DEALER',
           meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY_DEALER',cache: true }
+        },
+        {
+          path: 'performanceSummary',
+          component: () => import('@/pages/accountManagement/resultsQuery/performanceSummary/performanceSummary.vue'),
+          name: 'performanceSummary',
+          code: 'XDD_PERFORMANCE_SUMMARY',
+          meta: { title: '业绩汇总查询', name: 'XDD_PERFORMANCE_SUMMARY',cache: true }
         }
       ]
     }
