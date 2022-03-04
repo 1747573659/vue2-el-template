@@ -44,10 +44,10 @@
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
       <el-table row-key="id" :data="tableList" style="width: 100%" v-loading="tableLoading" ref="table">
-        <el-table-column prop="orderTime" width='110' label="订单日期"></el-table-column>
-        <el-table-column prop="month" label="月份" width='80' align='right'></el-table-column>
-        <el-table-column prop="quarter" label="季度" width='80' align='right'></el-table-column>
-        <el-table-column prop="channelManangerName" label="渠道经理" width='100'></el-table-column>
+        <el-table-column prop="orderTime" width='110' label="订单日期" fixed></el-table-column>
+        <el-table-column prop="month" label="月份" width='80' align='right' fixed></el-table-column>
+        <el-table-column prop="quarter" label="季度" width='80' align='right' fixed></el-table-column>
+        <el-table-column prop="channelManangerName" label="渠道经理" width='100' fixed></el-table-column>
         <el-table-column prop="industryName" label="行业" width='100'></el-table-column>
         <el-table-column prop="productCode" width='200' label="产品">
           <template slot-scope="scope">
@@ -143,8 +143,8 @@ export default {
         id: 3,
         name: '专卖'
       }, {
-        id: 99,
-        name: '硬件'
+        id: 3,
+        name: '有数'
       }],
       pickerOptions: {
         disabledDate (time) {
@@ -172,10 +172,11 @@ export default {
         }
       ],
       tableSummaryObj: {
-        performanceAmount: { label: '完成业绩', value: '', formatNumber: true, toFixed: 2 },
+        performanceAmount: { label: '业绩金额', value: '', formatNumber: true, toFixed: 2 },
         originAmount: { label: '本金', value: '', formatNumber: true, toFixed: 2 },
         depositAmount: { label: '使用担保金', value: '', formatNumber: true, toFixed: 2 },
-        performanceAdjustmentAmount: { label: '业绩调整', value: '', formatNumber: true, toFixed: 2 }
+        performanceAdjustmentAmount: { label: '业绩调整', value: '', formatNumber: true, toFixed: 2 },
+        performanceAdjustmentAmount1: { label: '数量', value: '', formatNumber: true },
       }, // 表格汇总数据
       productTypeList: [],
       form: {
