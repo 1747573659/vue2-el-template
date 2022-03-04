@@ -144,7 +144,7 @@
               <el-select
                 size="small"
                 v-model="scope.row.unionChannelType"
-                :disabled="$route.query.status === 'detail' || Boolean(channelByCustIdStatus)"
+                :disabled="$route.query.status === 'detail' || (scope.row.unionChannel !== '' && scope.row.unionChannelType !== '')"
                 clearable
                 class="e-select-con js-unionChannelType"
                 placeholder="银联功能类型"
