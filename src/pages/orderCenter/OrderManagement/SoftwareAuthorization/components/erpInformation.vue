@@ -29,7 +29,10 @@
         </el-form-item>
         <el-form-item label="产品">
           <el-input
-            :value="`${form.erpAuthMerchantDTO.productCode ? '[' + form.erpAuthMerchantDTO.productCode + ']' : ''}${form.erpAuthMerchantDTO.productName || ''}`"
+            :value="
+              `${form.erpAuthMerchantDTO.productCode ? '[' + form.erpAuthMerchantDTO.productCode + ']' : ''}${form.erpAuthMerchantDTO.productName ||
+                ''}`
+            "
             disabled
           ></el-input>
         </el-form-item>
@@ -58,21 +61,44 @@
         </el-table-column>
         <el-table-column prop="authStoreId" label="门店编码"></el-table-column>
         <el-table-column prop="authStoreName" label="门店名称"></el-table-column>
-        <el-table-column prop="authSiteCount" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
+        <el-table-column
+          prop="authSiteCount"
+          label="已授权点数"
+          v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)"
+          align="right"
+        ></el-table-column>
         <el-table-column prop="authPoint" label="本次授权数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authPoint }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.authPoint" @change="handleAuthNumAmount(scope.row, 'authPoint')" style="width:100%"></el-input>
+            <el-input
+              v-else
+              size="small"
+              v-model.number.trim="scope.row.authPoint"
+              @change="handleAuthNumAmount(scope.row, 'authPoint')"
+              style="width:100%"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
+            <el-input
+              size="small"
+              v-model="scope.row.remark"
+              :disabled="$route.query.status === 'detail'"
+              maxlength="100"
+              clearable
+              class="e-product_remark"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm class="el-button el-button--text" @confirm="handleAuthorStoreDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
+            <el-popconfirm
+              class="el-button el-button--text"
+              @confirm="handleAuthorStoreDelDetailDTO(scope)"
+              placement="top-start"
+              title="确定删除所选数据吗？"
+            >
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -89,7 +115,14 @@
     <el-card shadow="never" class="p-card">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.erpAuthOrderDetails.length === 0">
+        <el-button
+          type="primary"
+          size="small"
+          plain
+          @click="getProductStock"
+          :loading="checkProductStockLoad"
+          :disabled="form.erpAuthOrderDetails.length === 0"
+        >
           刷新库存
         </el-button>
       </div>
@@ -99,7 +132,12 @@
         </el-table-column>
         <el-table-column prop="moduleCode" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
-        <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
+        <el-table-column
+          prop="authPoint"
+          label="已授权点数"
+          v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)"
+          align="right"
+        ></el-table-column>
         <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column prop="authNum" label="加点数量" align="right">
           <template slot-scope="scope">
@@ -144,7 +182,10 @@
               <el-select
                 size="small"
                 v-model="scope.row.unionChannelType"
-                :disabled="$route.query.status === 'detail' || (scope.row.unionChannel !== '' && scope.row.unionChannelType !== '')"
+                :disabled="
+                  $route.query.status === 'detail' ||
+                    (Boolean(channelByCustIdStatus) && scope.row.unionChannel !== '' && scope.row.unionChannelType !== '')
+                "
                 clearable
                 class="e-select-con js-unionChannelType"
                 placeholder="银联功能类型"
@@ -156,7 +197,14 @@
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
+            <el-input
+              size="small"
+              v-model="scope.row.remark"
+              :disabled="$route.query.status === 'detail'"
+              maxlength="100"
+              clearable
+              class="e-product_remark"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
@@ -174,7 +222,14 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择产品模块" width="700px" class="p-address-con">
+    <el-dialog
+      :visible.sync="checkProductVisible"
+      @close="productVal = ''"
+      :close-on-click-modal="false"
+      title="选择产品模块"
+      width="700px"
+      class="p-address-con"
+    >
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
           <el-input v-model="productVal" maxlength="50" placeholder="模块编码/模块名称" clearable></el-input>
@@ -191,7 +246,14 @@
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog :visible.sync="checkAuthorStoreVisible" @close="authorVal = ''" :close-on-click-modal="false" title="选择授权门店" width="800px" class="p-address-con">
+    <el-dialog
+      :visible.sync="checkAuthorStoreVisible"
+      @close="authorVal = ''"
+      :close-on-click-modal="false"
+      title="选择授权门店"
+      width="800px"
+      class="p-address-con"
+    >
       <el-form size="small" :inline="true" label-width="70px" @submit.native.prevent>
         <el-form-item label="门店编码">
           <el-input v-model="authorForm.storeId" maxlength="30" placeholder="" clearable></el-input>
@@ -201,12 +263,24 @@
         </el-form-item>
         <el-button type="primary" size="small" @click="handleAuthorStoreSearch">查询</el-button>
       </el-form>
-      <el-table ref="authorStore" :data="basicAuthorStoreData" @select="handleAuthorStoreSelect" @select-all="handleAuthorStoreSelectAll" v-loading="checkAuthorStoreTabLock">
+      <el-table
+        ref="authorStore"
+        :data="basicAuthorStoreData"
+        @select="handleAuthorStoreSelect"
+        @select-all="handleAuthorStoreSelectAll"
+        v-loading="checkAuthorStoreTabLock"
+      >
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="authStoreId" label="门店编码"></el-table-column>
         <el-table-column prop="authStoreName" label="门店名称"></el-table-column>
       </el-table>
-      <km-pagination :request="getAuthorStorePage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
+      <km-pagination
+        :request="getAuthorStorePage"
+        layout="prev, pager, next"
+        :current-page.sync="currentPage"
+        :page-size.sync="pageSize"
+        :total="totalPage"
+      />
       <div slot="footer">
         <el-button @click="checkAuthorStoreVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleAuthorStoreConfirm" size="small">确定</el-button>
@@ -286,7 +360,9 @@ export default {
     },
     handleChannelPage(scope, val) {
       scope.row.unionChannelName = this.channelData.find(item => item.channelCode === val).channelName
-      scope.row.channelTypes = val ? this.channelTypes.filter(ele => this.channelData.find(item => item.channelCode === val).funTypes.includes(ele.value)) : []
+      scope.row.channelTypes = val
+        ? this.channelTypes.filter(ele => this.channelData.find(item => item.channelCode === val).funTypes.includes(ele.value))
+        : []
       scope.row.unionChannelType = val && scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
     },
     checkSelectable(row) {
@@ -411,10 +487,19 @@ export default {
     },
     handleShopPage(val) {
       if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.find(item => item.custId === val)
+        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.find(
+          item => item.custId === val
+        )
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
         this.getOrderErpCode()
-      } else this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount: '', productCode: '', productName: '', authStatus: '', merchantId: '' })
+      } else
+        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, {
+          authCount: '',
+          productCode: '',
+          productName: '',
+          authStatus: '',
+          merchantId: ''
+        })
       this.form.erpAuthOrderDetails = []
       this.selectMaps.clear()
       this.currentPageSelectSets.clear()
@@ -475,7 +560,10 @@ export default {
     async getProductStock() {
       try {
         this.checkProductStockLoad = true
-        const res = await queryByAgentErpProduct({ agentId: this.userInfo.agentId, productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode) })
+        const res = await queryByAgentErpProduct({
+          agentId: this.userInfo.agentId,
+          productCodes: this.form.erpAuthOrderDetails.map(item => item.productCode)
+        })
         if (this.form.erpAuthOrderDetails.length > 0 && res) {
           this.form.erpAuthOrderDetails.forEach(item => {
             let orderInventoryItem = res.find(ele => ele.productCode.toUpperCase() === item.productCode.toUpperCase())
@@ -519,7 +607,8 @@ export default {
           if (this.basicAuthorStoreData?.length) {
             let hasDetailDTO = ''
             this.basicAuthorStoreData.forEach(item => {
-              if (this.form.erpStoreOrderDetailList?.length) hasDetailDTO = this.form.erpStoreOrderDetailList.some(ele => ele.authStoreId === item.authStoreId)
+              if (this.form.erpStoreOrderDetailList?.length)
+                hasDetailDTO = this.form.erpStoreOrderDetailList.some(ele => ele.authStoreId === item.authStoreId)
               if ((this.selectAuthorMaps?.size && this.selectAuthorMaps.has(item.authStoreId)) || hasDetailDTO) {
                 this.currentPageSelectAuthorSets.add(item.authStoreId)
                 this.$refs.authorStore.toggleRowSelection(item, true)
@@ -611,8 +700,22 @@ export default {
           const bnkChannelIndex = this.form.erpAuthOrderDetails.findIndex(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))
           document.querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = this.channelByCustIdStatus.channelName
           this.form.erpAuthOrderDetails[bnkChannelIndex].unionChannel = this.channelByCustIdStatus.channelCode
-          this.form.erpAuthOrderDetails[bnkChannelIndex].channelTypes = this.channelTypes.filter(ele => this.channelByCustIdStatus.funTypes.includes(ele.value)) || []
-          this.form.erpAuthOrderDetails[bnkChannelIndex].unionChannelType = this.channelByCustIdStatus.funTypes[0]
+
+          if (this.channelByCustIdStatus?.funTypes[0] === '') {
+            this.getChannelPage({ page: 1, query: this.channelByCustIdStatus.channelName })
+          }
+          if (this.channelByCustIdStatus?.funTypes[0] !== '') {
+            this.form.erpAuthOrderDetails[bnkChannelIndex].channelTypes =
+              this.channelTypes.filter(ele => this.channelByCustIdStatus.funTypes.includes(ele.value)) || []
+            this.form.erpAuthOrderDetails[bnkChannelIndex].unionChannelType = this.channelByCustIdStatus.funTypes[0]
+          } else {
+            this.channelData = []
+            this.isChannelPage = false
+            this.getChannelPage({ page: 1, query: this.channelByCustIdStatus.channelName })
+            const funTypesEmptyVO = this.channelData.filter(item => item.channelCode === this.channelByCustIdStatus.channelCode)
+            this.form.erpAuthOrderDetails[bnkChannelIndex].channelTypes =
+              this.channelTypes.filter(ele => funTypesEmptyVO[0].funTypes.includes(ele.value)) || []
+          }
         }
       } catch (error) {}
     },
