@@ -383,8 +383,8 @@ export default {
     getErpInformationObj() {
       if (this.form.erpAuthOrderDetails.length === 0 || !this.form.erpAuthMerchantDTO.merchantId) {
         this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
-      } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && (item.unionChannel === '' || item.unionChannelType === ''))) {
-        this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道或银联功能类型不能为空' })
+      } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && item.unionChannel === '')) {
+        this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else {
         // 采购单多单库存扣减有问题，暂时屏蔽此逻辑
         // if (this.form.erpAuthMerchantDTO.productCode === 'HCM11') {
@@ -503,9 +503,6 @@ export default {
               if (document.querySelectorAll('.el-table__row')[index]) {
                 if (item.unionChannel) {
                   document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-                }
-                if (item.unionChannelType) {
-                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannelType')[0].childNodes[1].childNodes[1].value = item.unionChannelTypeName
                 }
               }
             })
