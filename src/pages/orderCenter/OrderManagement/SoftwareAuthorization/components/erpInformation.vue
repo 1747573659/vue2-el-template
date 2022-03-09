@@ -433,6 +433,10 @@ export default {
       this.form.erpAuthOrderDetails.splice(scope.$index, 1)
       this.selectMaps.delete(scope.row.moduleCode)
       this.currentPageSelectSets.delete(scope.row.moduleCode)
+      if (['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)) {
+        this.channelData = []
+        this.isChannelPage = false
+      }
     },
     handleSelectAll(selection) {
       if (selection?.length) {
