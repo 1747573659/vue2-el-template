@@ -168,7 +168,7 @@
                 :data.sync="channelData"
                 :request="getChannelPage"
                 @change="val => handleChannelPage(scope, val)"
-                :disabled="$route.query.status === 'detail' || Boolean(channelByCustIdStatus)"
+                :disabled="checkUnionChannelDisabled"
                 :is-max-page.sync="isChannelPage"
                 placeholder="银联通道"
                 class="e-select-con js-unionChannel"
@@ -330,6 +330,10 @@ export default {
     erpStoreOrderTabData() {
       const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size))
       return chunk(this.form.erpStoreOrderDetailList, this.erpStoreOrderPageSize)[this.erpStoreOrderCurrentPage - 1]
+    },
+    checkUnionChannelDisabled() {
+      const { status, orderStatus } = this.$route.query
+      return status === 'detail' || Boolean(this.channelByCustIdStatus) || (status === 'edit' && Number(orderStatus) === 5)
     }
   },
   methods: {
