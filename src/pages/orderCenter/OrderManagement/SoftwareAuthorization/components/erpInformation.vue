@@ -470,10 +470,10 @@ export default {
     },
     handleShopPage(val) {
       if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.find(
+        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId, authCountType } = this.shopPageData.find(
           item => item.custId === val
         )
-        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
+        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId, authCountType })
         this.getOrderErpCode()
       } else
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, {
@@ -481,7 +481,8 @@ export default {
           productCode: '',
           productName: '',
           authStatus: '',
-          merchantId: ''
+          merchantId: '',
+          authCountType: ''
         })
       this.form.erpAuthOrderDetails = []
       this.selectMaps.clear()
