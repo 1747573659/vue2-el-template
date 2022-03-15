@@ -67,6 +67,14 @@ const accountManagement = {
           meta: { title: '库存换购订单', name: 'softwareInventoryReplace', cache: true }
         },
         {
+          path: 'softwareInventoryReplaceDetails',
+          component: _import('orderCenter/OrderManagement/SoftwareInventoryReplace/softwareInventoryReplaceDetails'),
+          name: 'softwareInventoryReplaceDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '库存换购订单详情', name: 'softwareInventoryReplaceDetails', cache: true }
+        },
+        {
           path: 'selfServiceEquipment',
           component: _import('orderCenter/OrderManagement/SelfServiceEquipment/selfServiceEquipment'),
           name: 'selfServiceEquipment',
