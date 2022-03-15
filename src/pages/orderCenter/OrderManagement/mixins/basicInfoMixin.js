@@ -191,10 +191,6 @@ export const basicInfoMixin = {
       this.$refs.product.getProductPage()
     },
     handleCountAmount(row, scope = '') {
-      if (!scope && !/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
-        this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
-        row.productCount = 1
-      }
       if (scope && scope === 99999 && !/^\+?[1-9]{1}[0-9]{0,4}\d{0,0}$/.test(row.productCount)) {
         this.$message({ type: 'warning', message: '有效采购数量范围为[1-99999]' })
         row.productCount = 1
