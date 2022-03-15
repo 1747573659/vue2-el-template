@@ -190,9 +190,10 @@ export const basicInfoMixin = {
       this.$refs.product.basicProductData = []
       this.$refs.product.getProductPage()
     },
-    handleCountAmount(row, scope = '') {
-      if (scope && scope === 99999 && !/^\+?[1-9]{1}[0-9]{0,4}\d{0,0}$/.test(row.productCount)) {
-        this.$message({ type: 'warning', message: '有效采购数量范围为[1-99999]' })
+    handleCountAmount(row, source = '') {
+      const productReg = source === 'hardwarePurchaseOrder' ? /^\+?[1-9]{1}[0-9]{0,4}\d{0,0}$/ : /^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/
+      if (!productReg.test(row.productCount)) {
+        this.$message({ type: 'warning', message: `有效采购数量范围为${source === 'hardwarePurchaseOrder' ? '[1-99999]' : '[1-999]'}` })
         row.productCount = 1
       }
       if (!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
