@@ -51,7 +51,9 @@ export const basicInfoMixin = {
       return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperMoney) + agentPaperGiftMoney
     },
     useAmount() {
-      const useAmountGift = this.form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmountGift) + '）' : ''
+      const useAmountGift = this.form.purchaseOrderDTO.useAmountGift
+        ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmountGift) + '）'
+        : ''
       return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmount) + useAmountGift
     }
   },
@@ -91,7 +93,9 @@ export const basicInfoMixin = {
                 : await purchaseUpdate(Object.assign(params, { orderItemList: deepOrderItemList }))
             if (this.$route.query.status === 'add') {
               this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
-              document.querySelector('.e-tag_active span').innerText = `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑`
+              document.querySelector('.e-tag_active span').innerText = `${
+                this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'
+              }采购订单/编辑`
             }
             this.handleDetail()
             this.$message({ type: 'success', message: '保存成功' })
@@ -119,7 +123,10 @@ export const basicInfoMixin = {
         })
         await purchaseSubmit(Object.assign(params, { orderItemList: deepOrderItemList }))
         this.handleDetail().then(() => {
-          this.$router.replace({ name: this.$route.name, query: { id: this.form.purchaseOrderDTO.id, orderStatus: this.form.purchaseOrderDTO.orderStatus, status: 'detail' } })
+          this.$router.replace({
+            name: this.$route.name,
+            query: { id: this.form.purchaseOrderDTO.id, orderStatus: this.form.purchaseOrderDTO.orderStatus, status: 'detail' }
+          })
         })
         this.$message({ type: 'success', message: '提交成功' })
       } catch (error) {
@@ -183,9 +190,13 @@ export const basicInfoMixin = {
       this.$refs.product.basicProductData = []
       this.$refs.product.getProductPage()
     },
-    handleCountAmount(row) {
-      if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
+    handleCountAmount(row, scope = '') {
+      if (!scope && !/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.productCount)) {
         this.$message({ type: 'warning', message: '有效采购数量范围为[1-999]' })
+        row.productCount = 1
+      }
+      if (scope && scope === 99999 && !/^\+?[1-9]{1}[0-9]{0,4}\d{0,0}$/.test(row.productCount)) {
+        this.$message({ type: 'warning', message: '有效采购数量范围为[1-99999]' })
         row.productCount = 1
       }
       if (!/^([0-9]\d{0,6}?)(\.\d{1,2})?$/.test(row.productPrice)) {
@@ -203,14 +214,14 @@ export const basicInfoMixin = {
       row.productAmount = NP.round(row.productAmount, 2)
       return (row.productPrice = NP.round(NP.divide(parseFloat(row.productAmount), parseFloat(row.productCount)), 2))
     },
-    getHandlerMan: async function() {
+    getHandlerMan: async function () {
       try {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.handUserInfo.districtCode })
         this.form.purchaseOrderDTO.handUser = id
         this.form.purchaseOrderDTO.handUserName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
       } catch (error) {}
     },
-    getAgentMoneyStream: async function() {
+    getAgentMoneyStream: async function () {
       try {
         const { paperMoney, paperMoneyGift, noQualityGuaranteeMoney } = await queryAgentMoneyStream({ agentId: this.handUserInfo.agentId })
         this.form.purchaseOrderDTO.agentPaperMoney = paperMoney
@@ -232,7 +243,9 @@ export const basicInfoMixin = {
                   ? NP.plus(prev, curr)
                   : this.$options.filters['formatAmount'](NP.plus(prev, curr))
               } else {
-                return column.property === 'productCount' || this.$route.query.status !== 'details' ? prev : this.$options.filters['formatAmount'](prev)
+                return column.property === 'productCount' || this.$route.query.status !== 'details'
+                  ? prev
+                  : this.$options.filters['formatAmount'](prev)
               }
             }, 0)
             this.form.purchaseOrderDTO.orderAmount = sums[5] ? NP.times(sums[5], 100) : 0
