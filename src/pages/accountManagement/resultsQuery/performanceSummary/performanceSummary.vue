@@ -90,13 +90,13 @@ export default {
         { id: 2, name: '餐饮' },
         { id: 5, name: '有数' }
       ],
+      yearList: [{ id: '', name: '全部' }],
+      form: { industry: [], year: new Date().getFullYear() },
       checkTabLock: false,
       tableData: [], // 表格数据
       currentPage: 1,
       totalPage: 0,
-      pageSize: 10,
-      form: { industry: [], year: new Date().getFullYear() },
-      yearList: []
+      pageSize: 10
     }
   },
   filters: {

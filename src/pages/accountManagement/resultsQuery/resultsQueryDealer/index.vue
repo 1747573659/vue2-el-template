@@ -2,8 +2,8 @@
   <div>
     <div class="search-box">
       <el-row>
-        <el-form :inline="true" size="small" :model="form" label-width="80px">
-          <el-form-item label="订单日期:">
+        <el-form :model="form" :inline="true" size="small" label-width="80px" label-suffix=":">
+          <el-form-item label="订单日期">
             <el-date-picker
               v-model="form.orderTime"
               :picker-options="pickerOptions"
@@ -15,21 +15,21 @@
               end-placeholder="结束日期"
             ></el-date-picker>
           </el-form-item>
-          <el-form-item label="行业:">
+          <el-form-item label="行业">
             <el-select multiple clearable placeholder="全部" @change="industryChange" size="small" style="width: 100%" v-model="form.industry">
               <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in industryList"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="产品类型: ">
+          <el-form-item label="产品类型">
             <el-select @change="productTypeChange" clearable placeholder="全部" size="small" style="width: 100%" v-model="form.productType">
               <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in productTypeList"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="产品: ">
+          <el-form-item label="产品">
             <km-select-page
+              ref="productCodes"
               multiple
               collapse-tags
-              ref="productCodes"
               v-model="form.productCode"
               option-label="name"
               option-value="code"
@@ -39,27 +39,18 @@
               :is-max-page.sync="isLicensedProductMaxPage"
             />
           </el-form-item>
-          <el-form-item label="业务类型:">
-            <el-select
-              clearable
-              class="address-select"
-              collapse-tags
-              filterable
-              placeholder="全部"
-              size="small"
-              style="width: 100%"
-              v-model="form.businessType"
-            >
+          <el-form-item label="业务类型">
+            <el-select clearable filterable placeholder="全部" size="small" style="width: 100%" v-model="form.businessType">
               <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="使用返利: ">
+          <el-form-item label="使用返利">
             <el-select clearable placeholder="全部" size="small" style="width: 100%" v-model="form.useRebate">
               <el-option label="是" :value="1"></el-option>
               <el-option label="否" :value="0"></el-option>
             </el-select>
           </el-form-item>
-          <el-form-item label="订单编码:">
+          <el-form-item label="订单编码">
             <el-input v-model.trim="form.billNo" maxlength="16" size="small" placeholder="请输入订单编码" clearable></el-input>
           </el-form-item>
           <el-form-item style="margin-left: 80px">
@@ -68,9 +59,9 @@
         </el-form>
       </el-row>
     </div>
-    <div class="data-box">
+    <div class="data-box" v-loading="tableLoading">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
-      <el-table row-key="id" :data="tableList" style="width: 100%" v-loading="tableLoading" ref="table">
+      <el-table :data="tableList">
         <el-table-column prop="orderTime" width="110" label="订单日期" fixed></el-table-column>
         <el-table-column prop="month" label="月份" width="80" align="right" fixed></el-table-column>
         <el-table-column prop="quarter" label="季度" width="80" align="right" fixed></el-table-column>
@@ -105,7 +96,7 @@
           <template slot-scope="scope">{{ scope.row.bonusAmount | toFixedFilter }}</template>
         </el-table-column>
         <el-table-column label="使用返利" width="100">
-          <template slot-scope="scope">{{ scope.row.useRebate == 1 ? '是' : '否' }}</template>
+          <template slot-scope="scope">{{ scope.row.useRebate === 1 ? '是' : '否' }}</template>
         </el-table-column>
         <el-table-column label="使用担保金" width="140" align="right">
           <template slot-scope="scope">{{ scope.row.depositAmount | toFixedFilter }}</template>
@@ -137,12 +128,14 @@
     </div>
   </div>
 </template>
+
 <script>
 import dayjs from 'dayjs'
+import { formatAmountDivide } from '@/filters'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+
 import { detailPage, detailCount } from '@/api/accountManagement/resultsQuery'
 import { productQueryByPage, productQueryTypeList } from '@/api/product'
-import { formatAmountDivide } from '@/filters'
 
 export default {
   name: 'resultsQueryDealer',
@@ -179,7 +172,7 @@ export default {
         depositAmount: { label: '使用担保金', value: '', formatNumber: true, toFixed: 2 },
         performanceAdjustmentAmount: { label: '业绩调整', value: '', formatNumber: true, toFixed: 2 },
         num: { label: '数量', value: '', formatNumber: true }
-      }, // 表格汇总数据
+      },
       productTypeList: [],
       form: {
         orderTime: [dayjs().subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
@@ -283,6 +276,7 @@ export default {
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .search-box {
   margin-left: -16px;
