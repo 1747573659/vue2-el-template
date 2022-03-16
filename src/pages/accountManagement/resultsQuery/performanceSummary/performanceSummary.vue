@@ -22,52 +22,52 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table :data="tableData" v-loading="checkTabLock">
-        <el-table-column prop="industryName" label="行业"></el-table-column>
-        <el-table-column prop="year" label="年份" align="right"></el-table-column>
-        <el-table-column label="年度任务" align="right">
+      <el-table :data="tableData" show-summary :summary-method="getStoreSummaries" v-loading="checkTabLock">
+        <el-table-column prop="industryName" label="行业" width="110"></el-table-column>
+        <el-table-column prop="year" label="年份"></el-table-column>
+        <el-table-column prop="yearAmount" label="年度任务" align="right">
           <template slot-scope="scope">{{ scope.row.yearAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="年度销售">
+        <el-table-column prop="yearCompletedAmount" label="年度销售" align="right">
           <template slot-scope="scope">{{ scope.row.yearCompletedAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="年度完成率" width="110">
+        <el-table-column prop="yearCompletedRate" label="年度完成率" align="right" width="110">
           <template slot-scope="scope">{{ scope.row.yearCompletedRate }}%</template>
         </el-table-column>
-        <el-table-column label="Q1任务">
+        <el-table-column prop="firstQuarterAmount" label="Q1任务" align="right">
           <template slot-scope="scope">{{ scope.row.firstQuarterAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q1销售">
+        <el-table-column prop="fourCompletedAmount" label="Q1销售" align="right">
           <template slot-scope="scope">{{ scope.row.fourCompletedAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q1完成率" width="110" align="right">
+        <el-table-column prop="firstCompletedRate" label="Q1完成率" width="110" align="right">
           <template slot-scope="scope">{{ scope.row.firstCompletedRate }}%</template>
         </el-table-column>
-        <el-table-column label="Q2任务" align="right">
+        <el-table-column prop="secondQuarterAmount" label="Q2任务" align="right">
           <template slot-scope="scope">{{ scope.row.secondQuarterAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q2销售" align="right">
+        <el-table-column prop="secondCompletedAmount" label="Q2销售" align="right">
           <template slot-scope="scope">{{ scope.row.secondCompletedAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q2完成率" width="110" align="right">
+        <el-table-column prop="secondCompletedRate" label="Q2完成率" width="110" align="right">
           <template slot-scope="scope">{{ scope.row.secondCompletedRate }}%</template>
         </el-table-column>
-        <el-table-column label="Q3任务" align="right">
+        <el-table-column prop="thirdQuarterAmount" label="Q3任务" align="right">
           <template slot-scope="scope">{{ scope.row.thirdQuarterAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q3销售" align="right">
+        <el-table-column prop="thirdCompletedAmount" label="Q3销售" align="right">
           <template slot-scope="scope">{{ scope.row.thirdCompletedAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q3完成率" width="110">
+        <el-table-column prop="thirdCompletedRate" label="Q3完成率" align="right" width="110">
           <template slot-scope="scope">{{ scope.row.thirdCompletedRate }}%</template>
         </el-table-column>
-        <el-table-column label="Q4任务" align="right">
+        <el-table-column prop="fourQuarterAmount" label="Q4任务" align="right">
           <template slot-scope="scope">{{ scope.row.fourQuarterAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q4销售">
+        <el-table-column prop="fourCompletedAmount" label="Q4销售" align="right">
           <template slot-scope="scope">{{ scope.row.fourCompletedAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="Q4完成率" width="110">
+        <el-table-column prop="fourCompletedRate" label="Q4完成率" align="right" width="110">
           <template slot-scope="scope">{{ scope.row.fourCompletedRate }}%</template>
         </el-table-column>
       </el-table>
@@ -128,10 +128,30 @@ export default {
       } finally {
         this.checkTabLock = false
       }
+    },
+    getStoreSummaries(param) {
+      const { columns, data } = param
+      const sums = []
+      columns.forEach((column, index) => {
+        const values = data.map(item => parseFloat(item[column.property]))
+        sums[0] = sums[1] = ''
+        if (index > 1) {
+          if (!values.every(value => isNaN(value))) {
+            sums[index] = values.reduce((prev, curr) => {
+              const value = Number(curr)
+              if (!isNaN(value)) return NP.plus(prev, curr)
+              else return prev
+            }, 0)
+            if (column.property.slice(-4) === 'Rate') sums[index] = `${sums[index]}%`
+          }
+        }
+      })
+      return sums
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .search-box {
   margin-left: -16px;

@@ -29,7 +29,7 @@ const accountManagement = {
           component: () => import('@/pages/accountManagement/accountQuery/amountHistory/amountHistory.vue'),
           name: 'amountHistory',
           code: 'XDD_ACCMANAGEMENT_ACCQUERY_AMOUNTHISTORY',
-          meta: { title: '余额变动流水', name: 'amountHistory',cache: true }
+          meta: { title: '余额变动流水', name: 'amountHistory', cache: true }
         }
       ]
     },
@@ -50,14 +50,14 @@ const accountManagement = {
           component: _import('accountManagement/softStockQuery/querySoftStock/querySoftStock.vue'),
           name: 'querySoftStock',
           code: 'XDD_ACCMANAGEMENT_SOFTSTOCK_QUERY',
-          meta: { title: '软件库存查询', name: 'querySoftStock' ,cache: true}
+          meta: { title: '软件库存查询', name: 'querySoftStock', cache: true }
         },
         {
           path: 'softStockChangeHistory',
           component: _import('accountManagement/softStockQuery/softStockChangeHistory/softStockChangeHistory.vue'),
           name: 'softStockChangeHistory',
           code: 'XDD_ACCMANAGEMENT_SOFTSTOCK_HISTORY',
-          meta: { title: '软件库存变动流水', name: 'softStockChangeHistory',cache: true }
+          meta: { title: '软件库存变动流水', name: 'softStockChangeHistory', cache: true }
         },
         {
           path: 'softwareInventoryReplace',
@@ -72,7 +72,7 @@ const accountManagement = {
           name: 'selfServiceEquipment',
           code: 'ORDERCENTER_ORDERMANAGEMENT_SELFSERVICEEQUIPMENT',
           meta: { title: '自助设备授权查询', name: 'selfServiceEquipment', cache: false }
-        },
+        }
       ]
     },
     {
@@ -92,14 +92,14 @@ const accountManagement = {
           component: () => import('@/pages/accountManagement/resultsQuery/resultsQueryDealer/index.vue'),
           name: 'resultsQueryDealer',
           code: 'XDD_RSSULTSQUERY_DEALER',
-          meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY_DEALER',cache: true }
+          meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY_DEALER', cache: true }
         },
         {
           path: 'performanceSummary',
           component: () => import('@/pages/accountManagement/resultsQuery/performanceSummary/performanceSummary.vue'),
           name: 'performanceSummary',
           code: 'XDD_PERFORMANCE_SUMMARY',
-          meta: { title: '业绩汇总查询', name: 'XDD_PERFORMANCE_SUMMARY',cache: true }
+          meta: { title: '业绩汇总查询', name: 'XDD_PERFORMANCE_SUMMARY', cache: true }
         }
       ]
     }
