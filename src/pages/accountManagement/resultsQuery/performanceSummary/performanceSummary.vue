@@ -31,7 +31,7 @@
           <template slot-scope="scope">{{ scope.row.yearCompletedRate }}%</template>
         </el-table-column>
         <el-table-column prop="firstQuarterAmount" label="Q1任务" align="right"></el-table-column>
-        <el-table-column prop="fourCompletedAmount" label="Q1销售" align="right"></el-table-column>
+        <el-table-column prop="firstCompletedAmount" label="Q1销售" align="right"></el-table-column>
         <el-table-column prop="firstCompletedRate" label="Q1完成率" width="110" align="right">
           <template slot-scope="scope">{{ scope.row.firstCompletedRate }}%</template>
         </el-table-column>
