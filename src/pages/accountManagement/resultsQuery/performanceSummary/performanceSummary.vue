@@ -26,30 +26,29 @@
         <el-table-column prop="industryName" label="行业" width="110"></el-table-column>
         <el-table-column prop="year" label="年份"></el-table-column>
         <el-table-column prop="yearAmount" label="年度任务" width="120" align="right"></el-table-column>
-        <el-table-column prop="yearCompletedAmount" label="年度销售" align="right"></el-table-column>
+        <el-table-column prop="yearCompletedAmount" label="年度销售" min-width="110" align="right"></el-table-column>
         <el-table-column prop="yearCompletedRate" label="年度完成率" align="right" width="110">
           <template slot-scope="scope">{{ scope.row.yearCompletedRate }}%</template>
         </el-table-column>
-        <el-table-column prop="firstQuarterAmount" label="Q1任务" align="right"></el-table-column>
-        <el-table-column prop="firstCompletedAmount" label="Q1销售" align="right"></el-table-column>
-        <el-table-column prop="firstCompletedRate" label="Q1完成率" width="110" align="right">
-          <template slot-scope="scope">{{ scope.row.firstCompletedRate }}%</template>
-        </el-table-column>
-        <el-table-column prop="secondQuarterAmount" label="Q2任务" align="right"></el-table-column>
-        <el-table-column prop="secondCompletedAmount" label="Q2销售" align="right"></el-table-column>
-        <el-table-column prop="secondCompletedRate" label="Q2完成率" width="110" align="right">
-          <template slot-scope="scope">{{ scope.row.secondCompletedRate }}%</template>
-        </el-table-column>
-        <el-table-column prop="thirdQuarterAmount" label="Q3任务" align="right"></el-table-column>
-        <el-table-column prop="thirdCompletedAmount" label="Q3销售" align="right"></el-table-column>
-        <el-table-column prop="thirdCompletedRate" label="Q3完成率" align="right" width="110">
-          <template slot-scope="scope">{{ scope.row.thirdCompletedRate }}%</template>
-        </el-table-column>
-        <el-table-column prop="fourQuarterAmount" label="Q4任务" align="right"></el-table-column>
-        <el-table-column prop="fourCompletedAmount" label="Q4销售" align="right"></el-table-column>
-        <el-table-column prop="fourCompletedRate" label="Q4完成率" align="right" width="110">
-          <template slot-scope="scope">{{ scope.row.fourCompletedRate }}%</template>
-        </el-table-column>
+        <template v-for="(item, index) in quartersVO">
+          <el-table-column
+            :prop="`${item}QuarterAmount`"
+            :label="`Q${index + 1}任务`"
+            :key="`${item}QuarterAmount`"
+            min-width="110"
+            align="right"
+          ></el-table-column>
+          <el-table-column
+            :prop="`${item}CompletedAmount`"
+            :label="`Q${index + 1}销售`"
+            :key="`${item}CompletedAmount`"
+            min-width="110"
+            align="right"
+          ></el-table-column>
+          <el-table-column :prop="`${item}CompletedRate`" :label="`Q${index + 1}完成率`" :key="`${item}CompletedRate`" width="110" align="right">
+            <template slot-scope="scope">{{ scope.row[`${item}CompletedRate`] }}%</template>
+          </el-table-column>
+        </template>
       </el-table>
       <km-pagination :request="getQueryPage" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     </div>
@@ -70,6 +69,7 @@ export default {
         { id: 2, name: '餐饮' },
         { id: 5, name: '有数' }
       ],
+      quartersVO: ['first', 'second', 'third', 'four'],
       yearList: [{ id: '', name: '全部' }],
       form: { industry: 1, year: new Date().getFullYear() },
       checkTabLock: false,
@@ -77,11 +77,6 @@ export default {
       currentPage: 1,
       totalPage: 0,
       pageSize: 10
-    }
-  },
-  filters: {
-    formatAmount(val) {
-      return val ? NP.divide(val, 100) : 0
     }
   },
   created() {
@@ -106,7 +101,9 @@ export default {
         if (this.form.industry !== 5) {
           this.tableData.forEach(item => {
             Object.keys(item).forEach(ele => {
-              if (ele.slice(-6) === 'Amount') item[ele] = NP.divide(item[ele], 100)
+              if (ele.slice(-6) === 'Amount') {
+                item[ele] = this.form.industry !== 5 ? NP.divide(item[ele], 100).toFixed(2) : NP.divide(item[ele], 100)
+              }
             })
           })
         }
@@ -129,7 +126,9 @@ export default {
               if (!isNaN(value)) return NP.plus(prev, curr)
               else return prev
             }, 0)
-            if (column.property.slice(-4) === 'Rate') sums[index] = `${sums[index]}%`
+            if (column.property.slice(-4) === 'Rate'){
+              sums[index] = `${NP.times(NP.round(NP.divide(sums[index - 1], sums[index - 2]), 2), 100).toFixed(2)}%`
+            }
           }
         }
       })
