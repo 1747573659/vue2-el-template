@@ -127,8 +127,8 @@ export default {
               else return prev
             }, 0)
             if (column.property.slice(-4) === 'Rate') {
-              if (sums[index - 2] !== 0) sums[index] = `${NP.times(NP.round(NP.divide(sums[index - 1], sums[index - 2]), 2), 100).toFixed(2)}%`
-              else sums[index] = '100%'
+              if (sums[index - 2] === 0 && sums[index - 1] !== 0) sums[index] = '100%'
+              else sums[index] = `${NP.times(NP.round(NP.divide(sums[index - 1] || 0, sums[index - 2] || 0), 2), 100)}%`
             }
           }
         }
