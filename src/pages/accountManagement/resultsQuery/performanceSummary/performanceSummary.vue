@@ -126,8 +126,9 @@ export default {
               if (!isNaN(value)) return NP.plus(prev, curr)
               else return prev
             }, 0)
-            if (column.property.slice(-4) === 'Rate'){
-              sums[index] = `${NP.times(NP.round(NP.divide(sums[index - 1], sums[index - 2]), 2), 100).toFixed(2)}%`
+            if (column.property.slice(-4) === 'Rate') {
+              if (sums[index - 2] !== 0) sums[index] = `${NP.times(NP.round(NP.divide(sums[index - 1], sums[index - 2]), 2), 100).toFixed(2)}%`
+              else sums[index] = '100%'
             }
           }
         }
