@@ -350,9 +350,7 @@ export default {
                   .format('YYYY-MM-DD 23:59:59')
               : '',
             delayValidTime: this.merchantInfo.KMValidity
-              ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
-                  .subtract(1, 'day')
-                  .format('YYYY-MM-DD 23:59:59')
+              ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity)).format('YYYY-MM-DD 23:59:59')
               : ''
           }
         ]
