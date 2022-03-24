@@ -128,7 +128,10 @@ export default {
             }, 0)
             if (column.property.slice(-4) === 'Rate') {
               if (sums[index - 2] === 0 && sums[index - 1] !== 0) sums[index] = '100%'
-              else sums[index] = `${NP.times(NP.round(NP.divide(sums[index - 1] || 0, sums[index - 2] || 0), 2), 100)}%`
+              else {
+                const completionRate = NP.divide(sums[index - 1], sums[index - 2])
+                sums[index] = completionRate ? `${NP.times(NP.round(completionRate, 2), 100)}%` : '0%'
+              }
             }
           }
         }
