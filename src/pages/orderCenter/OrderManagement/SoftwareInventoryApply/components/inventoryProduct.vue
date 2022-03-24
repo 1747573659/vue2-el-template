@@ -1,5 +1,13 @@
 <template>
-  <el-dialog v-bind="$attrs" v-on="$listeners" :destroy-on-close="true" @close="handleProductClose" title="选择产品" width="700px" class="p-product-con">
+  <el-dialog
+    v-bind="$attrs"
+    v-on="$listeners"
+    :destroy-on-close="true"
+    @close="handleProductClose"
+    title="选择产品"
+    width="700px"
+    class="p-product-con"
+  >
     <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
       <el-form-item label="产品信息">
         <el-input v-model="productVal" maxlength="50" placeholder="请输入产品编码/名称" clearable></el-input>
@@ -15,7 +23,13 @@
       <el-table-column prop="code" label="产品编码"></el-table-column>
       <el-table-column prop="name" label="产品名称"></el-table-column>
     </el-table>
-    <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
+    <km-pagination
+      :request="getProductPage"
+      layout="prev, pager, next"
+      :current-page.sync="currentPage"
+      :page-size.sync="pageSize"
+      :total="totalPage"
+    />
     <div slot="footer">
       <el-button @click="$emit('update:visible', false)" size="small">取消</el-button>
       <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
@@ -54,7 +68,15 @@ export default {
       try {
         this.checkProductVal = ''
         this.checkProductTabLock = true
-        const res = await productInfo({ info: this.productVal.trim(), page: this.currentPage, rows: this.pageSize, orderType: 1 })
+        const { topAgentId, agentId, propertyType, level } = JSON.parse(localStorage.getItem('userInfo'))
+        let data = {
+          info: this.productVal.trim(),
+          agentId: propertyType === 1 && level === 2 ? topAgentId : agentId,
+          page: this.currentPage,
+          rows: this.pageSize,
+          orderType: 1
+        }
+        const res = await productInfo(data)
         this.tableData = res?.results ?? []
         this.totalPage = res.totalRecord ?? 0
       } catch (error) {
