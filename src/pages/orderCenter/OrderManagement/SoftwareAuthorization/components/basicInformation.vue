@@ -4,7 +4,9 @@
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
-          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
+          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark"
+            >（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span
+          >
         </div>
         <div class="p-card-state">
           <span>订单状态：</span>
@@ -31,7 +33,9 @@
     </el-card>
     <component ref="information" :is="activeName" :form="form" :userInfo="userInfo"></component>
     <div class="p-infomation-action">
-      <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
+      <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{
+        $route.query.status === 'detail' ? '关闭' : '取消'
+      }}</el-button>
       <el-button size="small" @click="handleDelRow" v-if="$route.query.status === 'edit'">删除</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
         <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave">
@@ -39,7 +43,14 @@
         </el-button>
       </template>
       <template v-if="$route.query.status === 'edit'">
-        <el-button size="small" type="primary" :disabled="isWlsDisableStatus" v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">
+        <el-button
+          size="small"
+          type="primary"
+          :disabled="isWlsDisableStatus"
+          v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'"
+          :loading="checkVerifyBtnLoad"
+          @click="handleVerify"
+        >
           提交
         </el-button>
       </template>
@@ -169,7 +180,12 @@ export default {
       } else return ''
     },
     isWlsDisableStatus() {
-      return this.productType === 3 && this.form.merchantDTO.applicationModule === 2 && this.form.detailDTOList.length > 0 && this.form.detailDTOList[0].openCustAssistantApp === 1
+      return (
+        this.productType === 3 &&
+        this.form.merchantDTO.applicationModule === 2 &&
+        this.form.detailDTOList.length > 0 &&
+        this.form.detailDTOList[0].openCustAssistantApp === 1
+      )
     }
   },
   created() {
@@ -237,7 +253,12 @@ export default {
               this.getDetail().then(() => {
                 this.$router.replace({
                   name: this.$route.name,
-                  query: { id: this.$route.query.id, productType: this.productType, orderStatus: this.form.authOrderDTO.orderStatus, status: 'detail' }
+                  query: {
+                    id: this.$route.query.id,
+                    productType: this.productType,
+                    orderStatus: this.form.authOrderDTO.orderStatus,
+                    status: 'detail'
+                  }
                 })
                 document.querySelector('.e-tag_active span').innerText = `软件授权订单/详情`
               })
@@ -262,12 +283,16 @@ export default {
         if (insufficientObj.length > 0) {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
-              if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
+              if (action === 'confirm')
+                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
               else this.$refs.information.getProductStock()
               done()
             }
           })
-          this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
+          this.$confirm(
+            `[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`,
+            confirmOptions
+          ).catch(() => {})
         } else {
           return {
             authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
@@ -292,12 +317,16 @@ export default {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
-                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.appModuleObj.productCode } })
+                this.$router.push({
+                  name: 'softwarePurchaseDetails',
+                  query: { status: 'add', productCode: this.$refs.information.appModuleObj.productCode }
+                })
               } else this.$refs.information.getProductStock()
               done()
             }
           })
-          this.$confirm(`[${this.$refs.information.appModuleObj.name}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`, confirmOptions).catch(() => {})
+          const confirmTitleMsg = `[${this.$refs.information.appModuleObj.name}]的库存不足，当前库存: ${insufficientObj[0]?.orderInventory ?? 0}`
+          this.$confirm(confirmTitleMsg, confirmOptions).catch(() => {})
         } else {
           const { merchantNo: merchantId, merchantName, delayHour: delayCount, applicationSystem: useModal } = this.form.merchantDTO
           const productCode = this.$refs.information.appModulesData.find(item => item.code === useModal).productCode
@@ -307,7 +336,7 @@ export default {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { orderStatus: 0, productType: 5, merchantId, merchantName, useModal, delayCount, useModalInner },
-              { productCode, userLevelNum, userLevel }
+              { productCode, userLevelNum, userLevel, longValidate: [201, 205].includes(useModal) ? 100 : 0 }
             ),
             addOrderDetailVos: this.form.addAuthOrderDetailDTOList,
             renewOrderDetailVos: this.form.renewAuthOrderDetailDTOList
@@ -324,7 +353,10 @@ export default {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
-                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
+                this.$router.push({
+                  name: 'softwarePurchaseDetails',
+                  query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode }
+                })
               } else this.$refs.information.getProductStock()
               done()
             }
@@ -357,7 +389,10 @@ export default {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
               if (action === 'confirm') {
-                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode } })
+                this.$router.push({
+                  name: 'softwarePurchaseDetails',
+                  query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode }
+                })
               } else this.$refs.information.getProductStock()
               done()
             }
@@ -383,7 +418,11 @@ export default {
     getErpInformationObj() {
       if (this.form.erpAuthOrderDetails.length === 0 || !this.form.erpAuthMerchantDTO.merchantId) {
         this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
-      } else if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && (item.unionChannel === '' || item.unionChannelType === ''))) {
+      } else if (
+        this.form.erpAuthOrderDetails.some(
+          item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && (item.unionChannel === '' || item.unionChannelType === '')
+        )
+      ) {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道或银联功能类型不能为空' })
       } else {
         // 采购单多单库存扣减有问题，暂时屏蔽此逻辑
@@ -409,12 +448,16 @@ export default {
         if (insufficientObj.length > 0) {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
-              if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
+              if (action === 'confirm')
+                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
               else this.$refs.information.getProductStock()
               done()
             }
           })
-          this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
+          this.$confirm(
+            `[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`,
+            confirmOptions
+          ).catch(() => {})
         } else {
           const { merchantId, productCode, authStatus } = this.form.erpAuthMerchantDTO
           return {
@@ -505,7 +548,8 @@ export default {
                   document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
                 }
                 if (item.unionChannelType) {
-                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannelType')[0].childNodes[1].childNodes[1].value = item.unionChannelTypeName
+                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannelType')[0].childNodes[1].childNodes[1].value =
+                    item.unionChannelTypeName
                 }
               }
             })

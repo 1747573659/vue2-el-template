@@ -10,7 +10,7 @@
               </el-select>
             </el-form-item>
             <el-form-item label="年份">
-              <el-select v-model="form.year" filterable clearable placeholder="请选择" size="small" style="width: 100%">
+              <el-select v-model="form.year" filterable placeholder="请选择" size="small" style="width: 100%">
                 <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in yearList"></el-option>
               </el-select>
             </el-form-item>
@@ -70,7 +70,7 @@ export default {
         { id: 5, name: '有数' }
       ],
       quartersVO: ['first', 'second', 'third', 'four'],
-      yearList: [{ id: '', name: '全部' }],
+      yearList: [],
       form: { industry: 1, year: new Date().getFullYear() },
       checkTabLock: false,
       tableData: [], // 表格数据
