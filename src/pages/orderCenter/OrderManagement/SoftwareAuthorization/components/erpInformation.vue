@@ -168,30 +168,11 @@
                 :data.sync="channelData"
                 :request="getChannelPage"
                 @change="val => handleChannelPage(scope, val)"
-                :disabled="$route.query.status === 'detail' || Boolean(channelByCustIdStatus)"
+                :disabled="checkUnionChannelDisabled"
                 :is-max-page.sync="isChannelPage"
                 placeholder="银联通道"
                 class="e-select-con js-unionChannel"
               />
-            </template>
-          </template>
-        </el-table-column>
-        <el-table-column label="银联功能类型">
-          <template slot-scope="scope">
-            <template v-if="['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)">
-              <el-select
-                size="small"
-                v-model="scope.row.unionChannelType"
-                :disabled="
-                  $route.query.status === 'detail' ||
-                    (Boolean(channelByCustIdStatus) && scope.row.unionChannel !== '' && scope.row.unionChannelType !== '')
-                "
-                clearable
-                class="e-select-con js-unionChannelType"
-                placeholder="银联功能类型"
-              >
-                <el-option v-for="(item, index) in scope.row.channelTypes" :label="item.label" :value="item.value" :key="index"></el-option>
-              </el-select>
             </template>
           </template>
         </el-table-column>
@@ -299,7 +280,6 @@ import {
   queryChannelPage,
   getOrderErpCode,
   getOrderErpSiteInfo,
-  getOrderErpChannel,
   getOrderErpCustInfo,
   getChannelByCustId
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
@@ -340,7 +320,6 @@ export default {
       storeOrderInventory: 0,
       selectAuthorMaps: new Map(),
       currentPageSelectAuthorSets: new Set(),
-      channelTypes: [],
       orderErpCustInfo: {},
       erpStoreOrderCurrentPage: 1,
       erpStoreOrderPageSize: 10,
@@ -351,6 +330,10 @@ export default {
     erpStoreOrderTabData() {
       const chunk = (arr, size) => Array.from({ length: Math.ceil(arr.length / size) }, (v, i) => arr.slice(i * size, i * size + size))
       return chunk(this.form.erpStoreOrderDetailList, this.erpStoreOrderPageSize)[this.erpStoreOrderCurrentPage - 1]
+    },
+    checkUnionChannelDisabled() {
+      const { status, orderStatus } = this.$route.query
+      return status === 'detail' || Boolean(this.channelByCustIdStatus) || (status === 'edit' && Number(orderStatus) === 5)
     }
   },
   methods: {
@@ -360,10 +343,6 @@ export default {
     },
     handleChannelPage(scope, val) {
       scope.row.unionChannelName = this.channelData.find(item => item.channelCode === val).channelName
-      scope.row.channelTypes = val
-        ? this.channelTypes.filter(ele => this.channelData.find(item => item.channelCode === val).funTypes.includes(ele.value))
-        : []
-      scope.row.unionChannelType = val && scope.row.channelTypes.length > 0 ? scope.row.channelTypes[0].value : ''
     },
     checkSelectable(row) {
       if (this.form.erpStoreOrderDetailList?.length > 0) return row.moduleId !== 'MDZD'
@@ -458,6 +437,10 @@ export default {
       this.form.erpAuthOrderDetails.splice(scope.$index, 1)
       this.selectMaps.delete(scope.row.moduleCode)
       this.currentPageSelectSets.delete(scope.row.moduleCode)
+      if (['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode)) {
+        this.channelData = []
+        this.isChannelPage = false
+      }
     },
     handleSelectAll(selection) {
       if (selection?.length) {
@@ -487,10 +470,10 @@ export default {
     },
     handleShopPage(val) {
       if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId } = this.shopPageData.find(
+        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId, authCountType } = this.shopPageData.find(
           item => item.custId === val
         )
-        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId })
+        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId, authCountType })
         this.getOrderErpCode()
       } else
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, {
@@ -498,7 +481,8 @@ export default {
           productCode: '',
           productName: '',
           authStatus: '',
-          merchantId: ''
+          merchantId: '',
+          authCountType: ''
         })
       this.form.erpAuthOrderDetails = []
       this.selectMaps.clear()
@@ -511,6 +495,7 @@ export default {
       this.currentPageSelectAuthorSets.clear()
     },
     handleConfirm() {
+      const bnkVO = { BNK: 1, BNK1: 2, BNK5: 5 }
       const addDetailItem = item => {
         this.form.erpAuthOrderDetails.push({
           moduleCode: item.moduleId,
@@ -520,7 +505,7 @@ export default {
           authNum: 1,
           productCode: item.productId,
           unionChannel: '',
-          unionChannelType: '',
+          unionChannelType: ['BNK', 'BNK1', 'BNK5'].includes(item.moduleId) ? bnkVO[item.moduleId] : '',
           remark: ''
         })
       }
@@ -529,7 +514,6 @@ export default {
         this.$message({ type: 'warning', message: '至少选择一个授权门店' })
         return
       } else if (!this.orderErpCustInfo.misStatus) {
-        // better 2022-01-28 优化银联mis模块勾选数量
         const channelBanks = Array.from(this.currentPageSelectSets.values()).filter(item => ['BNK', 'BNK1', 'BNK5'].includes(item))
         if (channelBanks.length > 1) {
           this.$message({ type: 'warning', message: '只能选一种银联接口' })
@@ -551,7 +535,6 @@ export default {
       if (this.form.erpAuthOrderDetails?.length > 0) {
         if (this.form.erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))) {
           this.getChannelPage()
-          this.getOrderErpChannel()
           this.getChannelByCustId()
         }
         this.getProductStock().then(() => (this.checkProductVisible = false))
@@ -678,17 +661,10 @@ export default {
         this.checkProductTabLock = false
       }
     },
-    async getOrderErpChannel() {
-      try {
-        const res = await getOrderErpChannel()
-        this.channelTypes = res.map(item => {
-          return { label: Object.values(item)[0], value: Object.keys(item)[0] }
-        })
-      } catch (error) {}
-    },
     async getChannelPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
-        const res = await queryChannelPage({ channelName: query, page, rows })
+        const b = this.form.erpAuthOrderDetails.find(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))
+        const res = await queryChannelPage({ channelName: query, funType: b.unionChannelType, page, rows })
         this.channelData = this.channelData.concat(res.results || [])
         this.isChannelPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
@@ -700,22 +676,6 @@ export default {
           const bnkChannelIndex = this.form.erpAuthOrderDetails.findIndex(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode))
           document.querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = this.channelByCustIdStatus.channelName
           this.form.erpAuthOrderDetails[bnkChannelIndex].unionChannel = this.channelByCustIdStatus.channelCode
-
-          if (this.channelByCustIdStatus?.funTypes[0] === '') {
-            this.getChannelPage({ page: 1, query: this.channelByCustIdStatus.channelName })
-          }
-          if (this.channelByCustIdStatus?.funTypes[0] !== '') {
-            this.form.erpAuthOrderDetails[bnkChannelIndex].channelTypes =
-              this.channelTypes.filter(ele => this.channelByCustIdStatus.funTypes.includes(ele.value)) || []
-            this.form.erpAuthOrderDetails[bnkChannelIndex].unionChannelType = this.channelByCustIdStatus.funTypes[0]
-          } else {
-            this.channelData = []
-            this.isChannelPage = false
-            this.getChannelPage({ page: 1, query: this.channelByCustIdStatus.channelName })
-            const funTypesEmptyVO = this.channelData.filter(item => item.channelCode === this.channelByCustIdStatus.channelCode)
-            this.form.erpAuthOrderDetails[bnkChannelIndex].channelTypes =
-              this.channelTypes.filter(ele => funTypesEmptyVO[0].funTypes.includes(ele.value)) || []
-          }
         }
       } catch (error) {}
     },

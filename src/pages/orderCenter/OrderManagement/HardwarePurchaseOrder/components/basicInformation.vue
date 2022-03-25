@@ -96,13 +96,13 @@
         <el-table-column prop="productCount" label="采购数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.productCount }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.productCount" @change="handleCountAmount(scope.row)" style="width: 100%;"></el-input>
+            <el-input v-else size="small" v-model.number.trim="scope.row.productCount" @change="handleCountAmount(scope.row, 'hardwarePurchaseOrder')" style="width: 100%;"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="productPrice" label="单价" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.productPrice }}</span>
-            <el-input v-else size="small" v-model.trim="scope.row.productPrice" @change="handleCountAmount(scope.row)" style="width: 100%;"></el-input>
+            <el-input v-else size="small" v-model.trim="scope.row.productPrice" @change="handleCountAmount(scope.row, 'hardwarePurchaseOrder')" style="width: 100%;"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="productAmount" label="金额" align="right">

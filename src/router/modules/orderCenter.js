@@ -69,14 +69,6 @@ const orderCenter = {
           meta: { title: '软件库存申请单详情', name: 'softwareInventoryApplyDetails', cache: true }
         },
         {
-          path: 'softwareInventoryReplaceDetails',
-          component: _import('orderCenter/OrderManagement/SoftwareInventoryReplace/softwareInventoryReplaceDetails'),
-          name: 'softwareInventoryReplaceDetails',
-          code: 'KM_DEFAULT_CODE',
-          hidden: true,
-          meta: { title: '库存换购订单详情', name: 'softwareInventoryReplaceDetails', cache: true }
-        },
-        {
           path: 'hardwarePurchaseOrder',
           component: _import('orderCenter/OrderManagement/HardwarePurchaseOrder'),
           name: 'hardwarePurchaseOrder',

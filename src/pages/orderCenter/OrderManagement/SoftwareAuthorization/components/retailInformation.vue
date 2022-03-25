@@ -50,7 +50,15 @@
         <template v-if="form.merchantDTO.applicationModule === 3 && form.merchantDTO.merchantId">
           <el-button type="primary" size="small" plain @click="handleProductVisible">选择授权对象</el-button>
         </template>
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0" :loading="checkProductStockLoad">刷新库存</el-button>
+        <el-button
+          type="primary"
+          size="small"
+          plain
+          @click="getProductStock"
+          :disabled="form.detailDTOList.length === 0"
+          :loading="checkProductStockLoad"
+          >刷新库存</el-button
+        >
       </div>
       <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
         <el-table-column label="序号" width="100">
@@ -73,7 +81,14 @@
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
+            <el-input
+              size="small"
+              v-model="scope.row.remark"
+              :disabled="$route.query.status === 'detail'"
+              maxlength="100"
+              clearable
+              class="e-product_remark"
+            ></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail' && form.merchantDTO.applicationModule === 3">
@@ -85,7 +100,14 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择授权对象" width="700px" class="p-address-con">
+    <el-dialog
+      :visible.sync="checkProductVisible"
+      @close="productVal = ''"
+      :close-on-click-modal="false"
+      title="选择授权对象"
+      width="700px"
+      class="p-address-con"
+    >
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="30" placeholder="请输入税号" clearable></el-input>
@@ -248,11 +270,7 @@ export default {
     handleDelayHour(val) {
       this.form.authOrderDTO.inventoryAmount = val
       this.form.detailDTOList.forEach(item => {
-        item.delayValidTime = item.currentValidTime
-          ? dayjs(this.setDelayValidTime(item.currentValidTime))
-              .subtract(1, 'day')
-              .format('YYYY-MM-DD 23:59:59')
-          : ''
+        item.delayValidTime = item.currentValidTime ? dayjs(this.setDelayValidTime(item.currentValidTime)).format('YYYY-MM-DD 23:59:59') : ''
         item.useInventory = val
       })
     },
@@ -277,7 +295,10 @@ export default {
     async handleZbProduct() {
       try {
         const applicationModule = this.form.merchantDTO.applicationModule
-        const res = await queryByAgentProductAndModule({ moduleId: applicationModule === 2 ? 'WXXCX' : 'DZFP', productCode: this.merchantInfo.productCode })
+        const res = await queryByAgentProductAndModule({
+          moduleId: applicationModule === 2 ? 'WXXCX' : 'DZFP',
+          productCode: this.merchantInfo.productCode
+        })
         this.merchantInfo.productCode = res.productId
         if (!this.merchantInfo.productCode) this.$message({ type: 'warning', message: '找不到对应的周边产品' })
       } catch (error) {}
@@ -329,9 +350,7 @@ export default {
                   .format('YYYY-MM-DD 23:59:59')
               : '',
             delayValidTime: this.merchantInfo.KMValidity
-              ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity))
-                  .subtract(1, 'day')
-                  .format('YYYY-MM-DD 23:59:59')
+              ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity)).format('YYYY-MM-DD 23:59:59')
               : ''
           }
         ]

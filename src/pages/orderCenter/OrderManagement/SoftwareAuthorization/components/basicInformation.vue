@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con" style="padding-bottom:72px" v-loading="checkBasicInformLoad">
+  <section class="p-information-con" style="padding-bottom: 72px" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
@@ -38,9 +38,7 @@
       }}</el-button>
       <el-button size="small" @click="handleDelRow" v-if="$route.query.status === 'edit'">删除</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave">
-          保存
-        </el-button>
+        <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave"> 保存 </el-button>
       </template>
       <template v-if="$route.query.status === 'edit'">
         <el-button
@@ -416,14 +414,23 @@ export default {
       }
     },
     getErpInformationObj() {
-      if (this.form.erpAuthOrderDetails.length === 0 || !this.form.erpAuthMerchantDTO.merchantId) {
+      const {
+        erpAuthMerchantDTO: { merchantId, productCode, authStatus, authCountType },
+        erpAuthOrderDetails,
+        erpStoreOrderDetailList
+      } = this.form
+      if (erpAuthOrderDetails.length === 0 || !merchantId) {
         this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
+      } else if (erpAuthOrderDetails.some(item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && item.unionChannel === '')) {
+        this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
+      } else if (authCountType === '1' && productCode === 'HCM11' && erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))) {
+        this.$message({ type: 'warning', message: '商户已使用站点授权，不支持门店授权，请联系商务。' })
       } else if (
-        this.form.erpAuthOrderDetails.some(
-          item => ['BNK', 'BNK1', 'BNK5'].includes(item.moduleCode) && (item.unionChannel === '' || item.unionChannelType === '')
-        )
+        [0, 1].includes(parseFloat(authStatus)) &&
+        this.$refs.information.basicProductData.some(item => item.moduleId === 'MDZD') &&
+        !erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))
       ) {
-        this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道或银联功能类型不能为空' })
+        this.$message({ type: 'warning', message: '请选择"门店站点"后在提交。' })
       } else {
         // 采购单多单库存扣减有问题，暂时屏蔽此逻辑
         // if (this.form.erpAuthMerchantDTO.productCode === 'HCM11') {
@@ -444,29 +451,27 @@ export default {
         //     }
         //   }
         // }
-        const insufficientObj = this.form.erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
+        const insufficientObj = erpAuthOrderDetails.filter(item => item.authNum > item.orderInventory)
         if (insufficientObj.length > 0) {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
-              if (action === 'confirm')
+              if (action === 'confirm') {
                 this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
-              else this.$refs.information.getProductStock()
+              } else this.$refs.information.getProductStock()
               done()
             }
           })
-          this.$confirm(
-            `[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`,
-            confirmOptions
-          ).catch(() => {})
+          this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(
+            () => {}
+          )
         } else {
-          const { merchantId, productCode, authStatus } = this.form.erpAuthMerchantDTO
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
-              { merchantId, productCode, erpStore: this.form.erpStoreOrderDetailList && this.form.erpStoreOrderDetailList.length > 0 ? 1 : 0 },
+              { merchantId, productCode, erpStore: erpStoreOrderDetailList && erpStoreOrderDetailList.length > 0 ? 1 : 0 },
               { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
             ),
-            erpStoreList: this.form.erpStoreOrderDetailList,
+            erpStoreList: erpStoreOrderDetailList,
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
         }
@@ -546,10 +551,6 @@ export default {
               if (document.querySelectorAll('.el-table__row')[index]) {
                 if (item.unionChannel) {
                   document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-                }
-                if (item.unionChannelType) {
-                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannelType')[0].childNodes[1].childNodes[1].value =
-                    item.unionChannelTypeName
                 }
               }
             })
