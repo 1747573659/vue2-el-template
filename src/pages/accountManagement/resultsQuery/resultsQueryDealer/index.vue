@@ -87,31 +87,47 @@
           <template slot-scope="scope">{{ scope.row.orderAmount | toFixedFilter }}</template>
         </el-table-column>
         <el-table-column label="业绩金额" width="140" align="right">
-          <template slot-scope="scope">{{ scope.row.performanceAmount | toFixedFilter }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.performanceAmount | toFixedFilter }}</div>
+          </template>
         </el-table-column>
         <el-table-column label="使用本金" width="140" align="right">
-          <template slot-scope="scope">{{ scope.row.originAmount | toFixedFilter }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.originAmount | toFixedFilter }}</div>
+          </template>
         </el-table-column>
         <el-table-column label="使用赠金" width="140" align="right">
-          <template slot-scope="scope">{{ scope.row.bonusAmount | toFixedFilter }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.bonusAmount | toFixedFilter }}</div>
+          </template>
         </el-table-column>
         <el-table-column label="使用返利" width="100">
-          <template slot-scope="scope">{{ scope.row.useRebate === 1 ? '是' : '否' }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.useRebate === 1 ? '是' : '否' }}</div>
+          </template>
         </el-table-column>
         <el-table-column label="使用担保金" width="140" align="right">
-          <template slot-scope="scope">{{ scope.row.depositAmount | toFixedFilter }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.depositAmount | toFixedFilter }}</div>
+          </template>
         </el-table-column>
         <el-table-column prop="depositName" label="担保人" width="120"></el-table-column>
         <el-table-column prop="couponName" label="订单优惠活动" width="120"></el-table-column>
         <el-table-column prop="billNo" label="订单编码" width="160"></el-table-column>
         <el-table-column label="扣款后本额" width="140" align="right">
-          <template slot-scope="scope">{{ scope.row.deductionOriginAmount | toFixedFilter }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.deductionOriginAmount | toFixedFilter }}</div>
+          </template>
         </el-table-column>
         <el-table-column label="扣款后赠金" width="140" align="right">
-          <template slot-scope="scope">{{ scope.row.deductionBonusAmount | toFixedFilter }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.deductionBonusAmount | toFixedFilter }}</div>
+          </template>
         </el-table-column>
         <el-table-column label="未核销金额" width="140" align="right">
-          <template slot-scope="scope">{{ scope.row.noWriteAmount | toFixedFilter }}</template>
+          <template slot-scope="scope">
+            <div v-if="scope.row.industry !== 5">{{ scope.row.noWriteAmount | toFixedFilter }}</div>
+          </template>
         </el-table-column>
       </el-table>
       <div v-show="tableTotal > 0" class="km-page-block">
@@ -175,7 +191,12 @@ export default {
       },
       productTypeList: [],
       form: {
-        orderTime: [dayjs().subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
+        orderTime: [
+          dayjs()
+            .subtract(60, 'days')
+            .format('YYYY-MM-DD 00:00:00'),
+          dayjs().format('YYYY-MM-DD 23:59:59')
+        ],
         industry: [],
         productType: '',
         productCode: [],
