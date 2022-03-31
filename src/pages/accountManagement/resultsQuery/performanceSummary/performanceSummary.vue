@@ -69,6 +69,7 @@ export default {
         { id: 2, name: '餐饮' },
         { id: 5, name: '有数' }
       ],
+      searchIndustry: '',
       quartersVO: ['first', 'second', 'third', 'four'],
       yearList: [],
       form: { industry: 1, year: new Date().getFullYear() },
@@ -98,12 +99,11 @@ export default {
         this.checkTabLock = true
         const res = await queryByPage(this.form)
         this.tableData = res?.results ?? []
-        if (this.form.industry !== 5) {
+        this.searchIndustry = this.form.industry
+        if (this.tableData.length > 0 && this.searchIndustry !== 5) {
           this.tableData.forEach(item => {
             Object.keys(item).forEach(ele => {
-              if (ele.slice(-6) === 'Amount') {
-                item[ele] = this.form.industry !== 5 ? NP.divide(item[ele], 100).toFixed(2) : NP.divide(item[ele], 100)
-              }
+              if (ele.slice(-6) === 'Amount') item[ele] = NP.divide(item[ele], 100).toFixed(2)
             })
           })
         }
@@ -118,12 +118,13 @@ export default {
       const sums = []
       columns.forEach((column, index) => {
         const values = data.map(item => parseFloat(item[column.property]))
-        sums[0] = sums[1] = ''
+        sums[0] = '合计'
+        sums[1] = ''
         if (index > 1) {
           if (!values.every(value => isNaN(value))) {
             sums[index] = values.reduce((prev, curr) => {
               const value = Number(curr)
-              if (!isNaN(value)) return NP.plus(prev, curr)
+              if (!isNaN(value)) return this.searchIndustry === 5 ? NP.plus(prev, curr) : NP.round(NP.plus(prev, curr), 2).toFixed(2)
               else return prev
             }, 0)
             if (column.property.slice(-4) === 'Rate') {

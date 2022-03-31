@@ -379,34 +379,37 @@ export default {
       }
     },
     getWlsInformationObj() {
-      if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantId) {
+      const {
+        merchantDTO: { merchantId, merchantVersion, applicationModule: useModal, delayHour: delayCount, productCode: dtoProductCode },
+        detailDTOList
+      } = this.form
+      const { ProductionType, productCode } = this.$refs.information.merchantInfo
+      if (detailDTOList.length === 0 || !merchantId) {
         this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
+      } else if (merchantVersion === '3' && [1, 3, 28, 25, 33].includes(parseFloat(ProductionType))) {
+        // 微平台专业版且ERP是（1御商、33御商+、3智赢、28智赢+、25智海鲸）不能续费
+        this.$message({ type: 'warning', message: '该产品目前已不受理续费，请升级上线科脉·有数，详情咨询有数渠道经理。' })
       } else {
-        const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
+        const insufficientObj = detailDTOList.filter(item => item.useInventory > item.orderInventory)
         if (insufficientObj.length > 0) {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
-              if (action === 'confirm') {
-                this.$router.push({
-                  name: 'softwarePurchaseDetails',
-                  query: { status: 'add', productCode: this.$refs.information.merchantInfo.productCode }
-                })
-              } else this.$refs.information.getProductStock()
+              if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode } })
+              else this.$refs.information.getProductStock()
               done()
             }
           })
           let productName = ''
-          if (this.productLists?.length) {
-            productName = this.productLists.find(item => item.code === this.$refs.information.merchantInfo.productCode).name
-          } else productName = this.$refs.information.merchantInfo.productCode
+          if (this.productLists?.length) productName = this.productLists.find(item => item.code === productCode).name
+          else productName = productCode
+
           this.$confirm(`[${productName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
-          const { merchantId, applicationModule: useModal, delayHour: delayCount, productCode } = this.form.merchantDTO
           return {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { orderStatus: 0, productType: 3, merchantId, useModal, delayCount, useModalInner: -1 },
-              { productCode: this.$refs.information.merchantInfo.productCode || productCode }
+              { productCode: productCode || dtoProductCode }
             ),
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
@@ -461,9 +464,10 @@ export default {
               done()
             }
           })
-          this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(
-            () => {}
-          )
+          this.$confirm(
+            `[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`,
+            confirmOptions
+          ).catch(() => {})
         } else {
           return {
             authOrderVO: Object.assign(
@@ -548,10 +552,9 @@ export default {
           setTimeout(() => {
             this.$refs.information.getShopPage({ query: this.form.erpAuthMerchantDTO.merchantId })
             res.erpAuthOrderDetails.forEach((item, index) => {
-              if (document.querySelectorAll('.el-table__row')[index]) {
-                if (item.unionChannel) {
-                  document.querySelectorAll('.el-table__row')[index].querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
-                }
+              const tableRow = document.querySelectorAll('.el-table__row')[index]
+              if (tableRow && item.unionChannel) {
+                tableRow.querySelectorAll('.js-unionChannel')[0].childNodes[0].childNodes[1].childNodes[1].value = item.unionChannelName
               }
             })
           }, 500)

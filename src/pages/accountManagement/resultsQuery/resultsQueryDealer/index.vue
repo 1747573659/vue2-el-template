@@ -2,7 +2,7 @@
   <div>
     <div class="search-box">
       <el-row>
-        <el-form :model="form" :inline="true" size="small" label-width="80px" label-suffix=":">
+        <el-form :model="form" :inline="true" size="small" label-width="100px" label-suffix=":">
           <el-form-item label="订单日期">
             <el-date-picker
               v-model="form.orderTime"
@@ -53,7 +53,7 @@
           <el-form-item label="订单编码">
             <el-input v-model.trim="form.billNo" maxlength="16" size="small" placeholder="请输入订单编码" clearable></el-input>
           </el-form-item>
-          <el-form-item style="margin-left: 80px">
+          <el-form-item style="margin-left: 100px">
             <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
           </el-form-item>
         </el-form>
@@ -180,7 +180,8 @@ export default {
         { id: 1, name: '软件采购' },
         { id: 2, name: '软件升级' },
         { id: 3, name: '需求开发' },
-        { id: 4, name: '业绩调整' }
+        { id: 4, name: '业绩调整' },
+        { id: 5, name: '软件销售' }
       ],
       tableSummaryObj: {
         performanceAmount: { label: '业绩金额', value: '', formatNumber: true, toFixed: 2 },
