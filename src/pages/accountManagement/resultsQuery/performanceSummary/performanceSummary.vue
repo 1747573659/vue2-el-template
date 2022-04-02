@@ -22,7 +22,7 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table :data="tableData" show-summary :summary-method="getStoreSummaries" v-loading="checkTabLock">
+      <el-table :data="tableData" :show-summary="performanceCountVO !== ''" :summary-method="getStoreSummaries" v-loading="checkTabLock">
         <el-table-column prop="industryName" label="行业" width="110"></el-table-column>
         <el-table-column prop="year" label="年份"></el-table-column>
         <el-table-column prop="yearAmount" label="年度任务" width="120" align="right"></el-table-column>
