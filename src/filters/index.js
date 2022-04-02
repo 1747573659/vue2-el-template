@@ -1,22 +1,20 @@
 import { formatNumber } from '@/utils'
 import NP from 'number-precision'
-export function formatAmountDivide (val) {
+export function formatAmountDivide(val) {
   return val ? NP.divide(val, 100) : 0
 }
-export function formatAmountTimes (val) {
+export function formatAmountTimes(val) {
   return val ? NP.times(val, 100) : 0
 }
-export function toThousandfilter (num) {
-  return (+num || 0)
-    .toString()
-    .replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
+export function toThousandfilter(num) {
+  return (+num || 0).toString().replace(/^-?\d+/g, m => m.replace(/(?=(?!\b)(\d{3})+$)/g, ','))
 }
 
 export function formatAmount(val) {
   return val ? NP.divide(val, 100) : 0
 }
 
-export function toFormatTime (times, type) {
+export function toFormatTime(times, type) {
   if (times) {
     let date = new Date(times)
     let year = date.getFullYear()
@@ -35,27 +33,28 @@ export function toFormatTime (times, type) {
   }
 }
 
-export function formatTimeToymdhms (time) {}
+export function formatTimeToymdhms(time) {}
 
-export function distance (val) {
+export function distance(val) {
   let data = val / 1000
   if (data < 1) return val + 'M'
   return data + 'KM'
 }
 
-export function toFixedFilter (num, precision) {
-  num = num / 100
-  return formatNumber(num, 2)
+export function toFixedFilter(num) {
+  if (num) return formatNumber(formatAmount(num), 2)
+  else if(num === 0) return num
+  else return ''
 }
 
-export function toFixedMoneyFilter (num, precision) {
+export function toFixedMoneyFilter(num, precision) {
   // num = num / 100
   return formatNumber(num, 2)
 }
-export function formatNumberFilter (num, precision) {
+export function formatNumberFilter(num, precision) {
   return formatNumber(num, precision || 0)
 }
-export function parseTime (d) {
+export function parseTime(d) {
   if (arguments.length === 0) {
     return null
   }
@@ -70,7 +69,7 @@ export function parseTime (d) {
   return date
 }
 // 去掉时间的时分秒
-export function parseTimeydm (times) {
+export function parseTimeydm(times) {
   if (arguments.length === 0) {
     return null
   }
@@ -84,7 +83,7 @@ export function parseTimeydm (times) {
   return date
 }
 // 去掉时间的时分秒 加中间的横线
-export function parseTimeydmTostring (times) {
+export function parseTimeydmTostring(times) {
   if (arguments.length === 0) {
     return null
   }
@@ -98,7 +97,7 @@ export function parseTimeydmTostring (times) {
   return date
 }
 // 去掉时间的时分秒日
-export function parseTimeyd (times) {
+export function parseTimeyd(times) {
   if (arguments.length === 0) {
     return null
   }
@@ -110,14 +109,14 @@ export function parseTimeyd (times) {
   let date = year + '-' + months
   return date
 }
-export function parsePhone (phone) {
+export function parsePhone(phone) {
   if (phone) {
     return phone.replace(phone.substring(3, 7), '****')
   } else {
     return '--'
   }
 }
-export function formatBankNumber (bankNumber) {
+export function formatBankNumber(bankNumber) {
   if (bankNumber) {
     bankNumber = String(bankNumber)
     return bankNumber.substr(0, bankNumber.length - 8) + '****' + bankNumber.substr(-4)
@@ -125,14 +124,14 @@ export function formatBankNumber (bankNumber) {
     return '--'
   }
 }
-export function cutString (str) {
+export function cutString(str) {
   if (str && str.length > 20) {
     return str.substring(0, 20) + '...'
   } else {
     return str
   }
 }
-export function ThousandNum (num ) {
+export function ThousandNum(num) {
   return num.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ',')
 }
 

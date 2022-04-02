@@ -57,11 +57,12 @@
 
 <script>
 import NP from 'number-precision'
+import { toFixedFilter } from '@/filters'
 
-import { queryByPage } from '@/api/accountManagement/accountQuery/performanceSummary'
+import { queryByPage, summaryCount } from '@/api/accountManagement/accountQuery/performanceSummary'
 
 export default {
-  name: 'resultsQueryDealer',
+  name: 'performanceSummary',
   data() {
     return {
       industryList: [
@@ -69,7 +70,6 @@ export default {
         { id: 2, name: '餐饮' },
         { id: 5, name: '有数' }
       ],
-      searchIndustry: '',
       quartersVO: ['first', 'second', 'third', 'four'],
       yearList: [],
       form: { industry: 1, year: new Date().getFullYear() },
@@ -77,7 +77,8 @@ export default {
       tableData: [], // 表格数据
       currentPage: 1,
       totalPage: 0,
-      pageSize: 10
+      pageSize: 10,
+      performanceCountVO: ''
     }
   },
   created() {
@@ -88,26 +89,33 @@ export default {
   },
   mounted() {
     this.getQueryPage()
+    this.getPerformanceCount()
   },
   methods: {
     handleSearch() {
       this.currentPage = 1
       this.getQueryPage()
+      this.getPerformanceCount()
+    },
+    async getPerformanceCount() {
+      try {
+        const res = await summaryCount(this.form)
+        this.performanceCountVO = res || ''
+        if (res) this.formatTableItemVO(this.performanceCountVO)
+      } catch (error) {}
+    },
+    formatTableItemVO(tabItem) {
+      Object.keys(tabItem).forEach(ele => {
+        if (ele.slice(-6) === 'Amount' && this.form.industry !== 5) tabItem[ele] = toFixedFilter(tabItem[ele])
+      })
     },
     async getQueryPage() {
       try {
         this.checkTabLock = true
         const res = await queryByPage(this.form)
         this.tableData = res?.results ?? []
-        this.searchIndustry = this.form.industry
-        if (this.tableData.length > 0 && this.searchIndustry !== 5) {
-          this.tableData.forEach(item => {
-            Object.keys(item).forEach(ele => {
-              if (ele.slice(-6) === 'Amount') item[ele] = NP.divide(item[ele], 100).toFixed(2)
-            })
-          })
-        }
         this.totalPage = res?.totalCount ?? 0
+        if (this.tableData.length > 0) this.tableData.forEach(item => this.formatTableItemVO(item))
       } catch (error) {
       } finally {
         this.checkTabLock = false
@@ -119,23 +127,10 @@ export default {
       columns.forEach((column, index) => {
         const values = data.map(item => parseFloat(item[column.property]))
         sums[0] = '合计'
-        sums[1] = ''
         if (index > 1) {
-          if (!values.every(value => isNaN(value))) {
-            sums[index] = values.reduce((prev, curr) => {
-              const value = Number(curr)
-              if (!isNaN(value)) return this.searchIndustry === 5 ? NP.plus(prev, curr) : NP.round(NP.plus(prev, curr), 2).toFixed(2)
-              else return prev
-            }, 0)
-            if (column.property.slice(-4) === 'Rate') {
-              if (sums[index - 2] === 0 && sums[index - 1] !== 0) sums[index] = '100%'
-              else {
-                const completionRate = NP.divide(sums[index - 1], sums[index - 2])
-                sums[index] = completionRate ? `${NP.times(NP.round(completionRate, 2), 100)}%` : '0%'
-              }
-            }
-          }
-        }
+          sums[index] = this.performanceCountVO[column.property]
+          if (column.property.slice(-4) === 'Rate') sums[index] = sums[index] + '%'
+        } else return ''
       })
       return sums
     }
