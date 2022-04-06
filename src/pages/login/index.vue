@@ -1,13 +1,13 @@
 <template>
   <section class="p-login">
-    <div :style="{backgroundImage: 'url(' + (bacImage) + ')'}" class="p-login_picture"></div>
+    <div :style="{ backgroundImage: 'url(' + bacImage + ')' }" class="p-login_picture"></div>
     <div class="p-login_con">
       <header>
         <img src="../../assets/images/menu/logo.png" class="p-login_logo" alt="logo" />
       </header>
       <section>
         <div class="p-login_form">
-          <header class="p-loginForm_head">欢迎登录渠道管理系统</header>
+          <header class="p-loginForm_head">欢迎登录科脉伙伴运营平台</header>
           <el-form :model="loginForm" :rules="loginRules" ref="ruleForm" class="p-loginForm_con" @submit.native.prevent>
             <el-form-item prop="userName">
               <label class="e-form_label">账号</label>
@@ -15,7 +15,13 @@
             </el-form-item>
             <el-form-item prop="password">
               <label class="e-form_label">密码</label>
-              <el-input clearable type="password" v-model.trim="loginForm.password" @keyup.enter.native="handleSubmitCode" placeholder="请输入密码"></el-input>
+              <el-input
+                clearable
+                type="password"
+                v-model.trim="loginForm.password"
+                @keyup.enter.native="handleSubmitCode"
+                placeholder="请输入密码"
+              ></el-input>
             </el-form-item>
           </el-form>
           <el-button type="primary" :loading="isLoading" @click.native="handleSubmitCode" class="e-form_btn">登录</el-button>
@@ -32,7 +38,20 @@
     </div>
     <section class="login_nocolor">
       <el-dialog :visible.sync="loginVisible" width="318px" :close-on-click-modal="false">
-        <slide-login v-if="loginVisible" :loading="loading" :text="text" :title="title" :status.sync="status" :slide-block-img-bg="slideBlockImgBg" :slide-block-img="slideBlockImg" :slideH="170" :offsetY="offsetY" @close="close" @getMouseUpData="mouseUp" @refresh="refresh">
+        <slide-login
+          v-if="loginVisible"
+          :loading="loading"
+          :text="text"
+          :title="title"
+          :status.sync="status"
+          :slide-block-img-bg="slideBlockImgBg"
+          :slide-block-img="slideBlockImg"
+          :slideH="170"
+          :offsetY="offsetY"
+          @close="close"
+          @getMouseUpData="mouseUp"
+          @refresh="refresh"
+        >
         </slide-login>
       </el-dialog>
     </section>
@@ -45,7 +64,7 @@ import slideLogin from './components/slide-login'
 import { queryBackgroundById } from '@/api/login'
 export default {
   components: { slideLogin },
-  data () {
+  data() {
     var userNamePass = (rule, value, callback) => {
       if (/^1[3456789]\d{9}$/.test(value)) {
         callback()
@@ -54,7 +73,7 @@ export default {
       }
     }
     return {
-      bacImage: require('../../assets/images/login/login.jpg'),  // 本地的静态资源需要用require引入
+      bacImage: require('../../assets/images/login/login.jpg'), // 本地的静态资源需要用require引入
       isLoading: false,
       loginVisible: false,
       loading: false,
@@ -82,13 +101,13 @@ export default {
       query: ''
     }
   },
-  mounted () {
+  mounted() {
     this.queryBackgroundById()
     this.initImg()
   },
   watch: {
     $route: {
-      handler: function (route) {
+      handler: function(route) {
         this.redirect = route.query && route.query.redirect
         this.query = route.query && route.query.query
       },
@@ -96,7 +115,7 @@ export default {
     }
   },
   methods: {
-    async queryBackgroundById () {
+    async queryBackgroundById() {
       if (localStorage.getItem('bacImage')) {
         this.bacImage = localStorage.getItem('bacImage')
       }
@@ -108,7 +127,7 @@ export default {
         localStorage.setItem('bacImage', this.bacImage)
       }
     },
-    initImg: async function () {
+    initImg: async function() {
       try {
         this.loading = true
         const res = await initImg()
@@ -123,15 +142,15 @@ export default {
       }
     },
     // 刷新图片验证
-    refresh () {
+    refresh() {
       this.initImg()
     },
     // 关闭图片验证
-    close () {
+    close() {
       this.loginVisible = false
     },
     // 验证
-    mouseUp: async function (imgX) {
+    mouseUp: async function(imgX) {
       try {
         const data = {
           x: imgX,
@@ -148,12 +167,12 @@ export default {
         this.status = 'fail'
       }
     },
-    handleSubmitCode () {
+    handleSubmitCode() {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) this.loginVisible = true
       })
     },
-    handleLogin () {
+    handleLogin() {
       this.$refs.ruleForm.validate(async valid => {
         if (valid) {
           this.isLoading = true
@@ -232,7 +251,7 @@ export default {
       border-radius: 4px;
       padding: 37px 24px 24px 24px;
       box-sizing: border-box;
-      /deep/ .el-input{
+      /deep/ .el-input {
         width: 100%;
       }
     }
