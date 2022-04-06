@@ -105,7 +105,7 @@ export default {
             return ele
           })
         } else {
-          if (!JSON.parse(localStorage.getItem('isPilotAgent')) || userInfo.propertyType !== 1) {
+          if (userInfo.propertyType !== 1) {
             item.children = item.children.filter(ele => ele.name !== 'orderManagement')
           } else if (userInfo.propertyType === 1 && userInfo.level !== 1) {
             item.children = item.children.map(ele => {
@@ -130,7 +130,7 @@ export default {
           item.children = item.children.filter(ele => {
             if (ele.name === 'softStockQuery') {
               return (ele.children = ele.children.filter(child => {
-                if (!JSON.parse(localStorage.getItem('isPilotAgent')) || userInfo.level !== 1) return !['softwareInventoryReplace', 'selfServiceEquipment'].includes(child.name)
+                if (userInfo.level !== 1) return !['softwareInventoryReplace', 'selfServiceEquipment'].includes(child.name)
                 else return child
               }))
             } else if (userInfo.level !== 1) return !['accountQuery', 'resultsQuery'].includes(ele.name)

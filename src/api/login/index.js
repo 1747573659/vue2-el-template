@@ -12,16 +12,7 @@ const urlLinks = {
   popUpsByAuditStatus: 'archive/xdd/popUpsByAuditStatus',
   initImg: '/initImg',
   checkSliderImg: '/checkSliderImg',
-  queryBackgroundById: '/loginBackground/queryBackgroundById',
-  isPilotAgent: '/common/isPilotAgent'
-}
-
-// 判断是否是试点代理商账户
-export function isPilotAgent(data) {
-  return request({
-    url: urlLinks.isPilotAgent,
-    method: 'post'
-  })
+  queryBackgroundById: '/loginBackground/queryBackgroundById'
 }
 
 // 根据应用系统ID查询图片调用地址
