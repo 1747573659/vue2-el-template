@@ -184,7 +184,6 @@ export default {
         { id: 5, name: '软件销售' }
       ],
       tableSummaryObj: {
-        performanceAmount: { label: '业绩金额', value: '', formatNumber: true, toFixed: 2 },
         originAmount: { label: '本金', value: '', formatNumber: true, toFixed: 2 },
         depositAmount: { label: '使用担保金', value: '', formatNumber: true, toFixed: 2 },
         performanceAdjustmentAmount: { label: '业绩调整', value: '', formatNumber: true, toFixed: 2 },
