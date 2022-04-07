@@ -60,7 +60,7 @@
 import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
 import { orderStatus, formErpObj, formWlsOrWcyObj, formYsObj, formDongleObj } from '../data'
-import erpInformation from './erpInformation'
+import erpInformation from './erpInformation.vue'
 import retailInformation from './retailInformation.vue'
 import repastInformation from './repastInformation.vue'
 import cloundInformation from './cloundInformation.vue'

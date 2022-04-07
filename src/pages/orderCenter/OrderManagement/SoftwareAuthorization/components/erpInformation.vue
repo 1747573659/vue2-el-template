@@ -333,7 +333,7 @@ export default {
     },
     checkUnionChannelDisabled() {
       const { status, orderStatus } = this.$route.query
-      return status === 'detail' || Boolean(this.channelByCustIdStatus) || (status === 'edit' && Number(orderStatus) === 5)
+      return status === 'detail' || Boolean(this.channelByCustIdStatus)
     }
   },
   methods: {
@@ -473,7 +473,14 @@ export default {
         const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId, authCountType } = this.shopPageData.find(
           item => item.custId === val
         )
-        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, { authCount, productCode, productName, authStatus, merchantId, authCountType })
+        this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, {
+          authCount,
+          productCode,
+          productName,
+          authStatus,
+          merchantId,
+          authCountType
+        })
         this.getOrderErpCode()
       } else
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, {
