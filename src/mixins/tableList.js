@@ -48,9 +48,8 @@ const listMixins = {
      * 处理异常情况
      * ==> 简单处理  仅仅是对表格处理为空以及取消loading
      */
-    listExceptionCb(error) {
+    listExceptionCb() {
       this.loading = false
-      console.error(error)
     },
 
     /**

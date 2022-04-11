@@ -1489,9 +1489,6 @@ export default {
             })
             this.$message.success('操作成功')
           } catch (error) {}
-        } else {
-          console.log('error submit!!')
-          return false
         }
       })
     },

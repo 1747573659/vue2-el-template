@@ -128,9 +128,7 @@ export default {
           if (!file.url && file.raw) {
             try {
               file.url = URL.createObjectURL(file.raw)
-            } catch (err) {
-              console.error('[Element Error][Upload]', err)
-            }
+            } catch (err) {}
           }
           return file
         })
@@ -163,10 +161,7 @@ export default {
       if (this.listType === 'picture-card' || this.listType === 'picture') {
         try {
           file.url = URL.createObjectURL(rawFile)
-        } catch (err) {
-          console.error('[Element Error][Upload]', err)
-          return
-        }
+        } catch (err) {}
       }
 
       this.uploadFiles.push(file)
