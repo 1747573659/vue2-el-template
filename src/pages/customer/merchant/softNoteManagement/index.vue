@@ -446,11 +446,7 @@ export default {
   border-bottom: 16px solid #f7f8fa;
 }
 .el-dialog__wrapper {
-<<<<<<< HEAD
-  /deep/ {
-=======
   ::v-deep {
->>>>>>> 9d3f8968... feat: init project
     .p-merchant-dialog {
       .el-dialog__body {
         padding-top: 20px;
