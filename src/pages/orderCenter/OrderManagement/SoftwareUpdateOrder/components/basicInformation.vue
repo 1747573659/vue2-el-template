@@ -368,6 +368,8 @@ export default {
         const res = await channelSoftUpgradeById(this.$route.query.id)
         res.upgradeAmount = NP.divide(res.upgradeAmount, 100)
         this.form = res
+        this.getOldShopPage({ query: res.oldMerchantId })
+        this.getNewShopPage({ query: res.newMerchantId })
         setTimeout(() => {
           if (this.form.oldRegistType !== 1) this.$refs.oldMerchantSelect.selectVal = res?.oldMerchantName ?? ''
           else this.$refs.product.selectVal = res?.oldMerchantProductCodeName ?? ''
