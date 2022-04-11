@@ -7,7 +7,7 @@
  */
 
 const listMixins = {
-  data () {
+  data() {
     return {
       loading: false, // 伴随loading状态
       tableParam: {
@@ -20,11 +20,11 @@ const listMixins = {
   },
   methods: {
     /**
-		 * 表格数据请求成功的回调
-		 * @param apiName {string}
-		 * @returns {*}
-		 */
-    async listSuccessCb (apiName, needParams = false) {
+     * 表格数据请求成功的回调
+     * @param apiName {string}
+     * @returns {*}
+     */
+    async listSuccessCb(apiName, needParams = false) {
       this.loading = true
       if (!needParams) {
         let res = await apiName()
@@ -45,20 +45,20 @@ const listMixins = {
       this.loading = false
     },
     /**
-		 * 处理异常情况
-		 * ==> 简单处理  仅仅是对表格处理为空以及取消loading
-		 */
-    listExceptionCb (error) {
+     * 处理异常情况
+     * ==> 简单处理  仅仅是对表格处理为空以及取消loading
+     */
+    listExceptionCb(error) {
       this.loading = false
       console.error(error)
     },
 
     /**
-		 * @msg: 导出数据excel
-		 * @param path {string}
-		 * @return:
-		 */
-    exportExcelCb (path) {
+     * @msg: 导出数据excel
+     * @param path {string}
+     * @return:
+     */
+    exportExcelCb(path) {
       if (!this.list || this.list.length === 0) {
         this.$message({
           message: '暂无数据，无法导出哦',
@@ -76,10 +76,10 @@ const listMixins = {
     },
 
     /**
-		 * @msg: 无分页时数据处理
-		 * @param apiName {string}
-		 * @return:
-		 */
+     * @msg: 无分页时数据处理
+     * @param apiName {string}
+     * @return:
+     */
     // async notPageListSuccessCb (apiName) {
     //   this.loading = true
     //   let params = this.queryParams
@@ -88,7 +88,7 @@ const listMixins = {
     //   this.loading = false
     // },
     // 重置搜索表单
-    resetForm (obj) {
+    resetForm(obj) {
       for (let key in obj) {
         for (let item of this.queryFormList) {
           if (item.name === key) {
@@ -97,10 +97,9 @@ const listMixins = {
         }
       }
     }
-
   },
   computed: {
-    queryParams () {
+    queryParams() {
       let tempObj = {}
       for (let item of this.queryFormList) {
         if (item.type === 'daterange') {

@@ -2,7 +2,7 @@
   <section>
     <div class="search-box">
       <count-tips show-icon>
-        <template #icon><img src="../../../../assets/images/icon/mark.png" alt="提示" class="p-count-icon"/></template>
+        <template #icon><img src="../../../../assets/images/icon/mark.png" alt="提示" class="p-count-icon" /></template>
         <div class="p-count_item" v-for="(item, index) in countData" :key="index">{{ item.label }}：{{ item.total }}</div>
       </count-tips>
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="form" label-width="80px" @submit.native.prevent>
@@ -18,8 +18,7 @@
                 end-placeholder="结束日期"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
-                clearable
-              ></el-date-picker>
+                clearable></el-date-picker>
             </el-form-item>
             <el-form-item label="商户类型">
               <el-select v-model="form.merchantType" class="p-form-input_width" clearable placeholder="全部">
@@ -49,7 +48,7 @@
               <el-button type="primary" :loading="isSearchLock" @click="handleSearch">查询</el-button>
             </el-form-item>
           </el-col>
-          <el-col :xl="2" :lg="3" style="text-align:right">
+          <el-col :xl="2" :lg="3" style="text-align: right">
             <el-form-item>
               <el-button type="primary" size="small" plain icon="el-icon-plus" v-permission="'WXARCHIVE_LIST_ADD'" @click="handlePushDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
@@ -157,7 +156,7 @@
           <p>请{{ signUpData.legalPersonName }}（本人）微信扫码完成签约</p>
         </header>
         <div>
-          <img :src="signUpData.QRcode" alt="签约二维码" style="width:200px;height:200px" />
+          <img :src="signUpData.QRcode" alt="签约二维码" style="width: 200px; height: 200px" />
         </div>
         <section>
           <p>商户名称：{{ signUpData.merchantShortName }}</p>
@@ -259,7 +258,7 @@ export default {
     handleToProgress(row) {
       this.$router.push({ name: 'wxProgress', query: { id: row.archiveBaseDTO.id } })
     },
-    handleDirectAuditStatus: async function(row) {
+    handleDirectAuditStatus: async function (row) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id: row.archiveBaseDTO.id })
         this.$message({ type: 'success', message: '资料撤销成功' })
@@ -274,11 +273,11 @@ export default {
     handleReason(row) {
       this.$alert(row.archiveBaseDTO.directAuditResultMsg, '原因', { confirmButtonText: '知道了', customClass: 'e-message-con' }).catch(() => {})
     },
-    handleTabSort({ column, prop, order }) {
+    handleTabSort({ order }) {
       this.form.sortStatus = order ? order.substring(0, order.indexOf('ending')) : ''
       this.getQueryPage()
     },
-    handleCheckAccount: async function(row) {
+    handleCheckAccount: async function (row) {
       try {
         const generalRes = await generalDetail({ id: row.archiveBaseDTO.id })
         const res = await queryBySubMchId({ subMchId: generalRes?.[0]?.subMchId ?? '' })
@@ -291,7 +290,7 @@ export default {
         } else this.$message({ type: 'error', message: '验证账户暂无结果，请稍后重试' })
       } catch (error) {}
     },
-    handleSignUp: async function(row) {
+    handleSignUp: async function (row) {
       try {
         const generalRes = await generalDetail({ id: row.archiveBaseDTO.id })
         if (generalRes.length > 0 && generalRes.length === 1) {
@@ -302,7 +301,7 @@ export default {
         } else this.$message({ type: 'error', message: '签约账户暂无结果，请稍后重试' })
       } catch (error) {}
     },
-    handleDelRow: async function(row) {
+    handleDelRow: async function (row) {
       try {
         await delList({ id: row.archiveBaseDTO.id })
         if (!--this.tableData.length) this.currentPage = Math.ceil((this.totalPage - 1) / this.pageSize) || 1
@@ -310,14 +309,14 @@ export default {
         this.handleQueryTotalByStatus()
       } catch (error) {}
     },
-    handleStopOrUse: async function(row) {
+    handleStopOrUse: async function (row) {
       try {
         await generalStopUse({ archiveId: row.archiveBaseDTO.id, stopUse: Math.pow(0, row.archiveBaseDTO.stopUse) })
         await this.getQueryPage()
         this.$message.success('修改成功')
       } catch (error) {}
     },
-    getQueryTotalByStatus: async function() {
+    getQueryTotalByStatus: async function () {
       try {
         const res = await queryTotalByStatus(this.handleQueryTabParams())
         this.countData = []
@@ -335,7 +334,7 @@ export default {
         } else this.countData = countOptions
       } catch (error) {}
     },
-    getAuditStatus: async function() {
+    getAuditStatus: async function () {
       try {
         const res = await queryArchiveDirectAuditStatus()
         const direAuditStatusOptions = res.map(item => {
@@ -369,7 +368,7 @@ export default {
         this.isSearchLock = false
       })
     },
-    getQueryPage: async function() {
+    getQueryPage: async function () {
       try {
         this.isTabLock = true
         const res = await queryPage(this.handleQueryTabParams())

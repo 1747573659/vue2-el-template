@@ -8,7 +8,7 @@
         <el-form-item>
           <el-button type="primary" class="km-role-search" @click="search" :loading="cxLoading">查询</el-button>
         </el-form-item>
-        <el-form-item style="float:right">
+        <el-form-item style="float: right">
           <el-button type="primary" plain icon="el-icon-plus" v-permission="'ACCOUNT_ROLE_ADD'" @click="add">新增</el-button>
         </el-form-item>
       </el-form>
@@ -33,8 +33,7 @@
               iconColor="#FFA033"
               title="确定删除所选数据吗？"
               placement="top-start"
-              @confirm="del(scope.row)"
-            >
+              @confirm="del(scope.row)">
               <el-button slot="reference" type="text" size="small">删除</el-button>
             </el-popconfirm>
           </template>
@@ -48,8 +47,7 @@
           :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+          :total="total">
         </el-pagination>
       </div>
     </div>
@@ -91,12 +89,12 @@ export default {
       this.getList()
     },
     add() {
-      this.delCachedView({ name: 'roleAdd' }).then(()=> {
+      this.delCachedView({ name: 'roleAdd' }).then(() => {
         this.$router.push({ name: 'roleAdd' })
       })
     },
     edit(row) {
-      this.delCachedView({ name: 'roleAdd' }).then(()=> {
+      this.delCachedView({ name: 'roleAdd' }).then(() => {
         this.$router.push({ name: 'roleAdd', query: { id: row.id } })
       })
     },
@@ -143,7 +141,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;

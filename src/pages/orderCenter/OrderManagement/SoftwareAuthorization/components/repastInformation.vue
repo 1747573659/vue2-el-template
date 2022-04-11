@@ -18,8 +18,7 @@
             :request="getCustList"
             :is-max-page.sync="isShopMaxPage"
             @change="handleMerchantInfo"
-            placeholder="请输入名称/商户号"
-          />
+            placeholder="请输入名称/商户号" />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.merchantDTO.merchantNo" disabled placeholder="请先选择商户"></el-input>
@@ -357,9 +356,7 @@ export default {
     },
     setDelayValidTime(date) {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
-      return dayjs(countTime)
-        .add(this.form.merchantDTO.delayHour, 'year')
-        .format('YYYY-MM-DD 23:59:59')
+      return dayjs(countTime).add(this.form.merchantDTO.delayHour, 'year').format('YYYY-MM-DD 23:59:59')
     }
   }
 }
@@ -371,7 +368,7 @@ export default {
 }
 .p-information {
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-input__inner {
         text-align: right;
       }
@@ -382,7 +379,7 @@ export default {
       }
     }
     .e-select-con {
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
         &__inner {
           text-align: left;
@@ -400,7 +397,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -409,7 +406,7 @@ export default {
 }
 .p-address {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }
@@ -427,7 +424,7 @@ export default {
   &_remark {
     width: 100%;
     max-width: 240px;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }

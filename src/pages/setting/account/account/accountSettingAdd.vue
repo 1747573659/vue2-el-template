@@ -1,7 +1,7 @@
 <template>
   <div class="data-box" v-permission.page="'ACCOUNT_SET_ADD,ACCOUNT_SET_EDIT'">
     <div class="km-setting-account-add">
-      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width:350px">
+      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 350px">
         <el-form-item label="手机 (账号)" prop="loginName">
           <el-input v-model.trim="form.loginName" v-if="isAdd"></el-input>
           <span v-else>{{ form.loginName }}</span>
@@ -18,7 +18,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="描述" prop="remark">
-          <el-input v-model="form.remark" style="width:240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
+          <el-input v-model="form.remark" style="width: 240px" :autosize="{ minRows: 6 }" type="textarea"></el-input>
         </el-form-item>
         <el-form-item label="">
           <el-button class="channel-baseinfo-save" type="primary" @click="onSubmit">保存</el-button>
@@ -84,13 +84,12 @@ export default {
             userName: this.form.userName
           }
           try {
-            const res = await insertRole(data)
+            await insertRole(data)
             this.$message.success('操作成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'accountSetting' })
             })
           } catch (e) {}
-        } else {
         }
       })
     },
@@ -134,7 +133,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.data-box{
+.data-box {
   border-top: 16px solid#f7f8fa;
 }
 .km-setting-account-add {
@@ -149,7 +148,7 @@ export default {
   padding: 8px 23px;
 }
 .km-setting-dialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     display: flex;
     justify-content: center;
   }

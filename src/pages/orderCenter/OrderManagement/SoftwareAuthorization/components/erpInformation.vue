@@ -18,8 +18,7 @@
             :request="getShopPage"
             :is-max-page.sync="isShopMaxPage"
             @change="handleShopPage"
-            placeholder="请输入名称/商户号"
-          />
+            placeholder="请输入名称/商户号" />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.erpAuthMerchantDTO.merchantId" placeholder="请先选择商户" disabled></el-input>
@@ -29,12 +28,8 @@
         </el-form-item>
         <el-form-item label="产品">
           <el-input
-            :value="
-              `${form.erpAuthMerchantDTO.productCode ? '[' + form.erpAuthMerchantDTO.productCode + ']' : ''}${form.erpAuthMerchantDTO.productName ||
-                ''}`
-            "
-            disabled
-          ></el-input>
+            :value="`${form.erpAuthMerchantDTO.productCode ? '[' + form.erpAuthMerchantDTO.productCode + ']' : ''}${form.erpAuthMerchantDTO.productName || ''}`"
+            disabled></el-input>
         </el-form-item>
         <el-form-item label="门店授权站点">
           <el-input :value="form.erpAuthMerchantDTO.authCount" disabled></el-input>
@@ -49,11 +44,9 @@
     </el-card>
     <el-card shadow="never" class="p-card" v-if="isStoreCard || form.erpStoreOrderDetailList.length > 0">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
-        <span style="margin-right:20px">下单时库存: {{ storeOrderInventory }}</span>
+        <span style="margin-right: 20px">下单时库存: {{ storeOrderInventory }}</span>
         <el-button type="primary" size="small" plain @click="handleAuthorStoreVisible">选择授权门店</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.erpStoreOrderDetailList.length === 0">
-          刷新库存
-        </el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.erpStoreOrderDetailList.length === 0"> 刷新库存 </el-button>
       </div>
       <el-table :data="erpStoreOrderTabData" show-summary :summary-method="getStoreSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
@@ -61,44 +54,21 @@
         </el-table-column>
         <el-table-column prop="authStoreId" label="门店编码"></el-table-column>
         <el-table-column prop="authStoreName" label="门店名称"></el-table-column>
-        <el-table-column
-          prop="authSiteCount"
-          label="已授权点数"
-          v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)"
-          align="right"
-        ></el-table-column>
+        <el-table-column prop="authSiteCount" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
         <el-table-column prop="authPoint" label="本次授权数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authPoint }}</span>
-            <el-input
-              v-else
-              size="small"
-              v-model.number.trim="scope.row.authPoint"
-              @change="handleAuthNumAmount(scope.row, 'authPoint')"
-              style="width:100%"
-            ></el-input>
+            <el-input v-else size="small" v-model.number.trim="scope.row.authPoint" @change="handleAuthNumAmount(scope.row, 'authPoint')" style="width: 100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-model="scope.row.remark"
-              :disabled="$route.query.status === 'detail'"
-              maxlength="100"
-              clearable
-              class="e-product_remark"
-            ></el-input>
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
-            <el-popconfirm
-              class="el-button el-button--text"
-              @confirm="handleAuthorStoreDelDetailDTO(scope)"
-              placement="top-start"
-              title="确定删除所选数据吗？"
-            >
+            <el-popconfirm class="el-button el-button--text" @confirm="handleAuthorStoreDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
@@ -109,20 +79,12 @@
         :current-page.sync="erpStoreOrderCurrentPage"
         :page-size.sync="erpStoreOrderPageSize"
         :total="form.erpStoreOrderDetailList.length"
-        layout="prev, pager, next"
-      />
+        layout="prev, pager, next" />
     </el-card>
     <el-card shadow="never" class="p-card">
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品模块</el-button>
-        <el-button
-          type="primary"
-          size="small"
-          plain
-          @click="getProductStock"
-          :loading="checkProductStockLoad"
-          :disabled="form.erpAuthOrderDetails.length === 0"
-        >
+        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.erpAuthOrderDetails.length === 0">
           刷新库存
         </el-button>
       </div>
@@ -132,12 +94,7 @@
         </el-table-column>
         <el-table-column prop="moduleCode" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
-        <el-table-column
-          prop="authPoint"
-          label="已授权点数"
-          v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)"
-          align="right"
-        ></el-table-column>
+        <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
         <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column prop="authNum" label="加点数量" align="right">
           <template slot-scope="scope">
@@ -148,11 +105,10 @@
               v-model.number.trim="scope.row.authNum"
               :disabled="
                 (scope.row.moduleCode === 'MDZD' && form.erpStoreOrderDetailList.length > 0) ||
-                  (orderErpCustInfo.architectureType === 1 && ['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode))
+                (orderErpCustInfo.architectureType === 1 && ['BNK', 'BNK1', 'BNK5'].includes(scope.row.moduleCode))
               "
               @change="handleAuthNumAmount(scope.row, 'authNum')"
-              style="width:100%"
-            ></el-input>
+              style="width: 100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="银联通道">
@@ -171,21 +127,13 @@
                 :disabled="checkUnionChannelDisabled"
                 :is-max-page.sync="isChannelPage"
                 placeholder="银联通道"
-                class="e-select-con js-unionChannel"
-              />
+                class="e-select-con js-unionChannel" />
             </template>
           </template>
         </el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-model="scope.row.remark"
-              :disabled="$route.query.status === 'detail'"
-              maxlength="100"
-              clearable
-              class="e-product_remark"
-            ></el-input>
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
@@ -195,22 +143,14 @@
               class="el-button el-button--text"
               @confirm="handleDelDetailDTO(scope)"
               placement="top-start"
-              title="确定删除所选数据吗？"
-            >
+              title="确定删除所选数据吗？">
               <el-button type="text" size="small" slot="reference">删除</el-button>
             </el-popconfirm>
           </template>
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog
-      :visible.sync="checkProductVisible"
-      @close="productVal = ''"
-      :close-on-click-modal="false"
-      title="选择产品模块"
-      width="700px"
-      class="p-address-con"
-    >
+    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择产品模块" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="产品信息">
           <el-input v-model="productVal" maxlength="50" placeholder="模块编码/模块名称" clearable></el-input>
@@ -227,14 +167,7 @@
         <el-button type="primary" @click="handleConfirm" size="small">确定</el-button>
       </div>
     </el-dialog>
-    <el-dialog
-      :visible.sync="checkAuthorStoreVisible"
-      @close="authorVal = ''"
-      :close-on-click-modal="false"
-      title="选择授权门店"
-      width="800px"
-      class="p-address-con"
-    >
+    <el-dialog :visible.sync="checkAuthorStoreVisible" @close="authorVal = ''" :close-on-click-modal="false" title="选择授权门店" width="800px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="70px" @submit.native.prevent>
         <el-form-item label="门店编码">
           <el-input v-model="authorForm.storeId" maxlength="30" placeholder="" clearable></el-input>
@@ -244,24 +177,12 @@
         </el-form-item>
         <el-button type="primary" size="small" @click="handleAuthorStoreSearch">查询</el-button>
       </el-form>
-      <el-table
-        ref="authorStore"
-        :data="basicAuthorStoreData"
-        @select="handleAuthorStoreSelect"
-        @select-all="handleAuthorStoreSelectAll"
-        v-loading="checkAuthorStoreTabLock"
-      >
+      <el-table ref="authorStore" :data="basicAuthorStoreData" @select="handleAuthorStoreSelect" @select-all="handleAuthorStoreSelectAll" v-loading="checkAuthorStoreTabLock">
         <el-table-column type="selection" width="55"></el-table-column>
         <el-table-column prop="authStoreId" label="门店编码"></el-table-column>
         <el-table-column prop="authStoreName" label="门店名称"></el-table-column>
       </el-table>
-      <km-pagination
-        :request="getAuthorStorePage"
-        layout="prev, pager, next"
-        :current-page.sync="currentPage"
-        :page-size.sync="pageSize"
-        :total="totalPage"
-      />
+      <km-pagination :request="getAuthorStorePage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
       <div slot="footer">
         <el-button @click="checkAuthorStoreVisible = false" size="small">取消</el-button>
         <el-button type="primary" @click="handleAuthorStoreConfirm" size="small">确定</el-button>
@@ -332,7 +253,7 @@ export default {
       return chunk(this.form.erpStoreOrderDetailList, this.erpStoreOrderPageSize)[this.erpStoreOrderCurrentPage - 1]
     },
     checkUnionChannelDisabled() {
-      const { status, orderStatus } = this.$route.query
+      const { status } = this.$route.query
       return status === 'detail' || Boolean(this.channelByCustIdStatus)
     }
   },
@@ -470,9 +391,7 @@ export default {
     },
     handleShopPage(val) {
       if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId, authCountType } = this.shopPageData.find(
-          item => item.custId === val
-        )
+        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId, authCountType } = this.shopPageData.find(item => item.custId === val)
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, {
           authCount,
           productCode,
@@ -597,8 +516,7 @@ export default {
           if (this.basicAuthorStoreData?.length) {
             let hasDetailDTO = ''
             this.basicAuthorStoreData.forEach(item => {
-              if (this.form.erpStoreOrderDetailList?.length)
-                hasDetailDTO = this.form.erpStoreOrderDetailList.some(ele => ele.authStoreId === item.authStoreId)
+              if (this.form.erpStoreOrderDetailList?.length) hasDetailDTO = this.form.erpStoreOrderDetailList.some(ele => ele.authStoreId === item.authStoreId)
               if ((this.selectAuthorMaps?.size && this.selectAuthorMaps.has(item.authStoreId)) || hasDetailDTO) {
                 this.currentPageSelectAuthorSets.add(item.authStoreId)
                 this.$refs.authorStore.toggleRowSelection(item, true)
@@ -762,13 +680,13 @@ export default {
 }
 .p-information {
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-input__inner {
         text-align: right;
       }
     }
     .e-select-con {
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
         &__inner {
           text-align: left;
@@ -786,7 +704,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -795,7 +713,7 @@ export default {
 }
 .p-address {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }
@@ -813,7 +731,7 @@ export default {
   &_remark {
     width: 100%;
     max-width: 240px;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }

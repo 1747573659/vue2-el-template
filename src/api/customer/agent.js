@@ -17,7 +17,7 @@ const urlLinks = {
   distributeAppQuota: '/agent/distributeAppQuota',
   queryDistricDto: '/district/queryDistricDto',
   checkAgentName: '/agent/checkAgentName',
-  checkChannelName: '/agent/checkChannelName',
+  checkChannelName: '/agent/checkChannelName'
 }
 
 // 查询渠道列表

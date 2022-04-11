@@ -8,13 +8,13 @@ export default {
   name: 'BrandSelect',
   model: {
     prop: 'brandValue',
-    event: 'brandChange',
+    event: 'brandChange'
   },
   props: {
     brandValue: {
       type: [String, Array],
-      required: true,
-    },
+      required: true
+    }
   },
   data() {
     return {
@@ -30,23 +30,22 @@ export default {
             res = await queryTradeById({ id: node.value })
           }
 
-          let nodes = res.map((item) => ({
+          let nodes = res.map(item => ({
             value: item.id,
             label: item.name,
-            leaf: level >= 1,
+            leaf: level >= 1
           }))
           resolve(nodes)
-        },
-      },
+        }
+      }
     }
   },
   methods: {
     handleChange(value) {
       this.$emit('brandChange', value)
-    },
-  },
+    }
+  }
 }
 </script>
 
-<style lang="scss" scoped>
-</style>
+<style lang="scss" scoped></style>

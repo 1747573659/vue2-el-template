@@ -5,10 +5,19 @@
         <el-col :span="20">
           <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
             <el-form-item label="产品: ">
-              <km-select-page multiple ref="productCodes" v-model="form.productCode" option-label="name" option-value="code" placeholder="全部" :data.sync="licensedProductData" :request="getProductByPage" :is-max-page.sync="isLicensedProductMaxPage" />
+              <km-select-page
+                multiple
+                ref="productCodes"
+                v-model="form.productCode"
+                option-label="name"
+                option-value="code"
+                placeholder="全部"
+                :data.sync="licensedProductData"
+                :request="getProductByPage"
+                :is-max-page.sync="isLicensedProductMaxPage" />
             </el-form-item>
             <el-form-item label="业务类型:">
-              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width:100%" v-model="form.businessTypeList">
+              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width: 100%" v-model="form.businessTypeList">
                 <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
               </el-select>
             </el-form-item>
@@ -18,7 +27,7 @@
               <el-date-picker v-model="form.endTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 23:59:59"></el-date-picker>
             </el-form-item>
             <el-form-item>
-              <el-button style="margin-left:36px" type="primary" @click="handleCurrentChange(1)">查询</el-button>
+              <el-button style="margin-left: 36px" type="primary" @click="handleCurrentChange(1)">查询</el-button>
             </el-form-item>
           </el-form>
         </el-col>
@@ -42,9 +51,7 @@
             <div class="table-tr-design">
               <span style="margin-right: 5px">变动库存</span>
               <el-tooltip :hide-after="0" class="item" content="" effect="light" placement="top">
-                <div slot="content" style="font-size: 14px">
-                  变动通用库存+变动项目库存
-                </div>
+                <div slot="content" style="font-size: 14px">变动通用库存+变动项目库存</div>
                 <i class="el-icon-warning-outline tooltip-icon"></i>
               </el-tooltip>
             </div>
@@ -55,9 +62,7 @@
             <div class="table-tr-design">
               <span style="margin-right: 5px">期末库存</span>
               <el-tooltip :hide-after="0" class="item" content="" effect="light" placement="top">
-                <div slot="content" style="font-size: 14px">
-                  期末通用库存+期末项目库存
-                </div>
+                <div slot="content" style="font-size: 14px">期末通用库存+期末项目库存</div>
                 <i class="el-icon-warning-outline tooltip-icon"></i>
               </el-tooltip>
             </div>
@@ -85,7 +90,14 @@
         </el-table-column>
       </el-table>
       <div v-show="tableTotal > 0" class="km-page-block">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="thisPage" :page-sizes="[10, 30, 50]" :page-size.sync="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="tableTotal"></el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="thisPage"
+          :page-sizes="[10, 30, 50]"
+          :page-size.sync="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="tableTotal"></el-pagination>
       </div>
     </div>
   </div>
@@ -98,12 +110,12 @@ import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQu
 export default {
   name: 'softStockChangeHistory',
   components: { tableSummary },
-  data () {
+  data() {
     return {
       licensedProductData: [],
       isLicensedProductMaxPage: false,
       pickerOptions: {
-        disabledDate (time) {
+        disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
         }
       },
@@ -138,8 +150,8 @@ export default {
       }
     }
   },
-  beforeRouteEnter (to, from, next) {
-    next((vm) => {
+  beforeRouteEnter(to, from, next) {
+    next(vm => {
       // 通过 `vm` 访问组件实例
       // 当从软件库存查询页面跳转过来时，将跳转的只赋值 再去请求列表
       const { productCode, productName, agentId } = vm.$route.query
@@ -150,14 +162,14 @@ export default {
         vm.form.endTime = ''
         vm.getProductByPage({ query: productName, page: 1, row: 10, init: true })
       } else {
-        vm.form.startTime = dayjs((new Date()).getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00')
-        vm.form.endTime = dayjs((new Date()).getTime()).format('YYYY-MM-DD 23:59:59')
+        vm.form.startTime = dayjs(new Date().getTime()).subtract(60, 'days').format('YYYY-MM-DD 00:00:00')
+        vm.form.endTime = dayjs(new Date().getTime()).format('YYYY-MM-DD 23:59:59')
       }
       vm.handleCurrentChange(1)
     })
   },
   methods: {
-    getBusinessType (value) {
+    getBusinessType(value) {
       if (value) {
         let res = this.businessTypeList.filter(item => value === item.id)
         return res.length ? res[0].name : '--'
@@ -166,17 +178,17 @@ export default {
       }
     },
     // 分页
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.thisPage = 1
       this.pageSize = val
       this.getPageList()
     },
     // 分页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.thisPage = val
       this.getPageList()
     },
-    async getPageList () {
+    async getPageList() {
       try {
         this.tableLoading = true
         let subData = {
@@ -198,9 +210,9 @@ export default {
         this.tableLoading = false
       }
     },
-    async getProductByPage ({ query = '', page = 1, row = 10, init = false } = {}) {
+    async getProductByPage({ query = '', page = 1, row = 10, init = false } = {}) {
       try {
-        const res = await productQueryByPage({ info: query, page, row, type:1, notProductTypeList:[99] })
+        const res = await productQueryByPage({ info: query, page, row, type: 1, notProductTypeList: [99] })
         this.licensedProductData = this.licensedProductData.concat(res.results || [])
         if (this.licensedProductData.length) {
           this.licensedProductData.map(item => {
@@ -214,15 +226,15 @@ export default {
             this.$refs.productCodes.handleEchoVal(this.form.productCode)
           }, 600)
         }
-      } catch (error) { }
+      } catch (error) {}
     },
     // 表单汇总
-    async detailCount (res) {
+    async detailCount(res) {
       const keys = Object.keys(this.tableSummaryObj)
       keys.map(item => {
         this.tableSummaryObj[item].value = res[item] || 0
       })
-    },
+    }
   }
 }
 </script>

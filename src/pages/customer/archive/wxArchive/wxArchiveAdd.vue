@@ -3,15 +3,15 @@
     <header v-if="!['add', 'copy'].includes(pageStatus)">
       <el-row>
         <el-col :span="12" v-if="form.archiveBaseVO.directAuditStatus">
-          <label class="el-form-item__label" style="width:210px">进件状态:</label>
+          <label class="el-form-item__label" style="width: 210px">进件状态:</label>
           <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ form.archiveBaseVO.directAuditStatus | filterStatus(direAuditStatusOptions) }}</span>
         </el-col>
         <el-col :span="12" v-if="form.archiveBaseVO.directAuditResultMsg && [2, 4, 6, 8].includes(form.archiveBaseVO.directAuditStatus)">
-          <label class="el-form-item__label" style="width:210px">审核结果:</label>
+          <label class="el-form-item__label" style="width: 210px">审核结果:</label>
           <el-tooltip effect="dark" placement="top">
             <span class="e-wxArchive-review">{{ form.archiveBaseVO.directAuditResultMsg }}</span>
             <template #content>
-              <div style="max-width:500px">{{ form.archiveBaseVO.directAuditResultMsg }}</div>
+              <div style="max-width: 500px">{{ form.archiveBaseVO.directAuditResultMsg }}</div>
             </template>
           </el-tooltip>
         </el-col>
@@ -34,8 +34,7 @@
                 option-label="companyName"
                 option-value="id"
                 placeholder="商户名称"
-                style="width:240px"
-              />
+                style="width: 240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -61,12 +60,12 @@
           </el-col>
           <el-col :span="12" v-if="form.businessSceneShow.includes(2)">
             <el-form-item label="公众号APPID" prop="archiveBaseVO.publicId">
-              <el-input v-model="form.archiveBaseVO.publicId" placeholder="公众号APPID" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.publicId" placeholder="公众号APPID" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="form.businessSceneShow.includes(3)">
             <el-form-item label="小程序APPID" prop="archiveBaseVO.appletId">
-              <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.appletId" placeholder="小程序APPID" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="24">
@@ -93,19 +92,18 @@
                   :example-img="exampleImg.businessLicenseUrl"
                   :image-url="form.archiveExpandVO.businessLicenseUrl"
                   :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.businessLicenseUrl', 'business_license')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
-                />
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
-                <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号" style="width:240px"></el-input>
+                <el-input v-model="form.archiveExpandVO.licId" placeholder="营业执照注册号" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12">
               <el-form-item label="营业执照有效期" prop="archiveExpandVO.licValidityBigen">
                 <el-date-picker v-model="form.archiveExpandVO.licValidityBigen" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
-                <span style="margin: 0 10px;">至</span>
+                <span style="margin: 0 10px">至</span>
                 <span v-if="!form.archiveExpandVO.licValidityEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.licValidityEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
                 <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
@@ -141,7 +139,7 @@
             <el-col :span="12">
               <el-form-item label="组织机构代码有效期" prop="archiveExpandVO.orgInstitutionBigen">
                 <el-date-picker v-model="form.archiveExpandVO.orgInstitutionBigen" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
-                <span style="margin: 0 10px;">至</span>
+                <span style="margin: 0 10px">至</span>
                 <span v-if="!form.archiveExpandVO.orgInstitutionEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
                 <el-date-picker v-else v-model="form.archiveExpandVO.orgInstitutionEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
               </el-form-item>
@@ -154,8 +152,7 @@
                   :fileServer="fileServer"
                   :image-url="form.archiveExpandVO.orgInstitutionUrl"
                   :on-success="res => handleUpload(res, 'archiveExpandVO.orgInstitutionUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.orgInstitutionUrl)"
-                />
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.orgInstitutionUrl)" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -166,14 +163,13 @@
                   :fileServer="fileServer"
                   :image-url="form.archiveExpandVO.taxRegistrationUrl"
                   :on-success="res => handleUpload(res, 'archiveExpandVO.taxRegistrationUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)"
-                />
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.taxRegistrationUrl)" />
               </el-form-item>
             </el-col>
           </template>
           <el-col :span="12">
             <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
-              <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.companyName" placeholder="公司名称" style="width: 240px"></el-input>
               <el-tooltip effect="dark" content="公司名称必须与营业执照/登记证书一致，若营业执照上商户名称为空或为‘无’，请填写‘个体户+经营者姓名’，如‘个体户张三’" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
@@ -181,7 +177,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
-              <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="商户简称" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.merchantShortName" placeholder="商户简称" style="width: 240px"></el-input>
               <el-tooltip effect="dark" content="商户简称在消费者付款成功页展示，请认真填写" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
@@ -194,17 +190,17 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="详细地址" prop="archiveBaseVO.address">
-              <el-input v-model="form.archiveBaseVO.address" placeholder="详细地址" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.address" placeholder="详细地址" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系人" prop="archiveBaseVO.contact">
-              <el-input v-model="form.archiveBaseVO.contact" placeholder="联系人" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.contact" placeholder="联系人" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="证件号码" prop="archiveExpandVO.administratorIdCard">
-              <el-input v-model="form.archiveExpandVO.administratorIdCard" placeholder="证件号码" style="width:240px"></el-input>
+              <el-input v-model="form.archiveExpandVO.administratorIdCard" placeholder="证件号码" style="width: 240px"></el-input>
               <el-tooltip effect="dark" placement="top-start">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 <template #content>
@@ -216,12 +212,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
-              <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="邮箱" prop="archiveBaseVO.email">
-              <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width:240px"></el-input>
+              <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -233,8 +229,7 @@
                 :exampleImg="exampleImg.signboardUrl"
                 :image-url="form.archiveOtherVO.signboardUrl"
                 :on-success="res => handleUpload(res, 'archiveOtherVO.signboardUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"
-              />
+                @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -246,8 +241,7 @@
                 :exampleImg="exampleImg.businessSiteOneUrl"
                 :image-url="form.archiveOtherVO.businessSiteOneUrl"
                 :on-success="res => handleUpload(res, 'archiveOtherVO.businessSiteOneUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
-              />
+                @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)" />
             </el-form-item>
           </el-col>
           <el-col :span="12" v-if="['300', '577'].includes(form.archiveBaseVO.businessCategory)">
@@ -259,8 +253,7 @@
                 :exampleImg="exampleImg.typeAptitudeUrl"
                 :image-url="form.archiveOtherVO.typeAptitudeUrl"
                 :on-success="res => handleUpload(res, 'archiveOtherVO.typeAptitudeUrl')"
-                @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)"
-              />
+                @click="handleImgPreview(fileServe + form.archiveOtherVO.typeAptitudeUrl)" />
             </el-form-item>
           </el-col>
           <template v-if="form.archiveBaseVO.merchantType === 5">
@@ -272,8 +265,7 @@
                   :fileServer="fileServer"
                   :image-url="form.archiveOtherVO.businessSiteUrl"
                   :on-success="res => handleUpload(res, 'archiveOtherVO.businessSiteUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteUrl)"
-                />
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteUrl)" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -284,8 +276,7 @@
                   :fileServer="fileServer"
                   :image-url="form.archiveOtherVO.additionalOneUrl"
                   :on-success="res => handleUpload(res, 'archiveOtherVO.additionalOneUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalOneUrl)"
-                />
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalOneUrl)" />
               </el-form-item>
             </el-col>
             <el-col :span="12">
@@ -296,8 +287,7 @@
                   :fileServer="fileServer"
                   :image-url="form.archiveOtherVO.additionalTwoUrl"
                   :on-success="res => handleUpload(res, 'archiveOtherVO.additionalTwoUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalTwoUrl)"
-                />
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.additionalTwoUrl)" />
               </el-form-item>
             </el-col>
             <el-col :span="24">
@@ -320,8 +310,7 @@
                 :exampleImg="exampleImg.idFrontUrl"
                 :image-url="form.archiveExpandVO.idFrontUrl"
                 :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.idFrontUrl', 'idcard')"
-                @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"
-              />
+                @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -333,8 +322,7 @@
                 :exampleImg="exampleImg.idBackUrl"
                 :image-url="form.archiveExpandVO.idBackUrl"
                 :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.idBackUrl', 'idcard')"
-                @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"
-              />
+                @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -358,7 +346,7 @@
           <el-col :span="12">
             <el-form-item label="证件有效期" prop="archiveExpandVO.idBegin">
               <el-date-picker v-model="form.archiveExpandVO.idBegin" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
-              <span style="margin: 0 10px;">至</span>
+              <span style="margin: 0 10px">至</span>
               <span v-if="!form.archiveExpandVO.idEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
               <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
             </el-form-item>
@@ -395,8 +383,7 @@
                 :exampleImg="exampleImg.openingPermitUrl"
                 :image-url="form.archiveExpandVO.openingPermitUrl"
                 :on-success="res => handleUpload(res, 'archiveExpandVO.openingPermitUrl')"
-                @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)"
-              />
+                @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)" />
             </el-form-item>
           </el-col>
           <el-col :span="24" v-else>
@@ -408,13 +395,12 @@
                 :exampleImg="exampleImg.bankCardFrontUrl"
                 :image-url="form.archiveExpandVO.bankCardFrontUrl"
                 :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.bankCardFrontUrl', 'bank_card')"
-                @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
-              />
+                @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
-              <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width:240px"></el-input>
+              <el-input v-model="form.archiveExpandVO.bankCard" placeholder="银行账号" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -428,13 +414,12 @@
                 option-label="bankName"
                 option-value="bankCode"
                 placeholder="开户行"
-                style="width:240px"
-              />
+                style="width: 240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="开户名称" prop="archiveExpandVO.bankAccountName">
-              <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width:240px"></el-input>
+              <el-input v-model="form.archiveExpandVO.bankAccountName" placeholder="账户名" style="width: 240px"></el-input>
               <el-tooltip effect="dark" content="营业执照上的主体类型一般为有限公司、有限责任公司" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 <template #content>
@@ -455,8 +440,7 @@
                 option-label="bName"
                 option-value="bCode"
                 placeholder="开户支行"
-                style="width:240px"
-              />
+                style="width: 240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -471,7 +455,7 @@
         <el-row class="p-wxArchive-fill">
           <el-col :span="12">
             <el-form-item label="费率" prop="archiveBaseVO.fixFeeRate">
-              <el-select v-model="form.archiveBaseVO.fixFeeRate" :disabled="form.archiveBaseVO.merchantType !== 5" placeholder="费率" style="width:240px">
+              <el-select v-model="form.archiveBaseVO.fixFeeRate" :disabled="form.archiveBaseVO.merchantType !== 5" placeholder="费率" style="width: 240px">
                 <el-option v-for="item in rateOptions" :key="item.value" :label="item.lable" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
@@ -690,7 +674,7 @@ export default {
       if (val !== 5) this.form.archiveBaseVO.fixFeeRate = 60
       if (val === 2) this.form.archiveExpandVO.acctType = 1
     },
-    handleDirectAuditStatus: async function(id) {
+    handleDirectAuditStatus: async function (id) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id })
         this.handleCancel()
@@ -707,7 +691,7 @@ export default {
         if (item.children.some(ele => ele.value === val)) this.businessCategory = [item.value, val]
       })
     },
-    getBusinessCategory: async function() {
+    getBusinessCategory: async function () {
       const res = await businessCategory()
       let data = []
       res.forEach(item => {
@@ -733,7 +717,7 @@ export default {
         }
       })
     },
-    handleVerify: async function() {
+    handleVerify: async function () {
       this.$refs.form.validate(async valid => {
         if (valid) {
           try {
@@ -748,7 +732,7 @@ export default {
         }
       })
     },
-    handleDetail: async function() {
+    handleDetail: async function () {
       try {
         this.checkFormLoad = true
         const res = await detail({ archiveId: Number(this.$route.query.id) })
@@ -823,7 +807,7 @@ export default {
         this.form.archiveExpandVO.bankArea = value[2]
       }
     },
-    handleSelectPageRemoteRe: async function(query, type, page, rows) {
+    handleSelectPageRemoteRe: async function (query, type, page, rows) {
       try {
         const selectQueryMap = new Map([
           ['Merchant', { method: queryShopListByPage, params: { id: query || '' } }],
@@ -877,7 +861,7 @@ export default {
   background-color: #fff;
   > header {
     min-height: 72px;
-    /deep/ .el-col {
+    ::v-deep .el-col {
       height: 72px;
       display: flex;
       align-items: center;
@@ -937,7 +921,7 @@ export default {
       cursor: pointer;
     }
     &-textarea {
-      /deep/ {
+      ::v-deep {
         .el-input__count {
           line-height: 1.3;
         }
@@ -953,16 +937,16 @@ export default {
       right: 35vw;
       bottom: 20vh;
       top: 10vh;
-      /deep/ .el-image-viewer__mask {
+      ::v-deep .el-image-viewer__mask {
         display: none;
       }
-      /deep/ .el-image-viewer__close {
+      ::v-deep .el-image-viewer__close {
         background-color: #606266;
         width: 44px;
         height: 44px;
         font-size: 30px;
       }
-      /deep/ .el-icon-circle-close:before {
+      ::v-deep .el-icon-circle-close:before {
         content: '\e6db';
         color: #fff;
       }

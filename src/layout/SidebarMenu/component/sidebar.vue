@@ -80,16 +80,16 @@ export default {
 <style lang="scss" scoped>
 .e {
   &-submenu {
-    /deep/ .el-submenu__title {
+    ::v-deep .el-submenu__title {
       color: #475166 !important;
       padding-left: 29px !important;
       font-weight: bold;
     }
-    /deep/ .el-menu-item {
+    ::v-deep .el-menu-item {
       padding-left: 60px !important;
       font-weight: 400;
     }
-    /deep/ .el-submenu__icon-arrow {
+    ::v-deep .el-submenu__icon-arrow {
       display: none;
     }
   }

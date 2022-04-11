@@ -12,8 +12,7 @@
               searchName="id"
               id="id"
               :width="'240px'"
-              :placeholder="'商户名称'"
-            >
+              :placeholder="'商户名称'">
             </select-page>
           </el-form-item>
           <el-form-item label="退款订单号">
@@ -62,8 +61,7 @@
           @current-change="handleTabCurrent"
           @size-change="handleTabSize"
           background
-          layout="total, sizes, prev, pager, next, jumper"
-        ></el-pagination>
+          layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
     <order-detail-dialog ref="orderDetailDialog" :dialogTitle="dialogTitle" :form="dialogForm" type="refund" />
@@ -217,7 +215,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
@@ -255,7 +253,7 @@ export default {
   }
 }
 .search-form {
-  /deep/.el-select {
+  ::v-deep.el-select {
     display: block;
   }
 }

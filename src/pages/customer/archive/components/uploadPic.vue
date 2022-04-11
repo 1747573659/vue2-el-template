@@ -10,19 +10,14 @@
       :on-error="uploadErrer"
       :on-success="uploadSuccess"
       :on-change="handleFileUploaderChange"
-      :before-upload="beforeUpload"
-    >
+      :before-upload="beforeUpload">
       <img v-if="imageUrl" @click="imgClick" :src="fileServer + imageUrl" class="avatar" :class="{ card: card }" :alt="alt" />
       <div class="before-upload" :class="{ card: card }" v-else>
         <i class="el-icon-plus avatar-uploader-icon"></i>
         <div class="upload-text">
           上传照片
-          <span v-if="card === 'front'">
-            (正面)
-          </span>
-          <span v-if="card === 'back'">
-            (背面)
-          </span>
+          <span v-if="card === 'front'"> (正面) </span>
+          <span v-if="card === 'back'"> (背面) </span>
         </div>
       </div>
     </el-upload>
@@ -88,20 +83,20 @@ export default {
   },
   computed: {
     imageUrl: {
-      get: function() {
+      get: function () {
         return this.imagePath
       },
-      set: function() {}
+      set: function () {}
     }
   },
   methods: {
-    uploadErrer(err) {
+    uploadErrer() {
       this.$message({
         message: '上传失败',
         type: 'success'
       })
     },
-    uploadSuccess(res, file) {
+    uploadSuccess(res) {
       if (res.data) {
         if (res.data) this.imageUrl = res.data.path
         if (this.hasBase64) this.$emit('on-success', res, this.imgBase64)
@@ -113,7 +108,7 @@ export default {
         let self = this
         let reader = new FileReader()
         reader.readAsDataURL(file.raw)
-        reader.onload = function() {
+        reader.onload = function () {
           self.imgBase64 = reader.result
         }
       }
@@ -138,7 +133,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.avatar-uploader /deep/ .el-upload {
+.avatar-uploader ::v-deep .el-upload {
   cursor: pointer;
   position: relative;
   overflow: hidden;

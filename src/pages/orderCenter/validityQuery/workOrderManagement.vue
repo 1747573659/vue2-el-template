@@ -18,8 +18,7 @@
         :total="total"
         :page.sync="tableParam.page"
         :rows.sync="tableParam.rows"
-        @viewResClick="viewResClick"
-      ></base-table>
+        @viewResClick="viewResClick"></base-table>
     </div>
   </div>
 </template>
@@ -29,7 +28,7 @@ import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
 import dayjs from 'dayjs'
-import { queryProductList,queryWorkOrderList } from '@/api/dataCenter/dataCenter.js'
+import { queryProductList, queryWorkOrderList } from '@/api/dataCenter/dataCenter.js'
 import { mapActions } from 'vuex'
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
@@ -46,12 +45,7 @@ export default {
         {
           type: 'daterange',
           label: '提交日期',
-          value: [
-            dayjs()
-              .subtract(30, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs().format('YYYY-MM-DD')
-          ]
+          value: [dayjs().subtract(30, 'days').format('YYYY-MM-DD'), dayjs().format('YYYY-MM-DD')]
         },
         {
           type: 'input',
@@ -191,7 +185,7 @@ export default {
           this.total = res.totalCount || 0
           this.showAdd = true
         })
-        .catch(error => {
+        .catch(() => {
           this.showAdd = false
         })
         .finally(() => {
@@ -214,7 +208,7 @@ export default {
       })
     }
   },
-  activated: function() {
+  activated: function () {
     this.handleFilter(this.queryParams)
   },
   mounted() {

@@ -12,8 +12,7 @@
                 :value.sync="form.searchObject"
                 @change="searchObjectChange"
                 :options="searchObjectList"
-                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-              />
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }" />
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
               <select-page
@@ -28,8 +27,7 @@
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus"
                 @change="selectPageChange"
-                @clear="selectPageClear"
-              >
+                @clear="selectPageClear">
               </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
@@ -93,7 +91,7 @@
         <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
-              商户优惠(元)
+              商家优惠(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
                   由商家承担的参与微信/支付宝/银联<br />
@@ -108,7 +106,7 @@
         <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
-              商户实退(元)
+              商家实退(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">
                   退还用户银行卡或零钱账户的<br />
@@ -123,7 +121,7 @@
         <el-col :span="4" class="sum-card-item">
           <div class="sum-card">
             <div class="sum-card-title">
-              商户实收(元)
+              商家实收(元)
               <el-tooltip effect="dark" placement="top">
                 <div slot="content">交易总额-商家优惠-商家实退</div>
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -134,7 +132,7 @@
         </el-col>
       </el-row>
       <!-- ECHARTS -->
-      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%;height:400px;"></div>
+      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%; height: 400px"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
@@ -174,8 +172,6 @@ export default {
     exportEecord
   },
   data() {
-    let maxTime = ''
-    let minTime = ''
     return {
       exportLoad: false, // 导出
       selectPageNo: 1,
@@ -227,14 +223,7 @@ export default {
         { id: 3, name: '门店' }
       ]
     }
-    this.form.time = [
-      dayjs()
-        .subtract(7, 'days')
-        .format('YYYY-MM-DD'),
-      dayjs()
-        .subtract(1, 'days')
-        .format('YYYY-MM-DD')
-    ]
+    this.form.time = [dayjs().subtract(7, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
   },
   methods: {
     handleExportLists() {
@@ -268,7 +257,7 @@ export default {
         this.payPluginList.unshift({ id: '', name: '全部' })
       } catch (error) {}
     },
-    searchObjectChange(value) {
+    searchObjectChange() {
       this.form.id = null
       this.form.ObjContent = null
       this.isMaxPage = false
@@ -355,40 +344,19 @@ export default {
       this.form.id = null
       this.form.ObjContent = ''
     },
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       this.activeIndex = String(key)
     },
     setSearchTime(type) {
       switch (type) {
         case 'yesterday':
-          this.form.time = [
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD')
-          ]
+          this.form.time = [dayjs().subtract(1, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
           break
         case 'week':
-          this.form.time = [
-            dayjs()
-              .subtract(7, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD')
-          ]
+          this.form.time = [dayjs().subtract(7, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
           break
         case 'month':
-          this.form.time = [
-            dayjs()
-              .subtract(30, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD')
-          ]
+          this.form.time = [dayjs().subtract(30, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
           break
       }
     },
@@ -460,7 +428,7 @@ export default {
                   ${params[0].axisValueLabel}
                 </p>
                 <p style="font-size: 18px;">
-                  <span class="echart-tooltip-bot-title">商户实收:</span>${params[0].data}
+                  <span class="echart-tooltip-bot-title">商家实收:</span>${params[0].data}
                 </p>
               </div>
             `

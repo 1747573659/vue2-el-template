@@ -6,9 +6,7 @@
       </div>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <el-button type="primary" size="small" plain @click="handleProductVisible">选择产品</el-button>
-        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.detailDTOList.length === 0">
-          刷新库存
-        </el-button>
+        <el-button type="primary" size="small" plain @click="getProductStock" :loading="checkProductStockLoad" :disabled="form.detailDTOList.length === 0"> 刷新库存 </el-button>
       </div>
       <el-table ref="table" :data="form.detailDTOList" max-height="500" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
@@ -28,7 +26,7 @@
         <el-table-column prop="authNum" label="加点数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authNum }}</span>
-            <el-input v-else size="small" v-model.number.trim="scope.row.authNum" @change="handleAuthNumAmount(scope.row)" style="width:100%"></el-input>
+            <el-input v-else size="small" v-model.number.trim="scope.row.authNum" @change="handleAuthNumAmount(scope.row)" style="width: 100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="加密狗ID/序列号">
@@ -248,13 +246,13 @@ export default {
 }
 .p-information {
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-input__inner {
         text-align: right;
       }
     }
     .e-select-con {
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
         &__inner {
           text-align: left;
@@ -272,7 +270,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -281,7 +279,7 @@ export default {
 }
 .p-address {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }
@@ -298,7 +296,7 @@ export default {
   }
   &_remark {
     width: 100%;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }

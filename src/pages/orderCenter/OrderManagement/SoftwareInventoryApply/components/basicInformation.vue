@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con"  style="padding-bottom:72px" v-loading="checkBasicInformLoad">
+  <section class="p-information-con" style="padding-bottom: 72px" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
@@ -301,7 +301,7 @@ export default {
     border-bottom: 72px solid #fff;
   }
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-input {
         width: 100%;
         max-width: 240px;
@@ -314,7 +314,7 @@ export default {
       }
     }
     .e-select-con {
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
         &__inner {
           text-align: left;
@@ -332,7 +332,7 @@ export default {
     .p-card-reason {
       flex-basis: 80%;
     }
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -365,7 +365,7 @@ export default {
   text-align: center;
   box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
   z-index: 1000;
-  /deep/ .el-button {
+  ::v-deep .el-button {
     padding: 8px 22px;
   }
 }
@@ -382,13 +382,13 @@ export default {
   &_remark {
     width: 100%;
     max-width: 240px;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }
 }
 .e-dialog-audit {
-  /deep/ {
+  ::v-deep {
     .el-dialog__body {
       padding: 10px 20px 8px;
     }

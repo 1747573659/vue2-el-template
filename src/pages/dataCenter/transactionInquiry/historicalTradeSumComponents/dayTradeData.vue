@@ -16,8 +16,7 @@
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
                 @blur="clearDisabled"
-                value-format="yyyy-MM-dd"
-              >
+                value-format="yyyy-MM-dd">
               </el-date-picker>
               <el-button @click="setSearchTime('yesterday')" class="pure-btn_space" size="small" type="default">昨天</el-button>
               <el-button @click="setSearchTime('week')" size="small" type="default">近7天</el-button>
@@ -40,8 +39,7 @@
                 :value.sync="form.searchObject"
                 @change="searchObjectChange"
                 :options="searchObjectList"
-                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-              />
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }" />
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
               <select-page
@@ -56,8 +54,7 @@
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus"
                 @change="selectPageChange"
-                @clear="selectPageClear"
-              >
+                @clear="selectPageClear">
               </select-page>
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
@@ -152,7 +149,7 @@
         </el-col>
       </el-row>
       <!-- ECHARTS -->
-      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%;height:400px;"></div>
+      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%; height: 400px"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
@@ -237,7 +234,7 @@ export default {
       eChartsDataList: [],
       cxLoading: false,
       pickerOptions: {
-        onPick: ({ maxDate, minDate }) => {
+        onPick: ({ minDate }) => {
           if (minDate) {
             const day31 = 30 * 24 * 3600 * 1000
             maxTime = minDate.getTime() + day31
@@ -246,23 +243,9 @@ export default {
         },
         disabledDate: time => {
           if (maxTime) {
-            return (
-              time.getTime() >
-                dayjs()
-                  .endOf('day')
-                  .valueOf() -
-                  24 * 3600 * 1000 ||
-              time.getTime() > maxTime ||
-              time.getTime() < minTime
-            )
+            return time.getTime() > dayjs().endOf('day').valueOf() - 24 * 3600 * 1000 || time.getTime() > maxTime || time.getTime() < minTime
           }
-          return (
-            time.getTime() >
-            dayjs()
-              .endOf('day')
-              .valueOf() -
-              24 * 3600 * 1000
-          )
+          return time.getTime() > dayjs().endOf('day').valueOf() - 24 * 3600 * 1000
         }
       }
     }
@@ -287,14 +270,7 @@ export default {
         { id: 3, name: '门店' }
       ]
     }
-    this.form.time = [
-      dayjs()
-        .subtract(7, 'days')
-        .format('YYYY-MM-DD'),
-      dayjs()
-        .subtract(1, 'days')
-        .format('YYYY-MM-DD')
-    ]
+    this.form.time = [dayjs().subtract(7, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
   },
   methods: {
     handleExportLists() {
@@ -332,7 +308,7 @@ export default {
       maxTime = ''
       minTime = ''
     },
-    searchObjectChange(value) {
+    searchObjectChange() {
       this.form.id = null
       this.form.ObjContent = null
       this.isMaxPage = false
@@ -414,40 +390,19 @@ export default {
       this.selectPageNo = 1
       this.form.id = null
     },
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       this.activeIndex = String(key)
     },
     setSearchTime(type) {
       switch (type) {
         case 'yesterday':
-          this.form.time = [
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD')
-          ]
+          this.form.time = [dayjs().subtract(1, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
           break
         case 'week':
-          this.form.time = [
-            dayjs()
-              .subtract(7, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD')
-          ]
+          this.form.time = [dayjs().subtract(7, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
           break
         case 'month':
-          this.form.time = [
-            dayjs()
-              .subtract(30, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD')
-          ]
+          this.form.time = [dayjs().subtract(30, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
           break
       }
     },

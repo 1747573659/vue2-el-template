@@ -19,8 +19,7 @@
       :placeholder="placeText"
       :remote-method="remoteMethod"
       @clear="clear()"
-      @visible-change="visibleChange"
-    >
+      @visible-change="visibleChange">
       <el-option v-for="item in options" :key="item[id]" :label="item[name]" :value="item[id]"> </el-option>
       <div class="loading-page">{{ isMaxPage ? '已全部加载完毕' : '正在加载下一页' }}</div>
     </el-select>
@@ -94,10 +93,10 @@ export default {
   directives: {
     loadmore: {
       // 指令的定义
-      bind: function(el, binding) {
+      bind: function (el, binding) {
         // 获取km-ui定义好的scroll盒子
         const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap')
-        SELECTWRAP_DOM.addEventListener('scroll', function() {
+        SELECTWRAP_DOM.addEventListener('scroll', function () {
           const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight
           if (CONDITION) {
             binding.value()
@@ -107,9 +106,9 @@ export default {
     }
   },
   watch: {
-    parame: function(val, oldVal) {
+    parame: function (val, oldVal) {
       if (val) {
-        Object.keys(val).forEach((value, index) => {
+        Object.keys(val).forEach(value => {
           if (val[value] && val[value] !== oldVal[value]) {
             this.selValue = ''
             this.isInit = true

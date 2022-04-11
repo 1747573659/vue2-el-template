@@ -4,7 +4,7 @@
       <img src="../../assets/images/menu/logo.png" alt="logo" />
     </router-link>
     <!-- 导航 -->
-    <div class="p-head_nav" style="display: flex;">
+    <div class="p-head_nav" style="display: flex">
       <ul v-if="!isDropdown">
         <template v-if="routeMenus.length > 0">
           <template v-for="item in routeMenus">
@@ -78,7 +78,7 @@ export default {
   computed: {
     ...mapGetters(['routes']),
     getActiveRoute() {
-      return function(path) {
+      return function (path) {
         if (this.$route.name === 'homeIndex') {
           this.setBasePath(this.routes[0].path)
           return this.routes[0].path === path
@@ -91,7 +91,7 @@ export default {
     }
   },
   watch: {
-    $route(route) {
+    $route() {
       this.getChildRoutes(this.$route)
     }
   },
@@ -109,9 +109,7 @@ export default {
             item.children = item.children.filter(ele => ele.name !== 'orderManagement')
           } else if (userInfo.propertyType === 1 && userInfo.level !== 1) {
             item.children = item.children.map(ele => {
-              ele.children = ele.children.filter(
-                child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name)
-              )
+              ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name))
               return ele
             })
           }

@@ -1,6 +1,4 @@
-import {
-  _import
-} from '@/utils'
+import { _import } from '@/utils'
 import Layout from '@/layout'
 import kmContainer from '@/components/km-container'
 const customer = {
@@ -12,7 +10,8 @@ const customer = {
     title: '客户管理',
     name: 'customer'
   },
-  children: [{
+  children: [
+    {
       path: 'merchant',
       name: 'merchant',
       code: 'KM_CUSTOMER_MERCHANT',
@@ -25,7 +24,8 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'merchant'
       },
-      children: [{
+      children: [
+        {
           path: 'merchantManage',
           name: 'merchantManage',
           code: 'KM_CUSTOMER_MERCHANT_MANAGE',
@@ -128,7 +128,8 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'archive'
       },
-      children: [{
+      children: [
+        {
           path: 'wxArchive',
           name: 'wxArchive',
           code: 'KM_CUSTOMER_ARCHIVE_WX',
@@ -222,7 +223,8 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'agent'
       },
-      children: [{
+      children: [
+        {
           path: 'agentManage',
           name: 'agentManage',
           code: 'KM_CUSTOMER_AGENT_HOME',
@@ -307,7 +309,8 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'workorder'
       },
-      children: [{
+      children: [
+        {
           path: 'workOrderManagement',
           component: () => import('@/pages/orderCenter/validityQuery/workOrderManagement.vue'),
           name: 'workOrderManagement',
@@ -356,7 +359,8 @@ const customer = {
         icon: 'el-icon-menu',
         name: 'marketing'
       },
-      children: [{
+      children: [
+        {
           path: 'marketingManagement',
           component: () => import('@/pages/customer/marketing/merchantApplets/index.vue'),
           name: 'marketingManagement',

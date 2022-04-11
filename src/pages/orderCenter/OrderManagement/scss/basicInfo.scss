@@ -7,7 +7,7 @@
     .p-card-reason {
       flex-basis: 80%;
     }
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -35,7 +35,7 @@
   &-back {
     color: red;
   }
-  /deep/ {
+  ::v-deep {
     .el-card__header {
       padding: 15px 67px 15px 16px;
     }
@@ -52,18 +52,18 @@
     text-align: center;
     box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
     z-index: 1000;
-    /deep/ .el-button {
+    ::v-deep .el-button {
       padding: 8px 22px;
     }
   }
   &-product {
     &_remark {
       width: 100%;
-      /deep/ .el-input__inner {
+      ::v-deep .el-input__inner {
         text-align: left !important;
       }
     }
-    /deep/ {
+    ::v-deep {
       .el-input__inner {
         text-align: right;
       }

@@ -5,8 +5,7 @@
       v-for="(item, index) in baseArr"
       :key="item.path"
       :class="{ 'e-tag_active': isActive(item), 'p-tags_closable': index > 0 }"
-      @click="handleJumpPage(item, item.query)"
-    >
+      @click="handleJumpPage(item, item.query)">
       <span>{{ item.title }}</span>
       <i class="el-icon-close" @click.stop="handleClose(item)"></i>
     </div>
@@ -148,7 +147,7 @@ export default {
       &:last-child {
         border-right: 1px solid #e4e7ed;
       }
-      /deep/ .el-icon-close {
+      ::v-deep .el-icon-close {
         position: relative;
         width: 0;
         height: 14px;
@@ -164,7 +163,7 @@ export default {
           padding-left: 20px;
           padding-right: 20px;
         }
-        /deep/ .el-icon-close {
+        ::v-deep .el-icon-close {
           width: 14px;
         }
       }
@@ -172,7 +171,7 @@ export default {
         &:hover {
           padding-left: 13px;
           padding-right: 13px;
-          /deep/ .el-icon-close {
+          ::v-deep .el-icon-close {
             width: 14px;
           }
         }
@@ -197,7 +196,7 @@ export default {
   &-tags {
     &_dropdown {
       padding: 0;
-      /deep/ .el-dropdown-link {
+      ::v-deep .el-dropdown-link {
         padding: 0 10px;
         display: inline-block;
       }

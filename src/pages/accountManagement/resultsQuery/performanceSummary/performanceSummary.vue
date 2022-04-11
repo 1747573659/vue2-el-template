@@ -31,20 +31,8 @@
           <template slot-scope="scope">{{ scope.row.yearCompletedRate }}%</template>
         </el-table-column>
         <template v-for="(item, index) in quartersVO">
-          <el-table-column
-            :prop="`${item}QuarterAmount`"
-            :label="`Q${index + 1}任务`"
-            :key="`${item}QuarterAmount`"
-            min-width="110"
-            align="right"
-          ></el-table-column>
-          <el-table-column
-            :prop="`${item}CompletedAmount`"
-            :label="`Q${index + 1}销售`"
-            :key="`${item}CompletedAmount`"
-            min-width="110"
-            align="right"
-          ></el-table-column>
+          <el-table-column :prop="`${item}QuarterAmount`" :label="`Q${index + 1}任务`" :key="`${item}QuarterAmount`" min-width="110" align="right"></el-table-column>
+          <el-table-column :prop="`${item}CompletedAmount`" :label="`Q${index + 1}销售`" :key="`${item}CompletedAmount`" min-width="110" align="right"></el-table-column>
           <el-table-column :prop="`${item}CompletedRate`" :label="`Q${index + 1}完成率`" :key="`${item}CompletedRate`" width="110" align="right">
             <template slot-scope="scope">{{ scope.row[`${item}CompletedRate`] }}%</template>
           </el-table-column>
@@ -56,7 +44,6 @@
 </template>
 
 <script>
-import NP from 'number-precision'
 import { toFixedFilter } from '@/filters'
 
 import { queryByPage, summaryCount } from '@/api/accountManagement/accountQuery/performanceSummary'
@@ -122,10 +109,9 @@ export default {
       }
     },
     getStoreSummaries(param) {
-      const { columns, data } = param
+      const { columns } = param
       const sums = []
       columns.forEach((column, index) => {
-        const values = data.map(item => parseFloat(item[column.property]))
         sums[0] = '合计'
         if (index > 1) {
           sums[index] = this.performanceCountVO[column.property]

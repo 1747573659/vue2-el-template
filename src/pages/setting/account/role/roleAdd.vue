@@ -71,7 +71,7 @@ export default {
   },
   methods: {
     // 递归选中的id
-    getCheckIdInitForPC(arr, list) {
+    getCheckIdInitForPC(arr) {
       var temp = []
       if (arr && arr.length > 0) {
         arr.forEach(item => {
@@ -81,7 +81,7 @@ export default {
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function(array, item) {
+            const traverse = function (array, item) {
               array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
@@ -122,7 +122,7 @@ export default {
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function(array, item) {
+            const traverse = function (array, item) {
               array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
@@ -150,7 +150,7 @@ export default {
     },
     getCheckIdList(tree) {
       let checkIdList = []
-      const traverse = function(node) {
+      const traverse = function (node) {
         const childNodes = node.root ? node.root.childNodes : node.childNodes
         childNodes.forEach(child => {
           if (child.checked || child.indeterminate) {
@@ -187,7 +187,7 @@ export default {
             remark: this.form.remark
           }
           try {
-            const res = await addRole(data)
+            await addRole(data)
             this.$message.success('操作成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ name: 'roleManagement' })
@@ -222,9 +222,24 @@ export default {
         var cid = 444444
         // 屏蔽二级经销商采购订单权限选择
         const userInfo = JSON.parse(localStorage.getItem('userInfo'))
-        if(userInfo.propertyType === 1 && userInfo.level === 2 || userInfo.propertyType === 2){
-          let purchaseOrderCodes = ['ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER', 'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREUPDATEORDER']
-          if (userInfo.propertyType === 2) purchaseOrderCodes = purchaseOrderCodes.concat(['XDD_PAY_SHOP_SOFTNOTEMANGEMENT', 'ORDERCENTER_ORDERMANAGEMENT', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREAUTHORIZATION', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYREPLACE', 'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYAPPLY', 'ORDERCENTER_ORDERMANAGEMENT_SELFSERVICEEQUIPMENT', 'ORDERCENTER_ORDERMANAGEMENT_ERPAUTHORIZEDTRANSFER', 'ORDERCENTER_EWECHAT_ORDER'])
+        if ((userInfo.propertyType === 1 && userInfo.level === 2) || userInfo.propertyType === 2) {
+          let purchaseOrderCodes = [
+            'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREPURCHASEORDER',
+            'ORDERCENTER_ORDERMANAGEMENT_HARDWAREPURCHASEORDER',
+            'ORDERCENTER_ORDERMANAGEMENT_DEMANDDEVELOPMENTFEE',
+            'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREUPDATEORDER'
+          ]
+          if (userInfo.propertyType === 2)
+            purchaseOrderCodes = purchaseOrderCodes.concat([
+              'XDD_PAY_SHOP_SOFTNOTEMANGEMENT',
+              'ORDERCENTER_ORDERMANAGEMENT',
+              'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREAUTHORIZATION',
+              'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYREPLACE',
+              'ORDERCENTER_ORDERMANAGEMENT_SOFTWAREINVENTORYAPPLY',
+              'ORDERCENTER_ORDERMANAGEMENT_SELFSERVICEEQUIPMENT',
+              'ORDERCENTER_ORDERMANAGEMENT_ERPAUTHORIZEDTRANSFER',
+              'ORDERCENTER_EWECHAT_ORDER'
+            ])
           const purchaseOrderIds = []
           res.allMenus = res.allMenus.filter(item => {
             if (purchaseOrderCodes.includes(item.code)) purchaseOrderIds.push(item.id)
@@ -334,7 +349,7 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-.data-box{
+.data-box {
   border-top: 16px solid#f7f8fa;
   border-bottom: 16px solid#f7f8fa;
 }

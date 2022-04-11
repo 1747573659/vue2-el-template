@@ -21,28 +21,27 @@
               :isMaxPage="isMaxPageErp"
               :options="ObjContentListErp"
               @loadMore="loadMoreErp"
-              style="width: 100%"
-            >
+              style="width: 100%">
             </select-page>
           </el-form-item>
           <el-form-item label="授权状态:">
-            <el-select style="width:100%" filterable v-model="form.status" placeholder="请选择">
+            <el-select style="width: 100%" filterable v-model="form.status" placeholder="请选择">
               <el-option v-for="item in authorizationState" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="在线状态:">
-            <el-select style="width:100%" filterable v-model="form.isOnline" placeholder="请选择">
+            <el-select style="width: 100%" filterable v-model="form.isOnline" placeholder="请选择">
               <el-option v-for="item in isOnlineState" :key="item.value" :label="item.label" :value="item.value"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="享钱开通状态:">
-            <el-select style="width:100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
+            <el-select style="width: 100%" filterable v-model="form.xqOpenStatus" placeholder="请选择">
               <el-option v-for="item in openingState" :key="item.value" :label="item.label" :value="item.value"> </el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="注册日期:">
             <el-date-picker
-              style="width:240px"
+              style="width: 240px"
               v-model="form.firstLoginDate"
               type="daterange"
               range-separator="至"
@@ -51,13 +50,12 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :clearable="true"
-              :picker-options="pickerOptions"
-            >
+              :picker-options="pickerOptions">
             </el-date-picker>
           </el-form-item>
           <el-form-item label="转正日期:">
             <el-date-picker
-              style="width:240px"
+              style="width: 240px"
               v-model="form.firstGrantAuthDate"
               type="daterange"
               range-separator="至"
@@ -66,18 +64,17 @@
               start-placeholder="开始日期"
               end-placeholder="结束日期"
               :clearable="true"
-              :picker-options="pickerOptions"
-            >
+              :picker-options="pickerOptions">
             </el-date-picker>
           </el-form-item>
-          <el-form-item style="padding-left: 30px;">
+          <el-form-item style="padding-left: 30px">
             <el-button @click="handleCurrentChange(1)" size="small" type="primary">查询</el-button>
           </el-form-item>
         </el-row>
       </el-form>
     </div>
     <div class="data-box">
-      <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableList" style="width: 100%;">
+      <el-table v-loading="tableLoading" :max-height="tabMaxHeight" :data="tableList" style="width: 100%">
         <el-table-column align="right" type="index" label="序号" width="70"></el-table-column>
         <el-table-column prop="custId" width="180" label="软注编码"></el-table-column>
         <el-table-column width="146" label="软注商户/享钱商户">
@@ -126,8 +123,8 @@
         </el-table-column>
         <el-table-column prop="isOnline" width="88" label="在线状态">
           <template slot-scope="scope">
-            <div v-if="scope.row.isOnline===true">在线</div>
-            <div v-else-if="scope.row.isOnline===false">离线</div>
+            <div v-if="scope.row.isOnline === true">在线</div>
+            <div v-else-if="scope.row.isOnline === false">离线</div>
             <div v-else>未知</div>
           </template>
         </el-table-column>
@@ -148,8 +145,7 @@
           @current-change="handleCurrentChange"
           background
           :page-sizes="[10, 30, 50]"
-          layout="total, sizes, prev, pager, next, jumper"
-        ></el-pagination>
+          layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
     <el-dialog title="编辑" :visible.sync="checkMerchantVisible" width="600px" custom-class="p-merchant-dialog">
@@ -159,9 +155,9 @@
         </el-form-item>
         <el-form-item label="客户有效期" prop="validPeriod">
           <el-date-picker v-model="merchantForm.validPeriod" :disabled="lockValidityPeriod" placeholder="客户有效期" type="date" clearable></el-date-picker>
-          <span style="margin-left: 10px;">23:59:59</span>
+          <span style="margin-left: 10px">23:59:59</span>
         </el-form-item>
-        <el-form-item label="客户备注" prop="remark" style="padding-top:5px">
+        <el-form-item label="客户备注" prop="remark" style="padding-top: 5px">
           <el-input type="textarea" v-model="merchantForm.remark" :rows="4" maxlength="100"></el-input>
         </el-form-item>
       </el-form>
@@ -450,7 +446,11 @@ export default {
   border-bottom: 16px solid #f7f8fa;
 }
 .el-dialog__wrapper {
+<<<<<<< HEAD
   /deep/ {
+=======
+  ::v-deep {
+>>>>>>> 9d3f8968... feat: init project
     .p-merchant-dialog {
       .el-dialog__body {
         padding-top: 20px;

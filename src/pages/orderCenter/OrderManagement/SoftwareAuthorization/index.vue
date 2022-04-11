@@ -14,8 +14,7 @@
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
-                clearable
-              ></el-date-picker>
+                clearable></el-date-picker>
             </el-form-item>
             <el-form-item label="产品类型">
               <el-select v-model="form.productType" placeholder="产品类型" @change="handleProductTypeChange" clearable>
@@ -33,8 +32,7 @@
                 :is-max-page.sync="isLicensedProductMaxPage"
                 placeholder="全部"
                 multiple
-                collapse-tags
-              />
+                collapse-tags />
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
@@ -52,8 +50,7 @@
                 option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
-                placeholder="下单人"
-              />
+                placeholder="下单人" />
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
@@ -61,7 +58,7 @@
           </el-col>
         </el-row>
         <el-row type="flex" justify="space-between">
-          <el-form-item style="margin-left:80px">
+          <el-form-item style="margin-left: 80px">
             <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
             <el-button size="small" v-permission="'SOFTWARE_AUTHORIZATION_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
             <km-export-view v-permission="'SOFTWARE_AUTHORIZATION_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
@@ -212,10 +209,10 @@ export default {
         this.checkExportLoad = false
       }
     },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+    handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
       return await authOrderExportLog({ exportType: 7, page: currentPage, rows: pageSize })
     },
-    handleExportDel: async function(row) {
+    handleExportDel: async function (row) {
       return await authOrderExportDel(row.id)
     },
     async handleOrderPage({ query = '', page = 1, rows = 10 } = {}) {

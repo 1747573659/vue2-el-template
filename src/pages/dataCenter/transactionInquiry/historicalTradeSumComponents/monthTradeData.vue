@@ -20,8 +20,7 @@
                 :picker-options="pickerOptions"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                value-format="yyyy-MM"
-              >
+                value-format="yyyy-MM">
               </el-date-picker>
             </el-form-item>
             <el-form-item label="查询对象" prop="paymentCode">
@@ -31,8 +30,7 @@
                 filterable
                 :value.sync="form.searchObject"
                 :options="searchObjectList"
-                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-              />
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }" />
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
               <select-page
@@ -47,8 +45,7 @@
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus"
                 @change="selectPageChange"
-                @clear="selectPageClear"
-              >
+                @clear="selectPageClear">
               </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
@@ -153,7 +150,7 @@
         </el-col>
       </el-row>
       <!-- ECHARTS -->
-      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%;height:400px;"></div>
+      <div id="eChart" v-if="tableData.cashierMockDTOS" style="width: 100%; height: 400px"></div>
       <!-- TABLE -->
       <el-table :data="tableData.cashierMockDTOS" ref="table">
         <!-- <el-table :max-height="tableMaxHeight" :data="tableData.cashierMockDTOS" ref="table"> -->
@@ -228,30 +225,17 @@ export default {
       eChartsDataList: [],
       cxLoading: false,
       pickerOptions: {
-        onPick: ({ maxDate, minDate }) => {
+        onPick: ({ minDate }) => {
           if (minDate) {
-            const day31 = 31 * 24 * 3600 * 1000
             maxTime = dayjs(minDate.getTime()).add(11, 'months')
             minTime = dayjs(minDate.getTime()).subtract(11, 'months')
           }
         },
         disabledDate: time => {
           if (maxTime) {
-            return (
-              time.getTime() >
-                dayjs()
-                  .endOf('day')
-                  .valueOf() ||
-              time.getTime() > maxTime ||
-              time.getTime() < minTime
-            )
+            return time.getTime() > dayjs().endOf('day').valueOf() || time.getTime() > maxTime || time.getTime() < minTime
           }
-          return (
-            time.getTime() >
-            dayjs()
-              .endOf('day')
-              .valueOf()
-          )
+          return time.getTime() > dayjs().endOf('day').valueOf()
         }
       }
     }
@@ -276,12 +260,7 @@ export default {
         { id: 3, name: '门店' }
       ]
     }
-    this.form.time = [
-      dayjs()
-        .subtract(11, 'months')
-        .format('YYYY-MM'),
-      dayjs().format('YYYY-MM')
-    ]
+    this.form.time = [dayjs().subtract(11, 'months').format('YYYY-MM'), dayjs().format('YYYY-MM')]
   },
   methods: {
     handleExportLists() {
@@ -319,7 +298,7 @@ export default {
       maxTime = ''
       minTime = ''
     },
-    searchObjectChange(value) {
+    searchObjectChange() {
       this.form.id = null
       this.form.ObjContent = null
       this.isMaxPage = false
@@ -411,7 +390,7 @@ export default {
       this.selectPageNo = 1
       this.form.ObjContent = ''
     },
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       this.activeIndex = String(key)
     },
     initSubData() {

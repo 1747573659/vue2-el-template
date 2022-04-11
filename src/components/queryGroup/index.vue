@@ -22,8 +22,7 @@
               :key="index"
               v-else-if="item.type === 'date' || item.type === 'daterange'"
               :label="item.label"
-              :label-width="item.labelWidth"
-            >
+              :label-width="item.labelWidth">
               <el-date-picker
                 :clearable="isClearable"
                 :type="item.type"
@@ -34,8 +33,7 @@
                 end-placeholder="结束日期"
                 :picker-options="pickerBeginDateBefore"
                 @change="daterangeChange"
-                v-model="item.value"
-              ></el-date-picker>
+                v-model="item.value"></el-date-picker>
             </el-form-item>
           </template>
           <slot name="formfooter"></slot>
@@ -85,7 +83,7 @@ export default {
     return {
       resetData: '',
       pickerBeginDateBefore: {
-        onPick: ({ maxDate, minDate }) => {
+        onPick: ({ minDate }) => {
           if (minDate) {
             maxTime = dayjs(minDate.getTime()).add(_this.timeinterval, 'months')
             minTime = dayjs(minDate.getTime()).subtract(_this.timeinterval, 'months')
@@ -94,22 +92,10 @@ export default {
         disabledDate(time) {
           if (_this.timeinterval) {
             if (maxTime) {
-              return (
-                time.getTime() >
-                  dayjs()
-                    .endOf('day')
-                    .valueOf() ||
-                time.getTime() > maxTime ||
-                time.getTime() < minTime
-              )
+              return time.getTime() > dayjs().endOf('day').valueOf() || time.getTime() > maxTime || time.getTime() < minTime
             }
           } else {
-            return (
-              time.getTime() >
-              dayjs()
-                .endOf('day')
-                .valueOf()
-            )
+            return time.getTime() > dayjs().endOf('day').valueOf()
           }
         }
       }
@@ -120,7 +106,7 @@ export default {
   },
 
   methods: {
-    search(val) {
+    search() {
       this.$emit('search', this.queryParams)
     },
     // 日期区间选择callback
@@ -138,8 +124,6 @@ export default {
 
 <style scoped lang="scss">
 .query-group-container {
-  .xdd_small-btn {
-  }
   overflow: hidden;
   .all-fr {
     float: left;
@@ -150,7 +134,7 @@ export default {
       float: right;
     }
   }
-  /deep/.xdd_item_form {
+  ::v-deep.xdd_item_form {
     display: inline-flex;
     .el-form-item__content {
       flex: 1;

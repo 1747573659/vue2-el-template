@@ -6,7 +6,7 @@
           <div class="com-edit-ruleForm__content">
             <el-form-item label="商户：" prop="adminId">
               <select-page
-                style="width:240px"
+                style="width: 240px"
                 :isMaxPage="isMaxPage"
                 :options="selectOptions"
                 @remoteMethod="remoteSelect"
@@ -15,8 +15,7 @@
                 @changeSelectPage="changeSelectPage"
                 label="companyName"
                 value="id"
-                placeholder="商户"
-              ></select-page>
+                placeholder="商户"></select-page>
             </el-form-item>
             <el-form-item label="品牌名称：" prop="name">
               <el-input v-model="ruleForm.name" maxlength="30" placeholder=""></el-input>
@@ -114,7 +113,7 @@ export default {
     }
   },
   watch: {
-    'ruleForm.industryId': function(val) {
+    'ruleForm.industryId': function (val) {
       this.ruleForm.erpProductId = ''
       if (val === '') {
         this.erpProductOptions = []
@@ -137,7 +136,7 @@ export default {
     this.remoteSelect()
   },
   methods: {
-    selectPageMore(type) {
+    selectPageMore() {
       if (!this.isMaxPage) {
         this.selectPageNo++
         this.remoteSelect(this.searchString)
@@ -152,7 +151,7 @@ export default {
     changeSelectPage(value) {
       this.ruleForm.adminId = value
     },
-    remoteSelect: async function(query) {
+    remoteSelect: async function (query) {
       if (!!this.searchString && query !== this.searchString) {
         this.resetSelectPage()
       }
@@ -206,7 +205,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.com-edit-wrapper{
+.com-edit-wrapper {
   border-top: 16px solid #f7f8fa;
 }
 .com-edit-block {

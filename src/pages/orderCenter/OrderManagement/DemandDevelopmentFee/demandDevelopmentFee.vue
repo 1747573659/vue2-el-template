@@ -14,8 +14,7 @@
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
-                clearable
-              ></el-date-picker>
+                clearable></el-date-picker>
             </el-form-item>
             <el-form-item label="行业">
               <el-select v-model="form.industry" @change="handleIndustryChange" clearable>
@@ -33,8 +32,7 @@
                 :is-max-page.sync="isProductMaxPage"
                 placeholder="全部"
                 multiple
-                collapse-tags
-              />
+                collapse-tags />
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
@@ -56,19 +54,18 @@
                 option-value="id"
                 :request="getOrderPersonPage"
                 :is-max-page.sync="isOrderPersonMaxPage"
-                placeholder="全部"
-              />
+                placeholder="全部" />
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="16" clearable></el-input>
             </el-form-item>
-            <el-form-item style="margin-left:80px">
+            <el-form-item style="margin-left: 80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'DEMAND_DEVELOPMENT_FEE_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view v-permission="'DEMAND_DEVELOPMENT_FEE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
-          <el-col :xl="2" :lg="3" style="text-align:right">
+          <el-col :xl="2" :lg="3" style="text-align: right">
             <el-form-item v-permission="'DEMAND_DEVELOPMENT_FEE_PLUS'">
               <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
@@ -214,10 +211,10 @@ export default {
         this.checkExportLoad = false
       }
     },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+    handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
       return await channelExportLog({ exportType: 35, page: currentPage, rows: pageSize })
     },
-    handleExportDel: async function(row) {
+    handleExportDel: async function (row) {
       return await channelExportDel(row.id)
     },
     handleIndustryChange() {

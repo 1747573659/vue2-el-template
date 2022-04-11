@@ -5,12 +5,12 @@
         <el-col :span="20">
           <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
             <el-form-item label="产品:">
-              <el-select clearable class="address-select" filterable placeholder="全部" size="small" style="width:100%" v-model="form.productCode">
+              <el-select clearable class="address-select" filterable placeholder="全部" size="small" style="width: 100%" v-model="form.productCode">
                 <el-option :key="index" :label="item.name" :value="item.code" v-for="(item, index) in allProductList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="库存状态:">
-              <el-select clearable class="address-select" placeholder="全部" size="small" style="width:100%" v-model="form.inventoryType">
+              <el-select clearable class="address-select" placeholder="全部" size="small" style="width: 100%" v-model="form.inventoryType">
                 <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in inventoryTypeList"></el-option>
               </el-select>
             </el-form-item>
@@ -34,9 +34,7 @@
             <span class="table-tr-design">
               <span style="margin-right: 5px">总库存</span>
               <el-tooltip :hide-after="0" class="item" content="" effect="light" placement="top">
-                <span slot="content" style="font-size: 14px">
-                  通用库存+项目库存
-                </span>
+                <span slot="content" style="font-size: 14px"> 通用库存+项目库存 </span>
                 <i class="el-icon-warning-outline tooltip-icon"></i>
               </el-tooltip>
             </span>
@@ -49,9 +47,7 @@
             <span class="table-tr-design">
               <span style="margin-right: 5px">限期库存</span>
               <el-tooltip :hide-after="0" class="item" content="" effect="light" placement="top">
-                <span slot="content" style="font-size: 14px">
-                  通用库存、项目库存中有限期的库存
-                </span>
+                <span slot="content" style="font-size: 14px"> 通用库存、项目库存中有限期的库存 </span>
                 <i class="el-icon-warning-outline tooltip-icon"></i>
               </el-tooltip>
             </span>
@@ -64,7 +60,14 @@
         </el-table-column>
       </el-table>
       <div v-show="tableTotal > 0" class="km-page-block">
-        <el-pagination @size-change="handleSizeChange" @current-change="handleCurrentChange" :current-page.sync="thisPage" :page-sizes="[10, 30, 50]" :page-size.sync="pageSize" layout="total, sizes, prev, pager, next, jumper" :total="tableTotal"></el-pagination>
+        <el-pagination
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          :current-page.sync="thisPage"
+          :page-sizes="[10, 30, 50]"
+          :page-size.sync="pageSize"
+          layout="total, sizes, prev, pager, next, jumper"
+          :total="tableTotal"></el-pagination>
       </div>
     </div>
   </div>
@@ -77,7 +80,7 @@ import { mapActions } from 'vuex'
 export default {
   name: 'querySoftStock',
   components: { tableSummary },
-  data () {
+  data() {
     return {
       inventoryTypeList: [
         { id: 1, name: '有通用库存' },
@@ -92,10 +95,10 @@ export default {
       // 原产品列表
       allProductList: [],
       tableSummaryObj: {
-        allTotalAmount: { label: '总库存', value: '', formatNumber: true, },
-        commonTotalAmount: { label: '通用库存', value: '', formatNumber: true, },
-        projectTotalAmount: { label: '项目库存', value: '', formatNumber: true, },
-        limitTotalAmount: { label: '限期库存', value: '', formatNumber: true, },
+        allTotalAmount: { label: '总库存', value: '', formatNumber: true },
+        commonTotalAmount: { label: '通用库存', value: '', formatNumber: true },
+        projectTotalAmount: { label: '项目库存', value: '', formatNumber: true },
+        limitTotalAmount: { label: '限期库存', value: '', formatNumber: true }
       }, // 表格汇总数据
       form: {
         orders: {},
@@ -104,14 +107,14 @@ export default {
       }
     }
   },
-  created () {
+  created() {
     this.getAllProductList()
     this.handleCurrentChange(1)
   },
   methods: {
     ...mapActions(['delCachedView']),
     // 新页签打开“软件库存变动流水”，自动填充过滤条件：截止日期、经销商、产品
-    detail (row) {
+    detail(row) {
       const { productCode, productName, agentId } = row
       this.delCachedView({ name: 'softStockChangeHistory' }).then(() => {
         this.$router.push({
@@ -124,37 +127,37 @@ export default {
         })
       })
     },
-    handleTabSort ({ prop, order }) {
+    handleTabSort({ prop, order }) {
       this.form.orders = { [prop]: order ? order.substring(0, order.indexOf('ending')) : '' }
       this.getPageList()
     },
     // 获取所有产品列表
-    async getAllProductList () {
+    async getAllProductList() {
       let data = {
         page: 1,
         rows: 500,
         // isOnSale: '1',
         type: '1',
-        notProductTypeList: [99],
+        notProductTypeList: [99]
         // productTypeList: [1, 2]
       }
       try {
         const res = await productQueryByPage(data)
         this.allProductList = res.results
-      } catch (error) { }
+      } catch (error) {}
     },
     // 分页
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.thisPage = 1
       this.pageSize = val
       this.getPageList()
     },
     // 分页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.thisPage = val
       this.getPageList()
     },
-    async getPageList () {
+    async getPageList() {
       try {
         this.tableLoading = true
         let subData = {
@@ -175,12 +178,12 @@ export default {
       }
     },
     // 表单汇总
-    async detailCount (res) {
+    async detailCount(res) {
       const keys = Object.keys(this.tableSummaryObj)
       keys.map(item => {
         this.tableSummaryObj[item].value = res[item] || 0
       })
-    },
+    }
   }
 }
 </script>

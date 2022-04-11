@@ -1,6 +1,15 @@
 <template>
   <div>
-    <el-upload class="avatar-uploader" :action="httpUploadUrl" :headers="{ token: token }" :accept="accept" :on-progress="onProgress" :show-file-list="false" :on-error="uploadErrer" :on-success="uploadSuccess" :before-upload="beforeUpload">
+    <el-upload
+      class="avatar-uploader"
+      :action="httpUploadUrl"
+      :headers="{ token: token }"
+      :accept="accept"
+      :on-progress="onProgress"
+      :show-file-list="false"
+      :on-error="uploadErrer"
+      :on-success="uploadSuccess"
+      :before-upload="beforeUpload">
       <div v-if="imageUrl" class="avatar-img-content">
         <i v-if="showIconClose" class="avatar-icon-close el-icon-error" @click.stop="handleRemove"></i>
         <img :src="imageUrl" class="avatar" />
@@ -11,7 +20,7 @@
       </span>
     </el-upload>
     <slot name="footer">
-      <span class="avatar__msg">{{desc}}</span>
+      <span class="avatar__msg">{{ desc }}</span>
     </slot>
   </div>
 </template>
@@ -25,19 +34,19 @@ export default {
     desc: {
       type: String,
       default: ''
-    },// 描述
+    }, // 描述
     showIconClose: {
       type: Boolean,
-      default: false,
+      default: false
     }, // 删除按钮
     uploadUrl: {
       require: true,
       type: String,
-      default: '',
+      default: ''
     }, // 上传接口
     accept: {
       type: String,
-      default: 'image/gif,image/jpeg,image/jpg,image/png',
+      default: 'image/gif,image/jpeg,image/jpg,image/png'
     }, // 图片类型
     size: {
       type: Number,
@@ -46,34 +55,32 @@ export default {
     imageUrl: {
       require: true,
       type: String,
-      default: '',
+      default: ''
     }, // 图片链接
     isWidthEqHeight: {
       type: Boolean,
       default: false
     }
   },
-  data () {
+  data() {
     return {
       httpUploadUrl: process.env.VUE_APP_BASE_API + this.uploadUrl,
-      token: getLocal('token'),
+      token: getLocal('token')
     }
   },
   methods: {
-    handleRemove () {
+    handleRemove() {
       this.$emit('on-remove')
     },
-    uploadErrer (err) {
+    uploadErrer() {
       this.$message.error('上传失败')
     },
-    uploadSuccess (res, file) {
+    uploadSuccess(res, file) {
       this.$emit('on-success', res, file)
     },
-    onProgress(event, file, fileList) {
-    },
-    beforeUpload (file) {
+    beforeUpload(file) {
       // const url = window.URL || window.webkitURL
-      const isSize = this.getImgSizeFormFile(file).then(({width, height}) => {
+      const isSize = this.getImgSizeFormFile(file).then(({ width, height }) => {
         const imgTypes = this.accept.split(',')
         const isJPG = imgTypes.includes(file.type)
         const isLt2M = file.size / 1024 < this.size
@@ -90,7 +97,7 @@ export default {
           this.$message.error(`上传的图片需要宽高相等!`)
           return Promise.reject()
         }
-        if(isLt2M && isJPG) {
+        if (isLt2M && isJPG) {
           return file
         } else {
           return Promise.reject()
@@ -99,9 +106,9 @@ export default {
       return isSize
     },
     getImgSizeFormFile(file) {
-      return new Promise((resolve, reject) => {
+      return new Promise(resolve => {
         const img = new Image()
-        img.onload = function() {
+        img.onload = function () {
           resolve({
             width: this.width,
             height: this.height
@@ -110,7 +117,7 @@ export default {
         img.src = URL.createObjectURL(file)
       })
     }
-  },
+  }
 }
 </script>
 
@@ -118,7 +125,7 @@ export default {
 .avatar-uploader {
   height: 82px;
 }
-.avatar-uploader /deep/ .el-upload {
+.avatar-uploader ::v-deep .el-upload {
   position: relative;
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -146,7 +153,7 @@ export default {
     }
   }
 }
-.avatar-uploader /deep/ .el-upload:hover {
+.avatar-uploader ::v-deep .el-upload:hover {
   border-color: #409eff;
 }
 .avatar-uploader-icon-block {

@@ -21,8 +21,7 @@
     :remote="remote"
     :reserve-keyword="reserveKeyword"
     :remote-method="remoteMethod"
-    @clear="clear()"
-  >
+    @clear="clear()">
     <el-option v-for="item in options" :key="item[optionsItem.key]" :label="item[optionsItem.label]" :value="item[optionsItem.value]"> </el-option>
   </el-select>
 </template>

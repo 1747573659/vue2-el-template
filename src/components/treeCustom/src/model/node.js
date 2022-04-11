@@ -24,7 +24,7 @@ export const getChildState = node => {
 const reInitChecked = function (node) {
   if (node.childNodes.length === 0) return
 
-  const {all, none, half} = getChildState(node.childNodes)
+  const { all, none, half } = getChildState(node.childNodes)
   if (all) {
     node.checked = true
     node.indeterminate = false
@@ -62,7 +62,7 @@ const getPropertyFromData = function (node, prop) {
 let nodeIdSeed = 0
 
 export default class Node {
-  constructor (options) {
+  constructor(options) {
     this.id = nodeIdSeed++
     this.text = null
     this.checked = false
@@ -73,7 +73,7 @@ export default class Node {
     this.visible = true
 
     for (let name in options) {
-      if ( Object.prototype.hasOwnProperty.call(options, name)) {
+      if (Object.prototype.hasOwnProperty.call(options, name)) {
         this[name] = options[name]
       }
     }
@@ -132,7 +132,7 @@ export default class Node {
     this.updateLeafState()
   }
 
-  setData (data) {
+  setData(data) {
     if (!Array.isArray(data)) {
       markNodeData(this, data)
     }
@@ -152,21 +152,21 @@ export default class Node {
     }
   }
 
-  get label () {
+  get label() {
     return getPropertyFromData(this, 'label')
   }
 
-  get key () {
+  get key() {
     const nodeKey = this.store.key
     if (this.data) return this.data[nodeKey]
     return null
   }
 
-  get disabled () {
+  get disabled() {
     return getPropertyFromData(this, 'disabled')
   }
 
-  get nextSibling () {
+  get nextSibling() {
     const parent = this.parent
     if (parent) {
       const index = parent.childNodes.indexOf(this)
@@ -177,7 +177,7 @@ export default class Node {
     return null
   }
 
-  get previousSibling () {
+  get previousSibling() {
     const parent = this.parent
     if (parent) {
       const index = parent.childNodes.indexOf(this)
@@ -188,7 +188,7 @@ export default class Node {
     return null
   }
 
-  contains (target, deep = true) {
+  contains(target, deep = true) {
     const walk = function (parent) {
       const children = parent.childNodes || []
       let result = false
@@ -205,14 +205,14 @@ export default class Node {
     return walk(this)
   }
 
-  remove () {
+  remove() {
     const parent = this.parent
     if (parent) {
       parent.removeChild(this)
     }
   }
 
-  insertChild (child, index, batch) {
+  insertChild(child, index, batch) {
     if (!child) throw new Error('insertChild error: child is required.')
     if (!(child instanceof Node)) {
       if (!batch) {
@@ -248,7 +248,7 @@ export default class Node {
     this.updateLeafState()
   }
 
-  insertBefore (child, ref) {
+  insertBefore(child, ref) {
     let index
     if (ref) {
       index = this.childNodes.indexOf(ref)
@@ -256,7 +256,7 @@ export default class Node {
     this.insertChild(child, index)
   }
 
-  insertAfter (child, ref) {
+  insertAfter(child, ref) {
     let index
     if (ref) {
       index = this.childNodes.indexOf(ref)
@@ -265,7 +265,7 @@ export default class Node {
     this.insertChild(child, index)
   }
 
-  removeChild (child) {
+  removeChild(child) {
     const children = this.getChildren() || []
     const dataIndex = children.indexOf(child.data)
     if (dataIndex > -1) {
@@ -283,7 +283,7 @@ export default class Node {
     this.updateLeafState()
   }
 
-  removeChildByData (data) {
+  removeChildByData(data) {
     let targetNode = null
 
     for (let i = 0; i < this.childNodes.length; i++) {
@@ -298,7 +298,7 @@ export default class Node {
     }
   }
 
-  expand (callback, expandParent) {
+  expand(callback, expandParent) {
     const done = () => {
       if (expandParent) {
         let parent = this.parent
@@ -312,7 +312,7 @@ export default class Node {
     }
 
     if (this.shouldLoadData()) {
-      this.loadData((data) => {
+      this.loadData(data => {
         if (data instanceof Array) {
           if (this.checked) {
             this.setChecked(true, true)
@@ -327,21 +327,21 @@ export default class Node {
     }
   }
 
-  doCreateChildren (array, defaultProps = {}) {
-    array.forEach((item) => {
+  doCreateChildren(array, defaultProps = {}) {
+    array.forEach(item => {
       this.insertChild(objectAssign({ data: item }, defaultProps), undefined, true)
     })
   }
 
-  collapse () {
+  collapse() {
     this.expanded = false
   }
 
-  shouldLoadData () {
+  shouldLoadData() {
     return this.store.lazy === true && this.store.load && !this.loaded
   }
 
-  updateLeafState () {
+  updateLeafState() {
     if (this.store.lazy === true && this.loaded !== true && typeof this.isLeafByUser !== 'undefined') {
       this.isLeaf = this.isLeafByUser
       return
@@ -354,7 +354,7 @@ export default class Node {
     this.isLeaf = false
   }
 
-  setChecked (value, deep, recursion, passValue, isLast) {
+  setChecked(value, deep, recursion, passValue, isLast) {
     this.indeterminate = value === 'half'
     this.checked = value === true
     if (this.store.checkStrictly) return
@@ -415,7 +415,7 @@ export default class Node {
       //     }
       //   }
       // }
-      if (!this.isLeaf && (!all && allWithoutDisable)) {
+      if (!this.isLeaf && !all && allWithoutDisable) {
         this.checked = false
         value = false
       }
@@ -438,12 +438,15 @@ export default class Node {
 
       if (this.shouldLoadData()) {
         // Only work on lazy load data.
-        this.loadData(() => {
-          handleDescendants()
-          reInitChecked(this)
-        }, {
-          checked: value !== false
-        })
+        this.loadData(
+          () => {
+            handleDescendants()
+            reInitChecked(this)
+          },
+          {
+            checked: value !== false
+          }
+        )
         return
       } else {
         handleDescendants()
@@ -458,7 +461,8 @@ export default class Node {
     }
   }
 
-  getChildren (forceInit = false) { // this is data
+  getChildren(forceInit = false) {
+    // this is data
     if (this.level === 0) return this.data
     const data = this.data
     if (!data) return null
@@ -480,9 +484,9 @@ export default class Node {
     return data[children]
   }
 
-  updateChildren () {
+  updateChildren() {
     const newData = this.getChildren() || []
-    const oldData = this.childNodes.map((node) => node.data)
+    const oldData = this.childNodes.map(node => node.data)
 
     const newDataMap = {}
     const newNodes = []
@@ -496,7 +500,7 @@ export default class Node {
     })
 
     if (!this.store.lazy) {
-      oldData.forEach((item) => {
+      oldData.forEach(item => {
         if (!newDataMap[item[NODE_KEY]]) this.removeChildByData(item)
       })
     }
@@ -508,11 +512,11 @@ export default class Node {
     this.updateLeafState()
   }
 
-  loadData (callback, defaultProps = {}) {
+  loadData(callback, defaultProps = {}) {
     if (this.store.lazy === true && this.store.load && !this.loaded && (!this.loading || Object.keys(defaultProps).length)) {
       this.loading = true
 
-      const resolve = (children) => {
+      const resolve = children => {
         this.loaded = true
         this.loading = false
         this.childNodes = []

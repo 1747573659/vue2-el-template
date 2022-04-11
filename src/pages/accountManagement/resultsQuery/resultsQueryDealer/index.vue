@@ -12,8 +12,7 @@
               start-placeholder="开始日期"
               value-format="yyyy-MM-dd HH:mm:ss"
               :default-time="['00:00:00', '23:59:59']"
-              end-placeholder="结束日期"
-            ></el-date-picker>
+              end-placeholder="结束日期"></el-date-picker>
           </el-form-item>
           <el-form-item label="行业">
             <el-select multiple clearable placeholder="全部" @change="industryChange" size="small" style="width: 100%" v-model="form.industry">
@@ -36,8 +35,7 @@
               placeholder="全部"
               :data.sync="licensedProductData"
               :request="getProductByPage"
-              :is-max-page.sync="isLicensedProductMaxPage"
-            />
+              :is-max-page.sync="isLicensedProductMaxPage" />
           </el-form-item>
           <el-form-item label="业务类型">
             <el-select clearable filterable placeholder="全部" size="small" style="width: 100%" v-model="form.businessType">
@@ -68,9 +66,7 @@
         <el-table-column prop="channelManangerName" label="渠道经理" width="100" fixed></el-table-column>
         <el-table-column prop="industryName" label="行业" width="100"></el-table-column>
         <el-table-column width="200" label="产品">
-          <template slot-scope="scope">{{
-            `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}`
-          }}</template>
+          <template slot-scope="scope">{{ `${scope.row.productCode ? '[' + scope.row.productCode + ']' : ''}${scope.row.productName || ''}` }}</template>
         </el-table-column>
         <el-table-column prop="businessTypeName" label="业务类型" width="120"></el-table-column>
         <el-table-column label="数量" width="140" align="right">
@@ -138,8 +134,7 @@
           :page-sizes="[10, 30, 50]"
           :page-size.sync="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="tableTotal"
-        ></el-pagination>
+          :total="tableTotal"></el-pagination>
       </div>
     </div>
   </div>
@@ -191,12 +186,7 @@ export default {
       },
       productTypeList: [],
       form: {
-        orderTime: [
-          dayjs()
-            .subtract(60, 'days')
-            .format('YYYY-MM-DD 00:00:00'),
-          dayjs().format('YYYY-MM-DD 23:59:59')
-        ],
+        orderTime: [dayjs().subtract(60, 'days').format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')],
         industry: [],
         productType: '',
         productCode: [],

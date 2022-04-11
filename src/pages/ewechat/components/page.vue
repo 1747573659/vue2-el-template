@@ -2,7 +2,7 @@
   <div class="km-container-con">
     <div class="search-box">
       <com-form ref="queryForm" :raw-form="queryConfig" label-width="110px" label-position="right" :is-in-page="true">
-        <el-col :span="8" slot="buttons" style="padding-left: 0; padding-right: 0;">
+        <el-col :span="8" slot="buttons" style="padding-left: 0; padding-right: 0">
           <el-form-item label-width="110px">
             <el-button size="small" type="primary" @click="query" :loading="queryLoading">查询</el-button>
             <el-button size="small" plain @click="reset" :loading="resetLoading">重置</el-button>
@@ -23,8 +23,7 @@
         :loading="tableLoading"
         :is-in-page="true"
         @page-change="onPageChange"
-        @size-change="onSizeChange"
-      >
+        @size-change="onSizeChange">
       </com-table>
     </div>
   </div>
@@ -137,7 +136,7 @@ export default {
       const queryFormData = this.$refs.queryForm.form
       const params = this.queryFormatter(queryFormData)
       try {
-        const res = await downloadBufferFile(DOWNLOAD_URL + this.downloadApi, { isExport: true, params }, 'POST', 'json')
+        await downloadBufferFile(DOWNLOAD_URL + this.downloadApi, { isExport: true, params }, 'POST', 'json')
       } catch (e) {
         this.$message.error('下载出错了')
       }
@@ -152,7 +151,7 @@ export default {
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
 }
-/deep/ {
+::v-deep {
   .el-select {
     width: 240px;
   }

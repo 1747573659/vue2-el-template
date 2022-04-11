@@ -86,7 +86,7 @@ export default {
 <style lang="scss" scoped>
 .p-address {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }
@@ -104,7 +104,7 @@ export default {
     margin: 0 8px 16px 8px;
   }
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-radio__label {
         display: none;
       }

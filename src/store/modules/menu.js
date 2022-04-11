@@ -70,7 +70,7 @@ const mutations = {
       }
     }
   },
-  DEL_ALL_TAG_VIEW: (state, view) => {
+  DEL_ALL_TAG_VIEW: state => {
     state.tagViews = [].concat(state.tagViews[0])
     state.cachedViews = []
   }

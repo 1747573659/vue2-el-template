@@ -1,30 +1,25 @@
 import Vue from 'vue'
 import VueRouter from 'vue-router'
-import HomeView from '../views/HomeView.vue'
 
 Vue.use(VueRouter)
 
-const routes = [
-  {
-    path: '/',
-    name: 'home',
-    component: HomeView
-  },
-  {
-    path: '/about',
-    name: 'about',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/AboutView.vue')
-  }
-]
+// 路由数据
+import { constantRoutes as routes } from './routes'
 
 // 导出路由 在 main.js 里使用
 const router = new VueRouter({
+  routes,
   mode: 'history',
-  base: process.env.BASE_URL,
-  routes
+  base: '',
+  linkActiveClass: 'active-link', // 点击进行路由跳转时那个路由会添加active-link
+  linkExactActiveClass: 'exact-active-link', // 路由路径完全匹配是点击的时候会有exact-active-link
+  scrollBehavior(to, from, savedPosition) {
+    if (savedPosition) {
+      return savedPosition
+    } else {
+      return { y: 0 }
+    }
+  }
 })
 
 export default router

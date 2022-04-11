@@ -98,7 +98,7 @@ export default {
   }
 }
 .el-dialog__wrapper {
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     padding-top: 20px;
     padding-bottom: 0;
   }

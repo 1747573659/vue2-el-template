@@ -16,8 +16,7 @@
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus(2)"
                 @change="selectPageChange"
-                @clear="selectPageClear(2)"
-              >
+                @clear="selectPageClear(2)">
               </select-page>
             </el-form-item>
             <el-form-item label="代理商" prop="paymentCode">
@@ -32,8 +31,7 @@
                 :isMaxPage="isMaxPage"
                 @focus="selectPageFocus(1)"
                 @change="selectPageChange"
-                @clear="selectPageClear(1)"
-              >
+                @clear="selectPageClear(1)">
               </select-page>
             </el-form-item>
             <el-form-item label="" prop="paymentCode">
@@ -147,8 +145,7 @@
           :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="totalPage"
-        >
+          :total="totalPage">
         </el-pagination>
       </div>
     </div>
@@ -306,10 +303,9 @@ export default {
       this.currentPage = 1
       this.getList
     },
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       this.activeIndex = String(key)
     },
-    setSearchTime(type) {},
     initSubData() {
       let data = {
         adminId: String(this.$route.query.searchObject) === '2' ? this.$route.query.id : this.form.adminId,

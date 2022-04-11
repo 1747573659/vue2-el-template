@@ -70,7 +70,7 @@ export default {
     this.handleApplySchedule()
   },
   methods: {
-    handleApplySchedule: async function() {
+    handleApplySchedule: async function () {
       try {
         this.progressLoad = true
         const res = await queryDirectArchiveApplySchedule({ id: this.$route?.query?.id ?? '' })
@@ -111,7 +111,7 @@ export default {
       }
     }
   }
-  /deep/ {
+  ::v-deep {
     .el-timeline-item__icon {
       font-size: 24px;
       color: #00c250;

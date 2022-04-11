@@ -14,7 +14,7 @@ export default {
       default: 'table'
     }
   },
-  render (createElement) {
+  render(createElement) {
     const genSlot = this.ctx.$scopedSlots[`${this.slotType}_${this.name}`]
     if (genSlot) {
       return createElement('div', genSlot(this.$attrs))

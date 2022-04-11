@@ -101,7 +101,7 @@ export default {
 .p {
   &-drop {
     &_con {
-      /deep/ .el-form {
+      ::v-deep .el-form {
         width: 300px;
         margin: 0 auto;
         margin-top: 11px;

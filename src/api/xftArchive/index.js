@@ -50,7 +50,7 @@ const urlLinks = {
   // 导出
   export: '/archive/xdd/export',
   // 导出记录
-  exportLog: '/export/log',
+  exportLog: '/export/log'
 }
 
 export function xftArchiveExportDel(data) {

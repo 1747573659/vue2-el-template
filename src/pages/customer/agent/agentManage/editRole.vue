@@ -10,14 +10,14 @@ import RoleForm from '@/components/roleForm'
 export default {
   name: 'editRole',
   components: {
-    RoleForm,
+    RoleForm
   },
   data() {
     return {
       isEdit: true,
       type: 1,
-      router: '/customer/agent/agentRole',
+      router: '/customer/agent/agentRole'
     }
-  },
+  }
 }
 </script>

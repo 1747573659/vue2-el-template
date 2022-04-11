@@ -1,6 +1,14 @@
 <template>
   <div>
-    <el-upload class="avatar-uploader" :action="uploadUrl" :headers="{ token: token }" :accept="accept" :show-file-list="false" :on-error="uploadErrer" :on-success="uploadSuccess" :before-upload="beforeUpload">
+    <el-upload
+      class="avatar-uploader"
+      :action="uploadUrl"
+      :headers="{ token: token }"
+      :accept="accept"
+      :show-file-list="false"
+      :on-error="uploadErrer"
+      :on-success="uploadSuccess"
+      :before-upload="beforeUpload">
       <div v-if="imageUrl" class="avatar-img-content">
         <i v-if="showIconClose" class="avatar-icon-close el-icon-error" @click.stop="handleRemove"></i>
         <img :src="fileServer + imageUrl" class="avatar" />
@@ -24,41 +32,41 @@ export default {
   props: {
     showIconClose: {
       type: Boolean,
-      default: false,
+      default: false
     },
     uploadUrl: {
       require: true,
       type: String,
-      default: '',
+      default: ''
     },
     accept: {
       type: String,
-      default: 'image/gif,image/jpeg,image/jpg,image/png',
+      default: 'image/gif,image/jpeg,image/jpg,image/png'
     },
     imageUrl: {
       require: true,
       type: String,
-      default: '',
+      default: ''
     },
     fileServer: {
       require: true,
       type: String,
-      default: '',
-    },
+      default: ''
+    }
   },
   data() {
     return {
-      token: getLocal('token'),
+      token: getLocal('token')
     }
   },
   methods: {
     handleRemove() {
       this.$emit('on-remove')
     },
-    uploadErrer(err) {
+    uploadErrer() {
       this.$message.error('上传失败')
     },
-    uploadSuccess(res, file) {
+    uploadSuccess(res) {
       this.$emit('on-success', res)
     },
     beforeUpload(file) {
@@ -72,8 +80,8 @@ export default {
         return this.$message.error('上传图片大小不能超过 2MB!')
       }
       return isLt2M && isJPG
-    },
-  },
+    }
+  }
 }
 </script>
 
@@ -81,7 +89,7 @@ export default {
 .avatar-uploader {
   height: 82px;
 }
-.avatar-uploader /deep/ .el-upload {
+.avatar-uploader ::v-deep .el-upload {
   position: relative;
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
@@ -109,7 +117,7 @@ export default {
     }
   }
 }
-.avatar-uploader /deep/ .el-upload:hover {
+.avatar-uploader ::v-deep .el-upload:hover {
   border-color: #409eff;
 }
 .avatar-uploader-icon-block {

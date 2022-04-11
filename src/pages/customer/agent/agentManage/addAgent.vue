@@ -8,7 +8,7 @@ import BaseEdit from './components/BaseEdit'
 export default {
   name: 'addAgent',
   components: {
-    BaseEdit,
+    BaseEdit
   }
 }
 </script>

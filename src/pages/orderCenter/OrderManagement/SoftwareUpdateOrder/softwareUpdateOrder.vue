@@ -14,8 +14,7 @@
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
-                clearable
-              ></el-date-picker>
+                clearable></el-date-picker>
             </el-form-item>
             <el-form-item label="升级前产品">
               <km-select-page
@@ -27,8 +26,7 @@
                 :is-max-page.sync="isProductMaxPage"
                 placeholder="全部"
                 multiple
-                collapse-tags
-              />
+                collapse-tags />
             </el-form-item>
             <el-form-item label="升级后产品">
               <km-select-page
@@ -40,8 +38,7 @@
                 :is-max-page.sync="isProductMaxPage"
                 placeholder="全部"
                 multiple
-                collapse-tags
-              />
+                collapse-tags />
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
@@ -69,8 +66,7 @@
                 option-value="id"
                 :request="getOrderPersonPage"
                 :is-max-page.sync="isOrderPersonMaxPage"
-                placeholder="全部"
-              />
+                placeholder="全部" />
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="16" clearable></el-input>
@@ -78,13 +74,13 @@
             <el-form-item label="商户信息" :rules="[{ min: 5, max: 40, message: '至少输入5个字符', trigger: 'blur' }]" prop="merchantId">
               <el-input v-model.trim="form.merchantId" maxlength="40" placeholder="请输入旧商户号/新商户号" clearable></el-input>
             </el-form-item>
-            <el-form-item style="margin-left:90px">
+            <el-form-item style="margin-left: 90px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'SOFTWARE_UPDATE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view v-permission="'SOFTWARE_UPDATE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
-          <el-col :xl="2" :lg="3" style="text-align:right">
+          <el-col :xl="2" :lg="3" style="text-align: right">
             <el-form-item>
               <el-button type="primary" size="small" v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })"
                 >新增</el-button
@@ -154,7 +150,13 @@ import { mapActions } from 'vuex'
 import { orderStatus, oldRegistTypes, paymentStatus } from './data'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
-import { querySoftUpgradePage, queryProductCode, channelSoftUpgradeExport, channelSoftUpgradeExportLog, channelSoftUpgradeExportDel } from '@/api/orderCenter/orderManagement/softwareUpdateOrder'
+import {
+  querySoftUpgradePage,
+  queryProductCode,
+  channelSoftUpgradeExport,
+  channelSoftUpgradeExportLog,
+  channelSoftUpgradeExportDel
+} from '@/api/orderCenter/orderManagement/softwareUpdateOrder'
 
 export default {
   name: 'softwareUpdateOrder',
@@ -244,10 +246,10 @@ export default {
         this.checkExportLoad = false
       }
     },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+    handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
       return await channelSoftUpgradeExportLog({ exportType: 36, page: currentPage, rows: pageSize })
     },
-    handleExportDel: async function(row) {
+    handleExportDel: async function (row) {
       return await channelSoftUpgradeExportDel(row.id)
     },
     async getOrderPersonPage({ query = '', page = 1, rows = 10 } = {}) {

@@ -17,8 +17,7 @@
                 placeholder="请输入业务员"
                 clearable
                 :options="clerkOptions"
-                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-              ></selectCopy>
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"></selectCopy>
             </el-form-item>
             <el-form-item label="代理商">
               <selectCopy
@@ -27,12 +26,11 @@
                 filterable
                 clearable
                 :options="topAgentOptions"
-                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-              />
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }" />
             </el-form-item>
             <el-form-item label="创建日期">
               <el-date-picker
-                style="width:240px"
+                style="width: 240px"
                 v-model="form.time"
                 type="daterange"
                 range-separator="至"
@@ -40,8 +38,7 @@
                 value-format="yyyy-MM-dd"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                :clearable="true"
-              >
+                :clearable="true">
               </el-date-picker>
             </el-form-item>
             <el-form-item label="状态">
@@ -53,13 +50,11 @@
               <el-button type="primary" @click="getPageList">查询</el-button>
             </el-form-item>
           </el-col>
-          <el-col :xl="3" :lg="3" style="text-align:right">
+          <el-col :xl="3" :lg="3" style="text-align: right">
             <el-form-item>
               <el-button v-permission="'MERCHANT_SET_ADD'" type="primary" plain icon="el-icon-plus" size="small" @click="addShop">新增</el-button>
-              <el-dropdown style="margin-left: 12px;">
-                <el-button size="small">
-                  更多
-                </el-button>
+              <el-dropdown style="margin-left: 12px">
+                <el-button size="small"> 更多 </el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-permission="'MERCHANT_SET_STOPORSTART'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
                   <el-dropdown-item v-permission="'MERCHANT_SET_STOPORSTART'" @click.native="batchOperate(1)">批量启用</el-dropdown-item>
@@ -100,8 +95,7 @@
               iconColor="#FFA033"
               title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
               placement="top-start"
-              @confirm="resetPsw(scope.row.userId)"
-            >
+              @confirm="resetPsw(scope.row.userId)">
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
           </template>
@@ -115,8 +109,7 @@
           :page-sizes="[10, 30, 50]"
           :page-size.sync="form.rows"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+          :total="total">
         </el-pagination>
       </div>
       <el-dialog title="移交业务员" :visible.sync="dialogFormVisible" width="510px">
@@ -128,8 +121,7 @@
               filterable
               clearable
               :options="newClerkOptions"
-              :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-            ></selectCopy>
+              :optionsItem="{ key: 'id', label: 'name', value: 'id' }"></selectCopy>
           </el-form-item>
         </el-form>
         <div slot="footer" class="dialog-footer">
@@ -301,7 +293,7 @@ export default {
         this.newClerkOptions = res
       })
     },
-    handleCurrentChange(value) {
+    handleCurrentChange() {
       this.queryShopListByPage()
     },
     getPageList() {

@@ -1,5 +1,5 @@
 <template>
-  <section class="p-information-con"  style="padding-bottom:72px" v-loading="checkBasicInformLoad">
+  <section class="p-information-con" style="padding-bottom: 72px" v-loading="checkBasicInformLoad">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-title">订单信息</div>
@@ -47,8 +47,7 @@
               @change="handleReplaceProductName"
               clearable
               size="small"
-              class="e-select-con"
-            >
+              class="e-select-con">
               <template v-for="(item, index) in replacedProducts">
                 <el-option :key="index" :label="`[${item.replaceProductCode}] ${item.replaceProductName}`" :value="item.replaceProductCode"></el-option>
               </template>
@@ -62,8 +61,7 @@
               v-model.number.trim="scope.row.replaceNum"
               @change="handleReplaceNum(scope.row)"
               :disabled="$route.query.status === 'detail'"
-              style="width:100%"
-            ></el-input>
+              style="width: 100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="备注">
@@ -280,10 +278,11 @@ export default {
     async getOriginalProduct(originalProductCode) {
       try {
         const res = await replaceOrderOriginalProduct(originalProductCode)
-        this.replacedProducts = res.map(item => {
-          item.replaceProductCode = item.replaceProductCode.toUpperCase()
-          return item
-        }) || []
+        this.replacedProducts =
+          res.map(item => {
+            item.replaceProductCode = item.replaceProductCode.toUpperCase()
+            return item
+          }) || []
       } catch (error) {}
     },
     async getBaseInfo() {
@@ -331,7 +330,7 @@ export default {
     border-bottom: 72px solid #fff;
   }
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-input__inner {
         text-align: right;
       }
@@ -340,7 +339,7 @@ export default {
       }
     }
     .e-select-con {
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
         max-width: 240px;
         &__inner {
@@ -356,7 +355,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -386,7 +385,7 @@ export default {
   text-align: center;
   box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
   z-index: 1000;
-  /deep/ .el-button {
+  ::v-deep .el-button {
     padding: 8px 22px;
   }
 }
@@ -403,7 +402,7 @@ export default {
   &_remark {
     width: 100%;
     max-width: 240px;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }

@@ -1,12 +1,11 @@
 import request from '@/utils/request'
-import ipConfig from '@/utils/baseUrl'
 
-function composeBaseUrl (api, baseUrl = '') {
+function composeBaseUrl(api, baseUrl = '') {
   return baseUrl + api
 }
 
 // 版本管理
-export function getVersionList (data) {
+export function getVersionList(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/queryPage'),
     method: 'POST',
@@ -14,7 +13,7 @@ export function getVersionList (data) {
   })
 }
 
-export function updateSaleStatus (data) {
+export function updateSaleStatus(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/updateSaleStatus'),
     method: 'POST',
@@ -22,7 +21,7 @@ export function updateSaleStatus (data) {
   })
 }
 
-export function updateSort (data) {
+export function updateSort(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/updateSort'),
     method: 'POST',
@@ -30,14 +29,14 @@ export function updateSort (data) {
   })
 }
 
-export function getMenuList () {
+export function getMenuList() {
   return request({
     url: composeBaseUrl('/ewechat/version/menuList'),
     method: 'POST'
   })
 }
 
-export function saveVersion (data) {
+export function saveVersion(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/save'),
     method: 'POST',
@@ -45,7 +44,7 @@ export function saveVersion (data) {
   })
 }
 
-export function getVersionDetail (data) {
+export function getVersionDetail(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/detail'),
     method: 'POST',
@@ -53,7 +52,7 @@ export function getVersionDetail (data) {
   })
 }
 
-export function getSort (data) {
+export function getSort(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/getSort'),
     method: 'POST',
@@ -62,7 +61,7 @@ export function getSort (data) {
 }
 
 // 增购管理
-export function getAddtionList (data) {
+export function getAddtionList(data) {
   return request({
     url: composeBaseUrl('/ewechat/addition/list'),
     method: 'POST',
@@ -70,7 +69,7 @@ export function getAddtionList (data) {
   })
 }
 
-export function updateAddtionStatus (data) {
+export function updateAddtionStatus(data) {
   return request({
     url: composeBaseUrl('/ewechat/addition/status/sale/update'),
     method: 'POST',
@@ -78,7 +77,7 @@ export function updateAddtionStatus (data) {
   })
 }
 
-export function updateAddtionSort (data) {
+export function updateAddtionSort(data) {
   return request({
     url: composeBaseUrl('/ewechat/addition/sort/update'),
     method: 'POST',
@@ -86,7 +85,7 @@ export function updateAddtionSort (data) {
   })
 }
 
-export function saveAddtion (data) {
+export function saveAddtion(data) {
   return request({
     url: composeBaseUrl('/ewechat/addition/create'),
     method: 'POST',
@@ -94,7 +93,7 @@ export function saveAddtion (data) {
   })
 }
 
-export function delAddtion (data) {
+export function delAddtion(data) {
   return request({
     url: composeBaseUrl('/ewechat/addition/delete'),
     method: 'POST',
@@ -102,7 +101,7 @@ export function delAddtion (data) {
   })
 }
 
-export function updateAddtion (data) {
+export function updateAddtion(data) {
   return request({
     url: composeBaseUrl('/ewechat/addition/update'),
     method: 'POST',
@@ -110,7 +109,7 @@ export function updateAddtion (data) {
   })
 }
 
-export function getAddtionDetail (data) {
+export function getAddtionDetail(data) {
   return request({
     url: composeBaseUrl('/ewechat/addition/queryById'),
     method: 'POST',
@@ -118,8 +117,16 @@ export function getAddtionDetail (data) {
   })
 }
 
+export function cancelOrder(data) {
+  return request({
+    url: composeBaseUrl('/ewechat/order/cancelOrder'),
+    method: 'POST',
+    data
+  })
+}
+
 // 文件上传
-export function uploadPic (data) {
+export function uploadPic(data) {
   return request({
     url: composeBaseUrl('/uploadPic'),
     method: 'POST',
@@ -129,7 +136,7 @@ export function uploadPic (data) {
 }
 
 /** ******************* 客户列表 *********************************************/
-export function getAllVersionList (data) {
+export function getAllVersionList(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/list/dropDownBox'),
     method: 'POST',
@@ -137,7 +144,7 @@ export function getAllVersionList (data) {
   })
 }
 
-export function getActiveVersionList (data) {
+export function getActiveVersionList(data) {
   return request({
     url: composeBaseUrl('/ewechat/version/list/active/dropDownBox'),
     method: 'POST',
@@ -145,7 +152,7 @@ export function getActiveVersionList (data) {
   })
 }
 
-export function updateChannel (data) {
+export function updateChannel(data) {
   return request({
     url: composeBaseUrl('/ewechat/corp/version/channel/update'),
     method: 'POST',
@@ -153,7 +160,7 @@ export function updateChannel (data) {
   })
 }
 
-export function updateExpireTime (data) {
+export function updateExpireTime(data) {
   return request({
     url: composeBaseUrl('/ewechat/corp/version/expireTime/update'),
     method: 'POST',
@@ -161,7 +168,7 @@ export function updateExpireTime (data) {
   })
 }
 
-export function getCorpVersionList (data) {
+export function getCorpVersionList(data) {
   return request({
     url: composeBaseUrl('/ewechat/corp/version/list'),
     method: 'POST',
@@ -169,7 +176,7 @@ export function getCorpVersionList (data) {
   })
 }
 
-export function updateCorpVersion (data) {
+export function updateCorpVersion(data) {
   return request({
     url: composeBaseUrl('/ewechat/corp/version/update'),
     method: 'POST',
@@ -177,7 +184,7 @@ export function updateCorpVersion (data) {
   })
 }
 
-export function getChannelList (data) {
+export function getChannelList(data) {
   return request({
     url: composeBaseUrl('/ewechat/corp/version/channel/list'),
     method: 'POST',
@@ -186,7 +193,7 @@ export function getChannelList (data) {
 }
 
 /** ******************* 订单管理 *********************************************/
-export function getOrderList (data) {
+export function getOrderList(data) {
   return request({
     url: composeBaseUrl('/ewechat/order/list'),
     method: 'POST',
@@ -194,7 +201,7 @@ export function getOrderList (data) {
   })
 }
 
-export function getOrderDetail (data) {
+export function getOrderDetail(data) {
   return request({
     url: composeBaseUrl('/ewechat/order/details'),
     method: 'POST',
@@ -202,7 +209,7 @@ export function getOrderDetail (data) {
   })
 }
 
-export function bindCorp (data) {
+export function bindCorp(data) {
   return request({
     url: composeBaseUrl('/ewechat/order/corp/binding'),
     method: 'POST',
@@ -210,7 +217,7 @@ export function bindCorp (data) {
   })
 }
 
-export function confirmReceipt (data) {
+export function confirmReceipt(data) {
   return request({
     url: composeBaseUrl('/ewechat/order/confirmReceipt'),
     method: 'POST',
@@ -218,7 +225,7 @@ export function confirmReceipt (data) {
   })
 }
 
-export function updateAmount (data) {
+export function updateAmount(data) {
   return request({
     url: composeBaseUrl('/ewechat/order/amount/update'),
     method: 'POST',
@@ -226,7 +233,7 @@ export function updateAmount (data) {
   })
 }
 
-export function getPayList (data) {
+export function getPayList(data) {
   return request({
     url: composeBaseUrl('/ewechat/order/list/receive'),
     method: 'POST',
@@ -234,9 +241,17 @@ export function getPayList (data) {
   })
 }
 
-export function getCorpList (data) {
+export function getCorpList(data) {
   return request({
     url: composeBaseUrl('/ewechat/corp/list/dropDownBox'),
+    method: 'POST',
+    data
+  })
+}
+
+export function getDownloadUrl(data) {
+  return request({
+    url: composeBaseUrl('/ewechat/order/getContractUrl'),
     method: 'POST',
     data
   })

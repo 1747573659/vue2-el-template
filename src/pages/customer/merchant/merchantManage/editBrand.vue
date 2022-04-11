@@ -187,7 +187,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.data-box{
+.data-box {
   border-top: 16px solid #f7f8fa;
 }
 .com-edit-item:last-child {

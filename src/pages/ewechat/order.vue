@@ -5,8 +5,17 @@
         <el-button type="text" @click="toDetail(scope.row)">详情</el-button>
       </template>
 
+      <!-- <template #table_operation="scope">
+        <el-button type="text" @click="toDetail(scope.row)">详情</el-button>
+        <el-button type="text" @click="cancelOrder(scope.row)" v-if="scope.row.orderStatusStr === '待付款' || scope.row.orderStatusStr === '待审核'">取消订单</el-button>
+      </template> -->
+
       <template #table_goods="scope">
         <div v-for="good in scope.row.goods" :key="good.id">{{ good.name + ' * ' + good.quantity }}</div>
+      </template>
+
+      <template #table_corpName="scope">
+        <div>{{ scope.row.corpName || scope.row.wxCorpId }}</div>
       </template>
 
       <template #table_orderAmount="scope">
@@ -45,11 +54,12 @@ export default {
       columns: [
         { prop: 'index', label: '序号', type: 'index', width: '60px' },
         { prop: 'orderNo', label: '订单编号', width: '230px' },
-        { prop: 'corpName', label: '企业名称' },
+        { prop: 'corpName', label: '企业名称', slot: true },
         { prop: 'channelName', label: '所属渠道' },
         { prop: 'channelAreaAddress', label: '渠道区域' },
         { prop: 'goods', label: '订购服务', slot: true },
         { prop: 'orderSourceStr', label: '来源渠道' },
+        { prop: 'contractStatusStr', label: '合同状态' },
         { prop: 'orderStatus', label: '订单状态', attrs: { formatter: statusFormatter } },
         { prop: 'orderAmount', label: '订单金额(元)', slot: true },
         { prop: 'updateTime', label: '更新时间', width: '180px' },
@@ -118,6 +128,13 @@ export default {
     }
   },
   methods: {
+    async cancelOrder(row) {
+      const confirm = await this.$confirm('确认要取消订单吗?')
+      if (confirm) {
+        await cancelOrder({ orderNo: row.orderNo })
+        this.$refs.page.getList()
+      }
+    },
     queryFormatter(queryFormData) {
       const params = {
         ...queryFormData,
@@ -139,7 +156,7 @@ export default {
   line-height: 40px;
 }
 
-/deep/ {
+::v-deep {
   .el-select {
     width: 100%;
   }

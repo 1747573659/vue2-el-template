@@ -17,8 +17,7 @@
                 filterable
                 clearable
                 placeholder="请选择BD经理"
-                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-              ></selectCopy>
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"></selectCopy>
             </el-form-item>
             <el-form-item label="类型" v-if="userInfo.propertyType === 1">
               <el-select v-model="form.propertyType" clearable>
@@ -28,9 +27,9 @@
             <el-form-item>
               <el-button type="primary" @click="getPageList">查询</el-button>
             </el-form-item>
-            <el-form-item style="float: right;margin-right: 0;">
+            <el-form-item style="float: right; margin-right: 0">
               <el-button v-permission="'AGENT_MANAGE_ADD'" type="primary" size="small" plain icon="el-icon-plus" @click="addShop">新增</el-button>
-              <el-dropdown style="margin-left: 12px;">
+              <el-dropdown style="margin-left: 12px">
                 <el-button size="small">更多</el-button>
                 <el-dropdown-menu slot="dropdown">
                   <el-dropdown-item v-permission="'AGENT_MANAGE_STOPANDSTART'" @click.native="batchOperate(0)">批量停用</el-dropdown-item>
@@ -50,8 +49,7 @@
         :data="tableData"
         tooltip-effect="dark"
         style="width: 100%"
-        @selection-change="handleSelectionChange"
-      >
+        @selection-change="handleSelectionChange">
         <el-table-column type="selection" width="40"></el-table-column>
         <el-table-column label="代理商">
           <template slot-scope="scope">{{ `${scope.row.id ? '[' + scope.row.id + ']' : ''}${scope.row.name || ''}` }}</template>
@@ -82,11 +80,10 @@
               iconColor="#FFA033"
               title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
               placement="top-start"
-              @confirm="resetPsw(scope.row.userId)"
-            >
+              @confirm="resetPsw(scope.row.userId)">
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
-            <el-button v-permission="'AGENT_MANAGE_QUATA'" style="margin-left: 12px;" size="small" type="text" @click="handleQuota(scope.row.userId)">分配应用配额</el-button>
+            <el-button v-permission="'AGENT_MANAGE_QUATA'" style="margin-left: 12px" size="small" type="text" @click="handleQuota(scope.row.userId)">分配应用配额</el-button>
           </template>
         </el-table-column>
       </el-table>
@@ -98,8 +95,7 @@
           :page-sizes="[10, 30, 50]"
           :page-size.sync="form.rows"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+          :total="total">
         </el-pagination>
       </div>
 
@@ -120,8 +116,8 @@
                 <div class="quota-item" v-for="item in quotaItems" :key="item.payType">
                   <span>
                     <el-checkbox v-model="item.checked" :disabled="item.quotaNo === 0" @change="changeCheckbox(item)"> </el-checkbox>
-                    {{ item.payType | fiterQuotaPayType }}（剩余配额 <span style="color: #FF6010">{{ item.quotaNo }}</span
-                    >，建议售价：<span style="color: #FF6010">{{ (item.saleAmount / 100).toFixed(2) }}</span
+                    {{ item.payType | fiterQuotaPayType }}（剩余配额 <span style="color: #ff6010">{{ item.quotaNo }}</span
+                    >，建议售价：<span style="color: #ff6010">{{ (item.saleAmount / 100).toFixed(2) }}</span
                     >元）
                   </span>
                   <span>
@@ -204,7 +200,7 @@ export default {
       dialogVisible: false,
       loading: false,
       channelManagerOptions: [],
-      form: { channelManagerId: '', id: '', mobile: '', propertyType:'', page: 1, rows: 10 },
+      form: { channelManagerId: '', id: '', mobile: '', propertyType: '', page: 1, rows: 10 },
       tableData: [],
       total: 0,
       multipleSelection: [],
@@ -341,7 +337,7 @@ export default {
       await this.queryAgentPage()
       this.$message.success('操作成功！')
     },
-    handleCurrentChange(value) {
+    handleCurrentChange() {
       this.queryAgentPage()
     },
     getPageList() {

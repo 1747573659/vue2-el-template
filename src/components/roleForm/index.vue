@@ -87,7 +87,7 @@ export default {
   },
   methods: {
     // 递归选中的id
-    getCheckIdInitForPC(arr, list) {
+    getCheckIdInitForPC(arr) {
       var temp = []
       if (arr && arr.length > 0) {
         arr.forEach(item => {
@@ -97,7 +97,7 @@ export default {
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function(array, item) {
+            const traverse = function (array, item) {
               array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
@@ -123,7 +123,7 @@ export default {
       }
       t2.call(this, temp)
     },
-    getCheckIdInitForAPP(arr, list) {
+    getCheckIdInitForAPP(arr) {
       var temp = []
       if (arr && arr.length > 0) {
         arr.forEach(item => {
@@ -133,7 +133,7 @@ export default {
           }
           if (item.parentId) {
             // 递归操作
-            const traverse = function(array, item) {
+            const traverse = function (array, item) {
               array.forEach(cItem => {
                 if (cItem.id === item.parentId) {
                   cItem['children'].push(item)
@@ -161,7 +161,7 @@ export default {
     },
     getCheckIdList(tree) {
       let checkIdList = []
-      const traverse = function(node) {
+      const traverse = function (node) {
         const childNodes = node.root ? node.root.childNodes : node.childNodes
         childNodes.forEach(child => {
           if (child.checked || child.indeterminate) {
@@ -199,7 +199,7 @@ export default {
             type: this.type
           }
           try {
-            const res = await addRole(data)
+            await addRole(data)
             this.$message.success('操作成功')
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: this.router })

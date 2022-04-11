@@ -1,5 +1,4 @@
 import store from '@/store'
-import deepClone from './deepClone'
 
 // 递归输出路由树,menu初始为接口返回的权限路由, asyncRouterMap为本地业务模块路由
 export default function convertRouter(menu = [], asyncRouterMap = []) {
@@ -13,7 +12,6 @@ export default function convertRouter(menu = [], asyncRouterMap = []) {
       // 如果为页面的附属页面，即为KM_DEFAULT_CODE，则添加到路由里面
       if (temp.code === 'KM_DEFAULT_CODE') accessedRouters.push(temp)
       menu.forEach(item => {
-        let tempArr = deepClone(accessedRouters)
         // 判断是不是没有code值和children项，没有的话就添加
         // if (!temp.code && !temp.children) {
         //   let isRepeat = tempArr.filter(i => i.name === temp.name && i.path === temp.path)

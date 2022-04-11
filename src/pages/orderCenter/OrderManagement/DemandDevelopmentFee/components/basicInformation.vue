@@ -30,8 +30,7 @@
             :data.sync="productLists"
             :request="getProductByPage"
             :is-max-page.sync="isProductMaxPage"
-            placeholder=""
-          />
+            placeholder="" />
         </el-form-item>
         <el-form-item label="开发人天" prop="developDay">
           <el-input v-model="form.developDay" clearable></el-input>
@@ -191,7 +190,7 @@ export default {
       let isValidatePass = false
       await this.$refs.orderForm.validate(valid => (isValidatePass = !!valid))
       if (isValidatePass) {
-        const { developDay, developAmount, productCode, handUser, id, ...params } = this.form
+        const { developDay, developAmount, productCode, handUser, id } = this.form
         const data = { agentId: this.userInfo.agentId, developAmount: NP.times(developAmount, 100), id, developDay, productCode, handUser }
         return this.$route.query.status === 'add' ? channelDevelopAdd(data) : channelDevelopUpdate(data)
       } else return new Promise((resolve, reject) => reject(new Error()))
@@ -268,7 +267,7 @@ export default {
     .p-card-reason {
       flex-basis: 80%;
     }
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -301,7 +300,7 @@ export default {
   text-align: center;
   box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
   z-index: 1000;
-  /deep/ .el-button {
+  ::v-deep .el-button {
     padding: 8px 22px;
   }
 }

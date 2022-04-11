@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="工单类型：" prop="orderType">
         <el-radio-group v-model="ruleForm.orderType">
-          <el-radio label="1" style="margin-right: 88px;">问题</el-radio>
+          <el-radio label="1" style="margin-right: 88px">问题</el-radio>
           <el-radio label="2">需求</el-radio>
         </el-radio-group>
       </el-form-item>
@@ -29,8 +29,7 @@
           :on-success="handleSuccess"
           ref="uploadfile"
           :file-list="fileList"
-          list-type="picture-card"
-        >
+          list-type="picture-card">
           <i class="el-icon-upload"></i>
           <div class="km_upload_file_text">上传素材</div>
           <div slot="tip" class="el-upload__tip">请上传图片、视频(推荐mp4格式)或文件</div>
@@ -48,12 +47,12 @@
       <el-form-item label="联系方式：" prop="linkPhone">
         <el-input v-model="ruleForm.linkPhone"></el-input>
       </el-form-item>
-      <el-form-item v-if="!isEdit" style="padding-bottom: 10px;">
+      <el-form-item v-if="!isEdit" style="padding-bottom: 10px">
         <el-button :disabled="isDisabled" size="small" type="primary" @click="submitForm('ruleForm')" class="e-workorder-action_pd">提交</el-button>
         <el-button size="small" @click="cance()" class="e-workorder-action_pd">关闭</el-button>
       </el-form-item>
     </el-form>
-    <div v-if="isEdit" style="padding-left: 100px;">
+    <div v-if="isEdit" style="padding-left: 100px">
       <el-button size="small" type="primary" @click="cance()" class="e-workorder-action_pd">取消</el-button>
     </div>
   </section>
@@ -133,7 +132,7 @@ export default {
     submitForm(formName) {
       let files = this.$refs['uploadfile'].$children[0].files
       if (files.length > 0) {
-        const isuploadingco = files.every((item, index) => {
+        const isuploadingco = files.every(item => {
           if (item.status === 'success') {
             return true
           } else {
@@ -162,7 +161,7 @@ export default {
             .filter(res => !/(^video\/.+$)|(^image\/.+$)/.test(res.type))
             .map(res => res.name)
             .join()
-          addWorkOrder(requestData).then(res => {
+          addWorkOrder(requestData).then(() => {
             this.$message.success('创建成功')
             this.$router.go(-1)
           })
@@ -171,7 +170,7 @@ export default {
         }
       })
     },
-    handleSuccess(response, file, fileList) {
+    handleSuccess(response, file) {
       this.fileList.push({
         name: response.fileName,
         url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + response.fileName,
@@ -200,22 +199,30 @@ export default {
         this.ruleForm = res
         this.ruleForm.productNoA = [requestData.productNo, requestData.branch]
         const files1 = requestData.fileName
-          ? requestData.fileName.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(res1 => {
-              return {
-                name: res1,
-                url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + res1,
-                type: 'image/*'
-              }
-            })
+          ? requestData.fileName
+              .replace(/[,;]$/, '')
+              .split(/[,;]/)
+              .filter(item => item !== '')
+              .map(res1 => {
+                return {
+                  name: res1,
+                  url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + res1,
+                  type: 'image/*'
+                }
+              })
           : []
         const files2 = requestData.fileName2
-          ? requestData.fileName2.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(res1 => {
-              return {
-                name: res1,
-                url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + res1,
-                type: 'video/*'
-              }
-            })
+          ? requestData.fileName2
+              .replace(/[,;]$/, '')
+              .split(/[,;]/)
+              .filter(item => item !== '')
+              .map(res1 => {
+                return {
+                  name: res1,
+                  url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + res1,
+                  type: 'video/*'
+                }
+              })
           : []
         this.fileList = [...files1, ...files2]
       })
@@ -231,7 +238,7 @@ export default {
       }
       this.isDisabled = true
     },
-    handleRemove(file, fileList) {
+    handleRemove(file) {
       this.fileList = this.fileList.filter(re => re.uid !== file.uid)
     },
     onClose(done) {
@@ -272,7 +279,7 @@ export default {
   height: 100%;
   margin-bottom: 0px;
 }
-/deep/.el-input__count {
+::v-deep.el-input__count {
   right: 56px;
   bottom: -5px;
   background: transparent;
@@ -281,10 +288,10 @@ export default {
   width: 545px;
   margin: 0 auto;
 }
-.xdd-btn-block__w240 /deep/ .el-input__inner {
+.xdd-btn-block__w240 ::v-deep .el-input__inner {
   height: 32px;
 }
-.demandDec /deep/ textarea {
+.demandDec ::v-deep textarea {
   width: 400px;
   height: 120px;
 }

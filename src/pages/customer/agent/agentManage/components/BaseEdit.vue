@@ -46,8 +46,7 @@
                   placement="top"
                   width="350"
                   trigger="hover"
-                  content="代理商分润 =（商户成本费率-代理商成本费率）*代理商分润比例，100表示分润全额返给代理商，0表示代理商不参与分润"
-                >
+                  content="代理商分润 =（商户成本费率-代理商成本费率）*代理商分润比例，100表示分润全额返给代理商，0表示代理商不参与分润">
                   <img :src="questionIcon" slot="reference" alt="提示" class="e-icon-question icon-question" />
                 </el-popover>
               </el-form-item>
@@ -70,8 +69,7 @@
                   :fileServer="ossFileServe"
                   :showIconClose="true"
                   @on-remove="onRemove"
-                  @on-success="onUploadSuccess"
-                >
+                  @on-success="onUploadSuccess">
                 </pic-upload>
               </el-form-item>
               <el-form-item label="商务姓名" prop="contact">
@@ -128,7 +126,7 @@
       <el-table :data="channelData" tooltip-effect="dark" max-height="450px">
         <el-table-column label="BD经理名称">
           <template slot-scope="scope">
-            <el-input size="small" v-model.trim="scope.row.name" maxlength="30" style="width: 100%;"></el-input>
+            <el-input size="small" v-model.trim="scope.row.name" maxlength="30" style="width: 100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" align="right">
@@ -151,7 +149,7 @@ import areaSelect from '@/components/areaSelect'
 import PicUpload from '@/components/picUpload'
 import picUploadMixin from '@/mixins/picUpload'
 import { deepClone } from '@/utils'
-import { isMPRelaxed, isEmail, isPositiveInteger, isPositiveNumber } from '@/utils/common'
+import { isMPRelaxed, isEmail, isPositiveNumber } from '@/utils/common'
 
 export default {
   name: 'BaseEdit',

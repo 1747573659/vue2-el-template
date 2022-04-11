@@ -37,7 +37,7 @@
                     dialogForm.codeKey = ''
                     dialogVisible = true
                   "
-                  style=" position: absolute;right:-46px;top:9px"
+                  style="position: absolute; right: -46px; top: 9px"
                   type="text"
                   >修改</el-button
                 >
@@ -72,7 +72,7 @@
           <el-input maxlength="11" v-model="dialogForm.mobile"></el-input>
         </el-form-item>
         <el-form-item label="验证码" prop="codeKey">
-          <el-input style="width: 102px;display:inline-block" maxlength="6" v-model="dialogForm.codeKey"></el-input>
+          <el-input style="width: 102px; display: inline-block" maxlength="6" v-model="dialogForm.codeKey"></el-input>
           <el-button style="float: right" @click="sendCode" class="resend-btn" :class="{ clicked: isClick, disabled: isDisabled }" size="small" :disabled="isDisabled">
             {{ sendBtnText }}
           </el-button>
@@ -221,7 +221,7 @@ export default {
             shopId: Number(this.$route.query.id)
           }
           try {
-            const res = await shopModifyMobile(data)
+            await shopModifyMobile(data)
             this.$message.success('修改成功')
             this.ruleForm.mobile = this.dialogForm.mobile
             this.dialogVisible = false
@@ -253,7 +253,7 @@ export default {
       this.$refs.dialogForm.validateField('mobile', async errorMessage => {
         if (!errorMessage) {
           try {
-            let res = await createAuthCode({ mobile: this.dialogForm.mobile })
+            await createAuthCode({ mobile: this.dialogForm.mobile })
             this.isClick = false
             this.isDisabled = true
             this.setCodeText()
@@ -354,7 +354,7 @@ export default {
   margin-right: 130px;
 }
 .km-setting-dialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     display: flex;
     justify-content: center;
     .resend-btn {

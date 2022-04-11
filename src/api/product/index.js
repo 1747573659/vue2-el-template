@@ -1,8 +1,8 @@
 import request from '@/utils/request'
 
 const urlLinks = {
-    productQueryByPage: '/product/queryByPage',
-    productQueryTypeList: '/product/queryTypeList'
+  productQueryByPage: '/product/queryByPage',
+  productQueryTypeList: '/product/queryTypeList'
 }
 export function productQueryTypeList(data) {
   return request({

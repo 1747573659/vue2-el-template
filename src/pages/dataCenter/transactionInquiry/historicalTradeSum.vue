@@ -36,7 +36,7 @@ export default {
   },
   computed: {},
   methods: {
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       this.activeIndex = String(key)
     }
   }
@@ -47,16 +47,16 @@ export default {
 .el-menu-sum {
   margin-left: -16px;
   margin-right: -16px;
-  /deep/.el-menu-item {
+  ::v-deep.el-menu-item {
     font-size: 16px;
     font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #3d4966;
   }
-  /deep/.el-menu-item.is-active {
+  ::v-deep.el-menu-item.is-active {
     border-bottom: 2px solid #3377ff;
   }
-  /deep/.el-menu-item.is-active {
+  ::v-deep.el-menu-item.is-active {
     font-size: 16px;
     font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 600;

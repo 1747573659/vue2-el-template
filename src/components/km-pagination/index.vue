@@ -10,8 +10,7 @@
       :total="total"
       :layout="layout"
       @size-change="handleSizeChange"
-      @current-change="handleCurrentChange"
-    ></el-pagination>
+      @current-change="handleCurrentChange"></el-pagination>
   </div>
 </template>
 

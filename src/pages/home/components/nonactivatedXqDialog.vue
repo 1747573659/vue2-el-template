@@ -25,10 +25,10 @@ export default {
   directives: {
     loadmore: {
       // 指令的定义
-      bind: function(el, binding) {
+      bind: function (el, binding) {
         // 获取km-ui定义好的scroll盒子
         const SELECTWRAP_DOM = el.querySelector('.el-table__body-wrapper')
-        SELECTWRAP_DOM.addEventListener('scroll', function() {
+        SELECTWRAP_DOM.addEventListener('scroll', function () {
           const CONDITION = this.scrollHeight - this.scrollTop <= this.clientHeight
           if (CONDITION) {
             binding.value()
@@ -42,30 +42,29 @@ export default {
       tableData: 'nonactivatedXqList'
     }),
     visibleInner: {
-      get () {
+      get() {
         return this.visible
       },
-      set (value) {
+      set(value) {
         this.$emit('update:visible', value)
       }
     }
-  }, 
+  },
   data() {
     return {
       tableLoading: false
     }
   },
-  mounted() {
-  },
+  mounted() {},
   methods: {
     ...mapMutations({
       setNonactivatedXq: 'SET_NONACTIVATEDXQ'
     }),
     ...mapActions(['authShopPageMethodAction']),
-    handleAuditStatus () {
+    handleAuditStatus() {
       this.setNonactivatedXq(false)
     },
-    loadMore () {
+    loadMore() {
       this.authShopPageMethodAction()
     }
   }
@@ -74,7 +73,7 @@ export default {
 
 <style lang="scss" scoped>
 .xq-dialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     padding: 10px 20px 10px;
     .xdd_tip {
       padding-bottom: 10px;
@@ -86,7 +85,7 @@ export default {
       font-size: 14px;
     }
   }
-  /deep/.el-dialog__footer {
+  ::v-deep.el-dialog__footer {
     display: flex;
     justify-content: center;
   }

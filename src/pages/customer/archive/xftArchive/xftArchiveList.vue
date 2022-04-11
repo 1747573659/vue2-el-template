@@ -19,8 +19,7 @@
                 range-separator="至"
                 start-placeholder="开始日期"
                 end-placeholder="结束日期"
-                value-format="yyyy-MM-dd"
-              ></el-date-picker>
+                value-format="yyyy-MM-dd"></el-date-picker>
             </el-form-item>
             <el-form-item label="资料状态">
               <el-select style="width: 240px" clearable v-model="form.auditStatus" placeholder="全部">
@@ -50,7 +49,7 @@
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3">
-            <el-form-item style="float:right">
+            <el-form-item style="float: right">
               <el-button type="primary" class="add-btn" size="small" @click="add" plain icon="el-icon-plus" v-permission="'XFT_LIST_ADD'">新增</el-button>
             </el-form-item>
           </el-col>
@@ -64,8 +63,7 @@
         :default-sort="{ prop: 'archiveBaseDTO.createTime', order: 'descending' }"
         @sort-change="tableSortChange"
         :data="tableData"
-        style="width: 100%"
-      >
+        style="width: 100%">
         <el-table-column prop="archiveBaseDTO.createTime" label="申请时间" sortable="custom" width="110"></el-table-column>
         <el-table-column prop="archiveBaseDTO.id" label="资料ID" width="100"></el-table-column>
         <el-table-column prop="archiveBaseDTO.merchantName" label="商户/公司名称" width="200">
@@ -121,13 +119,13 @@
             <el-dropdown trigger="click" style="margin-left: 12px" v-if="scope.row.archiveChannelList">
               <el-button type="text" size="small">更多</el-button>
               <el-dropdown-menu slot="dropdown">
-                <el-dropdown-item v-if="[6, 7].includes(scope.row.archiveBaseDTO.auditStatus)" style="color: #3377FF" @click.native="archiveDetail(scope.row)"
+                <el-dropdown-item v-if="[6, 7].includes(scope.row.archiveBaseDTO.auditStatus)" style="color: #3377ff" @click.native="archiveDetail(scope.row)"
                   >进件详情</el-dropdown-item
                 >
-                <el-dropdown-item style="color: #3377FF" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
+                <el-dropdown-item style="color: #3377ff" @click.native="queryStatus(scope.row)">认证状态</el-dropdown-item>
                 <el-dropdown-item
                   v-permission="'XFT_LIST_SHOP_QRCODE'"
-                  style="color: #3377FF"
+                  style="color: #3377ff"
                   v-if="[3, 4, 5].includes(scope.row.archiveBaseDTO.wxCertStatus)"
                   @click.native="shopQRCode(scope.row)"
                   >商户扫码认证</el-dropdown-item
@@ -141,7 +139,7 @@
     </div>
     <el-dialog title="商户微信实名认证指引流程" :visible.sync="certificationVisible" width="507px" class="certification-dialog">
       <div class="certification-dialog-text">
-        1. 商户联系人：<span style="color: #FF6010">{{ this.certificationForm.contact }}(手机尾号{{ this.certificationForm.contactPhone }})</span
+        1. 商户联系人：<span style="color: #ff6010">{{ this.certificationForm.contact }}(手机尾号{{ this.certificationForm.contactPhone }})</span
         >微信扫描下方二维码，按照指引补充或修改联系人信息
       </div>
       <img v-if="certificationVisible" :src="imgSrc" class="certification-dialog-img" alt="qrcode" />
@@ -301,7 +299,7 @@ export default {
         rows: this.pageSize
       }
     },
-    handleExport: async function() {
+    handleExport: async function () {
       if (!this.form.time?.length || dayjs(this.form.time[1]).diff(dayjs(this.form.time[0]), 'days') > 62) {
         this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
         return false
@@ -315,14 +313,14 @@ export default {
         this.exportLoad = false
       }
     },
-    handleExportDel: async function(row) {
+    handleExportDel: async function (row) {
       return await xftArchiveExportDel({ id: row.id })
     },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+    handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
       const data = { exportType: 1, page: currentPage, rows: pageSize }
       return await xftArchiveExportLog(data)
     },
-    handleQueryTotalByStatus: async function() {
+    handleQueryTotalByStatus: async function () {
       try {
         const res = await queryTotalByStatus(this.handleQueryParams())
         this.countData = []
@@ -341,14 +339,14 @@ export default {
         } else this.countData = this.countOptions
       } catch (error) {}
     },
-    handleDraftList: async function(scope) {
+    handleDraftList: async function (scope) {
       try {
         await delList({ id: scope.row.archiveBaseDTO.id })
         this.getList()
         this.handleQueryTotalByStatus()
       } catch (error) {}
     },
-    tableSortChange({ column, prop, order }) {
+    tableSortChange({ order }) {
       this.form.createTime = order ? order.substring(0, order.indexOf('ending')) : ''
       this.currentPage = 1
       this.getList()
@@ -390,7 +388,7 @@ export default {
         stopUse: row.archiveBaseDTO.stopUse ? 0 : 1
       }
       try {
-        const res = await stopUse(data)
+        await stopUse(data)
         this.getList()
         this.$message.success('操作成功')
       } catch (error) {}
@@ -451,7 +449,7 @@ export default {
         const res = await queryCertificationStatus(data)
         this.$alert(`微信认证状态为：${res.message}`, '', {
           confirmButtonText: '确定',
-          callback: action => {
+          callback: () => {
             this.getList()
           }
         })
@@ -462,7 +460,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ .p-dialog-order {
+::v-deep .p-dialog-order {
   display: flex;
   flex-direction: column;
   margin: 0 !important;
@@ -483,7 +481,7 @@ export default {
   border-bottom: 16px solid #f7f8fa;
 }
 .certification-dialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     display: flex;
     flex-direction: column;
     align-items: center;
@@ -552,7 +550,7 @@ export default {
   }
   &-export {
     &-con {
-      /deep/ {
+      ::v-deep {
         .has-gutter th {
           padding: 12px 0;
         }

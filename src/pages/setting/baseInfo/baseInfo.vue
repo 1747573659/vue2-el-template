@@ -1,7 +1,7 @@
 <template>
   <div class="data-box">
     <div class="km-setting-baseInfo">
-      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 384.30px">
+      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 384.3px">
         <el-form-item label="经销商编号" class="km-setting-baseInfo-text">
           <span>{{ form.agentId }}</span>
         </el-form-item>
@@ -39,7 +39,7 @@
         <el-form-item label="注册时间">
           <span>{{ form.createTime }}</span>
         </el-form-item>
-        <el-form-item v-if='form.organNo' label="社区编码">
+        <el-form-item v-if="form.organNo" label="社区编码">
           <span>{{ form.organNo }}</span>
         </el-form-item>
         <el-form-item label="">
@@ -52,7 +52,7 @@
             <el-input v-model="dialogForm.mobile"></el-input>
           </el-form-item>
           <el-form-item label="验证码" prop="codeKey">
-            <el-input style="width: 102px;display:inline-block" v-model="dialogForm.codeKey"></el-input>
+            <el-input style="width: 102px; display: inline-block" v-model="dialogForm.codeKey"></el-input>
             <el-button style="float: right" class="resend-btn" :class="{ clicked: isClick, disabled: isDisabled }" size="small" @click="sendCode" :disabled="isDisabled">
               {{ sendBtnText }}
             </el-button>
@@ -155,7 +155,7 @@ export default {
             mobile: this.form.mobile
           }
           try {
-            let res = await modifyBaseInfo(data)
+            await modifyBaseInfo(data)
             this.getInfo()
             this.$message.success('保存成功')
           } catch (e) {}
@@ -181,7 +181,7 @@ export default {
       this.$refs.dialogForm.validateField('mobile', async errorMessage => {
         if (!errorMessage) {
           try {
-            let res = await createAuthCode({ mobile: this.dialogForm.mobile })
+            await createAuthCode({ mobile: this.dialogForm.mobile })
             this.isClick = false
             this.isDisabled = true
             this.sendBtnText = `重新发送${this.countdownTime}s`
@@ -204,7 +204,7 @@ export default {
             mobile: this.dialogForm.mobile
           }
           try {
-            const res = await modifyMobile(data)
+            await modifyMobile(data)
             this.$message.success('修改成功')
             this.form.mobile = this.dialogForm.mobile
             this.dialogVisible = false
@@ -234,8 +234,8 @@ export default {
     padding: 0 16px;
   }
   .km-setting-baseInfo-text {
-    /deep/.el-form-item__label,
-    /deep/.el-form-item__content {
+    ::v-deep.el-form-item__label,
+    ::v-deep.el-form-item__content {
       line-height: normal;
     }
   }
@@ -247,7 +247,7 @@ export default {
   padding: 8px 22px;
 }
 .km-setting-dialog {
-  /deep/.el-dialog__body {
+  ::v-deep.el-dialog__body {
     display: flex;
     justify-content: center;
     .resend-btn {

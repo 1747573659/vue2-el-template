@@ -14,8 +14,7 @@
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
-                clearable
-              ></el-date-picker>
+                clearable></el-date-picker>
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
@@ -23,8 +22,7 @@
                   v-for="item in Array.from(orderStatus).filter(item => ![5, 10].includes(item[0]))"
                   :key="item[1].value"
                   :label="item[1].label"
-                  :value="item[1].value"
-                ></el-option>
+                  :value="item[1].value"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="付款状态">
@@ -40,13 +38,12 @@
                 option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
-                placeholder="下单人"
-              ></km-select-page>
+                placeholder="下单人"></km-select-page>
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" clearable></el-input>
             </el-form-item>
-            <el-form-item style="margin-left:80px">
+            <el-form-item style="margin-left: 80px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view ref="export" v-permission="'SOFT_PURCHASE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel">
@@ -59,7 +56,7 @@
                       <el-link :href="scope.row.fileUrl" :underline="false">
                         <el-button size="small" type="text">下载</el-button>
                       </el-link>
-                      <el-button size="small" @click="$refs.export.handleExportDel(scope.row)" type="text" style="margin-left: 8px;">删除</el-button>
+                      <el-button size="small" @click="$refs.export.handleExportDel(scope.row)" type="text" style="margin-left: 8px">删除</el-button>
                     </template>
                     <span v-else>--</span>
                   </template>
@@ -67,7 +64,7 @@
               </km-export-view>
             </el-form-item>
           </el-col>
-          <el-col :xl="2" :lg="3" style="text-align:right">
+          <el-col :xl="2" :lg="3" style="text-align: right">
             <el-form-item v-permission="'SOFT_PURCHASE_ORDER_PLUS'">
               <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleSoftWareDetail({ status: 'add' })">新增</el-button>
             </el-form-item>

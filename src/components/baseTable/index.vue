@@ -48,8 +48,7 @@
       :limit.sync="pageSizes"
       :auto-scroll="false"
       position="right"
-      @pagination="getList"
-    ></pagination>
+      @pagination="getList"></pagination>
   </div>
 </template>
 

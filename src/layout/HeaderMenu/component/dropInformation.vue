@@ -102,7 +102,7 @@ export default {
       this.$refs.phoneForm.validateField('nPhone', async errorMessage => {
         if (!errorMessage) {
           try {
-            let res = await createAuthCode({ mobile: this.phoneForm.nPhone })
+            await createAuthCode({ mobile: this.phoneForm.nPhone })
             this.isClick = false
             this.isDisabled = true
             this.sendBtnText = `重新发送${this.countdownTime}s`
@@ -113,9 +113,7 @@ export default {
                 this.handleResetCodeBtn()
               }
             }, 1000)
-          } catch (e) {
-          } finally {
-          }
+          } catch (e) {}
         }
       })
     },
@@ -131,7 +129,7 @@ export default {
       this.$emit('update:status', false)
       this.$refs.passForm.resetFields()
     },
-    handleUserInfo: async function() {
+    handleUserInfo: async function () {
       this.$refs.passForm.validate(async valid => {
         if (valid) {
           try {
@@ -171,7 +169,7 @@ export default {
         }
       })
     },
-    getUserInfo: async function() {
+    getUserInfo: async function () {
       try {
         const res = await queryUser()
         this.form = res
@@ -188,7 +186,7 @@ export default {
       display: flex;
       align-items: flex-end;
       justify-content: center;
-      /deep/ .el-button {
+      ::v-deep .el-button {
         margin-left: 50px;
         margin-bottom: 7px;
       }
@@ -210,7 +208,7 @@ export default {
       width: 300px;
       margin: 0 auto;
       margin-bottom: -16px;
-      /deep/ .el-form-item {
+      ::v-deep .el-form-item {
         &:nth-child(2) {
           .el-input {
             width: 55%;

@@ -13,8 +13,7 @@
                 :width="'240px'"
                 searchName="id"
                 id="id"
-                :placeholder="'商户名称'"
-              >
+                :placeholder="'商户名称'">
               </select-page>
             </el-form-item>
             <el-form-item label="交易时间">
@@ -28,8 +27,7 @@
                 start-placeholder="开始日期"
                 type="datetimerange"
                 v-model="formData.transactionTime"
-                value-format="timestamp"
-              ></el-date-picker>
+                value-format="timestamp"></el-date-picker>
               <el-button :disabled="isSubtract" @click="setSearchTime('subtract')" class="pure-btn_space" size="small" type="default">前一天</el-button>
               <el-button :disabled="isAdd" @click="setSearchTime('add')" size="small" type="default">后一天</el-button>
             </el-form-item>
@@ -43,8 +41,7 @@
                 :width="'240px'"
                 :parame="{ adminId: formData.shopId || '' }"
                 id="id"
-                placeholder="门店名称"
-              >
+                placeholder="门店名称">
               </select-page>
             </el-form-item>
             <el-form-item label="收银员" prop="cashier">
@@ -57,8 +54,7 @@
                 :isMultiple="true"
                 :parame="{ storeId: formData.stores || '' }"
                 id="id"
-                :placeholder="'收银员'"
-              >
+                :placeholder="'收银员'">
               </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
@@ -68,8 +64,7 @@
                 filterable
                 :value.sync="formData.paymentCode"
                 :options="paymentData"
-                :optionsItem="{ key: 'code', label: 'name', value: 'code' }"
-              />
+                :optionsItem="{ key: 'code', label: 'name', value: 'code' }" />
             </el-form-item>
             <el-form-item label="支付场景" prop="paymentScenarioCode">
               <selectCopy
@@ -77,13 +72,12 @@
                 :value.sync="formData.paymentScenarioCode"
                 filterable
                 :options="paymentScenarioData"
-                :optionsItem="{ key: 'code', label: 'name', value: 'code' }"
-              />
+                :optionsItem="{ key: 'code', label: 'name', value: 'code' }" />
             </el-form-item>
             <el-form-item label="交易金额" prop="paymentScenarioCode">
-              <div class="el-input2" style="display: flex;justify-content: space-between;">
-                <el-input-number ref="startAmount" v-model="formData.startAmount" controls-position="right" :min="0" placeholder="0" style="width: 108px;"></el-input-number>
-                <span style="margin:0 8px"> - </span>
+              <div class="el-input2" style="display: flex; justify-content: space-between">
+                <el-input-number ref="startAmount" v-model="formData.startAmount" controls-position="right" :min="0" placeholder="0" style="width: 108px"></el-input-number>
+                <span style="margin: 0 8px"> - </span>
                 <el-input-number
                   ref="endAmount"
                   v-model="formData.endAmount"
@@ -91,8 +85,7 @@
                   :min="0"
                   :max="999999.99"
                   placeholder="999999.99"
-                  style="width: 108px;"
-                ></el-input-number>
+                  style="width: 108px"></el-input-number>
               </div>
             </el-form-item>
             <el-form-item label="交易状态" prop="tradingStatusCode">
@@ -143,8 +136,7 @@
           @current-change="handleTabCurrent"
           @size-change="handleTabSize"
           background
-          layout="total, sizes, prev, pager, next, jumper"
-        ></el-pagination>
+          layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
     <el-dialog :visible.sync="centerDialogVisible" right title="导出记录">
@@ -165,7 +157,7 @@
               <el-button :disabled="scope.row.status !== 1" size="small" type="text" v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DOWNLOAD')">下载</el-button>
             </el-link>
             <template v-if="permissonCheckMenus('TRANSACTION_MERCHANT_EXPORT_DEL')">
-              <el-button @click="deleteExprot(scope.row)" size="small" style="margin-left:5px;" type="text">删除</el-button>
+              <el-button @click="deleteExprot(scope.row)" size="small" style="margin-left: 5px" type="text">删除</el-button>
             </template>
           </template>
         </el-table-column>
@@ -179,8 +171,7 @@
           @current-change="handleCurrentChange"
           @size-change="handleSizeChange"
           background
-          layout="total, sizes, prev, pager, next, jumper"
-        ></el-pagination>
+          layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </el-dialog>
     <order-detail-dialog :dialogTitle="dialogTitle" :form="dialogForm" ref="orderDetailDialog" type="order" />
@@ -198,10 +189,8 @@ import {
   queryMerchantAdminPage,
   queryClerkPageByStore,
   queryPaySceneByType,
-  querySummary,
   queryAllTradeStatus,
   queryMerchantOrderPage,
-  downloadExcel,
   queryExportRecord,
   deleteRecord,
   detail,
@@ -243,14 +232,7 @@ export default {
       paymentScenarioData: [{ code: '', name: '全部' }],
       tradingStatusData: [],
       formData: {
-        transactionTime: [
-          dayjs()
-            .startOf('day')
-            .valueOf(),
-          dayjs()
-            .endOf('day')
-            .valueOf()
-        ],
+        transactionTime: [dayjs().startOf('day').valueOf(), dayjs().endOf('day').valueOf()],
         shopId: '',
         stores: '',
         tradingChanneCode: '',
@@ -265,7 +247,7 @@ export default {
       // 选择弹窗
 
       pickerOptions: {
-        onPick: ({ maxDate, minDate }) => {
+        onPick: ({ minDate }) => {
           if (minDate) {
             const day31 = 31 * 24 * 3600 * 1000
             maxTime = minDate.getTime() + day31
@@ -275,44 +257,22 @@ export default {
         disabledDate: time => {
           if (maxTime) {
             return (
-              time.getTime() >=
-                dayjs()
-                  .endOf('day')
-                  .valueOf() ||
-              time.getTime() <=
-                dayjs()
-                  .subtract(12, 'months')
-                  .valueOf() ||
+              time.getTime() >= dayjs().endOf('day').valueOf() ||
+              time.getTime() <= dayjs().subtract(12, 'months').valueOf() ||
               time.getTime() >= maxTime ||
               time.getTime() <= minTime
             )
           }
-          return (
-            time.getTime() >=
-              dayjs()
-                .endOf('day')
-                .valueOf() ||
-            time.getTime() <=
-              dayjs()
-                .subtract(12, 'months')
-                .valueOf()
-          )
+          return time.getTime() >= dayjs().endOf('day').valueOf() || time.getTime() <= dayjs().subtract(12, 'months').valueOf()
         }
       }
     }
   },
   watch: {
     'formData.transactionTime': {
-      handler(newVal, oldVal) {
+      handler(newVal) {
         if (newVal === null) {
-          this.formData.transactionTime = [
-            dayjs()
-              .startOf('day')
-              .valueOf(),
-            dayjs()
-              .endOf('day')
-              .valueOf()
-          ]
+          this.formData.transactionTime = [dayjs().startOf('day').valueOf(), dayjs().endOf('day').valueOf()]
         }
       },
       immediate: true,
@@ -321,16 +281,7 @@ export default {
   },
   computed: {
     isSubtract() {
-      if (
-        dayjs(this.formData.transactionTime[0])
-          .startOf('day')
-          .subtract(1, 'days')
-          .valueOf() ===
-        dayjs()
-          .startOf('day')
-          .subtract(6, 'months')
-          .valueOf()
-      ) {
+      if (dayjs(this.formData.transactionTime[0]).startOf('day').subtract(1, 'days').valueOf() === dayjs().startOf('day').subtract(6, 'months').valueOf()) {
         return true
       } else {
         return false
@@ -340,14 +291,7 @@ export default {
       return document.documentElement.clientHeight - 56 - 48 - 64 - 32 - 210
     },
     isAdd() {
-      if (
-        dayjs(this.formData.transactionTime[1])
-          .startOf('day')
-          .valueOf() ===
-        dayjs()
-          .startOf('day')
-          .valueOf()
-      ) {
+      if (dayjs(this.formData.transactionTime[1]).startOf('day').valueOf() === dayjs().startOf('day').valueOf()) {
         return true
       } else {
         return false
@@ -425,7 +369,6 @@ export default {
       this.searchString = ''
       this.selectPageNo = 1
     },
-    shopChange(value) {},
     async handleDetails(row) {
       this.dialogForm = {}
       const data = {
@@ -524,14 +467,7 @@ export default {
       this.formData.endAmount = ''
       this.tabData = []
       this.$refs.form.resetFields()
-      this.$set(this.formData, 'transactionTime', [
-        dayjs()
-          .startOf('day')
-          .valueOf(),
-        dayjs()
-          .endOf('day')
-          .valueOf()
-      ])
+      this.$set(this.formData, 'transactionTime', [dayjs().startOf('day').valueOf(), dayjs().endOf('day').valueOf()])
     },
     handleSearch() {
       if (this.formData.shopId) {
@@ -582,13 +518,7 @@ export default {
         orderTypes: this.formData.tradingTypeCode !== '' ? [this.formData.tradingTypeCode] : [], // 交易类型集合
         paymentMethods: this.formData.paymentCode !== '' ? [this.formData.paymentCode] : [], // 支付方式集合
         paymentPlugins: this.formData.paymentScenarioCode !== '' ? [this.formData.paymentScenarioCode] : [], // 支付场景集合
-        paymentStatus:
-          paymentStatus.length > 0
-            ? paymentStatus
-                .toString()
-                .split(',')
-                .map(Number)
-            : [], // 交易状态集合
+        paymentStatus: paymentStatus.length > 0 ? paymentStatus.toString().split(',').map(Number) : [], // 交易状态集合
         shopId: this.formData.shopId, // 商户ID
         // shopId: 70, // 商户ID
         stores: this.formData.stores ? [this.formData.stores] : [], // 门店ID集合
@@ -660,7 +590,7 @@ export default {
   border-bottom: 16px solid #f7f8fa;
 }
 .action-box {
-  /deep/ .el-select {
+  ::v-deep .el-select {
     width: 100%;
   }
 }
@@ -673,7 +603,7 @@ export default {
   font-size: 14px;
 }
 .el-input2 {
-  /deep/ {
+  ::v-deep {
     .el-input {
       width: 100%;
     }
@@ -713,7 +643,7 @@ export default {
   width: 100%;
 }
 .paymentScenarioCod {
-  /deep/.el-form-item__content {
+  ::v-deep.el-form-item__content {
     justify-content: space-between;
     display: flex;
   }

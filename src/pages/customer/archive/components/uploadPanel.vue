@@ -9,8 +9,7 @@
       :on-error="onError"
       :show-file-list="false"
       v-bind="$attrs"
-      v-on="$listeners"
-    >
+      v-on="$listeners">
       <img v-if="imageUrl" class="avatar" :src="`${fileServer}${imageUrl}`" @click="$listeners.click" :alt="alt" />
       <div class="avatar-uploader-card" v-else>
         <i class="el-icon-plus avatar-uploader-icon"></i>
@@ -86,7 +85,7 @@ export default {
 <style lang="scss" scoped>
 .avatar-uploader {
   max-height: 82px;
-  /deep/ {
+  ::v-deep {
     .el-upload {
       border: 1px dashed #d3dbeb;
       background-color: #f7f8fa;
@@ -134,7 +133,7 @@ export default {
   margin-top: 5px;
   line-height: 1.5;
 
-  /deep/ {
+  ::v-deep {
     .el-button {
       margin-left: 12px;
     }

@@ -1,46 +1,77 @@
 <template>
   <div class="app-container">
     <div class="data-box">
-      <el-alert :closable='false' title="小程序资料用于支付宝小程序审核，请谨慎填写。" type="info"> </el-alert>
-      <el-form style="padding:0px 46px" size="mini" ref="form" label-position="top" :model="form" :rules="rules" label-width="120px">
+      <el-alert :closable="false" title="小程序资料用于支付宝小程序审核，请谨慎填写。" type="info"> </el-alert>
+      <el-form style="padding: 0px 46px" size="mini" ref="form" label-position="top" :model="form" :rules="rules" label-width="120px">
         <h4 class="title">小程序资料</h4>
         <el-row>
           <el-col :span="6">
             <el-form-item label="小程序名称" prop="miniName">
-              <el-input v-model.trim="form.miniName" clearable style="width:80%" placeholder="请输入小程序名称"></el-input>
+              <el-input v-model.trim="form.miniName" clearable style="width: 80%" placeholder="请输入小程序名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序英文名" prop="miniEnglishName">
-              <el-input v-model.trim="form.miniEnglishName" clearable style="width:80%" placeholder="请输入小程序英文名"></el-input>
+              <el-input v-model.trim="form.miniEnglishName" clearable style="width: 80%" placeholder="请输入小程序英文名"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序类目" prop="miniCategoryIds">
-              <el-cascader :key="miniCategoryIdsKey" v-model='form.miniCategoryIds' placeholder='请选择小程序类目' clearable :props="miniCategoryIdsProps"></el-cascader>
+              <el-cascader :key="miniCategoryIdsKey" v-model="form.miniCategoryIds" placeholder="请选择小程序类目" clearable :props="miniCategoryIdsProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序归属地区" prop="region">
-              <el-cascader :key="regionKey" v-model='form.region' placeholder='请选择小程序归属地区' clearable :props="regionProps"></el-cascader>
+              <el-cascader :key="regionKey" v-model="form.region" placeholder="请选择小程序归属地区" clearable :props="regionProps"></el-cascader>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序简介" prop="miniSlogan">
-              <el-input v-model.trim="form.miniSlogan" show-word-limit :maxlength="16" :minlength="3" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序简介" style="width:80%"></el-input>
+              <el-input
+                v-model.trim="form.miniSlogan"
+                show-word-limit
+                :maxlength="16"
+                :minlength="3"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 6 }"
+                clearable
+                placeholder="请输入小程序简介"
+                style="width: 80%"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序描述" prop="miniDesc">
-              <el-input v-model.trim="form.miniDesc" show-word-limit :maxlength="200" :minlength="30" type="textarea" :autosize="{ minRows: 2, maxRows: 6}" clearable placeholder="请输入小程序描述" style="width:80%"></el-input>
+              <el-input
+                v-model.trim="form.miniDesc"
+                show-word-limit
+                :maxlength="200"
+                :minlength="30"
+                type="textarea"
+                :autosize="{ minRows: 2, maxRows: 6 }"
+                clearable
+                placeholder="请输入小程序描述"
+                style="width: 80%"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="小程序LOGO" prop="miniLogo">
-              <picUpload :isWidthEqHeight="true" v-model="form.miniLogo" :imageUrl='form.miniLogo' :showIconClose='true' @on-remove='onRemove("miniLogo")' @on-success='(...value)=>uploadSuccess({
-                value,
-                upField:"miniLogo"
-                })' uploadUrl='/alipay/mini/fileUplaod' desc='只能上传jpg/png格式文件，文件不能超过250kb ' :size='250' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload
+                :isWidthEqHeight="true"
+                v-model="form.miniLogo"
+                :imageUrl="form.miniLogo"
+                :showIconClose="true"
+                @on-remove="onRemove('miniLogo')"
+                @on-success="
+                  (...value) =>
+                    uploadSuccess({
+                      value,
+                      upField: 'miniLogo'
+                    })
+                "
+                uploadUrl="/alipay/mini/fileUplaod"
+                desc="只能上传jpg/png格式文件，文件不能超过250kb "
+                :size="250"
+                accept="image/jpeg,image/jpg,image/png"></picUpload>
             </el-form-item>
           </el-col>
         </el-row>
@@ -48,12 +79,12 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="客服电话" prop="servicePhone">
-              <el-input v-model.trim="form.servicePhone" clearable style="width:80%" placeholder="请输入客服电话"></el-input>
+              <el-input v-model.trim="form.servicePhone" clearable style="width: 80%" placeholder="请输入客服电话"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="客服邮箱" prop="serviceMail">
-              <el-input maxlength="128" v-model.trim="form.serviceMail" clearable style="width:80%" placeholder="请输入客服邮箱"></el-input>
+              <el-input maxlength="128" v-model.trim="form.serviceMail" clearable style="width: 80%" placeholder="请输入客服邮箱"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -61,30 +92,34 @@
         <el-row>
           <el-col :span="6">
             <el-form-item label="营业执照号" prop="licenseNo">
-              <el-input v-model.trim="form.licenseNo" clearable style="width:80%" placeholder="请输入营业执照号"></el-input>
+              <el-input v-model.trim="form.licenseNo" clearable style="width: 80%" placeholder="请输入营业执照号"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="6">
             <el-form-item label="营业执照名称" prop="licenseName">
-              <el-input v-model.trim="form.licenseName" clearable style="width:80%" placeholder="请输入营业执照名称"></el-input>
+              <el-input v-model.trim="form.licenseName" clearable style="width: 80%" placeholder="请输入营业执照名称"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="营业执照到期日期" prop="licenseStartDate">
               <el-row>
                 <span>
-                  <el-date-picker @change="()=>{
-                    form.licenseEndDate=''
-                    }" v-model="form.licenseStartDate" type="date" placeholder="开始日期"></el-date-picker>
+                  <el-date-picker
+                    @change="
+                      () => {
+                        form.licenseEndDate = ''
+                      }
+                    "
+                    v-model="form.licenseStartDate"
+                    type="date"
+                    placeholder="开始日期"></el-date-picker>
                 </span>
-                <span>
-                  -
-                </span>
+                <span> - </span>
                 <span>
                   <el-date-picker :picker-options="pickerOptions" v-model="form.licenseEndDate" type="date" placeholder="结束日期"></el-date-picker>
                 </span>
                 <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
-                  <img :src="questionIcon" alt="提示" style="width:20px;margin:5px 0px 0px 5px" />
+                  <img :src="questionIcon" alt="提示" style="width: 20px; margin: 5px 0px 0px 5px" />
                 </el-tooltip>
               </el-row>
             </el-form-item>
@@ -94,57 +129,127 @@
         <el-row>
           <el-col :span="4">
             <el-form-item label="营业执照" prop="licensePic">
-              <picUpload v-model="form.licensePic" :imageUrl='form.licensePic' :showIconClose='true' @on-remove='onRemove("licensePic")' @on-success='(...value)=>uploadSuccess({
-                value,
-                upField:"licensePic"
-                })' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload
+                v-model="form.licensePic"
+                :imageUrl="form.licensePic"
+                :showIconClose="true"
+                @on-remove="onRemove('licensePic')"
+                @on-success="
+                  (...value) =>
+                    uploadSuccess({
+                      value,
+                      upField: 'licensePic'
+                    })
+                "
+                uploadUrl="/alipay/mini/fileUplaod"
+                desc=""
+                :size="4096"
+                accept="image/jpeg,image/jpg,image/png"></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="门店门头照" prop="outDoorPic">
-              <picUpload v-model="form.outDoorPic" :imageUrl='form.outDoorPic' :showIconClose='true' @on-remove='onRemove("outDoorPic")' @on-success='(...value)=>uploadSuccess({
-                value,
-                upField:"outDoorPic"
-                })' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload
+                v-model="form.outDoorPic"
+                :imageUrl="form.outDoorPic"
+                :showIconClose="true"
+                @on-remove="onRemove('outDoorPic')"
+                @on-success="
+                  (...value) =>
+                    uploadSuccess({
+                      value,
+                      upField: 'outDoorPic'
+                    })
+                "
+                uploadUrl="/alipay/mini/fileUplaod"
+                desc=""
+                :size="4096"
+                accept="image/jpeg,image/jpg,image/png"></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="营业执照授权照">
-              <picUpload v-model="form.firstSpecialLicensePic" :imageUrl='form.firstSpecialLicensePic' @on-remove='onRemove("firstSpecialLicensePic")' @on-success='(...value)=>uploadSuccess({
-                value,
-                upField:"firstSpecialLicensePic"
-                })' :showIconClose='true' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload
+                v-model="form.firstSpecialLicensePic"
+                :imageUrl="form.firstSpecialLicensePic"
+                @on-remove="onRemove('firstSpecialLicensePic')"
+                @on-success="
+                  (...value) =>
+                    uploadSuccess({
+                      value,
+                      upField: 'firstSpecialLicensePic'
+                    })
+                "
+                :showIconClose="true"
+                uploadUrl="/alipay/mini/fileUplaod"
+                desc=""
+                :size="4096"
+                accept="image/jpeg,image/jpg,image/png"></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="特殊资质照">
-              <picUpload v-model="form.secondSpecialLicensePic" :imageUrl='form.secondSpecialLicensePic' @on-remove='onRemove("secondSpecialLicensePic")' @on-success='(...value)=>uploadSuccess({
-                value,
-                upField:"secondSpecialLicensePic"
-                })' :showIconClose='true' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload
+                v-model="form.secondSpecialLicensePic"
+                :imageUrl="form.secondSpecialLicensePic"
+                @on-remove="onRemove('secondSpecialLicensePic')"
+                @on-success="
+                  (...value) =>
+                    uploadSuccess({
+                      value,
+                      upField: 'secondSpecialLicensePic'
+                    })
+                "
+                :showIconClose="true"
+                uploadUrl="/alipay/mini/fileUplaod"
+                desc=""
+                :size="4096"
+                accept="image/jpeg,image/jpg,image/png"></picUpload>
             </el-form-item>
           </el-col>
           <el-col :span="4">
             <el-form-item label="其它">
-              <picUpload v-model="form.thirdSpecialLicensePic" :imageUrl='form.thirdSpecialLicensePic' @on-remove='onRemove("thirdSpecialLicensePic")' @on-success='(...value)=>uploadSuccess({
-                value,
-                upField:"thirdSpecialLicensePic"
-                })' :showIconClose='true' uploadUrl='/alipay/mini/fileUplaod' desc='' :size='4096' accept='image/jpeg,image/jpg,image/png'></picUpload>
+              <picUpload
+                v-model="form.thirdSpecialLicensePic"
+                :imageUrl="form.thirdSpecialLicensePic"
+                @on-remove="onRemove('thirdSpecialLicensePic')"
+                @on-success="
+                  (...value) =>
+                    uploadSuccess({
+                      value,
+                      upField: 'thirdSpecialLicensePic'
+                    })
+                "
+                :showIconClose="true"
+                uploadUrl="/alipay/mini/fileUplaod"
+                desc=""
+                :size="4096"
+                accept="image/jpeg,image/jpg,image/png"></picUpload>
             </el-form-item>
           </el-col>
         </el-row>
       </el-form>
-      <div style="width:100%;text-align: center;padding:20px 0px  100px 0px">
-        <template v-if="operation=='add'">
-          <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
-          <el-button :loading="loadingField=='saveBaseData'" @click="saveBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
+      <div style="width: 100%; text-align: center; padding: 20px 0px 100px 0px">
+        <template v-if="operation == 'add'">
+          <el-button :loading="loadingField == 'saveBaseData'" @click="saveBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
+          <el-button :loading="loadingField == 'saveBaseData'" @click="saveBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
         </template>
-        <template v-if="operation=='edit'">
-          <el-button v-if="$route.query.status==2" :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
-          <el-button :loading="loadingField=='modifyBaseData'" @click="modifyBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
+        <template v-if="operation == 'edit'">
+          <el-button
+            v-if="$route.query.status == 2"
+            :loading="loadingField == 'modifyBaseData'"
+            @click="modifyBaseData(0)"
+            v-permission="'MARKETINGDETILESTAGING'"
+            type="primary"
+            plain
+            >暂存</el-button
+          >
+          <el-button :loading="loadingField == 'modifyBaseData'" @click="modifyBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
         </template>
         <el-button @click="cancel" plain>取消</el-button>
-        <div v-if="[8, 9, 10, 11].includes(Number($route.query.status))" style="margin-top: 20px; color: #666666; font-size: 14px">此次资料修改，将会在下一次小程序版本更新时生效</div>
+        <div v-if="[8, 9, 10, 11].includes(Number($route.query.status))" style="margin-top: 20px; color: #666666; font-size: 14px">
+          此次资料修改，将会在下一次小程序版本更新时生效
+        </div>
       </div>
     </div>
   </div>
@@ -156,7 +261,7 @@ import dayjs from 'dayjs'
 export default {
   name: 'marketingDetile',
   components: { picUpload },
-  data () {
+  data() {
     var checkRegMiniName = (rule, value, callback) => {
       if (!value) {
         return callback(new Error('请输入小程序名称'))
@@ -191,7 +296,7 @@ export default {
       if (!value) {
         return callback(new Error('请输入客服邮箱'))
       }
-      var reg = new RegExp("^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$");
+      var reg = new RegExp('^[a-z0-9A-Z]+[- | a-z0-9A-Z . _]+@([a-z0-9A-Z]+(-[a-z0-9A-Z]+)?\\.)+[a-z]{2,}$')
       if (!reg.test(value)) {
         return callback(new Error('请输入正确的邮箱'))
       }
@@ -214,58 +319,62 @@ export default {
       loadingField: '',
       form: {
         miniName: '', // 小程序名称
-        miniEnglishName: '',// 小程序英文名
+        miniEnglishName: '', // 小程序英文名
         miniCategoryIds: [], // 小程序类目
-        region: [],// 小程序归属地区
-        miniSlogan: '',// 小程序简介
-        miniDesc: '',// 小程序描述
+        region: [], // 小程序归属地区
+        miniSlogan: '', // 小程序简介
+        miniDesc: '', // 小程序描述
         miniLogo: '', // 小程序LOGO
-        servicePhone: '',// 客服电话
-        serviceMail: '',// 客服邮箱
-        licenseNo: '',// 营业执照号
-        licenseName: '',// 营业执照名称
-        licenseStartDate: null,// 营业执照到期日期
+        servicePhone: '', // 客服电话
+        serviceMail: '', // 客服邮箱
+        licenseNo: '', // 营业执照号
+        licenseName: '', // 营业执照名称
+        licenseStartDate: null, // 营业执照到期日期
         licenseEndDate: null,
-        licensePic: '',// 营业执照
+        licensePic: '', // 营业执照
         outDoorPic: '', // 门店门头照
         firstSpecialLicensePic: '', // 营业执照授权照
         secondSpecialLicensePic: '', // 特殊资质照
         thirdSpecialLicensePic: '' // 其它照片
       },
-      miniCategoryIdsProps: { // 小程序类目
+      miniCategoryIdsProps: {
+        // 小程序类目
         lazy: true,
-        async lazyLoad (node, resolve) {
-          const { level } = node;
-          const res = (await queryCategory({
-            categoryId: level === 0 ? "" : node.data.categoryId,
-            topParent: level === 0 ? true : false
-          })) || []
+        async lazyLoad(node, resolve) {
+          const { level } = node
+          const res =
+            (await queryCategory({
+              categoryId: level === 0 ? '' : node.data.categoryId,
+              topParent: level === 0 ? true : false
+            })) || []
           if (res.length) {
             res.map(item => {
-              item.value = item.categoryId;
-              item.label = item.categoryName;
+              item.value = item.categoryId
+              item.label = item.categoryName
               item.leaf = !item.hasChild
             })
           }
-          resolve(res);
+          resolve(res)
         }
       },
-      regionProps: { // 小程序归属地区
+      regionProps: {
+        // 小程序归属地区
         lazy: true,
-        async lazyLoad (node, resolve) {
-          const { level } = node;
-          const res = (await queryArea({
-            areaCode: level === 0 ? "" : node.data.areaCode,
-            topParent: level === 0 ? true : false
-          })) || []
+        async lazyLoad(node, resolve) {
+          const { level } = node
+          const res =
+            (await queryArea({
+              areaCode: level === 0 ? '' : node.data.areaCode,
+              topParent: level === 0 ? true : false
+            })) || []
           if (res.length) {
             res.map(item => {
-              item.value = item.areaCode;
-              item.label = item.areaName;
+              item.value = item.areaCode
+              item.label = item.areaName
               item.leaf = !item.hasChild
             })
           }
-          resolve(res);
+          resolve(res)
         }
       },
       rules: {
@@ -279,12 +388,8 @@ export default {
           { min: 3, max: 25, message: '长度在 3 到 25 个字符', trigger: 'blur' },
           { validator: checkRegMiniEnglishName, trigger: 'blur' }
         ],
-        miniCategoryIds: [
-          { required: true, message: '请选择小程序类目', trigger: 'change' }
-        ],
-        region: [
-          { required: true, message: '请选择小程序归属地区', trigger: 'change' }
-        ],
+        miniCategoryIds: [{ required: true, message: '请选择小程序类目', trigger: 'change' }],
+        region: [{ required: true, message: '请选择小程序归属地区', trigger: 'change' }],
         miniSlogan: [
           { required: true, message: '请输入小程序简介', trigger: 'blur' },
           { min: 8, max: 16, message: '长度在 8 到 16 个字符', trigger: 'blur' }
@@ -293,9 +398,7 @@ export default {
           { required: true, message: '请输入小程序描述', trigger: 'blur' },
           { min: 30, max: 200, message: '长度在 30 到 200 个字符', trigger: 'blur' }
         ],
-        miniLogo: [
-          { required: true, message: '请选择小程序LOGO', trigger: 'change' }
-        ],
+        miniLogo: [{ required: true, message: '请选择小程序LOGO', trigger: 'change' }],
         servicePhone: [
           { required: true, message: '请输入客服电话', trigger: 'blur' },
           { min: 5, max: 30, message: '长度在 5 到 30 个字符', trigger: 'blur' },
@@ -303,61 +406,54 @@ export default {
         ],
         serviceMail: [
           { required: true, message: '请输入客服邮箱', trigger: 'blur' },
-          {max: 128, message: '长度在 128 个字符以内', trigger: 'blur' },
+          { max: 128, message: '长度在 128 个字符以内', trigger: 'blur' },
           { validator: checkRegserviceMail, trigger: 'blur' }
         ],
         licenseNo: [
           { required: true, message: '请输入营业执照号', trigger: 'blur' },
-          { min: 5, max: 32, message: '长度在 5 到 32 个字符', trigger: 'blur' },
+          { min: 5, max: 32, message: '长度在 5 到 32 个字符', trigger: 'blur' }
         ],
         licenseName: [
           { required: true, message: '营业执照名称', trigger: 'blur' },
-          { min: 2, max: 32, message: '长度在 2 到 32 个字符', trigger: 'blur' },
+          { min: 2, max: 32, message: '长度在 2 到 32 个字符', trigger: 'blur' }
         ],
-        licenseStartDate: [
-          { required: true, message: '请选择营业执照开始日期', trigger: 'change' }
-        ],
-        licensePic: [
-          { required: true, message: '请选择营业执照', trigger: 'change' }
-        ],
-        outDoorPic: [
-          { required: true, message: '请选择门店门头照', trigger: 'change' }
-        ]
+        licenseStartDate: [{ required: true, message: '请选择营业执照开始日期', trigger: 'change' }],
+        licensePic: [{ required: true, message: '请选择营业执照', trigger: 'change' }],
+        outDoorPic: [{ required: true, message: '请选择门店门头照', trigger: 'change' }]
       }
     }
   },
-  created () {
+  created() {
     this.initFun()
   },
   methods: {
-    initFun () {
+    initFun() {
       const query = this.$route.query
-      this.operation = query.operation || ""
+      this.operation = query.operation || ''
       if (query.id && [2, 8, 9, 10, 11].includes(Number(query.status))) {
         this.queryByDatumId(query.id)
       }
     },
-    onRemove (field) {
+    onRemove(field) {
       this.form[field] = ''
     },
-    uploadSuccess (res) {
+    uploadSuccess(res) {
       this.form[res.upField] = res.value[0].data.url
-      this.$refs.form.validate(async valid => {
-      })
     },
-    cancel () {
+    cancel() {
       this.$confirm('确定退出吗?', '提示', {
         confirmButtonText: '确定',
         cancelButtonText: '取消',
         type: 'warning'
-      }).then(() => {
-        this.$store.dispatch('delTagView', this.$route).then(() => {
-          this.$router.push({ path: 'marketingManagement' })
-        })
-      }).catch(() => {
       })
+        .then(() => {
+          this.$store.dispatch('delTagView', this.$route).then(() => {
+            this.$router.push({ path: 'marketingManagement' })
+          })
+        })
+        .catch(() => {})
     },
-    async queryByDatumId (datumId) {
+    async queryByDatumId(datumId) {
       const res = await queryByDatumId({
         datumId
       })
@@ -385,7 +481,7 @@ export default {
       this.form.thirdSpecialLicensePic = res.thirdSpecialLicensePic
       this.detileId = res.id
     },
-    initSubData () {
+    initSubData() {
       let subData = {
         miniName: this.form.miniName,
         miniEnglishName: this.form.miniEnglishName,
@@ -408,12 +504,12 @@ export default {
         outDoorPic: this.form.outDoorPic,
         firstSpecialLicensePic: this.form.firstSpecialLicensePic,
         secondSpecialLicensePic: this.form.secondSpecialLicensePic,
-        thirdSpecialLicensePic: this.form.thirdSpecialLicensePic,
+        thirdSpecialLicensePic: this.form.thirdSpecialLicensePic
       }
       return subData
     },
     // 基础资料维护
-    async saveBaseData (status) {
+    async saveBaseData(status) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loadingField = 'saveBaseData'
@@ -436,7 +532,7 @@ export default {
       })
     },
     // 更改
-    async modifyBaseData (status) {
+    async modifyBaseData(status) {
       this.$refs.form.validate(async valid => {
         if (valid) {
           this.loadingField = 'modifyBaseData'

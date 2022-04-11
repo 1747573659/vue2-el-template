@@ -30,8 +30,7 @@
                   :options="shopList"
                   :isMaxPage="isMaxPageShop"
                   @change="shopChange"
-                  @clear="shopClear"
-                >
+                  @clear="shopClear">
                 </select-page>
               </el-form-item>
             </el-col>
@@ -61,8 +60,7 @@
                     :fileServer="fileServer"
                     @on-success="(value, base64Code) => setBusinessLicenseAndBase64(value, base64Code, 'archiveExpandVO', 'businessLicenseUrl')"
                     :exampleImg="exampleImg.businessLicenseUrl"
-                    @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)"
-                  >
+                    @click="handleImgPreview(fileServe + form.archiveExpandVO.businessLicenseUrl)">
                   </upload-pic>
                 </el-form-item>
               </el-col>
@@ -70,7 +68,7 @@
             <el-row>
               <el-col :span="12" class="archive-form-item">
                 <el-form-item label="营业执照注册号" prop="archiveExpandVO.licId">
-                  <el-input style="width:240px" v-model="form.archiveExpandVO.licId" placeholder=""></el-input>
+                  <el-input style="width: 240px" v-model="form.archiveExpandVO.licId" placeholder=""></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12" class="archive-form-item">
@@ -81,13 +79,10 @@
                     v-model="form.archiveExpandVO.licValidityBigen"
                     @change="value => timeChange(value, 'licValidityBigen')"
                     type="date"
-                    placeholder="选择日期"
-                  >
+                    placeholder="选择日期">
                   </el-date-picker>
                   <span style="margin: 5px">至</span>
-                  <span v-if="[3, 5, 6, 7, 9].includes(auditStatus) && !form.archiveExpandVO.licValidityEnd">
-                    长期有效
-                  </span>
+                  <span v-if="[3, 5, 6, 7, 9].includes(auditStatus) && !form.archiveExpandVO.licValidityEnd"> 长期有效 </span>
                   <el-date-picker
                     v-else
                     style="width: 140px"
@@ -95,8 +90,7 @@
                     v-model="form.archiveExpandVO.licValidityEnd"
                     @change="value => timeChange(value, 'licValidityEnd')"
                     type="date"
-                    placeholder="选择日期"
-                  >
+                    placeholder="选择日期">
                   </el-date-picker>
                   <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
                     <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -108,7 +102,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="公司名称" prop="archiveBaseVO.companyName">
-                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.companyName" placeholder=""></el-input>
+                <el-input style="width: 240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.companyName" placeholder=""></el-input>
                 <el-tooltip effect="dark" content="公司名称必须与营业执照/登记证书一致" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
@@ -116,7 +110,7 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="商户简称" prop="archiveBaseVO.merchantShortName">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.merchantShortName" placeholder=""></el-input>
+                <el-input style="width: 240px" v-model="form.archiveBaseVO.merchantShortName" placeholder=""></el-input>
                 <el-tooltip effect="dark" content="用于支付完成页面向消费者展示" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 </el-tooltip>
@@ -131,38 +125,38 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="详细地址" prop="archiveBaseVO.address">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.address" placeholder=""></el-input>
+                <el-input style="width: 240px" v-model="form.archiveBaseVO.address" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="客服电话" prop="archiveBaseVO.serviceTel">
-                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.serviceTel" placeholder=""></el-input>
+                <el-input style="width: 240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.serviceTel" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="负责人" prop="archiveBaseVO.contact">
-                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.contact" placeholder=""></el-input>
+                <el-input style="width: 240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.contact" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="负责人证件号码" prop="archiveBaseVO.idNumber">
-                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.idNumber" clearable placeholder=""></el-input>
+                <el-input style="width: 240px" :disabled="formYQDisabled" v-model="form.archiveBaseVO.idNumber" clearable placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="负责人电话" prop="archiveBaseVO.contactPhone">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.contactPhone" clearable placeholder=""></el-input>
+                <el-input style="width: 240px" v-model="form.archiveBaseVO.contactPhone" clearable placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="邮箱" prop="archiveBaseVO.email">
-                <el-input style="width:240px" v-model="form.archiveBaseVO.email" placeholder=""></el-input>
+                <el-input style="width: 240px" v-model="form.archiveBaseVO.email" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -184,8 +178,7 @@
             <el-col
               :span="12"
               class="archive-form-item"
-              v-if="form.archiveBaseVO.merchantType === 3 && form.archiveBaseVO.industrIdName && form.archiveBaseVO.industrIdName.includes('事业单位')"
-            >
+              v-if="form.archiveBaseVO.merchantType === 3 && form.archiveBaseVO.industrIdName && form.archiveBaseVO.industrIdName.includes('事业单位')">
               <el-form-item label="登记证书类型" prop="archiveExpandVO.certType">
                 <el-select style="width: 240px" clearable v-model="form.archiveExpandVO.certType" placeholder="全部">
                   <el-option v-for="item in certTypeList" :key="item.certNum" :label="item.certName" :value="item.certNum"></el-option>
@@ -202,8 +195,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.signboardUrl')"
                   :exampleImg="exampleImg.signboardUrl"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.signboardUrl)"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -214,8 +206,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.cashierDesk')"
                   :exampleImg="exampleImg.cashierDesk"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cashierDesk)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cashierDesk)"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -228,8 +219,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.enterpriseInfoScreenshot')"
                   :exampleImg="exampleImg.enterpriseInfoScreenshot"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.enterpriseInfoScreenshot)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.enterpriseInfoScreenshot)"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -243,8 +233,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.businessSiteOneUrl')"
                   :exampleImg="exampleImg.businessSiteOneUrl"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.businessSiteOneUrl)"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -256,8 +245,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.contractOfTenancy1')"
                   :exampleImg="exampleImg.contractOfTenancy"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.contractOfTenancy1)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.contractOfTenancy1)"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -271,8 +259,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.contractOfTenancy2')"
                   :exampleImg="exampleImg.contractOfTenancy"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.contractOfTenancy2)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.contractOfTenancy2)"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -284,8 +271,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.contractOfTenancy3')"
                   :exampleImg="exampleImg.contractOfTenancy"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.contractOfTenancy3)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.contractOfTenancy3)"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -302,8 +288,7 @@
                   :fileServer="fileServer"
                   @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idFrontUrl', 'face')"
                   :exampleImg="exampleImg.idFrontUrl"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)"></upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -315,8 +300,7 @@
                   :fileServer="fileServer"
                   @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveExpandVO', 'idBackUrl', 'back')"
                   :exampleImg="exampleImg.idBackUrl"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -324,7 +308,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="法人姓名" prop="archiveExpandVO.legalPersonName">
-                <el-input style="width:240px" v-model="form.archiveExpandVO.legalPersonName" placeholder=""></el-input>
+                <el-input style="width: 240px" v-model="form.archiveExpandVO.legalPersonName" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -338,7 +322,7 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="证件号码" prop="archiveExpandVO.idNumber">
-                <el-input style="width:240px" v-model="form.archiveExpandVO.idNumber" placeholder=""></el-input>
+                <el-input style="width: 240px" v-model="form.archiveExpandVO.idNumber" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
@@ -349,13 +333,10 @@
                   v-model="form.archiveExpandVO.legalPersonValidityBegin"
                   @change="value => timeChange(value, 'legalPersonValidityBegin')"
                   type="date"
-                  placeholder="选择日期"
-                >
+                  placeholder="选择日期">
                 </el-date-picker>
                 <span style="margin: 5px">至</span>
-                <span v-if="[3, 5, 6, 7, 9].includes(auditStatus) && !form.archiveExpandVO.legalPersonValidityEnd">
-                  长期有效
-                </span>
+                <span v-if="[3, 5, 6, 7, 9].includes(auditStatus) && !form.archiveExpandVO.legalPersonValidityEnd"> 长期有效 </span>
                 <el-date-picker
                   v-else
                   style="width: 140px"
@@ -363,8 +344,7 @@
                   v-model="form.archiveExpandVO.legalPersonValidityEnd"
                   @change="value => timeChange(value, 'legalPersonValidityEnd')"
                   type="date"
-                  placeholder="选择日期"
-                >
+                  placeholder="选择日期">
                 </el-date-picker>
                 <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
                   <img :src="questionIcon" alt="提示" class="e-icon-question" />
@@ -397,8 +377,7 @@
                   :isMaxPage="isMaxPageBank"
                   @focus="bankFocus"
                   @change="bankChange"
-                  @clear="bankClear"
-                >
+                  @clear="bankClear">
                 </select-page>
               </el-form-item>
             </el-col>
@@ -413,8 +392,7 @@
                   :fileServer="fileServer"
                   @on-success="(value, base64Code) => setBankCardAndBase64(value, base64Code, 'archiveExpandVO', 'bankCardFrontUrl')"
                   :exampleImg="exampleImg.bankCardFrontUrl"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardFrontUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -426,8 +404,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveExpandVO.bankCardBackUrl')"
                   :exampleImg="exampleImg.bankCardBackUrl"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardBackUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.bankCardBackUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -442,7 +419,7 @@
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="银行账号" prop="archiveExpandVO.bankCard">
-                <el-input clearable style="width:240px" v-model="form.archiveExpandVO.bankCard" placeholder=""></el-input>
+                <el-input clearable style="width: 240px" v-model="form.archiveExpandVO.bankCard" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item" v-if="form.archiveBaseVO.merchantType === 3">
@@ -458,8 +435,7 @@
                   :isMaxPage="isMaxPageBank"
                   @focus="bankFocus"
                   @change="bankChange"
-                  @clear="bankClear"
-                >
+                  @clear="bankClear">
                 </select-page>
               </el-form-item>
             </el-col>
@@ -467,12 +443,12 @@
           <el-row>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="账户名" prop="archiveExpandVO.bankAccountName">
-                <el-input clearable style="width:240px" v-model="form.archiveExpandVO.bankAccountName" placeholder=""></el-input>
+                <el-input clearable style="width: 240px" v-model="form.archiveExpandVO.bankAccountName" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="预留手机号" prop="archiveExpandVO.cardholderPhone">
-                <el-input clearable style="width:240px" :disabled="formYQDisabled" v-model="form.archiveExpandVO.cardholderPhone" placeholder=""></el-input>
+                <el-input clearable style="width: 240px" :disabled="formYQDisabled" v-model="form.archiveExpandVO.cardholderPhone" placeholder=""></el-input>
               </el-form-item>
             </el-col>
           </el-row>
@@ -500,8 +476,7 @@
                   :fileServer="fileServer"
                   @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveOtherVO', 'cardholderIdFrontUrl', 'face')"
                   :exampleImg="exampleImg.cardholderIdFrontUrl"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdFrontUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdFrontUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -514,8 +489,7 @@
                   :fileServer="fileServer"
                   @on-success="(value, base64Code) => setIdCardAndBase64(value, base64Code, 'archiveOtherVO', 'cardholderIdBackUrl', 'back')"
                   :exampleImg="exampleImg.cardholderIdBackUrl"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdBackUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdBackUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -530,7 +504,7 @@
             </el-col>
             <el-col :span="12" class="archive-form-item" v-if="form.archiveExpandVO.acctType === 1">
               <el-form-item label="持卡人证件号码" prop="archiveExpandVO.cardholderIdNumber">
-                <el-input style="width:240px" :disabled="formYQDisabled" v-model="form.archiveExpandVO.cardholderIdNumber" placeholder=""></el-input>
+                <el-input style="width: 240px" :disabled="formYQDisabled" v-model="form.archiveExpandVO.cardholderIdNumber" placeholder=""></el-input>
               </el-form-item>
             </el-col>
             <template v-if="form.archiveBaseVO.merchantType === 3 && form.archiveExpandVO.acctType === 1 && form.archiveExpandVO.cardholderType === 2">
@@ -539,9 +513,7 @@
                   <el-date-picker style="width: 140px" value-format="yyyy-MM-dd" v-model="form.archiveExpandVO.cardholderIdBegin" type="date" placeholder="选择日期">
                   </el-date-picker>
                   <span style="margin: 5px">至</span>
-                  <span v-if="[3, 5, 6, 7, 9].includes(auditStatus) && !form.archiveExpandVO.cardholderIdEnd">
-                    长期有效
-                  </span>
+                  <span v-if="[3, 5, 6, 7, 9].includes(auditStatus) && !form.archiveExpandVO.cardholderIdEnd"> 长期有效 </span>
                   <el-date-picker v-else style="width: 140px" value-format="yyyy-MM-dd" v-model="form.archiveExpandVO.cardholderIdEnd" type="date" placeholder="选择日期">
                   </el-date-picker>
                 </el-form-item>
@@ -558,8 +530,7 @@
                   :fileServer="fileServer"
                   :imagePath="form.archiveExpandVO.hardIdUrl"
                   @on-success="res => uploadSuccess(res, 'archiveExpandVO.hardIdUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.hardIdUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.hardIdUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -573,8 +544,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveExpandVO.openingPermitUrl')"
                   :exampleImg="exampleImg.openingPermitUrl"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.openingPermitUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -588,8 +558,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.cashreceiveIdFrontUrl')"
                   :exampleImg="exampleImg.cashreceiveIdFrontUrl"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cashreceiveIdFrontUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cashreceiveIdFrontUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -601,8 +570,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.cashreceiveIdBackUrl')"
                   :exampleImg="exampleImg.cashreceiveIdBackUrl"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cashreceiveIdBackUrl)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cashreceiveIdBackUrl)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -616,8 +584,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.publicAuthorization')"
                   :exampleImg="exampleImg.publicAuthorization"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.publicAuthorization)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.publicAuthorization)">
                 </upload-pic>
               </el-form-item>
             </el-col>
@@ -632,25 +599,23 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.cardholderPhoto')"
                   :exampleImg="exampleImg.cardholderPhoto"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderPhoto)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderPhoto)">
                 </upload-pic>
               </el-form-item>
             </el-col>
             <el-col :span="12" class="archive-form-item">
               <el-form-item label="第三方对私结算授权函" prop="archiveOtherVO.privateAuthorization">
                 <upload-pic
-                  style="display:inline-block"
+                  style="display: inline-block"
                   alt="第三方对私结算授权函"
                   :imagePath="form.archiveOtherVO.privateAuthorization"
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.privateAuthorization')"
                   :exampleImg="exampleImg.privateAuthorization"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.privateAuthorization)"
-                >
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.privateAuthorization)">
                 </upload-pic>
-                <div style="display:inline">
-                  <img ref="template" src="../../../../assets/images/xftArchive/privateTemplate.jpg" alt="" style="display:none" />
+                <div style="display: inline">
+                  <img ref="template" src="../../../../assets/images/xftArchive/privateTemplate.jpg" alt="" style="display: none" />
                   <span class="xft-add-template" @click="handlePrivateLetter">下载模板</span>
                 </div>
               </el-form-item>
@@ -669,8 +634,7 @@
                   :inactive-value="1"
                   v-model="form.archiveBaseVO.isOpenXingPos"
                   active-color="#3377FF"
-                  inactive-color="#D3DBEB"
-                >
+                  inactive-color="#D3DBEB">
                 </el-switch>
               </el-form-item>
             </el-col>
@@ -684,8 +648,7 @@
                   :fileServer="fileServer"
                   @on-success="res => uploadSuccess(res, 'archiveOtherVO.cardholderIdCardFront')"
                   :exampleImg="exampleImg.cardholderIdCardFront"
-                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdCardFront)"
-                ></upload-pic>
+                  @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdCardFront)"></upload-pic>
               </el-form-item>
             </el-col>
           </el-row>
@@ -728,8 +691,7 @@
       <template
         v-if="
           ([undefined, 0, 1, 2, 4, 8, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && !isDetail
-        "
-      >
+        ">
         <el-button @click="toSave" :loading="checkArchive" size="small" type="primary" plain class="archive-bottom-btn">保存</el-button>
       </template>
       <template v-if="([2, 5, 10, 11].includes(auditStatus) || isCopy || ([6, 7].includes(auditStatus) && [1, 6].includes(form.archiveBaseVO.wxCertStatus))) && isDetail">
@@ -756,8 +718,7 @@
       :initial-index="imageIndex"
       :url-list="previewList"
       :on-close="handleClosePreview"
-      class="e-preview-con"
-    ></el-image-preview>
+      class="e-preview-con"></el-image-preview>
   </div>
 </template>
 
@@ -1118,7 +1079,7 @@ export default {
         this.imageIndex = this.previewList.findIndex(item => item === url)
       }
     },
-    setBusinessLicenseAndBase64(res, base64Code, type, url, side) {
+    setBusinessLicenseAndBase64(res, base64Code, type, url) {
       const OCRData = {
         image: base64Code.split(',')[1],
         imageCode: 'business_license'
@@ -1150,7 +1111,7 @@ export default {
             this.form.archiveExpandVO.licValidityEnd = ''
           }
         })
-        .catch(err => {})
+        .catch(() => {})
       this.form[type][url] = res.data.path
     },
     setIdCardAndBase64(res, base64Code, type, url, side) {
@@ -1181,7 +1142,7 @@ export default {
             }
           }
         })
-        .catch(err => {})
+        .catch(() => {})
       this.form[type][url] = res.data.path
     },
     setBankCardAndBase64(res, base64Code, type, url) {
@@ -1195,7 +1156,7 @@ export default {
           this.$message.success('图片解析成功')
           this.form.archiveExpandVO.bankCard = res.card_num
         })
-        .catch(err => {})
+        .catch(() => {})
       this.form[type][url] = res.data.path
     },
     uploadSuccess(res, type) {
@@ -1489,7 +1450,7 @@ export default {
         ]
         Promise.all(
           formYQValids.map(item => {
-            return new Promise((resolve, reject) => {
+            return new Promise(resolve => {
               this.$refs.form.validateField(item, error => {
                 resolve(error)
               })
@@ -1521,7 +1482,7 @@ export default {
             auditRemark: this.refuseForm.remark
           }
           try {
-            const res = await refuse(data)
+            await refuse(data)
             this.refuseDialogVisible = false
             this.$store.dispatch('delTagView', this.$route).then(() => {
               this.$router.push({ path: 'xftArchive' })
@@ -1615,7 +1576,7 @@ export default {
         width: 100%;
       }
     }
-    /deep/.el-form-item {
+    ::v-deep.el-form-item {
       margin-bottom: 24px;
     }
   }
@@ -1640,10 +1601,10 @@ export default {
   padding: 8px 22px;
 }
 .xft-add-form {
-  /deep/.el-input.is-disabled .el-input__inner {
+  ::v-deep.el-input.is-disabled .el-input__inner {
     color: #212430 !important;
   }
-  /deep/.el-radio__input.is-disabled + span.el-radio__label {
+  ::v-deep.el-radio__input.is-disabled + span.el-radio__label {
     color: #212430 !important;
   }
 }
@@ -1654,16 +1615,16 @@ export default {
       right: 35vw;
       bottom: 20vh;
       top: 10vh;
-      /deep/ .el-image-viewer__mask {
+      ::v-deep .el-image-viewer__mask {
         display: none;
       }
-      /deep/ .el-image-viewer__close {
+      ::v-deep .el-image-viewer__close {
         background-color: #606266;
         width: 44px;
         height: 44px;
         font-size: 30px;
       }
-      /deep/ .el-icon-circle-close:before {
+      ::v-deep .el-icon-circle-close:before {
         content: '\e6db';
         color: #fff;
       }

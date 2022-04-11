@@ -13,8 +13,7 @@
               searchName="id"
               id="userId"
               :width="'240px'"
-              :placeholder="'代理商名称'"
-            >
+              :placeholder="'代理商名称'">
             </select-page>
           </el-form-item>
           <el-form-item label="上级代理商：">
@@ -26,8 +25,7 @@
               searchName="id"
               id="userId"
               :width="'240px'"
-              :placeholder="'上级代理商名称'"
-            >
+              :placeholder="'上级代理商名称'">
             </select-page>
           </el-form-item>
         </template>
@@ -90,14 +88,7 @@ export default {
           name: 'time',
           label: '日期：',
           placeholder: '请选择日期',
-          value: [
-            dayjs()
-              .subtract(7, 'days')
-              .format('YYYY-MM-DD'),
-            dayjs()
-              .subtract(1, 'days')
-              .format('YYYY-MM-DD')
-          ]
+          value: [dayjs().subtract(7, 'days').format('YYYY-MM-DD'), dayjs().subtract(1, 'days').format('YYYY-MM-DD')]
         }
       ],
       list: [],
@@ -182,7 +173,7 @@ export default {
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
 }
-/deep/.xdd-btn-block__w240 {
+::v-deep.xdd-btn-block__w240 {
   position: relative;
   left: -37px;
 }

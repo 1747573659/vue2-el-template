@@ -13,7 +13,7 @@
         <el-form-item>
           <el-button type="primary" class="km-role-search" :loading="cxLoading" @click="search">查询</el-button>
         </el-form-item>
-        <el-form-item style="float:right">
+        <el-form-item style="float: right">
           <el-button type="primary" plain icon="el-icon-plus" v-permission="'ACCOUNT_SET_ADD'" @click="add">新增</el-button>
         </el-form-item>
       </el-form>
@@ -39,8 +39,7 @@
               iconColor="#FFA033"
               title="你确定要重置密码吗？确定后将对应账号的密码更新为888888"
               placement="top-start"
-              @confirm="resetPsw(scope.row)"
-            >
+              @confirm="resetPsw(scope.row)">
               <el-button slot="reference" type="text" size="small">重置密码</el-button>
             </el-popconfirm>
             <el-popconfirm
@@ -49,8 +48,7 @@
               iconColor="#FFA033"
               title="确定删除所选数据吗？"
               placement="top-start"
-              @confirm="del(scope.row)"
-            >
+              @confirm="del(scope.row)">
               <el-button slot="reference" type="text" size="small">删除</el-button>
             </el-popconfirm>
           </template>
@@ -64,8 +62,7 @@
           :page-sizes="[10, 30, 50]"
           :page-size="pageSize"
           layout="total, sizes, prev, pager, next, jumper"
-          :total="total"
-        >
+          :total="total">
         </el-pagination>
       </div>
     </div>
@@ -112,7 +109,7 @@ export default {
       this.getList()
     },
     edit(row) {
-      this.delCachedView({ name: 'accountSettingAdd' }).then(()=> {
+      this.delCachedView({ name: 'accountSettingAdd' }).then(() => {
         this.$router.push({ path: 'accountSettingAdd', query: { id: row.id } })
       })
     },
@@ -122,7 +119,7 @@ export default {
         userId: row.id
       }
       try {
-        const res = await updateStatus(data)
+        await updateStatus(data)
         this.$message.success('操作成功')
         this.getList()
       } catch (e) {}
@@ -132,7 +129,7 @@ export default {
         userId: row.id
       }
       try {
-        const res = await resetPassword(data)
+        await resetPassword(data)
         this.getList()
         this.$message.success('重置密码成功!')
       } catch (e) {}
@@ -142,7 +139,7 @@ export default {
         userId: row.id
       }
       try {
-        const res = await deleteUser(data)
+        await deleteUser(data)
         this.getList()
         this.$message.success('删除成功!')
       } catch (e) {}
@@ -157,7 +154,7 @@ export default {
       this.getList()
     },
     add() {
-      this.delCachedView({ name: 'accountSettingAdd' }).then(()=> {
+      this.delCachedView({ name: 'accountSettingAdd' }).then(() => {
         this.$router.push({ path: 'accountSettingAdd' })
       })
     },
@@ -190,7 +187,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;

@@ -16,7 +16,7 @@
             <img :src="'data:image/jpeg;base64,' + slideBlockImgBg" alt="" ref="slideVerify" class="km-slide-login__bg" :width="slideW" :height="slideH" />
           </div>
           <!-- 图片 -->
-          <div class="km-slide-login__img ">
+          <div class="km-slide-login__img">
             <img
               v-if="slideBlockImg"
               class="km-slide-login__slide--img"
@@ -28,8 +28,7 @@
               @mousedown.prevent.stop="mouseDown"
               @touchstart.prevent.stop="touchStart"
               @touchmove.prevent.stop="mouseMove"
-              @touchend.prevent.stop="mouseUp"
-            />
+              @touchend.prevent.stop="mouseUp" />
             <p v-if="!slideBlockImg" class="km-slide-login__slide--img" ref="slideImgs"></p>
           </div>
           <!-- 遮罩 -->
@@ -65,8 +64,7 @@
               @touchstart.prevent.stop="touchStart"
               @touchmove.prevent.stop="mouseMove"
               @touchend.prevent.stop="mouseUp"
-              :class="{ info: loading, success: status === 'success', fail: status === 'fail' }"
-            >
+              :class="{ info: loading, success: status === 'success', fail: status === 'fail' }">
               <i v-if="status === 'pendding'" class="el-icon-right"></i>
               <i v-if="status === 'fail'" class="el-icon-close"></i>
               <i v-if="status === 'success'" class="el-icon-check"></i>
@@ -189,7 +187,6 @@ export default {
       e.preventDefault()
       // 滑块左端向右边移动的距离
       let moveX = touch.clientX - this.btnX
-      let btnWidth = this.$refs.btn.offsetWidth
       if (moveX > this.btnMovableDistance) {
         moveX = this.btnMovableDistance
       }
@@ -320,7 +317,7 @@ export default {
   cursor: pointer;
   z-index: 5000;
   &::before {
-    color:#fff;
+    color: #fff;
     transform: rotate(90deg);
   }
   &:hover {

@@ -10,8 +10,7 @@
     remote
     filterable
     clearable
-    style="width: 100%;"
-  >
+    style="width: 100%">
     <el-option v-for="(item, index) in data" :label="item[optionLabel]" :value="item[optionValue]" :key="index"></el-option>
     <slot name="loadmore" v-if="showLoadMore">
       <div class="el-select-dropdown__empty">{{ isMaxPage ? '加载完毕' : '加载中' }}</div>
@@ -53,7 +52,7 @@ export default {
     loadmore: {
       bind(el, binding) {
         const SELECTWRAP_DOM = el.querySelector('.el-select-dropdown .el-select-dropdown__wrap')
-        let scrollListener = function() {
+        let scrollListener = function () {
           const CONDITION = this.scrollHeight - Math.ceil(this.scrollTop) <= this.clientHeight
           if (CONDITION && this.scrollTop !== 0) binding.value()
         }
@@ -86,7 +85,7 @@ export default {
         this.handleSelectMore.intercept = false
       })
     },
-    handleSelectRemote: async function(query) {
+    handleSelectRemote: async function (query) {
       if (query !== this.searchStr) this.resetSelect()
       this.searchStr = query
       await this.request({ query, page: query !== this.searchStr ? 1 : this.selectPageNo })

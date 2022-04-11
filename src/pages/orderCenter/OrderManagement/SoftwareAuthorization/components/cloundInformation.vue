@@ -18,8 +18,7 @@
             :request="getShopPage"
             :is-max-page.sync="isShopMaxPage"
             @change="handleShopPage"
-            placeholder="请输入名称/商户号"
-          />
+            placeholder="请输入名称/商户号" />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.merchantDTO.merchantNo" placeholder="请先选择商户" disabled></el-input>
@@ -76,8 +75,7 @@
               v-model.number.trim="scope.row.addNum"
               @change="handleAddNumAmount(scope.row)"
               :disabled="$route.query.status === 'detail' || [203, 206].includes(form.merchantDTO.applicationSystem)"
-              style="width:100%"
-            ></el-input>
+              style="width: 100%"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
@@ -405,9 +403,7 @@ export default {
     },
     setDelayValidTime(date) {
       const countTime = dayjs(date).isAfter(dayjs().format('YYYY-MM-DD')) ? date : dayjs().format('YYYY-MM-DD')
-      return dayjs(countTime)
-        .add(this.form.merchantDTO.delayHour, 'year')
-        .format('YYYY-MM-DD 00:00:00')
+      return dayjs(countTime).add(this.form.merchantDTO.delayHour, 'year').format('YYYY-MM-DD 00:00:00')
     },
     handleProductVisible() {
       this.checkProductVisible = true
@@ -484,13 +480,13 @@ export default {
 }
 .p-information {
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-input__inner {
         text-align: right;
       }
     }
     .e-select-con {
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
         &__inner {
           text-align: left;
@@ -508,7 +504,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -517,7 +513,7 @@ export default {
 }
 .p-address {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }
@@ -534,7 +530,7 @@ export default {
   }
   &_remark {
     width: 100%;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }

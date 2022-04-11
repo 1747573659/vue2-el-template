@@ -1,5 +1,5 @@
 <template>
-  <section v-loading="checkBasicInformLoad"  style="padding-bottom:72px">
+  <section v-loading="checkBasicInformLoad" style="padding-bottom: 72px">
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
@@ -47,8 +47,7 @@
               :request="getOldShopPage"
               :is-max-page.sync="isOldShopMaxPage"
               @change="val => handleShopPage(val, 'old')"
-              placeholder="请输入名称/商户号"
-            />
+              placeholder="请输入名称/商户号" />
           </el-form-item>
           <el-form-item label="商户号">
             <el-input :value="form.oldMerchantId" placeholder="请先选择商户" disabled></el-input>
@@ -79,8 +78,7 @@
               :data.sync="productLists"
               :request="getProductByPage"
               :is-max-page.sync="isProductMaxPage"
-              placeholder="全部"
-            />
+              placeholder="全部" />
           </el-form-item>
         </template>
       </el-form>
@@ -100,8 +98,7 @@
             :request="getNewShopPage"
             :is-max-page.sync="isNewShopMaxPage"
             @change="val => handleShopPage(val, 'new')"
-            placeholder="请输入名称/商户号"
-          />
+            placeholder="请输入名称/商户号" />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.newMerchantId" placeholder="请先选择商户" disabled></el-input>
@@ -246,7 +243,7 @@ export default {
     } else this.getDetail()
   },
   methods: {
-    handleOldRegistType(val) {
+    handleOldRegistType() {
       const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAddress, oldMerchantAuthCount } = formObj
       this.form = Object.assign(this.form, {
         oldMerchantName,
@@ -454,7 +451,7 @@ export default {
     .p-card-reason {
       flex-basis: 80%;
     }
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -488,7 +485,7 @@ export default {
     text-align: center;
     box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
     z-index: 1000;
-    /deep/ .el-button {
+    ::v-deep .el-button {
       padding: 8px 22px;
     }
   }

@@ -56,7 +56,7 @@ export default {
   background-color: #fff;
   padding-left: 16px;
   padding-right: 16px;
-  /deep/ {
+  ::v-deep {
     .el-tabs__header {
       margin-bottom: 0;
     }

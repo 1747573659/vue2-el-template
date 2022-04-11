@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 const urlLinks = {
   fileServer: '/fileServer',
-  ossFileServer: '/oss/fileServer',
+  ossFileServer: '/oss/fileServer'
 }
 
 export function fileServer(data) {

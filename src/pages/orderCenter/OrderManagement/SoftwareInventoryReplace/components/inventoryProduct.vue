@@ -69,7 +69,7 @@ export default {
 <style lang="scss" scoped>
 .p-product {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }
@@ -81,7 +81,7 @@ export default {
 }
 .e-inventory {
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-radio__label {
         display: none;
       }

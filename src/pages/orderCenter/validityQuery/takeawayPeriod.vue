@@ -17,8 +17,7 @@
               searchName="id"
               :width="'240px'"
               id="userId"
-              :placeholder="'商户名称'"
-            >
+              :placeholder="'商户名称'">
             </select-page>
             <select-page
               v-else
@@ -28,8 +27,7 @@
               searchName="id"
               :width="'240px'"
               id="id"
-              :placeholder="'商户名称'"
-            >
+              :placeholder="'商户名称'">
             </select-page>
           </el-form-item>
         </template>
@@ -46,8 +44,7 @@
         :total="total"
         @getList="handleFilter(queryParams)"
         :page.sync="tableParam.page"
-        :rows.sync="tableParam.rows"
-      ></base-table>
+        :rows.sync="tableParam.rows"></base-table>
     </div>
   </div>
 </template>
@@ -57,7 +54,7 @@ import listMixins from '@/mixins/tableList'
 import baseTable from '@/components/baseTable'
 import queryGroup from '@/components/queryGroup'
 import { queryMerchantAdminPage } from '@/api/transtionManagement'
-import { wmdownloadExcel, queryWmTermPage, queryWmWhitePage, downloadWmWhiteExcel } from '@/api/orderCenter'
+import { queryWmTermPage, queryWmWhitePage } from '@/api/orderCenter'
 import selectPage from '@/components/selectPage2/index.vue'
 import { downloadBufferFile } from '@/utils'
 const DOWNLOAD_URL = process.env.VUE_APP_BASE_API
@@ -246,7 +243,7 @@ export default {
     }
   },
   methods: {
-    handleClick(key, keyPath) {
+    handleClick(key) {
       this.activeTab = String(key)
       if (this.activeTab === '1') {
         this.headers = this.headers1
@@ -355,43 +352,43 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.search-box{
+.search-box {
   margin-left: -16px;
   margin-right: -16px;
   border-bottom: 16px solid #f7f8fa;
 }
-/deep/.xdd-btn-block__w240 {
+::v-deep.xdd-btn-block__w240 {
   position: relative;
   left: -53px;
 }
 .tp-tabs {
-  /deep/.el-tabs__header {
+  ::v-deep.el-tabs__header {
     padding: 10px 24px;
     background-color: #ffffff;
   }
-  /deep/.el-tabs__item.is-active {
+  ::v-deep.el-tabs__item.is-active {
     color: #3377ff !important;
   }
-  /deep/.el-tabs__active-bar {
+  ::v-deep.el-tabs__active-bar {
     background-color: #3377ff;
   }
-  /deep/.el-tabs__item:hover {
+  ::v-deep.el-tabs__item:hover {
     color: #3b83ff !important;
   }
 }
 .el-menu-sum {
   margin-left: -16px;
   margin-right: -16px;
-  /deep/.el-menu-item {
+  ::v-deep.el-menu-item {
     font-size: 16px;
     font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #3d4966;
   }
-  /deep/.el-menu-item.is-active {
+  ::v-deep.el-menu-item.is-active {
     border-bottom: 2px solid #3377ff;
   }
-  /deep/.el-menu-item.is-active {
+  ::v-deep.el-menu-item.is-active {
     font-size: 16px;
     font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 600;

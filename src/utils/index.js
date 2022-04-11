@@ -11,7 +11,7 @@ import qs from 'qs'
 import { getLocal } from '@/utils/storage'
 import store from '@/store'
 import { Message, MessageBox } from 'element-ui'
-export function formatNumber (num, precision, separator) {
+export function formatNumber(num, precision, separator) {
   let parts
   // 判断是否为数字
   if (!isNaN(parseFloat(num)) && isFinite(num)) {
@@ -30,7 +30,7 @@ export function formatNumber (num, precision, separator) {
   }
   return '0.00'
 }
-export function formatNumberFilter (num, precision) {
+export function formatNumberFilter(num, precision) {
   return formatNumber(num, precision || 0)
 }
 /**
@@ -82,29 +82,29 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
         data,
         responseType: 'blob' // 必须是arraybuffer类型
       }).then(response => {
-        if(response.headers['content-type']==='application/json;charset=UTF-8'){
-        const data=response.data
-        const reader = new FileReader()
-        reader.addEventListener('loadend', function (e) {
-          let data=JSON.parse(e.target.result)
-          if(data.code===195001){
-            MessageBox.confirm('超时未操作或账号在其他设备登录，请重新登录', '重新登录', {
-              confirmButtonText: '重新登录',
-              type: 'warning',
-              showClose: false,
-              showCancelButton: false,
-              closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
-              beforeClose: action => {
-                if (action === 'cancel') {
-                  location.reload()
-                } else {
-                  store.dispatch('FedLogOut').then(() => {
-                    location.reload() // 为了重新实例化vue-router对象 避免bug
-                    // this.$router.push({path: '/login'})
-                  })
+        if (response.headers['content-type'] === 'application/json;charset=UTF-8') {
+          const data = response.data
+          const reader = new FileReader()
+          reader.addEventListener('loadend', function (e) {
+            let data = JSON.parse(e.target.result)
+            if (data.code === 195001) {
+              MessageBox.confirm('超时未操作或账号在其他设备登录，请重新登录', '重新登录', {
+                confirmButtonText: '重新登录',
+                type: 'warning',
+                showClose: false,
+                showCancelButton: false,
+                closeOnClickModal: false, // 遮罩层点击不能关闭MessageBox
+                beforeClose: action => {
+                  if (action === 'cancel') {
+                    location.reload()
+                  } else {
+                    store.dispatch('FedLogOut').then(() => {
+                      location.reload() // 为了重新实例化vue-router对象 避免bug
+                      // this.$router.push({path: '/login'})
+                    })
+                  }
                 }
-              }
-              }).catch(err => {})
+              }).catch(() => {})
             } else {
               Message.error(data.msg)
             }
@@ -115,7 +115,6 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
             handleDownloadBufferFile(response)
           }, 0)
         }
-
       })
     }
   }
@@ -124,8 +123,13 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
 function handleDownloadBufferFile(response, data) {
   let url = window.URL.createObjectURL(response.data) // 表示一个指定的file对象或Blob对象
   let fileName = '' // filename名称截取
-  if ((response.headers['content-disposition'] && response.headers['content-disposition'].length) || (response.headers['Content-Disposition'] && response.headers['Content-Disposition'].length)) {
-    let name = decodeURI((response.headers['content-disposition'] || response.headers['Content-Disposition']).split(';')[1].split('=')[1]) || (response.headers['content-disposition'] || response.headers['Content-Disposition']).split(';')[1].split('=')[1]
+  if (
+    (response.headers['content-disposition'] && response.headers['content-disposition'].length) ||
+    (response.headers['Content-Disposition'] && response.headers['Content-Disposition'].length)
+  ) {
+    let name =
+      decodeURI((response.headers['content-disposition'] || response.headers['Content-Disposition']).split(';')[1].split('=')[1]) ||
+      (response.headers['content-disposition'] || response.headers['Content-Disposition']).split(';')[1].split('=')[1]
     fileName = name
     // 兼容ie
     if (window.navigator.msSaveBlob) {
@@ -154,13 +158,4 @@ function handleDownloadBufferFile(response, data) {
     }
   }
 }
-export {
-  deepClone,
-  downloadForURL,
-  routeTree,
-  convertRouter,
-  _import,
-  resetRedirect,
-  MD5Util,
-  errorLog
-}
+export { deepClone, downloadForURL, routeTree, convertRouter, _import, resetRedirect, MD5Util, errorLog }

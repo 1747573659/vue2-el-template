@@ -31,8 +31,7 @@
         :current-page="exportCurrentPage"
         :page-size="exportPageSize"
         layout="total, sizes, prev, pager, next, jumper"
-        :total="exportPageTotal"
-      >
+        :total="exportPageTotal">
       </el-pagination>
     </div>
   </el-dialog>
@@ -97,7 +96,7 @@ export default {
               })
           } else done()
         }
-      }).catch(err => {})
+      }).catch(() => {})
     },
     // 查询
     async handleExportRecord() {
@@ -115,21 +114,6 @@ export default {
 }
 </script>
 <style lang="scss" scoped>
-// /deep/ .p-dialog-order {
-//   display: flex;
-//   flex-direction: column;
-//   margin: 0 !important;
-//   position: absolute;
-//   top: 50%;
-//   left: 50%;
-//   transform: translate(-50%, -50%);
-//   max-height: calc(100% - 30px);
-//   max-width: calc(100% - 30px);
-//   /deep/ .el-dialog__body {
-//     flex: 1;
-//     overflow: auto;
-//   }
-// }
 .p-export-pagination {
   text-align: right;
   margin-top: 16px;

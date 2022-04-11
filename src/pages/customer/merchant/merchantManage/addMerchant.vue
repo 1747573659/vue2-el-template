@@ -37,8 +37,7 @@
               filterable
               clearable
               :options="clerkOptions"
-              :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-            ></selectCopy>
+              :optionsItem="{ key: 'id', label: 'name', value: 'id' }"></selectCopy>
           </el-form-item>
         </div>
       </div>
@@ -230,7 +229,7 @@ export default {
     }
   },
   watch: {
-    'ruleForm.industryId': function(val) {
+    'ruleForm.industryId': function (val) {
       this.ruleForm.erpProductId = ''
       if (val === '') {
         this.erpProductOptions = []
@@ -351,14 +350,14 @@ export default {
   height: 82px;
   overflow: hidden;
 }
-.avatar-uploader /deep/ .el-upload {
+.avatar-uploader ::v-deep .el-upload {
   border: 1px dashed #d9d9d9;
   border-radius: 6px;
   cursor: pointer;
   position: relative;
   overflow: hidden;
 }
-.avatar-uploader /deep/ .el-upload:hover {
+.avatar-uploader ::v-deep .el-upload:hover {
   border-color: #409eff;
 }
 .avatar-uploader-icon-block {

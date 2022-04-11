@@ -51,9 +51,7 @@ export const basicInfoMixin = {
       return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.agentPaperMoney) + agentPaperGiftMoney
     },
     useAmount() {
-      const useAmountGift = this.form.purchaseOrderDTO.useAmountGift
-        ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmountGift) + '）'
-        : ''
+      const useAmountGift = this.form.purchaseOrderDTO.useAmountGift ? '（另扣赠金' + this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmountGift) + '）' : ''
       return this.$options.filters['formatAmount'](this.form.purchaseOrderDTO.useAmount) + useAmountGift
     }
   },
@@ -93,9 +91,7 @@ export const basicInfoMixin = {
                 : await purchaseUpdate(Object.assign(params, { orderItemList: deepOrderItemList }))
             if (this.$route.query.status === 'add') {
               this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
-              document.querySelector('.e-tag_active span').innerText = `${
-                this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'
-              }采购订单/编辑`
+              document.querySelector('.e-tag_active span').innerText = `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑`
             }
             this.handleDetail()
             this.$message({ type: 'success', message: '保存成功' })
@@ -240,9 +236,7 @@ export const basicInfoMixin = {
                   ? NP.plus(prev, curr)
                   : this.$options.filters['formatAmount'](NP.plus(prev, curr))
               } else {
-                return column.property === 'productCount' || this.$route.query.status !== 'details'
-                  ? prev
-                  : this.$options.filters['formatAmount'](prev)
+                return column.property === 'productCount' || this.$route.query.status !== 'details' ? prev : this.$options.filters['formatAmount'](prev)
               }
             }, 0)
             this.form.purchaseOrderDTO.orderAmount = sums[5] ? NP.times(sums[5], 100) : 0

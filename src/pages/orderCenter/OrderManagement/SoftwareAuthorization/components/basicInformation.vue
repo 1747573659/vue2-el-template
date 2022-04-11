@@ -4,9 +4,7 @@
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
-          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark"
-            >（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span
-          >
+          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
         </div>
         <div class="p-card-state">
           <span>订单状态：</span>
@@ -33,22 +31,13 @@
     </el-card>
     <component ref="information" :is="activeName" :form="form" :userInfo="userInfo"></component>
     <div class="p-infomation-action">
-      <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{
-        $route.query.status === 'detail' ? '关闭' : '取消'
-      }}</el-button>
+      <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" @click="handleDelRow" v-if="$route.query.status === 'edit'">删除</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
         <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave"> 保存 </el-button>
       </template>
       <template v-if="$route.query.status === 'edit'">
-        <el-button
-          size="small"
-          type="primary"
-          :disabled="isWlsDisableStatus"
-          v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'"
-          :loading="checkVerifyBtnLoad"
-          @click="handleVerify"
-        >
+        <el-button size="small" type="primary" :disabled="isWlsDisableStatus" v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">
           提交
         </el-button>
       </template>
@@ -178,12 +167,7 @@ export default {
       } else return ''
     },
     isWlsDisableStatus() {
-      return (
-        this.productType === 3 &&
-        this.form.merchantDTO.applicationModule === 2 &&
-        this.form.detailDTOList.length > 0 &&
-        this.form.detailDTOList[0].openCustAssistantApp === 1
-      )
+      return this.productType === 3 && this.form.merchantDTO.applicationModule === 2 && this.form.detailDTOList.length > 0 && this.form.detailDTOList[0].openCustAssistantApp === 1
     }
   },
   created() {
@@ -217,7 +201,7 @@ export default {
               })
           } else done()
         }
-      }).catch(err => {})
+      }).catch(() => {})
     },
     handleVerify() {
       const erpHCMModule =
@@ -281,16 +265,12 @@ export default {
         if (insufficientObj.length > 0) {
           const confirmOptions = Object.assign(this.handleConfirmOption(), {
             beforeClose: (action, instance, done) => {
-              if (action === 'confirm')
-                this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
+              if (action === 'confirm') this.$router.push({ name: 'softwarePurchaseDetails', query: { status: 'add', productCode: insufficientObj[0].productCode } })
               else this.$refs.information.getProductStock()
               done()
             }
           })
-          this.$confirm(
-            `[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`,
-            confirmOptions
-          ).catch(() => {})
+          this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           return {
             authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
@@ -464,10 +444,7 @@ export default {
               done()
             }
           })
-          this.$confirm(
-            `[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`,
-            confirmOptions
-          ).catch(() => {})
+          this.$confirm(`[${insufficientObj[0].moduleName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           return {
             authOrderVO: Object.assign(
@@ -585,7 +562,7 @@ export default {
     .p-card-reason {
       flex-basis: 80%;
     }
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -618,7 +595,7 @@ export default {
   text-align: center;
   box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
   z-index: 1000;
-  /deep/ .el-button {
+  ::v-deep .el-button {
     padding: 8px 22px;
   }
 }
@@ -634,7 +611,7 @@ export default {
   }
   &_remark {
     width: 100%;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }

@@ -1,7 +1,7 @@
 // 树形权限生成函数
 export default function routeTree(routes) {
   // 根据id对权限进行排序
-  routes.sort((a,b) => a.id - b.id)
+  routes.sort((a, b) => a.id - b.id)
   let routesMap = {}
   routes.forEach(item => {
     routesMap[item.id] = item
@@ -23,10 +23,10 @@ export default function routeTree(routes) {
   return newRouteTree
 }
 // 树形权限生成函数
-export  function routeTreeLevel(routes) {
+export function routeTreeLevel(routes) {
   // 根据id对权限进行排序
-  let arr=[]
-  routes.sort((a,b) => a.id - b.id)
+  let arr = []
+  routes.sort((a, b) => a.id - b.id)
   let routesMap = {}
   routes.forEach(item => {
     routesMap[item.id] = item
@@ -50,22 +50,21 @@ export  function routeTreeLevel(routes) {
   return arr
 }
 
-
 // 数据排序
 function compare(property) {
   return function (a, b) {
-    let value1 = a[property];
-    let value2 = b[property];
-    return value1 - value2;
-  };
+    let value1 = a[property]
+    let value2 = b[property]
+    return value1 - value2
+  }
 }
 // 排序数据
 export function sortData(arr = []) {
-  arr = arr.sort(compare("sort"));
-  arr.map((item) => {
+  arr = arr.sort(compare('sort'))
+  arr.map(item => {
     if (item.children && item.children.length) {
-      sortData(item.children); //递归
+      sortData(item.children) //递归
     }
-  });
-  return arr;
+  })
+  return arr
 }

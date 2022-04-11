@@ -15,8 +15,7 @@
                 filterable
                 :options="searchObjectList"
                 :value.sync="form.searchObject"
-                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"
-              ></selectCopy>
+                :optionsItem="{ key: 'id', label: 'name', value: 'id' }"></selectCopy>
             </el-form-item>
             <el-form-item label="对象内容" prop="paymentCode">
               <select-page
@@ -31,8 +30,7 @@
                 :disabled="form.searchObject === ''"
                 @focus="selectPageFocus"
                 @change="selectPageChange"
-                @clear="selectPageClear"
-              >
+                @clear="selectPageClear">
               </select-page>
             </el-form-item>
             <el-form-item label="支付方式" prop="paymentCode">
@@ -223,7 +221,7 @@ export default {
         this.payPluginList.unshift({ id: '', name: '全部' })
       } catch (error) {}
     },
-    searchObjectChange(value) {
+    searchObjectChange() {
       this.form.id = null
       this.form.ObjContent = null
       this.isMaxPage = false
@@ -309,12 +307,9 @@ export default {
       this.selectPageNo = 1
       this.form.ObjContent = ''
     },
-    handleCurrentChange() {},
-    handleSizeChange() {},
-    handleSelect(key, keyPath) {
+    handleSelect(key) {
       this.activeIndex = String(key)
     },
-    setSearchTime(type) {},
     async getpaymentMethodVoList() {
       try {
         const res = await paymentMethodVoList()

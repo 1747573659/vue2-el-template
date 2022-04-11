@@ -10,6 +10,9 @@ module.exports = {
   rules: {
     'no-console': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
     'no-debugger': process.env.NODE_ENV === 'production' ? 'warn' : 'off',
-    'prettier/prettier': 'error'
+    'prettier/prettier': 'error',
+    'no-empty': ['error', { allowEmptyCatch: true }],
+    'vue/no-mutating-props': 0,
+    'vue/multi-word-component-names': 0
   }
 }

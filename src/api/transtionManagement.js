@@ -1,5 +1,4 @@
 import request from '@/utils/request'
-import ipConfig from '@/utils/baseUrl'
 import qs from 'qs'
 
 const urlLinks = {
@@ -19,7 +18,7 @@ const urlLinks = {
   refundOrderQueryPage: `/refundOrder/queryPage`,
   refundOrderdetail: `/refundOrder/detail`,
   wmdownloadExcel: `/wm/downloadExcel`,
-  queryWmTermPage: `/wm/queryWmTermPage`,
+  queryWmTermPage: `/wm/queryWmTermPage`
 }
 
 const queryAllCondition = data => {
@@ -103,7 +102,7 @@ const queryExportRecord = data => {
   })
 }
 
-export function deleteRecord (data) {
+export function deleteRecord(data) {
   return request({
     url: urlLinks.deleteRecord,
     method: 'POST',
@@ -111,7 +110,7 @@ export function deleteRecord (data) {
   })
 }
 
-export function detail (data) {
+export function detail(data) {
   return request({
     url: urlLinks.detail,
     method: 'POST',
@@ -119,16 +118,16 @@ export function detail (data) {
   })
 }
 
-export function refundOrderdetail (data) {
+export function refundOrderdetail(data) {
   return request({
     url: urlLinks.refundOrderdetail,
     method: 'POST',
-    isOld:true,
+    isOld: true,
     data: qs.stringify(data)
   })
 }
 
-export function querySingleOrder (data) {
+export function querySingleOrder(data) {
   return request({
     url: urlLinks.querySingleOrder,
     method: 'POST',
@@ -136,7 +135,7 @@ export function querySingleOrder (data) {
   })
 }
 
-export function refundOrderQueryPage (data) {
+export function refundOrderQueryPage(data) {
   return request({
     url: urlLinks.refundOrderQueryPage,
     method: 'POST',

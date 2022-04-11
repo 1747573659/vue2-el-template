@@ -26,8 +26,7 @@
             :on-remove="handleRemove"
             :on-success="handleSuccess"
             :file-list="fileList"
-            list-type="picture-card"
-          >
+            list-type="picture-card">
           </el-upload>
           <el-dialog :before-close="onClose" width="40%" title="预览" :visible.sync="dialogImgVisible">
             <img width="100%" v-if="dialogImgUrl" :src="dialogImgUrl" alt="" />
@@ -53,13 +52,13 @@
         </el-form-item>
         <el-form-item label="进度：" prop="linkPhone">
           <div v-for="item in ruleForm.schedules" :key="item.operDate">
-            <span style="margin-right: 20px;">{{ item.operDate }}</span>
+            <span style="margin-right: 20px">{{ item.operDate }}</span>
             <span>{{ item.sheetStatus }}</span>
           </div>
         </el-form-item>
         <el-form-item label="沟通记录" prop="linkPhone">
           <div v-for="(item, index) in ruleForm.records" :key="index">
-            <span v-if="item.title" style="margin-right: 20px;">{{ item.title }}</span>
+            <span v-if="item.title" style="margin-right: 20px">{{ item.title }}</span>
             <span v-html="item.detail"></span>
           </div>
         </el-form-item>
@@ -70,7 +69,7 @@
           <el-button size="small" @click="cance()">取消</el-button>
         </el-form-item>
       </el-form>
-      <div v-if="isEdit" style="padding-left: 100px;">
+      <div v-if="isEdit" style="padding-left: 100px">
         <el-button size="small" type="primary" @click="cance()">关闭</el-button>
       </div>
     </div>
@@ -78,8 +77,7 @@
 </template>
 
 <script>
-import { addWorkOrder, queryProductList, queryAgent, queryWorkOrderList, queryOrderDetail } from '@/api/dataCenter/dataCenter.js'
-import { uploadimage } from '@/api/dataCenter/common.js'
+import { addWorkOrder, queryProductList, queryOrderDetail } from '@/api/dataCenter/dataCenter.js'
 import baseurl from '@/utils/baseUrl.js'
 import ElUpload from '@/components/upload'
 const { VUE_APP_WORK_ORDER_URL, VUE_APP_WORK_ORDER_URLPATH } = baseurl
@@ -91,7 +89,7 @@ export default {
     ElUpload
   },
   computed: {
-    workorderType: function() {
+    workorderType: function () {
       if (this.ruleForm.orderType === '1') {
         return '问题'
       } else if (this.ruleForm.orderType === '2') {
@@ -100,7 +98,7 @@ export default {
         return '未知类型'
       }
     },
-    workProductNo: function() {
+    workProductNo: function () {
       return this.ruleForm.productName + '-' + this.ruleForm.branchName
     }
   },
@@ -171,7 +169,7 @@ export default {
             .filter(res => !/(^video\/.+$)|(^image\/.+$)/.test(res.type))
             .map(res => res.name)
             .join()
-          addWorkOrder(requestData).then(res => {
+          addWorkOrder(requestData).then(() => {
             this.$message.success('创建成功')
             this.$router.go(-1)
           })
@@ -180,7 +178,7 @@ export default {
         }
       })
     },
-    handleSuccess(response, file, fileList) {
+    handleSuccess(response, file) {
       this.fileList.push({
         name: response.fileName,
         url: VUE_APP_WORK_ORDER_URL + '/KMjsfw/images/' + response.fileName,
@@ -231,8 +229,20 @@ export default {
         let requestData = Object.assign({}, res)
         this.ruleForm = res
         this.ruleForm.productNoA = [requestData.productNo, requestData.branch]
-        const files1 = requestData.fileName ? requestData.fileName.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(getTypeFile) : []
-        const files2 = requestData.fileName2 ? requestData.fileName2.replace(/[,;]$/, '').split(/[,;]/).filter(item => item !== '').map(getTypeFile) : []
+        const files1 = requestData.fileName
+          ? requestData.fileName
+              .replace(/[,;]$/, '')
+              .split(/[,;]/)
+              .filter(item => item !== '')
+              .map(getTypeFile)
+          : []
+        const files2 = requestData.fileName2
+          ? requestData.fileName2
+              .replace(/[,;]$/, '')
+              .split(/[,;]/)
+              .filter(item => item !== '')
+              .map(getTypeFile)
+          : []
         this.fileList = [...files1, ...files2]
       })
     },
@@ -246,7 +256,7 @@ export default {
         return false
       }
     },
-    handleRemove(file, fileList) {
+    handleRemove(file) {
       this.fileList = this.fileList.filter(re => re.uid !== file.uid)
     },
     onClose(done) {
@@ -284,16 +294,16 @@ export default {
   top: -36%;
   color: #d3dbeb;
 }
-.demandDec /deep/ textarea {
+.demandDec ::v-deep textarea {
   height: 200px !important;
 }
 .km_input_width {
   width: 62%;
 }
-/deep/ .el-upload--picture-card {
+::v-deep .el-upload--picture-card {
   display: none;
 }
-/deep/ .el-form-item {
+::v-deep .el-form-item {
   margin-bottom: 6px;
 }
 </style>

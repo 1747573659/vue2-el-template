@@ -1,16 +1,13 @@
-import {
-  mapGetters,
-  mapActions
-} from 'vuex'
+import { mapGetters, mapActions } from 'vuex'
 
 export default {
   computed: {
-    ...mapGetters(['ossFileServe']),
+    ...mapGetters(['ossFileServe'])
   },
   methods: {
-    ...mapActions(['setOSSFileServe']),
+    ...mapActions(['setOSSFileServe'])
   },
   created() {
     this.setOSSFileServe()
-  },
+  }
 }

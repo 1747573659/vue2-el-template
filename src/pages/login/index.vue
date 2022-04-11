@@ -15,13 +15,7 @@
             </el-form-item>
             <el-form-item prop="password">
               <label class="e-form_label">密码</label>
-              <el-input
-                clearable
-                type="password"
-                v-model.trim="loginForm.password"
-                @keyup.enter.native="handleSubmitCode"
-                placeholder="请输入密码"
-              ></el-input>
+              <el-input clearable type="password" v-model.trim="loginForm.password" @keyup.enter.native="handleSubmitCode" placeholder="请输入密码"></el-input>
             </el-form-item>
           </el-form>
           <el-button type="primary" :loading="isLoading" @click.native="handleSubmitCode" class="e-form_btn">登录</el-button>
@@ -50,8 +44,7 @@
           :offsetY="offsetY"
           @close="close"
           @getMouseUpData="mouseUp"
-          @refresh="refresh"
-        >
+          @refresh="refresh">
         </slide-login>
       </el-dialog>
     </section>
@@ -107,7 +100,7 @@ export default {
   },
   watch: {
     $route: {
-      handler: function(route) {
+      handler: function (route) {
         this.redirect = route.query && route.query.redirect
         this.query = route.query && route.query.query
       },
@@ -127,7 +120,7 @@ export default {
         localStorage.setItem('bacImage', this.bacImage)
       }
     },
-    initImg: async function() {
+    initImg: async function () {
       try {
         this.loading = true
         const res = await initImg()
@@ -150,14 +143,14 @@ export default {
       this.loginVisible = false
     },
     // 验证
-    mouseUp: async function(imgX) {
+    mouseUp: async function (imgX) {
       try {
         const data = {
           x: imgX,
           y: this.offsetY,
           token: this.key
         }
-        const res = await checkSliderImg(data)
+        await checkSliderImg(data)
         this.status = 'success'
         setTimeout(() => {
           this.loginVisible = false
@@ -190,7 +183,7 @@ export default {
                 } else utilRoutePoint()
               } else utilRoutePoint()
             })
-            .catch(err => {
+            .catch(() => {
               this.loginForm.codeKey = ''
             })
             .finally(() => {
@@ -205,7 +198,7 @@ export default {
 
 <style lang="scss" scoped>
 .login_nocolor {
-  /deep/ .el-dialog {
+  ::v-deep .el-dialog {
     border-radius: 4px;
     .el-dialog__header {
       display: none;
@@ -251,7 +244,7 @@ export default {
       border-radius: 4px;
       padding: 37px 24px 24px 24px;
       box-sizing: border-box;
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
       }
     }
@@ -259,7 +252,7 @@ export default {
       margin-top: 20px;
       font-size: 12px;
       color: #807e7e;
-      /deep/ .el-checkbox__label {
+      ::v-deep .el-checkbox__label {
         color: #807e7e !important;
       }
       > a {
@@ -283,13 +276,13 @@ export default {
     &_con {
       margin-top: 40px;
       margin-bottom: 57px;
-      /deep/ .el-input__inner {
+      ::v-deep .el-input__inner {
         border-radius: 0;
         border: 0 none;
         border-bottom: 1px solid #d3dbeb;
         padding-left: 80px;
       }
-      /deep/ .el-form-item {
+      ::v-deep .el-form-item {
         &:nth-child(2) {
           .e-form_label {
             top: -1px;

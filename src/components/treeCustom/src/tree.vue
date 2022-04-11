@@ -2,7 +2,7 @@
   <div class="tree-custom-wrap clearfix">
     <div class="tree-custom-left">
       <div
-        style="height: 100%;"
+        style="height: 100%"
         class="el-tree"
         :class="{
           'el-tree--highlight-current': highlightCurrent,
@@ -10,8 +10,7 @@
           'is-drop-not-allow': !dragState.allowDrop,
           'is-drop-inner': dragState.dropType === 'inner'
         }"
-        role="tree"
-      >
+        role="tree">
         <el-tree-node
           v-for="child in root.childNodes"
           :node="child"
@@ -20,9 +19,8 @@
           :key="getNodeKey(child)"
           :render-content="renderContent"
           @node-expand="handleNodeExpand"
-          style="height: 100%;"
-          :power-checked.sync="powerChecked"
-        >
+          style="height: 100%"
+          :power-checked.sync="powerChecked">
         </el-tree-node>
         <div class="el-tree__empty-block" v-if="isEmpty">
           <span class="el-tree__empty-text">{{ emptyText }}</span>
@@ -368,7 +366,7 @@ export default {
       this.$emit('node-drag-start', treeNode.node, event)
     })
 
-    this.$on('tree-node-drag-over', (event, treeNode) => {
+    this.$on('tree-node-drag-over', event => {
       const dropNode = findNearestComponent(event.target, 'ElTreeNode')
       const oldDropNode = dragState.dropNode
       if (oldDropNode && oldDropNode !== dropNode) {

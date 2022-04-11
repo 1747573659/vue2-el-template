@@ -5,10 +5,19 @@
         <el-row type="flex" align="bottom">
           <el-col :xl="22" :lg="21">
             <el-form-item label="享钱商户名称">
-              <el-input class="p-form-input_width" @clear="()=>{
-                  form.shopAdminName=''
-                  form.shopAdminId=''
-                  }" @focus="selectSeach('shopAdminName')" clearable placeholder="请输入享钱商户名称搜索" size="small" v-model.trim="form.shopAdminName"></el-input>
+              <el-input
+                class="p-form-input_width"
+                @clear="
+                  () => {
+                    form.shopAdminName = ''
+                    form.shopAdminId = ''
+                  }
+                "
+                @focus="selectSeach('shopAdminName')"
+                clearable
+                placeholder="请输入享钱商户名称搜索"
+                size="small"
+                v-model.trim="form.shopAdminName"></el-input>
             </el-form-item>
             <el-form-item label="支付宝商户PID">
               <el-input class="p-form-input_width" clearable placeholder="请输入支付宝商户PID搜索" size="small" maxlength="30" v-model.trim="form.authPid"></el-input>
@@ -18,12 +27,12 @@
             </el-form-item>
             <el-form-item label="小程序版本">
               <el-select class="p-form-input_width" clearable v-model="form.version" filterable placeholder="请输入小程序版本搜索">
-                <el-option v-for="(item,index) in appVersionOption" :key="index" :label="item.version" :value="item.id"></el-option>
+                <el-option v-for="(item, index) in appVersionOption" :key="index" :label="item.version" :value="item.id"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="状态">
               <el-select class="p-form-input_width" clearable v-model="form.status" filterable placeholder="请选择小程序状态搜索">
-                <el-option v-for="(item,index) in queryAllStatusOption" :key="index" :label="item.statusTypeDesc" :value="item.statusType"></el-option>
+                <el-option v-for="(item, index) in queryAllStatusOption" :key="index" :label="item.statusTypeDesc" :value="item.statusType"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="小程序APPID">
@@ -38,7 +47,7 @@
             </el-form-item>
           </el-col>
           <el-col :xl="2" :lg="3">
-            <el-form-item style="float:right">
+            <el-form-item style="float: right">
               <el-button @click="selectSeach('orderApp')" v-permission="'MARKETINGMANAGEMENT_ORDER'" class="add-btn" size="small" type="primary" plain>订购小程序</el-button>
             </el-form-item>
           </el-col>
@@ -55,54 +64,159 @@
         <el-table-column prop="name" label="联系人"></el-table-column>
         <el-table-column prop="phone" label="联系电话" width="120"></el-table-column>
         <el-table-column prop="versionName" label="小程序版本"></el-table-column>
-        <el-table-column prop="status" class-name="el-table-column-noHide" label="状态" width='120'>
+        <el-table-column prop="status" class-name="el-table-column-noHide" label="状态" width="120">
           <template slot-scope="scope">
-            <span>{{initQqueryAllStatus(scope.row.status)}}</span>
-            <el-button v-if="[10,11].includes(scope.row.status)" style="margin-left: 10px;" type="text" @click="handleReason(scope.row)">原因</el-button>
+            <span>{{ initQqueryAllStatus(scope.row.status) }}</span>
+            <el-button v-if="[10, 11].includes(scope.row.status)" style="margin-left: 10px" type="text" @click="handleReason(scope.row)">原因</el-button>
           </template>
         </el-table-column>
         <el-table-column prop="miniDesc" label="备注">
           <template slot-scope="scope">
-            <div style="min-width: 80px;min-height: 35px" v-if="!scope.row.isEdit" @click="clickRemark(scope)">{{scope.row.miniDesc}}</div>
-            <el-input type="textarea" :maxlength="50" autosize :ref="`miniDesc${scope.$index}`" :disabled="remarkInputDisabled" v-else v-model="scope.row.miniDesc" placeholder="请输入内容" @blur="remarkBlur(scope.row)"></el-input>
+            <div style="min-width: 80px; min-height: 35px" v-if="!scope.row.isEdit" @click="clickRemark(scope)">{{ scope.row.miniDesc }}</div>
+            <el-input
+              type="textarea"
+              :maxlength="50"
+              autosize
+              :ref="`miniDesc${scope.$index}`"
+              :disabled="remarkInputDisabled"
+              v-else
+              v-model="scope.row.miniDesc"
+              placeholder="请输入内容"
+              @blur="remarkBlur(scope.row)"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="基础资料维护">
           <template slot-scope="scope">
-            <el-button v-if="[1].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'add')" type="text">基础资料维护</el-button>
-            <el-button v-if="[2,8,9,10,11].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row,'edit')" type="text">更改小程序资料</el-button>
+            <el-button v-if="[1].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row, 'add')" type="text"
+              >基础资料维护</el-button
+            >
+            <el-button v-if="[2, 8, 9, 10, 11].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTMAINNTEN'" @click="marketingDetile(scope.row, 'edit')" type="text"
+              >更改小程序资料</el-button
+            >
           </template>
         </el-table-column>
-        <el-table-column label="操作" width='140' align="right">
+        <el-table-column label="操作" width="140" align="right">
           <template slot-scope="scope">
-            <el-button :loading="loadingField==`versionUpload${scope.$index}`" v-if="[3].includes(scope.row.status)" @click="versionUpload(scope)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">立即构建</el-button>
-            <el-button :loading="loadingField==`versionReUpload${scope.$index}`" v-if="[10].includes(scope.row.status)" @click="versionReUpload(scope)" v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'" type="text">重新构建</el-button>
-            <el-button :loading="loadingField==`queryVersion${scope.$index}`" v-if="[4].includes(scope.row.status)" @click="queryVersion(scope)" v-permission="'MARKETINGMANAGEMENTSTATUSlOOK'" type="text">构建状态查询</el-button>
-            <el-button :loading="loadingField==`auditApply${scope.$index}`" v-if="[5].includes(scope.row.status)" @click="auditApply(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">提交审核</el-button>
-            <el-button :loading="loadingField==`auditReApply${scope.$index}`" v-if="[11].includes(scope.row.status)" @click="auditReApply(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'" type="text">重新提交审核</el-button>
-            <el-button :loading="loadingField==`queryAudit${scope.$index}`" v-if="[6].includes(scope.row.status)" @click="queryAudit(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'" type="text">审核状态查询</el-button>
-            <el-button :loading="loadingField==`online${scope.$index}`" v-if="[7].includes(scope.row.status)" @click="online(scope)" v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'" type="text">上架</el-button>
+            <el-button
+              :loading="loadingField == `versionUpload${scope.$index}`"
+              v-if="[3].includes(scope.row.status)"
+              @click="versionUpload(scope)"
+              v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'"
+              type="text"
+              >立即构建</el-button
+            >
+            <el-button
+              :loading="loadingField == `versionReUpload${scope.$index}`"
+              v-if="[10].includes(scope.row.status)"
+              @click="versionReUpload(scope)"
+              v-permission="'MARKETINGMANAGEMENTBUILDIMMEDIATELY'"
+              type="text"
+              >重新构建</el-button
+            >
+            <el-button
+              :loading="loadingField == `queryVersion${scope.$index}`"
+              v-if="[4].includes(scope.row.status)"
+              @click="queryVersion(scope)"
+              v-permission="'MARKETINGMANAGEMENTSTATUSlOOK'"
+              type="text"
+              >构建状态查询</el-button
+            >
+            <el-button
+              :loading="loadingField == `auditApply${scope.$index}`"
+              v-if="[5].includes(scope.row.status)"
+              @click="auditApply(scope)"
+              v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'"
+              type="text"
+              >提交审核</el-button
+            >
+            <el-button
+              :loading="loadingField == `auditReApply${scope.$index}`"
+              v-if="[11].includes(scope.row.status)"
+              @click="auditReApply(scope)"
+              v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHE'"
+              type="text"
+              >重新提交审核</el-button
+            >
+            <el-button
+              :loading="loadingField == `queryAudit${scope.$index}`"
+              v-if="[6].includes(scope.row.status)"
+              @click="queryAudit(scope)"
+              v-permission="'MARKETINGMANAGEMENTSUBBITSHENGHESTATUSlOOK'"
+              type="text"
+              >审核状态查询</el-button
+            >
+            <el-button
+              :loading="loadingField == `online${scope.$index}`"
+              v-if="[7].includes(scope.row.status)"
+              @click="online(scope)"
+              v-permission="'MARKETINGMANAGEMENTSUBBITSHANGJIA'"
+              type="text"
+              >上架</el-button
+            >
             <el-popconfirm class="e-popover_con" @confirm="offline(scope)" placement="top-start" title="下架后，小程序将不可用，确认下架吗？" v-else>
-              <el-button style="margin-right: 5px" :loading="loadingField==`offline${scope.$index}`" slot="reference" v-if="[8].includes(scope.row.status)" v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'" type="text">下架</el-button>
+              <el-button
+                style="margin-right: 5px"
+                :loading="loadingField == `offline${scope.$index}`"
+                slot="reference"
+                v-if="[8].includes(scope.row.status)"
+                v-permission="'MARKETINGMANAGEMENTSUBBITXIAJIA'"
+                type="text"
+                >下架</el-button
+              >
             </el-popconfirm>
-            <el-button :loading="loadingField==`qrcodeCreate${scope.$index}`" v-if="[8].includes(scope.row.status)" @click="qrcodeCreate(scope)" v-permission="'MARKETINGMANAGEMENTlOOKAPP'" type="text">查看小程序</el-button>
+            <el-button
+              :loading="loadingField == `qrcodeCreate${scope.$index}`"
+              v-if="[8].includes(scope.row.status)"
+              @click="qrcodeCreate(scope)"
+              v-permission="'MARKETINGMANAGEMENTlOOKAPP'"
+              type="text"
+              >查看小程序</el-button
+            >
           </template>
         </el-table-column>
       </el-table>
       <div class="km-page-block">
-        <el-pagination :current-page="thisPage" :total="tableTotal" :page-size="pageSize" @size-change="handleSizeChange" @current-change="handleCurrentChange" background :page-sizes="[10, 30, 50]" layout="total, sizes, prev, pager, next, jumper"></el-pagination>
+        <el-pagination
+          :current-page="thisPage"
+          :total="tableTotal"
+          :page-size="pageSize"
+          @size-change="handleSizeChange"
+          @current-change="handleCurrentChange"
+          background
+          :page-sizes="[10, 30, 50]"
+          layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
-    <selectPage @sureVal='sureVal' :listApi='queryShopListByPage' v-bind:dialogVisible.sync='dialogVisible' :placeholder='selectPageAttribute.placeholder' :title="selectPageAttribute.title"></selectPage>
+    <selectPage
+      @sureVal="sureVal"
+      :listApi="queryShopListByPage"
+      v-bind:dialogVisible.sync="dialogVisible"
+      :placeholder="selectPageAttribute.placeholder"
+      :title="selectPageAttribute.title"></selectPage>
     <el-dialog title="商户小程序订购" :visible.sync="zfbDialogVisible" width="820px">
-      <iframe :src="iframeSrc" align='middle' frameborder='0' height='600' width='800'></iframe>
+      <iframe :src="iframeSrc" align="middle" frameborder="0" height="600" width="800"></iframe>
     </el-dialog>
   </div>
 </template>
 <script>
 import selectPage from './components/selectPage.vue'
 import { queryShopListByPage } from '@/api/customer/merchant'
-import { queryPage, auditApply, queryAllStatus, queryAllVersion, createLinkUrl, versionUpload, auditReApply, qrcodeCreate, queryVersion, queryAudit, online, offline, versionReUpload, modifyMiniDesc } from '@/api/alipay'
+import {
+  queryPage,
+  auditApply,
+  queryAllStatus,
+  queryAllVersion,
+  createLinkUrl,
+  versionUpload,
+  auditReApply,
+  qrcodeCreate,
+  queryVersion,
+  queryAudit,
+  online,
+  offline,
+  versionReUpload,
+  modifyMiniDesc
+} from '@/api/alipay'
 import { getLocal } from '@/utils/storage'
 import { getLoadBufferImage, downLoadImg } from '@/utils/getLoadBufferImage.js'
 import dayjs from 'dayjs'
@@ -111,7 +225,7 @@ export default {
   name: 'marketingManagement',
   mixins: [tableMaxHeight],
   components: { selectPage },
-  data () {
+  data() {
     var checkRegMiniName = (rule, value, callback) => {
       if (value) {
         let reg = /^[a-zA-Z0-9_\u4e00-\u9fa5]+$/
@@ -124,7 +238,7 @@ export default {
     return {
       // 当输入完进行请求时将输入框置灰，避免继续更改
       remarkInputDisabled: false,
-      iframeSrc: '',//链接地址
+      iframeSrc: '', //链接地址
       loadingField: '', // 加载的字段
       rules: {
         miniProgramName: [
@@ -134,9 +248,9 @@ export default {
         name: [
           { required: false, min: 1, max: 20, message: '长度在 1 到 20 个字符', trigger: 'blur' },
           { validator: checkRegMiniName, trigger: 'blur' }
-        ],
+        ]
       },
-      queryAllStatusOption: [],// 审核状态
+      queryAllStatusOption: [], // 审核状态
       queryShopListByPage, // 享钱API
       zfbDialogVisible: false, // 支付宝弹框
       appVersionOption: [], // 小程序版本
@@ -145,7 +259,7 @@ export default {
         placeholder: '',
         ref: ''
       }, // 选择弹框参数
-      dialogVisible: false,// 选择弹框
+      dialogVisible: false, // 选择弹框
       form: {
         shopAdminName: '', // 享钱商户名称
         shopAdminId: '', // 享钱商户ID
@@ -163,10 +277,10 @@ export default {
       tableData: []
     }
   },
-  activated () {
+  activated() {
     this.getTable()
   },
-  created () {
+  created() {
     this.getTable()
     this.queryAllStatus()
     this.queryAllVersion()
@@ -179,7 +293,7 @@ export default {
       })
     },
     // 立即构建
-    async versionUpload (scope) {
+    async versionUpload(scope) {
       this.loadingField = `versionUpload${scope.$index}`
       try {
         await versionUpload({
@@ -197,7 +311,7 @@ export default {
       }
     },
     // 重新构建
-    async versionReUpload (scope) {
+    async versionReUpload(scope) {
       this.loadingField = `versionReUpload${scope.$index}`
       try {
         await versionReUpload({
@@ -215,7 +329,7 @@ export default {
       }
     },
     // 构建状态查询
-    async queryVersion (scope) {
+    async queryVersion(scope) {
       this.loadingField = `queryVersion${scope.$index}`
       try {
         await queryVersion({
@@ -233,7 +347,7 @@ export default {
       }
     },
     // 提交审核
-    async auditApply (scope) {
+    async auditApply(scope) {
       this.loadingField = `auditApply${scope.$index}`
       try {
         await auditApply({
@@ -251,7 +365,7 @@ export default {
       }
     },
     // 重新提交审核
-    async auditReApply (scope) {
+    async auditReApply(scope) {
       this.loadingField = `auditReApply${scope.$index}`
       try {
         await auditReApply({
@@ -269,7 +383,7 @@ export default {
       }
     },
     // 审核状态查询
-    async queryAudit (scope) {
+    async queryAudit(scope) {
       this.loadingField = `queryAudit${scope.$index}`
       try {
         await queryAudit({
@@ -287,7 +401,7 @@ export default {
       }
     },
     // 上架
-    async online (scope) {
+    async online(scope) {
       this.loadingField = `online${scope.$index}`
       try {
         await online({
@@ -302,7 +416,7 @@ export default {
       }
     },
     // 下架
-    async offline (scope) {
+    async offline(scope) {
       this.loadingField = `offline${scope.$index}`
       try {
         await offline({
@@ -317,7 +431,7 @@ export default {
       }
     },
     // 点击备注
-    clickRemark ({ row, $index }) {
+    clickRemark({ row, $index }) {
       // console.log(scope)
       this.$set(row, 'isEdit', true)
       this.$nextTick(() => {
@@ -325,7 +439,7 @@ export default {
       })
     },
     // 备注修改完成(即输入框失去焦点)
-    async remarkBlur (row) {
+    async remarkBlur(row) {
       this.remarkInputDisabled = true
       let data = {
         id: row.id,
@@ -333,15 +447,16 @@ export default {
         source: 1
       }
       try {
-        const res = await modifyMiniDesc(data)
+        await modifyMiniDesc(data)
         row.isEdit = false
-      this.$message.success('备注修改成功')
-      } catch (err) {} finally {
+        this.$message.success('备注修改成功')
+      } catch (err) {
+      } finally {
         this.remarkInputDisabled = false
       }
     },
     // 查看小程序
-    async qrcodeCreate (scope) {
+    async qrcodeCreate(scope) {
       this.loadingField = `qrcodeCreate${scope.$index}`
       try {
         const res = await qrcodeCreate({ currentStatus: scope.row.status, id: scope.row.id })
@@ -355,23 +470,23 @@ export default {
       }
     },
     // 搜索
-    search () {
+    search() {
       this.thisPage = 1
       this.getTable()
     },
     // 小程序版本
-    async queryAllVersion () {
+    async queryAllVersion() {
       const res = await queryAllVersion()
       this.appVersionOption = [
         {
-          "id": '',
-          "version": "全部",
+          id: '',
+          version: '全部'
         },
         ...res
       ]
     },
     // 状态
-    initQqueryAllStatus (status) {
+    initQqueryAllStatus(status) {
       let value = ''
       for (let i = 0; i < this.queryAllStatusOption.length; i++) {
         if (status == this.queryAllStatusOption[i].statusType) {
@@ -381,17 +496,21 @@ export default {
       return value
     },
     // 状态查询
-    async queryAllStatus () {
+    async queryAllStatus() {
       const res = await queryAllStatus()
-      this.queryAllStatusOption = [{
-        statusTypeDesc: '全部',
-        statusType: ''
-      }, ...res]
+      this.queryAllStatusOption = [
+        {
+          statusTypeDesc: '全部',
+          statusType: ''
+        },
+        ...res
+      ]
     },
     // 详情
-    marketingDetile (row, operation) {
+    marketingDetile(row, operation) {
       this.$router.push({
-        name: 'marketingDetile', query: {
+        name: 'marketingDetile',
+        query: {
           id: row.id || '',
           status: row.status,
           miniProgramAppid: row.miniProgramAppid,
@@ -400,7 +519,7 @@ export default {
       })
     },
     // 重置
-    clearFrom () {
+    clearFrom() {
       this.$refs.form.clearValidate()
       this.form = {
         shopAdminName: '', // 享钱商户名称
@@ -414,7 +533,7 @@ export default {
       }
     },
     // 选择点击确定回调
-    async sureVal (value) {
+    async sureVal(value) {
       const ref = this.selectPageAttribute.ref
       if (ref === 'shopAdminName') {
         this.form.shopAdminName = value.tableItem.companyName
@@ -432,7 +551,7 @@ export default {
       }
     },
     // 出现选择框
-    selectSeach (ref) {
+    selectSeach(ref) {
       this.selectPageAttribute.ref = ref
       if (ref === 'shopAdminName') {
         this.selectPageAttribute.title = '享钱商户查询'
@@ -445,32 +564,30 @@ export default {
       this.dialogVisible = true
     },
     // 分页
-    handleSizeChange (val) {
+    handleSizeChange(val) {
       this.thisPage = 1
       this.pageSize = val
       this.getTable()
     },
     // 分页
-    handleCurrentChange (val) {
+    handleCurrentChange(val) {
       this.thisPage = val
       this.getTable()
     },
-    async getTable () {
+    async getTable() {
       this.tableLoading = true
       try {
-        const res = await queryPage(
-          {
-            page: this.thisPage,
-            rows: this.pageSize,
-            shopAdminId: this.form.shopAdminId,
-            authPid: this.form.authPid,
-            miniProgramName: this.form.miniProgramName,
-            version: this.form.version,
-            status: this.form.status,
-            miniProgramAppid: this.form.miniProgramAppid,
-            name: this.form.name
-          }
-        )
+        const res = await queryPage({
+          page: this.thisPage,
+          rows: this.pageSize,
+          shopAdminId: this.form.shopAdminId,
+          authPid: this.form.authPid,
+          miniProgramName: this.form.miniProgramName,
+          version: this.form.version,
+          status: this.form.status,
+          miniProgramAppid: this.form.miniProgramAppid,
+          name: this.form.name
+        })
         this.tableData = res.results || []
         this.tableTotal = res.totalCount
       } catch (error) {
@@ -497,11 +614,11 @@ export default {
   padding-bottom: 20px;
 }
 .search-form {
-  /deep/.el-select {
+  ::v-deep.el-select {
     display: block;
   }
 }
-/deep/ .el-table-column-noHide > div {
+::v-deep .el-table-column-noHide > div {
   -webkit-line-clamp: 100;
 }
 .add-btn {
@@ -512,7 +629,7 @@ export default {
 <style lang="scss">
 .applets-confirm {
   p {
-    word-wrap:break-word
+    word-wrap: break-word;
   }
 }
 </style>

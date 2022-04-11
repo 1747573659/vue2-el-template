@@ -17,7 +17,7 @@
       <el-table :data="tableData">
         <el-table-column prop="serialNo" label="序列号"></el-table-column>
         <el-table-column label="产品">
-          <template slot-scope="scope">{{ scope.row.productCode ? `[${scope.row.productCode}] ${scope.row.productName}` : ''}}</template>
+          <template slot-scope="scope">{{ scope.row.productCode ? `[${scope.row.productCode}] ${scope.row.productName}` : '' }}</template>
         </el-table-column>
         <el-table-column prop="custId" label="商户编码"></el-table-column>
         <el-table-column prop="custName" label="商户名称"></el-table-column>

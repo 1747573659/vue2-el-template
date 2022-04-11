@@ -1,7 +1,4 @@
 import request from '@/utils/request'
-//import { parse} from "query-string";
-
-import qs from 'qs'
 const urlLinks = {
   // 分页角色列表
   userdataCount: '/userdata/count'

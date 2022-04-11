@@ -2,7 +2,7 @@ import request from '@/utils/request'
 
 const urlLinks = {
   detailCount: '/performance/detail/count',
-  detailPage: '/performance/detail/page',
+  detailPage: '/performance/detail/page'
 }
 export function detailPage(data) {
   return request({

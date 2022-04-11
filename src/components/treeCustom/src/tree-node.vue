@@ -21,8 +21,7 @@
     @dragover.stop="handleDragOver"
     @dragend.stop="handleDragEnd"
     @drop.stop="handleDrop"
-    ref="node"
-  >
+    ref="node">
     <!-- :style="{ 'padding-left': (node.level - 1) * tree.indent + 'px' }" -->
     <div :class="['tree-custom-header' + node.level, 'tree-custom-header']">
       <!-- <div v-if="">
@@ -50,8 +49,7 @@
         v-if="!renderAfterExpand || childNodeRendered"
         v-show="expanded"
         role="group"
-        :aria-expanded="expanded"
-      >
+        :aria-expanded="expanded">
         <!-- style="position: absolute; top:0px;"
         :style="{ 'left': (node.level - 2) * tree.indent*6 + 'px'}" -->
         <el-tree-node
@@ -60,8 +58,7 @@
           :render-after-expand="renderAfterExpand"
           :key="getNodeKey(child)"
           :node="child"
-          @node-expand="handleChildNodeExpand"
-        >
+          @node-expand="handleChildNodeExpand">
           <!-- :style="{'top': index * 28 + 'px'}" style="position: absolute;" -->
         </el-tree-node>
       </div>
@@ -88,7 +85,7 @@ export default {
       default: false
     },
     node: {
-      default () {
+      default() {
         return {}
       }
     },
@@ -109,21 +106,22 @@ export default {
           required: true
         }
       },
-      render (h) {
+      render(h) {
         const parent = this.$parent
         const tree = parent.tree
         const node = this.node
         const { data, store } = node
-        return (
-          parent.renderContent
-            ? parent.renderContent.call(parent._renderProxy, h, { _self: tree.$vnode.context, node, data, store })
-            : tree.$scopedSlots.default
-              ? tree.$scopedSlots.default({ node, data })
-              : <span class="el-tree-node__label" title={node.label}>{node.label}</span>
+        return parent.renderContent ? (
+          parent.renderContent.call(parent._renderProxy, h, { _self: tree.$vnode.context, node, data, store })
+        ) : tree.$scopedSlots.default ? (
+          tree.$scopedSlots.default({ node, data })
+        ) : (
+          <span class='el-tree-node__label' title={node.label}>
+            {node.label}
+          </span>
         )
       }
     }
-
   },
   computed: {
     ndsabled: {
@@ -131,13 +129,11 @@ export default {
         return !!this.node.disabled
       },
       // setter
-      set: function (newValue) {
-
-      }
+      set: function () {}
     }
   },
 
-  data () {
+  data() {
     return {
       tree: null,
       expanded: false,
@@ -149,14 +145,14 @@ export default {
   },
 
   watch: {
-    'node.indeterminate' (val) {
+    'node.indeterminate'(val) {
       this.handleSelectChange(this.node.checked, val)
     },
 
-    'node.checked' (val) {
+    'node.checked'(val) {
       this.handleSelectChange(val, this.node.indeterminate)
     },
-    'node.expanded' (val) {
+    'node.expanded'(val) {
       this.$nextTick(() => {
         this.expanded = val
       })
@@ -167,12 +163,12 @@ export default {
   },
 
   methods: {
-    getNodeKey (node) {
+    getNodeKey(node) {
       this.$emit('update:powerChecked', false)
       return getNodeKey(this.tree.nodeKey, node.data)
     },
 
-    handleSelectChange (checked, indeterminate) {
+    handleSelectChange(checked, indeterminate) {
       if (this.oldChecked !== checked && this.oldIndeterminate !== indeterminate) {
         this.tree.$emit('check-change', this.node.data, checked, indeterminate)
       }
@@ -180,7 +176,7 @@ export default {
       this.indeterminate = indeterminate
     },
 
-    handleClick () {
+    handleClick() {
       const store = this.tree.store
       store.setCurrentNode(this.node)
       this.tree.$emit('current-change', store.currentNode ? store.currentNode.data : null, store.currentNode)
@@ -207,7 +203,7 @@ export default {
       // console.log(curremtEl)
     },
 
-    handleContextMenu (event) {
+    handleContextMenu(event) {
       if (this.tree._events['node-contextmenu'] && this.tree._events['node-contextmenu'].length > 0) {
         event.stopPropagation()
         event.preventDefault()
@@ -215,7 +211,7 @@ export default {
       this.tree.$emit('node-contextmenu', event, this.node.data, this.node, this)
     },
 
-    handleExpandIconClick () {
+    handleExpandIconClick() {
       // 2019-1-4
       if (this.node.isLeaf) {
         let parent = this.node.parent
@@ -240,7 +236,7 @@ export default {
       // }
     },
 
-    handleCheckChange (value, ev) {
+    handleCheckChange(value, ev) {
       if (this.node.level === 5) {
         this.node.setChecked(ev.target.checked, !this.tree.checkStrictly, undefined, undefined, 1)
       } else {
@@ -257,33 +253,33 @@ export default {
       })
     },
 
-    handleChildNodeExpand (nodeData, node, instance) {
+    handleChildNodeExpand(nodeData, node, instance) {
       this.broadcast('ElTreeNode', 'tree-node-expand', node)
       this.tree.$emit('node-expand', nodeData, node, instance)
     },
 
-    handleDragStart (event) {
+    handleDragStart(event) {
       if (!this.tree.draggable) return
       this.tree.$emit('tree-node-drag-start', event, this)
     },
 
-    handleDragOver (event) {
+    handleDragOver(event) {
       if (!this.tree.draggable) return
       this.tree.$emit('tree-node-drag-over', event, this)
       event.preventDefault()
     },
 
-    handleDrop (event) {
+    handleDrop(event) {
       event.preventDefault()
     },
 
-    handleDragEnd (event) {
+    handleDragEnd(event) {
       if (!this.tree.draggable) return
       this.tree.$emit('tree-node-drag-end', event, this)
     }
   },
 
-  created () {
+  created() {
     const parent = this.$parent
     if (parent.isTree) {
       this.tree = parent

@@ -1,11 +1,11 @@
 const state = {
   fileServe: null,
-  ossFileServe: '',
+  ossFileServe: ''
 }
 
 const getters = {
   fileServe: state => state.fileServe,
-  ossFileServe: state => state.ossFileServe,
+  ossFileServe: state => state.ossFileServe
 }
 
 const mutations = {
@@ -14,7 +14,7 @@ const mutations = {
   },
   SET_OSS_FILE_SERVE: (state, ossFileServe) => {
     state.ossFileServe = ossFileServe
-  },
+  }
 }
 
 const actions = {
@@ -33,7 +33,7 @@ const actions = {
         commit('SET_OSS_FILE_SERVE', data)
       })
     }
-  },
+  }
 }
 
 export default {

@@ -1,8 +1,8 @@
 <template>
   <div class="form custom-form">
     <el-form ref="form" :model="form" :rules="rules" :label-width="labelWidth" :label-position="labelPosition" size="small" @validate="onValidate">
-      <el-row :gutter="gutter" style="margin-left: 0; margin-right: 0;">
-        <el-col v-for="(item, index) in rawForm" :key="index" :span="item.col || 24" style="padding-left: 0; padding-right: 0;">
+      <el-row :gutter="gutter" style="margin-left: 0; margin-right: 0">
+        <el-col v-for="(item, index) in rawForm" :key="index" :span="item.col || 24" style="padding-left: 0; padding-right: 0">
           <el-form-item v-if="!item.hide" :prop="item.prop" :class="{ 'is-text': item.type === 'text' }">
             <!-- 自定义label start-->
             <template v-slot:label>
@@ -18,8 +18,7 @@
               v-model="form[item.prop]"
               :placeholder="(item.attrs && item.attrs.placeholder) || '请选择' + item.label"
               v-bind="item.attrs || {}"
-              v-on="listeners[item.prop] || {}"
-            >
+              v-on="listeners[item.prop] || {}">
               <el-option v-for="(option, i) in item.options || []" :key="i" :label="option.label" :value="option.value" />
             </el-select>
             <!-- select 选择框end -->
@@ -36,8 +35,7 @@
               v-bind="item.attrs || {}"
               :active-value="item.active === undefined ? 1 : 0"
               :inactive-value="item.inactive === undefined ? 0 : 1"
-              v-on="listeners[item.prop] || {}"
-            />
+              v-on="listeners[item.prop] || {}" />
             <!-- switch end -->
 
             <!-- slot start -->
@@ -61,8 +59,7 @@
               v-model="form[item.prop]"
               :placeholder="(item.attrs && item.attrs.placeholder) || '请选择' + item.label"
               v-bind="item.attrs || {}"
-              v-on="listeners[item.prop] || {}"
-            />
+              v-on="listeners[item.prop] || {}" />
             <!-- 时间选择器 end -->
 
             <!-- 日期选择器 start -->
@@ -74,8 +71,7 @@
               type="date"
               v-bind="item.attrs || {}"
               value-format="yyyy-MM-dd"
-              v-on="$listeners[item.prop] || {}"
-            />
+              v-on="$listeners[item.prop] || {}" />
             <!-- 日期选择器 en -->
 
             <!-- 日期时间选择器 start -->
@@ -86,8 +82,7 @@
               :placeholder="(item.attrs && item.attrs.placeholder) || '请选择' + item.label"
               type="datetime"
               v-bind="item.attrs || {}"
-              v-on="listeners[item.prop] || {}"
-            />
+              v-on="listeners[item.prop] || {}" />
             <!-- 日期时间选择器 end -->
 
             <!-- 日期时间范围选择器 start -->
@@ -100,8 +95,7 @@
               v-on="listeners[item.prop] || {}"
               range-separator="至"
               start-placeholder="开始日期"
-              end-placeholder="结束日期"
-            />
+              end-placeholder="结束日期" />
             <!-- 日期时间范围选择器 end -->
 
             <!-- 头像上传 start -->
@@ -110,9 +104,9 @@
 
             <!-- 数字输入框 start -->
             <div class="el-input-number-wrapper" v-else-if="item.type === 'number'">
-              <label v-if="item.prepend" style="padding-right: 12px;">{{ item.prepend }}</label>
+              <label v-if="item.prepend" style="padding-right: 12px">{{ item.prepend }}</label>
               <el-input-number :controls="false" :ref="item.prop" v-model="form[item.prop]" v-bind="item.attrs || {}" v-on="listeners[item.prop] || {}"> </el-input-number>
-              <label v-if="item.append" style="padding-left: 12px;">{{ item.append }}</label>
+              <label v-if="item.append" style="padding-left: 12px">{{ item.append }}</label>
             </div>
             <!-- 数字输入框 end -->
 
@@ -128,8 +122,7 @@
               :row="item.type === 'textarea' ? item.row : ''"
               :maxlength="item.maxlength > 0 ? item.maxlength : '-1'"
               @input="onInput($event, item)"
-              v-on="listeners[item.prop] || {}"
-            >
+              v-on="listeners[item.prop] || {}">
               <template slot="append" v-if="item.append">{{ item.append }}</template>
               <template slot="prepend" v-if="item.prepend">{{ item.prepend }}</template>
             </el-input>
@@ -319,7 +312,7 @@ export default {
           }
         }
       }
-      autoFocusRef.focus()
+      autoFocusRef && autoFocusRef.focus()
     },
     /**
      * reset 表单数据

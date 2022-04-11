@@ -1,6 +1,8 @@
 <template>
   <p v-if="list.length">
-    <span :class="{'incorporate':item.incorporate,'marginZerz':!index}" v-for="(item, index) of list" :key="index">{{ item.label }}{{item.hideValue?'':`${item.hideColon?'':':'}${sorting(item)}`}}</span>
+    <span :class="{ incorporate: item.incorporate, marginZerz: !index }" v-for="(item, index) of list" :key="index"
+      >{{ item.label }}{{ item.hideValue ? '' : `${item.hideColon ? '' : ':'}${sorting(item)}` }}</span
+    >
   </p>
 </template>
 <script>
@@ -10,14 +12,14 @@ export default {
     value: {
       type: Object,
       required: true,
-      default () {
+      default() {
         return {}
       }
     }
   },
   computed: {
     list: {
-      get () {
+      get() {
         const arr = []
         const keys = Object.keys(this.value)
         for (let i = 0; i < keys.length; i++) {
@@ -25,11 +27,11 @@ export default {
         }
         return arr
       },
-      set (value) { }
+      set() {}
     }
   },
   methods: {
-    sorting (item) {
+    sorting(item) {
       if (item.value === '') {
         return ''
       }

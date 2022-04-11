@@ -64,11 +64,11 @@ export const purchaseOrder = {
         this.checkExportLoad = false
       }
     },
-    handleExportRecord: async function({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const { page, rows, ...params } = this.handleQueryParams()
+    handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      const { ...params } = this.handleQueryParams()
       return await exportRecordList({ ...params, page: currentPage, rows: pageSize })
     },
-    handleExportDel: async function(row) {
+    handleExportDel: async function (row) {
       return await deleteExport({ id: row.id })
     },
     handleSearch() {

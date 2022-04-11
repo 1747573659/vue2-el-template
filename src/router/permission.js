@@ -33,7 +33,7 @@ router.beforeEach((to, from, next) => {
               } else next({ ...to, replace: true })
             }
           })
-          .catch(error => {
+          .catch(() => {
             // 接口服务关闭时测试
             store.dispatch('FedLogOut').then(() => {
               // Message.error(error || '请重新登录')

@@ -7,7 +7,7 @@
       <el-form :inline="true" @submit.native.prevent label-width="100px" size="small" class="xdd-btn-block__w240">
         <el-row>
           <el-col>
-            <el-form-item label="商户" class="xdd_form_item" style="margin-right:44px">
+            <el-form-item label="商户" class="xdd_form_item" style="margin-right: 44px">
               <select-page
                 :request="queryMerchantAdminPage"
                 :bvalue.sync="formData.shopAdminId"
@@ -15,8 +15,7 @@
                 :width="'240px'"
                 searchName="id"
                 id="id"
-                :placeholder="'商户名称'"
-              >
+                :placeholder="'商户名称'">
               </select-page>
             </el-form-item>
             <el-form-item label="支付订单号" class="xdd_form_item">
@@ -38,8 +37,7 @@
                 start-placeholder="开始日期"
                 type="datetimerange"
                 v-model="formData.transactionTime"
-                value-format="timestamp"
-              ></el-date-picker>
+                value-format="timestamp"></el-date-picker>
             </el-form-item>
             <el-form-item label="交易流水号" class="xdd_form_item">
               <el-input clearable placeholder="请输入交易流水号" size="small" oninput="value=value.replace(/[\W]/g,'')" v-model.trim="formData.serialSn"></el-input>
@@ -62,7 +60,7 @@
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
               </el-tooltip>
             </el-form-item>
-            <el-form-item style="margin-left: 100px;">
+            <el-form-item style="margin-left: 100px">
               <el-button :loading="searchLock" @click="handleSearch" size="small" type="primary">查询</el-button>
             </el-form-item>
           </el-col>
@@ -104,8 +102,7 @@
           @current-change="handleTabCurrent"
           @size-change="handleTabSize"
           background
-          layout="total, sizes, prev, pager, next, jumper"
-        ></el-pagination>
+          layout="total, sizes, prev, pager, next, jumper"></el-pagination>
       </div>
     </div>
 
@@ -150,7 +147,7 @@ export default {
         tenantSn: ''
       },
       pickerOptions: {
-        onPick: ({ maxDate, minDate }) => {
+        onPick: ({ minDate }) => {
           if (minDate) {
             const day31 = 31 * 24 * 3600 * 1000
             maxTime = minDate.getTime() + day31
@@ -160,28 +157,13 @@ export default {
         disabledDate: time => {
           if (maxTime) {
             return (
-              time.getTime() >=
-                dayjs()
-                  .endOf('day')
-                  .valueOf() ||
-              time.getTime() <=
-                dayjs()
-                  .subtract(6, 'months')
-                  .valueOf() ||
+              time.getTime() >= dayjs().endOf('day').valueOf() ||
+              time.getTime() <= dayjs().subtract(6, 'months').valueOf() ||
               time.getTime() >= maxTime ||
               time.getTime() <= minTime
             )
           }
-          return (
-            time.getTime() >=
-              dayjs()
-                .endOf('day')
-                .valueOf() ||
-            time.getTime() <=
-              dayjs()
-                .subtract(6, 'months')
-                .valueOf()
-          )
+          return time.getTime() >= dayjs().endOf('day').valueOf() || time.getTime() <= dayjs().subtract(6, 'months').valueOf()
         }
       }
     }
@@ -334,16 +316,9 @@ export default {
 .xdd_tip i {
   color: #3377ff;
 }
-.xdd_form_item {
-  // min-width: 363px;
-  // margin-right: 0px;
-}
-/deep/.el-date-editor {
+::v-deep.el-date-editor {
   width: 305px;
   padding-right: 0px;
-}
-.xdd-btn-block__w240 .el-input {
-  //width: 200px!important;
 }
 .pure {
   &-dialog {
@@ -361,14 +336,14 @@ export default {
   }
 }
 .action-box {
-  /deep/.el-date-editor--wrap {
+  ::v-deep.el-date-editor--wrap {
     width: 100%;
-    /deep/.el-date-editor--datetimerange.el-input__inner {
+    ::v-deep.el-date-editor--datetimerange.el-input__inner {
       width: 100%;
     }
   }
   .select-paeg {
-    /deep/.el-select {
+    ::v-deep.el-select {
       display: block;
     }
   }

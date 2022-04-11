@@ -10,13 +10,13 @@ import BaseEdit from './components/BaseEdit.vue'
 export default {
   name: 'editAgent',
   components: {
-    BaseEdit,
+    BaseEdit
   },
   data() {
     return {
-      isEdit: true,
+      isEdit: true
     }
-  },
+  }
 }
 </script>
 

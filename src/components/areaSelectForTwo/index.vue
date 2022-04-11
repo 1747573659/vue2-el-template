@@ -12,7 +12,8 @@ import { queryProvinceList, queryCityList } from '@/api/area'
 
 export default {
   props: {
-    areaList: { // 用于回显传入数据
+    areaList: {
+      // 用于回显传入数据
       type: Array,
       default: () => []
     }
@@ -23,14 +24,13 @@ export default {
         lazy: true,
         lazyLoad: async function (node, resolve) {
           const { level } = node
-          let code = node?.data?.value
           let nodes = []
           let res
           // level为0时去请求省的列表，否则根据node.value去请求市和区，leaf用来判断是否有子节点
           if (level === 0) {
             res = await queryProvinceList()
           } else {
-            res = await queryCityList({code: node.value})
+            res = await queryCityList({ code: node.value })
           }
           res.forEach(item => {
             nodes.push({

@@ -33,8 +33,6 @@ export function toFormatTime(times, type) {
   }
 }
 
-export function formatTimeToymdhms(time) {}
-
 export function distance(val) {
   let data = val / 1000
   if (data < 1) return val + 'M'
@@ -43,12 +41,11 @@ export function distance(val) {
 
 export function toFixedFilter(num) {
   if (num) return formatNumber(formatAmount(num), 2)
-  else if(num === 0) return num
+  else if (num === 0) return num
   else return ''
 }
 
-export function toFixedMoneyFilter(num, precision) {
-  // num = num / 100
+export function toFixedMoneyFilter(num) {
   return formatNumber(num, 2)
 }
 export function formatNumberFilter(num, precision) {
@@ -104,7 +101,6 @@ export function parseTimeyd(times) {
   let d = new Date(times)
   const year = d.getFullYear()
   const month = d.getMonth() + 1
-  let day = d.getDate()
   let months = month < 10 ? '0' + month : month
   let date = year + '-' + months
   return date

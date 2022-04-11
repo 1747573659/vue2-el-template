@@ -21,7 +21,7 @@ export default {
     return {
       props: {
         lazy: true,
-        lazyLoad: async function(node, resolve) {
+        lazyLoad: async function (node, resolve) {
           const { level } = node
           let code = node?.data?.value
           if (code === '820000' || code === '810000') {

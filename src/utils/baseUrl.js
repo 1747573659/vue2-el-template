@@ -3,8 +3,8 @@ let BASE_URL = process.env.VUE_APP_COMMON_API
 let COLLECTION_API = process.env.VUE_APP_COLLECTION_API
 let IOT_API = process.env.VUE_APP_IOT_API
 let BIG_PAY_API = process.env.VUE_APP_PAYBIG_API
-let VUE_APP_WORK_ORDER_URL=process.env.VUE_APP_WORK_ORDER_URL
-let VUE_APP_WORK_ORDER_URLPATH=process.env.VUE_APP_WORK_ORDER_URLPATH
+let VUE_APP_WORK_ORDER_URL = process.env.VUE_APP_WORK_ORDER_URL
+let VUE_APP_WORK_ORDER_URLPATH = process.env.VUE_APP_WORK_ORDER_URLPATH
 
 if (process.env.NODE_ENV === 'development') {
   COMMON_API = '/commonApi'

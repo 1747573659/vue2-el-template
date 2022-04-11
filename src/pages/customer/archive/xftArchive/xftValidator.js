@@ -86,15 +86,19 @@ export default function xftValidator() {
     'archiveOtherVO.cardholderIdCardFront': [{ required: true, message: '请上传持卡人身份证正面照', trigger: 'change' }],
     'archiveBaseVO.fixFeeRate': [
       { required: true, message: '请选择费率', trigger: 'blur' },
-      { validator(rule, value, callback, source, options){
-        parseFloat(value) === 0 ? callback(new Error('费率不能为0')) : callback([])
-      }}
+      {
+        validator(rule, value, callback) {
+          parseFloat(value) === 0 ? callback(new Error('费率不能为0')) : callback([])
+        }
+      }
     ],
     'archiveBaseVO.exchangeFeeRate': [
       { required: true, message: '请选择费率', trigger: 'blur' },
-      { validator(rule, value, callback, source, options){
-        parseFloat(value) === 0 ? callback(new Error('费率不能为0')) : callback([])
-      }}
+      {
+        validator(rule, value, callback) {
+          parseFloat(value) === 0 ? callback(new Error('费率不能为0')) : callback([])
+        }
+      }
     ]
   }
 }

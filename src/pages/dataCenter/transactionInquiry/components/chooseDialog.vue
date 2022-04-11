@@ -2,14 +2,14 @@
   <section>
     <el-dialog :close-on-click-modal="false" :close-on-press-escape="false" :show-close="false" :visible.sync="isChooseStatus" width="660px">
       <div class="pure-dialog_title" slot="title">
-        <div>{{titleName}}查询</div>
+        <div>{{ titleName }}查询</div>
         <div>
           <i @click="handleChooseList" class="el-icon-close"></i>
         </div>
       </div>
       <el-form :inline="true" @submit.native.prevent>
         <el-form-item>
-          <el-input :placeholder="searchPlaceHolder" style="width:400px" v-model="searchVal"></el-input>
+          <el-input :placeholder="searchPlaceHolder" style="width: 400px" v-model="searchVal"></el-input>
         </el-form-item>
         <el-form-item>
           <el-button @click="handleSearch" type="primary">查询</el-button>
@@ -30,8 +30,7 @@
         :total="chooseDiaTotal"
         @pagination="handleCurrentPage"
         layout="prev,next"
-        v-if="chooseDiaTotal>0"
-      />
+        v-if="chooseDiaTotal > 0" />
       <div slot="footer">
         <el-button @click="handleChooseList">取消</el-button>
         <el-button @click="handleChooseList" type="primary">确定</el-button>
@@ -73,7 +72,7 @@ export default {
       }
     }
   },
-  data () {
+  data() {
     return {
       tabLoad: false,
       chooseRadio: '',
@@ -88,7 +87,7 @@ export default {
     Pagination
   },
   methods: {
-    handleChooseList () {
+    handleChooseList() {
       if (this.chooseRadio !== '') {
         this.$emit('chooseList', this.tabData[this.chooseRadio])
       }
@@ -96,14 +95,14 @@ export default {
       this.choosePage = 1
       this.chooseRadio = this.searchId = this.searchName = this.searchVal = ''
     },
-    handleSearch () {
+    handleSearch() {
       const pattern = new RegExp(/^\d{1,}$/)
       this.searchId = this.searchName = ''
       this.choosePage = 1
       pattern.test(this.searchVal) ? (this.searchId = this.searchVal) : (this.searchName = this.searchVal)
       this.$emit('search', { id: this.searchId, name: this.searchName })
     },
-    handleCurrentPage () {
+    handleCurrentPage() {
       this.$emit('search', { id: this.searchId, name: this.searchName })
     }
   }
@@ -117,7 +116,7 @@ export default {
     justify-content: space-between;
   }
   &_content {
-    /deep/ .el-radio__label {
+    ::v-deep .el-radio__label {
       display: none;
     }
   }

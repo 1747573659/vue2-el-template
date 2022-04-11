@@ -73,7 +73,7 @@ export default {
         }
       }).catch(() => {})
     },
-    handleExportRecord: async function() {
+    handleExportRecord: async function () {
       try {
         this.checkExportTabLock = true
         const res = await this.requestExportLog({ currentPage: this.currentPage, pageSize: this.pageSize })
@@ -103,7 +103,7 @@ export default {
   margin-left: 12px;
   line-height: 1.5;
 }
-/deep/ {
+::v-deep {
   .p-export-con {
     .el-link {
       vertical-align: inherit;

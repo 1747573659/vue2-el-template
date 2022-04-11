@@ -14,8 +14,7 @@
                 :picker-options="pickerOptions"
                 value-format="yyyy-MM-dd HH:mm:ss"
                 :default-time="['00:00:00', '23:59:59']"
-                clearable
-              ></el-date-picker>
+                clearable></el-date-picker>
             </el-form-item>
             <el-form-item label="申请经销商" v-if="userInfo.level === 1">
               <km-select-page
@@ -25,8 +24,7 @@
                 option-value="id"
                 :request="handleAgentPage"
                 :is-max-page.sync="isAgentMaxPage"
-                placeholder="请输入经销商ID/名称"
-              />
+                placeholder="请输入经销商ID/名称" />
             </el-form-item>
             <el-form-item label="订单状态">
               <el-select v-model="form.orderStatus" clearable>
@@ -43,19 +41,18 @@
                 option-value="id"
                 :request="handleOrderPage"
                 :is-max-page.sync="isOrdererMaxPage"
-                placeholder="下单人"
-              />
+                placeholder="下单人" />
             </el-form-item>
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="16" clearable></el-input>
             </el-form-item>
-            <el-form-item style="margin-left:90px">
+            <el-form-item style="margin-left: 90px">
               <el-button type="primary" size="small" @click="handleSearch">查询</el-button>
               <el-button size="small" v-permission="'SOFTWARE_INVENTORY_APPLY_EXPORT'" :loading="checkExportLoad" @click="handleExport">导出</el-button>
               <km-export-view width="900px" v-permission="'SOFTWARE_INVENTORY_APPLY_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
-          <el-col :xl="2" :lg="3" style="text-align:right">
+          <el-col :xl="2" :lg="3" style="text-align: right">
             <el-form-item v-permission="'SOFTWARE_INVENTORY_APPLY_PLUS'" v-if="userInfo.level === 2">
               <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">新增</el-button>
             </el-form-item>
@@ -70,7 +67,7 @@
         </el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column prop="agentName" label="申请经销商" v-if="userInfo.level === 1">
-            <template slot-scope="scope">[{{scope.row.agentId}}]{{ scope.row.agentName }}</template>
+          <template slot-scope="scope">[{{ scope.row.agentId }}]{{ scope.row.agentName }}</template>
         </el-table-column>
         <el-table-column label="订单状态">
           <template slot-scope="scope">
@@ -198,7 +195,7 @@ export default {
     handleExportRecord({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
       return replaceOrderExportLog({ exportType: this.userInfo.level === 1 ? 33 : 32, page: currentPage, rows: pageSize, userId: this.userInfo.id })
     },
-    handleExportDel: async function(row) {
+    handleExportDel: async function (row) {
       return await replaceOrderExportDel(row.id)
     },
     handleSearch() {

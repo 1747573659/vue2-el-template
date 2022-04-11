@@ -1,39 +1,28 @@
 <template>
   <div>
-    <page
-        ref="page"
-        :api="getCorpVersionList"
-        :query-config="queryForm"
-        :list-config="columns"
-        :query-formatter="queryFormatter"
-        :download-api="downloadVersionList">
-        <template #form_label-dateRange>
-          <el-select v-model="dateCondition">
-            <el-option :value="1" label="开通时间"></el-option>
-            <el-option :value="2" label="到期时间"></el-option>
-            <el-option :value="3" label="首购时间"></el-option>
-          </el-select>
-        </template>
-      </page>
+    <page ref="page" :api="getCorpVersionList" :query-config="queryForm" :list-config="columns" :query-formatter="queryFormatter" :download-api="downloadVersionList">
+      <template #form_label-dateRange>
+        <el-select v-model="dateCondition">
+          <el-option :value="1" label="开通时间"></el-option>
+          <el-option :value="2" label="到期时间"></el-option>
+          <el-option :value="3" label="首购时间"></el-option>
+        </el-select>
+      </template>
+    </page>
   </div>
 </template>
 
 <script>
 import page from './components/page.vue'
-import { getAllVersionList,  downloadVersionList, getCorpVersionList } from '@/api/ewechat'
-import comTable from './components/table.vue'
-import comForm from './components/form.vue'
+import { getAllVersionList, downloadVersionList, getCorpVersionList } from '@/api/ewechat'
 export default {
   components: {
-    page,
+    page
   },
-  data () {
-    const statusFormatter = (row) => {
-      const statusMap = ['配置中', '试用中', '试用到期', '付费使用中', '即将到期(30天以内)', '已到期' ]
+  data() {
+    const statusFormatter = row => {
+      const statusMap = ['配置中', '试用中', '试用到期', '付费使用中', '即将到期(30天以内)', '已到期']
       return statusMap[row.status]
-    }
-    const repurchaseFormatter = (row) => {
-      return row.repurchase ? '是' : '否'
     }
     return {
       current: {},
@@ -59,7 +48,7 @@ export default {
         { prop: 'channelName', label: '所属代理商' },
         { prop: 'openTime', label: '开通时间' },
         { prop: 'expireTime', label: '到期时间' },
-        { prop: 'lastLoginTime', label: '最近登录时间' },
+        { prop: 'lastLoginTime', label: '最近登录时间' }
       ],
       queryForm: [
         {
@@ -85,9 +74,7 @@ export default {
           prop: 'versionId',
           type: 'select',
           default: -1,
-          options: [
-            { label: '全部', value: -1 }
-          ],
+          options: [{ label: '全部', value: -1 }],
           col: 6
         },
         {
@@ -113,20 +100,18 @@ export default {
           attrs: { 'value-format': 'yyyy-MM-dd' },
           col: 6
         }
-      ],
+      ]
     }
   },
-  created () {
+  created() {
     this.getAllVersionList()
   },
   methods: {
-    async getAllVersionList () {
-      let res = await getAllVersionList({ page: 1, rows: 10000})
-      this.queryForm[3].options = this.queryForm[3].options.concat(res.results.map(item =>
-        ({ label: item.name, value: item.id })
-      ))
+    async getAllVersionList() {
+      let res = await getAllVersionList({ page: 1, rows: 10000 })
+      this.queryForm[3].options = this.queryForm[3].options.concat(res.results.map(item => ({ label: item.name, value: item.id })))
     },
-    queryFormatter (queryFormData) {
+    queryFormatter(queryFormData) {
       const params = {
         ...queryFormData,
         dateCondition: this.dateCondition,
@@ -140,12 +125,11 @@ export default {
 </script>
 
 <style scoped lang="scss">
-
 .radio-wrapper {
   line-height: 40px;
 }
 
-/deep/ {
+::v-deep {
   .el-select {
     width: 100%;
   }
@@ -156,5 +140,4 @@ export default {
     }
   }
 }
-
 </style>

@@ -169,10 +169,10 @@
         </div>
         <div class="table-item">
           <div class="table-item-content left-content">
-            <span class="table-item-title ">支付流水号: </span>
+            <span class="table-item-title">支付流水号: </span>
             <span class="table-item-text">{{ form.tradeNo }}</span>
           </div>
-          <div class="table-item-content ">
+          <div class="table-item-content">
             <span class="table-item-title">线下订单号: </span>
             <span class="table-item-text">{{ form.thirdSn }}</span>
           </div>
@@ -219,7 +219,7 @@
         </div>
       </div>
       <div slot="footer" class="dialog-footer right">
-        <el-button style="width:80px" type="primary" @click="orderDetailVisible = false" size="small">我知道了</el-button>
+        <el-button style="width: 80px" type="primary" @click="orderDetailVisible = false" size="small">我知道了</el-button>
       </div>
     </el-dialog>
   </div>
@@ -251,7 +251,7 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-/deep/ .p-dialog-order {
+::v-deep .p-dialog-order {
   display: flex;
   flex-direction: column;
   margin: 0 !important;
@@ -261,7 +261,7 @@ export default {
   transform: translate(-50%, -50%);
   max-height: calc(100% - 30px);
   max-width: calc(100% - 30px);
-  /deep/ .el-dialog__body {
+  ::v-deep .el-dialog__body {
     flex: 1;
     overflow: auto;
   }

@@ -4,7 +4,7 @@
       <el-form-item label="产品信息">
         <el-input v-model="productVal" maxlength="50" placeholder="请输入产品编码/名称" clearable></el-input>
       </el-form-item>
-      <el-form-item label="行业" v-if="$route.name==='softwarePurchaseDetails'">
+      <el-form-item label="行业" v-if="$route.name === 'softwarePurchaseDetails'">
         <el-select v-model="industry" clearable placeholder="全部">
           <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
         </el-select>
@@ -15,7 +15,7 @@
       <el-table-column type="selection" width="55"></el-table-column>
       <el-table-column prop="code" label="产品编码"></el-table-column>
       <el-table-column prop="name" label="产品名称"></el-table-column>
-      <el-table-column prop="industryName" label="所属行业" width="100" v-if="$route.name==='softwarePurchaseDetails'"></el-table-column>
+      <el-table-column prop="industryName" label="所属行业" width="100" v-if="$route.name === 'softwarePurchaseDetails'"></el-table-column>
     </el-table>
     <km-pagination :request="getProductPage" layout="prev, pager, next" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     <div slot="footer">
@@ -51,7 +51,7 @@ export default {
   },
   methods: {
     find() {
-      this.currentPage=1
+      this.currentPage = 1
       this.getProductPage()
     },
     handleSelectAll(selection) {
@@ -97,7 +97,7 @@ export default {
       this.currentPageSelectSets.clear()
       this.selectMaps.clear()
     },
-    getProductPage: async function() {
+    getProductPage: async function () {
       try {
         this.checkProductTabLock = true
         this.currentPageSelectSets.clear()
@@ -132,7 +132,7 @@ export default {
 <style lang="scss" scoped>
 .p-address {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }

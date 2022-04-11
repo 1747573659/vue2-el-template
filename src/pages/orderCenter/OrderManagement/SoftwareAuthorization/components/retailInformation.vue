@@ -18,8 +18,7 @@
             :request="getCustList"
             :is-max-page.sync="isShopMaxPage"
             @change="handleMerchantInfo"
-            placeholder="请输入名称/商户号"
-          />
+            placeholder="请输入名称/商户号" />
         </el-form-item>
         <el-form-item label="商户号">
           <el-input :value="form.merchantDTO.merchantId" placeholder="请先选择商户" disabled></el-input>
@@ -50,15 +49,7 @@
         <template v-if="form.merchantDTO.applicationModule === 3 && form.merchantDTO.merchantId">
           <el-button type="primary" size="small" plain @click="handleProductVisible">选择授权对象</el-button>
         </template>
-        <el-button
-          type="primary"
-          size="small"
-          plain
-          @click="getProductStock"
-          :disabled="form.detailDTOList.length === 0"
-          :loading="checkProductStockLoad"
-          >刷新库存</el-button
-        >
+        <el-button type="primary" size="small" plain @click="getProductStock" :disabled="form.detailDTOList.length === 0" :loading="checkProductStockLoad">刷新库存</el-button>
       </div>
       <el-table :data="form.detailDTOList" class="p-information-tab" :key="form.merchantDTO.applicationModule">
         <el-table-column label="序号" width="100">
@@ -81,14 +72,7 @@
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
         <el-table-column label="备注">
           <template slot-scope="scope">
-            <el-input
-              size="small"
-              v-model="scope.row.remark"
-              :disabled="$route.query.status === 'detail'"
-              maxlength="100"
-              clearable
-              class="e-product_remark"
-            ></el-input>
+            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail' && form.merchantDTO.applicationModule === 3">
@@ -100,14 +84,7 @@
         </el-table-column>
       </el-table>
     </el-card>
-    <el-dialog
-      :visible.sync="checkProductVisible"
-      @close="productVal = ''"
-      :close-on-click-modal="false"
-      title="选择授权对象"
-      width="700px"
-      class="p-address-con"
-    >
+    <el-dialog :visible.sync="checkProductVisible" @close="productVal = ''" :close-on-click-modal="false" title="选择授权对象" width="700px" class="p-address-con">
       <el-form size="small" :inline="true" label-width="80px" @submit.native.prevent>
         <el-form-item label="授权信息">
           <el-input v-model="productVal" maxlength="30" placeholder="请输入税号" clearable></el-input>
@@ -135,13 +112,7 @@ import dayjs from 'dayjs'
 import { delayTimes, versionMap } from '../data'
 import { deepClone } from '@/utils'
 
-import {
-  authOrderWlsCustList,
-  queryByAgentProduct,
-  authOrderWlsCustInfo,
-  queryByAgentProductAndModule,
-  authOrderWcyTaxpayerNum
-} from '@/api/orderCenter/orderManagement/softwareAuthorization'
+import { authOrderWlsCustList, queryByAgentProduct, queryByAgentProductAndModule, authOrderWcyTaxpayerNum } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
   props: {
@@ -344,14 +315,8 @@ export default {
             useInventory: this.form.merchantDTO.delayHour,
             orderInventory: this.productStockObj?.totalAmount ?? 0,
             openCustAssistantApp: this.merchantInfo.OpenCustAssistantApp,
-            currentValidTime: this.merchantInfo?.KMValidity
-              ? dayjs(this.merchantInfo?.KMValidity)
-                  .startOf('day')
-                  .format('YYYY-MM-DD 23:59:59')
-              : '',
-            delayValidTime: this.merchantInfo.KMValidity
-              ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity)).format('YYYY-MM-DD 23:59:59')
-              : ''
+            currentValidTime: this.merchantInfo?.KMValidity ? dayjs(this.merchantInfo?.KMValidity).startOf('day').format('YYYY-MM-DD 23:59:59') : '',
+            delayValidTime: this.merchantInfo.KMValidity ? dayjs(this.setDelayValidTime(this.merchantInfo.KMValidity)).format('YYYY-MM-DD 23:59:59') : ''
           }
         ]
       }
@@ -386,9 +351,7 @@ export default {
     },
     setDelayValidTime(val) {
       const countTime = dayjs(val).isAfter(dayjs().format('YYYY-MM-DD')) ? val : dayjs().format('YYYY-MM-DD')
-      return dayjs(countTime)
-        .add(this.form.merchantDTO.delayHour, 'year')
-        .format('YYYY-MM-DD 23:59:59')
+      return dayjs(countTime).add(this.form.merchantDTO.delayHour, 'year').format('YYYY-MM-DD 23:59:59')
     }
   }
 }
@@ -400,13 +363,13 @@ export default {
 }
 .p-information {
   &-tab {
-    /deep/ {
+    ::v-deep {
       .el-input__inner {
         text-align: right;
       }
     }
     .e-select-con {
-      /deep/ .el-input {
+      ::v-deep .el-input {
         width: 100%;
         &__inner {
           text-align: left;
@@ -424,7 +387,7 @@ export default {
     display: flex;
     justify-content: space-between;
     align-items: center;
-    /deep/ {
+    ::v-deep {
       .el-button {
         font-size: 16px;
       }
@@ -433,7 +396,7 @@ export default {
 }
 .p-address {
   &-con {
-    /deep/ {
+    ::v-deep {
       .el-dialog__body {
         padding: 16px 20px;
       }
@@ -451,7 +414,7 @@ export default {
   &_remark {
     width: 100%;
     max-width: 240px;
-    /deep/ .el-input__inner {
+    ::v-deep .el-input__inner {
       text-align: left !important;
     }
   }
