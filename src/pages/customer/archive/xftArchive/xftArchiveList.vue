@@ -487,14 +487,13 @@ export default {
     align-items: center;
     .certification-dialog-text {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #3d4966;
       margin-bottom: 12px;
       line-height: 22px;
     }
     .certification-dialog-text:last-child {
-      margin-bottom: 0px;
+      margin-bottom: 0;
     }
     .certification-dialog-img {
       margin: 18px 30px 30px;
@@ -516,7 +515,6 @@ export default {
 }
 .table-text-color {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #ff6010;
   cursor: pointer;

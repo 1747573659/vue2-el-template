@@ -206,8 +206,7 @@ export default {
     }
     &_phone {
       width: 300px;
-      margin: 0 auto;
-      margin-bottom: -16px;
+      margin: 0 auto -16px;
       ::v-deep .el-form-item {
         &:nth-child(2) {
           .el-input {
@@ -223,7 +222,7 @@ export default {
             padding: 8px 15px;
           }
           .e-drop-resend_disabled {
-            padding: 8px 0px;
+            padding: 8px 0;
             width: 90px;
           }
         }

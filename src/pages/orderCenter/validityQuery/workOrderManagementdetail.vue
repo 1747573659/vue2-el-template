@@ -277,7 +277,7 @@ export default {
 .app-form {
   background: #fff;
   height: 100%;
-  margin-bottom: 0px;
+  margin-bottom: 0;
 }
 ::v-deep.el-input__count {
   right: 56px;
@@ -299,7 +299,7 @@ export default {
   color: #d3dbeb;
 }
 .km_upload_file_text {
-  line-height: 0px;
+  line-height: 0;
   position: relative;
   top: -36%;
   color: #d3dbeb;

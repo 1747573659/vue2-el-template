@@ -393,7 +393,6 @@ export default {
     height: 550px;
     .author-dialog-text {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       line-height: 22px;
       color: #3d4966;

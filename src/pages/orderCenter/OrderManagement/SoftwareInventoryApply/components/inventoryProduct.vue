@@ -82,7 +82,7 @@ export default {
         padding: 16px 20px;
       }
       .km-page-block {
-        padding-bottom: 0px;
+        padding-bottom: 0;
       }
     }
   }

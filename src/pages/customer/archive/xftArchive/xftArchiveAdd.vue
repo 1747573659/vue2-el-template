@@ -1541,7 +1541,6 @@ export default {
       display: flex;
       align-items: center;
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #3d4966;
       .archive-status {
@@ -1560,7 +1559,6 @@ export default {
     height: 48px;
     padding-left: 16px;
     font-size: 16px;
-    font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 500;
     color: #1f2e4d;
     line-height: 48px;

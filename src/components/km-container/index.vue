@@ -20,8 +20,7 @@ export default {
 
 <style lang="scss">
 .km-container {
-  padding: 16px;
-  padding-top: 0;
+  padding: 0 16px 16px;
   height: inherit;
   &-con {
     height: inherit;

@@ -318,7 +318,7 @@ export default {
 }
 ::v-deep.el-date-editor {
   width: 305px;
-  padding-right: 0px;
+  padding-right: 0;
 }
 .pure {
   &-dialog {

@@ -360,7 +360,6 @@ export default {
     flex-direction: column;
     .sum-card-title {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #3d4966;
       margin-bottom: 3px;
@@ -368,7 +367,6 @@ export default {
     .sum-card-money {
       margin-top: 3px;
       font-size: 30px;
-      font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 500;
       color: #1f2e4d;
     }

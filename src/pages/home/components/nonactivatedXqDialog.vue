@@ -76,7 +76,6 @@ export default {
   ::v-deep.el-dialog__body {
     padding: 10px 20px 10px;
     .xdd_tip {
-      padding-bottom: 10px;
       background: #e5edfd;
       border: 1px solid #a6c4fe;
       padding: 8px 10px;

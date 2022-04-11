@@ -364,7 +364,7 @@ export default {
       padding: 8px 15px;
     }
     .disabled {
-      padding: 8px 0px;
+      padding: 8px 0;
       width: 90px;
     }
   }

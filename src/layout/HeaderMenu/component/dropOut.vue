@@ -103,9 +103,7 @@ export default {
     &_con {
       ::v-deep .el-form {
         width: 300px;
-        margin: 0 auto;
-        margin-top: 11px;
-        margin-bottom: -16px;
+        margin: 11px auto -16px;
       }
     }
   }

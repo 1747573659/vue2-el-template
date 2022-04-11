@@ -453,7 +453,7 @@ export default {
           },
           formatter: params => {
             return `
-              <div style="font-family: PingFangSC-Regular, PingFang SC;font-weight: 400;color: #3D4966;box-shadow: 0px 4px 16px 0px rgba(31, 46, 77, 0.2);padding: 18px 16px">
+              <div style="font-weight: 400;color: #3D4966;box-shadow: 0 4px 16px 0 rgba(31, 46, 77, 0.2);padding: 18px 16px">
                 <p style="font-size: 12px;margin-bottom: 12px">
                   ${params[0].axisValueLabel}
                 </p>
@@ -552,7 +552,6 @@ export default {
     flex-direction: column;
     .sum-card-title {
       font-size: 14px;
-      font-family: PingFangSC-Regular, PingFang SC;
       font-weight: 400;
       color: #3d4966;
       margin-bottom: 3px;
@@ -560,7 +559,6 @@ export default {
     .sum-card-money {
       margin-top: 3px;
       font-size: 30px;
-      font-family: PingFangSC-Medium, PingFang SC;
       font-weight: 500;
       color: #1f2e4d;
     }

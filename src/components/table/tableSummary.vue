@@ -65,7 +65,7 @@ export default {
 p {
   height: auto;
   line-height: 36px;
-  padding: 0px 20px;
+  padding: 0 20px;
   background: #e5edfd;
   border: 1px solid #a6c4fe;
   margin-bottom: 20px;
@@ -79,6 +79,6 @@ p {
   margin-left: 10px;
 }
 .marginZerz {
-  margin-left: 0px;
+  margin-left: 0;
 }
 </style>

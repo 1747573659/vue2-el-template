@@ -190,7 +190,7 @@ export default {
     height: 56px;
     overflow: hidden;
     background: rgba(255, 255, 255, 1);
-    box-shadow: 0px 6px 12px 0px rgba(230, 233, 240, 1);
+    box-shadow: 0 6px 12px 0 rgba(230, 233, 240, 1);
     display: flex;
     position: fixed;
     z-index: 2000;
@@ -210,7 +210,6 @@ export default {
       ul {
         display: flex;
         li {
-          line-height: 56px;
           padding: 0 20px;
           height: 56px;
           line-height: 56px;

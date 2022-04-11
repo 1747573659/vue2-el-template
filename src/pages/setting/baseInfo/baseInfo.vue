@@ -1,7 +1,7 @@
 <template>
   <div class="data-box">
     <div class="km-setting-baseInfo">
-      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 384.3px">
+      <el-form ref="form" size="small" :rules="rules" label-suffix=":" :model="form" label-width="110px" style="width: 384px">
         <el-form-item label="经销商编号" class="km-setting-baseInfo-text">
           <span>{{ form.agentId }}</span>
         </el-form-item>
@@ -257,7 +257,7 @@ export default {
       padding: 8px 15px;
     }
     .disabled {
-      padding: 8px 0px;
+      padding: 8px 0;
       width: 90px;
     }
   }

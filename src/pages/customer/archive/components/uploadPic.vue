@@ -164,7 +164,6 @@ export default {
 .upload-text {
   margin-top: 12px;
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #8f9bb3;
   line-height: 14px;
@@ -181,7 +180,6 @@ export default {
 
 .upload-require {
   font-size: 14px;
-  font-family: PingFangSC-Regular, PingFang SC;
   font-weight: 400;
   color: #cad1e0;
   line-height: 20px;

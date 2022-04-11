@@ -49,7 +49,6 @@ export default {
   margin-right: -16px;
   ::v-deep.el-menu-item {
     font-size: 16px;
-    font-family: PingFangSC-Regular, PingFang SC;
     font-weight: 400;
     color: #3d4966;
   }
@@ -58,7 +57,6 @@ export default {
   }
   ::v-deep.el-menu-item.is-active {
     font-size: 16px;
-    font-family: PingFangSC-Medium, PingFang SC;
     font-weight: 600;
     color: #1f2e4d;
   }

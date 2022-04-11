@@ -39,7 +39,7 @@ export default {
       height: 100%;
     }
     &_fill {
-      padding: 48px 0px 0px;
+      padding: 48px 0 0;
       height: inherit;
       overflow-y: auto;
     }

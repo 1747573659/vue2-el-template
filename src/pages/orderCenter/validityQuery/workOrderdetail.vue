@@ -289,7 +289,7 @@ export default {
   color: #d3dbeb;
 }
 .km_upload_file_text {
-  line-height: 0px;
+  line-height: 0;
   position: relative;
   top: -36%;
   color: #d3dbeb;

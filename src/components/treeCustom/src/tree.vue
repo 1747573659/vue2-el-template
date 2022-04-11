@@ -518,7 +518,7 @@ export default {
 .tree-custom-wrap {
   .tree-custom-left {
     border: 1px solid #d5d5d5;
-    border-radius: 4px 4px 0px 0px;
+    border-radius: 4px 4px 0 0;
     width: 390px;
     // height: 350px;
     min-height: 526px;
@@ -529,7 +529,7 @@ export default {
   }
   .tree-custom-right {
     border: 1px solid #d5d5d5;
-    border-radius: 4px 4px 0px 0px;
+    border-radius: 4px 4px 0 0;
     width: 122px;
     margin-left: 18px;
     // height: 350px;

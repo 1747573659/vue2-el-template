@@ -260,7 +260,7 @@ export default {
   box-sizing: border-box;
   border: 1px solid #e3e3e3;
   border-radius: 4px;
-  box-shadow: 0px 0px 5px #eee;
+  box-shadow: 0 0 5px #eee;
 }
 
 .km-slide-login__title-group {
@@ -441,8 +441,7 @@ export default {
     left: 50%;
     transform: translate(-50%, -50%);
     .sk-circle-fade {
-      margin: 0 auto;
-      margin-bottom: 10px;
+      margin: 0 auto 10px;
     }
     span {
       font-size: 12px;

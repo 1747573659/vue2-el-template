@@ -273,10 +273,7 @@ export default {
 .table-content {
   border: 1px solid #e6e9f0;
   width: 820px;
-  margin-top: 10px;
-  margin-bottom: -10px;
-  margin-right: 10px;
-  margin-left: 10px;
+  margin: 10px 10px -10px;
   .table-item {
     border-bottom: 1px solid #e6e9f0;
     display: flex;
@@ -285,7 +282,6 @@ export default {
     .table-item-content {
       font-size: 14px;
       color: #3d4966;
-      padding: 10px;
       width: 50%;
       display: flex;
       padding: 15px 0;

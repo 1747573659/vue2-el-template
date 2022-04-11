@@ -38,7 +38,7 @@ export default {
       width: 200px;
       position: fixed;
       background-color: #fff;
-      box-shadow: 2px 0px 4px 0px rgba(0, 0, 0, 0.08);
+      box-shadow: 2px 0 4px 0 rgba(0, 0, 0, 0.08);
       z-index: 1100;
     }
     &_main {

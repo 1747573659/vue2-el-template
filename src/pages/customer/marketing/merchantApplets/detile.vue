@@ -2,7 +2,7 @@
   <div class="app-container">
     <div class="data-box">
       <el-alert :closable="false" title="小程序资料用于支付宝小程序审核，请谨慎填写。" type="info"> </el-alert>
-      <el-form style="padding: 0px 46px" size="mini" ref="form" label-position="top" :model="form" :rules="rules" label-width="120px">
+      <el-form style="padding: 0 46px" size="mini" ref="form" label-position="top" :model="form" :rules="rules" label-width="120px">
         <h4 class="title">小程序资料</h4>
         <el-row>
           <el-col :span="6">
@@ -119,7 +119,7 @@
                   <el-date-picker :picker-options="pickerOptions" v-model="form.licenseEndDate" type="date" placeholder="结束日期"></el-date-picker>
                 </span>
                 <el-tooltip effect="dark" content="“结束日期”留空代表长期有效" placement="top">
-                  <img :src="questionIcon" alt="提示" style="width: 20px; margin: 5px 0px 0px 5px" />
+                  <img :src="questionIcon" alt="提示" style="width: 20px; margin: 5px 0 0 5px" />
                 </el-tooltip>
               </el-row>
             </el-form-item>
@@ -229,7 +229,7 @@
           </el-col>
         </el-row>
       </el-form>
-      <div style="width: 100%; text-align: center; padding: 20px 0px 100px 0px">
+      <div style="width: 100%; text-align: center; padding: 20px 0 100px 0">
         <template v-if="operation == 'add'">
           <el-button :loading="loadingField == 'saveBaseData'" @click="saveBaseData(0)" v-permission="'MARKETINGDETILESTAGING'" type="primary" plain>暂存</el-button>
           <el-button :loading="loadingField == 'saveBaseData'" @click="saveBaseData(1)" type="primary" v-permission="'MARKETINGDETILESUBMIT'">提交</el-button>
@@ -561,6 +561,6 @@ export default {
 <style scoped>
 .title {
   width: 100%;
-  padding: 40px 0px 20px 0px;
+  padding: 40px 0 20px 0;
 }
 </style>

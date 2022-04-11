@@ -79,7 +79,6 @@ export default {
   vertical-align: top;
   display: inline-block;
   text-align: center;
-  cursor: pointer;
   outline: none;
 }
 
