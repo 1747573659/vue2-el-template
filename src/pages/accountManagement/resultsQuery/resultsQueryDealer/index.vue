@@ -82,17 +82,17 @@
         <el-table-column label="订单金额" width="140" align="right">
           <template slot-scope="scope">{{ scope.row.orderAmount | toFixedFilter }}</template>
         </el-table-column>
-        <el-table-column label="业绩金额" width="140" align="right">
+        <el-table-column label="签约完成" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.performanceAmount | toFixedFilter }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="使用本金" width="140" align="right">
+        <el-table-column label="扣减本金" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.originAmount | toFixedFilter }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="使用赠金" width="140" align="right">
+        <el-table-column label="扣减赠金" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.bonusAmount | toFixedFilter }}</div>
           </template>
@@ -102,15 +102,15 @@
             <div v-if="scope.row.industry !== 5">{{ scope.row.useRebate === 1 ? '是' : '否' }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="使用担保金" width="140" align="right">
+        <el-table-column label="担保金额" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.depositAmount | toFixedFilter }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="depositName" label="担保人" width="120"></el-table-column>
-        <el-table-column prop="couponName" label="订单优惠活动" width="120"></el-table-column>
+        <el-table-column prop="couponName" label="优惠活动" width="120"></el-table-column>
         <el-table-column prop="billNo" label="订单编码" width="160"></el-table-column>
-        <el-table-column label="扣款后本额" width="140" align="right">
+        <el-table-column label="本金余额" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.deductionOriginAmount | toFixedFilter }}</div>
           </template>
