@@ -17,6 +17,10 @@
             <el-form-item>
               <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
             </el-form-item>
+            <el-form-item>
+              <el-button v-permission="'SOFTWARE_STOCK_EXPORT'" @click="handleExport()" :loading="exportLoad">导出</el-button>
+              <km-export-view v-permission="'SOFTWARE_STOCK_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+            </el-form-item>
           </el-form>
         </el-col>
       </el-row>
@@ -76,6 +80,7 @@
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { getInventoryAndSummary } from '@/api/accountManagement/softStockQuery'
 import { productQueryByPage } from '@/api/product'
+import { xftArchiveExportLog, xftArchiveExportDel, xftArchiveExport } from '@/api/xftArchive'
 import { mapActions } from 'vuex'
 export default {
   name: 'querySoftStock',
@@ -104,7 +109,13 @@ export default {
         orders: {},
         inventoryType: '',
         productCode: ''
-      }
+      },
+      exportLoad: false
+    }
+  },
+  computed: {
+    exportQueryParams() {
+      return { productCode: this.form.productCode, inventoryType: this.form.inventoryType }
     }
   },
   created() {
@@ -183,6 +194,24 @@ export default {
       keys.map(item => {
         this.tableSummaryObj[item].value = res[item] || 0
       })
+    },
+    //处理导出
+    async handleExport() {
+      this.exportLoad = true
+      try {
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+      } catch (error) {
+      } finally {
+        this.exportLoad = false
+      }
+    },
+    async handleExportRecord({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      const data = { exportType: 1, page: currentPage, rows: pageSize }
+      return await xftArchiveExportLog(data)
+    },
+    async handleExportDel(row) {
+      return await xftArchiveExportDel({ id: row.id })
     }
   }
 }
