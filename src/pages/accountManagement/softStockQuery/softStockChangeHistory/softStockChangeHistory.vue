@@ -28,6 +28,8 @@
             </el-form-item>
             <el-form-item>
               <el-button style="margin-left: 36px" type="primary" @click="handleCurrentChange(1)">查询</el-button>
+              <el-button v-permission="'SOFTWARE_STOCK_CHANGE_EXPORT'" @click="handleExport()" :loading="exportLoad">导出</el-button>
+              <km-export-view v-permission="'SOFTWARE_STOCK_CHANGE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-form>
         </el-col>
@@ -107,6 +109,7 @@ import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 import { productQueryByPage } from '@/api/product'
 import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQuery'
+import { xftArchiveExport, xftArchiveExportLog, xftArchiveExportDel } from '@/api/xftArchive'
 export default {
   name: 'softStockChangeHistory',
   components: { tableSummary },
@@ -169,6 +172,27 @@ export default {
     })
   },
   methods: {
+    handleExport: async function () {
+      if (!this.form.time?.length || dayjs(this.form.time[1]).diff(dayjs(this.form.time[0]), 'days') > 62) {
+        this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
+        return false
+      }
+      this.exportLoad = true
+      try {
+        this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
+        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+      } catch (error) {
+      } finally {
+        this.exportLoad = false
+      }
+    },
+    handleExportDel: async function (row) {
+      return await xftArchiveExportDel({ id: row.id })
+    },
+    handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
+      const data = { exportType: 1, page: currentPage, rows: pageSize }
+      return await xftArchiveExportLog(data)
+    },
     getBusinessType(value) {
       if (value) {
         let res = this.businessTypeList.filter(item => value === item.id)
