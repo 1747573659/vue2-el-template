@@ -61,11 +61,6 @@
             <el-input v-else size="small" v-model.number.trim="scope.row.authPoint" @change="handleAuthNumAmount(scope.row, 'authPoint')" style="width: 100%"></el-input>
           </template>
         </el-table-column>
-        <el-table-column label="备注">
-          <template slot-scope="scope">
-            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
-          </template>
-        </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
             <el-popconfirm class="el-button el-button--text" @confirm="handleAuthorStoreDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
@@ -129,11 +124,6 @@
                 placeholder="银联通道"
                 class="e-select-con js-unionChannel" />
             </template>
-          </template>
-        </el-table-column>
-        <el-table-column label="备注">
-          <template slot-scope="scope">
-            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">

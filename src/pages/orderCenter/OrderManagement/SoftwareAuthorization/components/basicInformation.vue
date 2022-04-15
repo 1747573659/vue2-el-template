@@ -11,21 +11,29 @@
           <span class="p-card-state_text">{{ currentOrderStatus }}</span>
         </div>
       </div>
-      <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
+      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="订单编码">
-          <el-input :value="form.authOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
+          <el-input :value="form.authOrderDTO.billNo" disabled placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
-          <el-input :value="`${form.authOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
+          <el-input :value="`${form.authOrderDTO.createOrderTime || baseOrderTime}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="消耗库存">
-          <el-input :value="form.authOrderDTO.inventoryAmount"></el-input>
+          <el-input :value="form.authOrderDTO.inventoryAmount" disabled></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input :value="form.authOrderDTO.handManName"></el-input>
+          <el-input :value="form.authOrderDTO.handManName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="经销商" v-if="Number($route.query.productType) === 6">
-          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
+        <template v-if="Number($route.query.productType) === 6">
+          <el-form-item label="经销商">
+            <el-input :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="主产品">
+            <el-input :value="form.authOrderDTO.inventoryAmount" disabled></el-input>
+          </el-form-item>
+        </template>
+        <el-form-item label="备注">
+          <el-input v-model="form.authOrderDTO.remark" :disabled="$route.query.status === 'detail'" type="text" maxlength="100" clearable></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -77,7 +85,8 @@ import {
   authOrderDogById,
   authOrderDogUpdate,
   authOrderDogSubmit,
-  authOrderDelete
+  authOrderDelete,
+  authOrderProductPage
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -155,7 +164,9 @@ export default {
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
       userInfo: JSON.parse(localStorage.userInfo),
-      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]')
+      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]'),
+      licensedProducts: [],
+      isLicensedProductMaxPage: false
     }
   },
   computed: {
@@ -465,9 +476,9 @@ export default {
       return optionVo
     },
     handleQueryParams() {
-      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
+      const { handMan, inventoryAmount, id, billNo, remark } = this.form.authOrderDTO
       return {
-        authOrderVO: { handMan, inventoryAmount, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
+        authOrderVO: { handMan, inventoryAmount, remark, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
@@ -546,6 +557,13 @@ export default {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
         this.form.authOrderDTO.handMan = id
         this.form.authOrderDTO.handManName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
+      } catch (error) {}
+    },
+    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 2, productTypeList: [1], type: '1' })
+        this.licensedProducts = this.licensedProducts.concat(res.results || [])
+        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     }
   }

@@ -70,11 +70,6 @@
         </template>
         <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
-        <el-table-column label="备注">
-          <template slot-scope="scope">
-            <el-input size="small" v-model="scope.row.remark" :disabled="$route.query.status === 'detail'" maxlength="100" clearable class="e-product_remark"></el-input>
-          </template>
-        </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail' && form.merchantDTO.applicationModule === 3">
           <template slot-scope="scope">
             <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">

@@ -26,7 +26,8 @@ export const formErpObj = {
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
     handManName: '', // 受理人名称
-    erpStore: '' // 授权类型
+    erpStore: '', // 授权类型
+    remark: ''
   },
   erpAuthMerchantDTO: {
     agentId: '',
@@ -46,7 +47,8 @@ export const formWlsOrWcyObj = {
     billNo: '', // 订单编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
-    handManName: '' // 受理人名称
+    handManName: '', // 受理人名称
+    remark: ''
   },
   merchantDTO: {
     agentId: '',
@@ -70,7 +72,8 @@ export const formYsObj = {
     handManName: '', // 受理人名称
     useModalInner: -1,
     userLevel: 1,
-    userLevelNum: 100
+    userLevelNum: 100,
+    remark: ''
   },
   merchantDTO: {
     agentId: '',
@@ -90,7 +93,8 @@ export const formDongleObj = {
     billNo: '', // 订单编码
     createOrderTime: '',
     inventoryAmount: '', // 受理人id
-    handManName: '' // 受理人名称
+    handManName: '', // 受理人名称
+    remark: ''
   },
   detailDTOList: []
 }
