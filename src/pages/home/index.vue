@@ -12,6 +12,7 @@
     </el-dialog>
     <nonactivated-xq-dialog :visible.sync="showNoNactivatedXq"></nonactivated-xq-dialog>
     <check-pass-view :visible.sync="checkPwdVisible" v-if="environment" />
+    <protocol-dialog :visible.sync="showProtocolStatus" />
   </section>
 </template>
 
@@ -20,6 +21,7 @@ import { mapGetters, mapMutations } from 'vuex'
 
 import nonactivatedXqDialog from './components/nonactivatedXqDialog.vue'
 import checkPassView from './components/checkPass.vue'
+import protocolDialog from './components/protocolDialog'
 
 export default {
   data() {
@@ -29,20 +31,26 @@ export default {
   },
   components: {
     nonactivatedXqDialog,
-    checkPassView
+    checkPassView,
+    protocolDialog
   },
   computed: {
     ...mapGetters({
       xftAuditStatus: 'xftAuditStatus',
       nonactivatedXq: 'nonactivatedXq',
-      checkPwdVisible: 'checkPwdVisible'
+      checkPwdVisible: 'checkPwdVisible',
+      checkProtocolStatus: 'checkProtocolStatus'
     }),
     // 当提示享钱的弹窗关闭之后再去提示进件相关的弹窗
     showXftAuditStatus() {
-      return !this.checkPwdVisible && !this.nonactivatedXq && this.xftAuditStatus
+      return !this.checkPwdVisible && !this.checkProtocolStatus && !this.nonactivatedXq && this.xftAuditStatus
     },
     showNoNactivatedXq() {
-      return !this.checkPwdVisible && this.nonactivatedXq
+      return !this.checkPwdVisible && !this.checkProtocolStatus && this.nonactivatedXq
+    },
+    showProtocolStatus() {
+      // return !this.checkPwdVisible && this.checkProtocolStatus
+      return this.checkProtocolStatus
     }
   },
   methods: {
