@@ -28,12 +28,20 @@
           <el-form-item label="经销商">
             <el-input :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`" disabled></el-input>
           </el-form-item>
-          <el-form-item label="主产品">
-            <el-input :value="form.authOrderDTO.inventoryAmount" disabled></el-input>
+          <el-form-item label="主产品" class="is-required">
+            <km-select-page
+              ref="productCode"
+              v-model="form.authOrderDTO.productCode"
+              option-label="name"
+              option-value="code"
+              :data.sync="licensedProducts"
+              :request="getProductByPage"
+              :is-max-page.sync="isLicensedProductMaxPage"
+              placeholder="" />
           </el-form-item>
         </template>
         <el-form-item label="备注">
-          <el-input v-model="form.authOrderDTO.remark" :disabled="$route.query.status === 'detail'" type="text" maxlength="100" clearable></el-input>
+          <el-input v-model="form.authOrderDTO.backRemark" :disabled="$route.query.status === 'detail'" type="text" maxlength="100" clearable></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -265,7 +273,9 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     getDogInformationObj() {
-      if (!this.form.detailDTOList.length) {
+      if (!this.form.authOrderDTO.productCode) {
+        this.$message({ type: 'warning', message: '请选择主产品' })
+      } else if (!this.form.detailDTOList.length) {
         this.$message({ type: 'warning', message: '请选择授权产品' })
       } else if (this.form.detailDTOList.some(item => !item.authVersion)) {
         this.$message({ type: 'warning', message: '订单明细产品版本不能为空' })
@@ -284,7 +294,7 @@ export default {
           this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           return {
-            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
+            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: this.form.authOrderDTO.productCode }),
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
         }
@@ -476,9 +486,9 @@ export default {
       return optionVo
     },
     handleQueryParams() {
-      const { handMan, inventoryAmount, id, billNo, remark } = this.form.authOrderDTO
+      const { handMan, inventoryAmount, id, billNo, backRemark } = this.form.authOrderDTO
       return {
-        authOrderVO: { handMan, inventoryAmount, remark, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
+        authOrderVO: { handMan, inventoryAmount, backRemark, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
@@ -533,6 +543,9 @@ export default {
               if (this.form?.addAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 1
               else if (this.form?.renewAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 2
             }
+          } else if (this.productType === 6) {
+            this.getProductByPage({ query: res.authOrderDTO.productCode })
+            this.$refs.productCode.selectVal = res.authOrderDTO.productCode
           }
         })
         if (this.productType === 1) {
