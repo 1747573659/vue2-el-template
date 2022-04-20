@@ -6,7 +6,7 @@
       </el-form-item>
       <el-form-item label="行业" v-if="$route.name === 'softwarePurchaseDetails'">
         <el-select v-model="industry" clearable placeholder="全部">
-          <el-option v-for="item in industryOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+          <el-option v-for="item in industryOptions" :key="item.id" :label="item.name" :value="item.id"></el-option>
         </el-select>
       </el-form-item>
       <el-button type="primary" size="small" @click="find()">查询</el-button>
@@ -27,7 +27,7 @@
 
 <script>
 import NP from 'number-precision'
-import { productInfo } from '@/api/orderCenter/orderManagement'
+import { productInfo, queryIndustryInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
   data() {
@@ -41,13 +41,11 @@ export default {
       totalPage: 0,
       selectMaps: new Map(),
       currentPageSelectSets: new Set(),
-      industryOptions: [
-        { label: '全部', value: '' },
-        { label: '零售', value: 1 },
-        { label: '餐饮', value: 2 },
-        { label: '专卖', value: 3 }
-      ]
+      industryOptions: []
     }
+  },
+  mounted() {
+    this.getIndustryInfo()
   },
   methods: {
     find() {
@@ -96,6 +94,9 @@ export default {
       this.industry = ''
       this.currentPageSelectSets.clear()
       this.selectMaps.clear()
+    },
+    async getIndustryInfo() {
+      this.industryOptions = (await queryIndustryInfo({ enablePurchase: 0 })) || []
     },
     getProductPage: async function () {
       try {

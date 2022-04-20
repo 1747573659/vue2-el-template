@@ -429,6 +429,8 @@ export default {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else if (authCountType === '1' && productCode === 'HCM11' && erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))) {
         this.$message({ type: 'warning', message: '商户已使用站点授权，不支持门店授权，请联系商务。' })
+      } else if (!authStatus) {
+        this.$message({ type: 'warning', message: '授权状态不能为空，请联系运维人员处理' })
       } else if (
         [0, 1].includes(parseFloat(authStatus)) &&
         this.$refs.information.basicProductData.some(item => item.moduleId === 'MDZD') &&
@@ -471,7 +473,7 @@ export default {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { merchantId, productCode, erpStore: erpStoreOrderDetailList && erpStoreOrderDetailList.length > 0 ? 1 : 0 },
-              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
+              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus) }
             ),
             erpStoreList: erpStoreOrderDetailList,
             orderDetailVos: this.handleQueryParams().orderDetailVos

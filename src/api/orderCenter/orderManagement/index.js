@@ -1,6 +1,15 @@
 import request from '@/utils/request'
 import qs from 'qs'
 
+// 采购订单 行业信息
+export function queryIndustryInfo(data) {
+  return request({
+    url: '/channel/purchase/industryInfo',
+    method: 'POST',
+    data
+  })
+}
+
 // 分页获取订单
 export function queryByPage(data) {
   return request({
