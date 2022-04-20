@@ -13,7 +13,7 @@ const state = {
   xftAuditStatus: false,
   nonactivatedXq: false,
   nonactivatedXqList: [],
-  checkPwdVisible: sessionStorage.getItem('pass') === '21218cca77804d2ba1922c33e0151105' || false,
+  checkPwdVisible: JSON.parse(sessionStorage.getItem('isInitPwd')) || false,
   checkProtocolStatus: false
 }
 
@@ -103,7 +103,7 @@ const actions = {
           authShopPageMethod(commit, response.userInfo)
           // 判断当前密码是否初始密码
           if (userData.password === '21218cca77804d2ba1922c33e0151105') {
-            sessionStorage.setItem('pass', '21218cca77804d2ba1922c33e0151105')
+            sessionStorage.setItem('isInitPwd', true)
             commit('SET_PWDVISIBLE', true)
           }
           // 重新设置异步路由里面的重定向地址
