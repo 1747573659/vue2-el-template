@@ -32,12 +32,14 @@
             <km-select-page
               ref="productCode"
               v-model="form.authOrderDTO.productCode"
+              :modelName="form.authOrderDTO.productCode"
               option-label="name"
               option-value="code"
               :data.sync="licensedProducts"
               :request="getProductByPage"
               :is-max-page.sync="isLicensedProductMaxPage"
-              placeholder="" />
+              placeholder=""
+              :disabled="$route.query.status === 'detail'" />
           </el-form-item>
         </template>
         <el-form-item label="备注">
@@ -226,7 +228,7 @@ export default {
       const erpHCMModule =
         this.productType === 1 &&
         ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.useModalInner))
       if (erpHCMModule) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请选择"总部模块"后再提交' })
@@ -235,7 +237,7 @@ export default {
       }
       if (
         this.productType === 1 &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) &&
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.useModalInner)) &&
         this.$refs.information.shopPageData.length > 0 &&
         !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName
       ) {
@@ -419,7 +421,7 @@ export default {
     },
     getErpInformationObj() {
       const {
-        erpAuthMerchantDTO: { merchantId, productCode, authStatus, authCountType },
+        erpAuthMerchantDTO: { merchantId, productCode, useModalInner, authCountType },
         erpAuthOrderDetails,
         erpStoreOrderDetailList
       } = this.form
@@ -429,10 +431,10 @@ export default {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else if (authCountType === '1' && productCode === 'HCM11' && erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))) {
         this.$message({ type: 'warning', message: '商户已使用站点授权，不支持门店授权，请联系商务。' })
-      } else if (!authStatus) {
+      } else if (!useModalInner) {
         this.$message({ type: 'warning', message: '授权状态不能为空，请联系运维人员处理' })
       } else if (
-        [0, 1].includes(parseFloat(authStatus)) &&
+        [0, 1].includes(parseFloat(useModalInner)) &&
         this.$refs.information.basicProductData.some(item => item.moduleId === 'MDZD') &&
         !erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))
       ) {
@@ -473,7 +475,7 @@ export default {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { merchantId, productCode, erpStore: erpStoreOrderDetailList && erpStoreOrderDetailList.length > 0 ? 1 : 0 },
-              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus) }
+              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(useModalInner) }
             ),
             erpStoreList: erpStoreOrderDetailList,
             orderDetailVos: this.handleQueryParams().orderDetailVos

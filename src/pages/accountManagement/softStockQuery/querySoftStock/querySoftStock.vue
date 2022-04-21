@@ -176,24 +176,22 @@ export default {
           productCode: this.form.productCode,
           inventoryType: this.form.inventoryType
         }
-        const res = await getInventoryAndSummary({
-          ...subData,
-          page: this.thisPage,
-          rows: this.pageSize
-        })
+        const res = await getInventoryAndSummary({ ...subData, page: this.thisPage, rows: this.pageSize })
         this.detailCount(res)
-        this.tableList = res.results
-        this.tableTotal = res.totalCount
+        this.tableList = res.results || []
+        this.tableTotal = res.totalCount || 0
       } finally {
         this.tableLoading = false
       }
     },
     // 表单汇总
     async detailCount(res) {
-      const keys = Object.keys(this.tableSummaryObj)
-      keys.map(item => {
-        this.tableSummaryObj[item].value = res[item] || 0
-      })
+      if (res) {
+        const keys = Object.keys(this.tableSummaryObj)
+        keys.map(item => {
+          this.tableSummaryObj[item].value = res[item] || 0
+        })
+      }
     },
     //处理导出
     async handleExport() {

@@ -115,6 +115,7 @@ export default {
   components: { tableSummary },
   data() {
     return {
+      exportLoad: false,
       licensedProductData: [],
       isLicensedProductMaxPage: false,
       pickerOptions: {
@@ -222,14 +223,10 @@ export default {
           startTime: this.form.startTime || '',
           endTime: this.form.endTime || ''
         }
-        const res = await getInventoryWaterAndSummary({
-          ...subData,
-          page: this.thisPage,
-          rows: this.pageSize
-        })
+        const res = await getInventoryWaterAndSummary({ ...subData, page: this.thisPage, rows: this.pageSize })
         this.detailCount(res)
-        this.tableList = res.results
-        this.tableTotal = res.totalCount
+        this.tableList = res.results || []
+        this.tableTotal = res.totalCount || 0
       } finally {
         this.tableLoading = false
       }
@@ -254,14 +251,17 @@ export default {
     },
     // 表单汇总
     async detailCount(res) {
-      const keys = Object.keys(this.tableSummaryObj)
-      keys.map(item => {
-        this.tableSummaryObj[item].value = res[item] || 0
-      })
+      if (res) {
+        const keys = Object.keys(this.tableSummaryObj)
+        keys.map(item => {
+          this.tableSummaryObj[item].value = res[item] || 0
+        })
+      }
     }
   }
 }
 </script>
+
 <style lang="scss" scoped>
 .search-box {
   margin-left: -16px;

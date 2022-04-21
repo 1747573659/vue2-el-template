@@ -237,6 +237,7 @@ export default {
         const res = await detailPage({ ...subData, page: this.thisPage, rows: this.pageSize })
         this.tableList = res.results || []
         this.tableTotal = res.totalCount
+      } catch (err) {
       } finally {
         this.tableLoading = false
       }

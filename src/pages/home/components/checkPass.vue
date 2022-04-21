@@ -74,7 +74,7 @@ export default {
             await modifyPwd({ newPassword: this.form.newPassword, oldPassword: '888888' })
             this.setPwdVisible(false)
             this.$message({ type: 'success', message: '修改成功，将重新登录' })
-            sessionStorage.removeItem('pass')
+            sessionStorage.removeItem('isInitPwd')
             this.Logout()
           } catch (e) {
           } finally {

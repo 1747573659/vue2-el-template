@@ -24,7 +24,7 @@
           <el-input :value="form.erpAuthMerchantDTO.merchantId" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="授权状态">
-          <el-input :value="['试用', '试用', '正式', '停用'][parseFloat(form.erpAuthMerchantDTO.authStatus)]" disabled></el-input>
+          <el-input :value="['试用', '试用', '正式', '停用'][parseFloat(form.erpAuthMerchantDTO.useModalInner)]" disabled></el-input>
         </el-form-item>
         <el-form-item label="产品">
           <el-input
@@ -54,7 +54,7 @@
         </el-table-column>
         <el-table-column prop="authStoreId" label="门店编码"></el-table-column>
         <el-table-column prop="authStoreName" label="门店名称"></el-table-column>
-        <el-table-column prop="authSiteCount" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
+        <el-table-column prop="authSiteCount" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.useModalInner)" align="right"></el-table-column>
         <el-table-column prop="authPoint" label="本次授权数量" align="right">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.authPoint }}</span>
@@ -89,7 +89,7 @@
         </el-table-column>
         <el-table-column prop="moduleCode" label="模块编码"></el-table-column>
         <el-table-column prop="moduleName" label="模块名称"></el-table-column>
-        <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.authStatus)" align="right"></el-table-column>
+        <el-table-column prop="authPoint" label="已授权点数" v-if="['2', '3'].includes(form.erpAuthMerchantDTO.useModalInner)" align="right"></el-table-column>
         <el-table-column prop="orderInventory" label="库存数量" align="right"></el-table-column>
         <el-table-column prop="authNum" label="加点数量" align="right">
           <template slot-scope="scope">
@@ -311,7 +311,7 @@ export default {
             this.form.erpAuthOrderDetails.push({
               moduleCode: siteInZdItem.moduleId,
               moduleName: siteInZdItem.moduleName,
-              authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : siteInZdItem?.authNum ?? 0,
+              authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.useModalInner) ? 0 : siteInZdItem?.authNum ?? 0,
               orderInventory: 0,
               authNum: 1,
               productCode: siteInZdItem.productId,
@@ -381,12 +381,12 @@ export default {
     },
     handleShopPage(val) {
       if (val) {
-        const { authCount, productId: productCode, productName, status: authStatus, custId: merchantId, authCountType } = this.shopPageData.find(item => item.custId === val)
+        const { authCount, productId: productCode, productName, status: useModalInner, custId: merchantId, authCountType } = this.shopPageData.find(item => item.custId === val)
         this.form.erpAuthMerchantDTO = Object.assign(this.form.erpAuthMerchantDTO, {
           authCount,
           productCode,
           productName,
-          authStatus,
+          useModalInner,
           merchantId,
           authCountType
         })
@@ -396,7 +396,7 @@ export default {
           authCount: '',
           productCode: '',
           productName: '',
-          authStatus: '',
+          useModalInner: '',
           merchantId: '',
           authCountType: ''
         })
@@ -416,7 +416,7 @@ export default {
         this.form.erpAuthOrderDetails.push({
           moduleCode: item.moduleId,
           moduleName: item.moduleName,
-          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.authStatus) ? 0 : item?.authNum ?? 0,
+          authPoint: [0, 1].includes(this.form.erpAuthMerchantDTO.useModalInner) ? 0 : item?.authNum ?? 0,
           orderInventory: 0,
           authNum: 1,
           productCode: item.productId,
@@ -631,7 +631,7 @@ export default {
               }
             }, 0)
             this.form.erpAuthOrderDetails.forEach(item => {
-              if (item.moduleCode === 'MDZD') item.authNum = sums[['2', '3'].includes(this.form.erpAuthMerchantDTO.authStatus) ? 4 : 3]
+              if (item.moduleCode === 'MDZD') item.authNum = sums[['2', '3'].includes(this.form.erpAuthMerchantDTO.useModalInner) ? 4 : 3]
               return item
             })
           }
@@ -654,7 +654,7 @@ export default {
                 return prev
               }
             }, 0)
-            this.form.authOrderDTO.inventoryAmount = sums[['2', '3'].includes(this.form.erpAuthMerchantDTO.authStatus) ? 5 : 4]
+            this.form.authOrderDTO.inventoryAmount = sums[['2', '3'].includes(this.form.erpAuthMerchantDTO.useModalInner) ? 5 : 4]
           }
         }
       })
