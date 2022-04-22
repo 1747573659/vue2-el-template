@@ -579,6 +579,7 @@ export default {
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 2, productTypeList: [1], type: '1' })
+        res.results.forEach(item => (item.name = `[${item.code}]${item.name}`))
         this.licensedProducts = this.licensedProducts.concat(res.results || [])
         this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
