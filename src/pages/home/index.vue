@@ -49,8 +49,8 @@ export default {
       return !this.checkPwdVisible && !this.checkProtocolStatus && this.nonactivatedXq
     },
     showProtocolStatus() {
-      // return !this.checkPwdVisible && this.checkProtocolStatus
-      return this.checkProtocolStatus
+      if (process.env.VUE_APP_FLAG === 'pro') return !this.checkPwdVisible && this.checkProtocolStatus
+      else return this.checkProtocolStatus
     }
   },
   methods: {

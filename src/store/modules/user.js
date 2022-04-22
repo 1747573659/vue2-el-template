@@ -117,7 +117,7 @@ const actions = {
           queryBaseInfo()
             .then(info => {
               setLocal('userInfo', JSON.stringify(Object.assign(response.userInfo, info)))
-              if (info.level === 1 && [1, 2].includes(info.propertyType) && response.userInfo.userType === 2) {
+              if (info.level === 1 && [1, 2].includes(info.propertyType) && response.userInfo.userType === 11) {
                 queryByAgent({ agentId: info.agentId })
                   .then(res => {
                     commit('SET_PROTOCOLSTATUS', !res)

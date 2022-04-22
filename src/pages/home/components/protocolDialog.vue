@@ -1,8 +1,8 @@
 <template>
   <el-dialog v-bind="$attrs" title="查看协议" :show-close="false" :close-on-press-escape="false" width="900px" :close-on-click-modal="false" append-to-body>
-    <embed src="https://static-oss.cs.kemai.com.cn/boss/uploadFiles/1/a4a1876918a94fb1a4ac8a5646e18716.pdf" type="" width="100%" height="500" />
+    <embed src="http://www.kemai.com.cn/dailiapp/ezs/commission/commission.pdf" type="" width="100%" height="500" />
     <div class="e-protocol-center e-protocol-pd-checkbox">
-      <el-checkbox v-model="isReadAndAgree">我已阅读并同意以上协议内容</el-checkbox>
+      <el-checkbox v-model="isReadAndAgree">本公司（负责人）已认真阅读以上内容，并自愿遵守以上管理办法流程与规定！</el-checkbox>
     </div>
     <div slot="footer" class="e-protocol-center">
       <el-button :disabled="!isReadAndAgree" :loading="checkProtocolLoad" @click="handleProtocolstatus" type="primary" size="small">我已确认</el-button>
