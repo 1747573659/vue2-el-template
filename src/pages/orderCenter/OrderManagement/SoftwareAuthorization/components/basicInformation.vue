@@ -554,6 +554,7 @@ export default {
         })
         if (this.productType === 1) {
           if (!this.form.erpStoreOrderDetailList) this.form.erpStoreOrderDetailList = []
+          this.form.erpAuthMerchantDTO.useModalInner = res.erpAuthMerchantDTO.authStatus
           setTimeout(() => {
             this.$refs.information.getShopPage({ query: this.form.erpAuthMerchantDTO.merchantId })
             res.erpAuthOrderDetails.forEach((item, index) => {
