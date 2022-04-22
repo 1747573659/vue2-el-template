@@ -56,7 +56,7 @@
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
             </el-form-item>
             <el-form-item label="备注">
-              <el-input v-model.trim="form.backRemark" clearable></el-input>
+              <el-input v-model.trim="form.backRemark" maxlength="100" clearable></el-input>
             </el-form-item>
           </el-col>
         </el-row>
