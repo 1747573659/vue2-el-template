@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import router from '@/router'
-import { setLocal, removeLocal } from '@/utils/storage'
+import { setLocal, getLocal, removeLocal } from '@/utils/storage'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
 
@@ -14,7 +14,7 @@ const state = {
   nonactivatedXq: false,
   nonactivatedXqList: [],
   checkPwdVisible: JSON.parse(sessionStorage.getItem('isInitPwd')) || false,
-  checkProtocolStatus: false
+  checkProtocolStatus: JSON.parse(getLocal('checkProtocolStatus')) || false
 }
 
 const getters = {
@@ -121,6 +121,7 @@ const actions = {
                 queryByAgent({ agentId: info.agentId })
                   .then(res => {
                     commit('SET_PROTOCOLSTATUS', !res)
+                    setLocal('checkProtocolStatus', !res)
                   })
                   .catch(() => {})
               }
