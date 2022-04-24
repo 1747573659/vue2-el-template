@@ -1,19 +1,24 @@
 import request from '@/utils/request'
 
-const urlLinks = {
-  detailCount: '/performance/detail/count',
-  detailPage: '/performance/detail/page'
-}
-export function detailPage(data) {
+export function querySubIndustry(data) {
   return request({
-    url: urlLinks.detailPage,
+    url: '/performance/detail/querySubIndustry',
     method: 'post',
     data
   })
 }
+
+export function detailPage(data) {
+  return request({
+    url: '/performance/detail/page',
+    method: 'post',
+    data
+  })
+}
+
 export function detailCount(data) {
   return request({
-    url: urlLinks.detailCount,
+    url: '/performance/detail/count',
     method: 'post',
     data
   })

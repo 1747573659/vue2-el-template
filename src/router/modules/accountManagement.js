@@ -90,7 +90,7 @@ const accountManagement = {
       redirect: { name: 'resultsQueryDealer' },
       component: kmContainer,
       meta: {
-        title: '业绩查询',
+        title: '签约完成',
         icon: 'el-icon-menu',
         name: 'resultsQuery'
       },
@@ -100,14 +100,14 @@ const accountManagement = {
           component: () => import('@/pages/accountManagement/resultsQuery/resultsQueryDealer/index.vue'),
           name: 'resultsQueryDealer',
           code: 'XDD_RSSULTSQUERY_DEALER',
-          meta: { title: '业绩明细查询', name: 'XDD_RSSULTSQUERY_DEALER', cache: true }
+          meta: { title: '完成明细查询', name: 'XDD_RSSULTSQUERY_DEALER', cache: true }
         },
         {
           path: 'performanceSummary',
           component: () => import('@/pages/accountManagement/resultsQuery/performanceSummary/performanceSummary.vue'),
           name: 'performanceSummary',
           code: 'XDD_PERFORMANCE_SUMMARY',
-          meta: { title: '业绩汇总查询', name: 'XDD_PERFORMANCE_SUMMARY', cache: true }
+          meta: { title: '签约完成进度', name: 'XDD_PERFORMANCE_SUMMARY', cache: true }
         }
       ]
     }

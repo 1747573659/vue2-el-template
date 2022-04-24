@@ -6,7 +6,7 @@
           <el-form :inline="true" :model="form" label-width="85px" label-suffix=":">
             <el-form-item label="行业">
               <el-select v-model="form.industry" placeholder="全部" size="small" style="width: 100%">
-                <el-option v-for="(item, index) in industryList" :label="item.name" :value="item.id" :key="index"></el-option>
+                <el-option :key="index" :label="item.contractIndustryName" :value="item.contractIndustry" v-for="(item, index) in industryList"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="年份">
@@ -46,17 +46,13 @@
 <script>
 import { toFixedFilter } from '@/filters'
 
-import { queryByPage, summaryCount } from '@/api/accountManagement/accountQuery/performanceSummary'
+import { queryByPage, summaryCount, querySubIndustry } from '@/api/accountManagement/accountQuery/performanceSummary'
 
 export default {
   name: 'performanceSummary',
   data() {
     return {
-      industryList: [
-        { id: 1, name: '零售专卖' },
-        { id: 2, name: '餐饮' },
-        { id: 5, name: '有数' }
-      ],
+      industryList: [],
       quartersVO: ['first', 'second', 'third', 'four'],
       yearList: [],
       form: { industry: 1, year: new Date().getFullYear() },
@@ -75,8 +71,9 @@ export default {
     }
   },
   mounted() {
-    this.getQueryPage()
+    this.getSubIndustry()
     this.getPerformanceCount()
+    this.getQueryPage()
   },
   methods: {
     handleSearch() {
@@ -107,6 +104,11 @@ export default {
       } finally {
         this.checkTabLock = false
       }
+    },
+    async getSubIndustry() {
+      try {
+        this.industryList = (await querySubIndustry()) || []
+      } catch (error) {}
     },
     getStoreSummaries(param) {
       const { columns } = param

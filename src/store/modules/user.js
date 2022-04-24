@@ -1,10 +1,10 @@
 import dayjs from 'dayjs'
 import router from '@/router'
-import { setLocal, removeLocal } from '@/utils/storage'
+import { setLocal, getLocal } from '@/utils/storage'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
 
-import { login, getMenuInfo, logout, popUpsByAuditStatus, queryBaseInfo } from '@/api/login'
+import { login, getMenuInfo, logout, popUpsByAuditStatus, queryBaseInfo, queryByAgent } from '@/api/login'
 import { authShopPage } from '@/api/customer/merchant'
 
 const state = {
@@ -13,7 +13,8 @@ const state = {
   xftAuditStatus: false,
   nonactivatedXq: false,
   nonactivatedXqList: [],
-  checkPwdVisible: sessionStorage.getItem('pass') === '21218cca77804d2ba1922c33e0151105' || false
+  checkPwdVisible: JSON.parse(sessionStorage.getItem('isInitPwd')) || false,
+  checkProtocolStatus: JSON.parse(getLocal('checkProtocolStatus')) || false
 }
 
 const getters = {
@@ -22,7 +23,8 @@ const getters = {
   xftAuditStatus: state => state.xftAuditStatus,
   nonactivatedXq: state => state.nonactivatedXq,
   nonactivatedXqList: state => state.nonactivatedXqList,
-  checkPwdVisible: state => state.checkPwdVisible
+  checkPwdVisible: state => state.checkPwdVisible,
+  checkProtocolStatus: state => state.checkProtocolStatus
 }
 
 const mutations = {
@@ -51,15 +53,16 @@ const mutations = {
   },
   SET_PWDVISIBLE: (state, status) => {
     state.checkPwdVisible = status
+  },
+  SET_PROTOCOLSTATUS: (state, status) => {
+    state.checkProtocolStatus = status
   }
 }
 
 let page = 0,
   maxPage = false
-
 const adminUserType = 11
 
-// 获取该经销商下商户未开通享钱的列表
 const authShopPageMethod = (commit, { userType = 0 }) => {
   authShopPage({
     queryType: 2,
@@ -79,6 +82,12 @@ const authShopPageMethod = (commit, { userType = 0 }) => {
   })
 }
 
+const getAuditStatus = commit => {
+  popUpsByAuditStatus()
+    .then(res => commit('SET_AUDITSTATUS', Boolean(res)))
+    .catch(() => {})
+}
+
 const actions = {
   login({ commit }, userInfo) {
     let userData = deepClone(userInfo)
@@ -87,11 +96,14 @@ const actions = {
     return new Promise((resolve, reject) => {
       login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
         .then(response => {
-          popUpsByAuditStatus().then(res => commit('SET_AUDITSTATUS', Boolean(res)))
           setLocal('token', response.token)
+          // 判断是否有未处理享付通进件资料
+          getAuditStatus(commit)
+          // 获取该经销商下商户未开通享钱的列表
           authShopPageMethod(commit, response.userInfo)
+          // 判断当前密码是否初始密码
           if (userData.password === '21218cca77804d2ba1922c33e0151105') {
-            sessionStorage.setItem('pass', '21218cca77804d2ba1922c33e0151105')
+            sessionStorage.setItem('isInitPwd', true)
             commit('SET_PWDVISIBLE', true)
           }
           // 重新设置异步路由里面的重定向地址
@@ -100,14 +112,21 @@ const actions = {
           let redirectList = resetRedirect(convertTreeRouter)
           commit('SET_ROUTES', [...redirectList])
           router.addRoutes(state.routes)
-          setLocal('token', response.token)
+
+          // 获取登陆商户信息
           queryBaseInfo()
             .then(info => {
               setLocal('userInfo', JSON.stringify(Object.assign(response.userInfo, info)))
+              if (info.level === 1 && [1, 2].includes(info.propertyType) && response.userInfo.userType === 11) {
+                queryByAgent({ agentId: info.agentId })
+                  .then(res => {
+                    commit('SET_PROTOCOLSTATUS', !res)
+                    setLocal('checkProtocolStatus', !res)
+                  })
+                  .catch(() => {})
+              }
             })
-            .catch(() => {
-              setLocal('userInfo', JSON.stringify(response.userInfo))
-            })
+            .catch(() => {})
             .finally(() => {
               resolve()
             })
@@ -123,8 +142,7 @@ const actions = {
     return new Promise(resolve => {
       logout()
         .then(() => {
-          removeLocal('token')
-          removeLocal('userInfo')
+          localStorage.clear()
           window.location.reload()
           resolve()
         })
@@ -136,8 +154,7 @@ const actions = {
   FedLogOut({ commit }) {
     return new Promise(resolve => {
       commit('SET_ROUTES', [])
-      removeLocal('token')
-      removeLocal('userInfo')
+      localStorage.clear()
       resolve()
     })
   },

@@ -12,7 +12,27 @@ const urlLinks = {
   popUpsByAuditStatus: 'archive/xdd/popUpsByAuditStatus',
   initImg: '/initImg',
   checkSliderImg: '/checkSliderImg',
-  queryBackgroundById: '/loginBackground/queryBackgroundById'
+  queryBackgroundById: '/loginBackground/queryBackgroundById',
+  queryByAgent: '/agent/queryByAgent',
+  insertRebateRecord: '/agent/insertRebateRecord'
+}
+
+// 新增代理商返佣记录
+export function insertRebateRecord(data) {
+  return request({
+    url: urlLinks.insertRebateRecord,
+    method: 'post',
+    data
+  })
+}
+
+// 查询代理商返佣记录
+export function queryByAgent(data) {
+  return request({
+    url: urlLinks.queryByAgent,
+    method: 'post',
+    data: qs.stringify(data)
+  })
 }
 
 // 根据应用系统ID查询图片调用地址
@@ -23,6 +43,7 @@ export function queryBackgroundById(data) {
     data: qs.stringify(data)
   })
 }
+
 // 滑动验证码-获取图形验证码
 export function initImg(data) {
   return request({

@@ -128,12 +128,6 @@ import { productInfo } from '@/api/orderCenter/orderManagement'
 
 export default {
   mixins: [basicInfoMixin],
-  activated() {
-    if (this.$route.query.productCode) this.handleToStock()
-  },
-  mounted() {
-    if (this.$route.query.productCode) this.handleToStock()
-  },
   methods: {
     async handleToStock() {
       if (this.form.id) delete this.form.id

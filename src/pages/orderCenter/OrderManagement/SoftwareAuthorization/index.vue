@@ -55,6 +55,9 @@
             <el-form-item label="订单编码">
               <el-input v-model.trim="form.billNo" maxlength="14" clearable></el-input>
             </el-form-item>
+            <el-form-item label="备注">
+              <el-input v-model.trim="form.backRemark" maxlength="100" clearable></el-input>
+            </el-form-item>
           </el-col>
         </el-row>
         <el-row type="flex" justify="space-between">
@@ -91,6 +94,7 @@
         <el-table-column prop="inventoryAmount" label="消耗库存" align="right"></el-table-column>
         <el-table-column prop="handManName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
+        <el-table-column prop="backRemark" label="备注"></el-table-column>
         <el-table-column label="操作" fixed="right" width="110">
           <template slot-scope="scope">
             <template v-if="[0, 5].includes(scope.row.orderStatus)">

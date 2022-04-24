@@ -32,16 +32,10 @@
         <el-table-column label="加密狗ID/序列号">
           <template slot-scope="scope">
             <span v-if="$route.query.status === 'detail'">{{ scope.row.dogId }}</span>
-            <el-input v-else size="small" v-model="scope.row.dogId" maxlength="20" clearable class="e-product_remark"></el-input>
+            <el-input v-else size="small" v-model="scope.row.dogId" maxlength="40" clearable class="e-product_remark"></el-input>
           </template>
         </el-table-column>
         <el-table-column prop="dogAuthString" label="授权信息串" show-overflow-tooltip></el-table-column>
-        <el-table-column label="备注">
-          <template slot-scope="scope">
-            <span v-if="$route.query.status === 'detail'">{{ scope.row.remark }}</span>
-            <el-input v-else size="small" v-model="scope.row.remark" maxlength="100" clearable class="e-product_remark"></el-input>
-          </template>
-        </el-table-column>
         <el-table-column label="操作" v-if="$route.query.status !== 'detail'">
           <template slot-scope="scope">
             <el-popconfirm class="el-button el-button--text" @confirm="handleDelDetailDTO(scope)" placement="top-start" title="确定删除所选数据吗？">
@@ -187,10 +181,10 @@ export default {
         this.checkProductTabLock = true
         this.currentPageSelectSets.clear()
         const res = await authOrderProductPage({
-          type: 1,
-          registerMethod: 2,
+          type: '1',
           isOnSale: 1,
-          notProductTypeList: [99],
+          registerMethod: 2,
+          productTypeList: [1],
           info: this.productVal,
           page: this.currentPage,
           rows: this.pageSize

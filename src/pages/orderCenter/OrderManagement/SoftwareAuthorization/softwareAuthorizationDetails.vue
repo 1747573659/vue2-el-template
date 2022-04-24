@@ -2,7 +2,7 @@
   <section>
     <el-tabs v-model="activeName" class="p-detail-tab" @tab-click="handleTabPane">
       <el-tab-pane label="基本信息" name="basicInformation"></el-tab-pane>
-      <el-tab-pane label="操作记录" name="operationLog" v-if="['edit', 'detail'].includes($route.query.status)"></el-tab-pane>
+      <el-tab-pane v-if="['edit', 'detail'].includes($route.query.status)" label="操作记录" name="operationLog"></el-tab-pane>
     </el-tabs>
     <keep-alive>
       <component :is="activeName" :operateData="operateData"></component>

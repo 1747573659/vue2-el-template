@@ -11,21 +11,39 @@
           <span class="p-card-state_text">{{ currentOrderStatus }}</span>
         </div>
       </div>
-      <el-form :model="form" size="small" disabled :inline="true" label-suffix=":" label-width="110px">
+      <el-form :model="form" size="small" :inline="true" label-suffix=":" label-width="110px">
         <el-form-item label="订单编码">
-          <el-input :value="form.authOrderDTO.billNo" placeholder="保存后自动生成"></el-input>
+          <el-input :value="form.authOrderDTO.billNo" disabled placeholder="保存后自动生成"></el-input>
         </el-form-item>
         <el-form-item label="订单时间">
-          <el-input :value="`${form.authOrderDTO.createOrderTime || baseOrderTime}`"></el-input>
+          <el-input :value="`${form.authOrderDTO.createOrderTime || baseOrderTime}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="消耗库存">
-          <el-input :value="form.authOrderDTO.inventoryAmount"></el-input>
+          <el-input :value="form.authOrderDTO.inventoryAmount" disabled></el-input>
         </el-form-item>
         <el-form-item label="受理人">
-          <el-input :value="form.authOrderDTO.handManName"></el-input>
+          <el-input :value="form.authOrderDTO.handManName" disabled></el-input>
         </el-form-item>
-        <el-form-item label="经销商" v-if="Number($route.query.productType) === 6">
-          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
+        <template v-if="Number($route.query.productType) === 6">
+          <el-form-item label="经销商">
+            <el-input :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="主产品" class="is-required">
+            <km-select-page
+              ref="productCode"
+              v-model="form.authOrderDTO.productCode"
+              :modelName="form.authOrderDTO.productCode"
+              option-label="name"
+              option-value="code"
+              :data.sync="licensedProducts"
+              :request="getProductByPage"
+              :is-max-page.sync="isLicensedProductMaxPage"
+              placeholder=""
+              :disabled="$route.query.status === 'detail'" />
+          </el-form-item>
+        </template>
+        <el-form-item label="备注">
+          <el-input v-model="form.authOrderDTO.backRemark" :disabled="$route.query.status === 'detail'" type="text" maxlength="100" clearable></el-input>
         </el-form-item>
       </el-form>
     </el-card>
@@ -77,7 +95,8 @@ import {
   authOrderDogById,
   authOrderDogUpdate,
   authOrderDogSubmit,
-  authOrderDelete
+  authOrderDelete,
+  authOrderProductPage
 } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 
 export default {
@@ -155,7 +174,9 @@ export default {
       checkSaveBtnLoad: false,
       checkVerifyBtnLoad: false,
       userInfo: JSON.parse(localStorage.userInfo),
-      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]')
+      productLists: JSON.parse(localStorage?.softWareProductList ?? '[]'),
+      licensedProducts: [],
+      isLicensedProductMaxPage: false
     }
   },
   computed: {
@@ -207,7 +228,7 @@ export default {
       const erpHCMModule =
         this.productType === 1 &&
         ['HCMJK10', 'HCM', 'HCM11', 'KSH'].includes(this.form.erpAuthMerchantDTO.productCode) &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus))
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.useModalInner))
       if (erpHCMModule) {
         if (!this.form.erpAuthOrderDetails.some(item => item.moduleCode === 'ZBMK')) {
           this.$message({ type: 'warning', message: '请选择"总部模块"后再提交' })
@@ -216,7 +237,7 @@ export default {
       }
       if (
         this.productType === 1 &&
-        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.authStatus)) &&
+        [0, 1].includes(parseFloat(this.form.erpAuthMerchantDTO.useModalInner)) &&
         this.$refs.information.shopPageData.length > 0 &&
         !this.$refs.information.shopPageData.find(item => item.custId === this.form.erpAuthMerchantDTO.merchantId).custName
       ) {
@@ -254,7 +275,9 @@ export default {
       this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name }))
     },
     getDogInformationObj() {
-      if (!this.form.detailDTOList.length) {
+      if (!this.form.authOrderDTO.productCode) {
+        this.$message({ type: 'warning', message: '请选择主产品' })
+      } else if (!this.form.detailDTOList.length) {
         this.$message({ type: 'warning', message: '请选择授权产品' })
       } else if (this.form.detailDTOList.some(item => !item.authVersion)) {
         this.$message({ type: 'warning', message: '订单明细产品版本不能为空' })
@@ -273,7 +296,7 @@ export default {
           this.$confirm(`[${insufficientObj[0].productCodeName}]的库存不足，当前库存: ${insufficientObj[0].orderInventory}`, confirmOptions).catch(() => {})
         } else {
           return {
-            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: '' }),
+            authOrderVO: Object.assign(this.handleQueryParams().authOrderVO, { productType: 6, merchantId: '', productCode: this.form.authOrderDTO.productCode }),
             orderDetailVos: this.handleQueryParams().orderDetailVos
           }
         }
@@ -398,7 +421,7 @@ export default {
     },
     getErpInformationObj() {
       const {
-        erpAuthMerchantDTO: { merchantId, productCode, authStatus, authCountType },
+        erpAuthMerchantDTO: { merchantId, productCode, useModalInner, authCountType },
         erpAuthOrderDetails,
         erpStoreOrderDetailList
       } = this.form
@@ -408,8 +431,10 @@ export default {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else if (authCountType === '1' && productCode === 'HCM11' && erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))) {
         this.$message({ type: 'warning', message: '商户已使用站点授权，不支持门店授权，请联系商务。' })
+      } else if (useModalInner !== 0 && !useModalInner) {
+        this.$message({ type: 'warning', message: '授权状态不能为空，请联系运维人员处理' })
       } else if (
-        [0, 1].includes(parseFloat(authStatus)) &&
+        [0, 1].includes(parseFloat(useModalInner)) &&
         this.$refs.information.basicProductData.some(item => item.moduleId === 'MDZD') &&
         !erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))
       ) {
@@ -450,7 +475,7 @@ export default {
             authOrderVO: Object.assign(
               this.handleQueryParams().authOrderVO,
               { merchantId, productCode, erpStore: erpStoreOrderDetailList && erpStoreOrderDetailList.length > 0 ? 1 : 0 },
-              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(authStatus || -1) }
+              { orderStatus: 0, productType: 1, useModal: -1, useModalInner: parseFloat(useModalInner) }
             ),
             erpStoreList: erpStoreOrderDetailList,
             orderDetailVos: this.handleQueryParams().orderDetailVos
@@ -465,9 +490,9 @@ export default {
       return optionVo
     },
     handleQueryParams() {
-      const { handMan, inventoryAmount, id, billNo } = this.form.authOrderDTO
+      const { handMan, inventoryAmount, id, billNo, backRemark } = this.form.authOrderDTO
       return {
-        authOrderVO: { handMan, inventoryAmount, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
+        authOrderVO: { handMan, inventoryAmount, backRemark, agentId: this.userInfo.agentId, createUser: this.userInfo.id, id, billNo },
         orderDetailVos: this.form[this.productType === 1 ? 'erpAuthOrderDetails' : 'detailDTOList']
       }
     },
@@ -522,10 +547,14 @@ export default {
               if (this.form?.addAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 1
               else if (this.form?.renewAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 2
             }
+          } else if (this.productType === 6) {
+            this.getProductByPage({ query: res.authOrderDTO.productCode })
+            this.$refs.productCode.selectVal = res.authOrderDTO.productCode
           }
         })
         if (this.productType === 1) {
           if (!this.form.erpStoreOrderDetailList) this.form.erpStoreOrderDetailList = []
+          this.form.erpAuthMerchantDTO.useModalInner = res.authOrderDTO.useModalInner
           setTimeout(() => {
             this.$refs.information.getShopPage({ query: this.form.erpAuthMerchantDTO.merchantId })
             res.erpAuthOrderDetails.forEach((item, index) => {
@@ -546,6 +575,14 @@ export default {
         const { id = '', contactor = '', mobile = '' } = await queryHandlerMan({ area: this.userInfo.districtCode })
         this.form.authOrderDTO.handMan = id
         this.form.authOrderDTO.handManName = `${contactor}${mobile ? '（' + mobile + '）' : ''}`
+      } catch (error) {}
+    },
+    async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 2, productTypeList: [1], type: '1' })
+        res.results.forEach(item => (item.name = `[${item.code}]${item.name}`))
+        this.licensedProducts = this.licensedProducts.concat(res.results || [])
+        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     }
   }

@@ -16,7 +16,7 @@
           </el-form-item>
           <el-form-item label="行业">
             <el-select multiple clearable placeholder="全部" @change="industryChange" size="small" style="width: 100%" v-model="form.industry">
-              <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in industryList"></el-option>
+              <el-option :key="index" :label="item.industryByOne" :value="item.industry" v-for="(item, index) in industryList"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="产品类型">
@@ -82,17 +82,17 @@
         <el-table-column label="订单金额" width="140" align="right">
           <template slot-scope="scope">{{ scope.row.orderAmount | toFixedFilter }}</template>
         </el-table-column>
-        <el-table-column label="业绩金额" width="140" align="right">
+        <el-table-column label="签约完成" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.performanceAmount | toFixedFilter }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="使用本金" width="140" align="right">
+        <el-table-column label="扣减本金" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.originAmount | toFixedFilter }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="使用赠金" width="140" align="right">
+        <el-table-column label="扣减赠金" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.bonusAmount | toFixedFilter }}</div>
           </template>
@@ -102,15 +102,15 @@
             <div v-if="scope.row.industry !== 5">{{ scope.row.useRebate === 1 ? '是' : '否' }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="使用担保金" width="140" align="right">
+        <el-table-column label="担保金额" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.depositAmount | toFixedFilter }}</div>
           </template>
         </el-table-column>
         <el-table-column prop="depositName" label="担保人" width="120"></el-table-column>
-        <el-table-column prop="couponName" label="订单优惠活动" width="120"></el-table-column>
+        <el-table-column prop="couponName" label="优惠活动" width="120"></el-table-column>
         <el-table-column prop="billNo" label="订单编码" width="160"></el-table-column>
-        <el-table-column label="扣款后本额" width="140" align="right">
+        <el-table-column label="本金余额" width="140" align="right">
           <template slot-scope="scope">
             <div v-if="scope.row.industry !== 5">{{ scope.row.deductionOriginAmount | toFixedFilter }}</div>
           </template>
@@ -145,7 +145,7 @@ import dayjs from 'dayjs'
 import { formatAmountDivide } from '@/filters'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
 
-import { detailPage, detailCount } from '@/api/accountManagement/resultsQuery'
+import { detailPage, detailCount, querySubIndustry } from '@/api/accountManagement/resultsQuery'
 import { productQueryByPage, productQueryTypeList } from '@/api/product'
 
 export default {
@@ -155,12 +155,7 @@ export default {
     return {
       licensedProductData: [],
       isLicensedProductMaxPage: false,
-      industryList: [
-        { id: 1, name: '零售' },
-        { id: 2, name: '餐饮' },
-        { id: 3, name: '专卖' },
-        { id: 5, name: '有数' }
-      ],
+      industryList: [],
       pickerOptions: {
         disabledDate(time) {
           return time.getTime() > dayjs().endOf('day')
@@ -199,6 +194,7 @@ export default {
   created() {
     this.handleCurrentChange(1)
     this.queryTypeList()
+    this.getSubIndustry()
   },
   methods: {
     productTypeChange() {
@@ -213,13 +209,11 @@ export default {
       this.licensedProductData = []
       this.isLicensedProductMaxPage = false
     },
-    // 分页
     handleSizeChange(val) {
       this.thisPage = 1
       this.pageSize = val
       this.getPageList()
     },
-    // 分页
     handleCurrentChange(val) {
       this.thisPage = val
       this.getPageList()
@@ -240,13 +234,10 @@ export default {
           subData.endOrderTime = this.form.orderTime[1]
         }
         this.detailCount(subData)
-        const res = await detailPage({
-          ...subData,
-          page: this.thisPage,
-          rows: this.pageSize
-        })
+        const res = await detailPage({ ...subData, page: this.thisPage, rows: this.pageSize })
         this.tableList = res.results || []
         this.tableTotal = res.totalCount
+      } catch (err) {
       } finally {
         this.tableLoading = false
       }
@@ -275,7 +266,6 @@ export default {
         this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
-    // 表单汇总
     async detailCount(subData) {
       const res = (await detailCount(subData)) || {}
       const keys = Object.keys(this.tableSummaryObj)
@@ -283,6 +273,11 @@ export default {
         if (item === 'num') this.tableSummaryObj[item].value = res[item] || 0
         else this.tableSummaryObj[item].value = formatAmountDivide(res[item]) || 0
       })
+    },
+    async getSubIndustry() {
+      try {
+        this.industryList = (await querySubIndustry({ enableContract: 0 })) || []
+      } catch (error) {}
     }
   }
 }
