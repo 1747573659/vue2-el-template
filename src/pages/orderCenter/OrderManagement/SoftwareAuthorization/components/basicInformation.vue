@@ -431,7 +431,7 @@ export default {
         this.$message({ type: 'warning', message: '模块是BNK、BNK1、BNK5时, 银联通道不能为空' })
       } else if (authCountType === '1' && productCode === 'HCM11' && erpAuthOrderDetails.some(item => ['MDZD'].includes(item.moduleCode))) {
         this.$message({ type: 'warning', message: '商户已使用站点授权，不支持门店授权，请联系商务。' })
-      } else if (!useModalInner) {
+      } else if (useModalInner !== 0 && !useModalInner) {
         this.$message({ type: 'warning', message: '授权状态不能为空，请联系运维人员处理' })
       } else if (
         [0, 1].includes(parseFloat(useModalInner)) &&
