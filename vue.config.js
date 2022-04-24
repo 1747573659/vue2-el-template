@@ -20,23 +20,62 @@ module.exports = defineConfig({
   },
   chainWebpack: config => {
     config.plugins.delete('prefetch').delete('preload')
+    config.optimization.splitChunks({
+      cacheGroups: {
+        libs: {
+          name: 'chunk-vendor',
+          chunks: 'initial',
+          minChunks: 1,
+          test: /[\\/]node_modules[\\/]/,
+          priority: 1,
+          reuseExistingChunk: true,
+          enforce: true
+        },
+        common: {
+          name: 'chunk-common',
+          chunks: 'initial',
+          minChunks: 2,
+          maxInitialRequests: 5,
+          minSize: 0,
+          priority: 2,
+          reuseExistingChunk: true,
+          enforce: true
+        },
+        vue: {
+          name: 'chunk-vue',
+          test: /[\\/]node_modules[\\/](vue|vue-router|vuex)[\\/]/,
+          chunks: 'all',
+          priority: 3,
+          reuseExistingChunk: true,
+          enforce: true
+        },
+        element: {
+          name: 'chunk-element',
+          test: /[\\/]node_modules[\\/]element-ui[\\/]/,
+          chunks: 'all',
+          priority: 3,
+          reuseExistingChunk: true,
+          enforce: true
+        }
+      }
+    })
   },
   configureWebpack: config => {
     config.name = name
     config.resolve.fallback = {
       path: require.resolve('path-browserify')
     }
-    const sassLoader = require.resolve('sass-loader')
-    config.module.rules
-      .filter(rule => {
-        return rule.test.toString().indexOf('scss') !== -1
-      })
-      .forEach(rule => {
-        rule.oneOf.forEach(oneOfRule => {
-          const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
-          oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
-        })
-      })
+    // const sassLoader = require.resolve('sass-loader')
+    // config.module.rules
+    //   .filter(rule => {
+    //     return rule.test.toString().indexOf('scss') !== -1
+    //   })
+    //   .forEach(rule => {
+    //     rule.oneOf.forEach(oneOfRule => {
+    //       const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
+    //       oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
+    //     })
+    //   })
     if (process.env.NODE_ENV === 'production') {
       config.optimization.minimizer[
         new TerserPlugin({
