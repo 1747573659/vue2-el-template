@@ -56,6 +56,14 @@ module.exports = defineConfig({
           priority: 3,
           reuseExistingChunk: true,
           enforce: true
+        },
+        echarts: {
+          name: 'chunk-echarts',
+          test: /[\\/]node_modules[\\/]echarts[\\/]/,
+          chunks: 'all',
+          priority: 3,
+          reuseExistingChunk: true,
+          enforce: true
         }
       }
     })
@@ -65,17 +73,17 @@ module.exports = defineConfig({
     config.resolve.fallback = {
       path: require.resolve('path-browserify')
     }
-    // const sassLoader = require.resolve('sass-loader')
-    // config.module.rules
-    //   .filter(rule => {
-    //     return rule.test.toString().indexOf('scss') !== -1
-    //   })
-    //   .forEach(rule => {
-    //     rule.oneOf.forEach(oneOfRule => {
-    //       const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
-    //       oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
-    //     })
-    //   })
+    const sassLoader = require.resolve('sass-loader')
+    config.module.rules
+      .filter(rule => {
+        return rule.test.toString().indexOf('scss') !== -1
+      })
+      .forEach(rule => {
+        rule.oneOf.forEach(oneOfRule => {
+          const sassLoaderIndex = oneOfRule.use.findIndex(item => item.loader === sassLoader)
+          oneOfRule.use.splice(sassLoaderIndex, 0, { loader: require.resolve('css-unicode-loader') })
+        })
+      })
     if (process.env.NODE_ENV === 'production') {
       config.optimization.minimizer[
         new TerserPlugin({
