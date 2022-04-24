@@ -276,7 +276,12 @@ export default {
     },
     async getSubIndustry() {
       try {
-        this.industryList = (await querySubIndustry({ enableContract: 0 })) || []
+        const res = await querySubIndustry({ enableContract: 0 })
+        if (res.length > 0) {
+          this.industryList = res.map(item => {
+            return { industry: parseFloat(item.industry), industryByOne: item.industryByOne }
+          })
+        }
       } catch (error) {}
     }
   }
