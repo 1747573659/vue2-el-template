@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import router from '@/router'
-import { setLocal, getLocal, removeLocal } from '@/utils/storage'
+import { setLocal, getLocal } from '@/utils/storage'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
 
@@ -142,8 +142,7 @@ const actions = {
     return new Promise(resolve => {
       logout()
         .then(() => {
-          removeLocal('token')
-          removeLocal('userInfo')
+          localStorage.clear()
           window.location.reload()
           resolve()
         })
@@ -155,8 +154,7 @@ const actions = {
   FedLogOut({ commit }) {
     return new Promise(resolve => {
       commit('SET_ROUTES', [])
-      removeLocal('token')
-      removeLocal('userInfo')
+      localStorage.clear()
       resolve()
     })
   },
