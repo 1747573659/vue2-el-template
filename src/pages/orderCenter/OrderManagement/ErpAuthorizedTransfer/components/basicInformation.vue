@@ -129,6 +129,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
 import { orderStatus, formObj, oldRegistTypes, merchantAuthType } from '../data'
@@ -188,6 +189,7 @@ export default {
     else this.getDetail()
   },
   methods: {
+    ...mapActions(['updateTagView']),
     handleOldRegistType() {
       const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldAddress, oldMerchantAuthCount } = formObj
       this.form = Object.assign(this.form, {
@@ -267,7 +269,7 @@ export default {
         .then(res => {
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res.id, orderStatus: res.orderStatus, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = 'ERP授权变更申请/编辑'
+            this.updateTagView({ tagRoute: this.$route, title: 'ERP授权变更申请/编辑' })
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })

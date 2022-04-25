@@ -501,6 +501,8 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
+import dayjs from 'dayjs'
 import fileServer from '@/mixins/fileServe'
 import UploadPanel from '../components/uploadPanel'
 import selectPage from '../components/selectPage'
@@ -522,7 +524,6 @@ import {
   imageOCR,
   updateArchiveBaseDirectAuditStatus
 } from '@/api/wxArchive'
-import dayjs from 'dayjs'
 
 export default {
   name: 'wxArchiveAdd',
@@ -578,12 +579,13 @@ export default {
   mounted() {
     this.$nextTick(() => {
       const tags = { edit: '编辑', detail: '详情', add: '新增', copy: '编辑' }
-      document.querySelector('.e-tag_active span').innerText = `普通资质进件/${this.pageStatus ? tags[this.pageStatus] : '新增'}`
+      this.updateTagView({ tagRoute: this.$route, title: `普通资质进件/${this.pageStatus ? tags[this.pageStatus] : '新增'}` })
     })
     this.getBusinessCategory()
     if (this.pageStatus !== 'add') this.handleDetail()
   },
   methods: {
+    ...mapActions(['updateTagView']),
     handleBusinessSceneShow(val) {
       if (!val.includes(1)) this.form.businessSceneShow = [1, ...val]
       if (!val.includes(2)) this.form.archiveBaseVO.publicId = ''
@@ -784,7 +786,7 @@ export default {
               const res = await submit(this.form)
               if (!this.form.archiveBaseVO.id) {
                 this.$router.replace({ name: 'wxArchiveAdd', query: { id: res, status: 'edit' } })
-                document.querySelector('.e-tag_active span').innerText = '普通资质进件/编辑'
+                this.updateTagView({ tagRoute: this.$route, title: `普通资质进件/编辑` })
               }
               this.handleDetail()
               this.$message({ type: 'success', message: '保存成功' })

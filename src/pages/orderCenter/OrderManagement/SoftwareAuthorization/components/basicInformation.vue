@@ -64,6 +64,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
 import { orderStatus, formErpObj, formWlsOrWcyObj, formYsObj, formDongleObj } from '../data'
@@ -205,6 +206,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['updateTagView']),
     handleDelRow() {
       this.$confirm('确定要删除吗？', '删除', {
         type: 'warning',
@@ -263,7 +265,7 @@ export default {
                     status: 'detail'
                   }
                 })
-                document.querySelector('.e-tag_active span').innerText = `软件授权订单/详情`
+                this.updateTagView({ tagRoute: this.$route, title: '软件授权订单/详情' })
               })
               this.$message({ type: 'success', message: this.productType === 6 ? '提交成功，请等待商务审核' : '提交成功' })
             })
@@ -513,7 +515,7 @@ export default {
         .then(res => {
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res, productType: this.productType, orderStatus: 0, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = `软件授权订单/编辑`
+            this.updateTagView({ tagRoute: this.$route, title: '软件授权订单/编辑' })
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })

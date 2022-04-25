@@ -86,6 +86,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import NP from 'number-precision'
 import dayjs from 'dayjs'
 import { deepClone } from '@/utils'
@@ -155,6 +156,7 @@ export default {
     } else this.getDetail()
   },
   methods: {
+    ...mapActions(['updateTagView']),
     handleVerify() {
       this.checkVerifyBtnLoad = true
       this.setOrderSave()
@@ -176,7 +178,7 @@ export default {
         .then(res => {
           if (this.$route.query.status === 'add') {
             this.$router.replace({ name: this.$route.name, query: { id: res.id, orderStatus: res.orderStatus, status: 'edit' } })
-            document.querySelector('.e-tag_active span').innerText = '需求开发订单/编辑'
+            this.updateTagView({ tagRoute: this.$route, title: '需求开发订单/编辑' })
           }
           this.getDetail()
           this.$message({ type: 'success', message: '保存成功' })
