@@ -1,4 +1,5 @@
 import store from '../index'
+import router from '@/router'
 
 const state = {
   asideRoutes: [], // 路由权限
@@ -69,10 +70,6 @@ const mutations = {
         break
       }
     }
-  },
-  DEL_ALL_TAG_VIEW: state => {
-    state.tagViews = [].concat(state.tagViews[0])
-    state.cachedViews = []
   }
 }
 
@@ -89,6 +86,35 @@ const actions = {
   setCachedViews({ commit }, view) {
     commit('SET_CACHE_VIEWS', view)
   },
+  async closeTagView({ state, dispatch }, { tagName, current }) {
+    let newPage = {}
+    const isCurrent = current === tagName
+    if (isCurrent) {
+      const len = state.tagViews.length
+      for (let i = 0; i < len; i++) {
+        if (state.tagViews[i].fullPath === tagName) {
+          newPage = i < len - 1 ? state.tagViews[i + 1] : state.tagViews[i - 1]
+          break
+        }
+      }
+    }
+    const index = state.tagViews.findIndex(page => page.fullPath === tagName)
+    if (index >= 0) {
+      const removeTagView = state.tagViews.find(item => item.fullPath === tagName)
+      dispatch('delTagView', removeTagView)
+      dispatch('delCachedView', removeTagView)
+    }
+    if (isCurrent) {
+      const { name = 'index', params = {}, query = {} } = newPage
+      await router.push({ name, params, query })
+    }
+  },
+  updateTagView({ state }, { tagRoute, title }) {
+    const index = state.tagViews.findIndex(item => item.name === tagRoute.name)
+    if (index === 0) return
+    if (title) state.tagViews[index].title = title
+    state.tagViews[index].fullPath = tagRoute.fullPath
+  },
   delTagView({ commit }, view) {
     return new Promise(resolve => {
       commit('DEL_TAG_VIEW', view)
@@ -100,9 +126,6 @@ const actions = {
       commit('DEL_CACHED_VIEW', view)
       resolve([...state.cachedViews])
     })
-  },
-  delAllTagView({ commit }) {
-    commit('DEL_ALL_TAG_VIEW')
   }
 }
 

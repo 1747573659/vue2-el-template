@@ -11,6 +11,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { orderStatus } from '../index'
 import operationLog from '../components/operationLog'
 import basicInformation from './components/basicInformation.vue'
@@ -37,10 +38,11 @@ export default {
   mounted() {
     this.$nextTick(() => {
       const { orderStatus: orderStatusVal } = this.$route.query
-      document.querySelector('.e-tag_active span').innerText = `软件采购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}`
+      this.updateTagView({ tagRoute: this.$route, title: `软件采购订单/${orderStatus.has(orderStatusVal) ? orderStatus.get(orderStatusVal).name : '新增'}` })
     })
   },
   methods: {
+    ...mapActions(['updateTagView']),
     handleTabPane(tab) {
       if (tab.name === 'operationLog') this.getOperateLog()
       else this.operateData = []

@@ -1,3 +1,4 @@
+import { mapActions } from 'vuex'
 import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { deepClone } from '@/utils'
@@ -69,6 +70,7 @@ export const basicInfoMixin = {
     } else this.handleDetail()
   },
   methods: {
+    ...mapActions(['updateTagView']),
     handleSave() {
       const saveAction = async () => {
         if (this.form.orderItemList?.length === 0) {
@@ -91,7 +93,7 @@ export const basicInfoMixin = {
                 : await purchaseUpdate(Object.assign(params, { orderItemList: deepOrderItemList }))
             if (this.$route.query.status === 'add') {
               this.$router.replace({ name: this.$route.name, query: { id, orderStatus, status: 'edit' } })
-              document.querySelector('.e-tag_active span').innerText = `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑`
+              this.updateTagView({ tagRoute: this.$route, title: `${this.$route.name === 'hardwarePurchaseDetails' ? '硬件' : '软件'}采购订单/编辑` })
             }
             this.handleDetail()
             this.$message({ type: 'success', message: '保存成功' })

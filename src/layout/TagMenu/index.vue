@@ -1,114 +1,68 @@
 <template>
-  <section class="p-tags_con" ref="tagMenu">
-    <div
-      class="p-tags_item"
-      v-for="(item, index) in baseArr"
-      :key="item.path"
-      :class="{ 'e-tag_active': isActive(item), 'p-tags_closable': index > 0 }"
-      @click="handleJumpPage(item, item.query)">
-      <span>{{ item.title }}</span>
-      <i class="el-icon-close" @click.stop="handleClose(item)"></i>
-    </div>
-    <el-dropdown class="p-tags_item e-tags_dropdown" v-if="dropArr.length > 0" @command="handleCommand">
-      <span class="el-dropdown-link">
-        <i class="el-icon-arrow-down"></i>
-      </span>
-      <el-dropdown-menu slot="dropdown">
-        <el-dropdown-item v-for="item in dropArr" :key="item.name" :command="{ item: item, query: item.query }" :class="{ 'e-tag_active': isActive(item) }">{{
-          item.title
-        }}</el-dropdown-item>
-      </el-dropdown-menu>
-    </el-dropdown>
+  <section ref="tagMenu" class="p-tags_con">
+    <el-tabs :value="current" class="e-tags-con" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+      <el-tab-pane v-for="item in tagViews" :key="item.fullPath" :closable="isTabClosable(item)" :label="item.title" :name="item.fullPath"></el-tab-pane>
+    </el-tabs>
   </section>
 </template>
 
 <script>
-import { mapGetters, mapActions } from 'vuex'
+import { mapActions, mapGetters } from 'vuex'
 
 export default {
   data() {
     return {
-      dropArr: [],
-      baseArr: []
+      current: ''
     }
   },
   watch: {
-    $route() {
+    $route(newVal) {
       this.handleTagViews()
-    },
-    tagViews: {
-      handler(val) {
-        this.baseArr = val
-        this.$nextTick(() => {
-          let tagsWidth = this.$refs.tagMenu.offsetWidth
-          let tagsItem = document.querySelectorAll('.p-tags_item')
-          let width = 0
-          for (let i = 0; i < this.tagViews.length; i++) {
-            width += tagsItem[i].offsetWidth
-            if (tagsWidth - width <= 100) {
-              this.baseArr = this.tagViews.slice(0, i)
-              this.dropArr = this.tagViews.slice(i).concat({ title: '关闭全部' })
-              break
-            } else {
-              if (val.length >= 2) this.dropArr = [{ title: '关闭全部' }]
-              else this.dropArr = []
-            }
-          }
-        })
-      },
-      immediate: true
+      this.current = newVal.fullPath
     }
   },
   computed: {
-    ...mapGetters(['tagViews', 'routes'])
+    ...mapGetters(['tagViews', 'cachedViews'])
   },
   mounted() {
     this.handleTagViews()
+    this.current = this.$route.fullPath
   },
   methods: {
-    ...mapActions(['setTagViews', 'setCachedViews', 'delTagView', 'delCachedView', 'delAllTagView']),
-    handleCommand({ item, query }) {
-      if (item.title === '关闭全部') {
-        new Promise(resolve => {
-          this.delAllTagView()
-          resolve()
-        }).then(() => {
-          this.$router.replace({ name: 'home' })
-        })
-      } else this.$router.push({ path: item.path, query: Object.keys(query).length === 0 ? {} : query })
-    },
-    handleTagViews() {
-      if (this.$route.name) {
-        if (this.tagViews.length === 15 && !this.tagViews.some(item => item.name === this.$route.name)) {
-          this.$message({ type: 'warning', message: '最大支持15个页签，请关闭其他页签后重试' })
-        } else this.setTagViews(this.$route)
-        this.setCachedViews(this.$route)
+    ...mapActions(['setTagViews', 'setCachedViews', 'closeTagView']),
+    /**
+     * @description 接收 tab 标签的点击事件
+     * @param {Object} tab 当前点击标签
+     * */
+    handleTabClick(tab) {
+      const page = this.tagViews.find(item => item.fullPath === tab.name)
+      if (page && page.fullPath !== this.current) {
+        const { name, params, query } = page
+        this.$router.push({ name, params, query })
       }
     },
-    handleJumpPage(item, query) {
-      if (this.$route.path === item.path) return
-      this.$router.push({ path: item.path, query: Object.keys(query).length === 0 ? {} : query })
+    /**
+     * @description 触发 tab 标签的删除按钮
+     * @param {String} tagName tab名称
+     * */
+    handleTabRemove(tagName) {
+      this.closeTagView({ tagName, current: this.current })
     },
-    handleClose(item) {
-      this.delTagView(item).then(views => {
-        if (this.isActive(item)) {
-          const latestView = views.slice(-1)[0]
-          if (latestView) {
-            this.$router.push({ path: latestView.path, query: latestView.query ? latestView.query : {} })
-          } else {
-            const menus = this.routes
-            if (JSON.stringify(menus).includes('home')) {
-              this.$router.push({ name: 'home' })
-            } else {
-              this.$router.push({ name: menus[0].children[0].children[0].name })
-            }
-          }
-        }
-        this.delCachedView(item)
-      })
+    /**
+     * @description 计算某个标签是否可关闭
+     * @param {Object} page 其中一个标签
+     * */
+    isTabClosable(page) {
+      return page.name !== 'homeIndex'
     },
-    isActive(route) {
-      return route.path === this.$route.path
+    /**
+     * @description 设置页面tag与cache
+     * */
+    handleTagViews() {
+      if (this.$route.name) {
+        this.setTagViews(this.$route)
+        if (this.$route.name !== 'homeIndex') this.setCachedViews(this.$route)
+      }
     }
   }
 }
@@ -129,76 +83,45 @@ export default {
       width: calc(100% - 200px);
       z-index: 1000;
     }
-    &_item {
-      height: 32px;
-      line-height: 32px;
-      display: inline-block;
-      font-size: 14px;
-      color: #555555;
-      background: #f6f6f6;
-      position: relative;
-      top: 15px;
-      border-bottom: 1px solid transparent;
-      border-left: 1px solid #e4e7ed;
-      border-top: 1px solid #e4e7ed;
-      transition: padding 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-      padding: 0 20px;
-      cursor: pointer;
-      &:last-child {
-        border-right: 1px solid #e4e7ed;
-      }
-      ::v-deep .el-icon-close {
-        position: relative;
-        width: 0;
-        height: 14px;
-        vertical-align: middle;
-        overflow: hidden;
-        top: -1px;
-        right: -2px;
-        transition: all 0.3s cubic-bezier(0.645, 0.045, 0.355, 1);
-        margin-left: 5px;
-      }
-      &.e-tag_active.p-tags_closable {
-        &:hover {
-          padding-left: 20px;
-          padding-right: 20px;
+  }
+}
+
+.e-tags {
+  &-con {
+    padding-top: 14px;
+    ::v-deep {
+      .el-tabs__item {
+        height: 32px;
+        line-height: 32px;
+        font-size: 14px;
+        color: #555555;
+        background: #f6f6f6;
+        &.is-active {
+          background: #fff;
+          color: #3377ff;
         }
-        ::v-deep .el-icon-close {
-          width: 14px;
-        }
-      }
-      &.p-tags_closable {
-        &:hover {
-          padding-left: 13px;
-          padding-right: 13px;
-          ::v-deep .el-icon-close {
-            width: 14px;
+        .el-icon-close {
+          font-size: 14px !important;
+          &:hover {
+            background-color: inherit;
+            color: inherit;
           }
         }
       }
-    }
-  }
-}
-.e {
-  &-tag {
-    &_active {
-      background: #fff;
-      color: #3377ff;
-      border-bottom: 1px solid #fff;
-    }
-    &_close {
-      margin-left: 10px;
-    }
-    &-cut__pd {
-      padding-right: 10px;
-    }
-  }
-  &-tags {
-    &_dropdown {
-      padding: 0;
-      ::v-deep .el-dropdown-link {
-        padding: 0 10px;
-        display: inline-block;
+      .el-tabs__header {
+        margin-bottom: 0;
+        border-bottom: none;
+        .el-tabs__nav {
+          border-radius: 2px 2px 0 0;
+        }
+      }
+      .el-tabs__nav-prev,
+      .el-tabs__nav-next {
+        line-height: 32px;
+      }
+      .el-icon-arrow-left,
+      .el-tabs__nav-next {
+        font-size: 16px;
       }
     }
   }
