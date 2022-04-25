@@ -24,7 +24,9 @@
     </div>
   </div>
 </template>
+
 <script>
+import { mapActions } from 'vuex'
 import { addRole, queryAllPCMenu, queryAllAPPMenu, queryRoleById, checkRoleName } from '@/api/setting/account'
 import { routeTree } from '@/utils'
 import { routeTreeLevel, sortData } from '@/utils/modules/routeTree.js'
@@ -70,6 +72,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['updateTagView']),
     // 递归选中的id
     getCheckIdInitForPC(arr) {
       var temp = []
@@ -343,7 +346,7 @@ export default {
     this.queryAllPCMenu(this.$route.query.id || '')
     this.queryAllAPPMenu(this.$route.query.id || '')
     this.$nextTick(() => {
-      document.querySelector('.e-tag_active span').innerText = `角色管理/${this.$route.query.id ? '编辑' : '新增'}`
+      this.updateTagView({ tagRoute: this.$route, title: `角色管理/${this.$route.query.id ? '编辑' : '新增'}` })
     })
   }
 }

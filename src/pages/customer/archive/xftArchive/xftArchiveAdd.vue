@@ -723,6 +723,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import selectPage from '@/components/selectPage'
 import uploadPic from '../components/uploadPic'
 import areaSelect from '@/components/areaSelect'
@@ -1058,10 +1059,11 @@ export default {
       if (this.auditStatus && this.isDetail) pageStatus = '详情'
       else if ([0, 1, 4, 8].includes(this.auditStatus)) pageStatus = '编辑'
       else pageStatus = '新增'
-      document.querySelector('.e-tag_active span').innerText = `享付通资质进件/${pageStatus}`
+      this.updateTagView({ tagRoute: this.$route, title: `享付通资质进件/${pageStatus}` })
     })
   },
   methods: {
+    ...mapActions(['updateTagView']),
     handlePrivateLetter() {
       window.open(this.$refs.template.src)
     },
@@ -1395,7 +1397,7 @@ export default {
               this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: 0, id: res } })
               this.isCopy = false
               this.getDetail()
-              document.querySelector('.e-tag_active span').innerText = `享付通资质进件/编辑`
+              this.updateTagView({ tagRoute: this.$route, title: `享付通资质进件/编辑` })
             }
             this.$message.success('保存成功')
           } catch (error) {

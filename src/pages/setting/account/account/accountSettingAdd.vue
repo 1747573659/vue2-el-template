@@ -30,6 +30,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import { queryRole, insertRole, checkMobile, queryUserById } from '@/api/setting/account'
 
 export default {
@@ -73,6 +74,7 @@ export default {
     }
   },
   methods: {
+    ...mapActions(['updateTagView']),
     async onSubmit() {
       this.$refs.form.validate(async valid => {
         if (valid) {
@@ -118,7 +120,7 @@ export default {
     this.getRoleList()
     if (this.$route.query.id) this.queryUserById()
     this.$nextTick(() => {
-      document.querySelector('.e-tag_active span').innerText = `账号设置/${this.$route.query.id ? '编辑' : '新增'}`
+      this.updateTagView({ tagRoute: this.$route, title: `账号设置/${this.$route.query.id ? '编辑' : '新增'}` })
     })
   },
   computed: {
