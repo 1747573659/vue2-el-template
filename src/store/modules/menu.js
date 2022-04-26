@@ -70,6 +70,10 @@ const mutations = {
         break
       }
     }
+  },
+  DEL_ALL_TAG_VIEW: state => {
+    state.tagViews = [].concat(state.tagViews[0])
+    state.cachedViews = []
   }
 }
 
@@ -126,6 +130,9 @@ const actions = {
       commit('DEL_CACHED_VIEW', view)
       resolve([...state.cachedViews])
     })
+  },
+  delAllTagView({ commit }) {
+    commit('DEL_ALL_TAG_VIEW')
   }
 }
 
