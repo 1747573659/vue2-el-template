@@ -1,6 +1,6 @@
 import dayjs from 'dayjs'
 import router from '@/router'
-import { setLocal, getLocal } from '@/utils/storage'
+import { setLocal, getLocal, removeLocal } from '@/utils/storage'
 import { constantRoutes, asyncRouterMap } from '@/router/routes'
 import { routeTree, convertRouter, MD5Util, deepClone, resetRedirect } from '@/utils'
 
@@ -117,6 +117,7 @@ const actions = {
           queryBaseInfo()
             .then(info => {
               setLocal('userInfo', JSON.stringify(Object.assign(response.userInfo, info)))
+              if (getLocal('checkProtocolStatus')) removeLocal('checkProtocolStatus')
               if (info.level === 1 && [1, 2].includes(info.propertyType) && response.userInfo.userType === 11) {
                 queryByAgent({ agentId: info.agentId })
                   .then(res => {

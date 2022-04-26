@@ -182,9 +182,9 @@ export default {
         this.currentPageSelectSets.clear()
         const res = await authOrderProductPage({
           type: '1',
-          isOnSale: 1,
           registerMethod: 2,
-          productTypeList: [1],
+          isOnSale: 1,
+          notProductTypeList: [99],
           info: this.productVal,
           page: this.currentPage,
           rows: this.pageSize
