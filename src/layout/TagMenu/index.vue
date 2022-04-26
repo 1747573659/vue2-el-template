@@ -1,8 +1,18 @@
 <template>
   <section ref="tagMenu" class="p-tags_con">
-    <el-tabs :value="current" class="e-tags-con" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
-      <el-tab-pane v-for="item in tagViews" :key="item.fullPath" :closable="isTabClosable(item)" :label="item.title" :name="item.fullPath"></el-tab-pane>
-    </el-tabs>
+    <div class="p-tabs-con">
+      <el-tabs :value="current" class="e-tags-con" type="card" @tab-click="handleTabClick" @tab-remove="handleTabRemove">
+        <el-tab-pane v-for="item in tagViews" :key="item.fullPath" :closable="isTabClosable(item)" :label="item.title" :name="item.fullPath"></el-tab-pane>
+      </el-tabs>
+    </div>
+    <el-dropdown class="e-tags-dropdown" @command="handleCloseAllTab" v-if="tagViews.length > 1">
+      <span class="el-dropdown-link">
+        <i class="el-icon-arrow-down"></i>
+      </span>
+      <el-dropdown-menu slot="dropdown">
+        <el-dropdown-item>关闭全部</el-dropdown-item>
+      </el-dropdown-menu>
+    </el-dropdown>
   </section>
 </template>
 
@@ -29,7 +39,12 @@ export default {
     this.current = this.$route.fullPath
   },
   methods: {
-    ...mapActions(['setTagViews', 'setCachedViews', 'closeTagView']),
+    ...mapActions(['setTagViews', 'setCachedViews', 'closeTagView', 'delAllTagView']),
+    handleCloseAllTab() {
+      this.delAllTagView()
+      this.current = '/home'
+      this.$router.push({ name: 'home' })
+    },
     /**
      * @description 接收 tab 标签的点击事件
      * @param {Object} tab 当前点击标签
@@ -69,26 +84,29 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p {
-  &-tags {
-    &_con {
-      height: 48px;
-      min-height: 48px;
-      padding: 0 10px;
-      background: #ffffff;
-      border-bottom: 1px solid #e8e8e8;
-      position: fixed;
-      top: 56px;
-      left: 200px;
-      width: calc(100% - 200px);
-      z-index: 1000;
-    }
+.p-tags {
+  &_con {
+    height: 48px;
+    min-height: 48px;
+    padding: 0 10px;
+    background: #ffffff;
+    border-bottom: 1px solid #e8e8e8;
+    position: fixed;
+    top: 56px;
+    left: 200px;
+    width: calc(100% - 200px);
+    z-index: 1000;
+    display: flex;
   }
+}
+.p-tabs-con {
+  overflow: hidden;
 }
 
 .e-tags {
   &-con {
     padding-top: 14px;
+
     ::v-deep {
       .el-tabs__item {
         height: 32px;
@@ -124,6 +142,20 @@ export default {
         font-size: 16px;
       }
     }
+  }
+  &-dropdown {
+    height: 33px;
+    line-height: 33px;
+    font-size: 14px;
+    color: #555;
+    background: #f6f6f6;
+    position: relative;
+    top: 14px;
+    border-bottom: 1px solid transparent;
+    border-right: 1px solid #e4e7ed;
+    border-top: 1px solid #e4e7ed;
+    padding: 0 10px;
+    cursor: pointer;
   }
 }
 </style>
