@@ -17,8 +17,7 @@
 </template>
 
 <script>
-import { mapGetters, mapMutations } from 'vuex'
-
+import { mapGetters, mapMutations, mapState } from 'vuex'
 import nonactivatedXqDialog from './components/nonactivatedXqDialog.vue'
 import checkPassView from './components/checkPass.vue'
 import protocolDialog from './components/protocolDialog'
@@ -35,11 +34,11 @@ export default {
     protocolDialog
   },
   computed: {
+    ...mapState(['checkProtocolStatus']),
     ...mapGetters({
       xftAuditStatus: 'xftAuditStatus',
       nonactivatedXq: 'nonactivatedXq',
-      checkPwdVisible: 'checkPwdVisible',
-      checkProtocolStatus: 'checkProtocolStatus'
+      checkPwdVisible: 'checkPwdVisible'
     }),
     // 当提示享钱的弹窗关闭之后再去提示进件相关的弹窗
     showXftAuditStatus() {
