@@ -349,7 +349,7 @@ export default {
     },
     getWcyInformationObj() {
       if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantNo) {
-        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
+        this.$message({ type: 'warning', message: '请选择正确商户或产品模块信息' })
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
         if (insufficientObj.length > 0) {

@@ -277,9 +277,15 @@ export default {
         try {
           this.form.merchantDTO.merchantNo = val
           this.merchantInfo = await this.getWcyCustInfo()
-          this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
-          const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
-          this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
+          const { productCode, ProductionCust } = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId)
+          if (ProductionCust === '1') {
+            this.$message({ type: 'warning', message: '零售商户请到微零售下单' })
+            return
+          } else {
+            this.merchantInfo = Object.assign(this.merchantInfo, { productCode })
+            const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
+            this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
+          }
         } catch (error) {}
       } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantVersion: '', relationProductName: '', storeCount: '', applicationModule: '' })
       this.resetDTOList()
