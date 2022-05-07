@@ -1,29 +1,25 @@
 <template>
   <div>
     <div class="search-box">
-      <el-row>
-        <el-col :span="20">
-          <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
-            <el-form-item label="产品:">
-              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width: 100%" v-model="form.productCode">
-                <el-option :key="index" :label="item.name" :value="item.code" v-for="(item, index) in allProductList"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="库存状态:">
-              <el-select clearable class="address-select" placeholder="全部" size="small" style="width: 100%" v-model="form.inventoryType">
-                <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in inventoryTypeList"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button v-permission="'SOFTWARE_STOCK_EXPORT'" @click="handleExport()" :loading="exportLoad">导出</el-button>
-              <km-export-view v-permission="'SOFTWARE_STOCK_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
+      <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
+        <el-form-item label="产品:">
+          <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width: 100%" v-model="form.productCode">
+            <el-option :key="index" :label="item.name" :value="item.code" v-for="(item, index) in allProductList"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="库存状态:">
+          <el-select clearable class="address-select" placeholder="全部" size="small" style="width: 100%" v-model="form.inventoryType">
+            <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in inventoryTypeList"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
+        </el-form-item>
+        <el-form-item>
+          <el-button v-permission="'SOFTWARE_STOCK_EXPORT'" @click="handleExport" :loading="exportLoad">导出</el-button>
+          <km-export-view v-permission="'SOFTWARE_STOCK_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+        </el-form-item>
+      </el-form>
     </div>
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
