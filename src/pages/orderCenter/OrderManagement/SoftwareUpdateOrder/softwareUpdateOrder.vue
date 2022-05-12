@@ -82,9 +82,9 @@
           </el-col>
           <el-col :xl="2" :lg="3" style="text-align: right">
             <el-form-item>
-              <el-button type="primary" size="small" v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })"
-                >新增</el-button
-              >
+              <template v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'">
+                <el-button type="primary" size="small" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })">ERP产品</el-button>
+              </template>
             </el-form-item>
           </el-col>
         </el-row>

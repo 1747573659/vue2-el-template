@@ -6,7 +6,7 @@
           <km-select-page
             multiple
             ref="productCodes"
-            v-model="form.productCode"
+            v-model="form.productCodeList"
             option-label="name"
             option-value="code"
             placeholder="全部"
@@ -26,8 +26,8 @@
         </el-form-item>
         <el-form-item>
           <el-button style="margin-left: 36px" type="primary" @click="handleCurrentChange(1)">查询</el-button>
-          <el-button v-permission="'SOFTWARE_STOCK_CHANGE_EXPORT'" @click="handleExport" :loading="exportLoad">导出</el-button>
-          <km-export-view v-permission="'SOFTWARE_STOCK_CHANGE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+          <el-button v-permission="'SOFT_STOCK_CHANGE_EXPORT'" @click="handleExport" :loading="exportLoad">导出</el-button>
+          <km-export-view v-permission="'SOFT_STOCK_CHANGE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
         </el-form-item>
       </el-form>
     </div>
@@ -93,9 +93,10 @@
 <script>
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+
 import { productQueryByPage } from '@/api/product'
-import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQuery'
-import { xftArchiveExport, xftArchiveExportLog, xftArchiveExportDel } from '@/api/xftArchive'
+import { getInventoryWaterAndSummary, exportInventoryChangeWater, exportInventoryExportLog, exportInventoryDel } from '@/api/accountManagement/softStockQuery'
+
 export default {
   name: 'softStockChangeHistory',
   components: { tableSummary },
@@ -135,7 +136,7 @@ export default {
         agentId: '',
         startTime: '',
         endTime: '',
-        productCode: [],
+        productCodeList: [],
         businessTypeList: []
       }
     }
@@ -163,18 +164,18 @@ export default {
       this.exportLoad = true
       try {
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        await exportInventoryChangeWater({ export: true, from: true, ...this.handleQueryParams() })
       } catch (error) {
       } finally {
         this.exportLoad = false
       }
     },
-    handleExportDel: async function (row) {
-      return await xftArchiveExportDel({ id: row.id })
-    },
     handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const data = { exportType: 1, page: currentPage, rows: pageSize }
-      return await xftArchiveExportLog(data)
+      const data = { exportType: 15, page: currentPage, rows: pageSize }
+      return await exportInventoryExportLog(data)
+    },
+    handleExportDel: async function (row) {
+      return await exportInventoryDel({ id: row.id })
     },
     getBusinessType(value) {
       if (value) {
@@ -183,6 +184,15 @@ export default {
       } else {
         return '--'
       }
+    },
+    handleQueryParams() {
+      const { startTime, endTime, ...params } = this.form
+      return Object.assign(params, {
+        startTime: startTime || '',
+        endTime: endTime || '',
+        page: this.thisPage,
+        rows: this.pageSize
+      })
     },
     // 分页
     handleSizeChange(val) {
@@ -198,14 +208,7 @@ export default {
     async getPageList() {
       try {
         this.tableLoading = true
-        let subData = {
-          agentId: this.form.agentId,
-          productCodeList: this.form.productCode,
-          businessTypeList: this.form.businessTypeList,
-          startTime: this.form.startTime || '',
-          endTime: this.form.endTime || ''
-        }
-        const res = await getInventoryWaterAndSummary({ ...subData, page: this.thisPage, rows: this.pageSize })
+        const res = await getInventoryWaterAndSummary(this.handleQueryParams())
         this.detailCount(res)
         this.tableList = res.results || []
         this.tableTotal = res.totalCount || 0

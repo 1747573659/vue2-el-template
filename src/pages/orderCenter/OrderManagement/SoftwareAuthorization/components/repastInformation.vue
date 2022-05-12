@@ -55,7 +55,9 @@
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
-        <el-table-column prop="shopName" label="门店名称/商户/税号"></el-table-column>
+        <el-table-column prop="shopName" label="门店名称/商户/税号" width="250">
+          <template slot-scope="scope">{{ `${scope.row.shopName} ${scope.row.shopType === 102 ? '[' + scope.row.shopCode + ']' : ''}` }}</template>
+        </el-table-column>
         <el-table-column label="类型">
           <template slot-scope="scope">{{ scope.row.shopType === 101 ? '门店' : scope.row.shopType === 102 ? '电子发票' : '积分商城' }}</template>
         </el-table-column>
