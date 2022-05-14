@@ -22,11 +22,19 @@ export const paymentStatus = new Map([
   [2, { value: 2, label: '已付款' }]
 ])
 
+// 授权状态
 export const merchantAuthType = new Map([
   [0, '正式'],
   [1, '试用'],
   [2, '试用'],
   [3, '停用']
+])
+
+// 商户版本
+export const versionMap = new Map([
+  [2, '标准版'],
+  [3, '专业版'],
+  [5, '基础版']
 ])
 
 // form 基础对象
@@ -37,6 +45,8 @@ export const formObj = {
   handUser: '', // 受理人
   handUserName: '', // 受理人名称
   upgradeAmount: '', // 升级费用
+  updateVersion: '', // 升级版本
+  updateAfterDate: '', // 升级有效期
   oldRegistType: 0, // 旧商户注册方式
   oldMerchantName: '', // 旧商户名称
   oldMerchantId: '', // 旧商户号
@@ -52,6 +62,8 @@ export const formObj = {
   newMerchantProductCodeName: '', // 产品名称
   newMerchantAddress: '', // newAddress
   newMerchantAuthCount: '', // 门店授权站点
+  merchantVersion: '', // 商户版本
+  merchantCount: '', // 门店总数
   agentPaperMoney: '', //经销商账面余额
   agentGuaranteeMoney: '', //经销商未核销担保金
   payStatus: 0, //付款状态

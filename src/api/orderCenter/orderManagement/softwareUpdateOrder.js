@@ -1,5 +1,32 @@
 import request from '@/utils/request'
 
+// 微零售更新
+export function softUpgradeUpdateWls(data) {
+  return request({
+    url: '/channel/soft/upgrade/updateWls',
+    method: 'POST',
+    data
+  })
+}
+
+// 微零售提交
+export function softUpgradeSubmitWls(data) {
+  return request({
+    url: '/channel/soft/upgrade/submitWls',
+    method: 'POST',
+    data
+  })
+}
+
+// 微零售新增
+export function softUpgradeAddWls(data) {
+  return request({
+    url: '/channel/soft/upgrade/addWls',
+    method: 'POST',
+    data
+  })
+}
+
 // 列表
 export function querySoftUpgradePage(data) {
   return request({
