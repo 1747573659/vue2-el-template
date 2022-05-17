@@ -53,6 +53,7 @@
           <km-select-page
             ref="wlsMerchantSelect"
             v-model="form.oldMerchantName"
+            :model-name="form.oldMerchantName"
             option-label="CustNameExpand"
             option-value="CustID"
             :data.sync="shopPageData"
@@ -303,11 +304,11 @@ export default {
       if (!this.form.oldMerchantId) this.$message({ type: 'warning', message: '请先选择商户' })
     },
     handleMerchantInfo(val) {
-      const { VersionType, ProductionType, ProductionTypeName, BranchCount } = this.shopPageData.find(item => item.CustID === val)
+      const { VersionType, productCode, ProductionTypeName, BranchCount } = this.shopPageData.find(item => item.CustID === val)
       this.form = Object.assign(this.form, {
         oldMerchantId: val,
         merchantVersion: VersionType,
-        oldMerchantProductCode: ProductionType,
+        oldMerchantProductCode: productCode,
         oldMerchantProductCodeName: ProductionTypeName,
         merchantCount: BranchCount,
         updateVersion: ''
@@ -379,7 +380,6 @@ export default {
       this.checkSaveBtnLoad = true
       this.setOrderSave()
         .then(res => {
-          console.info(res)
           if (this.$route.query.status === 'add') {
             const {
               name,
