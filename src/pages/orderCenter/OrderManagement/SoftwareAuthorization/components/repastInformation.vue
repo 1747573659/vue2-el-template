@@ -279,6 +279,7 @@ export default {
           this.merchantInfo = await this.getWcyCustInfo()
           const { productCode, ProductionCust } = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId)
           if (ProductionCust === '1') {
+            this.form.merchantDTO.merchantNo = ''
             this.$message({ type: 'warning', message: '零售商户请到微零售下单' })
             return
           } else {

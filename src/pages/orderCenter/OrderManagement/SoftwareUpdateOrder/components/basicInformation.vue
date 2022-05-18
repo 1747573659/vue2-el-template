@@ -304,15 +304,19 @@ export default {
       if (!this.form.oldMerchantId) this.$message({ type: 'warning', message: '请先选择商户' })
     },
     handleMerchantInfo(val) {
-      const { VersionType, productCode, ProductionTypeName, BranchCount } = this.shopPageData.find(item => item.CustID === val)
-      this.form = Object.assign(this.form, {
-        oldMerchantId: val,
-        merchantVersion: VersionType,
-        oldMerchantProductCode: productCode,
-        oldMerchantProductCodeName: ProductionTypeName,
-        merchantCount: BranchCount,
-        updateVersion: ''
-      })
+      this.form.updateVersion = ''
+      if (val) {
+        const {
+          VersionType: merchantVersion,
+          productCode: oldMerchantProductCode,
+          ProductionTypeName: oldMerchantProductCodeName,
+          BranchCount: merchantCount
+        } = this.shopPageData.find(item => item.CustID === val)
+        this.form = Object.assign(this.form, { oldMerchantId: val, merchantVersion, oldMerchantProductCode, oldMerchantProductCodeName, merchantCount })
+      } else {
+        const resetDTO = { oldMerchantId: '', merchantVersion: '', oldMerchantProductCode: '', oldMerchantProductCodeName: '', merchantCount: '' }
+        this.form = Object.assign(this.form, resetDTO)
+      }
     },
     handleOldRegistType() {
       const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAddress, oldMerchantAuthCount } = formObj
@@ -576,10 +580,10 @@ export default {
     height: 56px;
     position: fixed;
     bottom: 0;
-    background-color: #fff;
+    background-color: #ffffff;
     line-height: 56px;
     text-align: center;
-    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 3%);
     z-index: 1000;
     ::v-deep .el-button {
       padding: 8px 22px;

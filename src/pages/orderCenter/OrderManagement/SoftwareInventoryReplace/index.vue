@@ -51,7 +51,7 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="checkTabLock">
-      <el-table :data="tableData">
+      <el-table :data="tableData" :max-height="tabMaxHeight">
         <el-table-column prop="createTime" label="订单时间" width="165"></el-table-column>
         <el-table-column prop="billNo" label="订单编码"></el-table-column>
         <el-table-column prop="orderTypeDesc" label="订单状态">
@@ -83,12 +83,14 @@
 import dayjs from 'dayjs'
 import { mapActions } from 'vuex'
 import { orderStatus } from './data'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 import { queryAgentAllUser } from '@/api/orderCenter/orderManagement'
 import { queryByPage, replaceOrderExport, replaceOrderExportLog, replaceOrderExportDel, replaceOrderDelete } from '@/api/orderCenter/orderManagement/softwareInventoryReplace'
 
 export default {
   name: 'softwareInventoryReplace',
+  mixins: [tableMaxHeight],
   data() {
     return {
       orderStatus,

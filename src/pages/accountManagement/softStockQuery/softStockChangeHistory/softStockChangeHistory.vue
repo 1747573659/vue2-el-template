@@ -19,7 +19,7 @@
             <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
           </el-select>
         </el-form-item>
-        <el-form-item label="业务日期:">
+        <el-form-item label="订单日期:">
           <el-date-picker v-model="form.startTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
           <span style="padding: 0 2px">—</span>
           <el-date-picker v-model="form.endTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 23:59:59"></el-date-picker>
@@ -33,7 +33,7 @@
     </div>
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
-      <el-table row-key="id" :data="tableList" style="width: 100%" v-loading="tableLoading" ref="table">
+      <el-table :data="tableList" :max-height="tabMaxHeight - 56" style="width: 100%" v-loading="tableLoading">
         <el-table-column prop="checkTime" label="业务时间" width="110px"></el-table-column>
         <el-table-column prop="agentName" label="业务类型">
           <template slot-scope="scope">{{ getBusinessType(scope.row.businessType) }}</template>
@@ -77,7 +77,7 @@
           <template slot-scope="scope">{{ scope.row.expireTime === '1970-01-01 00:00:00' ? '--' : scope.row.expireTime.split(' ')[0] }}</template>
         </el-table-column>
       </el-table>
-      <div v-show="tableTotal > 0" class="km-page-block">
+      <div class="km-page-block">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -90,15 +90,18 @@
     </div>
   </div>
 </template>
+
 <script>
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 import { productQueryByPage } from '@/api/product'
 import { getInventoryWaterAndSummary, exportInventoryChangeWater, exportInventoryExportLog, exportInventoryDel } from '@/api/accountManagement/softStockQuery'
 
 export default {
   name: 'softStockChangeHistory',
+  mixins: [tableMaxHeight],
   components: { tableSummary },
   data() {
     return {

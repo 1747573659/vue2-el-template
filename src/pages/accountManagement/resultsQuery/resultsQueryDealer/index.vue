@@ -59,7 +59,7 @@
     </div>
     <div class="data-box" v-loading="tableLoading">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
-      <el-table :data="tableList">
+      <el-table :data="tableList" :max-height="tabMaxHeight - 56">
         <el-table-column prop="orderTime" width="110" label="订单日期" fixed></el-table-column>
         <el-table-column prop="month" label="月份" width="80" align="right" fixed></el-table-column>
         <el-table-column prop="quarter" label="季度" width="80" align="right" fixed></el-table-column>
@@ -126,7 +126,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-show="tableTotal > 0" class="km-page-block">
+      <div class="km-page-block">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -144,12 +144,14 @@
 import dayjs from 'dayjs'
 import { formatAmountDivide } from '@/filters'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 import { detailPage, detailCount, querySubIndustry } from '@/api/accountManagement/resultsQuery'
 import { productQueryByPage, productQueryTypeList } from '@/api/product'
 
 export default {
   name: 'resultsQueryDealer',
+  mixins: [tableMaxHeight],
   components: { tableSummary },
   data() {
     return {

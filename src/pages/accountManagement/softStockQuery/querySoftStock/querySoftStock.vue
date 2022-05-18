@@ -14,8 +14,6 @@
         </el-form-item>
         <el-form-item>
           <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
-        </el-form-item>
-        <el-form-item>
           <el-button v-permission="'SOFT_STOCK_EXPORT'" @click="handleExport" :loading="exportLoad">导出</el-button>
           <km-export-view v-permission="'SOFT_STOCK_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
         </el-form-item>
@@ -23,7 +21,7 @@
     </div>
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
-      <el-table row-key="id" :data="tableList" style="width: 100%" @sort-change="handleTabSort" v-loading="tableLoading" ref="table">
+      <el-table :data="tableList" :max-height="tabMaxHeight - 56" style="width: 100%" @sort-change="handleTabSort" v-loading="tableLoading">
         <el-table-column prop="productName" label="产品">
           <template slot-scope="scope">
             <span>{{ '[' + scope.row.productCode + ']' + scope.row.productName }}</span>
@@ -75,12 +73,14 @@
 <script>
 import { mapActions } from 'vuex'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 import { productQueryByPage } from '@/api/product'
 import { getInventoryAndSummary, exportInventoryTotal, exportInventoryDel, exportInventoryExportLog } from '@/api/accountManagement/softStockQuery'
 
 export default {
   name: 'querySoftStock',
+  mixins: [tableMaxHeight],
   components: { tableSummary },
   data() {
     return {
