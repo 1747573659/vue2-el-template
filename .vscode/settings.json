@@ -9,12 +9,10 @@
   "prettier.jsxSingleQuote": true,
   "prettier.jsxBracketSameLine": false,
   "prettier.printWidth": 120,
-  "prettier.semi": false
-  // "vetur.format.defaultFormatter.scss": "none",
-  // "vetur.format.defaultFormatter.css": "none",
-  // "stylelint.enable": true,
-  // "editor.codeActionsOnSave": {
-  //   "source.fixAll.stylelint": true
-  // },
-  // "stylelint.validate": ["css", "less", "postcss", "scss", "vue", "sass"]
+  "prettier.semi": false,
+  "stylelint.enable": true,
+  "editor.codeActionsOnSave": {
+    "source.fixAll.stylelint": true
+  },
+  "stylelint.validate": ["css", "less", "postcss", "scss", "vue", "sass"]
 }
