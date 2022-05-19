@@ -83,6 +83,29 @@ const customer = {
           }
         },
         {
+          path: 'ysMerchantManagement',
+          component: _import('customer/merchant/ysMerchantManagement/index'),
+          name: 'ysMerchantManagement',
+          code: 'YOUSHU_MERCHANT_MANAGEMENT',
+          meta: {
+            title: '有数商户管理',
+            cache: true,
+            name: 'ysMerchantManagement'
+          }
+        },
+        {
+          path: 'ysMerchantDetails',
+          component: _import('customer/merchant/ysMerchantManagement/details'),
+          name: 'ysMerchantDetails',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: {
+            title: '有数商户详情',
+            cache: true,
+            name: 'ysMerchantDetails'
+          }
+        },
+        {
           path: 'addBrand',
           name: 'addBrand',
           code: 'KM_DEFAULT_CODE',
