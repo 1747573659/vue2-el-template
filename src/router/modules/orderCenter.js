@@ -129,6 +129,21 @@ const orderCenter = {
           meta: { title: '软件升级订单详情', name: 'softwareUpdateOrderDetails', cache: true }
         },
         {
+          path: 'ysOrder',
+          component: _import('orderCenter/OrderManagement/ysOrder/index'),
+          name: 'ysOrder',
+          code: 'ORDERCENTER_YOUSHU',
+          meta: { title: '有数订单', name: 'ysOrder', cache: true }
+        },
+        {
+          path: 'ysOrderDetail',
+          component: _import('orderCenter/OrderManagement/ysOrder/details'),
+          name: 'ysOrderDetail',
+          code: 'KM_DEFAULT_CODE',
+          hidden: true,
+          meta: { title: '有数订单详情', name: 'ysOrderDetail', cache: true }
+        },
+        {
           path: 'ewechatOrder',
           component: _import('ewechat/order'),
           name: 'ewechatOrder',
