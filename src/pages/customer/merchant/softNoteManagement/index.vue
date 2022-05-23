@@ -236,7 +236,7 @@ export default {
             required: true,
             trigger: ['blur', 'change'],
             validator: (rule, value, callback) => {
-              if (dayjs(value).isBefore(dayjs().startOf('day')) || dayjs(value).isAfter(dayjs(this.merchantForm.expireDate))) {
+              if (dayjs(value).isAfter(dayjs(this.merchantForm.expireDate))) {
                 callback(new Error('客户有效期不能小于今天/客户有效期不能大于授权有效期'))
               }
               callback()
