@@ -532,7 +532,7 @@ export default {
       try {
         const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
         const res = await authShopPage({ custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status, page, rows })
-        res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
+        if (res.results) res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
         this[dataObj] = this[dataObj].concat(res.results || [])
         this[isMaxpage] = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
