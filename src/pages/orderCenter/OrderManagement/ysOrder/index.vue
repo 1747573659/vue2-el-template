@@ -53,7 +53,7 @@
                 :default-time="['00:00:00', '23:59:59']">
               </el-date-picker>
             </el-form-item>
-            <el-form-item>
+            <el-form-item class="form-botton">
               <el-button type="primary" @click="handleSearch">查询</el-button>
               <el-button size="small" plain @click="handleReset">重置</el-button>
               <el-button size="small" v-permission="'ORDERCENTER_YOUSHU_EXPORT'" @click="handleExport">导出</el-button>
@@ -64,15 +64,29 @@
     </div>
     <div class="data-box" v-loading="isLoading">
       <el-table :data="tableData" :max-height="tabMaxHeight">
-        <el-table-column label="订单编号" prop="orderNo"></el-table-column>
-        <el-table-column label="商户名称" prop="shopAdminName" width="100px"></el-table-column>
+        <el-table-column label="订单编号" prop="orderNo" width="180px"></el-table-column>
+        <el-table-column label="商户名称" prop="shopAdminName" width="180px"></el-table-column>
         <el-table-column label="订购服务">
           <template slot-scope="{ row }">
             <div>{{ (row.orderDetailList || []).map(v => `${v.goodsName}*${v.quantity}${v.isProbation === 1 ? '(试用版)' : ''}`).join(',') }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="开始时间" prop="firstPurchaseTime" width="100px"></el-table-column>
-        <el-table-column label="到期时间" prop="validTime" width="100px"></el-table-column>
+        <el-table-column label="开始时间" prop="activeTimeStr" width="120px">
+          <template slot-scope="scope">
+            {{ scope.row.activeTimeStr }}
+            <div class="wordsStyle" v-show="scope.row.implementPeriod">
+              {{ scope.row.implementPeriod ? `（含实施期${scope.row.implementPeriod}天）` : '' }}
+            </div>
+          </template>
+        </el-table-column>
+        <el-table-column label="到期时间" prop="expiredDateAppend" width="120px">
+          <template slot-scope="scope">
+            {{ scope.row.expiredDateAppend }}
+            <div class="wordsStyle" v-show="scope.row.implementPeriod">
+              {{ scope.row.implementPeriod ? `（含实施期${scope.row.implementPeriod}天）` : '' }}
+            </div>
+          </template>
+        </el-table-column>
         <el-table-column align="right" prop="orderAmount" label="订单金额">
           <template slot-scope="scope">
             <span>{{ (scope.row.orderAmounts || 0).toFixed(2) }}</span>
@@ -80,9 +94,9 @@
             <div style="color: rgb(250, 47, 47)" v-if="scope.row.changeDiscount > 0">({{ scope.row.changeDiscount / 100 }}折)</div>
           </template>
         </el-table-column>
-        <el-table-column label="购买标识" prop="accountStatus">
+        <el-table-column label="购买标识" prop="buyFlag">
           <template slot-scope="scope">
-            <span>{{ buyFlagOptions[scope.row.accountStatus] }}</span>
+            <span>{{ buyFlagEnum[scope.row.buyFlag] || '--' }}</span>
           </template>
         </el-table-column>
         <el-table-column prop="orderStatusDesc" label="订单状态"></el-table-column>
@@ -105,7 +119,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <km-pagination :request="handleSearch" :current-page.sync="searchForm.page" :page-size.sync="searchForm.rows" :total="total" />
+      <km-pagination :request="getList" :current-page.sync="searchForm.page" :page-size.sync="searchForm.rows" :total="total" />
     </div>
   </section>
 </template>
@@ -113,32 +127,35 @@
 <script>
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 import { downloadBufferFile } from '@/utils'
-import { tipsData, orderStatusOptions, contractStatusOptions, serviceOptions, buyFlagOptions, invoiceOptions } from './data'
+import { tipsData, orderStatusOptions, contractStatusOptions, serviceOptions, buyFlagOptions, buyFlagEnum, receiptOptions } from './data'
+import { customerPayPage, merchantOrderStatusStatic } from '@/api/orderCenter/orderManagement/ysOrder'
 
 export default {
   name: 'ysMerchantManagement',
   mixins: [tableMaxHeight],
   data() {
     return {
-      download_url: process.env.VUE_APP_BASE_API + '/ewechat/corp/version/list/download',
+      download_url: process.env.VUE_APP_BASE_API + '/youshu/customerpay/download',
+      ontractDownload_url: process.env.VUE_APP_BASE_API + '/youshu/customerpay/downloadContractByFddId',
       tipsData,
       orderStatusOptions,
       contractStatusOptions,
       serviceOptions,
       buyFlagOptions,
-      invoiceOptions,
+      buyFlagEnum,
+      receiptOptions,
       searchForm: {
         page: 1,
         rows: 10,
         params: {
           shopIdOrName: '',
-          orderStatusList: '',
+          orderStatusList: [1],
           contractStatus: '',
           orderNo: '',
           serviceType: '',
           receiptStatus: '',
-          startDate: '',
-          endDate: ''
+          startTime: '',
+          endTime: ''
         }
       },
       total: 0,
@@ -150,28 +167,33 @@ export default {
   watch: {
     date(val) {
       if (val) {
-        this.searchForm.params.startDate = val[0] + ' 00:00:00'
-        this.searchForm.params.endDate = val[1] + ' 23:59:59'
+        this.searchForm.params.startTime = val[0] + ' 00:00:00'
+        this.searchForm.params.endTime = val[1] + ' 23:59:59'
       } else {
-        this.searchForm.params.startDate = ''
-        this.searchForm.params.endDate = ''
+        this.searchForm.params.startTime = ''
+        this.searchForm.params.endTime = ''
       }
     }
   },
-  mounted() {
-    console.log(this.tipsData, 'tipsData')
+  created() {
+    this.merchantOrderStatusStatic()
+    this.handleSearch()
   },
   methods: {
-    async handleSearch() {
-      // this.isLoading = true
-      // try {
-      //   let res = await customerPayPage(this.searchForm)
-      //   this.tableData = res.results || []
-      //   this.total = res.totalRecord
-      //   this.isLoading = false
-      // } catch {
-      //   this.isLoading = false
-      // }
+    handleSearch() {
+      this.searchForm.page = 1
+      this.getList()
+    },
+    async getList() {
+      this.isLoading = true
+      try {
+        let res = await customerPayPage(this.searchForm)
+        this.tableData = res.results || []
+        this.total = res.totalRecord
+        this.isLoading = false
+      } catch {
+        this.isLoading = false
+      }
     },
     handleReset() {
       this.searchForm = {
@@ -179,29 +201,42 @@ export default {
         rows: 10,
         params: {
           shopIdOrName: '',
-          orderStatusList: '',
+          orderStatusList: [1],
           contractStatus: '',
           orderNo: '',
           serviceType: '',
           receiptStatus: '',
-          startDate: '',
-          endDate: ''
+          startTime: '',
+          endTime: ''
         }
       }
       this.handleSearch()
     },
-    handleContractDownload() {},
-    async handleExport() {
-      let params = this.searchForm.params
+    async merchantOrderStatusStatic() {
+      let res = await merchantOrderStatusStatic()
+      if (res) {
+        this.tipsData.map(e => {
+          e.total = e[e.key]
+        })
+      }
+      console.log(this.tipsData, 'this.tipsData')
+    },
+    async handleContractDownload({ orderId }) {
       try {
-        await downloadBufferFile(this.download_url, { isExport: true, params }, 'POST', 'json')
+        await downloadBufferFile(this.ontractDownload_url, { orderId }, 'POST', 'json')
+      } catch (e) {
+        this.$message.error('下载出错了')
+      }
+    },
+    async handleExport() {
+      try {
+        await downloadBufferFile(this.download_url, this.searchForm, 'POST', 'json', '有数商户订单')
       } catch (e) {
         this.$message.error('下载出错了')
       }
     },
     handleDeatils(row) {
-      console.log('查看详情')
-      this.$router.push({ path: `/customer/merchant/ysMerchantDetails?id=${row.shopAdminId}` })
+      this.$router.push({ path: `/orderCenter/OrderManagement/ysOrderDetail?id=${row.orderId}` })
     }
   }
 }

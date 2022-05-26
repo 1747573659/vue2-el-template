@@ -128,12 +128,12 @@
         </el-table-column>
         <el-table-column label="开票类型">
           <template slot-scope="{ row }">
-            <div>{{ invoiceTypeEnum[row.receiptType] }}</div>
+            <div>{{ invoiceTypeOptions[row.receiptType] }}</div>
           </template>
         </el-table-column>
         <el-table-column label="开票状态">
           <template slot-scope="{ row }">
-            <div>{{ invoiceStatusEnum[row.status] }}</div>
+            <div>{{ invoiceStatusOptions[row.status] }}</div>
           </template>
         </el-table-column>
       </el-table>
@@ -144,9 +144,10 @@
 <script>
 import Descriptions from '@/components/Descriptions/list'
 import DescriptionsItem from '@/components/Descriptions/item'
-// import { getCustomerPay, uploadContractFile } from '@/api/businessSupport/ysBusiness'
 import { downloadBufferFile } from '@/utils'
 import { invoiceTypeOptions, invoiceStatusOptions } from './data'
+import { getDetails } from '@/api/orderCenter/orderManagement/ysOrder'
+
 export default {
   name: 'ysOrderDetails',
   components: {
@@ -173,31 +174,30 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.getDetails()
   },
   methods: {
-    async onDownload({ contractNo, orderId }) {
-      let params = { contractNo, orderId }
+    async onDownload({ orderId }) {
       try {
-        await downloadBufferFile(this.download_url, { isExport: true, params }, 'POST', 'json')
+        await downloadBufferFile(this.download_url, { orderId }, 'POST', 'json')
       } catch (e) {
         this.$message.error('下载出错了')
       }
     },
-    async getList() {
-      // this.listLoading = true
-      // try {
-      //   this.listLoading = false
-      //   let response = await getCustomerPay(this.$route.query.id)
-      //   this.itemInfo = response
-      //   this.contractTable = [response]
-      //   this.tableData = response.orderDetailList
-      //   this.invoiceDetails = [response.receiptOutDTO]
-      // } catch {
-      //   this.listLoading = false
-      //   this.tableData = []
-      //   this.invoiceDetails = []
-      // }
+    async getDetails() {
+      this.listLoading = true
+      try {
+        this.listLoading = false
+        let response = await getDetails({ orderId: this.$route.query.id })
+        this.itemInfo = response
+        this.contractTable = [response]
+        this.tableData = response.orderDetailList
+        this.invoiceDetails = response.receiptOutDTO ? [response.receiptOutDTO] : []
+      } catch {
+        this.listLoading = false
+        this.tableData = []
+        this.invoiceDetails = []
+      }
     }
   }
 }

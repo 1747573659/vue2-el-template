@@ -1,7 +1,7 @@
 export const tipsData = [
-  { status: 0, label: '待付款', total: 0 },
-  { status: 1, label: '待签约', total: 0 },
-  { status: 3, label: '待提交发票', total: 0 }
+  { key: 'needPay', label: '待付款', total: 0 },
+  { key: 'needSign', label: '待签约', total: 0 },
+  { key: 'needReceipt', label: '待提交发票', total: 0 }
 ]
 
 // 订单状态
@@ -33,8 +33,13 @@ export const buyFlagOptions = [
   { id: 3, name: '升级' },
   { id: 2, name: '续费' }
 ]
-// 发票状态
-export const invoiceOptions = [
+export const buyFlagEnum = {
+  1: '首购',
+  2: '续费',
+  3: '升级'
+}
+// 开票状态
+export const receiptOptions = [
   { id: '', name: '全部' },
   { id: -1, name: '待提交' },
   { id: 0, name: '已提交' },
