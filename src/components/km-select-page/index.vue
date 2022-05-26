@@ -71,7 +71,8 @@ export default {
       queryParams: '',
       checkSelectLoad: false,
       currentPage: 1,
-      hitOptions: []
+      hitOptions: [],
+      isAskLoading: false
     }
   },
   directives: {
@@ -103,7 +104,7 @@ export default {
       this.selectVal = val
     },
     handleSelectFocus() {
-      if (!this.data.length) {
+      if (!this.data.length && !this.isAskLoading) {
         this.currentPage = 1
         this.request({ page: this.currentPage })
       }
@@ -111,7 +112,10 @@ export default {
     handleSelectClear() {
       this.initSelect()
       this.queryParams = ''
-      this.request({ page: this.currentPage })
+      this.isAskLoading = true
+      this.request({ page: this.currentPage }).then(() => {
+        this.isAskLoading = false
+      })
     },
     handleRemoteSearch(query) {
       if (this.$refs.selectPage?.multiple) {
