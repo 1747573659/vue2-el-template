@@ -8,19 +8,19 @@
       <el-form ref="form" size="small" label-suffix=":" :inline="true" :model="searchForm" label-width="120px" @submit.native.prevent>
         <el-row type="flex" align="bottom">
           <el-col>
-            <el-form-item label="商户">
-              <el-input placeholder="编号/名称" clearable v-model="searchForm.params.shopIdOrName" @keyup.enter.native="handleSearch"></el-input>
+            <el-form-item label="商户名称">
+              <el-input placeholder="请输入商户名称" clearable v-model="searchForm.params.shopIdOrName" @keyup.enter.native="handleSearch"></el-input>
             </el-form-item>
             <el-form-item label="主账号">
-              <el-input placeholder="超级管理员登录账号" clearable v-model="searchForm.params.loginName" @keyup.enter.native="handleSearch"></el-input>
+              <el-input placeholder="超管登录账号" clearable v-model="searchForm.params.loginName" @keyup.enter.native="handleSearch"></el-input>
             </el-form-item>
             <el-form-item label="账号状态">
-              <el-select placeholder="全部" clearable multiple v-model="searchForm.params.accoumtStatus" @keyup.enter.native="handleSearch">
+              <el-select placeholder="全部" clearable multiple v-model="searchForm.params.accountStatus" @keyup.enter.native="handleSearch">
                 <el-option :key="item.value" :label="item.label" :value="item.value" v-for="item in accountStatusData"></el-option>
               </el-select>
             </el-form-item>
             <el-form-item label="版本">
-              <el-select placeholder="全部" clearable multiple collapse-tags v-model="searchForm.params.currentVersion" @keyup.enter.native="handleSearch">
+              <el-select placeholder="全部" clearable multiple collapse-tags v-model="searchForm.params.versionDetailId" @keyup.enter.native="handleSearch">
                 <el-option :key="item.versionDetailDTO.id" :label="item.versionDetailDTO.name" :value="item.versionDetailDTO.id" v-for="item in currentVersionData"></el-option>
               </el-select>
             </el-form-item>
@@ -57,7 +57,7 @@
                 size="small"
                 start-placeholder="开始日期"
                 type="daterange"
-                v-model="searchForm.params.queryTime" />
+                v-model="date" />
             </el-form-item>
             <el-form-item class="form-botton">
               <el-button type="primary" @click="handleSearch">查询</el-button>
@@ -70,25 +70,25 @@
     </div>
     <div class="data-box" v-loading="isLoading">
       <el-table :data="tableData" :max-height="tabMaxHeight">
-        <el-table-column label="商户号" width="100px">
+        <el-table-column label="商户名称" width="180px">
           <template slot-scope="scope">
             {{ '[' + scope.row.shopAdminId + ']' + scope.row.shopName }}
           </template>
         </el-table-column>
-        <el-table-column label="主账号" prop="loginName">
+        <el-table-column label="主账号" prop="loginName" width="180px">
           <template slot-scope="scope">
             {{ scope.row.loginName ? scope.row.loginName : '--' }}
           </template>
         </el-table-column>
         <el-table-column label="ERP产品" prop="erpName"></el-table-column>
-        <el-table-column label="开通时间" prop="activeTime" width="100px"></el-table-column>
-        <el-table-column label="首购时间" prop="firstPurchaseTime" width="100px"></el-table-column>
-        <el-table-column label="到期时间" prop="validTime" width="100px"></el-table-column>
-        <el-table-column label="上线时间" prop="onlineTime" width="100px"></el-table-column>
-        <!-- <el-table-column label="版本" prop="versionDetailDTO.name"></el-table-column> -->
-        <el-table-column label="版本状态" prop="accountStatus">
+        <el-table-column label="开通时间" prop="activeTime" width="120px"></el-table-column>
+        <el-table-column label="首购时间" prop="firstPurchaseTime" width="120px"></el-table-column>
+        <el-table-column label="到期时间" prop="validTime" width="120px"></el-table-column>
+        <el-table-column label="上线时间" prop="onlineTime" width="120px"></el-table-column>
+        <el-table-column label="版本" prop="versionDetailDTO.name" width="120px"></el-table-column>
+        <el-table-column label="版本状态" prop="accountStatus" width="160px">
           <template slot-scope="scope">
-            <span>{{ accountStatusData[scope.row.accountStatus] }}</span>
+            <span>{{ accountStatusEnum[scope.row.accountStatus] }}</span>
           </template>
         </el-table-column>
         <el-table-column label="是否增购" prop="isAdditional" width="80px">
@@ -97,7 +97,7 @@
           </template>
         </el-table-column>
         <el-table-column label="微平台ID" prop="microCustId"></el-table-column>
-        <el-table-column label="地址" prop="detailAddress">
+        <el-table-column label="地址" prop="detailAddress" width="120px">
           <template slot-scope="scope">
             {{ scope.row.detailAddress ? scope.row.detailAddress : '--' }}
           </template>
@@ -110,7 +110,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <km-pagination :request="handleSearch" :current-page.sync="searchForm.page" :page-size.sync="searchForm.rows" :total="total" />
+      <km-pagination :request="getList" :current-page.sync="searchForm.page" :page-size.sync="searchForm.rows" :total="total" />
     </div>
   </section>
 </template>
@@ -118,16 +118,18 @@
 <script>
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 import { downloadBufferFile } from '@/utils'
-import { tipsData, accountStatusData, erpSelectList } from './data'
+import { tipsData, accountStatusData, accountStatusEnum, erpSelectList } from './data'
+import { queryCustomerVersion, queryByPage, queryVersionStatic } from '@/api/customer/ysMerchantManagement'
 
 export default {
   name: 'ysMerchantManagement',
   mixins: [tableMaxHeight],
   data() {
     return {
-      download_url: process.env.VUE_APP_BASE_API + '/ewechat/corp/version/list/download',
+      download_url: process.env.VUE_APP_BASE_API + '/youshu/merchant/download',
       tipsData,
       accountStatusData,
+      accountStatusEnum,
       erpSelectList,
       currentVersionData: [],
       searchForm: {
@@ -136,34 +138,54 @@ export default {
         params: {
           shopIdOrName: '',
           loginName: '',
-          accoumtStatus: [],
-          currentVersion: [],
+          accountStatus: [],
+          versionDetailId: [],
           isAdditional: '',
           erpCodes: [],
           isMicro: '',
-          timeQueryType: '',
+          timeQueryType: '1',
           queryStartTime: '',
           queryEndTime: ''
         }
       },
+      date: [],
       total: 0,
-      tableData: [{ shopAdminId: '1' }],
+      tableData: [],
       isLoading: false
     }
   },
-  mounted() {
-    console.log(this.tipsData, 'tipsData')
+  watch: {
+    date(val) {
+      if (val) {
+        this.searchForm.params.queryStartTime = val[0] + ' 00:00:00'
+        this.searchForm.params.queryEndTime = val[1] + ' 23:59:59'
+      } else {
+        this.searchForm.params.queryStartTime = ''
+        this.searchForm.params.queryEndTime = ''
+      }
+    }
+  },
+  created() {
+    this.getCurrentVersion()
+    this.queryVersionStatic()
+    this.handleSearch()
   },
   methods: {
-    async handleSearch() {
-      // this.isLoading = true
-      // try {
-      //   let res = await customerPayPage(this.searchForm)
-      //   this.tableData = res.results || []
-      //   this.total = res.totalRecord
-      // } catch {
-      //   this.isLoading = false
-      // }
+    handleSearch() {
+      this.searchForm.page = 1
+      this.getList()
+    },
+    async getList() {
+      console.log(this.searchForm.page, 'this.searchForm.page')
+      this.isLoading = true
+      try {
+        let res = await queryByPage(this.searchForm)
+        this.tableData = res.results || []
+        this.total = res.totalRecord
+        this.isLoading = false
+      } catch {
+        this.isLoading = false
+      }
     },
     handleReset() {
       this.searchForm = {
@@ -172,28 +194,38 @@ export default {
         params: {
           shopIdOrName: '',
           loginName: '',
-          accoumtStatus: [],
-          currentVersion: [],
+          accountStatus: [],
+          versionDetailId: [],
           isAdditional: '',
           erpCodes: [],
           isMicro: '',
-          timeQueryType: '',
+          timeQueryType: '1',
           queryStartTime: '',
           queryEndTime: ''
         }
       }
       this.handleSearch()
     },
+    async queryVersionStatic() {
+      let res = await queryVersionStatic()
+      if (res) {
+        this.tipsData.map(e => {
+          e.total = res[e.key]
+        })
+      }
+    },
+    async getCurrentVersion() {
+      let res = await queryCustomerVersion()
+      this.currentVersionData = res
+    },
     async handleExport() {
-      let params = this.searchForm.params
       try {
-        await downloadBufferFile(this.download_url, { isExport: true, params }, 'POST', 'json')
+        await downloadBufferFile(this.download_url, this.searchForm, 'POST', 'json', '有数商户')
       } catch (e) {
         this.$message.error('下载出错了')
       }
     },
     handleDeatils(row) {
-      console.log('查看详情')
       this.$router.push({ path: `/customer/merchant/ysMerchantDetails?id=${row.shopAdminId}` })
     }
   }

@@ -31,12 +31,19 @@
 import Descriptions from '@/components/Descriptions/list'
 import DescriptionsItem from '@/components/Descriptions/item'
 import { baseInfoItems, versionsItems } from './data'
+import { getDetails } from '@/api/customer/ysMerchantManagement'
+import { formatNumber } from '@/utils'
 
 export default {
   name: 'ysMerchantDetails',
   components: {
     Descriptions,
     DescriptionsItem
+  },
+  filters: {
+    toFixedMoneyFilter(num) {
+      return formatNumber(num, 2)
+    }
   },
   data() {
     return {
@@ -47,42 +54,39 @@ export default {
     }
   },
   created() {
-    this.getList()
+    this.getDetails()
   },
   methods: {
-    async getList() {
-      console.log('getList')
-      // this.listLoading = true
-      // try {
-      //   console.log(this.$route.query.id)
-      //   let allVersion = await getVersion(this.$route.query.id)
-      //   this.detailsInfo = allVersion
-      //   this.baseInfoItems = [
-      //     { title: '客户名称', value: allVersion.name },
-      //     { title: '服务到期时间', value: allVersion.validTime },
-      //     { title: '渠道来源', value: allVersion.chName },
-      //     { title: '客户地址', value: allVersion.address },
-      //     { title: 'ERP客户编码', value: allVersion.custId },
-      //     { title: '微平台商户ID', value: allVersion.microCustId || '无' }
-      //   ]
+    async getDetails() {
+      this.listLoading = true
+      try {
+        let allVersion = await getDetails({ shopAdminId: this.$route.query.id })
+        this.detailsInfo = allVersion
+        this.baseInfoItems = [
+          { title: '客户名称', value: allVersion.name },
+          { title: '服务到期时间', value: allVersion.validTime },
+          { title: '渠道来源', value: allVersion.chName },
+          { title: '客户地址', value: allVersion.address },
+          { title: 'ERP客户编码', value: allVersion.custId },
+          { title: '微平台商户ID', value: allVersion.microCustId || '无' }
+        ]
 
-      //   this.versionsItems = [
-      //     { title: '版本名称', value: allVersion.versionName },
-      //     { title: '期限至', value: allVersion.versionValid },
-      //     { title: '购买状态', value: allVersion.versionStatus === 1 ? '已购买' : '未购买' },
-      //     { title: '版本开通费用', value: this.formatNumber(allVersion.versionAmount / 100, 2) }
-      //   ]
-
-      //   this.tableData =
-      //     allVersion.funcList &&
-      //     allVersion.funcList.filter(item => {
-      //       return item.funcStatus === 1
-      //     })
-      //   this.listLoading = false
-      // } catch {
-      //   this.listLoading = false
-      //   this.tableData = []
-      // }
+        this.versionsItems = [
+          { title: '版本名称', value: allVersion.versionName },
+          { title: '期限至', value: allVersion.versionValid },
+          { title: '购买状态', value: allVersion.versionStatus === 1 ? '已购买' : '未购买' },
+          { title: '版本开通费用', value: formatNumber(allVersion.versionAmount / 100, 2) }
+        ]
+        this.tableData =
+          allVersion.funcList &&
+          allVersion.funcList.filter(item => {
+            return item.funcStatus === 1
+          })
+        this.listLoading = false
+      } catch {
+        this.listLoading = false
+        this.tableData = []
+      }
     },
     getSummaries(param) {
       const { columns, data } = param
@@ -94,7 +98,6 @@ export default {
         }
         const values = data.map(item => item[column.property])
         if (!values.every(value => isNaN(value))) {
-          console.log(values)
           let temp = values.reduce((prev, curr) => {
             return prev + curr
           })
@@ -104,17 +107,6 @@ export default {
         }
       })
       return sums
-    },
-    formatNumber(num, precision, separator) {
-      let parts
-      if (!isNaN(parseFloat(num)) && isFinite(num)) {
-        num = Number(num)
-        num = (typeof precision !== 'undefined' ? num.toFixed(precision) : num).toString()
-        parts = num.split('.')
-        parts[0] = parts[0].toString().replace(/(\d)(?=(\d{3})+(?!\d))/g, '$1' + (separator || ','))
-        return parts.join('.')
-      }
-      return '0.00'
     }
   }
 }

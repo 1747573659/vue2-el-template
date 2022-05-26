@@ -1,18 +1,27 @@
 export const tipsData = [
-  { status: 0, label: '即将到期', total: 0 },
-  { status: 1, label: '付费使用中', total: 0 },
-  { status: 3, label: '试用中', total: 0 },
-  { status: 2, label: '已到期', total: 0 }
+  { key: 'nearEndCount', label: '即将到期', total: 0 },
+  { key: 'payUsingCount', label: '付费使用中', total: 0 },
+  { key: 'testUsingCount', label: '试用中', total: 0 },
+  { key: 'endCount', label: '已到期', total: 0 }
 ]
 // 账号状态
 export const accountStatusData = [
-  { value: 0, label: '未试用' },
+  { value: 0, label: '未试用(已开通，未试用，不含经销商开通)' },
   { value: 1, label: '试用中' },
   { value: 2, label: '试用到期' },
   { value: 3, label: '付费使用中' },
   { value: 4, label: '即将到期（不足30天）' },
   { value: 5, label: '已到期' }
 ]
+// 当前状态
+export const accountStatusEnum = {
+  0: '未试用(已开通，未试用，不含经销商开通)',
+  1: '试用中',
+  2: '试用到期',
+  3: '付费使用中',
+  4: '即将到期（不足30天）',
+  5: '已到期'
+}
 // erp产品类型
 export const erpSelectList = [
   { label: '御商+', value: 'ADV10' },
