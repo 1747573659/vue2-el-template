@@ -4,7 +4,9 @@
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
-          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
+          <template v-if="$route.query.status !== 'add' && form.authOrderDTO.remark && form.authOrderDTO.orderStatus === 5">
+            <span class="p-card-back">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
+          </template>
         </div>
         <div class="p-card-state">
           <span>订单状态：</span>
