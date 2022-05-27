@@ -216,7 +216,7 @@ export default {
       let res = await merchantOrderStatusStatic()
       if (res) {
         this.tipsData.map(e => {
-          e.total = e[e.key]
+          e.total = res[e.key]
         })
       }
       console.log(this.tipsData, 'this.tipsData')
