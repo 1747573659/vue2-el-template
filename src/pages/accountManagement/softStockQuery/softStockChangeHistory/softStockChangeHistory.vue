@@ -4,8 +4,9 @@
       <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
         <el-form-item label="产品: ">
           <km-select-page
-            multiple
             ref="productCodes"
+            multiple
+            collapse-tags
             v-model="form.productCodeList"
             option-label="name"
             option-value="code"
