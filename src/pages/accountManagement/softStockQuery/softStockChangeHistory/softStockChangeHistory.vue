@@ -34,6 +34,7 @@
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
       <el-table :data="tableList" :max-height="tabMaxHeight - 56" style="width: 100%" v-loading="tableLoading">
+        <el-table-column prop="createOrderTime" label="订单时间" width="110px"></el-table-column>
         <el-table-column prop="checkTime" label="业务时间" width="110px"></el-table-column>
         <el-table-column prop="agentName" label="业务类型">
           <template slot-scope="scope">{{ getBusinessType(scope.row.businessType) }}</template>
