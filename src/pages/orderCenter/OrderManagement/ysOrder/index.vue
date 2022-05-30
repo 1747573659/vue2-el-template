@@ -24,6 +24,36 @@
             <el-form-item label="订单编号">
               <el-input v-model="searchForm.params.orderNo" clearable placeholder="请输入订单编号" @keyup.enter.native="handleSearch"></el-input>
             </el-form-item>
+            <el-form-item label="订单金额" class="number input2">
+              <el-input-number
+                style="width: 130px"
+                v-model="searchForm.params.orderAmountMin"
+                :controls="false"
+                clearable
+                placeholder="请输入订单金额"
+                :min="0"
+                :max="999999 - 1"
+                step-strictly
+                @keyup.enter.native="handleSearch"
+                @change="
+                  val => {
+                    if (val > searchForm.params.orderAmountMax) {
+                      searchForm.params.orderAmountMax = val + 1
+                    }
+                  }
+                "></el-input-number>
+              <div style="padding: 0 8px; display: inline-block">-</div>
+              <el-input-number
+                style="width: 108px"
+                v-model="searchForm.params.orderAmountMax"
+                :controls="false"
+                clearable
+                placeholder="请输入订单金额"
+                :min="searchForm.params.orderAmountMin + 1"
+                :max="999999"
+                step-strictly
+                @keyup.enter.native="handleSearch"></el-input-number>
+            </el-form-item>
             <el-form-item label="服务类型">
               <el-select clearable v-model="searchForm.params.serviceType" @keyup.enter.native="handleSearch">
                 <el-option v-for="item in serviceOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -71,20 +101,14 @@
             <div>{{ (row.orderDetailList || []).map(v => `${v.goodsName}*${v.quantity}${v.isProbation === 1 ? '(试用版)' : ''}`).join(',') }}</div>
           </template>
         </el-table-column>
-        <el-table-column label="开始时间" prop="activeTimeStr" width="120px">
+        <el-table-column label="开始时间" prop="activeTimeStr" width="140px">
           <template slot-scope="scope">
             {{ scope.row.activeTimeStr }}
-            <div class="wordsStyle" v-show="scope.row.implementPeriod">
-              {{ scope.row.implementPeriod ? `（含实施期${scope.row.implementPeriod}天）` : '' }}
-            </div>
           </template>
         </el-table-column>
-        <el-table-column label="到期时间" prop="expiredDateAppend" width="120px">
+        <el-table-column label="到期时间" prop="expiredDateAppend" width="140px">
           <template slot-scope="scope">
             {{ scope.row.expiredDateAppend }}
-            <div class="wordsStyle" v-show="scope.row.implementPeriod">
-              {{ scope.row.implementPeriod ? `（含实施期${scope.row.implementPeriod}天）` : '' }}
-            </div>
           </template>
         </el-table-column>
         <el-table-column align="right" prop="orderAmount" label="订单金额">
@@ -149,13 +173,15 @@ export default {
         rows: 10,
         params: {
           shopIdOrName: '',
-          orderStatusList: [1],
+          orderStatusList: [],
           contractStatus: '',
           orderNo: '',
           serviceType: '',
           receiptStatus: '',
           startTime: '',
-          endTime: ''
+          endTime: '',
+          orderAmountMin: undefined,
+          orderAmountMax: undefined
         }
       },
       total: 0,
@@ -201,13 +227,15 @@ export default {
         rows: 10,
         params: {
           shopIdOrName: '',
-          orderStatusList: [1],
+          orderStatusList: [],
           contractStatus: '',
           orderNo: '',
           serviceType: '',
           receiptStatus: '',
           startTime: '',
-          endTime: ''
+          endTime: '',
+          orderAmountMin: undefined,
+          orderAmountMax: undefined
         }
       }
       this.handleSearch()
@@ -219,7 +247,6 @@ export default {
           e.total = res[e.key]
         })
       }
-      console.log(this.tipsData, 'this.tipsData')
     },
     async handleContractDownload({ orderId }) {
       try {
@@ -282,6 +309,14 @@ export default {
     overflow: hidden;
     white-space: nowrap;
     text-overflow: ellipsis;
+  }
+}
+
+.input2 {
+  ::v-deep {
+    .el-input {
+      width: 100%;
+    }
   }
 }
 </style>
