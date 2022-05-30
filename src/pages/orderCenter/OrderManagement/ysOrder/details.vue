@@ -93,7 +93,7 @@
             <el-button
               type="text"
               @click="onDownload(row)"
-              :disabled="permission('ORDERCENTER_YOUSHU_CONTRACT_DOWNLOAD')"
+              v-permission="'ORDERCENTER_YOUSHU_CONTRACT_DOWNLOAD'"
               v-if="(row.orderType !== 5 && row.contractStatus === 1) || (row.orderType === 5 && row.contractUrl)"
               >下载</el-button
             >
@@ -156,6 +156,7 @@ export default {
   },
   data() {
     return {
+      download_url: process.env.VUE_APP_BASE_API + '/youshu/customerpay/downloadContractByFddId',
       invoiceTypeOptions,
       invoiceStatusOptions,
       listLoading: false,
