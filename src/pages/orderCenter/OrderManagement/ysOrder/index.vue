@@ -44,7 +44,7 @@
                 "></el-input-number>
               <div style="padding: 0 8px; display: inline-block">-</div>
               <el-input-number
-                style="width: 108px"
+                style="width: 130px"
                 v-model="searchForm.params.orderAmountMax"
                 :controls="false"
                 clearable
