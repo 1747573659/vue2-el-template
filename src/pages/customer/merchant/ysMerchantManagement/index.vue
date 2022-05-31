@@ -204,6 +204,7 @@ export default {
           queryEndTime: ''
         }
       }
+      this.date = []
       this.handleSearch()
     },
     async queryVersionStatic() {

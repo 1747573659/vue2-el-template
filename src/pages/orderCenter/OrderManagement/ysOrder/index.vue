@@ -238,6 +238,7 @@ export default {
           orderAmountMax: undefined
         }
       }
+      this.date = []
       this.handleSearch()
     },
     async merchantOrderStatusStatic() {
