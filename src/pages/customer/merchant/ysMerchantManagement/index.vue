@@ -156,7 +156,7 @@ export default {
   },
   watch: {
     date(val) {
-      if (val) {
+      if (val && val.length > 0) {
         this.searchForm.params.queryStartTime = val[0] + ' 00:00:00'
         this.searchForm.params.queryEndTime = val[1] + ' 23:59:59'
       } else {
