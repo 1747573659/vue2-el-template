@@ -133,7 +133,7 @@ const orderCenter = {
           component: _import('orderCenter/OrderManagement/ysOrder/index'),
           name: 'ysOrder',
           code: 'ORDERCENTER_YOUSHU',
-          meta: { title: '有数订单', name: 'ysOrder', cache: true }
+          meta: { title: '有数订单', name: 'ysOrder' }
         },
         {
           path: 'ysOrderDetail',

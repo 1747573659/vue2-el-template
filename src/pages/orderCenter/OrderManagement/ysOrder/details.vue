@@ -142,6 +142,7 @@
 </template>
 
 <script>
+import { mapActions } from 'vuex'
 import Descriptions from '@/components/Descriptions/list'
 import DescriptionsItem from '@/components/Descriptions/item'
 import { downloadBufferFile } from '@/utils'
@@ -176,8 +177,12 @@ export default {
   },
   created() {
     this.getDetails()
+    this.$nextTick(() => {
+      this.updateTagView({ tagRoute: this.$route, title: '有数订单详情' })
+    })
   },
   methods: {
+    ...mapActions(['updateTagView']),
     async onDownload({ orderId }) {
       try {
         await downloadBufferFile(this.download_url, { orderId }, 'POST', 'json')

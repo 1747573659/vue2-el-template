@@ -101,7 +101,6 @@ const customer = {
           hidden: true,
           meta: {
             title: '有数商户详情',
-            cache: true,
             name: 'ysMerchantDetails'
           }
         },
