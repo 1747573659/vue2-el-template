@@ -14,7 +14,7 @@ const state = {
   nonactivatedXq: false,
   nonactivatedXqList: [],
   checkPwdVisible: JSON.parse(sessionStorage.getItem('isInitPwd')) || false,
-  checkProtocolStatus: JSON.parse(getLocal('checkProtocolStatus')) || false
+  checkProtocolStatus: false
 }
 
 const getters = {
@@ -23,8 +23,7 @@ const getters = {
   xftAuditStatus: state => state.xftAuditStatus,
   nonactivatedXq: state => state.nonactivatedXq,
   nonactivatedXqList: state => state.nonactivatedXqList,
-  checkPwdVisible: state => state.checkPwdVisible,
-  checkProtocolStatus: state => state.checkProtocolStatus
+  checkPwdVisible: state => state.checkPwdVisible
 }
 
 const mutations = {
@@ -82,57 +81,65 @@ const authShopPageMethod = (commit, { userType = 0 }) => {
   })
 }
 
-const getAuditStatus = commit => {
-  popUpsByAuditStatus()
-    .then(res => commit('SET_AUDITSTATUS', Boolean(res)))
-    .catch(() => {})
-}
-
 const actions = {
-  login({ commit }, userInfo) {
+  setRoutes({ commit }, routes) {
+    const treeRoute = routeTree(routes)
+    const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
+    let redirectList = resetRedirect(convertTreeRouter)
+    commit('SET_ROUTES', [...redirectList])
+  },
+  getAuditStatus({ commit }) {
+    // 判断是否有未处理享付通进件资料
+    popUpsByAuditStatus()
+      .then(res => commit('SET_AUDITSTATUS', Boolean(res)))
+      .catch(() => {})
+  },
+  checkProtocol({ commit }) {
+    // 是否展示返佣协议
+    const userInfo = JSON.parse(getLocal('userInfo'))
+    if (userInfo.level === 1 && [1, 2].includes(userInfo.propertyType) && userInfo.userType === 11) {
+      queryByAgent({ agentId: userInfo.agentId })
+        .then(res => {
+          commit('SET_PROTOCOLSTATUS', !res)
+        })
+        .catch(() => {})
+    }
+  },
+  getBaseInfo({ dispatch }, userInfo) {
+    // 获取登陆商户信息
+    return new Promise(resolve => {
+      queryBaseInfo()
+        .then(info => {
+          setLocal('userInfo', JSON.stringify(Object.assign(userInfo, info)))
+          dispatch('checkProtocol')
+        })
+        .catch(() => {})
+        .finally(() => {
+          resolve()
+        })
+    })
+  },
+  login({ commit, dispatch }, userInfo) {
     let userData = deepClone(userInfo)
     userData.password = MD5Util.md5(userData.password)
     const { userName, password, codeKey } = userData
     return new Promise((resolve, reject) => {
       login({ userName: userName.replace(/\s/g, ''), password: password.replace(/\s/g, ''), codeKey: codeKey })
         .then(response => {
-          setLocal('token', response.token)
-          // 判断是否有未处理享付通进件资料
-          getAuditStatus(commit)
-          // 获取该经销商下商户未开通享钱的列表
-          authShopPageMethod(commit, response.userInfo)
           // 判断当前密码是否初始密码
           if (userData.password === '21218cca77804d2ba1922c33e0151105') {
             sessionStorage.setItem('isInitPwd', true)
             commit('SET_PWDVISIBLE', true)
           }
-          // 重新设置异步路由里面的重定向地址
-          const treeRoute = routeTree(response.menus)
-          const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
-          let redirectList = resetRedirect(convertTreeRouter)
-          commit('SET_ROUTES', [...redirectList])
+          setLocal('token', response.token)
+          // 获取该经销商下商户未开通享钱的列表
+          authShopPageMethod(commit, response.userInfo)
+          dispatch('getAuditStatus')
+          dispatch('getBaseInfo', response.userInfo).finally(() => resolve())
+          dispatch('setRoutes', response.menus)
           router.addRoutes(state.routes)
-
-          // 获取登陆商户信息
-          queryBaseInfo()
-            .then(info => {
-              setLocal('userInfo', JSON.stringify(Object.assign(response.userInfo, info)))
-              if (info.level === 1 && [1, 2].includes(info.propertyType) && response.userInfo.userType === 11) {
-                queryByAgent({ agentId: info.agentId })
-                  .then(res => {
-                    commit('SET_PROTOCOLSTATUS', !res)
-                  })
-                  .catch(() => {})
-              }
-            })
-            .catch(() => {})
-            .finally(() => {
-              resolve()
-            })
         })
-        .catch(error => {
-          reject(error)
-        })
+        .catch(error => reject(error))
     })
   },
 
@@ -142,7 +149,7 @@ const actions = {
       logout()
         .then(() => {
           localStorage.clear()
-          window.location.reload()
+          location.reload()
           resolve()
         })
         .catch(() => {})
@@ -159,23 +166,12 @@ const actions = {
   },
 
   // 获取路由信息
-  GetMenuInfo({ commit }) {
+  GetMenuInfo({ commit, dispatch }) {
     return new Promise((resolve, reject) => {
       getMenuInfo()
         .then(res => {
-          // 重新设置异步路由里面的重定向地址
-          const treeRoute = routeTree(res)
-          const convertTreeRouter = convertRouter(treeRoute, asyncRouterMap)
-          let redirectList = resetRedirect(convertTreeRouter)
-          commit('SET_ROUTES', [...redirectList])
-          const userInfo = JSON.parse(getLocal('userInfo'))
-          if (userInfo.level === 1 && [1, 2].includes(userInfo.propertyType) && userInfo.userType === 11) {
-            queryByAgent({ agentId: userInfo.agentId })
-              .then(res => {
-                commit('SET_PROTOCOLSTATUS', !res)
-              })
-              .catch(() => {})
-          }
+          dispatch('setRoutes', res)
+          if (location.href === '/home') dispatch('checkProtocol')
           resolve()
         })
         .catch(error => {
