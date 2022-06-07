@@ -31,3 +31,11 @@ export function getDetails(data) {
     data
   })
 }
+
+// 获取经销商列表
+export function queryAgents() {
+  return request({
+    url: '/youshu/merchant/queryAgents',
+    method: 'GET'
+  })
+}
