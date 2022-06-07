@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="search-box">
-      <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
+      <el-form :inline="true" size="small" :model="form" label-width="85px">
         <el-form-item label="产品:">
           <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width: 100%" v-model="form.productCodeQueryList">
             <el-option :key="index" :label="item.name" :value="item.code" v-for="(item, index) in allProductList"></el-option>

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="search-box">
-      <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
+      <el-form :inline="true" size="small" :model="form" label-width="85px">
         <el-form-item label="产品: ">
           <km-select-page
             ref="productCodes"
