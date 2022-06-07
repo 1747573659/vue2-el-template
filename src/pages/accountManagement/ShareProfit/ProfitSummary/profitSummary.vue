@@ -79,7 +79,7 @@
 
 <script>
 import dayjs from 'dayjs'
-import { queryBenefitSummaryPage } from '@/api/accountManagement/shareProfit/profitSummary'
+import { queryBenefitSummaryPage, updateBenefitThirdInfo } from '@/api/accountManagement/shareProfit/profitSummary'
 import { getBenefitStatusMap } from '@/api/accountManagement/shareProfit/profitDetail'
 
 export default {
@@ -88,7 +88,7 @@ export default {
       benefitStatusData: [],
       form: { benefitStatus: '', billingMonth: '' },
       checkProfitVisible: false,
-      profitForm: { id: '', invoiceNo: '', trackingNo: '' },
+      profitForm: { benefitCountOrder: '', invoiceNo: '', trackingNo: '' },
       isProfitLoad: false,
       checkTabLock: false,
       tableData: [],
@@ -116,8 +116,8 @@ export default {
         if (valid) {
           try {
             this.isProfitLoad = true
-            // const { id, invoiceNo, trackingNo } = this.profitForm
-            // await setBenefitModify({ id, invoiceNo, trackingNo })
+            const { id, benefitCountOrder, invoiceNo, trackingNo } = this.profitForm
+            await updateBenefitThirdInfo({ id, benefitCountOrder, invoiceNo, trackingNo })
             this.$refs.profitForm.clearValidate()
             this.getQueryPage()
             this.checkProfitVisible = false
@@ -129,7 +129,7 @@ export default {
       })
     },
     handleToConfirm(row) {
-      this.profitForm = { id: row.id, invoiceNo: '', trackingNo: '' }
+      this.profitForm = { id: row.id, benefitCountOrder: row.benefitCountOrder, invoiceNo: '', trackingNo: '' }
       this.checkProfitVisible = true
     },
     handleToDetail(row) {

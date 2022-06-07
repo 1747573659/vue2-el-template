@@ -8,3 +8,12 @@ export function queryBenefitSummaryPage(data) {
     data
   })
 }
+
+// 确认更新
+export function updateBenefitThirdInfo(data) {
+  return request({
+    url: '/channel/account/benefit/updateThirdInfo',
+    method: 'POST',
+    data
+  })
+}
