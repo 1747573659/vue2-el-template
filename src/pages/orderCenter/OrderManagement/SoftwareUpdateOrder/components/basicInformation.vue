@@ -24,99 +24,146 @@
         <el-form-item label="升级费用" prop="upgradeAmount">
           <el-input v-model.trim="form.upgradeAmount" clearable></el-input>
         </el-form-item>
-        <el-form-item label="旧商户注册方式" prop="oldRegistType">
+        <template v-if="$route.query.source === 'retail'">
+          <el-form-item label="升级版本" prop="updateVersion">
+            <el-select v-model="form.updateVersion" @focus="handleVersionFocus" placeholder="升级版本" clearable>
+              <el-option v-for="item in Array.from(versionMap).filter(ele => ele[0] !== form.merchantVersion)" :key="item[0]" :label="item[1]" :value="item[0]"></el-option>
+            </el-select>
+          </el-form-item>
+          <el-form-item label="升级有效期">
+            <el-input :value="form.updateAfterDate" disabled></el-input>
+          </el-form-item>
+        </template>
+        <el-form-item label="旧商户注册方式" prop="oldRegistType" v-else>
           <el-select v-model="form.oldRegistType" @change="handleOldRegistType" placeholder="旧商户注册方式" clearable>
             <el-option v-for="item in Array.from(oldRegistTypes).filter((item, index) => index > 0)" :key="item[1].value" :label="item[1].label" :value="item[1].value"></el-option>
           </el-select>
         </el-form-item>
       </el-form>
     </el-card>
-    <el-card shadow="never" class="p-card">
+    <el-card shadow="never" class="p-card" v-if="$route.query.source === 'retail'">
       <div slot="header" class="p-card-head">
-        <span class="p-card-title">旧商户信息</span>
+        <span class="p-card-title">商户信息</span>
       </div>
-      <el-form ref="oldForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
-        <template v-if="['', 0].includes(form.oldRegistType)">
-          <el-form-item label="商户名称" prop="oldMerchantName" key="1">
-            <km-select-page
-              ref="oldMerchantSelect"
-              v-model="form.oldMerchantName"
-              option-label="custNameExpand"
-              option-value="custId"
-              :data.sync="oldShopPageData"
-              :request="getOldShopPage"
-              :is-max-page.sync="isOldShopMaxPage"
-              @change="val => handleShopPage(val, 'old')"
-              placeholder="请输入名称/商户号" />
-          </el-form-item>
-          <el-form-item label="商户号">
-            <el-input :value="form.oldMerchantId" placeholder="请先选择商户" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="授权状态">
-            <el-input :value="form.oldMerchantAuthType !== '' ? merchantAuthType.get(form.oldMerchantAuthType) : ''" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="产品">
-            <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="地区">
-            <el-input :value="form.oldMerchantAddress" disabled></el-input>
-          </el-form-item>
-          <el-form-item label="门店授权站点">
-            <el-input :value="form.oldMerchantAuthCount" disabled></el-input>
-          </el-form-item>
-        </template>
-        <template v-if="form.oldRegistType === 1">
-          <el-form-item label="加密狗ID" prop="oldMerchantId" key="2">
-            <el-input v-model="form.oldMerchantId" maxlength="30" placeholder="加密狗ID" clearable></el-input>
-          </el-form-item>
-          <el-form-item label="产品" prop="oldMerchantProductCode">
-            <km-select-page
-              ref="product"
-              v-model="form.oldMerchantProductCode"
-              option-label="name"
-              option-value="code"
-              :data.sync="productLists"
-              :request="getProductByPage"
-              :is-max-page.sync="isProductMaxPage"
-              placeholder="全部" />
-          </el-form-item>
-        </template>
-      </el-form>
-    </el-card>
-    <el-card shadow="never" class="p-card">
-      <div slot="header" class="p-card-head">
-        <span class="p-card-title">新商户信息</span>
-      </div>
-      <el-form ref="newForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
-        <el-form-item label="商户名称" prop="newMerchantName">
+      <el-form ref="retailForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
+        <el-form-item label="经销商">
+          <el-input disabled :value="`${userInfo.agentId ? '[' + userInfo.agentId + ']' : ''}${userInfo.name}`"></el-input>
+        </el-form-item>
+        <el-form-item label="商户名称" prop="oldMerchantName">
           <km-select-page
-            ref="newMerchantSelect"
-            v-model="form.newMerchantName"
-            option-label="custNameExpand"
-            option-value="custId"
-            :data.sync="newShopPageData"
-            :request="getNewShopPage"
-            :is-max-page.sync="isNewShopMaxPage"
-            @change="val => handleShopPage(val, 'new')"
+            ref="wlsMerchantSelect"
+            v-model="form.oldMerchantName"
+            :model-name="form.oldMerchantName"
+            option-label="CustNameExpand"
+            option-value="CustID"
+            :data.sync="shopPageData"
+            :request="getCustList"
+            :is-max-page.sync="isShopMaxPage"
+            @change="handleMerchantInfo"
             placeholder="请输入名称/商户号" />
         </el-form-item>
         <el-form-item label="商户号">
-          <el-input :value="form.newMerchantId" placeholder="请先选择商户" disabled></el-input>
+          <el-input :value="form.oldMerchantId" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
-        <el-form-item label="授权状态">
-          <el-input :value="form.newMerchantAuthType !== '' ? merchantAuthType.get(form.newMerchantAuthType) : ''" disabled></el-input>
+        <el-form-item label="商户版本">
+          <el-input :value="versionMap.get(form.merchantVersion)" disabled></el-input>
         </el-form-item>
-        <el-form-item label="产品">
-          <el-input :value="`${form.newMerchantProductCode ? '[' + form.newMerchantProductCode + ']' : ''}${form.newMerchantProductCodeName || ''}`" disabled></el-input>
+        <el-form-item label="关联产品">
+          <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
         </el-form-item>
-        <el-form-item label="地区">
-          <el-input :value="form.newMerchantAddress" disabled></el-input>
-        </el-form-item>
-        <el-form-item label="门店授权站点" prop="newMerchantAuthCount">
-          <el-input v-model="form.newMerchantAuthCount"></el-input>
+        <el-form-item label="门店总数">
+          <el-input :value="form.merchantCount" disabled></el-input>
         </el-form-item>
       </el-form>
     </el-card>
+    <template v-else>
+      <el-card shadow="never" class="p-card">
+        <div slot="header" class="p-card-head">
+          <span class="p-card-title">旧商户信息</span>
+        </div>
+        <el-form ref="oldForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
+          <template v-if="['', 0].includes(form.oldRegistType)">
+            <el-form-item label="商户名称" prop="oldMerchantName" key="1">
+              <km-select-page
+                ref="oldMerchantSelect"
+                v-model="form.oldMerchantName"
+                option-label="custNameExpand"
+                option-value="custId"
+                :data.sync="oldShopPageData"
+                :request="getOldShopPage"
+                :is-max-page.sync="isOldShopMaxPage"
+                @change="val => handleShopPage(val, 'old')"
+                placeholder="请输入名称/商户号" />
+            </el-form-item>
+            <el-form-item label="商户号">
+              <el-input :value="form.oldMerchantId" placeholder="请先选择商户" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="授权状态">
+              <el-input :value="form.oldMerchantAuthType !== '' ? merchantAuthType.get(form.oldMerchantAuthType) : ''" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="产品">
+              <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="地区">
+              <el-input :value="form.oldMerchantAddress" disabled></el-input>
+            </el-form-item>
+            <el-form-item label="门店授权站点">
+              <el-input :value="form.oldMerchantAuthCount" disabled></el-input>
+            </el-form-item>
+          </template>
+          <template v-if="form.oldRegistType === 1">
+            <el-form-item label="加密狗ID" prop="oldMerchantId" key="2">
+              <el-input v-model="form.oldMerchantId" maxlength="30" placeholder="加密狗ID" clearable></el-input>
+            </el-form-item>
+            <el-form-item label="产品" prop="oldMerchantProductCode">
+              <km-select-page
+                ref="product"
+                v-model="form.oldMerchantProductCode"
+                option-label="name"
+                option-value="code"
+                :data.sync="productLists"
+                :request="getProductByPage"
+                :is-max-page.sync="isProductMaxPage"
+                placeholder="全部" />
+            </el-form-item>
+          </template>
+        </el-form>
+      </el-card>
+      <el-card shadow="never" class="p-card">
+        <div slot="header" class="p-card-head">
+          <span class="p-card-title">新商户信息</span>
+        </div>
+        <el-form ref="newForm" :model="form" :rules="rules" :disabled="$route.query.status === 'detail'" size="small" :inline="true" label-suffix=":" label-width="110px">
+          <el-form-item label="商户名称" prop="newMerchantName">
+            <km-select-page
+              ref="newMerchantSelect"
+              v-model="form.newMerchantName"
+              option-label="custNameExpand"
+              option-value="custId"
+              :data.sync="newShopPageData"
+              :request="getNewShopPage"
+              :is-max-page.sync="isNewShopMaxPage"
+              @change="val => handleShopPage(val, 'new')"
+              placeholder="请输入名称/商户号" />
+          </el-form-item>
+          <el-form-item label="商户号">
+            <el-input :value="form.newMerchantId" placeholder="请先选择商户" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="授权状态">
+            <el-input :value="form.newMerchantAuthType !== '' ? merchantAuthType.get(form.newMerchantAuthType) : ''" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="产品">
+            <el-input :value="`${form.newMerchantProductCode ? '[' + form.newMerchantProductCode + ']' : ''}${form.newMerchantProductCodeName || ''}`" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="地区">
+            <el-input :value="form.newMerchantAddress" disabled></el-input>
+          </el-form-item>
+          <el-form-item label="门店授权站点" prop="newMerchantAuthCount">
+            <el-input v-model="form.newMerchantAuthCount"></el-input>
+          </el-form-item>
+        </el-form>
+      </el-card>
+    </template>
     <el-card shadow="never" class="p-card">
       <div slot="header" class="p-card-head">
         <span class="p-card-title">账款信息</span>
@@ -167,9 +214,10 @@ import { mapActions } from 'vuex'
 import dayjs from 'dayjs'
 import NP from 'number-precision'
 import { deepClone } from '@/utils'
-import { orderStatus, formObj, paymentStatus, oldRegistTypes, merchantAuthType } from '../data'
+import { orderStatus, formObj, paymentStatus, oldRegistTypes, merchantAuthType, versionMap } from '../data'
 
 import { queryHandlerMan, queryAgentMoneyStream } from '@/api/orderCenter/orderManagement'
+import { authOrderWlsCustList } from '@/api/orderCenter/orderManagement/softwareAuthorization'
 import {
   authShopPage,
   queryProductCode,
@@ -177,12 +225,16 @@ import {
   channelSoftUpgradeUpdate,
   channelSoftUpgradeById,
   channelSoftUpgradeDel,
-  channelSoftUpgradeSubmit
+  channelSoftUpgradeSubmit,
+  softUpgradeUpdateWls,
+  softUpgradeSubmitWls,
+  softUpgradeAddWls
 } from '@/api/orderCenter/orderManagement/softwareUpdateOrder'
 
 export default {
   data() {
     return {
+      versionMap,
       oldRegistTypes,
       paymentStatus,
       merchantAuthType,
@@ -203,8 +255,11 @@ export default {
         upgradeAmount: [
           { required: true, message: '请输入升级费用', trigger: ['blur', 'change'] },
           { pattern: /^([0-9]\d{0,10}?)(\.\d{1,2})?$/, message: '升级费用范围为[0, 99999999999.99]', trigger: 'blur' }
-        ]
+        ],
+        updateVersion: [{ required: true, message: '请选择升级版本', trigger: 'blur' }]
       },
+      shopPageData: [],
+      isShopMaxPage: false,
       oldShopPageData: [],
       isOldShopMaxPage: false,
       newShopPageData: [],
@@ -245,41 +300,51 @@ export default {
   },
   methods: {
     ...mapActions(['updateTagView']),
+    handleVersionFocus() {
+      if (!this.form.oldMerchantId) this.$message({ type: 'warning', message: '请先选择商户' })
+    },
+    handleMerchantInfo(val) {
+      this.form.updateVersion = ''
+      if (val) {
+        const {
+          VersionType: merchantVersion,
+          productCode: oldMerchantProductCode,
+          ProductionTypeName: oldMerchantProductCodeName,
+          BranchCount: merchantCount
+        } = this.shopPageData.find(item => item.CustID === val)
+        this.form = Object.assign(this.form, { oldMerchantId: val, merchantVersion, oldMerchantProductCode, oldMerchantProductCodeName, merchantCount })
+      } else {
+        const resetDTO = { oldMerchantId: '', merchantVersion: '', oldMerchantProductCode: '', oldMerchantProductCodeName: '', merchantCount: '' }
+        this.form = Object.assign(this.form, resetDTO)
+      }
+    },
     handleOldRegistType() {
       const { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode, oldMerchantProductCodeName, oldMerchantAddress, oldMerchantAuthCount } = formObj
-      this.form = Object.assign(this.form, {
-        oldMerchantName,
-        oldMerchantId,
-        oldMerchantAuthType,
-        oldMerchantProductCode,
-        oldMerchantProductCodeName,
-        oldMerchantAddress,
-        oldMerchantAuthCount
-      })
+      this.form = Object.assign(
+        this.form,
+        { oldMerchantName, oldMerchantId, oldMerchantAuthType, oldMerchantProductCode },
+        { oldMerchantProductCodeName, oldMerchantAddress, oldMerchantAuthCount }
+      )
       if (this.$refs.oldMerchantSelect) this.$refs.oldMerchantSelect.selectVal = ''
     },
     handleShopPage(val, type) {
       if (val) {
         const { authCount, productId, productName, status, custId, companyProvince, companyCity } = this[`${type}ShopPageData`].find(item => item.custId === val)
         if (type === 'old') {
-          this.form = Object.assign(this.form, {
-            oldMerchantAuthCount: authCount && authCount.includes(';') ? authCount.split(';')[1] : authCount,
-            oldMerchantProductCode: productId,
-            oldMerchantProductCodeName: productName,
-            oldMerchantAuthType: status === '2' ? 0 : 1,
-            oldMerchantId: custId,
-            oldMerchantAddress: companyProvince + companyCity
-          })
+          this.form = Object.assign(
+            this.form,
+            { oldMerchantAuthCount: authCount && authCount.includes(';') ? authCount.split(';')[1] : authCount },
+            { oldMerchantAuthType: status === '2' ? 0 : 1 },
+            { oldMerchantProductCode: productId, oldMerchantProductCodeName: productName, oldMerchantId: custId, oldMerchantAddress: companyProvince + companyCity }
+          )
           if (this.form.newMerchantId) this.form.newMerchantAuthCount = ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1
         } else {
-          this.form = Object.assign(this.form, {
-            newMerchantAuthCount: ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1,
-            newMerchantProductCode: productId,
-            newMerchantProductCodeName: productName,
-            newMerchantAuthType: status === '2' ? 0 : 1,
-            newMerchantId: custId,
-            newMerchantAddress: companyProvince + companyCity
-          })
+          this.form = Object.assign(
+            this.form,
+            { newMerchantAuthCount: ['', 0].includes(this.form.oldRegistType) ? this.form.oldMerchantAuthCount : 1 },
+            { newMerchantAuthType: status === '2' ? 0 : 1 },
+            { newMerchantId: custId, newMerchantProductCode: productId, newMerchantProductCodeName: productName, newMerchantAddress: companyProvince + companyCity }
+          )
         }
       } else {
         if (type === 'old') {
@@ -294,14 +359,15 @@ export default {
     handleVerify() {
       this.$confirm('确定要提交吗？', '提示', {
         type: 'warning',
-        beforeClose: (action, instance, done) => {
+        beforeClose: async (action, instance, done) => {
           if (action === 'confirm') {
             instance.confirmButtonLoading = true
             this.setOrderSave()
               .then(async () => {
-                await channelSoftUpgradeSubmit({ id: parseFloat(this.$route.query.id) })
-                this.getDetail().then(() => {
-                  this.$router.replace({ name: this.$route.name, query: { id: this.$route.query.id, orderStatus: 10, status: 'detail' } })
+                const { id, source } = this.$route.query
+                source === 'erp' ? await channelSoftUpgradeSubmit({ id: parseFloat(id) }) : await softUpgradeSubmitWls({ id: parseFloat(id) })
+                await this.getDetail().then(() => {
+                  this.$router.replace({ name: this.$route.name, query: { id, source, orderStatus: 10, status: 'detail' } })
                 })
                 this.$message({ type: 'success', message: '提交成功' })
               })
@@ -319,7 +385,11 @@ export default {
       this.setOrderSave()
         .then(res => {
           if (this.$route.query.status === 'add') {
-            this.$router.replace({ name: this.$route.name, query: { id: res.id, orderStatus: res.orderStatus, status: 'edit' } })
+            const {
+              name,
+              query: { source }
+            } = this.$route
+            this.$router.replace({ name, query: { id: res.id, orderStatus: res.orderStatus, status: 'edit', source } })
             this.updateTagView({ tagRoute: this.$route, title: '软件升级订单/编辑' })
           }
           this.getDetail()
@@ -333,19 +403,29 @@ export default {
     setOrderSave() {
       return this.handleValidateForm().then(async () => {
         if (this.isFormValidatePass) {
-          const { oldMerchantId, oldMerchantProductCode, oldRegistType, oldMerchantAuthType, oldMerchantAuthCount } = this.form
-          const { handUser, id, billNo, upgradeAmount, newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode } = this.form
-          let data = Object.assign(
-            { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
-            { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
-          )
-          if (oldRegistType === 0) data = Object.assign(data, { oldMerchantAuthType, oldMerchantAuthCount })
-          return this.$route.query.status === 'add' ? await channelSoftUpgradeAdd(data) : await channelSoftUpgradeUpdate(data)
+          const { handUser, id, billNo, upgradeAmount, oldMerchantId, oldMerchantProductCode } = this.form
+          if (this.$route.query.source === 'erp') {
+            const { oldRegistType, oldMerchantAuthType, oldMerchantAuthCount } = this.form
+            const { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode } = this.form
+            let data = Object.assign(
+              { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
+              { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode, oldMerchantId, oldMerchantProductCode, oldRegistType }
+            )
+            if (oldRegistType === 0) data = Object.assign(data, { oldMerchantAuthType, oldMerchantAuthCount })
+            return this.$route.query.status === 'add' ? await channelSoftUpgradeAdd(data) : await channelSoftUpgradeUpdate(data)
+          } else {
+            const { updateVersion, merchantCount, merchantVersion } = this.form
+            let data = Object.assign(
+              { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
+              { updateVersion, merchantCount, merchantVersion, oldMerchantId, oldMerchantProductCode }
+            )
+            return this.$route.query.status === 'add' ? await softUpgradeAddWls(data) : await softUpgradeUpdateWls(data)
+          }
         } else return new Promise((resolve, reject) => reject(new Error()))
       })
     },
     handleValidateForm() {
-      const reFormArr = ['orderForm', 'oldForm', 'newForm']
+      const reFormArr = this.$route.query.source === 'erp' ? ['orderForm', 'oldForm', 'newForm'] : ['orderForm', 'retailForm']
       const validateFormFunc = () => {
         return reFormArr.map(item => {
           return new Promise((resolve, reject) => {
@@ -370,13 +450,19 @@ export default {
         const res = await channelSoftUpgradeById(this.$route.query.id)
         res.upgradeAmount = NP.divide(res.upgradeAmount, 100)
         this.form = res
-        this.getOldShopPage({ query: res.oldMerchantId })
-        this.getNewShopPage({ query: res.newMerchantId })
-        setTimeout(() => {
-          if (this.form.oldRegistType !== 1) this.$refs.oldMerchantSelect.selectVal = res?.oldMerchantName ?? ''
-          else this.$refs.product.selectVal = res?.oldMerchantProductCodeName ?? ''
-          this.$refs.newMerchantSelect.selectVal = res.newMerchantName
-        }, 500)
+        if (this.$route.query.source === 'erp') {
+          this.getOldShopPage({ query: res.oldMerchantId })
+          this.getNewShopPage({ query: res.newMerchantId })
+          setTimeout(() => {
+            if (this.form.oldRegistType !== 1) this.$refs.oldMerchantSelect.selectVal = res?.oldMerchantName ?? ''
+            else this.$refs.product.selectVal = res?.oldMerchantProductCodeName ?? ''
+            this.$refs.newMerchantSelect.selectVal = res.newMerchantName
+          }, 500)
+        } else {
+          setTimeout(() => {
+            this.$refs.wlsMerchantSelect.selectVal = res?.oldMerchantName ?? ''
+          }, 500)
+        }
       } catch (error) {
       } finally {
         this.checkBasicInformLoad = false
@@ -426,6 +512,16 @@ export default {
         this.isProductMaxPage = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
     },
+    async getCustList({ query = '', page = 1, rows = 10 } = {}) {
+      try {
+        const isNum = new RegExp(/^\d{1,}$/).test(query)
+        const data = { cust: isNum ? query : '', custName: !isNum && query ? query : '', pageIndex: page, pageSize: rows, organ: this.userInfo.organNo }
+        const res = await authOrderWlsCustList(data)
+        res.forEach(item => (item.CustNameExpand = `${item.CustName ? item.CustName : ''}（${item.CustID}）`))
+        this.shopPageData = this.shopPageData.concat(res || [])
+        this.isShopMaxPage = !res || (res && res.length < 10)
+      } catch (error) {}
+    },
     async getOldShopPage({ query = '', page = 1, rows = 10 } = {}) {
       await this.getShopPage({ query, page, rows, status: '2' }, 'oldShopPageData', 'isOldShopMaxPage')
     },
@@ -436,7 +532,7 @@ export default {
       try {
         const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
         const res = await authShopPage({ custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status, page, rows })
-        res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
+        if (res.results) res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
         this[dataObj] = this[dataObj].concat(res.results || [])
         this[isMaxpage] = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
@@ -484,10 +580,10 @@ export default {
     height: 56px;
     position: fixed;
     bottom: 0;
-    background-color: #fff;
+    background-color: #ffffff;
     line-height: 56px;
     text-align: center;
-    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 3%);
     z-index: 1000;
     ::v-deep .el-button {
       padding: 8px 22px;

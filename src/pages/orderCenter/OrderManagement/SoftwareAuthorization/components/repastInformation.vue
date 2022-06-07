@@ -55,7 +55,9 @@
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
-        <el-table-column prop="shopName" label="门店名称/商户/税号"></el-table-column>
+        <el-table-column prop="shopName" label="门店名称/商户/税号" width="250">
+          <template slot-scope="scope">{{ `${scope.row.shopName} ${scope.row.shopType === 102 ? '[' + scope.row.shopCode + ']' : ''}` }}</template>
+        </el-table-column>
         <el-table-column label="类型">
           <template slot-scope="scope">{{ scope.row.shopType === 101 ? '门店' : scope.row.shopType === 102 ? '电子发票' : '积分商城' }}</template>
         </el-table-column>
@@ -275,9 +277,16 @@ export default {
         try {
           this.form.merchantDTO.merchantNo = val
           this.merchantInfo = await this.getWcyCustInfo()
-          this.merchantInfo.productCode = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId).productCode
-          const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
-          this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
+          const { productCode, ProductionCust } = this.shopPageData.find(item => item.CustId === this.merchantInfo.CustId)
+          if (ProductionCust === '1') {
+            this.form.merchantDTO.merchantNo = ''
+            this.$message({ type: 'warning', message: '零售商户请到微零售下单' })
+            return
+          } else {
+            this.merchantInfo = Object.assign(this.merchantInfo, { productCode })
+            const { IsHadWxGzhForOss: merchantVersion, BranchCount: storeCount, productionTypeName: relationProductName } = this.merchantInfo
+            this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantVersion, storeCount, relationProductName, delayHour: 1, applicationModule: 101 })
+          }
         } catch (error) {}
       } else this.form.merchantDTO = Object.assign(this.form.merchantDTO, { merchantNo: '', merchantVersion: '', relationProductName: '', storeCount: '', applicationModule: '' })
       this.resetDTOList()

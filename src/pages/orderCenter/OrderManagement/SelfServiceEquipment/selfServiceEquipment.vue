@@ -14,7 +14,7 @@
       </el-form>
     </div>
     <div class="data-box" v-loading="checkTabLock">
-      <el-table :data="tableData">
+      <el-table :data="tableData" :max-height="tabMaxHeight">
         <el-table-column prop="serialNo" label="序列号"></el-table-column>
         <el-table-column label="产品">
           <template slot-scope="scope">{{ scope.row.productCode ? `[${scope.row.productCode}] ${scope.row.productName}` : '' }}</template>
@@ -33,10 +33,13 @@
 </template>
 
 <script>
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
 import { queryOrderSelfPage } from '@/api/orderCenter/orderManagement/selfServiceEquipment'
 
 export default {
   name: 'selfServiceEquipment',
+  mixins: [tableMaxHeight],
   data() {
     return {
       form: { custId: '', custName: '' },

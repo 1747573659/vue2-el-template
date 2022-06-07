@@ -4,7 +4,9 @@
       <div slot="header" class="p-card-head">
         <div class="p-card-reason">
           <span class="p-card-title">订单信息</span>
-          <span class="p-card-back" v-if="$route.query.status !== 'add' && form.authOrderDTO.remark">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
+          <template v-if="$route.query.status !== 'add' && form.authOrderDTO.remark && form.authOrderDTO.orderStatus === 5">
+            <span class="p-card-back">（订单被退回，原因：{{ form.authOrderDTO.remark }}）</span>
+          </template>
         </div>
         <div class="p-card-state">
           <span>订单状态：</span>
@@ -349,7 +351,7 @@ export default {
     },
     getWcyInformationObj() {
       if (this.form.detailDTOList.length === 0 || !this.form.merchantDTO.merchantNo) {
-        this.$message({ type: 'warning', message: '请选择商户或产品模块信息' })
+        this.$message({ type: 'warning', message: '请选择正确商户或产品模块信息' })
       } else {
         const insufficientObj = this.form.detailDTOList.filter(item => item.useInventory > item.orderInventory)
         if (insufficientObj.length > 0) {
@@ -582,9 +584,9 @@ export default {
     async getProductByPage({ query = '', page = 1, rows = 10 } = {}) {
       try {
         const res = await authOrderProductPage({ info: query, page, rows, registerMethod: 2, productTypeList: [1], type: '1' })
-        res.results.forEach(item => (item.name = `[${item.code}]${item.name}`))
+        if (res.results) res.results.forEach(item => (item.name = `[${item.code}]${item.name}`))
         this.licensedProducts = this.licensedProducts.concat(res.results || [])
-        this.isLicensedProductMaxPage = !res.results || (res.results && res.results.length < 10)
+        this.isLicensedProductMaxPage = !res?.results || (res.results && res.results.length < 10)
       } catch (error) {}
     }
   }
@@ -629,10 +631,10 @@ export default {
   height: 56px;
   position: fixed;
   bottom: 0;
-  background-color: #fff;
+  background-color: #ffffff;
   line-height: 56px;
   text-align: center;
-  box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 3%);
   z-index: 1000;
   ::v-deep .el-button {
     padding: 8px 22px;

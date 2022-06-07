@@ -3,7 +3,7 @@
     <div class="search-box">
       <el-form size="small" ref="form" :model="form" :inline="true" label-suffix=":" label-width="90px" @submit.native.prevent>
         <el-row type="flex" align="bottom">
-          <el-col :xl="22" :lg="21">
+          <el-col :xl="21" :lg="20">
             <el-form-item label="订单日期">
               <el-date-picker
                 v-model="form.createTime"
@@ -80,11 +80,12 @@
               <km-export-view v-permission="'SOFTWARE_UPDATE_ORDER_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
             </el-form-item>
           </el-col>
-          <el-col :xl="2" :lg="3" style="text-align: right">
+          <el-col :xl="3" :lg="4" style="text-align: right">
             <el-form-item>
-              <el-button type="primary" size="small" v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'" plain icon="el-icon-plus" @click="handleToDetail({ status: 'add' })"
-                >新增</el-button
-              >
+              <template v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'">
+                <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' }, { oldRegistType: 1 })">ERP产品</el-button>
+                <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' }, { oldRegistType: 2 })">微零售</el-button>
+              </template>
             </el-form-item>
           </el-col>
         </el-row>
@@ -203,8 +204,12 @@ export default {
   methods: {
     ...mapActions(['delCachedView']),
     handleToDetail(status, row = {}) {
+      const { id, orderStatus, oldRegistType } = row
       this.delCachedView({ name: 'softwareUpdateOrderDetails' }).then(() => {
-        this.$router.push({ name: 'softwareUpdateOrderDetails', query: Object.assign({ ...status, id: row.id, orderStatus: row.orderStatus }) })
+        this.$router.push({
+          name: 'softwareUpdateOrderDetails',
+          query: Object.assign({ ...status, id, orderStatus, source: oldRegistType === 1 ? 'erp' : 'retail' })
+        })
       })
     },
     handleQueryParams() {
