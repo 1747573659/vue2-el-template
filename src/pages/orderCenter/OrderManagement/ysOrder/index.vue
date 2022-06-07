@@ -54,6 +54,11 @@
                 step-strictly
                 @keyup.enter.native="handleSearch"></el-input-number>
             </el-form-item>
+            <el-form-item label="经销商" prop="agentId">
+              <el-select clearable v-model="searchForm.params.agentId" @keyup.enter.native="handleSearch">
+                <el-option v-for="(item, index) in agentsList" :key="index" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="服务类型">
               <el-select clearable v-model="searchForm.params.serviceType" @keyup.enter.native="handleSearch">
                 <el-option v-for="item in serviceOptions" :key="item.id" :label="item.name" :value="item.id"> </el-option>
@@ -96,6 +101,7 @@
       <el-table :data="tableData" :max-height="tabMaxHeight">
         <el-table-column label="订单编号" prop="orderNo" width="180px"></el-table-column>
         <el-table-column label="商户名称" prop="shopAdminName" width="180px"></el-table-column>
+        <el-table-column label="经销商" prop="orderSalesUserName" width="180px"></el-table-column>
         <el-table-column label="订购服务">
           <template slot-scope="{ row }">
             <div>{{ (row.orderDetailList || []).map(v => `${v.goodsName}*${v.quantity}${v.isProbation === 1 ? '(试用版)' : ''}`).join(',') }}</div>
@@ -153,6 +159,7 @@ import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 import { downloadBufferFile } from '@/utils'
 import { tipsData, orderStatusOptions, contractStatusOptions, serviceOptions, buyFlagOptions, buyFlagEnum, receiptOptions } from './data'
 import { customerPayPage, merchantOrderStatusStatic } from '@/api/orderCenter/orderManagement/ysOrder'
+import { queryAgents } from '@/api/customer/ysMerchantManagement'
 
 export default {
   name: 'ysMerchantManagement',
@@ -168,6 +175,7 @@ export default {
       buyFlagOptions,
       buyFlagEnum,
       receiptOptions,
+      agentsList: [],
       searchForm: {
         page: 1,
         rows: 10,
@@ -181,7 +189,8 @@ export default {
           startTime: '',
           endTime: '',
           orderAmountMin: undefined,
-          orderAmountMax: undefined
+          orderAmountMax: undefined,
+          agentId: ''
         }
       },
       total: 0,
@@ -202,6 +211,7 @@ export default {
     }
   },
   created() {
+    this.getAgentsList()
     this.merchantOrderStatusStatic()
     this.handleSearch()
   },
@@ -235,11 +245,16 @@ export default {
           startTime: '',
           endTime: '',
           orderAmountMin: undefined,
-          orderAmountMax: undefined
+          orderAmountMax: undefined,
+          agentId: ''
         }
       }
       this.date = []
       this.handleSearch()
+    },
+    async getAgentsList() {
+      let res = await queryAgents()
+      this.agentsList = res
     },
     async merchantOrderStatusStatic() {
       let res = await merchantOrderStatusStatic()

@@ -31,6 +31,11 @@
                 <el-option :value="0" label="否"></el-option>
               </el-select>
             </el-form-item>
+            <el-form-item label="经销商" prop="agentId">
+              <el-select clearable v-model="searchForm.params.agentId" @keyup.enter.native="handleSearch">
+                <el-option v-for="(item, index) in agentsList" :key="index" :label="item.name" :value="item.id"></el-option>
+              </el-select>
+            </el-form-item>
             <el-form-item label="ERP产品" prop="erpName">
               <el-select clearable multiple v-model="searchForm.params.erpCodes" @keyup.enter.native="handleSearch">
                 <el-option v-for="(item, index) in erpSelectList" :key="index" :label="item.label" :value="item.value"></el-option>
@@ -80,6 +85,7 @@
             {{ scope.row.loginName ? scope.row.loginName : '--' }}
           </template>
         </el-table-column>
+        <el-table-column label="经销商" prop="chName" width="180px"></el-table-column>
         <el-table-column label="ERP产品" prop="erpName"></el-table-column>
         <el-table-column label="开通时间" prop="activeTime" width="120px"></el-table-column>
         <el-table-column label="首购时间" prop="firstPurchaseTime" width="120px"></el-table-column>
@@ -119,7 +125,7 @@
 import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 import { downloadBufferFile } from '@/utils'
 import { tipsData, accountStatusData, accountStatusEnum, erpSelectList } from './data'
-import { queryCustomerVersion, queryByPage, queryVersionStatic } from '@/api/customer/ysMerchantManagement'
+import { queryCustomerVersion, queryByPage, queryVersionStatic, queryAgents } from '@/api/customer/ysMerchantManagement'
 
 export default {
   name: 'ysMerchantManagement',
@@ -131,6 +137,7 @@ export default {
       accountStatusData,
       accountStatusEnum,
       erpSelectList,
+      agentsList: [],
       currentVersionData: [],
       searchForm: {
         page: 1,
@@ -145,7 +152,8 @@ export default {
           isMicro: '',
           timeQueryType: '1',
           queryStartTime: '',
-          queryEndTime: ''
+          queryEndTime: '',
+          agentId: ''
         }
       },
       date: [],
@@ -166,6 +174,7 @@ export default {
     }
   },
   created() {
+    this.getAgentsList()
     this.getCurrentVersion()
     this.queryVersionStatic()
     this.handleSearch()
@@ -201,7 +210,8 @@ export default {
           isMicro: '',
           timeQueryType: '1',
           queryStartTime: '',
-          queryEndTime: ''
+          queryEndTime: '',
+          agentId: ''
         }
       }
       this.date = []
@@ -214,6 +224,10 @@ export default {
           e.total = res[e.key]
         })
       }
+    },
+    async getAgentsList() {
+      let res = await queryAgents()
+      this.agentsList = res
     },
     async getCurrentVersion() {
       let res = await queryCustomerVersion()
