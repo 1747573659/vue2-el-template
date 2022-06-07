@@ -11,6 +11,7 @@ export function productQueryTypeList(data) {
     data
   })
 }
+
 export function productQueryByPage(data) {
   return request({
     url: urlLinks.productQueryByPage,
