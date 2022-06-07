@@ -1,33 +1,27 @@
 <template>
   <div>
     <div class="search-box">
-      <el-row>
-        <el-col :span="20">
-          <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
-            <el-form-item label="产品:">
-              <el-select clearable class="address-select" filterable placeholder="全部" size="small" style="width: 100%" v-model="form.productCode">
-                <el-option :key="index" :label="item.name" :value="item.code" v-for="(item, index) in allProductList"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="库存状态:">
-              <el-select clearable class="address-select" placeholder="全部" size="small" style="width: 100%" v-model="form.inventoryType">
-                <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in inventoryTypeList"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item>
-              <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
-            </el-form-item>
-            <el-form-item>
-              <el-button v-permission="'SOFTWARE_STOCK_EXPORT'" @click="handleExport()" :loading="exportLoad">导出</el-button>
-              <km-export-view v-permission="'SOFTWARE_STOCK_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
+      <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
+        <el-form-item label="产品:">
+          <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width: 100%" v-model="form.productCodeQueryList">
+            <el-option :key="index" :label="item.name" :value="item.code" v-for="(item, index) in allProductList"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="库存状态:">
+          <el-select clearable class="address-select" placeholder="全部" size="small" style="width: 100%" v-model="form.inventoryType">
+            <el-option :key="index" :label="item.name" :value="item.id" v-for="(item, index) in inventoryTypeList"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item>
+          <el-button type="primary" @click="handleCurrentChange(1)">查询</el-button>
+          <el-button v-permission="'SOFT_STOCK_EXPORT'" @click="handleExport" :loading="exportLoad">导出</el-button>
+          <km-export-view v-permission="'SOFT_STOCK_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+        </el-form-item>
+      </el-form>
     </div>
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
-      <el-table row-key="id" :data="tableList" style="width: 100%" @sort-change="handleTabSort" v-loading="tableLoading" ref="table">
+      <el-table :data="tableList" :max-height="tabMaxHeight - 56" style="width: 100%" @sort-change="handleTabSort" v-loading="tableLoading">
         <el-table-column prop="productName" label="产品">
           <template slot-scope="scope">
             <span>{{ '[' + scope.row.productCode + ']' + scope.row.productName }}</span>
@@ -77,13 +71,16 @@
   </div>
 </template>
 <script>
-import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
-import { getInventoryAndSummary } from '@/api/accountManagement/softStockQuery'
-import { productQueryByPage } from '@/api/product'
-import { xftArchiveExportLog, xftArchiveExportDel, xftArchiveExport } from '@/api/xftArchive'
 import { mapActions } from 'vuex'
+import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
+import { productQueryByPage } from '@/api/product'
+import { getInventoryAndSummary, exportInventoryTotal, exportInventoryDel, exportInventoryExportLog } from '@/api/accountManagement/softStockQuery'
+
 export default {
   name: 'querySoftStock',
+  mixins: [tableMaxHeight],
   components: { tableSummary },
   data() {
     return {
@@ -108,14 +105,9 @@ export default {
       form: {
         orders: {},
         inventoryType: '',
-        productCode: ''
+        productCodeQueryList: []
       },
       exportLoad: false
-    }
-  },
-  computed: {
-    exportQueryParams() {
-      return { productCode: this.form.productCode, inventoryType: this.form.inventoryType }
     }
   },
   created() {
@@ -128,34 +120,19 @@ export default {
     detail(row) {
       const { productCode, productName, agentId } = row
       this.delCachedView({ name: 'softStockChangeHistory' }).then(() => {
-        this.$router.push({
-          name: 'softStockChangeHistory',
-          query: {
-            productCode,
-            productName,
-            agentId
-          }
-        })
+        this.$router.push({ name: 'softStockChangeHistory', query: { productCode, productName, agentId } })
       })
     },
     handleTabSort({ prop, order }) {
       this.form.orders = { [prop]: order ? order.substring(0, order.indexOf('ending')) : '' }
       this.getPageList()
     },
-    // 获取所有产品列表
-    async getAllProductList() {
-      let data = {
-        page: 1,
-        rows: 500,
-        // isOnSale: '1',
-        type: '1',
-        notProductTypeList: [99]
-        // productTypeList: [1, 2]
+    handleQueryParams() {
+      return {
+        ...this.form,
+        page: this.thisPage,
+        rows: this.pageSize
       }
-      try {
-        const res = await productQueryByPage(data)
-        this.allProductList = res.results
-      } catch (error) {}
     },
     // 分页
     handleSizeChange(val) {
@@ -171,12 +148,7 @@ export default {
     async getPageList() {
       try {
         this.tableLoading = true
-        let subData = {
-          orders: this.form.orders,
-          productCode: this.form.productCode,
-          inventoryType: this.form.inventoryType
-        }
-        const res = await getInventoryAndSummary({ ...subData, page: this.thisPage, rows: this.pageSize })
+        const res = await getInventoryAndSummary(this.handleQueryParams())
         this.detailCount(res)
         this.tableList = res.results || []
         this.tableTotal = res.totalCount || 0
@@ -198,18 +170,25 @@ export default {
       this.exportLoad = true
       try {
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        await exportInventoryTotal({ export: true, from: true, ...this.handleQueryParams() })
       } catch (error) {
       } finally {
         this.exportLoad = false
       }
     },
     async handleExportRecord({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const data = { exportType: 1, page: currentPage, rows: pageSize }
-      return await xftArchiveExportLog(data)
+      const data = { exportType: 14, page: currentPage, rows: pageSize }
+      return await exportInventoryExportLog(data)
     },
     async handleExportDel(row) {
-      return await xftArchiveExportDel({ id: row.id })
+      return await exportInventoryDel({ id: row.id })
+    },
+    // 获取所有产品列表
+    async getAllProductList() {
+      try {
+        const res = await productQueryByPage({ page: 1, rows: 500, type: '1', notProductTypeList: [99] })
+        this.allProductList = res.results
+      } catch (error) {}
     }
   }
 }

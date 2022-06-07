@@ -21,7 +21,7 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table v-loading="loading" :data="tableData" tooltip-effect="dark" style="width: 100%">
+      <el-table v-loading="loading" :data="tableData" :max-height="tabMaxHeight" tooltip-effect="dark" style="width: 100%">
         <el-table-column prop="adminId" label="商户编号"> </el-table-column>
         <el-table-column prop="adminName" label="商户名称"> </el-table-column>
         <el-table-column prop="mid" label="品牌编码"> </el-table-column>
@@ -49,7 +49,7 @@
           </template>
         </el-table-column>
       </el-table>
-      <div v-show="total > 0" class="km-page-block">
+      <div class="km-page-block">
         <el-pagination
           @size-change="getPageList"
           @current-change="handleCurrentChange"
@@ -65,11 +65,14 @@
 </template>
 
 <script>
-import { queryMerchantListByPage, branchUpdateStatus, deleteMerchant } from '@/api/customer/merchant'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 import { mapActions } from 'vuex'
+
+import { queryMerchantListByPage, branchUpdateStatus, deleteMerchant } from '@/api/customer/merchant'
 
 export default {
   name: 'brandHome',
+  mixins: [tableMaxHeight],
   filters: {
     fiterStatus(val) {
       if (val === 0) {
