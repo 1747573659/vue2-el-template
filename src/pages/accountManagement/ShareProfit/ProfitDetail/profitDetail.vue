@@ -15,12 +15,7 @@
             :clearable="false"></el-date-picker>
         </el-form-item>
         <el-form-item label="订单编码">
-          <el-input v-model.trim="form.thirdBillNo" clearable :maxlength="14"></el-input>
-        </el-form-item>
-        <el-form-item label="行业">
-          <el-select v-model="form.industry" placeholder="全部" clearable>
-            <el-option :key="item.contractIndustry" :label="item.contractIndustryName" :value="item.contractIndustry" v-for="item in industryLists"></el-option>
-          </el-select>
+          <el-input v-model.trim="form.thirdBillNo" clearable :maxlength="32"></el-input>
         </el-form-item>
         <el-form-item label="产品">
           <km-select-page
@@ -97,14 +92,13 @@ import dayjs from 'dayjs'
 import NP from 'number-precision'
 
 import { productQueryByPage } from '@/api/product'
-import { queryBenefitPage, queryBenefitAccount, getBenefitStatusMap } from '@/api/accountManagement/shareProfit/profitDetail'
+import { queryBenefitPage, getBenefitStatusMap } from '@/api/accountManagement/shareProfit/profitDetail'
 
 export default {
   data() {
     return {
       licensedProductData: [],
       isLicensedProductMaxPage: false,
-      industryLists: [],
       benefitStatusData: [],
       form: { createTime: [], thirdBillNo: '', industry: '', productCodes: [], benefitStatusList: [], billingMonth: [] },
       checkTabLock: false,
@@ -127,13 +121,8 @@ export default {
   beforeRouteEnter(to, from, next) {
     next(vm => {
       if (vm.$route.query.billingMonth) {
-        // vm.getAgentPage({ query: vm.$route.query.agentId })
         const billingMonth = vm.$route.query.billingMonth
-        vm.form.billingMonth = [dayjs(billingMonth).startOf('month').format('YYYY-MM-DD 00:00:00'), dayjs(billingMonth).endOf('month').format('YYYY-MM-DD 00:00:00')]
-        // vm.form.agentId = vm.$route.query.agentId
-        // setTimeout(() => {
-        // vm.$refs.agentVO.selectVal = vm.$route.query.agentName
-        // }, 800)
+        vm.form.billingMonth = [dayjs(billingMonth).startOf('month').format('YYYY-MM-DD HH:mm:ss'), dayjs(billingMonth).endOf('month').format('YYYY-MM-DD HH:mm:ss')]
       } else {
         vm.form.billingMonth = []
       }
@@ -157,8 +146,8 @@ export default {
         { benefitCountOrder, page: this.currentPage, rows: this.pageSize },
         { benefitStatusList: benefitStatusList || [], minDate: createTime[0] || '', maxDate: createTime[1] || '' },
         {
-          overMinDate: billingMonth[0] ? dayjs(billingMonth[0]).startOf('month').format('YYYY-MM-DD 00:00:00') : '',
-          overMaxDate: billingMonth[1] ? dayjs(billingMonth[1]).startOf('month').format('YYYY-MM-DD 00:00:00') : ''
+          overMinDate: billingMonth[0] ? dayjs(billingMonth[0]).startOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
+          overMaxDate: billingMonth[1] ? dayjs(billingMonth[1]).endOf('month').format('YYYY-MM-DD HH:mm:ss') : ''
         }
       )
     },
@@ -176,10 +165,6 @@ export default {
       } finally {
         this.checkTabLock = false
       }
-    },
-    async getBenefitAccount() {
-      const res = await queryBenefitAccount({}).catch()
-      this.industryLists = res.filter(item => item.contractIndustry === 5)
     },
     async getProductByPage({ query = '', page = 1, row = 10 } = {}) {
       const res = await productQueryByPage({ info: query, page, row, notProductTypeList: [99] }).catch()
