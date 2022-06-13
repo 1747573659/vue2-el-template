@@ -52,7 +52,7 @@
       <el-button size="small" plain @click="handleCancel('softwareAuthorization')">{{ $route.query.status === 'detail' ? '关闭' : '取消' }}</el-button>
       <el-button size="small" @click="handleDelRow" v-if="$route.query.status === 'edit'">删除</el-button>
       <template v-if="['add', 'edit'].includes($route.query.status)">
-        <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave"> 保存 </el-button>
+        <el-button size="small" type="primary" plain :disabled="isWlsDisableStatus" :loading="checkSaveBtnLoad" @click="handleSave">保存</el-button>
       </template>
       <template v-if="$route.query.status === 'edit'">
         <el-button size="small" type="primary" :disabled="isWlsDisableStatus" v-permission="'SOFTWARE_AUTHORIZATION_SUBMIT'" :loading="checkVerifyBtnLoad" @click="handleVerify">

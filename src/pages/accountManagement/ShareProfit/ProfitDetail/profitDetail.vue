@@ -100,7 +100,7 @@ export default {
       licensedProductData: [],
       isLicensedProductMaxPage: false,
       benefitStatusData: [],
-      form: { createTime: [], thirdBillNo: '', industry: '', productCodes: [], benefitStatusList: [], billingMonth: [] },
+      form: { createTime: [], thirdBillNo: '', industry: '', productCodes: [], benefitStatusList: [], billingMonth: [], benefitCountOrder: '' },
       checkTabLock: false,
       tableData: [],
       currentPage: 1,
@@ -123,6 +123,7 @@ export default {
       if (vm.$route.query.billingMonth) {
         const billingMonth = vm.$route.query.billingMonth
         vm.form.billingMonth = [dayjs(billingMonth).startOf('month').format('YYYY-MM-DD HH:mm:ss'), dayjs(billingMonth).endOf('month').format('YYYY-MM-DD HH:mm:ss')]
+        vm.form.benefitCountOrder = vm.$route.query.benefitCountOrder
       } else {
         vm.form.billingMonth = []
       }
@@ -153,6 +154,7 @@ export default {
     },
     handleSearch() {
       this.currentPage = 1
+      this.form.benefitCountOrder = ''
       this.getQueryPage()
     },
     async getQueryPage() {
