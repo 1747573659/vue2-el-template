@@ -222,8 +222,10 @@ export default {
           remark: ''
         })
       }
-      if (this.form.detailDTOList.length === 0 && this.selectMaps.size) this.selectMaps.forEach(item => addDetailItem(item))
-      else if (this.selectMaps.size && this.form.detailDTOList?.length > 0) {
+      if (this.form.detailDTOList.length === 0 && this.selectMaps.size) {
+        this.form.authOrderDTO.inventoryAmount = this.form.merchantDTO.delayHour
+        this.selectMaps.forEach(item => addDetailItem(item))
+      } else if (this.selectMaps.size && this.form.detailDTOList?.length > 0) {
         this.form.detailDTOList.forEach((item, index) => {
           if (!this.selectMaps.has(item.shopCode)) this.form.detailDTOList.splice(index, 1)
         })
@@ -242,6 +244,7 @@ export default {
     },
     async handleApplicationModule(val) {
       this.form.merchantDTO.delayHour = 1
+      this.form.authOrderDTO.inventoryAmount = ''
       if (!this.form.merchantDTO.merchantId) this.$message({ type: 'warning', message: '请先选择商户' })
       else {
         if (this.merchantInfo?.productCode) {

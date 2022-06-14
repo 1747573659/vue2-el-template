@@ -313,6 +313,8 @@ export default {
         this.$message({ type: 'warning', message: '请选择应用系统' })
       } else if (!this.form.merchantDTO.delayHour) {
         this.$message({ type: 'warning', message: '请选择延期时长' })
+      } else if (this.$refs.information.activeName === '2' && this.form.renewAuthOrderDetailDTOList.length === 0) {
+        this.$message({ type: 'warning', message: '续费授权对象不能为空' })
       } else {
         const detailDTOList = this.form.addAuthOrderDetailDTOList.concat(this.form.renewAuthOrderDetailDTOList)
         const insufficientObj = detailDTOList.filter(item => {
