@@ -41,7 +41,8 @@
             range-separator="至"
             start-placeholder="开始月份"
             end-placeholder="结束月份"
-            :clearable="false"></el-date-picker>
+            :clearable="false"
+            clearables></el-date-picker>
         </el-form-item>
         <el-button type="primary" size="small" @click="handleSearch" style="margin-left: 80px">查询</el-button>
       </el-form>
@@ -73,7 +74,9 @@
         <el-table-column label="分润金额" align="right">
           <template slot-scope="scope">{{ scope.row.benefitAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="分润月份" prop="benefitTime" width="110"></el-table-column>
+        <el-table-column label="分润月份" width="110">
+          <template slot-scope="scope">{{ scope.row.benefitTime | formatBenefitTime }}</template>
+        </el-table-column>
         <el-table-column label="合同状态">
           <template slot-scope="scope">{{ scope.row.thirdContractStatus === 0 ? '已签约' : '未签约' }}</template>
         </el-table-column>
@@ -116,6 +119,9 @@ export default {
   filters: {
     formatAmount(val) {
       return val ? NP.round(NP.divide(val, 100), 2) : 0
+    },
+    formatBenefitTime(val) {
+      return dayjs(val).format('YYYY-MM')
     }
   },
   beforeRouteEnter(to, from, next) {
@@ -133,9 +139,8 @@ export default {
   created() {
     this.getProductByPage()
     this.getBenefitStatusMap()
-    this.getBenefitAccount()
     const StartTime = dayjs().subtract(30, 'days')
-    this.form.createTime = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
+    this.form.createTime = [StartTime.format('YYYY-MM-DD HH:mm:ss'), dayjs().format('YYYY-MM-DD HH:mm:ss')]
   },
   methods: {
     handleQueryParams() {
