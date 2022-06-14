@@ -276,6 +276,7 @@ export default {
       this.currentPageSelectSets.clear()
       this.form.addAuthOrderDetailDTOList = []
       this.form.renewAuthOrderDetailDTOList = []
+      this.form.authOrderDTO.inventoryAmount = ''
     },
     handleShopPage(val) {
       this.resetDTOList()
@@ -304,29 +305,27 @@ export default {
             }
             const useModalInner = res[stateAttr] ? parseFloat(res[stateAttr]) : ''
             this.form.authOrderDTO.useModalInner = useModalInner
-
-            await this.getProductStock()
-            if (this.activeName === '1') {
-              this.form.addAuthOrderDetailDTOList = [
-                {
-                  productCode,
-                  productName: name,
-                  addNum: 1,
-                  remark: '',
-                  useInventory: NP.times(delayHour, 1),
-                  billNo: this.form.authOrderDTO?.billNo ?? '',
-                  orderInventory: this.productStockObj?.totalAmount ?? 0
-                }
-              ]
-            }
           }
-
           if (applicationSystem === 206) {
             const authXmypUserNum = await authOrderYsXmypUserNum(custId)
             this.form.authOrderDTO.userLevel = authXmypUserNum?.userLevel ?? 1
           }
           if ([203, 206].includes(applicationSystem) && this.form.authOrderDTO.useModalInner === 0) this.activeName = '2'
           else this.activeName = '1'
+          if (this.activeName === '1') {
+            this.form.addAuthOrderDetailDTOList = [
+              {
+                productCode,
+                productName: name,
+                addNum: 1,
+                remark: '',
+                useInventory: NP.times(delayHour, 1),
+                billNo: this.form.authOrderDTO?.billNo ?? '',
+                orderInventory: this.productStockObj?.totalAmount ?? 0
+              }
+            ]
+            await this.getProductStock()
+          }
         } catch (error) {}
       }
     },
