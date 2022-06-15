@@ -53,7 +53,6 @@
           <km-select-page
             ref="wlsMerchantSelect"
             v-model="form.oldMerchantName"
-            :model-name="form.oldMerchantName"
             option-label="CustNameExpand"
             option-value="CustID"
             :data.sync="shopPageData"
@@ -310,11 +309,12 @@ export default {
           VersionType: merchantVersion,
           productCode: oldMerchantProductCode,
           ProductionTypeName: oldMerchantProductCodeName,
-          BranchCount: merchantCount
+          BranchCount: merchantCount,
+          KMValidity: updateAfterDate
         } = this.shopPageData.find(item => item.CustID === val)
-        this.form = Object.assign(this.form, { oldMerchantId: val, merchantVersion, oldMerchantProductCode, oldMerchantProductCodeName, merchantCount })
+        this.form = Object.assign(this.form, { oldMerchantId: val, merchantVersion, oldMerchantProductCode, oldMerchantProductCodeName, merchantCount, updateAfterDate })
       } else {
-        const resetDTO = { oldMerchantId: '', merchantVersion: '', oldMerchantProductCode: '', oldMerchantProductCodeName: '', merchantCount: '' }
+        const resetDTO = { oldMerchantId: '', merchantVersion: '', oldMerchantProductCode: '', oldMerchantProductCodeName: '', merchantCount: '', updateAfterDate: '' }
         this.form = Object.assign(this.form, resetDTO)
       }
     },
@@ -403,7 +403,7 @@ export default {
     setOrderSave() {
       return this.handleValidateForm().then(async () => {
         if (this.isFormValidatePass) {
-          const { handUser, id, billNo, upgradeAmount, oldMerchantId, oldMerchantProductCode } = this.form
+          const { handUser, id, billNo, upgradeAmount, updateAfterDate, oldMerchantId, oldMerchantProductCode } = this.form
           if (this.$route.query.source === 'erp') {
             const { oldRegistType, oldMerchantAuthType, oldMerchantAuthCount } = this.form
             const { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode } = this.form
@@ -417,7 +417,7 @@ export default {
             const { updateVersion, merchantCount, merchantVersion } = this.form
             let data = Object.assign(
               { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
-              { updateVersion, merchantCount, merchantVersion, oldMerchantId, oldMerchantProductCode }
+              { updateVersion, merchantCount, merchantVersion, oldMerchantId, oldMerchantProductCode, updateAfterDate }
             )
             return this.$route.query.status === 'add' ? await softUpgradeAddWls(data) : await softUpgradeUpdateWls(data)
           }

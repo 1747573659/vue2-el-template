@@ -95,7 +95,9 @@
           </template>
         </el-table-column>
         <el-table-column label="发货状态">
-          <template slot-scope="scope">{{ deliveryStatus.has(scope.row.goodsStatus) ? deliveryStatus.get(scope.row.goodsStatus).label : '--' }}</template>
+          <template slot-scope="scope">
+            {{ deliveryStatus.has(scope.row.goodsStatus) && scope.row.goodsStatus !== -1 ? deliveryStatus.get(scope.row.goodsStatus).label : '--' }}
+          </template>
         </el-table-column>
         <el-table-column prop="handUserName" label="受理人"></el-table-column>
         <el-table-column prop="createUserName" label="下单人"></el-table-column>
