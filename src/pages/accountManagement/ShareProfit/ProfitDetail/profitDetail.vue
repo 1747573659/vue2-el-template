@@ -35,14 +35,7 @@
           </el-select>
         </el-form-item>
         <el-form-item label="结算月份">
-          <el-date-picker
-            v-model="form.billingMonth"
-            type="monthrange"
-            range-separator="至"
-            start-placeholder="开始月份"
-            end-placeholder="结束月份"
-            :clearable="false"
-            clearables></el-date-picker>
+          <el-date-picker v-model="form.billingMonth" type="monthrange" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" clearable></el-date-picker>
         </el-form-item>
         <el-button type="primary" size="small" @click="handleSearch" style="margin-left: 80px">查询</el-button>
       </el-form>
@@ -152,8 +145,8 @@ export default {
         { benefitCountOrder, page: this.currentPage, rows: this.pageSize },
         { benefitStatusList: benefitStatusList || [], minDate: createTime[0] || '', maxDate: createTime[1] || '' },
         {
-          overMinDate: billingMonth[0] ? dayjs(billingMonth[0]).startOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
-          overMaxDate: billingMonth[1] ? dayjs(billingMonth[1]).endOf('month').format('YYYY-MM-DD HH:mm:ss') : ''
+          overMinDate: billingMonth && billingMonth[0] ? dayjs(billingMonth[0]).startOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
+          overMaxDate: billingMonth && billingMonth[1] ? dayjs(billingMonth[1]).endOf('month').format('YYYY-MM-DD HH:mm:ss') : ''
         }
       )
     },

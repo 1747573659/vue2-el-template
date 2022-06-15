@@ -3,13 +3,7 @@
     <div class="search-box">
       <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="80px" @submit.native.prevent>
         <el-form-item label="结算月份">
-          <el-date-picker
-            v-model="form.billingMonth"
-            type="monthrange"
-            range-separator="至"
-            start-placeholder="开始月份"
-            end-placeholder="结束月份"
-            :clearable="false"></el-date-picker>
+          <el-date-picker v-model="form.billingMonth" type="monthrange" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" clearable></el-date-picker>
         </el-form-item>
         <el-form-item label="分润状态">
           <el-select v-model="form.benefitStatusList" placeholder="全部" clearable>
@@ -139,8 +133,8 @@ export default {
       const { billingMonth, benefitStatusList, ...params } = this.form
       return Object.assign(params, {
         benefitStatusList: benefitStatusList || [],
-        overMinDate: billingMonth[0] ? dayjs(billingMonth[0]).startOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
-        overMaxDate: billingMonth[1] ? dayjs(billingMonth[1]).endOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
+        overMinDate: billingMonth && billingMonth[0] ? dayjs(billingMonth[0]).startOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
+        overMaxDate: billingMonth && billingMonth[1] ? dayjs(billingMonth[1]).endOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
         page: this.currentPage,
         rows: this.pageSize
       })
