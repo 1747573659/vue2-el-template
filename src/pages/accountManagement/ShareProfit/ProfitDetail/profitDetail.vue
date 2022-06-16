@@ -52,7 +52,7 @@
         </el-table-column>
         <el-table-column label="结算状态" width="110">
           <template slot-scope="scope">
-            <template v-if="scope.row.benefitStatus === 25"><span>待商户确认</span><span style="color: #ff0000">（被退回）</span></template>
+            <template v-if="scope.row.benefitStatus === 25"><span>待商务确认</span><span style="color: #ff0000">（被退回）</span></template>
             <span v-else>{{ scope.row.benefitStatusName }}</span>
           </template>
         </el-table-column>
@@ -74,7 +74,7 @@
           <template slot-scope="scope">{{ scope.row.thirdContractStatus === 0 ? '已签约' : '未签约' }}</template>
         </el-table-column>
         <el-table-column label="填写发票">
-          <template slot-scope="scope">{{ scope.row.thirdInvoiceStatus === 0 ? '已填写发票' : '未填写发票' }}</template>
+          <template slot-scope="scope">{{ scope.row.thirdInvoiceStatus === 0 ? '已提交' : '已开票' }}</template>
         </el-table-column>
         <el-table-column label="受理人" prop="handlerUserName"></el-table-column>
       </el-table>

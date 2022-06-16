@@ -32,7 +32,7 @@
         </el-table-column>
         <el-table-column label="结算状态" width="110">
           <template slot-scope="scope">
-            <template v-if="scope.row.benefitStatus === 25"><span>待商户确认</span><span style="color: #ff0000">（被退回）</span></template>
+            <template v-if="scope.row.benefitStatus === 25"><span>待商务确认</span><span style="color: #ff0000">（被退回）</span></template>
             <span v-else>{{ scope.row.benefitStatusName }}</span>
           </template>
         </el-table-column>
@@ -97,8 +97,8 @@ export default {
   },
   created() {
     this.getBenefitStatusMap()
-    // const StartTime = moment().subtract(30, 'days')
-    // this.form.billingMonth = [StartTime.format('YYYY-MM-DD 00:00:00'), moment().format('YYYY-MM-DD 23:59:59')]
+    const StartTime = dayjs().subtract(30, 'days')
+    this.form.billingMonth = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
   },
   mounted() {
     this.getQueryPage()
