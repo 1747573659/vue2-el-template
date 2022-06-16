@@ -45,8 +45,7 @@
         <el-table-column label="操作">
           <template slot-scope="scope">
             <template v-if="scope.row.benefitStatus === 10">
-              <!-- <el-button type="text" size="small" v-permission="'SHAREPROFIT_PROFITSUMMARY_CONFIRM'" @click="handleToConfirm(scope.row)">确认</el-button> -->
-              <el-button type="text" size="small" @click="handleToConfirm(scope.row)">确认</el-button>
+              <el-button type="text" size="small" v-permission="'SHAREPROFIT_PROFITSUMMARY_CONFIRM'" @click="handleToConfirm(scope.row)">确认</el-button>
             </template>
             <el-button type="text" size="small" @click="handleToDetail(scope.row)">详情</el-button>
           </template>
