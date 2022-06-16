@@ -67,7 +67,7 @@
         <el-table-column label="分润金额" align="right">
           <template slot-scope="scope">{{ scope.row.benefitAmount | formatAmount }}</template>
         </el-table-column>
-        <el-table-column label="分润月份" width="110">
+        <el-table-column label="结算月份" width="110">
           <template slot-scope="scope">{{ scope.row.benefitTime | formatBenefitTime }}</template>
         </el-table-column>
         <el-table-column label="合同状态">

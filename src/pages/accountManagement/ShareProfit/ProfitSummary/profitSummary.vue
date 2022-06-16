@@ -26,7 +26,7 @@
         <p>科脉伙伴应及时结算分润，如长达6个月未结算则视为放弃分润权利，科脉不再追溯结算。</p>
       </div>
       <el-table :data="tableData">
-        <el-table-column label="分润月份" prop="benefitTimeFormat" width="100"></el-table-column>
+        <el-table-column label="结算月份" prop="benefitTimeFormat" width="100"></el-table-column>
         <el-table-column label="经销商">
           <template slot-scope="scope">{{ `${scope.row.agentId ? '[' + scope.row.agentId + ']' : ''}${scope.row.agentName || ''}` }}</template>
         </el-table-column>
@@ -53,8 +53,8 @@
       </el-table>
       <km-pagination :request="getQueryPage" :current-page.sync="currentPage" :page-size.sync="pageSize" :total="totalPage" />
     </div>
-    <el-dialog title="确认" width="600px" :visible.sync="checkProfitVisible">
-      <el-form ref="profitForm" :model="profitForm" size="small" label-suffix=":" label-width="90px">
+    <el-dialog title="确认" width="500px" :visible.sync="checkProfitVisible">
+      <el-form ref="profitForm" :model="profitForm" size="small" label-suffix=":" label-width="70px">
         <el-form-item label="发票号" prop="invoiceNo" :rules="{ required: true, message: '请输入发票号', trigger: ['blur', 'change'] }">
           <el-input v-model="profitForm.invoiceNo" clearable style="width: 100%"></el-input>
         </el-form-item>
