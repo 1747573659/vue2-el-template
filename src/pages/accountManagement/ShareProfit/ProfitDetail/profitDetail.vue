@@ -74,7 +74,7 @@
           <template slot-scope="scope">{{ scope.row.thirdContractStatus === 0 ? '已签约' : '未签约' }}</template>
         </el-table-column>
         <el-table-column label="填写发票">
-          <template slot-scope="scope">{{ scope.row.thirdInvoiceStatus === 0 ? '已提交' : '已开票' }}</template>
+          <template slot-scope="scope">{{ scope.row.thirdInvoiceStatus === 0 ? '已填写发票' : '未填写发票' }}</template>
         </el-table-column>
         <el-table-column label="受理人" prop="handlerUserName"></el-table-column>
       </el-table>
