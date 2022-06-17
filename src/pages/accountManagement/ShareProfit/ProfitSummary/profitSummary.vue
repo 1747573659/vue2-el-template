@@ -3,7 +3,14 @@
     <div class="search-box">
       <el-form size="small" :model="form" :inline="true" label-suffix=":" label-width="80px" @submit.native.prevent>
         <el-form-item label="结算月份">
-          <el-date-picker v-model="form.billingMonth" type="monthrange" range-separator="至" start-placeholder="开始月份" end-placeholder="结束月份" clearable></el-date-picker>
+          <el-date-picker
+            v-model="form.billingMonth"
+            type="monthrange"
+            :picker-options="pickerOptions"
+            range-separator="至"
+            start-placeholder="开始月份"
+            end-placeholder="结束月份"
+            clearable></el-date-picker>
         </el-form-item>
         <el-form-item label="分润状态">
           <el-select v-model="form.benefitStatusList" placeholder="全部" clearable>
@@ -90,7 +97,7 @@ export default {
       pageSize: 10,
       pickerOptions: {
         disabledDate(time) {
-          return time.getTime() > dayjs().endOf('day').valueOf()
+          return time.getTime() > dayjs().endOf('month').valueOf() || time.getTime() < dayjs().endOf('month').subtract(6, 'month').endOf('month').valueOf()
         }
       }
     }
@@ -98,7 +105,7 @@ export default {
   created() {
     this.getBenefitStatusMap()
     const StartTime = dayjs().subtract(30, 'days')
-    this.form.billingMonth = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().format('YYYY-MM-DD 23:59:59')]
+    this.form.billingMonth = [StartTime.format('YYYY-MM-DD 00:00:00'), dayjs().endOf('day').format('YYYY-MM-DD HH:mm:ss')]
   },
   mounted() {
     this.getQueryPage()
