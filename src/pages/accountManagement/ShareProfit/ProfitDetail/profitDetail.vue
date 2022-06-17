@@ -75,7 +75,7 @@
           <template slot-scope="scope">{{ scope.row.benefitAmount | formatAmount }}</template>
         </el-table-column>
         <el-table-column label="结算月份" width="110">
-          <template slot-scope="scope">{{ scope.row.benefitTime | formatBenefitTime }}</template>
+          <template slot-scope="scope">{{ scope.row.benefitTime | formatBenefitTime(scope.row.benefitStatus) }}</template>
         </el-table-column>
         <el-table-column label="合同状态">
           <template slot-scope="scope">{{ scope.row.thirdContractStatus === 0 ? '已签约' : '未签约' }}</template>
@@ -125,8 +125,8 @@ export default {
     formatAmount(val) {
       return val ? NP.round(NP.divide(val, 100), 2) : 0
     },
-    formatBenefitTime(val) {
-      return dayjs(val).format('YYYY-MM')
+    formatBenefitTime(val, status) {
+      return status ? dayjs(val).format('YYYY-MM') : ''
     }
   },
   beforeRouteEnter(to, from, next) {
