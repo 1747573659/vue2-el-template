@@ -43,7 +43,7 @@
     <div class="data-box" v-loading="checkTabLock">
       <el-table :data="tableData">
         <el-table-column label="订单日期" prop="orderTime" width="110"></el-table-column>
-        <el-table-column label="订单编号" prop="thirdBillNo"></el-table-column>
+        <el-table-column label="订单编号" prop="thirdBillNo" width="160"></el-table-column>
         <el-table-column label="经销商" min-width="110">
           <template slot-scope="scope">{{ `${scope.row.agentId ? '[' + scope.row.agentId + ']' : ''}${scope.row.agentName || ''}` }}</template>
         </el-table-column>
