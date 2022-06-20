@@ -221,8 +221,8 @@ export default {
       else if (row.replaceableNum < row.replaceNum) {
         this.$message({ type: 'warning', message: '可换数量不能大于实换数量' })
         row.replaceNum = row.replaceableNum
-      } else if (!/^\+?[1-9]{1}[0-9]{0,2}\d{0,0}$/.test(row.replaceNum)) {
-        this.$message({ type: 'warning', message: '实换数量范围为[1-999]' })
+      } else if (!/^\+?[1-9]{1}[0-9]{0,3}\d{0,0}$/.test(row.replaceNum)) {
+        this.$message({ type: 'warning', message: '实换数量范围为[1-9999]' })
         row.replaceNum = 1
       } else {
         const replaceNum = NP.times(parseFloat(row.replaceNum), this.replaceProduct.reduceInventory)
