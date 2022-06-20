@@ -22,7 +22,7 @@
       </el-row>
     </div>
     <div class="data-box">
-      <el-table :data="tableData" :show-summary="performanceCountVO !== ''" :summary-method="getStoreSummaries" v-loading="checkTabLock">
+      <el-table :data="tableData" :max-height="tabMaxHeight" :show-summary="performanceCountVO !== ''" :summary-method="getStoreSummaries" v-loading="checkTabLock">
         <el-table-column prop="industryName" label="行业" width="110"></el-table-column>
         <el-table-column prop="year" label="年份"></el-table-column>
         <el-table-column prop="yearAmount" label="年度任务" width="120" align="right"></el-table-column>
@@ -45,11 +45,13 @@
 
 <script>
 import { toFixedFilter } from '@/filters'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
 
 import { queryByPage, summaryCount, querySubIndustry } from '@/api/accountManagement/accountQuery/performanceSummary'
 
 export default {
   name: 'performanceSummary',
+  mixins: [tableMaxHeight],
   data() {
     return {
       industryList: [],

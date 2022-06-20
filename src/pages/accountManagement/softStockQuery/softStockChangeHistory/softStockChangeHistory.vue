@@ -1,52 +1,48 @@
 <template>
   <div>
     <div class="search-box">
-      <el-row>
-        <el-col :span="20">
-          <el-form :inline="true" size="small" :model="form" label-width="85px" class="xdd-btn-block__w240">
-            <el-form-item label="产品: ">
-              <km-select-page
-                multiple
-                ref="productCodes"
-                v-model="form.productCode"
-                option-label="name"
-                option-value="code"
-                placeholder="全部"
-                :data.sync="licensedProductData"
-                :request="getProductByPage"
-                :is-max-page.sync="isLicensedProductMaxPage" />
-            </el-form-item>
-            <el-form-item label="业务类型:">
-              <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width: 100%" v-model="form.businessTypeList">
-                <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
-              </el-select>
-            </el-form-item>
-            <el-form-item label="业务日期:">
-              <el-date-picker v-model="form.startTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
-              <span style="padding: 0 2px">—</span>
-              <el-date-picker v-model="form.endTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 23:59:59"></el-date-picker>
-            </el-form-item>
-            <el-form-item>
-              <el-button style="margin-left: 36px" type="primary" @click="handleCurrentChange(1)">查询</el-button>
-              <el-button v-permission="'SOFTWARE_STOCK_CHANGE_EXPORT'" @click="handleExport()" :loading="exportLoad">导出</el-button>
-              <km-export-view v-permission="'SOFTWARE_STOCK_CHANGE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
-            </el-form-item>
-          </el-form>
-        </el-col>
-      </el-row>
+      <el-form :inline="true" size="small" :model="form" label-width="85px">
+        <el-form-item label="产品: ">
+          <km-select-page
+            ref="productCodes"
+            multiple
+            collapse-tags
+            v-model="form.productCodeList"
+            option-label="name"
+            option-value="code"
+            placeholder="全部"
+            :data.sync="licensedProductData"
+            :request="getProductByPage"
+            :is-max-page.sync="isLicensedProductMaxPage" />
+        </el-form-item>
+        <el-form-item label="业务类型:">
+          <el-select clearable class="address-select" multiple collapse-tags filterable placeholder="全部" size="small" style="width: 100%" v-model="form.businessTypeList">
+            <el-option :key="item.id" :label="item.name" :value="item.id" v-for="item in businessTypeList"></el-option>
+          </el-select>
+        </el-form-item>
+        <el-form-item label="订单日期:">
+          <el-date-picker v-model="form.startTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 00:00:00"></el-date-picker>
+          <span style="padding: 0 2px">—</span>
+          <el-date-picker v-model="form.endTime" type="date" placeholder="选择日期" value-format="yyyy-MM-dd 23:59:59"></el-date-picker>
+        </el-form-item>
+        <el-form-item>
+          <el-button style="margin-left: 36px" type="primary" @click="handleCurrentChange(1)">查询</el-button>
+          <el-button v-permission="'SOFT_STOCK_CHANGE_EXPORT'" @click="handleExport" :loading="exportLoad">导出</el-button>
+          <km-export-view v-permission="'SOFT_STOCK_CHANGE_EXPORT'" :request-export-log="handleExportRecord" :request-export-del="handleExportDel" />
+        </el-form-item>
+      </el-form>
     </div>
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
-      <el-table row-key="id" :data="tableList" style="width: 100%" v-loading="tableLoading" ref="table">
-        <el-table-column prop="organNo" label="产品">
-          <template slot-scope="scope">
-            <span>{{ '[' + scope.row.productCode + ']' + scope.row.productName }}</span>
-          </template>
-        </el-table-column>
+      <el-table :data="tableList" :max-height="tabMaxHeight - 56" style="width: 100%" v-loading="tableLoading">
+        <el-table-column prop="createOrderTime" label="订单时间" width="110px"></el-table-column>
+        <el-table-column prop="checkTime" label="业务时间" width="110px"></el-table-column>
         <el-table-column prop="agentName" label="业务类型">
-          <template slot-scope="scope">
-            <span>{{ getBusinessType(scope.row.businessType) }}</span>
-          </template>
+          <template slot-scope="scope">{{ getBusinessType(scope.row.businessType) }}</template>
+        </el-table-column>
+        <el-table-column prop="documentNumber" label="订单编码" width="160"></el-table-column>
+        <el-table-column prop="organNo" label="产品">
+          <template slot-scope="scope">{{ '[' + scope.row.productCode + ']' + scope.row.productName }}</template>
         </el-table-column>
         <el-table-column prop="changeAmount" label="变动库存" align="right" width="98px">
           <template slot="header">
@@ -70,28 +66,20 @@
             </div>
           </template>
         </el-table-column>
-        <el-table-column prop="checkTime" label="业务时间" width="110px"></el-table-column>
         <el-table-column prop="checkPersonName" label="受理人"></el-table-column>
-        <el-table-column prop="documentNumber" label="订单编码" width="160"></el-table-column>
         <el-table-column prop="changeAmount" label="变动项目库存" align="right">
-          <template slot-scope="scope">
-            <span>{{ scope.row.inventoryType === 2 ? scope.row.changeAmount : '0' }}</span>
-          </template>
+          <template slot-scope="scope">{{ scope.row.inventoryType === 2 ? scope.row.changeAmount : '0' }}</template>
         </el-table-column>
         <el-table-column prop="afterProjectAmount" label="期末项目库存" align="right"></el-table-column>
         <el-table-column prop="changeAmount" label="变动限期库存" align="right">
-          <template slot-scope="scope">
-            <span>{{ scope.row.isLimit === 3 ? scope.row.changeAmount : '0' }}</span>
-          </template>
+          <template slot-scope="scope">{{ scope.row.isLimit === 3 ? scope.row.changeAmount : '0' }}</template>
         </el-table-column>
         <el-table-column prop="afterLimitAmount" label="期末限期库存" align="right"></el-table-column>
         <el-table-column prop="expireTime" label="限期库存有效期" width="130px">
-          <template slot-scope="scope">
-            <span>{{ scope.row.expireTime === '1970-01-01 00:00:00' ? '--' : scope.row.expireTime.split(' ')[0] }}</span>
-          </template>
+          <template slot-scope="scope">{{ scope.row.expireTime === '1970-01-01 00:00:00' ? '--' : scope.row.expireTime.split(' ')[0] }}</template>
         </el-table-column>
       </el-table>
-      <div v-show="tableTotal > 0" class="km-page-block">
+      <div class="km-page-block">
         <el-pagination
           @size-change="handleSizeChange"
           @current-change="handleCurrentChange"
@@ -104,14 +92,18 @@
     </div>
   </div>
 </template>
+
 <script>
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
 import { productQueryByPage } from '@/api/product'
-import { getInventoryWaterAndSummary } from '@/api/accountManagement/softStockQuery'
-import { xftArchiveExport, xftArchiveExportLog, xftArchiveExportDel } from '@/api/xftArchive'
+import { getInventoryWaterAndSummary, exportInventoryChangeWater, exportInventoryExportLog, exportInventoryDel } from '@/api/accountManagement/softStockQuery'
+
 export default {
   name: 'softStockChangeHistory',
+  mixins: [tableMaxHeight],
   components: { tableSummary },
   data() {
     return {
@@ -149,7 +141,7 @@ export default {
         agentId: '',
         startTime: '',
         endTime: '',
-        productCode: [],
+        productCodeList: [],
         businessTypeList: []
       }
     }
@@ -174,25 +166,21 @@ export default {
   },
   methods: {
     handleExport: async function () {
-      if (!this.form.time?.length || dayjs(this.form.time[1]).diff(dayjs(this.form.time[0]), 'days') > 62) {
-        this.$message({ type: 'warning', message: '导出数据的时间范围最大支持62天，请更改时间条件后重试' })
-        return false
-      }
       this.exportLoad = true
       try {
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        await xftArchiveExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        await exportInventoryChangeWater({ export: true, from: true, ...this.handleQueryParams() })
       } catch (error) {
       } finally {
         this.exportLoad = false
       }
     },
-    handleExportDel: async function (row) {
-      return await xftArchiveExportDel({ id: row.id })
-    },
     handleExportRecord: async function ({ currentPage, pageSize } = { currentPage: 1, pageSize: 10 }) {
-      const data = { exportType: 1, page: currentPage, rows: pageSize }
-      return await xftArchiveExportLog(data)
+      const data = { exportType: 15, page: currentPage, rows: pageSize }
+      return await exportInventoryExportLog(data)
+    },
+    handleExportDel: async function (row) {
+      return await exportInventoryDel({ id: row.id })
     },
     getBusinessType(value) {
       if (value) {
@@ -201,6 +189,15 @@ export default {
       } else {
         return '--'
       }
+    },
+    handleQueryParams() {
+      const { startTime, endTime, ...params } = this.form
+      return Object.assign(params, {
+        startTime: startTime || '',
+        endTime: endTime || '',
+        page: this.thisPage,
+        rows: this.pageSize
+      })
     },
     // 分页
     handleSizeChange(val) {
@@ -216,14 +213,7 @@ export default {
     async getPageList() {
       try {
         this.tableLoading = true
-        let subData = {
-          agentId: this.form.agentId,
-          productCodeList: this.form.productCode,
-          businessTypeList: this.form.businessTypeList,
-          startTime: this.form.startTime || '',
-          endTime: this.form.endTime || ''
-        }
-        const res = await getInventoryWaterAndSummary({ ...subData, page: this.thisPage, rows: this.pageSize })
+        const res = await getInventoryWaterAndSummary(this.handleQueryParams())
         this.detailCount(res)
         this.tableList = res.results || []
         this.tableTotal = res.totalCount || 0

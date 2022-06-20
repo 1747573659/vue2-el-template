@@ -26,7 +26,7 @@
     </div>
     <div class="data-box">
       <tableSummary :value.sync="tableSummaryObj"></tableSummary>
-      <el-table row-key="id" :data="tableList" style="width: 100%" v-loading="tableLoading" ref="table">
+      <el-table :data="tableList" :max-height="tabMaxHeight - 56" style="width: 100%" v-loading="tableLoading">
         <el-table-column prop="createTime" label="业务时间"></el-table-column>
         <el-table-column prop="businessTypeName" label="业务类型"></el-table-column>
         <el-table-column prop="changeMoney" label="变动余额" align="right">
@@ -72,10 +72,14 @@
 <script>
 import dayjs from 'dayjs'
 import tableSummary from '@/components/table/tableSummary' // 表格上的汇总
-import { changePage, changeSumPage } from '@/api/accountManagement/accountQuery'
 import { formatAmountDivide } from '@/filters'
+import { tableMaxHeight } from '@/mixins/tableMaxHeight'
+
+import { changePage, changeSumPage } from '@/api/accountManagement/accountQuery'
+
 export default {
   name: 'amountHistory',
+  mixins: [tableMaxHeight],
   components: { tableSummary },
   data() {
     return {

@@ -104,15 +104,11 @@ export default {
             ele.children = ele.children.filter(child => child.name === 'ewechatOrder')
             return ele
           })
-        } else {
-          if (userInfo.propertyType !== 1) {
-            item.children = item.children.filter(ele => ele.name !== 'orderManagement')
-          } else if (userInfo.propertyType === 1 && userInfo.level !== 1) {
-            item.children = item.children.map(ele => {
-              ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name))
-              return ele
-            })
-          }
+        } else if ((userInfo.propertyType === 1 && userInfo.level !== 1) || userInfo.propertyType !== 1) {
+          item.children = item.children.map(ele => {
+            ele.children = ele.children.filter(child => !['softwarePurchaseOrder', 'hardwarePurchaseOrder', 'erpAuthorizedTransfer', 'softwareUpdateOrder'].includes(child.name))
+            return ele
+          })
         }
       }
       if (item.name === 'customer' && userInfo.propertyType === 2) {
@@ -189,8 +185,8 @@ export default {
     width: 100%;
     height: 56px;
     overflow: hidden;
-    background: rgba(255, 255, 255, 1);
-    box-shadow: 0 6px 12px 0 rgba(230, 233, 240, 1);
+    background: rgb(255 255 255 / 100%);
+    box-shadow: 0 6px 12px 0 rgb(230 233 240 / 100%);
     display: flex;
     position: fixed;
     z-index: 2000;

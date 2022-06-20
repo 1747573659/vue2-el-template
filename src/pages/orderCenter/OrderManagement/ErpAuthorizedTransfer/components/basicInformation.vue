@@ -376,7 +376,7 @@ export default {
       try {
         const isNum = new RegExp(/[\u4e00-\u9fa5]/).test(query)
         const res = await authShopPage({ custId: !isNum ? query : '', authShopMessage: isNum && query ? query : '', status, page, rows })
-        res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
+        if (res.results) res.results.forEach(item => (item.custNameExpand = `${item.custName ? item.custName : ''}（${item.custId}）`))
         this[dataObj] = this[dataObj].concat(res.results || [])
         this[isMaxpage] = !res.results || (res.results && res.results.length < 10)
       } catch (error) {}
@@ -423,10 +423,10 @@ export default {
   height: 56px;
   position: fixed;
   bottom: 0;
-  background-color: #fff;
+  background-color: #ffffff;
   line-height: 56px;
   text-align: center;
-  box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+  box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 3%);
   z-index: 1000;
   ::v-deep .el-button {
     padding: 8px 22px;
