@@ -27,7 +27,11 @@
         <template v-if="$route.query.source === 'retail'">
           <el-form-item label="升级版本" prop="updateVersion">
             <el-select v-model="form.updateVersion" @focus="handleVersionFocus" placeholder="升级版本" clearable>
-              <el-option v-for="item in Array.from(versionMap).filter(ele => ele[0] !== form.merchantVersion)" :key="item[0]" :label="item[1]" :value="item[0]"></el-option>
+              <el-option
+                v-for="item in Array.from(versionMap).filter(ele => ele[0] !== form.merchantVersion)"
+                :key="item[0]"
+                :label="`${item[1][0]} ${item[1][1]}`"
+                :value="item[0]"></el-option>
             </el-select>
           </el-form-item>
           <el-form-item label="升级有效期">
@@ -53,7 +57,6 @@
           <km-select-page
             ref="wlsMerchantSelect"
             v-model="form.oldMerchantName"
-            :model-name="form.oldMerchantName"
             option-label="CustNameExpand"
             option-value="CustID"
             :data.sync="shopPageData"
@@ -66,10 +69,10 @@
           <el-input :value="form.oldMerchantId" placeholder="请先选择商户" disabled></el-input>
         </el-form-item>
         <el-form-item label="商户版本">
-          <el-input :value="versionMap.get(form.merchantVersion)" disabled></el-input>
+          <el-input :value="versionMap.get(form.merchantVersion) ? versionMap.get(form.merchantVersion)[1] : ''" disabled></el-input>
         </el-form-item>
         <el-form-item label="关联产品">
-          <el-input :value="`${form.oldMerchantProductCode ? '[' + form.oldMerchantProductCode + ']' : ''}${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
+          <el-input :value="`${form.oldMerchantProductCodeName || ''}`" disabled></el-input>
         </el-form-item>
         <el-form-item label="门店总数">
           <el-input :value="form.merchantCount" disabled></el-input>
@@ -296,7 +299,10 @@ export default {
     if (this.$route.query.status === 'add') {
       this.getHandlerMan()
       this.getAgentMoneyStream()
-    } else this.getDetail()
+    } else {
+      this.getCustList()
+      this.getDetail()
+    }
   },
   methods: {
     ...mapActions(['updateTagView']),
@@ -310,11 +316,12 @@ export default {
           VersionType: merchantVersion,
           productCode: oldMerchantProductCode,
           ProductionTypeName: oldMerchantProductCodeName,
-          BranchCount: merchantCount
+          BranchCount: merchantCount,
+          KMValidity: updateAfterDate
         } = this.shopPageData.find(item => item.CustID === val)
-        this.form = Object.assign(this.form, { oldMerchantId: val, merchantVersion, oldMerchantProductCode, oldMerchantProductCodeName, merchantCount })
+        this.form = Object.assign(this.form, { oldMerchantId: val, merchantVersion, oldMerchantProductCode, oldMerchantProductCodeName, merchantCount, updateAfterDate })
       } else {
-        const resetDTO = { oldMerchantId: '', merchantVersion: '', oldMerchantProductCode: '', oldMerchantProductCodeName: '', merchantCount: '' }
+        const resetDTO = { oldMerchantId: '', merchantVersion: '', oldMerchantProductCode: '', oldMerchantProductCodeName: '', merchantCount: '', updateAfterDate: '' }
         this.form = Object.assign(this.form, resetDTO)
       }
     },
@@ -403,7 +410,7 @@ export default {
     setOrderSave() {
       return this.handleValidateForm().then(async () => {
         if (this.isFormValidatePass) {
-          const { handUser, id, billNo, upgradeAmount, oldMerchantId, oldMerchantProductCode } = this.form
+          const { handUser, id, billNo, upgradeAmount, updateAfterDate, oldMerchantId, oldMerchantProductCode } = this.form
           if (this.$route.query.source === 'erp') {
             const { oldRegistType, oldMerchantAuthType, oldMerchantAuthCount } = this.form
             const { newMerchantAuthCount, newMerchantAuthType, newMerchantId, newMerchantProductCode } = this.form
@@ -417,7 +424,7 @@ export default {
             const { updateVersion, merchantCount, merchantVersion } = this.form
             let data = Object.assign(
               { agentId: this.userInfo.agentId, id, handUser, billNo, upgradeAmount: NP.times(upgradeAmount, 100) },
-              { updateVersion, merchantCount, merchantVersion, oldMerchantId, oldMerchantProductCode }
+              { updateVersion, merchantCount, merchantVersion, oldMerchantId, oldMerchantProductCode, updateAfterDate }
             )
             return this.$route.query.status === 'add' ? await softUpgradeAddWls(data) : await softUpgradeUpdateWls(data)
           }
@@ -459,6 +466,8 @@ export default {
             this.$refs.newMerchantSelect.selectVal = res.newMerchantName
           }, 500)
         } else {
+          const { ProductionTypeName: oldMerchantProductCodeName } = this.shopPageData.find(item => item.CustID === parseFloat(this.form.oldMerchantId))
+          this.form = Object.assign(this.form, { oldMerchantProductCodeName })
           setTimeout(() => {
             this.$refs.wlsMerchantSelect.selectVal = res?.oldMerchantName ?? ''
           }, 500)
