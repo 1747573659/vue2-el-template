@@ -84,6 +84,33 @@ const accountManagement = {
       ]
     },
     {
+      path: 'shareProfit',
+      name: 'shareProfit',
+      code: 'XDD_ACCMANAGEMENT_SHAREPROFIT',
+      component: kmContainer,
+      meta: {
+        title: '分润管理',
+        icon: 'el-icon-menu',
+        name: 'shareProfit'
+      },
+      children: [
+        {
+          path: 'profitDetail',
+          component: _import('accountManagement/ShareProfit/ProfitDetail/profitDetail.vue'),
+          name: 'profitDetail',
+          code: 'XDD_ACCMANAGEMENT_SHAREPROFIT_PROFITDETAIL',
+          meta: { title: '分润明细查询', name: 'profitDetail', cache: true }
+        },
+        {
+          path: 'profitSummary',
+          component: _import('accountManagement/ShareProfit/ProfitSummary/profitSummary.vue'),
+          name: 'profitSummary',
+          code: 'XDD_ACCMANAGEMENT_SHAREPROFIT_PROFITSUMMARY',
+          meta: { title: '分润结算汇总', name: 'profitSummary', cache: true }
+        }
+      ]
+    },
+    {
       path: 'resultsQuery',
       name: 'resultsQuery',
       code: 'XDD_RSSULTSQUERY',
