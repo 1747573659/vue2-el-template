@@ -130,6 +130,7 @@ export default {
   mixins: [basicInfoMixin],
   methods: {
     async handleToStock() {
+      this.form.orderItemList = []
       if (this.form.id) delete this.form.id
       if (this.form.purchaseOrderDTO.id) delete this.form.purchaseOrderDTO.id
       try {
