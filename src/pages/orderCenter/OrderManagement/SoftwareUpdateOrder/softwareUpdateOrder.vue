@@ -84,7 +84,7 @@
             <el-form-item>
               <template v-permission="'SOFTWARE_UPDATE_ORDER_PLUS'">
                 <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' }, { oldRegistType: 1 })">ERP产品</el-button>
-                <!-- <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' }, { oldRegistType: 2 })">微零售</el-button> -->
+                <el-button type="primary" size="small" plain @click="handleToDetail({ status: 'add' }, { oldRegistType: 2 })">微零售</el-button>
               </template>
             </el-form-item>
           </el-col>
@@ -208,7 +208,7 @@ export default {
       this.delCachedView({ name: 'softwareUpdateOrderDetails' }).then(() => {
         this.$router.push({
           name: 'softwareUpdateOrderDetails',
-          query: Object.assign({ ...status, id, orderStatus, source: oldRegistType === 1 ? 'erp' : 'retail' })
+          query: Object.assign({ ...status, id, orderStatus, source: oldRegistType === 2 ? 'retail' : 'erp' })
         })
       })
     },

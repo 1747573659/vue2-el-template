@@ -32,9 +32,9 @@ export const merchantAuthType = new Map([
 
 // 商户版本
 export const versionMap = new Map([
-  [2, '标准版'],
-  [3, '专业版'],
-  [5, '基础版']
+  [2, ['[WPT6]', '标准版']],
+  [3, ['[WPT5]', '专业版']],
+  [5, ['[WPT2]', '基础版']]
 ])
 
 // form 基础对象
