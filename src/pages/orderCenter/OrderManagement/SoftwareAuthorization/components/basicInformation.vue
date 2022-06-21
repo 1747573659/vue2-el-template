@@ -553,6 +553,13 @@ export default {
               if (this.form?.addAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 1
               else if (this.form?.renewAuthOrderDetailDTOList?.length > 0) this.form.merchantDTO.operationType = 2
             }
+            const {
+              merchantDTO: { applicationSystem, operationType },
+              authOrderDTO: { useModalInner }
+            } = this.form
+            if ([201, 205].includes(applicationSystem)) this.$refs.information.activeName = '1'
+            else if ([203, 206].includes(applicationSystem)) this.$refs.information.activeName = useModalInner === 1 ? '1' : '2'
+            else this.$refs.information.activeName = operationType === 1 ? '1' : '2'
           } else if (this.productType === 6) {
             this.getProductByPage({ query: res.authOrderDTO.productCode })
             this.$refs.productCode.selectVal = res.authOrderDTO.productCode
