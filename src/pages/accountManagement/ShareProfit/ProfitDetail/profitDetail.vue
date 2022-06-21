@@ -135,6 +135,7 @@ export default {
         const billingMonth = vm.$route.query.billingMonth
         vm.form.billingMonth = [dayjs(billingMonth).startOf('month').format('YYYY-MM-DD HH:mm:ss'), dayjs(billingMonth).endOf('month').format('YYYY-MM-DD HH:mm:ss')]
         vm.form.benefitCountOrder = vm.$route.query.benefitCountOrder
+        vm.form.createTime = []
       } else {
         vm.form.billingMonth = []
       }
@@ -150,11 +151,9 @@ export default {
   methods: {
     handleQueryParams() {
       let { createTime, billingMonth, benefitStatusList, ...params } = this.form
-      let benefitCountOrder = ''
-      if (this.$route.query.billingMonth) benefitCountOrder = this.$route.query.benefitCountOrder
       return Object.assign(
         params,
-        { benefitCountOrder, page: this.currentPage, rows: this.pageSize },
+        { page: this.currentPage, rows: this.pageSize },
         { benefitStatusList: benefitStatusList || [], minDate: createTime[0] || '', maxDate: createTime[1] || '' },
         {
           overMinDate: billingMonth && billingMonth[0] ? dayjs(billingMonth[0]).startOf('month').format('YYYY-MM-DD HH:mm:ss') : '',
