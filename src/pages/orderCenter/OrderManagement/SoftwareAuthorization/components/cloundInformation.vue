@@ -50,8 +50,8 @@
         </el-form-item>
       </el-form>
       <el-tabs v-model="activeName">
-        <el-tab-pane label="加点" name="1" v-if="showAddPoint()"></el-tab-pane>
-        <el-tab-pane label="续费" name="2" v-if="showAuthorTab()"></el-tab-pane>
+        <el-tab-pane label="加点" name="1" v-if="activeName === '1'"></el-tab-pane>
+        <el-tab-pane label="续费" name="2" v-if="activeName === '2'"></el-tab-pane>
       </el-tabs>
       <div class="e-product-choose" v-if="['add', 'edit'].includes($route.query.status)">
         <template v-if="activeName === '1'">
@@ -61,7 +61,7 @@
         </template>
         <el-button type="primary" size="small" plain @click="handleProductVisible" v-if="activeName === '2'">选择授权对象</el-button>
       </div>
-      <el-table v-if="activeName === '1'" :data="form.addAuthOrderDetailDTOList" class="p-information-tab" :key="activeName">
+      <el-table v-if="activeName === '1'" :data="form.addAuthOrderDetailDTOList" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
@@ -80,7 +80,7 @@
         </el-table-column>
         <el-table-column prop="useInventory" label="消耗库存" align="right"></el-table-column>
       </el-table>
-      <el-table v-if="activeName === '2'" :data="form.renewAuthOrderDetailDTOList" show-summary :summary-method="getSummaries" class="p-information-tab" :key="activeName">
+      <el-table v-if="activeName === '2'" :data="form.renewAuthOrderDetailDTOList" show-summary :summary-method="getSummaries" class="p-information-tab">
         <el-table-column label="序号" width="100">
           <template slot-scope="scope">{{ scope.$index + 1 }}</template>
         </el-table-column>
@@ -210,25 +210,6 @@ export default {
     this.getOrderYsAppModules()
   },
   methods: {
-    showAddPoint() {
-      const {
-        merchantDTO: { applicationSystem, merchantName, operationType },
-        authOrderDTO: { useModalInner }
-      } = this.form
-      if ([202, 204].includes(applicationSystem) && !useModalInner) return operationType === 1
-      else if ([203, 206].includes(applicationSystem)) return merchantName !== '' && useModalInner
-      else return true
-    },
-    showAuthorTab() {
-      const {
-        merchantDTO: { applicationSystem, operationType },
-        authOrderDTO: { useModalInner }
-      } = this.form
-      if (!useModalInner) {
-        if ([202, 204].includes(applicationSystem)) return operationType === 2
-        else return ![201, 205].includes(applicationSystem)
-      } else return false
-    },
     handleOperationType(val) {
       if (val === 1) {
         this.activeName = '1'
@@ -314,19 +295,16 @@ export default {
           else this.activeName = '1'
           if (this.activeName === '1') {
             this.form.addAuthOrderDetailDTOList = [
-              {
-                productCode,
-                productName: name,
-                addNum: 1,
-                remark: '',
-                useInventory: NP.times(delayHour, 1),
-                billNo: this.form.authOrderDTO?.billNo ?? '',
-                orderInventory: this.productStockObj?.totalAmount ?? 0
-              }
+              Object.assign(
+                { productCode, productName: name, addNum: 1, remark: '', useInventory: NP.times(delayHour, 1) },
+                { billNo: this.form.authOrderDTO?.billNo ?? '', orderInventory: this.productStockObj?.totalAmount ?? 0 }
+              )
             ]
             await this.getProductStock()
           }
-        } catch (error) {}
+        } catch (error) {
+          this.activeName = '1'
+        }
       }
     },
     handleConfirm() {
