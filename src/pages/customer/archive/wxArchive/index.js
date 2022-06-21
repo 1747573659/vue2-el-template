@@ -1,21 +1,21 @@
+// 是否停用
+export const idTypeOptions = [
+  { value: '1', label: '身份证' },
+  { value: '2', label: '护照' },
+  { value: '3', label: '香港居民来往内地通行证' },
+  { value: '4', label: '澳门居民来往内地通行证' },
+  { value: '5', label: '台湾居民来往内地通行证' },
+  { value: '6', label: '外国人居留证' },
+  { value: '7', label: '港澳居民证' },
+  { value: '8', label: '台湾居民证' }
+]
+
 // 商户类型
 export const merchantTypeOptions = [
   { value: '', label: '全部', content: '' },
-  {
-    value: 5,
-    label: '小微',
-    content: '无营业执照、免办理工商注册登记的实体商户'
-  },
-  {
-    value: 1,
-    label: '个体工商户',
-    content: '营业执照上的主体类型一般为个体户、个体工商户、个体经营'
-  },
-  {
-    value: 2,
-    label: '企业',
-    content: '营业执照上的主体类型一般为有限公司、有限责任公司'
-  }
+  { value: 5, label: '小微', content: '无营业执照、免办理工商注册登记的实体商户' },
+  { value: 1, label: '个体工商户', content: '营业执照上的主体类型一般为个体户、个体工商户、个体经营' },
+  { value: 2, label: '企业', content: '营业执照上的主体类型一般为有限公司、有限责任公司' }
 ]
 
 // 是否停用
@@ -37,50 +37,17 @@ export const countOptions = [
 
 // 小微费率
 export const rateOptions = [
-  {
-    value: 38,
-    lable: '0.38%'
-  },
-  {
-    value: 39,
-    lable: '0.39%'
-  },
-  {
-    value: 40,
-    lable: '0.4%'
-  },
-  {
-    value: 45,
-    lable: '0.45%'
-  },
-  {
-    value: 48,
-    lable: '0.48%'
-  },
-  {
-    value: 49,
-    lable: '0.49%'
-  },
-  {
-    value: 50,
-    lable: '0.5%'
-  },
-  {
-    value: 55,
-    lable: '0.55%'
-  },
-  {
-    value: 58,
-    lable: '0.58%'
-  },
-  {
-    value: 59,
-    lable: '0.59%'
-  },
-  {
-    value: 60,
-    lable: '0.6%'
-  }
+  { value: 38, lable: '0.38%' },
+  { value: 39, lable: '0.39%' },
+  { value: 40, lable: '0.4%' },
+  { value: 45, lable: '0.45%' },
+  { value: 48, lable: '0.48%' },
+  { value: 49, lable: '0.49%' },
+  { value: 50, lable: '0.5%' },
+  { value: 55, lable: '0.55%' },
+  { value: 58, lable: '0.58%' },
+  { value: 59, lable: '0.59%' },
+  { value: 60, lable: '0.6%' }
 ]
 
 // 进件资料表单对象
@@ -175,19 +142,11 @@ export const detailValidate = {
   'archiveBaseVO.contact': [{ required: true, message: '请输入联系人', trigger: 'change' }],
   'archiveBaseVO.contactPhone': [
     { required: true, message: '请输入联系人电话', trigger: 'blur' },
-    {
-      pattern: validatorRules.mobildPhone,
-      message: '请输入正确的电话号码',
-      trigger: 'change'
-    }
+    { pattern: validatorRules.mobildPhone, message: '请输入正确的电话号码', trigger: 'change' }
   ],
   'archiveExpandVO.administratorIdCard': [
     { required: true, message: '请输入联系人证件号码', trigger: 'blur' },
-    {
-      pattern: validatorRules.idNumber,
-      message: '请输入正确证件号码',
-      trigger: 'change'
-    }
+    { pattern: validatorRules.idNumber, message: '请输入正确证件号码', trigger: 'change' }
   ],
   'archiveBaseVO.email': [
     { required: true, message: '请输入邮箱', trigger: 'blur' },
@@ -202,11 +161,7 @@ export const detailValidate = {
   'archiveExpandVO.businessLicenseUrl': [{ required: true, message: '请上传营业执照', trigger: 'change' }],
   'archiveExpandVO.licId': [
     { required: true, message: '请输入营业执照注册号', trigger: 'blur' },
-    {
-      pattern: validatorRules.licId,
-      message: '请输入正确营业执照注册号',
-      trigger: 'change'
-    }
+    { pattern: validatorRules.licId, message: '请输入正确营业执照注册号', trigger: 'change' }
   ],
   'archiveExpandVO.licValidityBigen': [{ required: true, message: '请输入营业执照有效期', trigger: 'change' }],
   'archiveBaseVO.businessCategory': [{ required: true, message: '请输入经营类目', trigger: 'change' }],
@@ -220,13 +175,11 @@ export const detailValidate = {
   'archiveExpandVO.idType': [{ required: true, message: '请输入证件类型', trigger: 'change' }],
   'archiveExpandVO.idNumber': [
     { required: true, message: '请输入证件号码', trigger: 'blur' },
-    {
-      pattern: validatorRules.idNumber,
-      message: '请输入正确证件号码',
-      trigger: 'change'
-    }
+    { pattern: validatorRules.idNumber, message: '请输入正确证件号码', trigger: 'change' }
   ],
   'archiveExpandVO.idBegin': [{ required: true, message: '请输入证件有效期', trigger: 'change' }],
+  'archiveExpandVO.legalPersonAddress': [{ required: true, message: '请输入证件居住地址', trigger: 'change' }],
+  'archiveExpandVO.credentialsAddress': [{ required: true, message: '请输入证件详细地址', trigger: 'change' }],
   'archiveExpandVO.idFrontUrl': [{ required: true, message: '请上传身份证正面照', trigger: 'change' }],
   'archiveExpandVO.idBackUrl': [{ required: true, message: '请上传身份证背面照', trigger: 'change' }],
   'archiveExpandVO.hardIdUrl': [{ required: true, message: '请上传手持身份证正面照', trigger: 'change' }],
@@ -237,11 +190,7 @@ export const detailValidate = {
   'archiveExpandVO.bankSub': [{ required: true, message: '请输入所属支行', trigger: 'change' }],
   'archiveExpandVO.bankCard': [
     { required: true, message: '请输入银行账号', trigger: 'blur' },
-    {
-      pattern: validatorRules.bankCard,
-      message: '请输入正确银行账号',
-      trigger: 'change'
-    }
+    { pattern: validatorRules.bankCard, message: '请输入正确银行账号', trigger: 'change' }
   ],
   'archiveExpandVO.bankAccountName': [{ required: true, message: '请输入账户名', trigger: 'change' }],
   'archiveExpandVO.bankArea': [{ required: true, message: '请输入银行所在地区', trigger: 'change' }],

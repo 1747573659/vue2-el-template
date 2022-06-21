@@ -185,7 +185,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="公司地址" prop="archiveBaseVO.area">
-              <area-select :key="areaKey" @change="value => handleArea('area', value)" :areaList="areaList"></area-select>
+              <area-select :key="areaKey" @change="value => handleArea('area', value)" :areaList="areaList" placeholder="省/市/区"></area-select>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -302,9 +302,9 @@
         <header>法人信息</header>
         <el-row class="p-wxArchive-fill">
           <el-col :span="12">
-            <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
+            <el-form-item label="法人证件照头像面" prop="archiveExpandVO.idFrontUrl">
               <upload-panel
-                alt="身份证正面照"
+                alt="法人证件照头像面"
                 action="/uploadFile"
                 :fileServer="fileServer"
                 :exampleImg="exampleImg.idFrontUrl"
@@ -314,9 +314,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
+            <el-form-item label="法人证件照国徽面" prop="archiveExpandVO.idBackUrl">
               <upload-panel
-                alt="身份证背面照"
+                alt="法人证件照国徽面"
                 action="/uploadFile"
                 :fileServer="fileServer"
                 :exampleImg="exampleImg.idBackUrl"
@@ -332,9 +332,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="证件类型" prop="archiveExpandVO.idType">
-              <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="证件类型" style="width: 240px">
-                <el-option label="身份证" value="1"></el-option>
-                <el-option label="护照" value="2"></el-option>
+              <el-select clearable v-model="form.archiveExpandVO.idType" filterable placeholder="证件类型" style="width: 240px">
+                <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -349,6 +348,99 @@
               <span style="margin: 0 10px">至</span>
               <span v-if="!form.archiveExpandVO.idEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
               <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <template v-if="form.archiveBaseVO.merchantType === 2">
+            <el-col :span="12">
+              <el-form-item label="证件居住地址" prop="archiveExpandVO.legalPersonAddress">
+                <area-select
+                  :key="legalPersonAddressKey"
+                  @change="value => handleArea('legalPersonAddress', value)"
+                  :areaList="legalPersonAddressList"
+                  placeholder="省/市/区"></area-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件详细地址" prop="archiveExpandVO.credentialsAddress">
+                <el-input v-model="form.archiveExpandVO.credentialsAddress" placeholder="证件详细地址" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+          </template>
+        </el-row>
+      </div>
+      <div class="p-wxArchive-item">
+        <header>联系人信息</header>
+        <el-row class="p-wxArchive-fill">
+          <el-col :span="12">
+            <el-form-item label="联系人是否同法人">
+              <el-select clearable v-model="form.archiveExpandVO.contactSameLegal" filterable placeholder="联系人是否同法人" style="width: 240px">
+                <el-option label="是" value="1"></el-option>
+                <el-option label="否" value="0"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人证件照头像面" prop="archiveExpandVO.idFrontUrl">
+              <upload-panel
+                alt="联系人证件照头像面"
+                action="/uploadFile"
+                :fileServer="fileServer"
+                :exampleImg="exampleImg.idFrontUrl"
+                :image-url="form.archiveExpandVO.idFrontUrl"
+                :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.idFrontUrl', 'idcard')"
+                @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人证件照国徽面" prop="archiveExpandVO.idBackUrl">
+              <upload-panel
+                alt="联系人证件照国徽面"
+                action="/uploadFile"
+                :fileServer="fileServer"
+                :exampleImg="exampleImg.idBackUrl"
+                :image-url="form.archiveExpandVO.idBackUrl"
+                :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.idBackUrl', 'idcard')"
+                @click="handleImgPreview(fileServe + form.archiveExpandVO.idBackUrl)" />
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人姓名" prop="archiveExpandVO.contactName">
+              <el-input v-model="form.archiveExpandVO.contactName" placeholder="联系人姓名" style="width: 240px"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="证件类型" prop="archiveExpandVO.contactCredentialsType">
+              <el-select clearable v-model="form.archiveExpandVO.contactCredentialsType" filterable placeholder="证件类型" style="width: 240px">
+                <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+              </el-select>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="证件号码" prop="archiveExpandVO.credentialsNumber">
+              <el-input v-model="form.archiveExpandVO.credentialsNumber" placeholder="证件号码" style="width: 240px"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="证件有效期" prop="archiveExpandVO.credentialsValidDateBegin">
+              <el-date-picker v-model="form.archiveExpandVO.credentialsValidDateBegin" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+              <span style="margin: 0 10px">至</span>
+              <span v-if="!form.archiveExpandVO.credentialsValidDateEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
+              <el-date-picker v-else v-model="form.archiveExpandVO.credentialsValidDateEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="联系人电话" prop="archiveExpandVO.idNumber">
+              <el-input v-model="form.archiveExpandVO.idNumber" placeholder="证件号码" style="width: 240px"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="邮箱" prop="archiveExpandVO.idNumber">
+              <el-input v-model="form.archiveExpandVO.idNumber" placeholder="证件号码" style="width: 240px"></el-input>
+            </el-form-item>
+          </el-col>
+          <el-col :span="12">
+            <el-form-item label="业务办理授权函" prop="archiveExpandVO.businessAuthLetterUrl">
+              <el-input v-model="form.archiveExpandVO.businessAuthLetterUrl" placeholder="证件号码" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
         </el-row>
@@ -445,7 +537,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="开户支行省市区/县" prop="archiveExpandVO.bankArea">
-              <area-select :key="bankAreaKey" @change="value => handleArea('bankArea', value)" :areaList="bankAreaList"></area-select>
+              <area-select :key="bankAreaKey" @change="value => handleArea('bankArea', value)" :areaList="bankAreaList" placeholder="省/市/区"></area-select>
             </el-form-item>
           </el-col>
         </el-row>
@@ -463,7 +555,6 @@
         </el-row>
       </div>
     </el-form>
-
     <div class="p-wxArchive-action">
       <template v-if="['add', 'copy'].includes(pageStatus) || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
         <template v-if="form.archiveBaseVO.directAuditStatus === 3">
@@ -481,7 +572,6 @@
       </template>
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
-
     <!-- dialog -->
     <el-dialog append-to-body :visible.sync="checkReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" label-width="60px">
@@ -494,7 +584,6 @@
         <el-button @click="handleRefund" type="primary" size="small" class="e-wxArchive-action_pd">确定</el-button>
       </div>
     </el-dialog>
-
     <!-- image-preview -->
     <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="() => (checkViewer = false)" class="e-preview-con"></el-image-preview>
   </section>
@@ -509,7 +598,7 @@ import selectPage from '../components/selectPage'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 import areaSelect from '@/components/areaSelect'
 
-import { detailValidate, formObj, rateOptions, merchantTypeOptions, sellShopDescribeArr, exampleImg } from './index'
+import { detailValidate, formObj, rateOptions, merchantTypeOptions, sellShopDescribeArr, exampleImg, idTypeOptions } from './index'
 import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
 import {
@@ -539,6 +628,7 @@ export default {
   },
   data() {
     return {
+      idTypeOptions,
       merchantTypeOptions,
       sellShopDescribeArr,
       rateOptions,
@@ -561,8 +651,10 @@ export default {
       selectBankSubData: [],
       isBankSubMaxPage: false,
       areaKey: Symbol('areaKey'),
+      legalPersonAddressKey: Symbol('legalPersonAddressKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
+      legalPersonAddressList: [],
       bankAreaList: [],
       checkViewer: false,
       imageIndex: 0,
@@ -749,11 +841,12 @@ export default {
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
-        // 待处理
         this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
+        this.legalPersonAddressList = [res.archiveExpandDTO.province, res.archiveExpandDTO.city, res.archiveExpandDTO.area]
+        this.legalPersonAddressKey = Symbol('legalPersonAddressKey')
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
         if (![0, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.pageStatus !== 'copy') this.checkFormDisabled = true
       } catch (error) {
@@ -800,13 +893,11 @@ export default {
     },
     handleArea(type, value) {
       if (type === 'area') {
-        this.form.archiveBaseVO.province = value[0]
-        this.form.archiveBaseVO.city = value[1]
-        this.form.archiveBaseVO.area = value[2]
+        this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { province: value[0], city: value[1], area: value[2] })
+      } else if (type === 'bankArea') {
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { bankProvince: value[0], bankCity: value[1], bankArea: value[2] })
       } else {
-        this.form.archiveExpandVO.bankProvince = value[0]
-        this.form.archiveExpandVO.bankCity = value[1]
-        this.form.archiveExpandVO.bankArea = value[2]
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { bankProvince: value[0], bankCity: value[1], bankArea: value[2] })
       }
     },
     handleSelectPageRemoteRe: async function (query, type, page, rows) {
@@ -860,7 +951,7 @@ export default {
 .p-wxArchive-con {
   border-top: 16px solid #f7f8fa;
   border-bottom: 72px solid #f7f8fa;
-  background-color: #fff;
+  background-color: #ffffff;
   > header {
     min-height: 72px;
     ::v-deep .el-col {
@@ -890,13 +981,12 @@ export default {
     height: 56px;
     position: fixed;
     bottom: 0;
-    background-color: #fff;
+    background-color: #ffffff;
     line-height: 56px;
     text-align: center;
-    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
+    box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 3%);
   }
 }
-
 .e {
   &-wxArchive {
     &-warning {
@@ -948,9 +1038,9 @@ export default {
         height: 44px;
         font-size: 30px;
       }
-      ::v-deep .el-icon-circle-close:before {
+      ::v-deep .el-icon-circle-close::before {
         content: '\e6db';
-        color: #fff;
+        color: #ffffff;
       }
     }
   }
