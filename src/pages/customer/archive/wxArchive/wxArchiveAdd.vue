@@ -306,7 +306,7 @@
           <el-col :span="12">
             <el-form-item label="证件类型" prop="archiveExpandVO.idType">
               <el-select clearable v-model="form.archiveExpandVO.idType" filterable placeholder="证件类型" style="width: 240px">
-                <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="String(item.value)"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -846,7 +846,7 @@ export default {
         this.areaKey = Symbol('areaKey')
         this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
         this.bankAreaKey = Symbol('bankAreaKey')
-        this.legalPersonAddressList = [res.archiveExpandDTO.province, res.archiveExpandDTO.city, res.archiveExpandDTO.area]
+        this.legalPersonAddressList = [res.archiveExpandDTO.legalPersonProvince, res.archiveExpandDTO.legalPersonCity, res.archiveExpandDTO.legalPersonArea]
         this.legalPersonAddressKey = Symbol('legalPersonAddressKey')
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
         if (![0, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.pageStatus !== 'copy') this.checkFormDisabled = true

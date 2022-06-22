@@ -1,4 +1,271 @@
-export default function xftValidator() {
+// form 对象
+export const formObj = {
+  archiveBaseVO: {
+    address: '',
+    agentId: null,
+    agentName: '',
+    alIndustryId: '',
+    alIndustryIdName: '',
+    aliOrgTypeCode: '',
+    appid: '',
+    appletId: '',
+    appsecret: '',
+    archiveMode: null,
+    archiveType: null,
+    area: '',
+    areaName: '',
+    auditRemark: '',
+    auditStatus: null,
+    auditTime: '',
+    auditUserId: null,
+    bossAuditTime: '',
+    businessCategory: '',
+    businessCategoryRemark: '',
+    city: '',
+    cityName: '',
+    companyName: '',
+    contact: '',
+    contactPhone: '',
+    createId: null,
+    createTime: '',
+    creditcardFeeRate: null,
+    debitcardFeeRate: null,
+    directAgentId: null,
+    email: '',
+    exchangeFeeRate: null,
+    fixFeeRate: null,
+    id: null,
+    idNumber: '',
+    industrId: '',
+    industrIdName: '',
+    isOpenXingPos: 1,
+    mchDealType: 1,
+    mchTypeId: null,
+    mchTypeName: '',
+    merchantId: null,
+    merchantName: '',
+    merchantShortName: '',
+    merchantType: 3,
+    partner: '',
+    pid: '',
+    province: '',
+    provinceName: '',
+    publicId: '',
+    remark: '',
+    serviceTel: '',
+    source: 2,
+    status: null,
+    submitLevel: null,
+    unionpaycodeFeeRate: null,
+    useChannelCode: '',
+    userId: null,
+    wxCertStatus: null,
+    wxFlag: null,
+    wxIndustryId: '',
+    wxIndustryIdName: ''
+  },
+  archiveExpandVO: {
+    cardType: 1,
+    acctType: 1,
+    archiveId: null,
+    bank: '',
+    bankAccountName: '',
+    bankArea: '',
+    bankAreaName: '',
+    bankCard: '',
+    bankCardBackUrl: '',
+    bankCardFrontUrl: '',
+    bankCity: '',
+    bankCityName: '',
+    bankName: '',
+    bankProvince: '',
+    bankProvinceName: '',
+    bankSub: '',
+    bankSubName: '',
+    businessLicenseUrl: '',
+    businessScope: '',
+    cardholderIdNumber: '',
+    cardholderIdType: '',
+    cardholderPhone: '',
+    cardholderType: 1,
+    cashreceiveType: 1,
+    certType: '',
+    certTypeName: '',
+    hardIdUrl: '',
+    idBackUrl: '',
+    idBegin: '',
+    idEnd: '',
+    idFrontUrl: '',
+    idNumber: '',
+    idType: '',
+    legalPersonName: '',
+    legalPersonValidityBegin: '',
+    legalPersonValidityEnd: '',
+    licId: '',
+    licType: null,
+    licValidityBigen: '',
+    licValidityEnd: '',
+    openingPermitUrl: '',
+    orgInstitutionBigen: '',
+    orgInstitutionCode: '',
+    orgInstitutionEnd: '',
+    orgInstitutionUrl: '',
+    sellShopDescribe: '',
+    taxRegistrationUrl: '',
+    cardholderIdBegin: '',
+    cardholderIdEnd: ''
+  },
+  archiveOtherVO: {
+    additionalFiveUrl: '',
+    additionalFourUrl: '',
+    additionalOneUrl: '',
+    additionalRemark: '',
+    additionalThreeUrl: '',
+    additionalTwoUrl: '',
+    archiveId: null,
+    authorizationOfCompany: '',
+    businessSiteOneUrl: '',
+    businessSiteThreeUrl: '',
+    businessSiteTwoUrl: '',
+    businessSiteUrl: '',
+    cardholderIdBackUrl: '',
+    cardholderIdCardFront: '',
+    cardholderIdFrontUrl: '',
+    cardholderPhoto: '',
+    cashierDesk: '',
+    cashreceiveIdBackUrl: '',
+    cashreceiveIdFrontUrl: '',
+    contractOfTenancy1: '',
+    contractOfTenancy2: '',
+    contractOfTenancy3: '',
+    enterpriseInfoScreenshot: '',
+    privateAuthorization: '',
+    publicAuthorization: '',
+    signboardUrl: '',
+    typeAptitudeUrl: ''
+  }
+}
+
+// 赢钱校验字段
+export const formYQValids = [
+  'archiveBaseVO.merchantShortName',
+  'archiveBaseVO.province',
+  'archiveBaseVO.address',
+  'archiveBaseVO.industrId',
+  'archiveBaseVO.contactPhone',
+  'archiveBaseVO.email',
+  'archiveOtherVO.signboardUrl',
+  'archiveOtherVO.cashierDesk',
+  'archiveExpandVO.idFrontUrl',
+  'archiveExpandVO.idBackUrl',
+  'archiveExpandVO.legalPersonName',
+  'archiveExpandVO.idNumber',
+  'archiveExpandVO.legalPersonValidityBegin',
+  'archiveExpandVO.bankCardFrontUrl',
+  'archiveExpandVO.bankCardBackUrl',
+  'archiveExpandVO.bankAccountName',
+  'archiveExpandVO.bankCard',
+  'archiveExpandVO.bankProvince',
+  'archiveExpandVO.bankSub'
+]
+// 进件状态
+export const auditStatusList = {
+  0: '草稿',
+  1: '未通过审核编辑中',
+  2: '待审核',
+  3: '平台审核中',
+  4: '未通过审核',
+  5: '账号申请中',
+  6: '账号部分申请通过',
+  7: '账号全部申请通过',
+  8: '资料待补充',
+  9: '资料补充待审核',
+  10: '账号申请中',
+  11: '账号申请中'
+}
+
+// 账户类型
+export const acctTypeList = [
+  { id: 2, name: '对公' },
+  { id: 1, name: '对私' }
+]
+
+// 收款类型
+export const cashreceiveTypeList = [
+  { id: 1, name: '本企业收款' },
+  { id: 2, name: '其他企业收款' }
+]
+
+// 持卡人类型
+export const cardholderTypeList = [
+  { id: 1, name: '个体商户 持卡人为法人' },
+  { id: 2, name: '个体商户 持卡人为非法人' }
+]
+
+// 持卡人证件类型
+export const cardholderIdTypeList = [
+  { id: '1', name: '身份证' },
+  { id: '2', name: '护照' }
+]
+
+// 证件类型
+export const cardTypeList = [{ id: 1, name: '身份证' }]
+
+// 经营类型
+export const mchDealTypeList = [
+  { id: 1, name: '实体' },
+  { id: 2, name: '虚拟' }
+]
+
+// 费率
+export const fixFeeRateList = [
+  { id: 25, name: '0.' + '25' + '%' },
+  { id: 28, name: '0.' + '28' + '%' },
+  { id: 30, name: '0.' + '30' + '%' },
+  { id: 35, name: '0.' + '35' + '%' },
+  { id: 38, name: '0.' + '38' + '%' },
+  { id: 45, name: '0.' + '45' + '%' },
+  { id: 55, name: '0.' + '55' + '%' },
+  { id: 60, name: '0.' + '60' + '%' }
+]
+
+// 享钱汇银费率
+export const exchangeFeeRateList = [
+  { id: 25, name: '0.' + '25' + '%' },
+  { id: 28, name: '0.' + '28' + '%' },
+  { id: 30, name: '0.' + '30' + '%' },
+  { id: 35, name: '0.' + '35' + '%' },
+  { id: 38, name: '0.' + '38' + '%' },
+  { id: 45, name: '0.' + '45' + '%' },
+  { id: 55, name: '0.' + '55' + '%' },
+  { id: 60, name: '0.' + '60' + '%' }
+]
+
+// 图片示例
+export const exampleImg = {
+  signboardUrl: require('@/assets/images/xftArchive/store_front.png'),
+  enterpriseInfoScreenshot: require('@/assets/images/xftArchive/company_information.png'),
+  businessLicenseUrl: require('@/assets/images/xftArchive/business_license.jpg'),
+  idFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+  idBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+  bankCardFrontUrl: require('@/assets/images/xftArchive/bank_card.png'),
+  bankCardBackUrl: require('@/assets/images/xftArchive/bank_card_back.png'),
+  cardholderIdCardFront: require('@/assets/images/xftArchive/idcard_front.png'),
+  openingPermitUrl: require('@/assets/images/xftArchive/licence_for_opening_accounts.png'),
+  cashreceiveIdFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+  cashreceiveIdBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+  publicAuthorization: require('@/assets/images/xftArchive/authorization.jpg'),
+  cardholderPhoto: require('@/assets/images/xftArchive/cardholder_photo.png'),
+  cardholderIdFrontUrl: require('@/assets/images/xftArchive/idcard_front.png'),
+  cardholderIdBackUrl: require('@/assets/images/xftArchive/idcard_back.png'),
+  privateAuthorization: require('@/assets/images/xftArchive/authorization.jpg'),
+  cashierDesk: require('@/assets/images/xftArchive/cashier_desk.png'),
+  businessSiteOneUrl: require('@/assets/images/xftArchive/shop_cash.png'),
+  contractOfTenancy: require('@/assets/images/xftArchive/contract_of_tenancy.png')
+}
+
+// 表单正则校验
+export function xftValidator() {
   const validatorRules = {
     serviceTel: /(^(\d{11})$|^((\d{7,8})|(\d{4}|\d{3})-(\d{7,8})|(\d{4}|\d{3})-(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1})|(\d{7,8})-(\d{4}|\d{3}|\d{2}|\d{1}))$)/,
     idNumber: /(^\d{15}$)|(^\d{18}$)|(^\d{17}(\d|X|x)$)/,
