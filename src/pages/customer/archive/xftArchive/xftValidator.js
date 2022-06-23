@@ -113,7 +113,18 @@ export const formObj = {
     sellShopDescribe: '',
     taxRegistrationUrl: '',
     cardholderIdBegin: '',
-    cardholderIdEnd: ''
+    cardholderIdEnd: '',
+    legalPersonProvince: '', // 证件居住地址省
+    legalPersonCity: '', // 证件居住地址市
+    legalPersonArea: '', // 证件居住地址区
+    credentialsAddress: '', // 证件详细地址
+    contactSameLegal: 1, // 联系人是否同法人
+    contractHeadUrl: '', // 联系人证件照头像面
+    contractNationalUrl: '', // 联系人证件照国徽面
+    contactCredentialsType: 1, // 证件类型
+    credentialsValidDateBegin: '', // 证件有效期开始时间
+    credentialsValidDateEnd: '', // 证件有效期结束时间
+    businessAuthLetterUrl: '' // 业务办理授权函
   },
   archiveOtherVO: {
     additionalFiveUrl: '',
@@ -274,6 +285,12 @@ export function xftValidator() {
     bankCard: /^[0-9]\d{5,29}$/
   }
   return {
+    'archiveExpandVO.contractHeadUrl': [{ required: true, message: '请上传联系人证件照头像面', trigger: 'change' }],
+    'archiveExpandVO.contractNationalUrl': [{ required: true, message: '请上传联系人证件照国徽面', trigger: 'change' }],
+    'archiveExpandVO.businessAuthLetterUrl': [{ required: true, message: '请上传业务办理授权函', trigger: 'change' }],
+    'archiveExpandVO.credentialsValidDateBegin': [{ required: true, message: '请输入联系人证件有效期', trigger: 'change' }],
+    'archiveExpandVO.credentialsAddress': [{ required: true, message: '请输入证件详细地址', trigger: 'change' }],
+    'archiveExpandVO.legalPersonArea': [{ required: true, message: '请输入证件居住地址', trigger: 'change' }],
     'archiveBaseVO.merchantId': [{ required: true, message: '请选择商户', trigger: 'change' }],
     'archiveBaseVO.merchantType': [{ required: true, message: '请选择商户类型', trigger: 'change' }],
     'archiveBaseVO.companyName': [{ required: true, message: '请输入公司名称', trigger: 'blur' }],
@@ -319,8 +336,8 @@ export function xftValidator() {
       { pattern: validatorRules.idNumber, message: '请输入正确的证件号码', trigger: 'change' }
     ],
     'archiveExpandVO.legalPersonValidityBegin': [{ required: true, message: '请选择证件有效期', trigger: 'change' }],
-    'archiveExpandVO.idFrontUrl': [{ required: true, message: '请上传身份证正面照', trigger: 'change' }],
-    'archiveExpandVO.idBackUrl': [{ required: true, message: '请上传身份证背面照', trigger: 'change' }],
+    'archiveExpandVO.idFrontUrl': [{ required: true, message: '请上传法人证件照头像面', trigger: 'change' }],
+    'archiveExpandVO.idBackUrl': [{ required: true, message: '请上传法人证件照国徽面', trigger: 'change' }],
     'archiveExpandVO.acctType': [{ required: true, message: '请选择账户类型', trigger: 'change' }],
     'archiveExpandVO.cashreceiveType': [{ required: true, message: '请选择收款类型', trigger: 'change' }],
     'archiveExpandVO.cardholderType': [{ required: true, message: '请选择持卡人类型', trigger: 'change' }],

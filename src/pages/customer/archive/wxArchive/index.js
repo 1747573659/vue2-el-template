@@ -88,7 +88,7 @@ export const formObj = {
     orgInstitutionUrl: '', //组织机构代码证
     taxRegistrationUrl: '', //税务登记证
     legalPersonName: '', // 法人姓名
-    idType: 1, // 证件类型
+    idType: '1', // 证件类型
     idNumber: '', // 证件号码
     idBegin: '', // 证件开始有效期
     idEnd: '', // 证件结束有效期
