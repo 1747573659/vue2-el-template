@@ -113,13 +113,7 @@
           </template>
           <el-col :span="24">
             <el-form-item label="经营类目" prop="archiveBaseVO.businessCategory">
-              <el-cascader
-                ref="cascader"
-                v-model="businessCategory"
-                :options="businessOptions"
-                @change="handleBusinessCategory"
-                placeholder="经营类目"
-                style="width: 240px"></el-cascader>
+              <el-cascader ref="cascader" v-model="businessCategory" :options="businessOptions" @change="handleBusinessCategory" style="width: 240px"></el-cascader>
               <el-tooltip effect="dark" placement="top">
                 <img :src="questionIcon" alt="提示" class="e-icon-question" />
                 <template #content>
@@ -748,15 +742,13 @@ export default {
       }
     },
     handleCancel() {
-      this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ name: 'wxArchive' })
-      })
+      this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name: 'wxArchive' }))
     },
     handleMerchantType(val) {
       if (val !== 5) this.form.archiveBaseVO.fixFeeRate = 60
       if (val === 2) this.form.archiveExpandVO.acctType = 1
     },
-    handleDirectAuditStatus: async function (id) {
+    async handleDirectAuditStatus(id) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id })
         this.handleCancel()
@@ -814,7 +806,7 @@ export default {
         }
       })
     },
-    handleDetail: async function () {
+    async handleDetail() {
       try {
         this.checkFormLoad = true
         const res = await detail({ archiveId: Number(this.$route.query.id) })
@@ -830,12 +822,7 @@ export default {
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
         // 页面回显处理
-        this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
-        this.areaKey = Symbol('areaKey')
-        this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
-        this.bankAreaKey = Symbol('bankAreaKey')
-        this.legalPersonAddressList = [res.archiveExpandDTO.legalPersonProvince, res.archiveExpandDTO.legalPersonCity, res.archiveExpandDTO.legalPersonArea]
-        this.legalPersonAddressKey = Symbol('legalPersonAddressKey')
+        this.handleAreaKeyAndVO(res)
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
         setTimeout(() => {
           this.$refs.merchant.selectVal = this.form.archiveBaseVO.merchantName
@@ -849,17 +836,34 @@ export default {
       }
 
       if (this.pageStatus === 'copy') {
-        this.form.archiveBaseVO.auditTime = ''
-        this.form.archiveBaseVO.bossAuditTime = ''
-        this.form.archiveBaseVO.createTime = ''
-        this.form.archiveBaseVO.directAuditStatus = ''
-        this.form.archiveBaseVO.useChannelCode = ''
-        this.form.archiveBaseVO.id = ''
+        this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { auditTime: '', bossAuditTime: '', createTime: '', directAuditStatus: '', useChannelCode: '', id: '' })
         this.form.archiveExpandVO.id = ''
         this.form.archiveOtherVO.id = ''
         this.$nextTick(() => {
           this.$refs.form.clearValidate()
         })
+      }
+    },
+    handleAreaKeyAndVO(res) {
+      this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
+      this.areaKey = Symbol('areaKey')
+      this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
+      this.bankAreaKey = Symbol('bankAreaKey')
+      this.legalPersonAddressList = [res.archiveExpandDTO.legalPersonProvince, res.archiveExpandDTO.legalPersonCity, res.archiveExpandDTO.legalPersonArea]
+      this.legalPersonAddressKey = Symbol('legalPersonAddressKey')
+    },
+    handleSetContactVO() {
+      if (this.form.archiveExpandVO.contactSameLegal) {
+        const { idFrontUrl, idBackUrl, legalPersonName, idType, idNumber, idBegin, idEnd } = this.form.archiveExpandVO
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, {
+          contractHeadUrl: idFrontUrl,
+          contractNationalUrl: idBackUrl,
+          contactCredentialsType: idType,
+          administratorIdCard: idNumber,
+          credentialsValidDateBegin: idBegin,
+          credentialsValidDateEnd: idEnd
+        })
+        this.form.archiveBaseVO.contact = legalPersonName
       }
     },
     handleArchive() {
@@ -870,18 +874,7 @@ export default {
           if (!errorMessage) {
             try {
               this.checkArchive = true
-              if (this.form.archiveExpandVO.contactSameLegal) {
-                const { idFrontUrl, idBackUrl, legalPersonName, idType, idNumber, idBegin, idEnd } = this.form.archiveExpandVO
-                this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, {
-                  contractHeadUrl: idFrontUrl,
-                  contractNationalUrl: idBackUrl,
-                  contactCredentialsType: idType,
-                  administratorIdCard: idNumber,
-                  credentialsValidDateBegin: idBegin,
-                  credentialsValidDateEnd: idEnd
-                })
-                this.form.archiveBaseVO.contact = legalPersonName
-              }
+              this.handleSetContactVO()
               const res = await submit(this.form)
               if (!this.form.archiveBaseVO.id) {
                 this.$router.replace({ name: 'wxArchiveAdd', query: { id: res, status: 'edit' } })
@@ -906,7 +899,7 @@ export default {
         this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { legalPersonProvince: value[0], legalPersonCity: value[1], legalPersonArea: value[2] })
       }
     },
-    handleSelectPageRemoteRe: async function (query, page, rows, type) {
+    async handleSelectPageRemoteRe(query, page, rows, type) {
       try {
         const selectQueryMap = new Map([
           ['Bank', { method: queryBankPage, params: { bankName: query || '' } }],
@@ -926,9 +919,6 @@ export default {
       if (refs === 'selectMerchant') {
         const merchantObj = this.shopVO.find(item => item.id === value)
         const { userId, shortName: merchantShortName, companyName, address, provinceCode: province, cityCode: city, districtCode: area } = merchantObj
-        // this.form.archiveBaseVO.contact = contactor
-        // this.form.archiveBaseVO.contactPhone = mobile
-        // this.form.archiveBaseVO.email = email
         this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { userId, merchantShortName, companyName, address, province, city, area })
         this.areaList = [province, city, area]
         this.areaKey = Symbol('areaKey')
