@@ -153,11 +153,11 @@ export const detailValidate = {
   'archiveBaseVO.contact': [{ required: true, message: '请输入联系人', trigger: 'change' }],
   'archiveBaseVO.contactPhone': [
     { required: true, message: '请输入联系人电话', trigger: 'blur' },
-    { pattern: validatorRules.mobildPhone, message: '请输入正确的电话号码', trigger: 'change' }
+    { pattern: validatorRules.mobildPhone, message: '请输入正确的联系人电话号码', trigger: 'change' }
   ],
   'archiveExpandVO.administratorIdCard': [
     { required: true, message: '请输入联系人证件号码', trigger: 'blur' },
-    { pattern: validatorRules.idNumber, message: '请输入正确证件号码', trigger: 'change' }
+    { pattern: validatorRules.idNumber, message: '请输入正确联系人证件号码', trigger: 'change' }
   ],
   'archiveBaseVO.email': [
     { required: true, message: '请输入邮箱', trigger: 'blur' },

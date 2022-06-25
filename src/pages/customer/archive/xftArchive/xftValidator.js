@@ -301,18 +301,18 @@ export function xftValidator() {
       { required: true, message: '请输入客服电话', trigger: 'blur' },
       { pattern: validatorRules.serviceTel, message: '请输入正确的客服电话', trigger: 'change' }
     ],
-    'archiveBaseVO.contact': [{ required: true, message: '请输入负责人', trigger: 'blur' }],
+    'archiveBaseVO.contact': [{ required: true, message: '请输入联系人姓名', trigger: 'blur' }],
     'archiveBaseVO.idNumber': [
-      { required: true, message: '请输入负责人证件号码', trigger: 'blur' },
-      { pattern: validatorRules.idNumber, message: '请输入正确的负责人证件号码', trigger: 'change' }
+      { required: true, message: '请输入联系人证件号码', trigger: 'blur' },
+      { pattern: validatorRules.idNumber, message: '请输入正确的联系人证件号码', trigger: 'change' }
     ],
     'archiveBaseVO.contactPhone': [
-      { required: true, message: '请输入负责人电话', trigger: 'blur' },
-      { pattern: validatorRules.mobildPhone, message: '请输入正确的负责人电话', trigger: 'change' }
+      { required: true, message: '请输入联系人电话', trigger: 'blur' },
+      { pattern: validatorRules.mobildPhone, message: '请输入正确的联系人电话', trigger: 'change' }
     ],
     'archiveBaseVO.email': [
       { required: true, message: '请输入邮箱', trigger: 'blur' },
-      { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
+      { type: 'email', message: '请输入正确的联系人邮箱地址', trigger: 'change' }
     ],
     'archiveBaseVO.mchDealType': [{ required: true, message: '请选择经营类型', trigger: 'change' }],
     'archiveBaseVO.industrId': [{ required: true, message: '请选择经营类目', trigger: 'change' }],
