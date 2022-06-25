@@ -17,11 +17,13 @@
       </div>
     </el-upload>
     <div class="avatar-upload-explain">
-      <span>要求图片清晰可见，{{ fileSize }}MB以内</span>
-      <el-popover v-if="exampleImg" placement="bottom" :title="`${alt}示例`" trigger="hover">
-        <img class="avatar-explain-img" :src="exampleImg" :alt="`${alt}示例`" />
-        <span class="el-button el-button--text" slot="reference">图片示例</span>
-      </el-popover>
+      <slot>
+        <span>要求图片清晰可见，{{ fileSize }}MB以内</span>
+        <el-popover v-if="exampleImg" placement="bottom" :title="`${alt}示例`" trigger="hover">
+          <img class="avatar-explain-img" :src="exampleImg" :alt="`${alt}示例`" />
+          <span class="el-button el-button--text" slot="reference">图片示例</span>
+        </el-popover>
+      </slot>
     </div>
   </div>
 </template>
@@ -95,18 +97,15 @@ export default {
       overflow: hidden;
       display: inline-flex;
     }
-
     .el-upload:hover {
       border-color: #409eff;
     }
   }
-
   .avatar {
     width: 80px;
     height: 80px;
     display: block;
   }
-
   .avatar-uploader-card {
     width: 80px;
     height: 80px;
@@ -114,11 +113,9 @@ export default {
     display: flex;
     flex-direction: column;
     justify-content: center;
-
     .avatar-uploader-icon {
       font-size: 18px;
     }
-
     .avatar-uploader-text {
       font-size: 14px;
       line-height: 14px;
@@ -126,20 +123,17 @@ export default {
     }
   }
 }
-
 .avatar-upload-explain {
   color: #cad1e0;
   font-size: 14px;
   margin-top: 5px;
   line-height: 1.5;
-
   ::v-deep {
     .el-button {
       margin-left: 12px;
     }
   }
 }
-
 .avatar-explain-img {
   width: 200px;
   height: 200px;

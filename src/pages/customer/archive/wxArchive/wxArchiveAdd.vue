@@ -304,7 +304,7 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="证件类型" prop="archiveExpandVO.idType">
-              <el-select clearable v-model="form.archiveExpandVO.idType" filterable placeholder="证件类型" style="width: 240px">
+              <el-select v-model="form.archiveExpandVO.idType" filterable placeholder="证件类型" style="width: 240px">
                 <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="String(item.value)"></el-option>
               </el-select>
             </el-form-item>
@@ -322,7 +322,7 @@
               <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
             </el-form-item>
           </el-col>
-          <template v-if="form.archiveBaseVO.merchantType === 2">
+          <el-row v-if="form.archiveBaseVO.merchantType === 2">
             <el-col :span="12">
               <el-form-item label="证件居住地址" prop="archiveExpandVO.legalPersonArea">
                 <area-select :key="legalPersonAddressKey" @change="value => handleArea('legalPersonArea', value)" :areaList="legalPersonAddressList" placeholder="省/市/区" />
@@ -333,21 +333,23 @@
                 <el-input v-model="form.archiveExpandVO.credentialsAddress" placeholder="证件详细地址" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
-          </template>
+          </el-row>
         </el-row>
       </div>
       <div class="p-wxArchive-item">
         <header>联系人信息</header>
         <el-row class="p-wxArchive-fill">
-          <el-col :span="24">
-            <el-form-item label="联系人是否同法人">
-              <el-select v-model="form.archiveExpandVO.contactSameLegal" filterable placeholder="联系人是否同法人" style="width: 240px">
-                <el-option label="是" :value="1"></el-option>
-                <el-option label="否" :value="0"></el-option>
-              </el-select>
-            </el-form-item>
-          </el-col>
-          <template v-if="!form.archiveExpandVO.contactSameLegal">
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="联系人是否同法人">
+                <el-select v-model="form.archiveExpandVO.contactSameLegal" filterable placeholder="联系人是否同法人" style="width: 240px">
+                  <el-option label="是" :value="1"></el-option>
+                  <el-option label="否" :value="0"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="!form.archiveExpandVO.contactSameLegal">
             <el-col :span="12">
               <el-form-item label="联系人证件照头像面" prop="archiveExpandVO.contractHeadUrl">
                 <upload-panel
@@ -379,7 +381,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="证件类型" prop="archiveExpandVO.contactCredentialsType">
-                <el-select clearable v-model="form.archiveExpandVO.contactCredentialsType" filterable placeholder="证件类型" style="width: 240px">
+                <el-select v-model="form.archiveExpandVO.contactCredentialsType" filterable placeholder="证件类型" style="width: 240px">
                   <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
                 </el-select>
               </el-form-item>
@@ -402,7 +404,7 @@
                   style="width: 140px"></el-date-picker>
               </el-form-item>
             </el-col>
-          </template>
+          </el-row>
           <el-col :span="12">
             <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
               <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width: 240px"></el-input>
@@ -413,7 +415,7 @@
               <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
-          <template v-if="!form.archiveExpandVO.contactSameLegal">
+          <el-row v-if="!form.archiveExpandVO.contactSameLegal">
             <el-col :span="12">
               <el-form-item label="业务办理授权函" prop="archiveExpandVO.businessAuthLetterUrl">
                 <upload-panel
@@ -423,10 +425,17 @@
                   :exampleImg="exampleImg.idFrontUrl"
                   :image-url="form.archiveExpandVO.businessAuthLetterUrl"
                   :on-success="res => handleUpload(res, 'archiveExpandVO.businessAuthLetterUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)" />
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)">
+                  <div style="width: 350px">
+                    <header>下载、填写商户信息后打印授权函，加盖</header>
+                    <section>① 商户号主体红章</section>
+                    <section>② 法定代表人/负责人章或签字（①、②二选一）后扫描或拍照上传，要求图片清晰可见，2MB以内</section>
+                    <el-link :href="businessAuthLetterUrl" type="primary" :underline="false" target="_blank"> 模板下载 </el-link>
+                  </div>
+                </upload-panel>
               </el-form-item>
             </el-col>
-          </template>
+          </el-row>
         </el-row>
       </div>
       <div class="p-wxArchive-item">
@@ -558,7 +567,6 @@
       </template>
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
-    <!-- dialog -->
     <el-dialog append-to-body :visible.sync="checkReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" label-width="60px">
         <el-form-item label="原因" prop="remark" :rules="[{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]" class="e-dialog-remark">
@@ -570,7 +578,6 @@
         <el-button @click="handleRefund" type="primary" size="small" class="e-wxArchive-action_pd">确定</el-button>
       </div>
     </el-dialog>
-    <!-- image-preview -->
     <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="() => (checkViewer = false)" class="e-preview-con"></el-image-preview>
   </section>
 </template>
@@ -587,7 +594,7 @@ import UploadPanel from '../components/uploadPanel'
 import areaSelect from '@/components/areaSelect'
 import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
 
-import { detailValidate, formObj, rateOptions, merchantTypeOptions, sellShopDescribeArr, exampleImg, idTypeOptions } from './index'
+import { detailValidate, formObj, rateOptions, merchantTypeOptions, sellShopDescribeArr, exampleImg, idTypeOptions, businessAuthLetterUrl } from './index'
 import { queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, updateArchiveBaseDirectAuditStatus } from '@/api/wxArchive'
 
 export default {
@@ -602,6 +609,7 @@ export default {
       sellShopDescribeArr,
       rateOptions,
       exampleImg,
+      businessAuthLetterUrl,
       detailStatusArr: [0, 1, 2, 3, 4, 6, 8],
       direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions),
       questionIcon: require('@/assets/images/icon/questioin.png'),
@@ -824,11 +832,13 @@ export default {
         // 页面回显处理
         this.handleAreaKeyAndVO(res)
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
-        setTimeout(() => {
-          this.$refs.merchant.selectVal = this.form.archiveBaseVO.merchantName
-          this.$refs.bank.selectVal = this.form.archiveExpandVO.bankName
-          this.$refs.bankSub.selectVal = this.form.archiveExpandVO.bankSubName
-        }, 200)
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.$refs.merchant.selectVal = this.form.archiveBaseVO.merchantName
+            this.$refs.bank.selectVal = this.form.archiveExpandVO.bankName
+            this.$refs.bankSub.selectVal = this.form.archiveExpandVO.bankSubName
+          }, 200)
+        })
         if (![0, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.pageStatus !== 'copy') this.checkFormDisabled = true
       } catch (error) {
       } finally {

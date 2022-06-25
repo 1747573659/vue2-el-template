@@ -1,3 +1,4 @@
+export const businessAuthLetterUrl = 'https://static-oss.platform.kemai.com.cn/boss/uploadFiles/241/ffbdac25bfff46899a1ba51586a3d897.docx'
 // 是否停用
 export const idTypeOptions = [
   { value: 1, label: '身份证' },
@@ -148,7 +149,7 @@ export const detailValidate = {
   'archiveBaseVO.appletId': [{ required: true, message: '请输入小程序APPID', trigger: 'change' }],
   'archiveBaseVO.companyName': [{ required: true, message: '请输入公司名称', trigger: 'change' }],
   'archiveBaseVO.merchantShortName': [{ required: true, message: '请输入商户简称', trigger: 'change' }],
-  'archiveBaseVO.area': [{ required: true, message: '请输入地区', trigger: 'change' }],
+  'archiveBaseVO.area': [{ required: true, message: '请输入公司地址', trigger: 'change' }],
   'archiveBaseVO.address': [{ required: true, message: '请输入详细地址', trigger: 'change' }],
   'archiveBaseVO.contact': [{ required: true, message: '请输入联系人', trigger: 'change' }],
   'archiveBaseVO.contactPhone': [
@@ -164,7 +165,7 @@ export const detailValidate = {
     { type: 'email', message: '请输入正确的邮箱地址', trigger: 'change' }
   ],
   'archiveOtherVO.signboardUrl': [{ required: true, message: '请上传门店门头照', trigger: 'change' }],
-  'archiveOtherVO.businessSiteOneUrl': [{ required: true, message: '请上传经营场所照1', trigger: 'change' }],
+  'archiveOtherVO.businessSiteOneUrl': [{ required: true, message: '请上传店内环境照片', trigger: 'change' }],
   'archiveOtherVO.typeAptitudeUrl': [{ required: true, message: '请上传特殊资质照', trigger: 'change' }],
   'archiveOtherVO.businessSiteTwoUrl': [{ required: true, message: '请上传经营场所照2', trigger: 'change' }],
   'archiveOtherVO.businessSiteThreeUrl': [{ required: true, message: '请上传经营场所照3', trigger: 'change' }],

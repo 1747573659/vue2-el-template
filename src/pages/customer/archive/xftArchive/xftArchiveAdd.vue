@@ -116,7 +116,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="经营类型" prop="archiveBaseVO.mchDealType">
-                <el-select :disabled="formYQDisabled" clearable v-model="form.archiveBaseVO.mchDealType" placeholder="全部" style="width: 240px">
+                <el-select :disabled="formYQDisabled" v-model="form.archiveBaseVO.mchDealType" placeholder="全部" style="width: 240px">
                   <el-option v-for="item in mchDealTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -307,15 +307,17 @@
         <div class="title">联系人信息</div>
         <div class="form-info">
           <el-row>
-            <el-col :span="24">
-              <el-form-item label="联系人是否同法人">
-                <el-select v-model="form.archiveExpandVO.contactSameLegal" filterable placeholder="联系人是否同法人" style="width: 240px">
-                  <el-option label="是" :value="1"></el-option>
-                  <el-option label="否" :value="0"></el-option>
-                </el-select>
-              </el-form-item>
-            </el-col>
-            <template v-if="!form.archiveExpandVO.contactSameLegal">
+            <el-row>
+              <el-col :span="24">
+                <el-form-item label="联系人是否同法人">
+                  <el-select v-model="form.archiveExpandVO.contactSameLegal" filterable placeholder="联系人是否同法人" style="width: 240px">
+                    <el-option label="是" :value="1"></el-option>
+                    <el-option label="否" :value="0"></el-option>
+                  </el-select>
+                </el-form-item>
+              </el-col>
+            </el-row>
+            <el-row v-if="!form.archiveExpandVO.contactSameLegal">
               <el-col :span="12">
                 <el-form-item label="联系人证件照头像面" prop="archiveExpandVO.contractHeadUrl">
                   <upload-panel
@@ -370,7 +372,7 @@
                     style="width: 140px"></el-date-picker>
                 </el-form-item>
               </el-col>
-            </template>
+            </el-row>
             <el-col :span="12">
               <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
                 <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width: 240px"></el-input>
@@ -381,7 +383,7 @@
                 <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
-            <template v-if="!form.archiveExpandVO.contactSameLegal">
+            <el-row v-if="!form.archiveExpandVO.contactSameLegal">
               <el-col :span="12">
                 <el-form-item label="业务办理授权函" prop="archiveExpandVO.businessAuthLetterUrl">
                   <upload-panel
@@ -394,7 +396,7 @@
                     @click="handleImgPreview(fileServe + form.archiveExpandVO.businessAuthLetterUrl)" />
                 </el-form-item>
               </el-col>
-            </template>
+            </el-row>
           </el-row>
         </div>
         <div class="title">银行卡信息</div>
@@ -402,7 +404,7 @@
           <el-row>
             <el-col :span="24">
               <el-form-item label="账户类型" prop="archiveExpandVO.acctType">
-                <el-select :disabled="form.archiveBaseVO.merchantType === 4" clearable v-model="form.archiveExpandVO.acctType" placeholder="全部" style="width: 240px">
+                <el-select :disabled="form.archiveBaseVO.merchantType === 4" v-model="form.archiveExpandVO.acctType" placeholder="全部" style="width: 240px">
                   <el-option v-for="item in acctTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
@@ -476,7 +478,7 @@
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.acctType === 1 && form.archiveBaseVO.merchantType === 3">
               <el-form-item label="持卡人类型" prop="archiveExpandVO.cardholderType">
-                <el-select clearable v-model="form.archiveExpandVO.cardholderType" placeholder="全部" style="width: 240px">
+                <el-select v-model="form.archiveExpandVO.cardholderType" placeholder="全部" style="width: 240px">
                   <el-option v-for="item in cardholderTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                 </el-select>
               </el-form-item>
