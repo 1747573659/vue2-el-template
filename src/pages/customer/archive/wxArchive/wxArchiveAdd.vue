@@ -828,7 +828,7 @@ export default {
           this.$refs.merchant.selectVal = this.form.archiveBaseVO.merchantName
           this.$refs.bank.selectVal = this.form.archiveExpandVO.bankName
           this.$refs.bankSub.selectVal = this.form.archiveExpandVO.bankSubName
-        }, 100)
+        }, 200)
         if (![0, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.pageStatus !== 'copy') this.checkFormDisabled = true
       } catch (error) {
       } finally {

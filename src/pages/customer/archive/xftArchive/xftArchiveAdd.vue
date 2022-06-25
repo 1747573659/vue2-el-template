@@ -1,18 +1,23 @@
 <template>
   <div v-permission.page="'XFT_LIST_ADD,XFT_LIST_EDIT'">
     <div class="xft-add" v-loading="addLoading">
-      <div class="header" v-if="!isCopy && auditStatus !== undefined">
+      <header v-if="!isCopy && auditStatus">
         <el-row>
-          <el-col :span="12" class="title-text" v-if="auditStatus !== undefined">
-            <span class="archive-title">进件状态：</span>
-            <span class="archive-status">{{ auditStatusList[auditStatus] }}</span>
+          <el-col :span="12" v-if="auditStatus">
+            <label class="el-form-item__label" style="width: 210px">进件状态:</label>
+            <span class="e-wxArchive-status_pd e-wxArchive-warning">{{ auditStatusList[auditStatus] }}</span>
           </el-col>
-          <el-col :span="12" class="title-text" v-if="[1, 4, 8].includes(auditStatus)">
-            <span class="archive-title">审核结果：</span>
-            <span>{{ form.archiveBaseVO.auditRemark }}</span>
+          <el-col :span="12" v-if="[1, 4, 8].includes(auditStatus)">
+            <label class="el-form-item__label" style="width: 210px">审核结果:</label>
+            <el-tooltip effect="dark" placement="top">
+              <span class="e-wxArchive-review">{{ form.archiveBaseVO.auditRemark }}</span>
+              <template #content>
+                <div style="max-width: 500px">{{ form.archiveBaseVO.auditRemark }}</div>
+              </template>
+            </el-tooltip>
           </el-col>
         </el-row>
-      </div>
+      </header>
       <el-form :disabled="isDetail" ref="form" :rules="rules" class="xft-add-form" size="small" label-suffix=":" :inline="true" :model="form" label-width="210px">
         <div class="title">基本信息</div>
         <div class="form-info">
@@ -20,6 +25,7 @@
             <el-col :span="12">
               <el-form-item label="商户" prop="archiveBaseVO.merchantId">
                 <km-select-page
+                  ref="merchant"
                   v-model="form.archiveBaseVO.merchantId"
                   :disabled="formYQDisabled || [1, 4, 8].includes(this.auditStatus)"
                   option-label="companyName"
@@ -140,7 +146,7 @@
               <el-form-item label="门店门头照" prop="archiveOtherVO.signboardUrl">
                 <upload-panel
                   alt="门店门头照"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.signboardUrl"
                   :image-url="form.archiveOtherVO.signboardUrl"
@@ -152,7 +158,7 @@
               <el-form-item label="收银台照片" prop="archiveOtherVO.cashierDesk">
                 <upload-panel
                   alt="收银台照片"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cashierDesk"
                   :image-url="form.archiveOtherVO.cashierDesk"
@@ -164,7 +170,7 @@
               <el-form-item label="企业信息公示网照片" prop="archiveOtherVO.enterpriseInfoScreenshot">
                 <upload-panel
                   alt="企业信息公示网照片"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.enterpriseInfoScreenshot"
                   :image-url="form.archiveOtherVO.enterpriseInfoScreenshot"
@@ -178,7 +184,7 @@
                   <upload-panel
                     alt="经营场所照"
                     :disabled="formYQDisabled"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.businessSiteOneUrl"
                     :image-url="form.archiveOtherVO.businessSiteOneUrl"
@@ -191,7 +197,7 @@
                   <upload-panel
                     alt="租赁合同照一"
                     :disabled="formYQDisabled"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.contractOfTenancy"
                     :image-url="form.archiveOtherVO.contractOfTenancy1"
@@ -204,7 +210,7 @@
                   <upload-panel
                     alt="租赁合同照二"
                     :disabled="formYQDisabled"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.contractOfTenancy"
                     :image-url="form.archiveOtherVO.contractOfTenancy2"
@@ -217,7 +223,7 @@
                   <upload-panel
                     alt="租赁合同照三"
                     :disabled="formYQDisabled"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.contractOfTenancy"
                     :image-url="form.archiveOtherVO.contractOfTenancy3"
@@ -235,7 +241,7 @@
               <el-form-item label="法人证件照头像面" prop="archiveExpandVO.idFrontUrl">
                 <upload-panel
                   alt="法人证件照头像面"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.idFrontUrl"
                   :image-url="form.archiveExpandVO.idFrontUrl"
@@ -247,7 +253,7 @@
               <el-form-item label="法人证件照国徽面" prop="archiveExpandVO.idBackUrl">
                 <upload-panel
                   alt="法人证件照国徽面"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.idBackUrl"
                   :image-url="form.archiveExpandVO.idBackUrl"
@@ -314,7 +320,7 @@
                 <el-form-item label="联系人证件照头像面" prop="archiveExpandVO.contractHeadUrl">
                   <upload-panel
                     alt="联系人证件照头像面"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.idFrontUrl"
                     :image-url="form.archiveExpandVO.contractHeadUrl"
@@ -326,7 +332,7 @@
                 <el-form-item label="联系人证件照国徽面" prop="archiveExpandVO.contractNationalUrl">
                   <upload-panel
                     alt="联系人证件照国徽面"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.idBackUrl"
                     :image-url="form.archiveExpandVO.contractNationalUrl"
@@ -347,8 +353,8 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="证件号码" prop="archiveExpandVO.idNumber">
-                  <el-input v-model="form.archiveExpandVO.idNumber" placeholder="证件号码" style="width: 240px"></el-input>
+                <el-form-item label="证件号码" prop="archiveBaseVO.idNumber">
+                  <el-input v-model="form.archiveBaseVO.idNumber" placeholder="证件号码" style="width: 240px"></el-input>
                 </el-form-item>
               </el-col>
               <el-col :span="12">
@@ -380,7 +386,7 @@
                 <el-form-item label="业务办理授权函" prop="archiveExpandVO.businessAuthLetterUrl">
                   <upload-panel
                     alt="业务办理授权函"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.idFrontUrl"
                     :image-url="form.archiveExpandVO.businessAuthLetterUrl"
@@ -406,7 +412,7 @@
                 <el-form-item label="银行卡正面照" prop="archiveExpandVO.bankCardFrontUrl">
                   <upload-panel
                     alt="银行卡正面照"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.bankCardFrontUrl"
                     :image-url="form.archiveExpandVO.bankCardFrontUrl"
@@ -418,7 +424,7 @@
                 <el-form-item label="银行卡背面照" prop="archiveExpandVO.bankCardBackUrl">
                   <upload-panel
                     alt="银行卡背面照"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.bankCardBackUrl"
                     :image-url="form.archiveExpandVO.bankCardBackUrl"
@@ -442,6 +448,7 @@
             <el-col :span="12">
               <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
                 <km-select-page
+                  ref="bankSub"
                   v-model="form.archiveExpandVO.bankSub"
                   option-label="bname"
                   option-value="bcode"
@@ -464,7 +471,7 @@
             </el-col>
             <el-col :span="12">
               <el-form-item label="开户支行所在省市" prop="archiveExpandVO.bankProvince">
-                <area-select-for-two :key="bankAreaKey" @change="value => handleArea('bankArea', value)" :areaList="bankAreaList" placeholder="省/市" />
+                <area-select-for-two :key="bankAreaKey" @change="value => handleArea('bankProvince', value)" :areaList="bankAreaList" placeholder="省/市" />
               </el-form-item>
             </el-col>
             <el-col :span="12" v-if="form.archiveExpandVO.acctType === 1 && form.archiveBaseVO.merchantType === 3">
@@ -480,7 +487,7 @@
               <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdFrontUrl">
                 <upload-panel
                   alt="持卡人身份证正面照"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cardholderIdFrontUrl"
                   :image-url="form.archiveOtherVO.cardholderIdFrontUrl"
@@ -492,7 +499,7 @@
               <el-form-item label="持卡人身份证反面照" prop="archiveOtherVO.cardholderIdBackUrl">
                 <upload-panel
                   alt="持卡人身份证反面照"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cardholderIdBackUrl"
                   :image-url="form.archiveOtherVO.cardholderIdBackUrl"
@@ -535,7 +542,7 @@
                 <upload-panel
                   alt="法人手持身份证"
                   :disabled="formYQDisabled"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :image-url="form.archiveExpandVO.hardIdUrl"
                   :on-success="res => handleUploadToOCR(res, 'archiveExpandVO.hardIdUrl')"
@@ -548,7 +555,7 @@
               <el-form-item label="开户许可证" prop="archiveExpandVO.openingPermitUrl">
                 <upload-panel
                   alt="开户许可证"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.openingPermitUrl"
                   :image-url="form.archiveExpandVO.openingPermitUrl"
@@ -562,7 +569,7 @@
               <el-form-item label="收款企业法人身份证正面照" prop="archiveOtherVO.cashreceiveIdFrontUrl">
                 <upload-panel
                   alt="收款企业法人身份证正面照"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cashreceiveIdFrontUrl"
                   :image-url="form.archiveOtherVO.cashreceiveIdFrontUrl"
@@ -574,7 +581,7 @@
               <el-form-item label="收款企业法人身份证反面照" prop="archiveOtherVO.cashreceiveIdBackUrl">
                 <upload-panel
                   alt="收款企业法人身份证反面照"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cashreceiveIdBackUrl"
                   :image-url="form.archiveOtherVO.cashreceiveIdBackUrl"
@@ -588,7 +595,7 @@
               <el-form-item label="第三方对公结算授权函" prop="archiveOtherVO.publicAuthorization">
                 <upload-panel
                   alt="第三方对公结算授权函"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.publicAuthorization"
                   :image-url="form.archiveOtherVO.publicAuthorization"
@@ -602,7 +609,7 @@
               <el-form-item label="持卡人手持身份证照片" prop="archiveOtherVO.cardholderPhoto">
                 <upload-panel
                   alt="持卡人手持身份证照片"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cardholderPhoto"
                   :image-url="form.archiveOtherVO.cardholderPhoto"
@@ -615,7 +622,7 @@
                 <div class="e-private-con">
                   <upload-panel
                     alt="第三方对私结算授权函"
-                    action="/uploadFile"
+                    action="/uploadPic"
                     :fileServer="fileServer"
                     :exampleImg="exampleImg.privateAuthorization"
                     :image-url="form.archiveOtherVO.privateAuthorization"
@@ -650,7 +657,7 @@
               <el-form-item label="持卡人身份证正面照" prop="archiveOtherVO.cardholderIdCardFront">
                 <upload-panel
                   alt="持卡人身份证正面照"
-                  action="/uploadFile"
+                  action="/uploadPic"
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cardholderIdCardFront"
                   :image-url="form.archiveOtherVO.cardholderIdCardFront"
@@ -795,7 +802,7 @@ export default {
       formYQDisabled: false,
       checkVerify: false,
       checkArchive: false,
-      checkLegalPersonStatus: true
+      checkLegalPersonStatus: false
     }
   },
   created() {
@@ -945,7 +952,7 @@ export default {
     },
     handleArea(type, value) {
       if (type === 'area') this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { province: value[0], city: value[1], area: value[2] })
-      else if (type === 'bankArea') this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { bankProvince: value[0], bankCity: value[1] })
+      else if (type === 'bankProvince') this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { bankProvince: value[0], bankCity: value[1] })
       else {
         this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { legalPersonProvince: value[0], legalPersonCity: value[1], legalPersonArea: value[2] })
       }
@@ -981,16 +988,15 @@ export default {
           try {
             this.checkArchive = true
             if (this.form.archiveExpandVO.contactSameLegal) {
-              const { idFrontUrl, idBackUrl, legalPersonName, idType, idNumber, legalPersonValidityBegin, legalPersonValidityEnd } = this.form.archiveExpandVO
+              const { idFrontUrl, idBackUrl, legalPersonName, cardType, idNumber, legalPersonValidityBegin, legalPersonValidityEnd } = this.form.archiveExpandVO
               this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, {
                 contractHeadUrl: idFrontUrl,
                 contractNationalUrl: idBackUrl,
-                contactCredentialsType: idType,
-                administratorIdCard: idNumber,
+                contactCredentialsType: cardType,
                 credentialsValidDateBegin: legalPersonValidityBegin,
                 credentialsValidDateEnd: legalPersonValidityEnd
               })
-              this.form.archiveBaseVO.contact = legalPersonName
+              this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { contact: legalPersonName, idNumber })
             }
             const res = await submit(this.form)
             if (!this.form.archiveBaseVO.id) {
@@ -1036,6 +1042,14 @@ export default {
         })
       }
     },
+    handleAreaKeyAndVO(res) {
+      this.areaKey = Symbol('areaKey')
+      this.bankAreaKey = Symbol('bankAreaKey')
+      this.legalPersonAddressKey = Symbol('legalPersonAddressKey')
+      this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
+      this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
+      this.legalPersonAddressList = [res.archiveExpandDTO.legalPersonProvince, res.archiveExpandDTO.legalPersonCity, res.archiveExpandDTO.legalPersonArea]
+    },
     async getDetail() {
       this.addLoading = true
       try {
@@ -1044,10 +1058,13 @@ export default {
         this.form.archiveExpandVO = res.archiveExpandDTO
         this.form.archiveOtherVO = res.archiveOtherDTO
         this.form.archiveExpandVO.cardType = 1
-        this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
-        this.areaKey = Symbol('areaKey')
-        this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity]
-        this.bankAreaKey = Symbol('bankAreaKey')
+        this.handleAreaKeyAndVO(res)
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.$refs.merchant.selectVal = this.form.archiveBaseVO.merchantName
+            this.$refs.bankSub.selectVal = this.form.archiveExpandVO.bankSubName
+          }, 200)
+        })
         if (this.isCopy) {
           this.form.archiveBaseVO.id = null
           this.form.archiveExpandVO.id = null
