@@ -349,7 +349,7 @@
               </el-col>
               <el-col :span="12">
                 <el-form-item label="证件类型">
-                  <el-select disabled v-model="form.archiveExpandVO.contactCredentialsType" placeholder="全部" style="width: 240px">
+                  <el-select disabled v-model="form.archiveExpandVO.contactCredentialsTypeXft" placeholder="全部" style="width: 240px">
                     <el-option v-for="item in cardTypeList" :key="item.id" :label="item.name" :value="item.id"></el-option>
                   </el-select>
                 </el-form-item>

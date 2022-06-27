@@ -123,7 +123,7 @@ export const formObj = {
     contactSameLegal: 1, // 联系人是否同法人
     contractHeadUrl: '', // 联系人证件照头像面
     contractNationalUrl: '', // 联系人证件照国徽面
-    contactCredentialsType: 1, // 证件类型
+    contactCredentialsTypeXft: 1, // 证件类型
     credentialsValidDateBegin: '', // 证件有效期开始时间
     credentialsValidDateEnd: '', // 证件有效期结束时间
     businessAuthLetterUrl: '' // 业务办理授权函
