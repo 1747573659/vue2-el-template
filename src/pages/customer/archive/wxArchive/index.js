@@ -1,3 +1,4 @@
+// 业务办理授权函
 export const businessAuthLetterUrl = 'https://static-oss.platform.kemai.com.cn/boss/uploadFiles/241/ffbdac25bfff46899a1ba51586a3d897.docx'
 // 是否停用
 export const idTypeOptions = [

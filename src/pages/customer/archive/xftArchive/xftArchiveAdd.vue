@@ -193,7 +193,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="租赁合同照一" prop="archiveOtherVO.contractOfTenancy1">
+                <el-form-item label="租赁合同照一">
                   <upload-panel
                     alt="租赁合同照一"
                     :disabled="formYQDisabled"
@@ -206,7 +206,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="租赁合同照二" prop="archiveOtherVO.contractOfTenancy2">
+                <el-form-item label="租赁合同照二">
                   <upload-panel
                     alt="租赁合同照二"
                     :disabled="formYQDisabled"
@@ -219,7 +219,7 @@
                 </el-form-item>
               </el-col>
               <el-col :span="12">
-                <el-form-item label="租赁合同照三" prop="archiveOtherVO.contractOfTenancy3">
+                <el-form-item label="租赁合同照三">
                   <upload-panel
                     alt="租赁合同照三"
                     :disabled="formYQDisabled"
@@ -393,7 +393,14 @@
                     :exampleImg="exampleImg.idFrontUrl"
                     :image-url="form.archiveExpandVO.businessAuthLetterUrl"
                     :on-success="res => handleUpload(res, 'archiveExpandVO.businessAuthLetterUrl')"
-                    @click="handleImgPreview(fileServe + form.archiveExpandVO.businessAuthLetterUrl)" />
+                    @click="handleImgPreview(fileServe + form.archiveExpandVO.businessAuthLetterUrl)">
+                    <div style="width: 350px">
+                      <header>下载、填写商户信息后打印授权函，加盖</header>
+                      <section>① 商户号主体红章</section>
+                      <section>② 法定代表人/负责人章或签字（①、②二选一）后扫描或拍照上传，要求图片清晰可见，2MB以内</section>
+                      <el-link :href="businessAuthLetterUrl" type="primary" :underline="false" target="_blank"> 模板下载 </el-link>
+                    </div>
+                  </upload-panel>
                 </el-form-item>
               </el-col>
             </el-row>
@@ -754,7 +761,8 @@ import {
   exchangeFeeRateList,
   auditStatusList,
   formYQValids,
-  formObj
+  formObj,
+  businessAuthLetterUrl
 } from './xftValidator'
 
 import { getWftAllTrade, queryCertType, getBankCnapByName, audit, submit, refuse, detail, imageOCR } from '@/api/xftArchive'
@@ -776,6 +784,7 @@ export default {
       fixFeeRateList,
       exchangeFeeRateList,
       formYQValids,
+      businessAuthLetterUrl,
       questionIcon: require('@/assets/images/icon/questioin.png'),
       addLoading: false,
       isCopy: false,
@@ -841,7 +850,7 @@ export default {
       if (val) {
         const industrItem = this.industrIdList.find(item => item.tradeCode === val)
         this.form.archiveBaseVO.industrIdName = industrItem.tradeName
-        this.checkLegalPersonStatus = industrItem.tradeName.startsWith('企业') && this.form.archiveExpandVO.contactSameLegal
+        this.checkLegalPersonStatus = industrItem.tradeName.startsWith('企业') && this.form.archiveBaseVO.merchantType === 3
         if (industrItem.tradeName.startsWith('事业单位')) this.getCertTypeList()
       }
     },
@@ -1077,6 +1086,7 @@ export default {
         this.auditStatus = this.form.archiveBaseVO.auditStatus
         this.form.archiveExpandVO.openingPermitUrl = res.archiveExpandDTO.openingPermitUrl
         this.formYQDisabled = res.archiveBaseDTO.source === 3
+        this.checkLegalPersonStatus = this.form.archiveBaseVO.industrIdName.startsWith('企业') && this.form.archiveBaseVO.merchantType === 3
       } catch (error) {
       } finally {
         this.addLoading = false

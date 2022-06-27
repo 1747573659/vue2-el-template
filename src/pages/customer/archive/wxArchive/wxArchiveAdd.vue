@@ -31,6 +31,7 @@
                 :data.sync="shopVO"
                 :request="getShopPage"
                 @change="val => handleSelectPageChange(val, 'selectMerchant')"
+                @visible-change="val => handleSelectVisibleChange(val, 'selectMerchant')"
                 :is-max-page.sync="isShopVOMaxPage"
                 placeholder="商户名称"
                 style="width: 240px" />
@@ -937,9 +938,9 @@ export default {
       } else if (refs === 'bankSub') {
         this.form.archiveExpandVO.bankSub = value
       }
-      // this.$nextTick(() => {
-      //   this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
-      // })
+      this.$nextTick(() => {
+        this.selectCopyVal = this.$refs[refs].$el.children[0].children[0].value
+      })
     }
   }
 }

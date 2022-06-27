@@ -1,3 +1,5 @@
+// 业务办理授权函
+export const businessAuthLetterUrl = 'https://static-oss.platform.kemai.com.cn/boss/uploadFiles/241/ffbdac25bfff46899a1ba51586a3d897.docx'
 // form 对象
 export const formObj = {
   archiveBaseVO: {
@@ -320,9 +322,6 @@ export function xftValidator() {
     'archiveOtherVO.signboardUrl': [{ required: true, message: '请上传门店门头照', trigger: 'change' }],
     'archiveOtherVO.cashierDesk': [{ required: true, message: '请上传室内场景照', trigger: 'change' }],
     'archiveOtherVO.businessSiteOneUrl': [{ required: true, message: '请上传经营场所照', trigger: 'change' }],
-    'archiveOtherVO.contractOfTenancy1': [{ required: true, message: '请上传租赁合同照一', trigger: 'change' }],
-    'archiveOtherVO.contractOfTenancy2': [{ required: true, message: '请上传租赁合同照二', trigger: 'change' }],
-    'archiveOtherVO.contractOfTenancy3': [{ required: true, message: '请上传租赁合同照三', trigger: 'change' }],
     'archiveExpandVO.businessLicenseUrl': [{ required: true, message: '请上传营业执照', trigger: 'change' }],
     'archiveExpandVO.licId': [
       { required: true, message: '请输入营业执照注册号', trigger: 'blur' },
