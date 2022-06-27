@@ -323,7 +323,7 @@
               <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
             </el-form-item>
           </el-col>
-          <el-row v-if="form.archiveBaseVO.merchantType === 2">
+          <template v-if="form.archiveBaseVO.merchantType === 2">
             <el-col :span="12">
               <el-form-item label="证件居住地址" prop="archiveExpandVO.legalPersonArea">
                 <area-select :key="legalPersonAddressKey" @change="value => handleArea('legalPersonArea', value)" :areaList="legalPersonAddressList" placeholder="省/市/区" />
@@ -334,7 +334,7 @@
                 <el-input v-model="form.archiveExpandVO.credentialsAddress" placeholder="证件详细地址" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
-          </el-row>
+          </template>
         </el-row>
       </div>
       <div class="p-wxArchive-item">
