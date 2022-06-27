@@ -40,7 +40,7 @@ export function formatNumberFilter(num, precision) {
  * @param {string} 请求方法(默认为get请求)
  * @param {string} paramsFormat 请求参数格式(默认为x-www-form-urlencoded格式)
  */
-export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-www-form-urlencoded') {
+export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-www-form-urlencoded', downloadFileName = '') {
   if (method === 'GET') {
     return axios({
       url,
@@ -112,7 +112,7 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
           reader.readAsText(data)
         } else {
           setTimeout(() => {
-            handleDownloadBufferFile(response)
+            handleDownloadBufferFile(response, '', downloadFileName)
           }, 0)
         }
       })
@@ -120,7 +120,7 @@ export function downloadBufferFile(url, data, method = 'GET', paramsFormat = 'x-
   }
 }
 
-function handleDownloadBufferFile(response, data) {
+function handleDownloadBufferFile(response, data, downloadFileName) {
   let url = window.URL.createObjectURL(response.data) // 表示一个指定的file对象或Blob对象
   let fileName = '' // filename名称截取
   if (
@@ -130,7 +130,7 @@ function handleDownloadBufferFile(response, data) {
     let name =
       decodeURI((response.headers['content-disposition'] || response.headers['Content-Disposition']).split(';')[1].split('=')[1]) ||
       (response.headers['content-disposition'] || response.headers['Content-Disposition']).split(';')[1].split('=')[1]
-    fileName = name
+    fileName = downloadFileName || name
     // 兼容ie
     if (window.navigator.msSaveBlob) {
       window.navigator.msSaveBlob(response.data, fileName)
