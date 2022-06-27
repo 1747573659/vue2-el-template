@@ -556,7 +556,7 @@
                   action="/uploadPic"
                   :fileServer="fileServer"
                   :image-url="form.archiveExpandVO.hardIdUrl"
-                  :on-success="res => handleUploadToOCR(res, 'archiveExpandVO.hardIdUrl')"
+                  :on-success="res => handleUpload(res, 'archiveExpandVO.hardIdUrl')"
                   @click="handleImgPreview(fileServe + form.archiveExpandVO.hardIdUrl)" />
               </el-form-item>
             </el-col>
@@ -994,6 +994,12 @@ export default {
         }
       })
     },
+    handleCardholderId() {
+      if (this.form.archiveExpandVO.acctType === 1 && this.form.archiveExpandVO.cardholderType === 2) {
+        const { cardType, idNumber } = this.form.archiveExpandVO
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { cardholderIdType: cardType, cardholderIdNumber: idNumber })
+      }
+    },
     async toSave() {
       this.resetArchiveBaseVOAttr()
       this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
@@ -1011,6 +1017,7 @@ export default {
               })
               this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { contact: legalPersonName, idNumber })
             }
+            this.handleCardholderId()
             const res = await submit(this.form)
             if (!this.form.archiveBaseVO.id) {
               this.$router.push({ name: 'xftArchiveAdd', query: { auditStatus: 0, id: res } })
@@ -1031,6 +1038,7 @@ export default {
         this.resetArchiveBaseVOAttr()
         try {
           this.checkVerify = true
+          this.handleCardholderId()
           await audit(this.form)
           this.toCancle()
           this.$message.success('提交成功')
