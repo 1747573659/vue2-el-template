@@ -406,36 +406,38 @@
               </el-form-item>
             </el-col>
           </el-row>
-          <el-col :span="12">
-            <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
-              <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width: 240px"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="archiveBaseVO.email">
-              <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width: 240px"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-row v-if="!form.archiveExpandVO.contactSameLegal">
+          <el-row>
             <el-col :span="12">
-              <el-form-item label="业务办理授权函" prop="archiveExpandVO.businessAuthLetterUrl">
-                <upload-panel
-                  alt="业务办理授权函"
-                  action="/uploadFile"
-                  :fileServer="fileServer"
-                  :exampleImg="exampleImg.idFrontUrl"
-                  :image-url="form.archiveExpandVO.businessAuthLetterUrl"
-                  :on-success="res => handleUpload(res, 'archiveExpandVO.businessAuthLetterUrl')"
-                  @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)">
-                  <div style="width: 350px">
-                    <header>下载、填写商户信息后打印授权函，加盖</header>
-                    <section>① 商户号主体红章</section>
-                    <section>② 法定代表人/负责人章或签字（①、②二选一）后扫描或拍照上传，要求图片清晰可见，2MB以内</section>
-                    <el-link :href="businessAuthLetterUrl" type="primary" :underline="false" target="_blank"> 模板下载 </el-link>
-                  </div>
-                </upload-panel>
+              <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
+                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width: 240px"></el-input>
               </el-form-item>
             </el-col>
+            <el-col :span="12">
+              <el-form-item label="邮箱" prop="archiveBaseVO.email">
+                <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <template v-if="!form.archiveExpandVO.contactSameLegal">
+              <el-col :span="12">
+                <el-form-item label="业务办理授权函" prop="archiveExpandVO.businessAuthLetterUrl">
+                  <upload-panel
+                    alt="业务办理授权函"
+                    action="/uploadFile"
+                    :fileServer="fileServer"
+                    :exampleImg="exampleImg.idFrontUrl"
+                    :image-url="form.archiveExpandVO.businessAuthLetterUrl"
+                    :on-success="res => handleUpload(res, 'archiveExpandVO.businessAuthLetterUrl')"
+                    @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)">
+                    <div style="width: 350px">
+                      <header>下载、填写商户信息后打印授权函，加盖</header>
+                      <section>① 商户号主体红章</section>
+                      <section>② 法定代表人/负责人章或签字（①、②二选一）后扫描或拍照上传，要求图片清晰可见，2MB以内</section>
+                      <el-link :href="businessAuthLetterUrl" type="primary" :underline="false" target="_blank"> 模板下载 </el-link>
+                    </div>
+                  </upload-panel>
+                </el-form-item>
+              </el-col>
+            </template>
           </el-row>
         </el-row>
       </div>
@@ -830,7 +832,6 @@ export default {
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
-        // 页面回显处理
         this.handleAreaKeyAndVO(res)
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
         this.$nextTick(() => {
