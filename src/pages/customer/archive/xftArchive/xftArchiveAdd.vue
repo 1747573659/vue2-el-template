@@ -995,7 +995,7 @@ export default {
       })
     },
     handleCardholderId() {
-      if (this.form.archiveExpandVO.acctType === 1 && this.form.archiveExpandVO.cardholderType === 2) {
+      if (this.form.archiveExpandVO.acctType === 1 && this.form.archiveExpandVO.cardholderType === 1) {
         const { cardType, idNumber } = this.form.archiveExpandVO
         this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { cardholderIdType: cardType, cardholderIdNumber: idNumber })
       }
