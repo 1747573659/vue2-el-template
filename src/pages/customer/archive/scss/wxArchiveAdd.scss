@@ -1,0 +1,110 @@
+.p-wxArchive-con {
+  border-top: 16px solid #f7f8fa;
+  border-bottom: 72px solid #f7f8fa;
+  background-color: #ffffff;
+  > header {
+    min-height: 72px;
+    ::v-deep .el-col {
+      height: 72px;
+      display: flex;
+      align-items: center;
+      color: #3d4966;
+      font-size: 14px;
+    }
+  }
+  .p-wxArchive-item {
+    > header {
+      height: 48px;
+      line-height: 48px;
+      padding-left: 16px;
+      font-size: 16px;
+      color: #1f2e4d;
+      border-bottom: 1px solid #e6e9f0;
+      font-weight: 500;
+    }
+    .p-wxArchive-fill {
+      padding-top: 24px;
+    }
+  }
+  .p-wxArchive-action {
+    width: calc(100% - 200px - 42px);
+    height: 56px;
+    position: fixed;
+    bottom: 0;
+    background-color: #ffffff;
+    line-height: 56px;
+    text-align: center;
+    box-shadow: 0 -1px 2px 0 rgb(0 0 0 / 3%);
+  }
+}
+.e {
+  &-wxArchive {
+    &-warning {
+      color: #ff6010;
+      margin-left: 10px;
+    }
+    &-status {
+      &_pd {
+        padding: 5px 12px;
+        background: #ffefe8;
+      }
+    }
+    &-action {
+      &_pd {
+        padding: 8px 22px;
+      }
+    }
+    &-review {
+      color: #ff6010;
+      width: 150px;
+      overflow: hidden;
+      white-space: nowrap;
+      text-overflow: ellipsis;
+      cursor: pointer;
+    }
+    &-textarea {
+      ::v-deep {
+        .el-input__count {
+          line-height: 1.3;
+        }
+        .el-textarea__inner {
+          padding-bottom: 20px;
+        }
+      }
+    }
+  }
+  &-preview {
+    &-con {
+      left: 35vw;
+      right: 35vw;
+      bottom: 20vh;
+      top: 10vh;
+      ::v-deep .el-image-viewer__mask {
+        display: none;
+      }
+      ::v-deep .el-image-viewer__close {
+        background-color: #606266;
+        width: 44px;
+        height: 44px;
+        font-size: 30px;
+      }
+      ::v-deep .el-icon-circle-close::before {
+        content: '\e6db';
+        color: #ffffff;
+      }
+    }
+  }
+  &-dialog {
+    &-remark {
+      margin-bottom: 0;
+    }
+  }
+  &-icon {
+    &-question {
+      width: 18px;
+      height: 18px;
+      vertical-align: middle;
+      margin-left: 10px;
+    }
+  }
+}
