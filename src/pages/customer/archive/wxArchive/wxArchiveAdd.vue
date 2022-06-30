@@ -807,6 +807,7 @@ export default {
         if (valid) {
           try {
             this.checkVerify = true
+            this.handleSetContactVO()
             await submitToVerify(this.form)
             this.handleCancel()
             this.$message({ type: 'success', message: '提交成功' })
