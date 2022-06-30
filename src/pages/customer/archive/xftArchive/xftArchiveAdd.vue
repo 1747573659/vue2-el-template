@@ -502,7 +502,7 @@
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cardholderIdFrontUrl"
                   :image-url="form.archiveOtherVO.cardholderIdFrontUrl"
-                  :on-success="res => handleUploadToOCR(res, 'archiveOtherVO.cardholderIdFrontUrl', 'idcard')"
+                  :on-success="(res, file) => handleUploadToOCR(file, 'archiveOtherVO.cardholderIdFrontUrl', 'idcard')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdFrontUrl)" />
               </el-form-item>
             </el-col>
@@ -514,7 +514,7 @@
                   :fileServer="fileServer"
                   :exampleImg="exampleImg.cardholderIdBackUrl"
                   :image-url="form.archiveOtherVO.cardholderIdBackUrl"
-                  :on-success="res => handleUploadToOCR(res, 'archiveOtherVO.cardholderIdBackUrl', 'idcard')"
+                  :on-success="(res, file) => handleUploadToOCR(file, 'archiveOtherVO.cardholderIdBackUrl', 'idcard')"
                   @click="handleImgPreview(fileServe + form.archiveOtherVO.cardholderIdBackUrl)" />
               </el-form-item>
             </el-col>
