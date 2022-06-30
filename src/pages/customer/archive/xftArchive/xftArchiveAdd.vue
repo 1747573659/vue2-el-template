@@ -1000,23 +1000,26 @@ export default {
         this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { cardholderIdType: cardType, cardholderIdNumber: idNumber })
       }
     },
+    handleSetContactVO() {
+      if (this.form.archiveExpandVO.contactSameLegal) {
+        const { idFrontUrl, idBackUrl, legalPersonName, cardType, idNumber, legalPersonValidityBegin, legalPersonValidityEnd } = this.form.archiveExpandVO
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, {
+          contractHeadUrl: idFrontUrl,
+          contractNationalUrl: idBackUrl,
+          contactCredentialsType: cardType,
+          credentialsValidDateBegin: legalPersonValidityBegin,
+          credentialsValidDateEnd: legalPersonValidityEnd
+        })
+        this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { contact: legalPersonName, idNumber })
+      }
+    },
     async toSave() {
       this.resetArchiveBaseVOAttr()
       this.$refs.form.validateField('archiveBaseVO.merchantId', async errorMessage => {
         if (!errorMessage) {
           try {
             this.checkArchive = true
-            if (this.form.archiveExpandVO.contactSameLegal) {
-              const { idFrontUrl, idBackUrl, legalPersonName, cardType, idNumber, legalPersonValidityBegin, legalPersonValidityEnd } = this.form.archiveExpandVO
-              this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, {
-                contractHeadUrl: idFrontUrl,
-                contractNationalUrl: idBackUrl,
-                contactCredentialsType: cardType,
-                credentialsValidDateBegin: legalPersonValidityBegin,
-                credentialsValidDateEnd: legalPersonValidityEnd
-              })
-              this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { contact: legalPersonName, idNumber })
-            }
+            this.handleSetContactVO()
             this.handleCardholderId()
             const res = await submit(this.form)
             if (!this.form.archiveBaseVO.id) {
@@ -1038,6 +1041,7 @@ export default {
         this.resetArchiveBaseVOAttr()
         try {
           this.checkVerify = true
+          this.handleSetContactVO()
           this.handleCardholderId()
           await audit(this.form)
           this.toCancle()
