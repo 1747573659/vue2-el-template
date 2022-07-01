@@ -98,6 +98,7 @@ import { productQueryByPage } from '@/api/product'
 import { queryBenefitPage, getBenefitStatusMap } from '@/api/accountManagement/shareProfit/profitDetail'
 
 export default {
+  name: 'profitDetail',
   data() {
     return {
       licensedProductData: [],
