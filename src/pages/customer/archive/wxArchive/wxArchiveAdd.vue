@@ -23,16 +23,16 @@
         <el-row class="p-wxArchive-fill">
           <el-col :span="24">
             <el-form-item label="商户名称" prop="archiveBaseVO.merchantId">
-              <select-page
-                ref="selectMerchant"
-                v-model="form.archiveBaseVO.merchantName"
-                :data.sync="selectMerchantData"
-                :request="({ query, page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, 'Merchant', page, rows)"
-                :is-max-page.sync="isMerchantMaxPage"
-                @change="val => handleSelectPageChange(val, 'selectMerchant')"
-                @visible-change="val => handleSelectVisibleChange(val, 'selectMerchant')"
+              <km-select-page
+                ref="merchant"
+                v-model="form.archiveBaseVO.merchantId"
                 option-label="companyName"
                 option-value="id"
+                :data.sync="shopVO"
+                :request="getShopPage"
+                @change="val => handleSelectPageChange(val, 'selectMerchant')"
+                @visible-change="val => handleSelectVisibleChange(val, 'selectMerchant')"
+                :is-max-page.sync="isShopVOMaxPage"
                 placeholder="商户名称"
                 style="width: 240px" />
             </el-form-item>
@@ -185,39 +185,12 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="公司地址" prop="archiveBaseVO.area">
-              <area-select :key="areaKey" @change="value => handleArea('area', value)" :areaList="areaList"></area-select>
+              <area-select :key="areaKey" @change="value => handleArea('area', value)" :areaList="areaList" placeholder="省/市/区" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="详细地址" prop="archiveBaseVO.address">
               <el-input v-model="form.archiveBaseVO.address" placeholder="详细地址" style="width: 240px"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系人" prop="archiveBaseVO.contact">
-              <el-input v-model="form.archiveBaseVO.contact" placeholder="联系人" style="width: 240px"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="证件号码" prop="archiveExpandVO.administratorIdCard">
-              <el-input v-model="form.archiveExpandVO.administratorIdCard" placeholder="证件号码" style="width: 240px"></el-input>
-              <el-tooltip effect="dark" placement="top-start">
-                <img :src="questionIcon" alt="提示" class="e-icon-question" />
-                <template #content>
-                  <p>请填写超级管理员的证件号码，可传身份证、来往内地通行证、来往大陆通行证、护照等证件号码，超级管理员签约时，</p>
-                  <p>校验微信号绑定的银行卡实名信息，是否与该证件号码一致。</p>
-                </template>
-              </el-tooltip>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
-              <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width: 240px"></el-input>
-            </el-form-item>
-          </el-col>
-          <el-col :span="12">
-            <el-form-item label="邮箱" prop="archiveBaseVO.email">
-              <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width: 240px"></el-input>
             </el-form-item>
           </el-col>
           <el-col :span="12">
@@ -302,9 +275,9 @@
         <header>法人信息</header>
         <el-row class="p-wxArchive-fill">
           <el-col :span="12">
-            <el-form-item label="身份证正面照" prop="archiveExpandVO.idFrontUrl">
+            <el-form-item label="法人证件照头像面" prop="archiveExpandVO.idFrontUrl">
               <upload-panel
-                alt="身份证正面照"
+                alt="法人证件照头像面"
                 action="/uploadFile"
                 :fileServer="fileServer"
                 :exampleImg="exampleImg.idFrontUrl"
@@ -314,9 +287,9 @@
             </el-form-item>
           </el-col>
           <el-col :span="12">
-            <el-form-item label="身份证背面照" prop="archiveExpandVO.idBackUrl">
+            <el-form-item label="法人证件照国徽面" prop="archiveExpandVO.idBackUrl">
               <upload-panel
-                alt="身份证背面照"
+                alt="法人证件照国徽面"
                 action="/uploadFile"
                 :fileServer="fileServer"
                 :exampleImg="exampleImg.idBackUrl"
@@ -332,9 +305,8 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="证件类型" prop="archiveExpandVO.idType">
-              <el-select clearable v-model="form.archiveExpandVO.idType" placeholder="证件类型" style="width: 240px">
-                <el-option label="身份证" value="1"></el-option>
-                <el-option label="护照" value="2"></el-option>
+              <el-select v-model="form.archiveExpandVO.idType" filterable placeholder="证件类型" style="width: 240px">
+                <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="String(item.value)"></el-option>
               </el-select>
             </el-form-item>
           </el-col>
@@ -351,6 +323,122 @@
               <el-date-picker v-else v-model="form.archiveExpandVO.idEnd" placeholder="结束日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
             </el-form-item>
           </el-col>
+          <template v-if="form.archiveBaseVO.merchantType === 2">
+            <el-col :span="12">
+              <el-form-item label="证件居住地址" prop="archiveExpandVO.legalPersonArea">
+                <area-select :key="legalPersonAddressKey" @change="value => handleArea('legalPersonArea', value)" :areaList="legalPersonAddressList" placeholder="省/市/区" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件详细地址" prop="archiveExpandVO.credentialsAddress">
+                <el-input v-model="form.archiveExpandVO.credentialsAddress" placeholder="证件详细地址" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+          </template>
+        </el-row>
+      </div>
+      <div class="p-wxArchive-item">
+        <header>联系人信息</header>
+        <el-row class="p-wxArchive-fill">
+          <el-row>
+            <el-col :span="24">
+              <el-form-item label="联系人是否同法人">
+                <el-select v-model="form.archiveExpandVO.contactSameLegal" filterable placeholder="联系人是否同法人" style="width: 240px">
+                  <el-option label="是" :value="1"></el-option>
+                  <el-option label="否" :value="0"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row v-if="!form.archiveExpandVO.contactSameLegal">
+            <el-col :span="12">
+              <el-form-item label="联系人证件照头像面" prop="archiveExpandVO.contractHeadUrl">
+                <upload-panel
+                  alt="联系人证件照头像面"
+                  action="/uploadFile"
+                  :fileServer="fileServer"
+                  :exampleImg="exampleImg.idFrontUrl"
+                  :image-url="form.archiveExpandVO.contractHeadUrl"
+                  :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.contractHeadUrl', 'idcard')"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.contractHeadUrl)" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人证件照国徽面" prop="archiveExpandVO.contractNationalUrl">
+                <upload-panel
+                  alt="联系人证件照国徽面"
+                  action="/uploadFile"
+                  :fileServer="fileServer"
+                  :exampleImg="exampleImg.idBackUrl"
+                  :image-url="form.archiveExpandVO.contractNationalUrl"
+                  :on-success="(res, file) => handleUploadToOCR(file, 'archiveExpandVO.contractNationalUrl', 'idcard')"
+                  @click="handleImgPreview(fileServe + form.archiveExpandVO.contractNationalUrl)" />
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="联系人姓名" prop="archiveBaseVO.contact">
+                <el-input v-model="form.archiveBaseVO.contact" placeholder="联系人姓名" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件类型" prop="archiveExpandVO.contactCredentialsType">
+                <el-select v-model="form.archiveExpandVO.contactCredentialsType" filterable placeholder="证件类型" style="width: 240px">
+                  <el-option v-for="item in idTypeOptions" :key="item.value" :label="item.label" :value="item.value"></el-option>
+                </el-select>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件号码" prop="archiveExpandVO.administratorIdCard">
+                <el-input v-model="form.archiveExpandVO.administratorIdCard" placeholder="证件号码" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="证件有效期" prop="archiveExpandVO.credentialsValidDateBegin">
+                <el-date-picker v-model="form.archiveExpandVO.credentialsValidDateBegin" placeholder="开始日期" value-format="yyyy-MM-dd" style="width: 140px"></el-date-picker>
+                <span style="margin: 0 10px">至</span>
+                <span v-if="!form.archiveExpandVO.credentialsValidDateEnd && checkFormDisabled && pageStatus === 'detail'">长期有效</span>
+                <el-date-picker
+                  v-else
+                  v-model="form.archiveExpandVO.credentialsValidDateEnd"
+                  placeholder="结束日期"
+                  value-format="yyyy-MM-dd"
+                  style="width: 140px"></el-date-picker>
+              </el-form-item>
+            </el-col>
+          </el-row>
+          <el-row>
+            <el-col :span="12">
+              <el-form-item label="联系人电话" prop="archiveBaseVO.contactPhone">
+                <el-input v-model="form.archiveBaseVO.contactPhone" placeholder="联系人电话" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <el-col :span="12">
+              <el-form-item label="邮箱" prop="archiveBaseVO.email">
+                <el-input v-model="form.archiveBaseVO.email" placeholder="邮箱" style="width: 240px"></el-input>
+              </el-form-item>
+            </el-col>
+            <template v-if="!form.archiveExpandVO.contactSameLegal">
+              <el-col :span="12">
+                <el-form-item label="业务办理授权函" prop="archiveExpandVO.businessAuthLetterUrl">
+                  <upload-panel
+                    alt="业务办理授权函"
+                    action="/uploadFile"
+                    :fileServer="fileServer"
+                    :exampleImg="exampleImg.idFrontUrl"
+                    :image-url="form.archiveExpandVO.businessAuthLetterUrl"
+                    :on-success="res => handleUpload(res, 'archiveExpandVO.businessAuthLetterUrl')"
+                    @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)">
+                    <div style="width: 350px">
+                      <header>下载、填写商户信息后打印授权函，加盖</header>
+                      <section>① 商户号主体红章</section>
+                      <section>② 法定代表人/负责人章或签字（①、②二选一）后扫描或拍照上传，要求图片清晰可见，2MB以内</section>
+                      <el-link :href="businessAuthLetterUrl" type="primary" :underline="false" target="_blank"> 模板下载 </el-link>
+                    </div>
+                  </upload-panel>
+                </el-form-item>
+              </el-col>
+            </template>
+          </el-row>
         </el-row>
       </div>
       <div class="p-wxArchive-item">
@@ -405,14 +493,15 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="开户行" prop="archiveExpandVO.bank">
-              <select-page
-                v-model="form.archiveExpandVO.bankName"
-                :data.sync="selectBankData"
-                :request="({ query, page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, 'Bank', page, rows)"
-                :is-max-page.sync="isBankMaxPage"
-                @change="val => handleSelectPageChange(val, 'bank')"
+              <km-select-page
+                ref="bank"
+                v-model="form.archiveExpandVO.bank"
                 option-label="bankName"
                 option-value="bankCode"
+                :data.sync="selectBankData"
+                :request="({ query = '', page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, page, rows, 'Bank')"
+                :is-max-page.sync="isBankMaxPage"
+                @change="val => handleSelectPageChange(val, 'bank')"
                 placeholder="开户行"
                 style="width: 240px" />
             </el-form-item>
@@ -431,21 +520,22 @@
           </el-col>
           <el-col :span="12">
             <el-form-item label="开户支行" prop="archiveExpandVO.bankSub">
-              <select-page
-                v-model="form.archiveExpandVO.bankSubName"
-                :data.sync="selectBankSubData"
-                :request="({ query, page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, 'BankSub', page, rows)"
-                :is-max-page.sync="isBankSubMaxPage"
-                @change="val => handleSelectPageChange(val, 'bankSub')"
+              <km-select-page
+                ref="bankSub"
+                v-model="form.archiveExpandVO.bankSub"
                 option-label="bName"
                 option-value="bCode"
+                :data.sync="selectBankSubData"
+                :request="({ query, page = 1, rows = 10 } = {}) => handleSelectPageRemoteRe(query, page, rows, 'BankSub')"
+                :is-max-page.sync="isBankSubMaxPage"
+                @change="val => handleSelectPageChange(val, 'bankSub')"
                 placeholder="开户支行"
                 style="width: 240px" />
             </el-form-item>
           </el-col>
           <el-col :span="12">
             <el-form-item label="开户支行省市区/县" prop="archiveExpandVO.bankArea">
-              <area-select :key="bankAreaKey" @change="value => handleArea('bankArea', value)" :areaList="bankAreaList"></area-select>
+              <area-select :key="bankAreaKey" @change="value => handleArea('bankArea', value)" :areaList="bankAreaList" placeholder="省/市/区" />
             </el-form-item>
           </el-col>
         </el-row>
@@ -463,7 +553,6 @@
         </el-row>
       </div>
     </el-form>
-
     <div class="p-wxArchive-action">
       <template v-if="['add', 'copy'].includes(pageStatus) || detailStatusArr.includes(form.archiveBaseVO.directAuditStatus)">
         <template v-if="form.archiveBaseVO.directAuditStatus === 3">
@@ -481,8 +570,6 @@
       </template>
       <el-button size="small" class="e-wxArchive-action_pd" @click="handleCancel">取消</el-button>
     </div>
-
-    <!-- dialog -->
     <el-dialog append-to-body :visible.sync="checkReason" title="拒绝原因" width="507px" :close-on-press-escape="false">
       <el-form ref="refundForm" :model="refundForm" label-width="60px">
         <el-form-item label="原因" prop="remark" :rules="[{ required: true, message: '请输入审核不能过的原因', trigger: 'change' }]" class="e-dialog-remark">
@@ -494,8 +581,6 @@
         <el-button @click="handleRefund" type="primary" size="small" class="e-wxArchive-action_pd">确定</el-button>
       </div>
     </el-dialog>
-
-    <!-- image-preview -->
     <el-image-preview v-if="checkViewer" :initial-index="imageIndex" :url-list="previewList" :on-close="() => (checkViewer = false)" class="e-preview-con"></el-image-preview>
   </section>
 </template>
@@ -503,46 +588,31 @@
 <script>
 import { mapActions } from 'vuex'
 import dayjs from 'dayjs'
-import fileServer from '@/mixins/fileServe'
-import UploadPanel from '../components/uploadPanel'
-import selectPage from '../components/selectPage'
-import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
-import areaSelect from '@/components/areaSelect'
-
-import { detailValidate, formObj, rateOptions, merchantTypeOptions, sellShopDescribeArr, exampleImg } from './index'
-import { filterStatus } from './filters'
 import { deepClone } from '@/utils'
-import {
-  queryShopListByPage,
-  queryBankPage,
-  submit,
-  detail,
-  submitToVerify,
-  refund,
-  queryBranchPage,
-  businessCategory,
-  imageOCR,
-  updateArchiveBaseDirectAuditStatus
-} from '@/api/wxArchive'
+import { filterStatus } from './filters'
+import fileServer from '@/mixins/fileServe'
+import { getSysShop } from '@/mixins/getSysShop'
+
+import UploadPanel from '../components/uploadPanel'
+import areaSelect from '@/components/areaSelect'
+import ElImagePreview from 'element-ui/packages/image/src/image-viewer'
+
+import { detailValidate, formObj, rateOptions, merchantTypeOptions, sellShopDescribeArr, exampleImg, idTypeOptions, businessAuthLetterUrl } from './index'
+import { queryBankPage, submit, detail, submitToVerify, refund, queryBranchPage, businessCategory, imageOCR, updateArchiveBaseDirectAuditStatus } from '@/api/wxArchive'
 
 export default {
   name: 'wxArchiveAdd',
-  mixins: [fileServer],
-  components: {
-    selectPage,
-    UploadPanel,
-    ElImagePreview,
-    areaSelect
-  },
-  filters: {
-    filterStatus
-  },
+  mixins: [fileServer, getSysShop],
+  components: { UploadPanel, ElImagePreview, areaSelect },
+  filters: { filterStatus },
   data() {
     return {
+      idTypeOptions,
       merchantTypeOptions,
       sellShopDescribeArr,
       rateOptions,
       exampleImg,
+      businessAuthLetterUrl,
       detailStatusArr: [0, 1, 2, 3, 4, 6, 8],
       direAuditStatusOptions: JSON.parse(sessionStorage.direAuditStatusOptions),
       questionIcon: require('@/assets/images/icon/questioin.png'),
@@ -554,15 +624,15 @@ export default {
       businessCategory: [],
       businessOptions: [],
       selectCopyVal: '',
-      selectMerchantData: [],
-      isMerchantMaxPage: false,
       selectBankData: [],
       isBankMaxPage: false,
       selectBankSubData: [],
       isBankSubMaxPage: false,
       areaKey: Symbol('areaKey'),
+      legalPersonAddressKey: Symbol('legalPersonAddressKey'),
       bankAreaKey: Symbol('bankAreaKey'),
       areaList: [],
+      legalPersonAddressList: [],
       bankAreaList: [],
       checkViewer: false,
       imageIndex: 0,
@@ -575,6 +645,7 @@ export default {
   },
   created() {
     this.form = deepClone(formObj)
+    this.getShopPage()
   },
   mounted() {
     this.$nextTick(() => {
@@ -593,14 +664,18 @@ export default {
     },
     // 图片上传模块
     handleUpload(res, type) {
-      const typeList = type.split('.')
-      this.form[typeList[0]][typeList[1]] = res.data.path
+      if (res.data) {
+        const typeList = type.split('.')
+        this.form[typeList[0]][typeList[1]] = res.data.path
+      }
     },
     handleUploadToOCR(file, type, code) {
       const OCRMap = new Map([
         ['archiveExpandVO.businessLicenseUrl', 'getBusinessLicenseOCR'],
         ['archiveExpandVO.idFrontUrl', 'getFaceIdOCR'],
         ['archiveExpandVO.idBackUrl', 'getBackIdOCR'],
+        ['archiveExpandVO.contractHeadUrl', 'getContractFaceIdOCR'],
+        ['archiveExpandVO.contractNationalUrl', 'getContractBackIdOCR'],
         ['archiveExpandVO.bankCardFrontUrl', 'getBankCardOCR']
       ])
       this.handleUpload(file.response, type)
@@ -608,7 +683,7 @@ export default {
       reader.readAsDataURL(file.raw)
       reader.onload = () => {
         let OCRData = { image: reader.result.split(',')[1], imageCode: code }
-        if (code === 'idcard') OCRData = Object.assign(OCRData, { side: type === 'archiveExpandVO.idFrontUrl' ? 'face' : 'back' })
+        if (code === 'idcard') OCRData = Object.assign(OCRData, { side: ['archiveExpandVO.contractHeadUrl', 'archiveExpandVO.idFrontUrl'].includes(type) ? 'face' : 'back' })
         this.$message({ type: 'success', message: '正在进行图片解析' })
         imageOCR(OCRData)
           .then(res => {
@@ -653,6 +728,16 @@ export default {
       this.form.archiveExpandVO.idBegin = res.start_date && new Date(startDate) ? startDate : ''
       this.form.archiveExpandVO.idEnd = res.end_date && new Date(endDate) ? endDate : ''
     },
+    getContractFaceIdOCR(res) {
+      this.form.archiveBaseVO.contact = res.name
+      this.form.archiveExpandVO.administratorIdCard = res.num
+    },
+    getContractBackIdOCR(res) {
+      const startDate = res.start_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+      const endDate = res.end_date.replace(/[年月./-]/g, '-').replace(/日/g, '')
+      this.form.archiveExpandVO.credentialsValidDateBegin = res.start_date && new Date(startDate) ? startDate : ''
+      this.form.archiveExpandVO.credentialsValidDateEnd = res.end_date && new Date(endDate) ? endDate : ''
+    },
     getBankCardOCR(res) {
       this.form.archiveExpandVO.bankCard = res.card_num
     },
@@ -668,15 +753,13 @@ export default {
       }
     },
     handleCancel() {
-      this.$store.dispatch('delTagView', this.$route).then(() => {
-        this.$router.push({ name: 'wxArchive' })
-      })
+      this.$store.dispatch('delTagView', this.$route).then(() => this.$router.push({ name: 'wxArchive' }))
     },
     handleMerchantType(val) {
       if (val !== 5) this.form.archiveBaseVO.fixFeeRate = 60
       if (val === 2) this.form.archiveExpandVO.acctType = 1
     },
-    handleDirectAuditStatus: async function (id) {
+    async handleDirectAuditStatus(id) {
       try {
         await updateArchiveBaseDirectAuditStatus({ id })
         this.handleCancel()
@@ -724,6 +807,7 @@ export default {
         if (valid) {
           try {
             this.checkVerify = true
+            this.handleSetContactVO()
             await submitToVerify(this.form)
             this.handleCancel()
             this.$message({ type: 'success', message: '提交成功' })
@@ -734,7 +818,7 @@ export default {
         }
       })
     },
-    handleDetail: async function () {
+    async handleDetail() {
       try {
         this.checkFormLoad = true
         const res = await detail({ archiveId: Number(this.$route.query.id) })
@@ -749,12 +833,15 @@ export default {
         this.form.archiveExpandVO = archiveExpandDTO
         this.form.archiveOtherVO = archiveOtherDTO
         this.form.businessSceneShow = businessSceneShow
-        // 待处理
-        this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
-        this.areaKey = Symbol('areaKey')
-        this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
-        this.bankAreaKey = Symbol('bankAreaKey')
+        this.handleAreaKeyAndVO(res)
         this.setBusinessCategory(res.archiveBaseDTO.businessCategory)
+        this.$nextTick(() => {
+          setTimeout(() => {
+            this.$refs.merchant.selectVal = this.form.archiveBaseVO.merchantName
+            this.$refs.bank.selectVal = this.form.archiveExpandVO.bankName
+            this.$refs.bankSub.selectVal = this.form.archiveExpandVO.bankSubName
+          }, 200)
+        })
         if (![0, 2, 4, 6, 8].includes(res.archiveBaseDTO.directAuditStatus) && this.pageStatus !== 'copy') this.checkFormDisabled = true
       } catch (error) {
       } finally {
@@ -762,17 +849,34 @@ export default {
       }
 
       if (this.pageStatus === 'copy') {
-        this.form.archiveBaseVO.auditTime = ''
-        this.form.archiveBaseVO.bossAuditTime = ''
-        this.form.archiveBaseVO.createTime = ''
-        this.form.archiveBaseVO.directAuditStatus = ''
-        this.form.archiveBaseVO.useChannelCode = ''
-        this.form.archiveBaseVO.id = ''
+        this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { auditTime: '', bossAuditTime: '', createTime: '', directAuditStatus: '', useChannelCode: '', id: '' })
         this.form.archiveExpandVO.id = ''
         this.form.archiveOtherVO.id = ''
         this.$nextTick(() => {
           this.$refs.form.clearValidate()
         })
+      }
+    },
+    handleAreaKeyAndVO(res) {
+      this.areaList = [res.archiveBaseDTO.province, res.archiveBaseDTO.city, res.archiveBaseDTO.area]
+      this.areaKey = Symbol('areaKey')
+      this.bankAreaList = [res.archiveExpandDTO.bankProvince, res.archiveExpandDTO.bankCity, res.archiveExpandDTO.bankArea]
+      this.bankAreaKey = Symbol('bankAreaKey')
+      this.legalPersonAddressList = [res.archiveExpandDTO.legalPersonProvince, res.archiveExpandDTO.legalPersonCity, res.archiveExpandDTO.legalPersonArea]
+      this.legalPersonAddressKey = Symbol('legalPersonAddressKey')
+    },
+    handleSetContactVO() {
+      if (this.form.archiveExpandVO.contactSameLegal) {
+        const { idFrontUrl, idBackUrl, legalPersonName, idType, idNumber, idBegin, idEnd } = this.form.archiveExpandVO
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, {
+          contractHeadUrl: idFrontUrl,
+          contractNationalUrl: idBackUrl,
+          contactCredentialsType: idType,
+          administratorIdCard: idNumber,
+          credentialsValidDateBegin: idBegin,
+          credentialsValidDateEnd: idEnd
+        })
+        this.form.archiveBaseVO.contact = legalPersonName
       }
     },
     handleArchive() {
@@ -783,6 +887,7 @@ export default {
           if (!errorMessage) {
             try {
               this.checkArchive = true
+              this.handleSetContactVO()
               const res = await submit(this.form)
               if (!this.form.archiveBaseVO.id) {
                 this.$router.replace({ name: 'wxArchiveAdd', query: { id: res, status: 'edit' } })
@@ -800,19 +905,16 @@ export default {
     },
     handleArea(type, value) {
       if (type === 'area') {
-        this.form.archiveBaseVO.province = value[0]
-        this.form.archiveBaseVO.city = value[1]
-        this.form.archiveBaseVO.area = value[2]
+        this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { province: value[0], city: value[1], area: value[2] })
+      } else if (type === 'bankArea') {
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { bankProvince: value[0], bankCity: value[1], bankArea: value[2] })
       } else {
-        this.form.archiveExpandVO.bankProvince = value[0]
-        this.form.archiveExpandVO.bankCity = value[1]
-        this.form.archiveExpandVO.bankArea = value[2]
+        this.form.archiveExpandVO = Object.assign(this.form.archiveExpandVO, { legalPersonProvince: value[0], legalPersonCity: value[1], legalPersonArea: value[2] })
       }
     },
-    handleSelectPageRemoteRe: async function (query, type, page, rows) {
+    async handleSelectPageRemoteRe(query, page, rows, type) {
       try {
         const selectQueryMap = new Map([
-          ['Merchant', { method: queryShopListByPage, params: { id: query || '' } }],
           ['Bank', { method: queryBankPage, params: { bankName: query || '' } }],
           ['BankSub', { method: queryBranchPage, params: { bName: query || '' } }]
         ])
@@ -828,20 +930,10 @@ export default {
     },
     handleSelectPageChange(value, refs) {
       if (refs === 'selectMerchant') {
-        this.form.archiveBaseVO.userId = this.selectMerchantData.filter(item => item.id === value)[0].userId
-        this.form.archiveBaseVO.merchantId = value
-        const merchantObj = this.selectMerchantData.filter(item => item.id === value)[0]
-        const { contactor, mobile, email, shortName, companyName, address, provinceCode, cityCode, districtCode } = merchantObj
-        this.form.archiveBaseVO.contact = contactor
-        this.form.archiveBaseVO.contactPhone = mobile
-        this.form.archiveBaseVO.email = email
-        this.form.archiveBaseVO.merchantShortName = shortName
-        this.form.archiveBaseVO.companyName = companyName
-        this.form.archiveBaseVO.address = address
-        this.form.archiveBaseVO.province = provinceCode
-        this.form.archiveBaseVO.city = cityCode
-        this.form.archiveBaseVO.area = districtCode
-        this.areaList = [provinceCode, cityCode, districtCode]
+        const merchantObj = this.shopVO.find(item => item.id === value)
+        const { userId, shortName: merchantShortName, companyName, address, provinceCode: province, cityCode: city, districtCode: area } = merchantObj
+        this.form.archiveBaseVO = Object.assign(this.form.archiveBaseVO, { userId, merchantShortName, companyName, address, province, city, area })
+        this.areaList = [province, city, area]
         this.areaKey = Symbol('areaKey')
       } else if (refs === 'bank') {
         this.form.archiveExpandVO.bank = value
@@ -857,115 +949,5 @@ export default {
 </script>
 
 <style lang="scss" scoped>
-.p-wxArchive-con {
-  border-top: 16px solid #f7f8fa;
-  border-bottom: 72px solid #f7f8fa;
-  background-color: #fff;
-  > header {
-    min-height: 72px;
-    ::v-deep .el-col {
-      height: 72px;
-      display: flex;
-      align-items: center;
-      color: #3d4966;
-      font-size: 14px;
-    }
-  }
-  .p-wxArchive-item {
-    > header {
-      height: 48px;
-      line-height: 48px;
-      padding-left: 16px;
-      font-size: 16px;
-      color: #1f2e4d;
-      border-bottom: 1px solid #e6e9f0;
-      font-weight: 500;
-    }
-    .p-wxArchive-fill {
-      padding-top: 24px;
-    }
-  }
-  .p-wxArchive-action {
-    width: calc(100% - 200px - 42px);
-    height: 56px;
-    position: fixed;
-    bottom: 0;
-    background-color: #fff;
-    line-height: 56px;
-    text-align: center;
-    box-shadow: 0px -1px 2px 0px rgba(0, 0, 0, 0.03);
-  }
-}
-
-.e {
-  &-wxArchive {
-    &-warning {
-      color: #ff6010;
-      margin-left: 10px;
-    }
-    &-status {
-      &_pd {
-        padding: 5px 12px;
-        background: #ffefe8;
-      }
-    }
-    &-action {
-      &_pd {
-        padding: 8px 22px;
-      }
-    }
-    &-review {
-      color: #ff6010;
-      width: 150px;
-      overflow: hidden;
-      white-space: nowrap;
-      text-overflow: ellipsis;
-      cursor: pointer;
-    }
-    &-textarea {
-      ::v-deep {
-        .el-input__count {
-          line-height: 1.3;
-        }
-        .el-textarea__inner {
-          padding-bottom: 20px;
-        }
-      }
-    }
-  }
-  &-preview {
-    &-con {
-      left: 35vw;
-      right: 35vw;
-      bottom: 20vh;
-      top: 10vh;
-      ::v-deep .el-image-viewer__mask {
-        display: none;
-      }
-      ::v-deep .el-image-viewer__close {
-        background-color: #606266;
-        width: 44px;
-        height: 44px;
-        font-size: 30px;
-      }
-      ::v-deep .el-icon-circle-close:before {
-        content: '\e6db';
-        color: #fff;
-      }
-    }
-  }
-  &-dialog {
-    &-remark {
-      margin-bottom: 0;
-    }
-  }
-  &-icon {
-    &-question {
-      width: 18px;
-      height: 18px;
-      vertical-align: middle;
-      margin-left: 10px;
-    }
-  }
-}
+@import '../scss/wxArchiveAdd';
 </style>

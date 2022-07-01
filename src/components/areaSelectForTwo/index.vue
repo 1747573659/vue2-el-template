@@ -1,6 +1,6 @@
 <template>
   <div>
-    <el-cascader style="width: 240px" v-model="value" :props="props" clearable @change="change"></el-cascader>
+    <el-cascader v-bind="$attrs" style="width: 240px" v-model="value" :props="props" clearable @change="change"></el-cascader>
   </div>
 </template>
 
