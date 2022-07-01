@@ -427,7 +427,7 @@
                     :exampleImg="exampleImg.idFrontUrl"
                     :image-url="form.archiveExpandVO.businessAuthLetterUrl"
                     :on-success="res => handleUpload(res, 'archiveExpandVO.businessAuthLetterUrl')"
-                    @click="handleImgPreview(fileServe + form.archiveExpandVO.idFrontUrl)">
+                    @click="handleImgPreview(fileServe + form.archiveExpandVO.businessAuthLetterUrl)">
                     <div style="width: 350px">
                       <header>下载、填写商户信息后打印授权函，加盖</header>
                       <section>① 商户号主体红章</section>
