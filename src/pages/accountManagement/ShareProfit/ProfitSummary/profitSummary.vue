@@ -83,6 +83,7 @@ import { queryBenefitSummaryPage, updateBenefitThirdInfo } from '@/api/accountMa
 import { getBenefitStatusMap } from '@/api/accountManagement/shareProfit/profitDetail'
 
 export default {
+  name: 'profitSummary',
   data() {
     return {
       benefitStatusData: [],
@@ -171,10 +172,10 @@ export default {
 <style lang="scss">
 .e-profit-tips {
   padding: 10px 20px;
-  background: rgb(229, 237, 253);
-  border: 1px solid rgb(166, 196, 254);
+  background: rgb(229 237 253);
+  border: 1px solid rgb(166 196 254);
   margin-bottom: 20px;
-  color: rgb(61, 73, 102);
+  color: rgb(61 73 102);
   font-size: 14px;
   height: auto;
   &_step {
