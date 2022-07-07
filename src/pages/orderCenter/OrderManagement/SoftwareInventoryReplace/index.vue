@@ -150,7 +150,7 @@ export default {
     async handleExport() {
       try {
         this.checkExportLoad = true
-        await replaceOrderExport({ menu: this.$route.meta.title, params: this.handleQueryParams() })
+        await replaceOrderExport({ menu: this.$route.meta.title, params: { ...this.handleQueryParams(), agentId: JSON.parse(localStorage.getItem('userInfo')).agentId } })
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
       } catch (error) {
       } finally {

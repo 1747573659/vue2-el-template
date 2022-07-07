@@ -169,7 +169,13 @@ export default {
       this.exportLoad = true
       try {
         this.$message({ type: 'success', message: '数据文件生成中，请稍后在导出记录中下载' })
-        await exportInventoryChangeWater({ export: true, from: true, ...this.handleQueryParams() })
+        const { agentId, ...params } = this.handleQueryParams()
+        await exportInventoryChangeWater({
+          export: true,
+          from: true,
+          ...params,
+          agentId: agentId || JSON.parse(localStorage.getItem('userInfo')).agentId
+        })
       } catch (error) {
       } finally {
         this.exportLoad = false
